@@ -1,0 +1,40 @@
+#summary vt-crypt documentation.
+#labels java,crypto,bouncycastle
+
+= Introduction =
+These crypt utilities were created to do basic encryption and decryption.
+The current version uses the Bouncy Castle library.
+No crypto code is implemented in this library, it is simply a wrapper around the Bouncy Castle implementations.
+There is support for all the ciphers which Bouncy Castle supports, however special classes have been created for the more commonly used algorithms.
+There are many convenience methods for doing common encryption and decryption tasks, including creating BASE64 and HEX encoded data, as well as, writing data to disk. 
+
+= Installation =
+The latest version can be downloaded at:
+
+If you would like to use this project in your maven build, include the following in your pom.xml:
+{{{
+...
+<repositories>
+  <repository>
+    <id>vt-middleware.repo</id>
+    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+  </repository>
+</repositories>
+...
+}}}
+
+If you would like to use this project's maven plugin, include the following in your pom.xml:
+{{{
+...
+<pluginRepositories>
+  <pluginRepository>
+    <id>vt-middleware.repo</id>
+    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+  </pluginRepository>
+</pluginRepositories>
+...
+}}}
+
+= Code Samples =
+
+= Scripts =
