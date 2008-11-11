@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
   <version>2.0</version>
   <name>VT Crypt Libraries</name>
-  <url>http://www.middleware.vt.edu/doku.php?id=middleware:opensource:crypt</url>
+  <url>http://code.google.com/p/vt-middleware/wiki/vtcrypt</url>
   <licenses>
     <license>
       <name>GNU Lesser General Public License</name>
@@ -16,8 +16,8 @@
     </license>
   </licenses>
   <scm>
-    <connection>scm:svn:https://projects.iad.vt.edu:8443/svn/middleware/crypt/trunk</connection>
-    <url>https://projects.iad.vt.edu:8443/wsvn/middleware/crypt/trunk</url>
+    <connection>scm:svn:https://vt-middleware.googlecode.com/svn/vt-crypt/trunk</connection>
+    <url>http://vt-middleware.googlecode.com/svn/vt-crypt/trunk</url>
   </scm>
 
   <properties>
@@ -164,23 +164,20 @@
   </build>
   <repositories>
     <repository>
-      <id>middleware.vt.edu.repo</id>
-      <name>Virginia Tech Middleware Maven2 Repository</name>
-      <url>http://middleware.vt.edu/maven2</url>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>http://vt-middleware.googlecode.com/svn/maven2</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>middleware.vt.edu.repo</id>
-      <name>Virginia Tech Middleware Maven2 Repository</name>
-      <url>http://middleware.vt.edu/maven2</url>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>http://vt-middleware.googlecode.com/svn/maven2</url>
     </pluginRepository>
   </pluginRepositories>
   <distributionManagement>
     <repository>
-      <id>middleware.vt.edu.repo</id>
-      <name>Virginia Tech Middleware Maven2 Repository</name>
-      <url>dav:https://www.middleware.vt.edu/pubs-webdav/maven2</url>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>svn:https://vt-middleware.googlecode.com/svn/maven2</url>
     </repository>
   </distributionManagement>
 </project>
