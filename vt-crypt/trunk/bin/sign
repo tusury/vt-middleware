@@ -1,12 +1,16 @@
 #!/bin/sh
 
 JAVA=java
-JAVA_OPTS=""
+JAVA_OPTS="$JAVA_OPTS"
 
-if [ -d bin ]; then
-  PREFIX=
+if [ "x$VTCRYPT_HOME" = "x" ]; then
+  if [ -d bin ]; then
+    PREFIX=
+  else
+    PREFIX=../
+  fi
 else
-  PREFIX=../
+  PREFIX="$VTCRYPT_HOME"
 fi
 
 CRYPT_JAR=vt-crypt-2.0.jar
