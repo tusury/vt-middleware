@@ -40,5 +40,23 @@ If you would like to use this project's maven plugin, include the following in y
 }}}
 
 = Code Samples =
+Unless otherwise noted, classes appearing in the following samples are included in the JSE libraries or VT Crypt.
+
+== Hashing ==
+Generate the MD5 hash of a password.  The result is a string of hexadecimal characters as is the common use case for password verification.
+{{{
+String hash = new MD5().digest(Convert.toBytes(passChars), new HexConverter());
+}}}
+
+Compute the SHA-1 fingerprint of a file, which produces a string of colon-delimited hex bytes, 1A:2B:3C... as is common with fingerprint utilities.  Note the {{{true}}} argument to the HexConverter constructor that causes colon-delimited bytes to be produced in the hexadecimal output string.
+{{{
+String fingerprint = null;
+InputStream in = new BufferedInputStream(new FileInputStream(new File(big-file.txt)));
+try {
+  fingerprint = new SHA1().digest(in, new HexConverter(true));
+} finally {
+  in.close();
+}
+}}}
 
 = Scripts =
