@@ -2,11 +2,15 @@
 #labels java,crypto,bouncycastle
 
 = Introduction =
-These crypt utilities were created to do basic encryption and decryption.
-The current version uses the Bouncy Castle library.
-No crypto code is implemented in this library, it is simply a wrapper around the Bouncy Castle implementations.
-There is support for all the ciphers which Bouncy Castle supports, however special classes have been created for the more commonly used algorithms.
-There are many convenience methods for doing common encryption and decryption tasks, including creating BASE64 and HEX encoded data, as well as, writing data to disk. 
+VT Crypt is a high level Java cryptograhic library that meets the following design goals:
+ # Flexible JCE provider.  Prefers the [http://www.bouncycastle.org/java.html Bouncy Castle Java Provider], but can fall back to other providers defined in the environment for algorithms not implemented by BC.
+ # Ease of use for common cryptographic operations.  A one liner highlights this well; the following prints the MD5 hash of a password as a string of HEX characters:  {{{System.out.println(new MD5().digest(passBytes, new HexConverter()));}}}
+ # Convenient and performant handling of cryptographic operations on large data streams.
+ # Support for base-64 and hexadecimal encoding of ciphertext input/output.
+ # Support for I/O operations on cryptographic primitives including generating and writing symmetric encryption keys, public/private key pairs, and X.509 certificates.  Both PEM and DER encoding is handled conveniently.
+ # Command line interface for each class of cryptographic operation (digest, symmetric encryption, public-key encryption, message signing, etc).  A command line interface for keystore operations is also included, which is notable as it supports features above and beyond the the Java [http://java.sun.com/j2se/1.5.0/docs/tooldocs/solaris/keytool.html keytool] utility.
+
+It is important to note that no cryptographic algorithms are implemented; [http://www.bouncycastle.org/java.html Bouncy Castle] provides all cryptographic algorithms where required.
 
 = Installation =
 The latest version can be downloaded at:
