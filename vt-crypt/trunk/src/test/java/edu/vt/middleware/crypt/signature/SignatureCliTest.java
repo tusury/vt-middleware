@@ -13,9 +13,14 @@
 */
 package edu.vt.middleware.crypt.signature;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
+
 import edu.vt.middleware.crypt.CliHelper;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.Assert;
@@ -110,20 +115,29 @@ public class SignatureCliTest
       final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outStream));
 
-      // Compute signature
+      // Compute signature and verify it
       String fullLine = partialLine + " -sign " +
         " -key " + privKeyPath + " -in " + TEST_PLAINTEXT;
       logger.info(
         "Testing signature CLI sign operation with command line:\n\t" +
         fullLine);
       SignatureCli.main(CliHelper.splitArgs(fullLine));
-
       final String sig = outStream.toString();
       Assert.assertTrue(sig.length() > 0);
+
+      // Write signature out to file for use in verify step
+      final File sigFile = new File("target/test-output/sig.out");
+      final BufferedOutputStream sigOs = new BufferedOutputStream(
+        new FileOutputStream(sigFile));
+      try {
+        sigOs.write(outStream.toByteArray());
+      } finally {
+        sigOs.close();
+      }
       outStream.reset();
 
       // Verify signature
-      fullLine = partialLine + " -verify " + sig + " -key " + pubKeyPath +
+      fullLine = partialLine + " -verify " + sigFile + " -key " + pubKeyPath +
         " -in " + TEST_PLAINTEXT;
       logger.info(
         "Testing signature CLI verify operation with command " +

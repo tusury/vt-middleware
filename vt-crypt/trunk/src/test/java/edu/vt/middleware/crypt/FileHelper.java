@@ -42,14 +42,14 @@ public class FileHelper
    * Gets a file name that includes all the given parameters.
    *
    * @param  basename  Base name of file.
-   * @param  algorithm  Encryption algorithm.
+   * @param  algorithm  Cryptographic algorithm.
    * @param  type  Type of data in file. May be null to indicate raw data.
    *
    * @return  File name.
    */
   public static String getFileName(
     final String basename,
-    final EncryptionAlgorithm algorithm,
+    final Algorithm algorithm,
     final String type)
   {
     final StringBuffer sb = new StringBuffer();
@@ -57,10 +57,13 @@ public class FileHelper
     sb.append(basename);
     sb.append('-');
     sb.append(algorithm.getAlgorithm());
-    sb.append('-');
-    sb.append(algorithm.getMode());
-    sb.append('-');
-    sb.append(algorithm.getPadding());
+    if (algorithm instanceof EncryptionAlgorithm) {
+      final EncryptionAlgorithm encAlg = (EncryptionAlgorithm) algorithm;
+      sb.append('-');
+      sb.append(encAlg.getMode());
+      sb.append('-');
+      sb.append(encAlg.getPadding());
+    }
     if (type != null) {
       sb.append("-");
       sb.append(type);
@@ -74,14 +77,14 @@ public class FileHelper
    * Gets an input stream for the given parameters.
    *
    * @param  basename  Base name of file.
-   * @param  algorithm  Encryption algorithm.
+   * @param  algorithm  Cryptographic algorithm.
    * @param  type  Type of data in file. May be null to indicate raw data.
    *
    * @return  File input stream.
    */
   public static InputStream getIn(
     final String basename,
-    final EncryptionAlgorithm algorithm,
+    final Algorithm algorithm,
     final String type)
   {
     final String name = getFileName(basename, algorithm, type);
@@ -97,14 +100,14 @@ public class FileHelper
    * Gets an output stream for the given parameters.
    *
    * @param  basename  Base name of file.
-   * @param  algorithm  Encryption algorithm.
+   * @param  algorithm  Cryptographic algorithm.
    * @param  type  Type of data in file. May be null to indicate raw data.
    *
    * @return  File output stream.
    */
   public static OutputStream getOut(
     final String basename,
-    final EncryptionAlgorithm algorithm,
+    final Algorithm algorithm,
     final String type)
   {
     final String name = getFileName(basename, algorithm, type);

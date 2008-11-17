@@ -24,10 +24,7 @@ import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.util.CryptWriter;
 import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
 /**
  * Command line interface for symmetric encryption operations.
@@ -86,37 +83,7 @@ public class SymmetricCli extends AbstractEncryptionCli
    */
   public static void main(final String[] args)
   {
-    final CommandLineParser parser = new GnuParser();
-    final SymmetricCli cli = new SymmetricCli();
-    cli.initOptions();
-    try {
-      if (args.length > 0) {
-        final CommandLine line = parser.parse(cli.options, args);
-        if (line.hasOption(OPT_ENCRYPT)) {
-          cli.encrypt(line);
-        } else if (line.hasOption(OPT_DECRYPT)) {
-          cli.decrypt(line);
-        } else if (line.hasOption(OPT_GENKEY)) {
-          cli.genKey(line);
-        } else {
-          cli.printHelp();
-        }
-      } else {
-        cli.printHelp();
-      }
-    } catch (ParseException pex) {
-      System.err.println(
-        "Failed parsing command arguments: " + pex.getMessage());
-    } catch (IllegalArgumentException iaex) {
-      String msg = "Operation failed: " + iaex.getMessage();
-      if (iaex.getCause() != null) {
-        msg += " Underlying reason: " + iaex.getCause().getMessage();
-      }
-      System.err.println(msg);
-    } catch (Exception ex) {
-      System.err.println("Operation failed:");
-      ex.printStackTrace(System.err);
-    }
+    new SymmetricCli().performAction(args);
   }
 
 
@@ -191,6 +158,21 @@ public class SymmetricCli extends AbstractEncryptionCli
     options.addOption(new Option(OPT_GENKEY, "generate new encryption key"));
     options.addOption(new Option(OPT_ENCRYPT, "perform encryption"));
     options.addOption(new Option(OPT_DECRYPT, "perform decryption"));
+  }
+
+
+  /** {@inheritDoc} */
+  protected void dispatch(final CommandLine line) throws Exception
+  {
+    if (line.hasOption(OPT_ENCRYPT)) {
+      encrypt(line);
+    } else if (line.hasOption(OPT_DECRYPT)) {
+      decrypt(line);
+    } else if (line.hasOption(OPT_GENKEY)) {
+      genKey(line);
+    } else {
+      printHelp();
+    }
   }
 
 
@@ -280,6 +262,8 @@ public class SymmetricCli extends AbstractEncryptionCli
   protected void encrypt(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
     final SymmetricAlgorithm alg = newAlgorithm(line);
     initAlgorithm(alg, line);
     encrypt(alg, getInputStream(line), getOutputStream(line));
@@ -296,6 +280,8 @@ public class SymmetricCli extends AbstractEncryptionCli
   protected void decrypt(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
     final SymmetricAlgorithm alg = newAlgorithm(line);
     initAlgorithm(alg, line);
     decrypt(alg, getInputStream(line), getOutputStream(line));
@@ -312,6 +298,8 @@ public class SymmetricCli extends AbstractEncryptionCli
   protected void genKey(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
     final SymmetricAlgorithm alg = newAlgorithm(line);
     SecretKey key = null;
     if (line.hasOption(OPT_PBE)) {
@@ -426,5 +414,18 @@ public class SymmetricCli extends AbstractEncryptionCli
       CryptReader.readSecretKey(
         new File(line.getOptionValue(OPT_KEY)),
         line.getOptionValue(OPT_CIPHER));
+  }
+
+
+  /**
+   * Validates the existence of required options for an operation.
+   *
+   * @param  line  Parsed command line arguments container.
+   */
+  protected void validateOptions(final CommandLine line)
+  {
+    if (!line.hasOption(OPT_CIPHER)) {
+      throw new IllegalArgumentException("cipher option is required.");
+    }
   }
 }

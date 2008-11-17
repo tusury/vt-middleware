@@ -13,15 +13,9 @@ else
   PREFIX="$VTCRYPT_HOME"
 fi
 
-CRYPT_JAR=vt-crypt-2.0.jar
-LIBDIR=${PREFIX}lib
-CLASSPATH="${PREFIX}jars/${CRYPT_JAR}"
-for i in ${LIBDIR}/* ; do
-  if [ "${CLASSPATH}" != "" ]; then
-    CLASSPATH=${CLASSPATH}:$i
-  else
-    CLASSPATH=$i
-  fi
+CLASSPATH="${PREFIX}/jars/vt-crypt-2.0.jar"
+for JAR in `ls ${PREFIX}/lib/*.jar` ; do
+  CLASSPATH=$CLASSPATH:$JAR
 done
 
 ${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \

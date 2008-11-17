@@ -13,10 +13,8 @@
 */
 package edu.vt.middleware.crypt;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +39,6 @@ public abstract class AbstractEncryptionCli extends AbstractCli
   /** Cipher option. */
   protected static final String OPT_CIPHER = "cipher";
 
-  /** Input file option. */
-  protected static final String OPT_INFILE = "in";
-
   /** Output file option. */
   protected static final String OPT_OUTFILE = "out";
 
@@ -66,7 +61,6 @@ public abstract class AbstractEncryptionCli extends AbstractCli
     super.initOptions();
 
     final Option cipher = new Option(OPT_CIPHER, true, "cipher algorithm");
-    cipher.setRequired(true);
     cipher.setArgName("algname");
     cipher.setOptionalArg(false);
 
@@ -172,15 +166,7 @@ public abstract class AbstractEncryptionCli extends AbstractCli
   protected InputStream getInputStream(final CommandLine line)
     throws IOException
   {
-    InputStream in = null;
-    if (line.hasOption(OPT_INFILE)) {
-      final File file = new File(line.getOptionValue(OPT_INFILE));
-      System.err.println("Reading input from " + file);
-      in = new BufferedInputStream(new FileInputStream(file));
-    } else {
-      System.err.println("Reading input from STDIN");
-      in = System.in;
-    }
+    InputStream in = super.getInputStream(line);
     if (line.hasOption(OPT_DECRYPT) && line.hasOption(OPT_ENCODING)) {
       final String encName = line.getOptionValue(OPT_ENCODING);
       if (BASE_64_ENCODING.equals(encName)) {

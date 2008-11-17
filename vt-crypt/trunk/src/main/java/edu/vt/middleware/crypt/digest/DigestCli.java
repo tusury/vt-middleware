@@ -13,19 +13,13 @@
 */
 package edu.vt.middleware.crypt.digest;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import edu.vt.middleware.crypt.AbstractCli;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
 /**
  * Command line interface for digest operations.
@@ -41,9 +35,6 @@ public class DigestCli extends AbstractCli
 
   /** Salt for digest initialization. */
   protected static final String OPT_SALT = "salt";
-
-  /** Input file option. */
-  protected static final String OPT_INFILE = "in";
 
   /** Output encoding format. */
   protected static final String OPT_OUTFORM = "outform";
@@ -62,28 +53,7 @@ public class DigestCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    final CommandLineParser parser = new GnuParser();
-    final DigestCli cli = new DigestCli();
-    cli.initOptions();
-    try {
-      if (args.length > 0) {
-        cli.digest(parser.parse(cli.options, args));
-      } else {
-        cli.printHelp();
-      }
-    } catch (ParseException pex) {
-      System.err.println(
-        "Failed parsing command arguments: " + pex.getMessage());
-    } catch (IllegalArgumentException iaex) {
-      String msg = "Operation failed: " + iaex.getMessage();
-      if (iaex.getCause() != null) {
-        msg += " Underlying reason: " + iaex.getCause().getMessage();
-      }
-      System.err.println(msg);
-    } catch (Exception ex) {
-      System.err.println("Operation failed:");
-      ex.printStackTrace(System.err);
-    }
+    new DigestCli().performAction(args);
   }
 
 
@@ -93,7 +63,6 @@ public class DigestCli extends AbstractCli
     super.initOptions();
 
     final Option algorithm = new Option(OPT_ALG, true, "digest algorithm name");
-    algorithm.setRequired(true);
     algorithm.setArgName("name");
     algorithm.setOptionalArg(false);
 
@@ -125,6 +94,16 @@ public class DigestCli extends AbstractCli
   }
 
 
+  /** {@inheritDoc} */
+  protected void dispatch(final CommandLine line) throws Exception
+  {
+    if (line.hasOption(OPT_ALG)) {
+      digest(line);
+    } else {
+      printHelp();
+    }
+  }
+
   /**
    * Compute a digest of a data stream from options defined on command line.
    *
@@ -141,18 +120,13 @@ public class DigestCli extends AbstractCli
       digest.setSalt(hexConv.toBytes(line.getOptionValue(OPT_SALT)));
     }
 
-    InputStream in = null;
-    if (line.hasOption(OPT_INFILE)) {
-      final File file = new File(line.getOptionValue(OPT_INFILE));
-      System.err.println("Reading input from " + file);
-      in = new BufferedInputStream(new FileInputStream(file));
-    } else {
-      System.err.println("Reading input from STDIN");
-      in = System.in;
+    byte[] hash = null;
+    final InputStream in = getInputStream(line);
+    try {
+      hash = digest.digest(in);
+    } finally {
+      closeStream(in);
     }
-
-    final byte[] hash = digest.digest(in);
-    closeStream(in);
     if (line.hasOption(OPT_OUTFORM)) {
       final String encName = line.getOptionValue(OPT_OUTFORM);
       Converter conv = null;

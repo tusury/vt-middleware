@@ -23,10 +23,7 @@ import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.util.CryptWriter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
 /**
  * Command line interface for asymmetric encryption operations.
@@ -38,7 +35,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
 {
 
   /** Generate key pair option. */
-  protected static final String OPT_GENKEYPAIR = "genkeypair";
+  protected static final String OPT_GENKEYPAIR = "genkeys";
 
   /** Output path of private key for keypair generation option. */
   protected static final String OPT_PRIVKEYPATH = "privkey";
@@ -54,37 +51,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
    */
   public static void main(final String[] args)
   {
-    final CommandLineParser parser = new GnuParser();
-    final AsymmetricCli cli = new AsymmetricCli();
-    cli.initOptions();
-    try {
-      if (args.length > 0) {
-        final CommandLine line = parser.parse(cli.options, args);
-        if (line.hasOption(OPT_ENCRYPT)) {
-          cli.encrypt(line);
-        } else if (line.hasOption(OPT_DECRYPT)) {
-          cli.decrypt(line);
-        } else if (line.hasOption(OPT_GENKEYPAIR)) {
-          cli.genKeyPair(line);
-        } else {
-          cli.printHelp();
-        }
-      } else {
-        cli.printHelp();
-      }
-    } catch (ParseException pex) {
-      System.err.println(
-        "Failed parsing command arguments: " + pex.getMessage());
-    } catch (IllegalArgumentException iaex) {
-      String msg = "Operation failed: " + iaex.getMessage();
-      if (iaex.getCause() != null) {
-        msg += " Underlying reason: " + iaex.getCause().getMessage();
-      }
-      System.err.println(msg);
-    } catch (Exception ex) {
-      System.err.println("Operation failed:");
-      ex.printStackTrace(System.err);
-    }
+    new AsymmetricCli().performAction(args);
   }
 
 
@@ -112,20 +79,35 @@ public class AsymmetricCli extends AbstractEncryptionCli
       OPT_ENCRYPT,
       true,
       "encrypt with X.509 DER-encoded public key or certificate");
-    encrypt.setArgName("filepath");
+    encrypt.setArgName("pubkeypath");
     encrypt.setOptionalArg(false);
 
     final Option decrypt = new Option(
       OPT_DECRYPT,
       true,
       "decrypt with PKCS#8 DER-encoded private key");
-    decrypt.setArgName("filepath");
+    decrypt.setArgName("privkeypath");
     decrypt.setOptionalArg(false);
 
     options.addOption(genKeyPair);
     options.addOption(privKeyPath);
     options.addOption(encrypt);
     options.addOption(decrypt);
+  }
+
+
+  /** {@inheritDoc} */
+  protected void dispatch(final CommandLine line) throws Exception
+  {
+    if (line.hasOption(OPT_ENCRYPT)) {
+      encrypt(line);
+    } else if (line.hasOption(OPT_DECRYPT)) {
+      decrypt(line);
+    } else if (line.hasOption(OPT_GENKEYPAIR)) {
+      genKeyPair(line);
+    } else {
+      printHelp();
+    }
   }
 
 
@@ -163,6 +145,8 @@ public class AsymmetricCli extends AbstractEncryptionCli
   protected void encrypt(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
     final AsymmetricAlgorithm alg = newAlgorithm(line);
     alg.setKey(readPublicKey(line));
     encrypt(alg, getInputStream(line), getOutputStream(line));
@@ -179,6 +163,8 @@ public class AsymmetricCli extends AbstractEncryptionCli
   protected void decrypt(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
     final AsymmetricAlgorithm alg = newAlgorithm(line);
     alg.setKey(readPrivateKey(line));
     decrypt(alg, getInputStream(line), getOutputStream(line));
@@ -195,14 +181,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
   protected void genKeyPair(final CommandLine line)
     throws Exception
   {
-    if (!line.hasOption(OPT_OUTFILE)) {
-      throw new IllegalArgumentException(
-        "genkey operation requires -out for public key output path");
-    }
-    if (!line.hasOption(OPT_PRIVKEYPATH)) {
-      throw new IllegalArgumentException(
-        "genkey operation requires -privkey for private key output path");
-    }
+    validateOptions(line);
 
     final AsymmetricAlgorithm alg = newAlgorithm(line);
     final int size = Integer.parseInt(line.getOptionValue(OPT_GENKEYPAIR));
@@ -236,9 +215,13 @@ public class AsymmetricCli extends AbstractEncryptionCli
     final File keyFile = new File(line.getOptionValue(OPT_ENCRYPT));
     System.err.println("Reading public key from " + keyFile);
     try {
-      key = CryptReader.readPublicKey(keyFile, alg);
+      if (keyFile.getName().endsWith(PEM_SUFFIX)) {
+        key = CryptReader.readPemPublicKey(keyFile);
+      } else {
+        key = CryptReader.readPublicKey(keyFile, alg);
+      }
     } catch (CryptException e) {
-      // Maybe the file is an X.509 DER-encoded cert containing the public key
+      // Maybe the file is an X.509 certificate containing the public key
       key = CryptReader.readCertificate(keyFile).getPublicKey();
     }
     return key;
@@ -258,9 +241,36 @@ public class AsymmetricCli extends AbstractEncryptionCli
   protected PrivateKey readPrivateKey(final CommandLine line)
     throws CryptException, IOException
   {
-    return
-      CryptReader.readPrivateKey(
-        new File(line.getOptionValue(OPT_DECRYPT)),
+    final File keyFile = new File(line.getOptionValue(OPT_DECRYPT));
+    if (keyFile.getName().endsWith(PEM_SUFFIX)) {
+      return CryptReader.readPemPrivateKey(keyFile, null);
+    } else {
+      return CryptReader.readPrivateKey(
+        keyFile,
         line.getOptionValue(OPT_CIPHER));
+    }
+  }
+
+
+  /**
+   * Validates the existence of required options for an operation.
+   *
+   * @param  line  Parsed command line arguments container.
+   */
+  protected void validateOptions(final CommandLine line)
+  {
+    if (!line.hasOption(OPT_CIPHER)) {
+      throw new IllegalArgumentException("cipher option is required.");
+    }
+    if (line.hasOption(OPT_GENKEYPAIR)) {
+      if (!line.hasOption(OPT_OUTFILE)) {
+        throw new IllegalArgumentException(
+          "genkeys operation requires -out for public key output path");
+      }
+      if (!line.hasOption(OPT_PRIVKEYPATH)) {
+        throw new IllegalArgumentException(
+          "genkeys operation requires -privkey for private key output path");
+      }
+    }
   }
 }

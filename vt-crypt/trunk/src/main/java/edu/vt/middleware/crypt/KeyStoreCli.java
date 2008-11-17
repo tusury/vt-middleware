@@ -29,10 +29,7 @@ import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.util.CryptWriter;
 import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
 /**
  * Command line interface for keystore operations.
@@ -79,9 +76,6 @@ public class KeyStoreCli extends AbstractCli
   /** Name of operation provided by this class. */
   private static final String COMMAND_NAME = "keystore";
 
-  /** Suffix of files using PEM encoding. */
-  private static final String PEM_SUFFIX = "pem";
-
   /** For calculating MD5 cert fingerprints. */
   private final MD5 md5 = new MD5();
 
@@ -99,37 +93,7 @@ public class KeyStoreCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    final CommandLineParser parser = new GnuParser();
-    final KeyStoreCli cli = new KeyStoreCli();
-    cli.initOptions();
-    try {
-      if (args.length > 0) {
-        final CommandLine line = parser.parse(cli.options, args);
-        if (line.hasOption(OPT_LIST)) {
-          cli.list(line);
-        } else if (line.hasOption(OPT_IMPORT)) {
-          cli.doImport(line);
-        } else if (line.hasOption(OPT_EXPORT)) {
-          cli.doExport(line);
-        } else {
-          cli.printHelp();
-        }
-      } else {
-        cli.printHelp();
-      }
-    } catch (ParseException pex) {
-      System.err.println(
-        "Failed parsing command arguments: " + pex.getMessage());
-    } catch (IllegalArgumentException iaex) {
-      String msg = "Operation failed: " + iaex.getMessage();
-      if (iaex.getCause() != null) {
-        msg += " Underlying reason: " + iaex.getCause().getMessage();
-      }
-      System.err.println(msg);
-    } catch (Exception ex) {
-      System.err.println("Operation failed:");
-      ex.printStackTrace(System.err);
-    }
+    new KeyStoreCli().performAction(args);
   }
 
 
@@ -139,12 +103,10 @@ public class KeyStoreCli extends AbstractCli
     super.initOptions();
 
     final Option keystore = new Option(OPT_STORE, true, "keystore file");
-    keystore.setRequired(true);
     keystore.setArgName("filepath");
     keystore.setOptionalArg(false);
 
     final Option pass = new Option(OPT_PASS, true, "keystore password");
-    pass.setRequired(true);
     pass.setArgName("password");
     pass.setOptionalArg(false);
 
@@ -198,6 +160,21 @@ public class KeyStoreCli extends AbstractCli
   }
 
 
+  /** {@inheritDoc} */
+  protected void dispatch(final CommandLine line) throws Exception
+  {
+    if (line.hasOption(OPT_LIST)) {
+      list(line);
+    } else if (line.hasOption(OPT_IMPORT)) {
+      doImport(line);
+    } else if (line.hasOption(OPT_EXPORT)) {
+      doExport(line);
+    } else {
+      printHelp();
+    }
+  }
+
+
   /**
    * Lists keystore contents on STDOUT. Output is similar to keytool -list -v.
    *
@@ -208,6 +185,8 @@ public class KeyStoreCli extends AbstractCli
   protected void list(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
     final KeyStore store = readKeyStore(line);
     final Enumeration aliases = store.aliases();
     System.out.println("");
@@ -245,48 +224,42 @@ public class KeyStoreCli extends AbstractCli
   protected void doImport(final CommandLine line)
     throws Exception
   {
-    if (!line.hasOption(OPT_ALIAS)) {
-      throw new IllegalArgumentException("Alias option required.");
-    }
+    validateOptions(line);
 
     final KeyStore store = readKeyStore(line);
     final String alias = line.getOptionValue(OPT_ALIAS);
     PrivateKey key = null;
-    if (line.hasOption(OPT_CERT)) {
-      final File certFile = new File(line.getOptionValue(OPT_CERT));
-      if (line.hasOption(OPT_KEY)) {
-        final File keyFile = new File(line.getOptionValue(OPT_KEY));
-        final char[] passChars = line.getOptionValue(OPT_PASS).toCharArray();
-        if (keyFile.getName().endsWith(PEM_SUFFIX)) {
-          key = CryptReader.readPemPrivateKey(keyFile, null);
-        } else {
-          String keyAlg = null;
-          if (line.hasOption(OPT_KEYALG)) {
-            keyAlg = line.getOptionValue(OPT_KEYALG);
-          } else {
-            keyAlg = DEFAULT_KEY_ALGORITHM;
-          }
-          key = CryptReader.readPrivateKey(keyFile, keyAlg);
-        }
-
-        final Certificate[] chain = CryptReader.readCertificateChain(certFile);
-        System.err.println(
-          "Read certificate chain of length " + chain.length + ":");
-        for (int i = 0; i < chain.length; i++) {
-          System.out.println("===== Certificate [" + i + "] =====");
-          printCertificate(chain[i]);
-        }
-        store.setKeyEntry(alias, key, passChars, chain);
-        System.err.println("Imported key entry " + alias);
+    final File certFile = new File(line.getOptionValue(OPT_CERT));
+    if (line.hasOption(OPT_KEY)) {
+      final File keyFile = new File(line.getOptionValue(OPT_KEY));
+      final char[] passChars = line.getOptionValue(OPT_PASS).toCharArray();
+      if (keyFile.getName().endsWith(PEM_SUFFIX)) {
+        key = CryptReader.readPemPrivateKey(keyFile, null);
       } else {
-        final Certificate cert = CryptReader.readCertificate(certFile);
-        System.err.println("Read certificate:");
-        printCertificate(cert);
-        store.setCertificateEntry(alias, cert);
-        System.err.println("Imported trusted cert entry " + alias);
+        String keyAlg = null;
+        if (line.hasOption(OPT_KEYALG)) {
+          keyAlg = line.getOptionValue(OPT_KEYALG);
+        } else {
+          keyAlg = DEFAULT_KEY_ALGORITHM;
+        }
+        key = CryptReader.readPrivateKey(keyFile, keyAlg);
       }
+
+      final Certificate[] chain = CryptReader.readCertificateChain(certFile);
+      System.err.println(
+          "Read certificate chain of length " + chain.length + ":");
+      for (int i = 0; i < chain.length; i++) {
+        System.out.println("===== Certificate [" + i + "] =====");
+        printCertificate(chain[i]);
+      }
+      store.setKeyEntry(alias, key, passChars, chain);
+      System.err.println("Imported key entry " + alias);
     } else {
-      throw new IllegalArgumentException("Certificate option required.");
+      final Certificate cert = CryptReader.readCertificate(certFile);
+      System.err.println("Read certificate:");
+      printCertificate(cert);
+      store.setCertificateEntry(alias, cert);
+      System.err.println("Imported trusted cert entry " + alias);
     }
 
     final OutputStream os = new FileOutputStream(
@@ -309,9 +282,7 @@ public class KeyStoreCli extends AbstractCli
   protected void doExport(final CommandLine line)
     throws Exception
   {
-    if (!line.hasOption(OPT_ALIAS)) {
-      throw new IllegalArgumentException("Alias option required.");
-    }
+    validateOptions(line);
 
     final KeyStore store = readKeyStore(line);
     final String alias = line.getOptionValue(OPT_ALIAS);
@@ -435,6 +406,32 @@ public class KeyStoreCli extends AbstractCli
         "SHA1 fingerprint: " + sha1.digest(encodedCert, hexConv));
     } else {
       System.out.println(cert);
+    }
+  }
+
+
+  /**
+   * Validates the existence of required options for an operation.
+   *
+   * @param  line  Parsed command line arguments container.
+   */
+  protected void validateOptions(final CommandLine line)
+  {
+    if (!line.hasOption(OPT_STORE)) {
+      throw new IllegalArgumentException("keystore option is required.");
+    }
+    if (!line.hasOption(OPT_PASS)) {
+      throw new IllegalArgumentException("storepass option is required.");
+    }
+    if (line.hasOption(OPT_IMPORT) || line.hasOption(OPT_EXPORT)) {
+      if (!line.hasOption(OPT_ALIAS)) {
+        throw new IllegalArgumentException("alias option is required.");
+      }
+    }
+    if (line.hasOption(OPT_IMPORT)) {
+      if (!line.hasOption(OPT_CERT)) {
+        throw new IllegalArgumentException("cert option is required.");
+      }
     }
   }
 }

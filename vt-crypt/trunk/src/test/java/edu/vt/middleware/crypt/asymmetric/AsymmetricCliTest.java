@@ -102,7 +102,7 @@ public class AsymmetricCliTest
       outDir + "/asymmetric-cli-plain-" + cipherName + "-" + encoding + ".txt");
 
     // Generate key
-    String commandLine = " -cipher " + cipherName + " -genkeypair " + keySize +
+    String commandLine = " -cipher " + cipherName + " -genkeys " + keySize +
       " -privkey " + privKeyFile + " -out " + pubKeyFile;
     logger.info(
       "Testing asymmetric key generation with command line:\n\t" + commandLine);

@@ -13,23 +13,22 @@
 */
 package edu.vt.middleware.crypt.signature;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import edu.vt.middleware.crypt.AbstractCli;
 import edu.vt.middleware.crypt.CryptException;
+import edu.vt.middleware.crypt.io.Base64FilterInputStream;
+import edu.vt.middleware.crypt.io.HexFilterInputStream;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.ParseException;
 
 /**
  * Command line interface for cryptographic signature operations.
@@ -42,9 +41,6 @@ public class SignatureCli extends AbstractCli
 
   /** Signature algorithm option. */
   protected static final String OPT_ALG = "alg";
-
-  /** Input file option. */
-  protected static final String OPT_INFILE = "in";
 
   /** Output encoding format. */
   protected static final String OPT_ENCODING = "encoding";
@@ -65,13 +61,6 @@ public class SignatureCli extends AbstractCli
   private static final String COMMAND_NAME = "sign";
 
 
-  /** {@inheritDoc} */
-  protected String getCommandName()
-  {
-    return COMMAND_NAME;
-  }
-
-
   /**
    * CLI entry point method.
    *
@@ -79,35 +68,7 @@ public class SignatureCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    final CommandLineParser parser = new GnuParser();
-    final SignatureCli cli = new SignatureCli();
-    cli.initOptions();
-    try {
-      if (args.length > 0) {
-        final CommandLine line = parser.parse(cli.options, args);
-        if (line.hasOption(OPT_SIGN)) {
-          cli.sign(line);
-        } else if (line.hasOption(OPT_VERIFY)) {
-          cli.verify(line);
-        } else {
-          cli.printHelp();
-        }
-      } else {
-        cli.printHelp();
-      }
-    } catch (ParseException pex) {
-      System.err.println(
-        "Failed parsing command arguments: " + pex.getMessage());
-    } catch (IllegalArgumentException iaex) {
-      String msg = "Operation failed: " + iaex.getMessage();
-      if (iaex.getCause() != null) {
-        msg += ". Underlying reason: " + iaex.getCause().getMessage();
-      }
-      System.err.println(msg);
-    } catch (Exception ex) {
-      System.err.println("Operation failed:");
-      ex.printStackTrace(System.err);
-    }
+    new SignatureCli().performAction(args);
   }
 
 
@@ -120,7 +81,6 @@ public class SignatureCli extends AbstractCli
       OPT_ALG,
       true,
       "signature algorithm; either DSA or RSA");
-    alg.setRequired(true);
     alg.setArgName("name");
     alg.setOptionalArg(false);
 
@@ -129,7 +89,6 @@ public class SignatureCli extends AbstractCli
       true,
       "DER-encoded PKCS#8 private key for signing or " +
       "X.509 cert/public key for verification");
-    key.setRequired(true);
     key.setArgName("filepath");
     key.setOptionalArg(false);
 
@@ -157,8 +116,9 @@ public class SignatureCli extends AbstractCli
     final Option verify = new Option(
       OPT_VERIFY,
       true,
-      "verify the given signature; signature encoding determined by -encoding");
-    encoding.setArgName("signature");
+      "verify signature in given file; " +
+        "signature encoding determined by -encoding option");
+    encoding.setArgName("sigfilepath");
     encoding.setOptionalArg(false);
 
     options.addOption(alg);
@@ -168,6 +128,26 @@ public class SignatureCli extends AbstractCli
     options.addOption(encoding);
     options.addOption(verify);
     options.addOption(new Option(OPT_SIGN, "perform sign operation"));
+  }
+
+
+  /** {@inheritDoc} */
+  protected void dispatch(final CommandLine line) throws Exception
+  {
+    if (line.hasOption(OPT_SIGN)) {
+      sign(line);
+    } else if (line.hasOption(OPT_VERIFY)) {
+      verify(line);
+    } else {
+      printHelp();
+    }
+  }
+
+
+  /** {@inheritDoc} */
+  protected String getCommandName()
+  {
+    return COMMAND_NAME;
   }
 
 
@@ -202,10 +182,12 @@ public class SignatureCli extends AbstractCli
   protected void sign(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
     final SignatureAlgorithm sig = newInstance(line);
     final File keyFile = new File(line.getOptionValue(OPT_KEY));
     System.err.println("Reading private key from " + keyFile);
-    sig.setSignKey(CryptReader.readPrivateKey(keyFile, sig.getAlgorithm()));
+    sig.setSignKey(readPrivateKey(line));
     sig.initSign();
 
     final InputStream in = getInputStream(line);
@@ -240,61 +222,23 @@ public class SignatureCli extends AbstractCli
   protected void verify(final CommandLine line)
     throws Exception
   {
+    validateOptions(line);
+
+    final InputStream in = getInputStream(line);
     final SignatureAlgorithm sig = newInstance(line);
     sig.setVerifyKey(readPublicKey(line));
     sig.initVerify();
-
-    final InputStream in = getInputStream(line);
-    byte[] sigBytes = null;
-    if (line.hasOption(OPT_ENCODING)) {
-      final String encName = line.getOptionValue(OPT_ENCODING);
-      Converter conv = null;
-      if (BASE_64_ENCODING.equals(encName)) {
-        conv = new Base64Converter();
-      } else if (HEX_ENCODING.equals(encName)) {
-        conv = new HexConverter();
-      } else {
-        throw new IllegalArgumentException("Unknown encoding.");
-      }
-      sigBytes = conv.toBytes(line.getOptionValue(OPT_VERIFY));
-    } else {
-      throw new IllegalArgumentException(
-        "Encoding is required for the signature verification string");
+    boolean isVerified = false;
+    try {
+      isVerified = sig.verify(in, readSignature(line));
+    } finally {
+      closeStream(in);
     }
-
-    final boolean isVerified = sig.verify(in, sigBytes);
-    closeStream(in);
     if (isVerified) {
       System.out.println("SUCCESS -- signature verified.");
     } else {
       System.out.println("FAILURE -- signature does not match.");
     }
-  }
-
-
-  /**
-   * Get an input stream containing data to be signed or verified based on CLI
-   * arguments.
-   *
-   * @param  line  Parsed command line arguments container.
-   *
-   * @return  Input stream.
-   *
-   * @throws  IOException  On stream creation errors.
-   */
-  protected InputStream getInputStream(final CommandLine line)
-    throws IOException
-  {
-    InputStream in = null;
-    if (line.hasOption(OPT_INFILE)) {
-      final File file = new File(line.getOptionValue(OPT_INFILE));
-      System.err.println("Reading input from " + file);
-      in = new BufferedInputStream(new FileInputStream(file));
-    } else {
-      System.err.println("Reading input from STDIN");
-      in = System.in;
-    }
-    return in;
   }
 
 
@@ -315,11 +259,89 @@ public class SignatureCli extends AbstractCli
     final File keyFile = new File(line.getOptionValue(OPT_KEY));
     System.err.println("Reading public key from " + keyFile);
     try {
-      key = CryptReader.readPublicKey(keyFile, alg);
+      if (keyFile.getName().endsWith(PEM_SUFFIX)) {
+        key = CryptReader.readPemPublicKey(keyFile);
+      } else {
+        key = CryptReader.readPublicKey(keyFile, alg);
+      }
     } catch (CryptException e) {
-      // Maybe the file is an X.509 DER-encoded cert containing the public key
+      // Maybe the file is an X.509 certificate containing the public key
       key = CryptReader.readCertificate(keyFile).getPublicKey();
     }
     return key;
+  }
+
+
+  /**
+   * Creates a private key from a file defined by CLI arguments.
+   *
+   * @param  line  Parsed command line arguments container.
+   *
+   * @return  Private key.
+   *
+   * @throws  CryptException  On crypto errors.
+   * @throws  IOException  On I/O errors.
+   */
+  protected PrivateKey readPrivateKey(final CommandLine line)
+    throws CryptException, IOException
+  {
+    final File keyFile = new File(line.getOptionValue(OPT_KEY));
+    if (keyFile.getName().endsWith(PEM_SUFFIX)) {
+      return CryptReader.readPemPrivateKey(keyFile, null);
+    } else {
+      return CryptReader.readPrivateKey(
+        keyFile,
+        line.getOptionValue(OPT_ALG));
+    }
+  }
+
+
+  /**
+   * Reads a cryptographic signature from a file, possibly in encoded format,
+   * and returns the result as the raw signature bytes.
+   *
+   * @param  line  Parsed command line arguments container.
+   *
+   * @return Signature bytes.
+   *
+   * @throws IOException On read errors.
+   */
+  protected byte[] readSignature(final CommandLine line) throws IOException
+  {
+    InputStream in = getInputStream(line, OPT_VERIFY);
+    if (line.hasOption(OPT_ENCODING)) {
+      final String encName = line.getOptionValue(OPT_ENCODING);
+      if (BASE_64_ENCODING.equals(encName)) {
+        in = new Base64FilterInputStream(in);
+      } else if (HEX_ENCODING.equals(encName)) {
+        in = new HexFilterInputStream(in);
+      } else {
+        throw new IllegalArgumentException("Unknown encoding.");
+      }
+    }
+    final ByteArrayOutputStream os = new ByteArrayOutputStream();
+    final int bufSize = 1024;
+    final byte[] buffer = new byte[bufSize];
+    int count = 0;
+    while ((count = in.read(buffer)) > 0) {
+      os.write(buffer, 0, count);
+    }
+    return os.toByteArray();
+  }
+
+
+  /**
+   * Validates the existence of required options for an operation.
+   *
+   * @param  line  Parsed command line arguments container.
+   */
+  protected void validateOptions(final CommandLine line)
+  {
+    if (!line.hasOption(OPT_ALG)) {
+      throw new IllegalArgumentException("alg option is required.");
+    }
+    if (!line.hasOption(OPT_KEY)) {
+      throw new IllegalArgumentException("key option is required.");
+    }
   }
 }
