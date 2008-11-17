@@ -42,7 +42,7 @@ If you would like to use this project's maven plugin, include the following in y
 = Code Samples =
 Unless otherwise noted, classes appearing in the following samples are included in the JSE libraries or VT Crypt.
 
-== Hashing ==
+== Message Digests/Hashing ==
 Generate the MD5 hash of a password.  The result is a string of hexadecimal characters as is the common use case for password verification.
 {{{
 String hash = new MD5().digest(Convert.toBytes(passChars), new HexConverter());
@@ -51,12 +51,132 @@ String hash = new MD5().digest(Convert.toBytes(passChars), new HexConverter());
 Compute the SHA-1 fingerprint of a file, which produces a string of colon-delimited hex bytes, 1A:2B:3C... as is common with fingerprint utilities.  Note the {{{true}}} argument to the HexConverter constructor that causes colon-delimited bytes to be produced in the hexadecimal output string.
 {{{
 String fingerprint = null;
-InputStream in = new BufferedInputStream(new FileInputStream(new File(big-file.txt)));
+InputStream in = new BufferedInputStream(
+  new FileInputStream(new File(big-file.txt)));
 try {
   fingerprint = new SHA1().digest(in, new HexConverter(true));
 } finally {
   in.close();
 }
+}}}
+
+== Cryptographic Signatures ==
+Compute a base 64-encoded DSA signature on a file.
+{{{
+final InputStream in = new BufferedInputStream(
+  new FileInputStream(new File("path/to/file.txt")));
+final SignatureAlgorithm signature = new DSASignature();
+signature.setSignKey(dsaPrivateKey);
+signature.initSign();
+final String b64Sig = signature.sign(in, new Base64Converter());
+}}}
+
+Verify an RSA signature on a file.  Use a custom SHA-512 digest instead of the default SHA-1.
+{{{
+final InputStream in = new BufferedInputStream(
+  new FileInputStream(new File("path/to/file.txt")));
+final SignatureAlgorithm signature = new RSASignature(new SHA512());
+signature.setVerifyKey(rsaPublicKey);
+signature.initVerify();
+if (signature.verify(in, sigBytes)) {
+  System.out.println("Signature is valid.");
+} else {
+  System.out.println("Invalid signature.");
+}
+}}}
+
+== Symmetric Encryption ==
+Generate a 256-bit symmetric encryption key suitable for use with the Blowfish cipher and write it out to a file.
+{{{
+CryptWriter.writeEncodedKey(
+  Blowfish.generateKey(256),
+  new File("path/to/blowfish.key"));
+}}}
+
+Encrypt a file with the Blowfish cipher in OFB mode producing hex-encoded ciphertext output.
+{{{
+final SymmetricAlgorithm alg = new Blowfish(
+  "OFB",
+  SymmetricAlgorithm.DEFAULT_PADDING);
+alg.setIV(iv);
+alg.setKey(key);
+alg.initEncrypt();
+final InputStream in = new BufferedInputStream(
+  new FileInputStream(new File("path/to/plain.txt")));
+final OutputStream out = new HexFilterOutputStream(
+  new BufferedOutputStream(
+    new FileOutputStream(new File("path/to/cipher.out"))));
+try {
+  alg.encrypt(in, out);
+} finally {
+  in.close();
+  out.close();
+}
+}}}
+
+Decrypt a base 64-encoded ciphertext file with the triple DES cipher in default CBC mode.
+{{{
+final SymmetricAlgorithm alg = new DESede();
+alg.setIV(iv);
+alg.setKey(key);
+alg.initDecrypt();
+final InputStream in = new Base64FilterInputStream(
+  new BufferedInputStream(
+    new FileInputStream(new File("path/to/cipher.out")));
+final OutputStream out = new BufferedOutputStream(
+  new FileOutputStream(new File("path/to/plain.txt"))));
+try {
+  alg.decrypt(in, out);
+} finally {
+  in.close();
+  out.close();
+}
+}}}
+
+Encrypt a file using PKCS#12 password-based encryption with AES cipher.
+{{{
+final KeyWithIV keyWithIV = PbeKeyGenerator.generatePkcs12(
+  passChars,
+  keyBitLength,
+  new SHA512(),
+  salt);
+final SymmetricAlgorithm alg = new AES();
+alg.setIV(keyWithIV.getIV());
+alg.setKey(keyWithIV.getKey());
+final InputStream in = new BufferedInputStream(
+  new FileInputStream(new File("path/to/plain.txt")));
+final OutputStream out = new BufferedOutputStream(
+  new FileOutputStream(new File("path/to/cipher.out"))));
+try {
+  alg.encrypt(in, out);
+} finally {
+  in.close();
+  out.close();
+}
+}}}
+
+== Public Key (Asymmetric) Cryptography ==
+Generate a new 2048-bit RSA key pair and save both keys as PEM-encoded files.  Password protect the private key.
+{{{
+final KeyPair keyPair = RSA.generateKeys(2048);
+CryptWriter.writePemKey(
+  keyPair.getPrivate(),
+  passChars,
+  new SecureRandom(),
+  new File("path/to/rsa-priv-key.pem"));
+CryptWriter.writePemKey(
+  keyPair.getPublic(),
+  new File("path/to/rsa-pub-key.pem"));
+}}}
+
+Encrypt a string with the public key and produce base 64-encoded ciphertext.  Note that for the RSA cipher, the size of data to be encrypted must be less than or equal to the size of the encryption key.
+{{{
+final AsymmetricAlgorithm alg = new RSA();
+alg.setKey(publicKey);
+alg.initEncrypt();
+final String b64CipherText = alg.encrypt(
+  plainText.getBytes(),
+  new Base64Converter());
 }}}
 
 = Scripts =
