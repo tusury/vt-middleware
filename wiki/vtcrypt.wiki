@@ -60,3 +60,134 @@ try {
 }}}
 
 = Scripts =
+In order to execute the scripts below without a full path specification, the VTCRYPT_HOME environment variable should be set to the location of the unpacked binary distribution, e.g.
+{{{
+export VTCRYPT_HOME=/home/marvin/apps/vt-crypt-2.0
+}}}
+
+== keystore - Keystore Operations ==
+Print contents of a JKS keystore
+{{{
+keystore -list -keystore path/to/keystore.jks -storepass changeit
+}}}
+
+Import a trusted PEM-encoded X.509 certificate into a BKS keystore
+{{{
+keystore -import -keystore path/to/keystore.bks -storetype bks \
+         -storepass changeit -alias mycert -cert path/to/cert.pem
+}}}
+
+Import a key pair consisting of a DER-encoded PKCS#8 RSA key and a PEM-encoded X.509 certificate into a JKS keystore
+{{{
+keystore -import -keystore path/to/keystore.jks -storepass changeit \
+         -alias mykeypair -cert path/to/cert.pem -key path/to/rsa-p8-key.der
+}}}
+
+Export a trusted certificate to a PEM-encoded file (PEM-encoded key is determined by .pem file extension)
+{{{
+keystore -export -keystore path/to/keystore.jks -storepass changeit \
+         -alias mycert -cert path/to/exported/cert.pem
+}}}
+
+Export key and certificate of a keypair entry to DER-encoded files
+{{{ 
+keystore -export -keystore path/to/keystore.jks -storepass changeit \
+         -alias mykeypair -cert path/to/exported/cert.der \
+         -key path/to/exported/key.der
+}}}
+
+== digest - Message Digest Operations ==
+Print the MD5 hash of a word or phrase as a hex string
+{{{
+echo -n secret | digest -alg md5 -outform hex
+}}}
+
+Print the SHA-1 fingerprint of a file
+{{{
+digest -alg sha1 -in path/to/file.txt -outform hex
+}}}
+
+== pkc - Public Key (Asymmetric) Cryptography Operations ==
+Generate a 2048-bit RSA public/private key pair as DER-encoded files
+{{{
+pkc -cipher RSA -genkeys 2048 -out rsa-pub-key.der -privkey rsa-priv-key.der
+}}}
+
+Encrypt a file to base-64-encoded ciphertext
+{{{
+pkc -cipher RSA -encrypt path/to/rsa-pub-key.der -encoding base64 \
+    -in path/to/plain.txt -out path/to/cipher.txt
+}}}
+
+Decrypt a base-64-encoded ciphertext file with a PEM-encoded private key (PEM-encoded key is determined by .pem file extension)
+{{{
+pkc -cipher RSA -decrypt path/to/rsa-priv-key.pem -encoding base64 \
+    -in path/to/cipher.txt -out path/to/plain.txt
+}}}
+
+== enc - Symmetric Encryption Operations ===
+Generate a new 256-bit AES key
+{{{
+enc -genkey -cipher AES -keysize 256 -out aes.key
+}}}
+  
+Encrypt a file with AES cipher in default CBC mode
+{{{
+enc -encrypt -cipher AES -key path/to/aes.key \
+    -iv 3858f62230ac3c915f300c664312c63f \
+    -in path/to/plain.txt -out path/to/cipher.out
+}}}     
+
+Decrypt a file with AES cipher in default CBC mode
+{{{
+enc -decrypt -cipher AES -key path/to/aes.key \
+    -iv 3858f62230ac3c915f300c664312c63f \
+    -in path/to/cipher.out -out path/to/plain.txt
+}}}
+
+Encrypt a file with AES cipher in OFB mode producing base-64-encoded ciphertext
+{{{
+enc -encrypt -cipher AES -key path/to/aes.key -mode OFB -encoding base64 \
+    -iv 3858f62230ac3c915f300c664312c63f \
+    -in path/to/plain.txt -out path/to/cipher.out
+}}}
+
+Decrypt a base-64-encoded ciphertext file using AES in OFB mode
+{{{
+enc -decrypt -cipher AES -key path/to/aes.key -mode OFB -encoding base64 \
+    -iv 3858f62230ac3c915f300c664312c63f \
+    -in path/to/cipher.out -out path/to/plain.txt
+}}}      
+
+Encrypt a file using PKCS#5s2 password-based encryption with AES cipher
+{{{
+enc -encrypt -cipher AES -pbe Seekr1t -pbemode pkcs5s2 \
+    -salt A1B2C3D4E5F6 -keysize 256 \
+    -in path/to/plain.txt -out path/to/cipher.out
+}}}      
+
+Decrypt a file that was originally encrypted with PKCS#5s2 password-based encryption using AES cipher
+{{{
+enc -decrypt -cipher AES -pbe Seekr1t -pbemode pkcs5s2 \
+    -salt A1B2C3D4E5F6 -keysize 256 \
+    -in path/to/cipher.out -out path/to/plain.txt
+}}}
+
+== sign - Cryptographic Signature Operations ==
+Create a base-64-encoded DSA signature of a file
+{{{
+sign -sign -alg DSA -key path/to/dsa-priv-key.der -encoding base64 \
+     -in path/to/file.txt
+}}}
+
+Create a hex-encoded RSA signature of a file using an MD5 digest
+{{{
+sign -sign -alg RSA -key path/to/dsa-priv-key.der -digest MD5 \
+     -encoding base64 -in path/to/file.txt
+}}}
+
+Verify a hex-encoded RSA signature using a PEM-encoded RSA public key (PEM-encoded key is determined by .pem file extension)
+{{{
+sign -verify path/to/sig.hex -alg RSA -key path/to/rsa-pub-key.pem \
+     -encoding hex -in path/to/file.txt
+}}}
