@@ -1,15 +1,24 @@
 @echo off
 if "%OS%" == "Windows_NT" setlocal
 
-set JAVA=java
-set JAVA_OPTS=
+if not defined JAVA_HOME goto no_java_home
+if not defined VTCRYPT_HOME goto no_vtcrypt_home
 
-if exist bin set PREFIX=
-if exist ..\bin set PREFIX=..\
+set JAVA=%JAVA_HOME%\bin\java
 
-set CRYPT_JAR=vt-crypt-2.0.jar
-set LIBDIR=%PREFIX%lib
+set CRYPT_JAR=%VTCRYPT_HOME%\jars\vt-crypt-2.0.jar
+set LIBDIR=%VTCRYPT_HOME%\lib
 
-set CLASSPATH=%LIBDIR%\commons-cli-1.1.jar;%LIBDIR%\commons-logging-1.1.1.jar;%LIBDIR%\bcprov-jdk14-140.jar;%PREFIX%jars\%CRYPT_JAR%
+set CLASSPATH=%LIBDIR%\commons-cli-1.1.jar;%LIBDIR%\commons-logging-1.1.1.jar;%LIBDIR%\bcprov-jdk14-140.jar;%CRYPT_JAR%
 
-call %JAVA% %JAVA_OPTS% -cp %CLASSPATH% edu.vt.middleware.crypt.asymmetric.AsymmetricCli %*
+call "%JAVA%" -cp "%CLASSPATH%" edu.vt.middleware.crypt.asymmetric.AsymmetricCli %*
+goto end
+
+:no_vtcrypt_home
+echo ERROR: VTCRYPT_HOME environment variable must be set to VT Crypt install path.
+goto end
+
+:no_java_home
+echo ERROR: JAVA_HOME environment variable must be set to JRE/JDK install path.
+
+:end
