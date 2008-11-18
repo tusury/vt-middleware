@@ -4,11 +4,7 @@ JAVA=java
 JAVA_OPTS="$JAVA_OPTS"
 
 if [ "x$VTCRYPT_HOME" = "x" ]; then
-  if [ -d bin ]; then
-    PREFIX=
-  else
-    PREFIX=../
-  fi
+  PREFIX=`dirname $0`/..
 else
   PREFIX="$VTCRYPT_HOME"
 fi
