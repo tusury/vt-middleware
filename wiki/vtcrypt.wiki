@@ -1,4 +1,4 @@
-#summary vt-crypt documentation.
+﻿#summary vt-crypt documentation.
 #labels java,crypto,bouncycastle
 
 = Introduction =
@@ -180,10 +180,18 @@ final String b64CipherText = alg.encrypt(
 }}}
 
 = Scripts =
-In order to execute the scripts below without a full path specification, the VTCRYPT_HOME environment variable should be set to the location of the unpacked binary distribution, e.g.
-{{{
-export VTCRYPT_HOME=/home/marvin/apps/vt-crypt-2.0
-}}}
+Script execution requirements vary by platform.  For the following platform-specific instructions, let VTCRYPT_HOME be the location where the VT Crypt distribution was unpacked.
+
+*Unix*
+ # Ensure the java executable is on your path.
+ # Ensure $VTCRYPT_HOME/bin is on your path.
+ # If you encounter classpath problems executing the scripts, export VTCRYPT_HOME as a separate shell variable.  This is not necessary in most cases (e.g. Linux, OSX, FreeBSD).
+
+*Windows*
+ # Set the JAVA_HOME environment variable to a JDK or JRE installation path.
+ # Set the VTCRYPT_HOME environment variable.
+
+http://vt-middleware.googlecode.com/svn/wiki/images/windows-env-var.png
 
 == keystore - Keystore Operations ==
 Print contents of a JKS keystore
