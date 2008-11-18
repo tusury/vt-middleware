@@ -37,7 +37,7 @@ public class DigestCli extends AbstractCli
   protected static final String OPT_SALT = "salt";
 
   /** Output encoding format. */
-  protected static final String OPT_OUTFORM = "outform";
+  protected static final String OPT_ENCODING = "encoding";
 
   /** Name of operation provided by this class. */
   private static final String COMMAND_NAME = "digest";
@@ -80,17 +80,17 @@ public class DigestCli extends AbstractCli
     infile.setArgName("filepath");
     infile.setOptionalArg(false);
 
-    final Option outform = new Option(
-      OPT_OUTFORM,
+    final Option encoding = new Option(
+      OPT_ENCODING,
       true,
       "output encoding format, either hex or base64");
-    outform.setArgName("encoding");
-    outform.setOptionalArg(false);
+    encoding.setArgName("encoding");
+    encoding.setOptionalArg(false);
 
     options.addOption(algorithm);
     options.addOption(salt);
     options.addOption(infile);
-    options.addOption(outform);
+    options.addOption(encoding);
   }
 
 
@@ -127,8 +127,8 @@ public class DigestCli extends AbstractCli
     } finally {
       closeStream(in);
     }
-    if (line.hasOption(OPT_OUTFORM)) {
-      final String encName = line.getOptionValue(OPT_OUTFORM);
+    if (line.hasOption(OPT_ENCODING)) {
+      final String encName = line.getOptionValue(OPT_ENCODING);
       Converter conv = null;
       if (BASE_64_ENCODING.equals(encName)) {
         conv = new Base64Converter();

@@ -1,8 +1,8 @@
  - Print the MD5 hash of a word or phrase as a hex string
 
-   echo -n secret | digest -alg md5 -outform hex
+   echo -n secret | digest -alg md5 -encoding hex
 
 
  - Print the SHA-1 fingerprint of a file
 
-   digest -alg sha1 -in path/to/file.txt -outform hex
+   digest -alg sha1 -in path/to/file.txt -encoding hex
