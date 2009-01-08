@@ -15,7 +15,7 @@ package edu.vt.middleware.crypt.tasks;
 
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.Base64Converter;
-import edu.vt.middleware.crypt.util.CryptReader;
+
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -35,14 +35,8 @@ public final class DecryptPropertyTask extends AbstractCryptTask
   public void execute()
   {
     try {
-      final SymmetricAlgorithm crypt = SymmetricAlgorithm.newInstance(
-        this.algorithm,
-        this.mode,
-        this.padding);
-      if (this.iv != null) {
-        crypt.setIV(this.iv.getBytes());
-      }
-      crypt.setKey(CryptReader.readPrivateKey(this.privateKey, this.algorithm));
+      final SymmetricAlgorithm crypt = createAlgorithm();
+      crypt.initDecrypt();
 
       final String propertyValue = this.getProject().getProperty(
         this.propertyName);
@@ -50,6 +44,7 @@ public final class DecryptPropertyTask extends AbstractCryptTask
         crypt.decrypt(propertyValue, new Base64Converter()));
       this.getProject().setProperty(this.propertyName, decryptValue);
     } catch (Exception e) {
+      e.printStackTrace();
       throw new BuildException(e);
     }
   }

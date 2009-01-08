@@ -14,6 +14,13 @@
 package edu.vt.middleware.crypt.tasks;
 
 import java.io.File;
+import java.io.IOException;
+
+import edu.vt.middleware.crypt.CryptException;
+import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
+import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.util.HexConverter;
+
 import org.apache.tools.ant.Task;
 
 /**
@@ -115,4 +122,28 @@ public abstract class AbstractCryptTask extends Task
    * <p>See @link{org.apache.tools.ant.Task}.</p>
    */
   public abstract void execute();
+
+
+  /**
+   * Creates a new symmetric algorithm cipher and initializes it using task
+   * properties.
+   *
+   * @return New instance ready for use.
+   *
+   * @throws CryptException On cryptographic errors.
+   * @throws IOException On IO errors reading symmetric key.
+   */
+  protected SymmetricAlgorithm createAlgorithm()
+    throws CryptException, IOException
+  {
+    final SymmetricAlgorithm crypt = SymmetricAlgorithm.newInstance(
+      this.algorithm,
+      this.mode,
+      this.padding);
+    if (this.iv != null) {
+      crypt.setIV(new HexConverter().toBytes(this.iv));
+    }
+    crypt.setKey(CryptReader.readSecretKey(this.privateKey, this.algorithm));
+    return crypt;
+  }
 }
