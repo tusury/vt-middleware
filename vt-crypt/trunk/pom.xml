@@ -155,7 +155,7 @@
             <id>assembly</id>
             <phase>package</phase>
             <goals>
-              <goal>assembly</goal>
+              <goal>attached</goal>
             </goals>
           </execution>
         </executions>
