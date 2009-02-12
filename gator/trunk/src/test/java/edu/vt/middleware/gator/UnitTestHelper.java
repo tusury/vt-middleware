@@ -74,7 +74,7 @@ public class UnitTestHelper
     rollingFileAppender.addLayoutParam(rollingFileLayoutParam);
     
     final CategoryConfig category = new CategoryConfig();
-    category.setName("edu.vt.middleware.logather");
+    category.setName("edu.vt.middleware.gator");
     category.setLevel("DEBUG");
     category.getAppenders().add(fileAppender);
     category.getAppenders().add(rollingFileAppender);

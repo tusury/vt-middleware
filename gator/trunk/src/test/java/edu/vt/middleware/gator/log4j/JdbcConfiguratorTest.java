@@ -54,7 +54,7 @@ public class JdbcConfiguratorTest
   public void setUp() throws Exception
   {
     configurator = new JdbcConfigurator();
-    configurator.setClientRootLogDirectory("target/server-logs");
+    configurator.setClientRootLogDirectory("target/logs");
     configurator.setConfigManager(new JpaConfigManager());
   }
 

@@ -135,7 +135,7 @@ public class SocketServerTest
       sock.connect(addr, SOCKET_CONNECT_TIMEOUT);
       // Allow the socket server time to build the hierarchy
       // before sending a test logging event
-      Thread.sleep(3000);
+      Thread.sleep(5000);
       LOGGER.debug("Sending test logging event.");
       final String category = getClass().getName();
       final LoggingEvent event = new LoggingEvent(
