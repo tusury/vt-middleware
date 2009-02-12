@@ -1,0 +1,44 @@
+#
+# Properties made available to Spring context via PropertyPlaceHolderConfigurer
+#
+
+# Database dialect class name
+# One of values defined in the org.hibernate.dialect package,
+# http://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html
+db.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# Batch size for multiple operations submitted as a batch
+# Set to 0 to disable query batching
+# MUST set to 0 for HSQL platform
+db.batchSize=10
+
+# JDBC driver class
+jdbc.driverClass=org.postgresql.Driver
+
+# JDBC connection URL
+jdbc.url=jdbc:postgresql://localhost:5432/user
+
+# JDBC user
+jdbc.user=gator_user
+
+# JDBC password
+jdbc.pass=PASSWORD
+
+# JDBC pool initial size
+jdbc.pool.initSize=1
+
+# JDBC pool maximum # idle connections
+jdbc.pool.maxIdle=1
+
+# JDBC pool maximum # active connections
+jdbc.pool.maxActive=5
+
+# Log4j socket server bind address
+log4j.server.bindAddress=127.0.0.1
+
+# Log4j socket server listening port
+log4j.server.port=8000
+
+# Root directory where client logs will be written
+# A subdirectory for each project will be created under root
+log4j.client.root.dir=/home/user/logs/gator-client
