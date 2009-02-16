@@ -21,12 +21,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 
   <!-- Exception handling -->
-  <!--
   <bean id="defaultExceptionHandler"
       class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"
     p:defaultErrorView="errGeneral">
   </bean>
-  -->
   
   <!-- Message source for this application -->
   <bean id="messageSource"
