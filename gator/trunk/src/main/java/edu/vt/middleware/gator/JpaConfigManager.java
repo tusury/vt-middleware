@@ -174,8 +174,11 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     } else {
       em.merge(config);
     }
+    final ProjectConfig project = find(
+      ProjectConfig.class,
+      getProject(config).getId());
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
-      listener.projectChanged(this, getProject(config));
+      listener.projectChanged(this, project);
     }
   }
 
