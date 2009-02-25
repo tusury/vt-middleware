@@ -10,6 +10,14 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
 
+  <bean id="runtimeProperties"
+    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+    p:ignoreResourceNotFound="true"
+    p:systemPropertiesMode="1"
+    p:location="/WEB-INF/runtime.properties"
+  />
+
+
   <!-- Default View Resolver -->
   <bean id="viewResolver"
     class="org.springframework.web.servlet.view.InternalResourceViewResolver"
@@ -134,7 +142,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     class="edu.vt.middleware.gator.web.XmlConfigViewController"
     parent="baseViewController"
     p:viewName="log4jXml"
-    p:socketServer-ref="log4jSocketServer"
+    p:bindAddress="${log4j.server.bindAddress}"
+    p:port="${log4j.server.port}"
   />
   
   <!-- Maps URLs onto controllers -->

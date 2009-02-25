@@ -29,6 +29,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.RootLogger;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import edu.vt.middleware.gator.ClientConfig;
@@ -258,6 +260,7 @@ public class SocketServer implements ConfigChangeListener, SocketCloseListener,
   }
 
   /** {@inheritDoc} */
+  @Transactional(propagation = Propagation.REQUIRED)
   public synchronized void projectChanged(
       final Object sender, final ProjectConfig project)
   {
@@ -279,6 +282,7 @@ public class SocketServer implements ConfigChangeListener, SocketCloseListener,
   }
 
   /** {@inheritDoc} */
+  @Transactional(propagation = Propagation.REQUIRED)
   public synchronized void projectRemoved(
       final Object sender, final ProjectConfig project)
   {

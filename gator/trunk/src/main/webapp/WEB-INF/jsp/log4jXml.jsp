@@ -7,8 +7,8 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
   <appender name="SOCKET" class="org.apache.log4j.net.SocketAppender">
-    <param name="RemoteHost" value="${model.socketServer.bindAddress}"/>
-    <param name="Port" value="${model.socketServer.port}"/>
+    <param name="RemoteHost" value="${model.bindAddress}"/>
+    <param name="Port" value="${model.port}"/>
     <param name="ReconnectionDelay" value="60000"/>
     <param name="Threshold" value="ALL"/>
   </appender>

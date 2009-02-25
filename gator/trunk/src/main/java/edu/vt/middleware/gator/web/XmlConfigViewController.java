@@ -25,7 +25,6 @@ import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.log4j.SocketServer;
 import edu.vt.middleware.gator.util.FileHelper;
 
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -37,28 +36,30 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class XmlConfigViewController extends BaseViewController
 {
-  private SocketServer socketServer;
+  /** IP address socket server is bound to */
+  protected String bindAddress = SocketServer.DEFAULT_BIND_ADDRESS;
+
+  /** Port socket server will listen on */
+  protected int port = SocketServer.DEFAULT_PORT;
  
   
   /**
-   * Sets the socket server whose configuration is needed to create the log4j
-   * XML configuration.
-   * @param server Socket server.
+   * Sets the bind address on which incoming connections will be accepted.
+   * @param ipAddress Dotted IP address of bind address.
    */
-  public void setSocketServer(final SocketServer server)
+  public void setBindAddress(final String ipAddress)
   {
-    socketServer = server;
+    bindAddress = ipAddress;
   }
 
 
   /**
-   * {@inheritDoc}
+   * Sets the port on which to listen for client connections.
+   * @param n Listening port number.
    */
-  @Override
-  public void afterPropertiesSet() throws Exception
+  public void setPort(final int n)
   {
-    super.afterPropertiesSet();
-    Assert.notNull(socketServer, "SocketServer is required.");
+    this.port = n;
   }
 
 
@@ -90,7 +91,8 @@ public class XmlConfigViewController extends BaseViewController
       }
     }
     model.put("project", project);
-    model.put("socketServer", socketServer);
+    model.put("bindAddress", bindAddress);
+    model.put("port", port);
     return new ModelAndView(getViewName(), "model", model);
   }
 }
