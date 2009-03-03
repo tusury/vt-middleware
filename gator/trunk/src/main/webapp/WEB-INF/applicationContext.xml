@@ -82,6 +82,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     p:startOnInit="true"
     p:bindAddress="${log4j.server.bindAddress}"
     p:port="${log4j.server.port}"
+    init-method="init"
     destroy-method="stop"
   />
   

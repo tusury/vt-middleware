@@ -28,7 +28,6 @@ import org.apache.log4j.Hierarchy;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.RootLogger;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import edu.vt.middleware.gator.ClientConfig;
@@ -46,8 +45,8 @@ import edu.vt.middleware.gator.ProjectConfig;
  * @version $Revision$
  *
  */
-public class SocketServer implements ConfigChangeListener, SocketCloseListener,
-  Runnable, InitializingBean
+public class SocketServer
+  implements ConfigChangeListener, SocketCloseListener, Runnable
 {
   /** Default port number to listen for connections on */
   public static final int DEFAULT_PORT = 8000;
@@ -138,7 +137,7 @@ public class SocketServer implements ConfigChangeListener, SocketCloseListener,
 
   /**
    * Set a flag indicating whether or not to start the server after
-   * initialization via {@link #afterPropertiesSet()} is complete.
+   * initialization via {@link #init()} is complete.
    * @param init True to start after initialization, false otherwise.
    * If false, the server must be started by an explicit call to
    * {@link #start()}.  The default is FALSE.
@@ -148,8 +147,14 @@ public class SocketServer implements ConfigChangeListener, SocketCloseListener,
     this.startOnInit = startOnInit;
   }
 
-  /** {@inheritDoc} */
-  public void afterPropertiesSet() throws Exception
+  /**
+   * Initializes the socket server so it can begin accepting connections
+   * from remote hosts.  If the {@link #startOnInit} flag is set, this 
+   * method calls {@link #start()}; otherwise the server must be started
+   * by calling {@link #start()} explicitly. 
+   * @throws Exception On initialization errors.
+   */
+  public void init() throws Exception
   {
     Assert.notNull(configurator, "Configurator cannot be null.");
     try {

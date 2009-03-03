@@ -114,7 +114,7 @@ public class SocketServerTest
     server = new SocketServer();
     server.setConfigurator(configurator);
     server.setStartOnInit(true);
-    server.afterPropertiesSet();
+    server.init();
   }
 
  
