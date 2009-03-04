@@ -19,6 +19,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,12 +62,9 @@ public class SocketServer
   /** Logger instance */
   protected final Log logger = LogFactory.getLog(getClass());
   
-  /**
-   * Maps clients to their repositories to facilitate updating repository
-   * configuration based on project configuration changes.
-   */
-  protected final Map<InetAddress, LoggerRepository> clientRepoMap =
-    new HashMap<InetAddress, LoggerRepository>();
+  /** Maps clients to the logging event handler that services its log events */
+  protected final Map<InetAddress, LoggingEventHandler> eventHandlerMap =
+    new HashMap<InetAddress, LoggingEventHandler>();
 
   /** IP address/host name server will bind to */
   protected String bindAddress = DEFAULT_BIND_ADDRESS;
@@ -133,6 +132,15 @@ public class SocketServer
   public void setPort(final int n)
   {
     this.port = n;
+  }
+  
+  /**
+   * Gets a collection of all registered logging event handlers.
+   * @return Immutable collection of logging event handlers.
+   */
+  public Collection<LoggingEventHandler> getLoggingEventHandlers()
+  {
+    return Collections.unmodifiableCollection(eventHandlerMap.values());
   }
 
   /**
@@ -217,20 +225,14 @@ public class SocketServer
         socket = serverSocket.accept();
         inetAddress =  socket.getInetAddress();
         logger.info("Accepted connection from client " + inetAddress);
-        LoggerRepository repo = null;
-        if (clientRepoMap.containsKey(inetAddress)) {
-	        logger.info("Using existing cached logger repository for client.");
-          repo = clientRepoMap.get(inetAddress);
-        } else {
-	        logger.info("Creating new logger repository for client.");
-          repo = new Hierarchy(new RootLogger(Level.ALL));
-	        clientRepoMap.put(inetAddress, repo);
-        }
+        logger.info("Configuring logger repository for " + inetAddress);
+        final LoggerRepository repo = new Hierarchy(new RootLogger(Level.ALL));
         configurator.configure(inetAddress, repo);
         logger.info("Logger repository configured successfully.");
         final LoggingEventHandler handler =
           new LoggingEventHandler(socket, repo);
         handler.getSocketCloseListeners().add(this);
+        eventHandlerMap.put(inetAddress, handler);
         new LoggingEventHandlerThread(handler, inetAddress).start();
       } catch(UnknownClientException e) {
         logger.warn("Unknown client " + inetAddress +
@@ -264,16 +266,19 @@ public class SocketServer
 
   /** {@inheritDoc} */
   public synchronized void projectChanged(
-      final Object sender, final ProjectConfig project)
+    final Object sender,
+    final ProjectConfig project)
   {
     logger.info(String.format("Got notice that %s has changed.", project));
-    for (InetAddress addr : clientRepoMap.keySet()) {
+    for (InetAddress addr : eventHandlerMap.keySet()) {
       for (ClientConfig client : project.getClients()) {
         if (addr.getHostName().equals(client.getName()) ||
             addr.getHostAddress().equals(client.getName()))
         {
           try {
-            configurator.configure(project, clientRepoMap.get(addr));
+            configurator.configure(
+              project,
+              eventHandlerMap.get(addr).getRepository());
           } catch (ConfigurationException e) {
             logger.error(String.format(
                 "Error updating configuration for %s.", project), e);
@@ -285,20 +290,23 @@ public class SocketServer
 
   /** {@inheritDoc} */
   public synchronized void projectRemoved(
-      final Object sender, final ProjectConfig project)
+    final Object sender,
+    final ProjectConfig project)
   {
     logger.info(String.format("Got notice that %s was removed.", project));
   }
 
   /** {@inheritDoc} */
-  public synchronized void socketClosed(Object sender, Socket socket)
+  public synchronized void socketClosed(
+    final Object sender,
+    final Socket socket)
   {
-    logger.info(String.format("Got notification of closed socket %s", socket));
+    logger.info("Got notification of closed socket " + socket);
     final InetAddress addr = socket.getInetAddress();
-    if (clientRepoMap.containsKey(addr)) {
+    if (eventHandlerMap.containsKey(addr)) {
       logger.info(String.format(
-          "Removing cached logger repository for %s", addr));
-	    clientRepoMap.remove(addr);
+          "Removing logging event handler for %s due to socket close.", addr));
+	    eventHandlerMap.remove(addr);
     }
   }
 }

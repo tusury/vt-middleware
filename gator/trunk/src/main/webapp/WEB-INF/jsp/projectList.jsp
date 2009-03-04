@@ -16,7 +16,7 @@
 <c:forEach items="${model.projects}" var="project" varStatus="stat">
   <tr>
   <td class="button_row" style="font-size:1.1em">${stat.count}.</td>
-  <td class="button_row" width="50%"
+  <td class="button_row" width="35%"
     style="font-size:1.1em">${project.name}</td>
   <td class="button_row">
 		<span class="button">
@@ -25,14 +25,19 @@
   </td>
   <td class="button_row">
 		<span class="button">
-		<a href="<c:url value="/project/${project.name}/log4j.xml" />">Preview XML</a>
+		<a href="<c:url value="/auth/project/${project.name}/watch.html" />">Watch&nbsp;Logs</a>
+	  </span>
+  </td>
+  <td class="button_row">
+		<span class="button">
+		<a href="<c:url value="/project/${project.name}/log4j.xml" />">Preview&nbsp;XML</a>
 	  </span>
   </td>
   <td class="button_row">
 		<span class="button">
 		<a href="<c:url value="/auth/project/${project.name}/delete.html" />">Delete</a>
 	  </span>
-	  <span>Requires Confirmation</span>
+	  <span>Confirmation&nbsp;Req'd</span>
   </td>
 	</tr>
 </c:forEach>

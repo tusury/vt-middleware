@@ -145,7 +145,15 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:bindAddress="${log4j.server.bindAddress}"
     p:port="${log4j.server.port}"
   />
-  
+    
+  <bean id="logWatcherFormController"
+    class="edu.vt.middleware.gator.web.LogWatcherFormController"
+    parent="baseFormController"
+    p:commandName="watchConfig"
+    p:formView="watchForm"
+    p:socketServer-ref="log4jSocketServer"
+  />
+
   <!-- Maps URLs onto controllers -->
   <bean id="urlMapping" 
       class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -173,6 +181,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <prop key="/auth/project/*/client/add.html">clientEditController</prop>
         <prop key="/auth/project/*/client/*/edit.html">clientEditController</prop>
         <prop key="/auth/project/*/client/*/delete.html">clientDeleteController</prop>
+        <prop key="/auth/project/*/watch.html">logWatcherFormController</prop>
         <prop key="/project/*/log4j.xml">xmlConfigViewController</prop>
       </props>    
     </property>

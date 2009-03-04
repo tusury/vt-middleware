@@ -41,7 +41,8 @@
   </div>
   <div class="field">
     <div><label for="appenderIds">Category Appenders</label>
-			<span class="note">Send logging events to these appenders.</div>
+			<span class="note">Send logging events to these appenders.</span>
+  	</div>
     <div class="checkboxes">
 	    <form:checkboxes id="appenderIds" path="appenderIds"
 	     items="${availableAppenders}" itemValue="id" itemLabel="name"

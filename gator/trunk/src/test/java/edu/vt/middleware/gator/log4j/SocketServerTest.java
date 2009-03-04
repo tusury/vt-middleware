@@ -163,7 +163,7 @@ public class SocketServerTest
       final String contents = readTextFile(logFilePath);
       Assert.assertTrue(contents.contains(TEST_MESSAGE));
     }
-    Assert.assertEquals(0, server.clientRepoMap.keySet().size());
+    Assert.assertEquals(0, server.eventHandlerMap.keySet().size());
   }
 
 

@@ -17,6 +17,7 @@ import java.io.BufferedInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashSet;
@@ -42,6 +43,10 @@ public class LoggingEventHandler implements Runnable
 {
   /** Logger instance */
   protected final Log logger = LogFactory.getLog(getClass());
+
+  /** Subscribers that get notified when logging events are received */
+  protected final Set<LoggingEventListener> loggingEventListeners =
+    new HashSet<LoggingEventListener>();
 
   /** Subscribers that get notified when underlying socket closes */
   protected final Set<SocketCloseListener> socketCloseListeners =
@@ -77,11 +82,37 @@ public class LoggingEventHandler implements Runnable
   }
 
   /**
+   * @return the loggingEventListeners
+   */
+  public Set<LoggingEventListener> getLoggingEventListeners()
+  {
+    return loggingEventListeners;
+  }
+
+  /**
    * @return the socketCloseListeners
    */
   public Set<SocketCloseListener> getSocketCloseListeners()
   {
     return socketCloseListeners;
+  }
+ 
+  /**
+   * @return the repository
+   */
+  public LoggerRepository getRepository()
+  {
+    return repository;
+  }
+ 
+  /**
+   * Gets the IP address of the remote host for which this handler services
+   * log events.
+   * @return IP address.
+   */
+  public InetAddress getRemoteAddress()
+  {
+    return socket.getInetAddress();
   }
 
   /** {@inheritDoc} */
@@ -96,6 +127,17 @@ public class LoggingEventHandler implements Runnable
           final Level level = remoteLogger.getEffectiveLevel();
           if(event.getLevel().isGreaterOrEqual(level)) {
             remoteLogger.callAppenders(event);
+          }
+          // Attempt to call registered listeners
+          for (LoggingEventListener listener : getLoggingEventListeners()) {
+	          try {
+	            listener.eventReceived(event);
+	          } catch (Exception e) {
+	            logger.error(
+	              "Failed executing LoggingEventListener#eventReceived() on " +
+	                listener,
+	              e);
+	          }
           }
         }
       }
