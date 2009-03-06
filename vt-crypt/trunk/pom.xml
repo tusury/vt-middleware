@@ -144,9 +144,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <appendAssemblyId>false</appendAssemblyId>
+          <appendAssemblyId>true</appendAssemblyId>
           <descriptors>
-            <descriptor>${assembly.dir}/vt-middleware.xml</descriptor>
+            <descriptor>${assembly.dir}/dist.xml</descriptor>
           </descriptors>
           <tarLongFileMode>omit</tarLongFileMode>
         </configuration>
@@ -163,6 +163,10 @@
     </plugins>
   </build>
   <repositories>
+    <repository>
+      <id>repo1.maven.org</id>
+      <url>http://repo1.maven.org/maven2/</url>
+    </repository>
     <repository>
       <id>vt-middleware.googlecode.com.repo</id>
       <url>http://vt-middleware.googlecode.com/svn/maven2</url>
