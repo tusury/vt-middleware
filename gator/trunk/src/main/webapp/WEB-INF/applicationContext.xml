@@ -39,7 +39,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <property name="jpaVendorAdapter">
       <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="generateDdl" value="true"/>
-        <property name="showSql" value="true" />
+        <property name="showSql" value="false" />
       </bean>
     </property>
     <property name="jpaProperties">
