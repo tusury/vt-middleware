@@ -45,13 +45,17 @@
 	  <legend>Categories</legend>
 	  <div class="button_group">
 	    <span class="button">
-	    <a href="<c:url
-	      value="/auth/project/${project.name}/category/add.html" />">Add Category</a>
+		    <a href="<c:url
+		      value="/auth/project/${project.name}/category/add.html" />">Add Category</a>
 	    </span>
+	    <span class="button">
+	      <a href="<c:url
+	        value="/auth/project/${project.name}/category/bulk_edit.html" />">Bulk Change</a>
+      </span>
 	  </div>
 	  <c:choose>
 	    <c:when test="${not empty project.categories}">
-	      <table>
+	      <table summary="Project category listing">
 	        <tr>
 	          <th>Name</th>
 	          <th>Level</th>
@@ -106,7 +110,7 @@
   </div>
   <c:choose>
     <c:when test="${not empty project.appenders}">
-	    <table>
+	    <table summary="Project appender listing">
 	      <tr>
 	        <th>Name</th>
 	        <th>Class</th>
@@ -150,7 +154,7 @@
   </div>
   <c:choose>
     <c:when test="${not empty project.clients}">
-	    <table>
+	    <table summary="Project allowed client listing">
 	      <tr>
 	        <th>Name/Address</th>
 	        <th>Edit</th>

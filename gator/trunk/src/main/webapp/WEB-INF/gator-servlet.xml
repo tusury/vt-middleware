@@ -94,6 +94,14 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
   />
 
+  <bean id="categoryBulkEditController"
+    class="edu.vt.middleware.gator.web.CategoryBulkEditFormController"
+    parent="baseFormController"
+    p:commandName="formData"
+    p:formView="categoryBulkEdit"
+    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+  />
+
   <bean id="categoryDeleteController"
     class="edu.vt.middleware.gator.web.CategoryDeleteViewController"
     parent="baseViewController"
@@ -172,6 +180,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <prop key="/auth/project/*/edit.html">projectEditController</prop>
         <prop key="/auth/project/*/delete.html">projectDeleteController</prop>
         <prop key="/auth/project/*/category/add.html">categoryEditController</prop>
+        <prop key="/auth/project/*/category/bulk_edit.html">categoryBulkEditController</prop>
         <prop key="/auth/project/*/category/*/edit.html">categoryEditController</prop>
         <prop key="/auth/project/*/category/*/delete.html">categoryDeleteController</prop>
         <prop key="/auth/project/*/appender/add.html">appenderEditController</prop>

@@ -12,7 +12,7 @@
 
 </p>
 
-<table width="100%">
+<table width="100%" summary="Project listing">
 <c:forEach items="${model.projects}" var="project" varStatus="stat">
   <tr>
   <td class="button_row" style="font-size:1.1em">${stat.count}.</td>

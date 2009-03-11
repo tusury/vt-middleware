@@ -8,6 +8,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 <link rel="stylesheet" href="<c:url value="/vt.css" />"
   type="text/css" media="screen" />
+<script type="text/javascript" src="<c:url value="/scripts.js" />"></script>
 
 <title>Gator Log Aggregating Server</title>
 </head>
