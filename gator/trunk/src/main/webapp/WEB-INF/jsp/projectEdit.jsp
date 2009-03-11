@@ -68,9 +68,11 @@
 	            <td class="button_row">${category.name}</td>
 	            <td class="button_row">${category.level}</td>
 	            <td class="button_row">
-	            	<c:forEach items="${category.appenders}" var="appender"
-		             varStatus="stat"><c:if 
-                   test="${stat.count > 1}">,</c:if>${appender.name}</c:forEach>
+	            	<c:forEach items="${category.appenders}"
+	            	 var="appender"
+		             varStatus="stat">
+		              <c:if test="${stat.count > 1}">, </c:if>${appender.name}
+		            </c:forEach>
 	            </td>
 	            <td class="button_row">
 	            <span class="button">
