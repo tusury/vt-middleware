@@ -103,9 +103,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   />
 
   <bean id="categoryDeleteController"
-    class="edu.vt.middleware.gator.web.CategoryDeleteViewController"
-    parent="baseViewController"
-    p:viewName="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    class="edu.vt.middleware.gator.web.CategoryDeleteFormController"
+    parent="baseFormController"
+    p:commandName="spec"
+    p:formView="deleteForm"
+    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="appenderEditController"
@@ -128,7 +130,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     class="edu.vt.middleware.gator.web.AppenderDeleteFormController"
     parent="baseFormController"
     p:commandName="spec"
-    p:formView="appenderDelete"
+    p:formView="deleteForm"
     p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
   />
   
@@ -141,9 +143,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   />
 
   <bean id="clientDeleteController"
-    class="edu.vt.middleware.gator.web.ClientDeleteViewController"
-    parent="baseViewController"
-    p:viewName="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    class="edu.vt.middleware.gator.web.ClientDeleteFormController"
+    parent="baseFormController"
+    p:commandName="spec"
+    p:formView="deleteForm"
+    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="xmlConfigViewController"

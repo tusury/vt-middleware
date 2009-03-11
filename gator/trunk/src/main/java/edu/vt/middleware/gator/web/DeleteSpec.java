@@ -24,6 +24,8 @@ public class DeleteSpec
 {
   private boolean confirmationFlag;
   
+  private String typeName;
+  
   private String name;
   
   private int id;
@@ -74,6 +76,22 @@ public class DeleteSpec
   public void setId(final int id)
   {
     this.id = id;
+  }
+
+  /**
+   * @param typeName the typeName to set
+   */
+  public void setTypeName(String typeName)
+  {
+    this.typeName = typeName;
+  }
+
+  /**
+   * @return the typeName
+   */
+  public String getTypeName()
+  {
+    return typeName;
   }
 
 

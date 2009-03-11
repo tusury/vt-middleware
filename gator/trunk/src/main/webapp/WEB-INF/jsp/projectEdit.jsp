@@ -74,13 +74,13 @@
 		              <c:if test="${stat.count > 1}">, </c:if>${appender.name}
 		            </c:forEach>
 	            </td>
-	            <td class="button_row">
+	            <td class="button_cell">
 	            <span class="button">
 	            <a href="<c:url
 	              value="/auth/project/${project.name}/category/${category.id}/edit.html" />">Edit</a>
 	            </span>
 	            </td>
-	            <td class="button_row">
+	            <td class="button_cell">
 	            <span class="button">
 	            <a href="<c:url
 	              value="/auth/project/${project.name}/category/${category.id}/delete.html" />">Delete</a>
@@ -123,18 +123,17 @@
 	        <tr>
 	          <td class="button_row">${appender.name}</td>
 	          <td class="button_row">${appender.appenderClassName}</td>
-	          <td class="button_row">
+	          <td class="button_cell">
 	          <span class="button">
 	          <a href="<c:url
 	            value="/auth/project/${project.name}/appender/${appender.id}/edit.html" />">Edit</a>
 	          </span>
 	          </td>
-	          <td class="button_row">
+	          <td class="button_cell">
 	          <span class="button">
             <a href="<c:url
               value="/auth/project/${project.name}/appender/${appender.id}/delete.html" />">Delete</a>
             </span>
-            <span>Requires Confirmation</span>
             </td>
 	        </tr>
 	      </c:forEach>
@@ -165,13 +164,13 @@
 	      <c:forEach items="${project.clients}" var="client">
 	        <tr>
 	          <td class="button_row">${client.name}</td>
-            <td class="button_row">
+            <td class="button_cell">
 	          <span class="button">
             <a href="<c:url
               value="/auth/project/${project.name}/client/${client.id}/edit.html" />">Edit</a>
             </span>
             </td>
-            <td class="button_row">
+            <td class="button_cell">
 	          <span class="button">
             <a href="<c:url
               value="/auth/project/${project.name}/client/${client.id}/delete.html" />">Delete</a>
