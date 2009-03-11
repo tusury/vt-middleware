@@ -46,6 +46,11 @@
     <div><label for="appenderIds">Category Appenders</label></div>
 		<div class="note">Send logging events to these appenders.</div>
   	</div>
+  	<div style="margin:5px">
+      <span><a href="javascript:select('appenderIds', true)">Select All</a><span>
+      <span>|</span>
+      <span><a href="javascript:select('appenderIds', false)">Select None</a><span>
+    </div>
     <div class="checkboxes">
 	    <form:checkboxes id="appenderIds" path="appenderIds"
 	     items="${availableAppenders}" itemValue="id" itemLabel="name"
