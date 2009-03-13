@@ -1,4 +1,4 @@
-#summary Features, installation, and use of Gator log aggregating server application.
+﻿#summary Features, installation, and use of Gator log aggregating server application.
 #labels Gator,log4j
 
 = Features =
@@ -8,7 +8,13 @@ Gator provides the following features/services:
 
 = Background =
 
-A bit of background may help put the features above in context.
+A bit of background may help put the features above in context.  Gator evolved from an amalgam of JBoss and the log4j [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/net/SocketServer.html SocketServer] to address our need for consolidated logging across multiple nodes and tiers of an enterprise Java application.  We chose a this solution for a few reasons:
+  # Wanted per-node logging and consolidated logging for redundancy
+  # The timestamps on the nodes were required to match exactly those on the server
+  # We did not have control of syslog configuration on our hosts
+Although the application used commons logging internally, we used the log4j engine underneath.  This made us secure in choosing a log4j-specific solution.  Although the end result suited our needs, it was a pain to configure.  Our solution required a JBoss container instance for each instance (development, pre-production, production) of our application, where each JBoss instance had a slightly different configuration.  And there were also 2 log4j configuration files for each server, one for the container and one for the nodes.  This is where it got dicey.  There were some very non-intuitive requirements on appender configuration and log levels of categories that only 1 person in the group understood well enough to troubleshoot.  But it worked once it was up and running, and was very performant.
+
+And then we would need to modify the logger configuration for a node or aspect of the application.  The process was both tedious and error prone, and again, we had to lean on a single person in the group to help troubleshoot configuration errors.  After running into this problem a few times, and getting more insight into the architecture of our solution, I had a hunch we could do better.  And then the outline of Gator emerged from a week or so of hacking on a JDBC-backed log4j configuration engine and a new SocketServer implementation that understood the notion of a project containing both a log4j logger hierarchy and allowed clients.
 
 = Installation =
 
