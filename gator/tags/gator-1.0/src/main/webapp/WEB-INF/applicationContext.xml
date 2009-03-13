@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+    
+  <bean id="runtimeProperties"
+    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+    p:ignoreResourceNotFound="true"
+    p:systemPropertiesMode="1"
+    p:location="/WEB-INF/runtime.properties"
+  />
+ 
+  <!-- DAO-related beans -->
+  <bean id="dataSourceTarget"
+    destroy-method="close"
+    class="org.apache.commons.dbcp.BasicDataSource"
+    p:driverClassName="${jdbc.driverClass}"
+    p:url="${jdbc.url}"
+    p:username="${jdbc.user}"
+    p:password="${jdbc.pass}"
+    p:initialSize="${jdbc.pool.initSize}"
+    p:maxIdle="${jdbc.pool.maxIdle}"
+    p:maxActive="${jdbc.pool.maxActive}"
+  />
+
+  <bean id="dataSource"
+    class="org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy"
+    p:targetDataSource-ref="dataSourceTarget"
+  />
+
+  <bean id="entityManagerFactory"
+    class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="persistenceXmlLocation" value="/META-INF/persistence.xml" />
+    <property name="jpaVendorAdapter">
+      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="generateDdl" value="true"/>
+        <property name="showSql" value="false" />
+      </bean>
+    </property>
+    <property name="jpaProperties">
+      <props>
+        <prop key="hibernate.dialect">${db.dialect}</prop>
+        <prop key="hibernate.jdbc.batch_size">${db.batchSize}</prop>
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="transactionManager"
+    class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
+
+  <tx:annotation-driven transaction-manager="transactionManager"/>
+
+
+  <!-- Domain-specific beans -->
+  <bean id="configManager"
+    class="edu.vt.middleware.gator.JpaConfigManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory" />
+    <property name="configChangeListeners">
+      <list>
+        <ref bean="log4jSocketServer" />
+      </list>
+    </property>
+  </bean>
+  
+  <bean id="log4jConfigurator"
+    class="edu.vt.middleware.gator.log4j.JdbcConfigurator"
+    p:configManager-ref="configManager"
+    p:clientRootLogDirectory="${log4j.client.root.dir}"
+  />
+  
+  <bean id="log4jSocketServer"
+    class="edu.vt.middleware.gator.log4j.SocketServer"
+    p:configurator-ref="log4jConfigurator"
+    p:startOnInit="true"
+    p:bindAddress="${log4j.server.bindAddress}"
+    p:port="${log4j.server.port}"
+    init-method="init"
+    destroy-method="stop"
+  />
+  
+  <bean id="log4jXmlFilter"
+    class="edu.vt.middleware.gator.servlet.Log4jXmlFilter"
+    p:configManager-ref="configManager"
+  />
+</beans>

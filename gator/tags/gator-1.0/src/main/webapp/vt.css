@@ -1,0 +1,156 @@
+body {
+  margin:0 8% 10px 8%;
+  padding:0;
+  background-color:#557082;
+  font-family:Helvetica, Arial, Sans-Serif;
+  font-size:.9em;
+}
+
+tr {
+  margin:2px;
+}
+
+tr th {
+  padding:2px;
+  background-color:#dbd8bc;
+  color:black;
+}
+
+tr td {
+  font-size:0.9em;
+  padding:2px;
+  background-color:#edeada;
+}
+
+tr td.button_row {
+  padding-top:7px;
+  padding-bottom:7px;
+}
+
+td.button_cell {
+  padding:7px 12px 7px 12px;
+}
+
+#page-wrapper {
+  background-color:white;
+  border:2px solid #3c5b6f;
+}
+
+#page-header {
+  border-bottom:3px solid #ff6600;
+  padding:10px;
+  margin-bottom:10px;
+  background-color:#660000;
+  background-repeat:repeat-y;
+  color:white;
+}
+
+#page-header a {
+  text-decoration:none;
+  color:white
+}
+
+#page-footer {
+  border-top:1px solid #3c5b6f;
+  margin-top:8%;
+  background-color:#f5f5eb;
+  font-size:90%;
+  padding:10px;
+}
+
+#page-footer p {
+  margin:0px;
+  padding:0px;
+  text-align:center;
+}
+
+h1 {
+  font-size:1.6em;
+}
+
+h2 {
+  font-size:1.4;
+}
+
+h3 {
+  font-size:1.2;
+}
+
+#content {
+  margin:5px 10px 5px 10px;
+}
+
+form { 
+  margin:0;
+  padding:0;
+}
+
+fieldset {
+  margin-bottom:15px;
+  background-color:#f5f5eb;
+}
+
+legend {
+  font-weight:bold;
+  padding-bottom:8px;
+}
+
+label {
+  margin-left:5px;
+  font-weight:bold;
+}
+
+label.checkbox,
+div.checkboxes label,
+div.checkboxes div label {
+  font-weight:normal;
+  position:relative;
+  top:-3px;
+}
+
+div.field {
+  margin-top:4px;
+  margin-bottom:4px;
+}
+
+#error, .error {
+  font-size:110%;
+  font-weight:bold;
+  color:#CC0000;
+}
+
+.note {
+  margin:3px;
+  font-size:90%;
+  font-weight:bold;
+  color:#666;
+}
+
+#info, .info {
+  font-size:110%;
+  font-weight:bold;
+  color:#0000CC;
+}
+
+.button {
+  border:2px solid #93a7b3;
+  background-color:#557082;
+  margin:5px;
+  padding:3px;
+}
+
+.button a {
+  color:white;
+  font-weight:bold;
+  text-decoration:none;
+}
+
+div.button_group {
+  margin-top:0px;
+  margin-bottom:12px;
+}
+
+#div.crumbs {
+  margin-bottom:5px;
+  font-size:0.8em;
+}

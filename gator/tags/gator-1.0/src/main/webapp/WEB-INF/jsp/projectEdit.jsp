@@ -1,0 +1,192 @@
+<%@ include file="includes/top.jsp" %>
+
+<c:choose>
+  <c:when test="${project.id == 0}">
+    <c:set var="action" value="Create Project" />
+  </c:when>
+  <c:otherwise>
+    <c:set var="action" value="Edit Project" />
+  </c:otherwise>
+</c:choose>
+
+<div class="crumbs">
+  <span>
+    <a href="<c:url value="/auth/list.html" />">Project Listing</a>
+  </span>
+  <span>&raquo;</span>
+  <span>${action} <em>${project.name}</em></span>
+</div>
+
+<h1>${action}</h1>
+
+<form:form method="post" commandName="project">
+  <form:errors id="error" path="*" element="div" />
+  
+  <fieldset>
+  <legend>Project Properties</legend>
+  <div class="field">
+    <div><label for="name">Project Name</label></div>
+    <div><form:input id="name" path="name" size="50" maxlength="50" /></div>
+  </div>
+  <div class="field">
+    <div><label for="clientLogDir">Client Log Directory</label></div>
+    <div class="note">Prepended to all file appender paths
+      for the client configuration only.</div>
+    <div><form:input id="clientLogDir" path="clientLogDir" size="75"
+      maxlength="100" /></div>
+  </div>
+  <div class="field">
+		<div><input type="submit" name="action" value="Update" /></div>
+  </div>
+  </fieldset>
+
+  <c:if test="${project.id > 0}">
+	<fieldset>
+	  <legend>Categories</legend>
+	  <div class="button_group">
+	    <span class="button">
+		    <a href="<c:url
+		      value="/auth/project/${project.name}/category/add.html" />">Add Category</a>
+	    </span>
+	    <span class="button">
+	      <a href="<c:url
+	        value="/auth/project/${project.name}/category/bulk_edit.html" />">Bulk Change</a>
+      </span>
+	  </div>
+	  <c:choose>
+	    <c:when test="${not empty project.categories}">
+	      <table summary="Project category listing">
+	        <tr>
+	          <th>Name</th>
+	          <th>Level</th>
+		        <th>Appenders</th>
+	          <th>Edit</th>
+	          <th>Delete</th>
+	        </tr>
+	        <c:forEach items="${project.categories}" var="category">
+	          <tr>
+	            <td class="button_row">${category.name}</td>
+	            <td class="button_row">${category.level}</td>
+	            <td class="button_row">
+	            	<c:forEach items="${category.appenders}"
+	            	 var="appender"
+		             varStatus="stat">
+		              <c:if test="${stat.count > 1}">, </c:if>${appender.name}
+		            </c:forEach>
+	            </td>
+	            <td class="button_cell">
+	            <span class="button">
+	            <a href="<c:url
+	              value="/auth/project/${project.name}/category/${category.id}/edit.html" />">Edit</a>
+	            </span>
+	            </td>
+	            <td class="button_cell">
+	            <span class="button">
+	            <a href="<c:url
+	              value="/auth/project/${project.name}/category/${category.id}/delete.html" />">Delete</a>
+	            </span>
+	            </td>
+	          </tr>
+	        </c:forEach>
+	      </table>    
+	    </c:when>
+	    <c:otherwise>
+	      <p>No categories defined.</p>
+	    </c:otherwise>
+	  </c:choose>
+	</fieldset>
+
+  <fieldset>
+  <legend>Appenders</legend>
+  <div class="button_group">
+    <span class="button">
+    <a href="<c:url
+      value="/auth/project/${project.name}/appender/add.html" />">Add Appender</a>
+    </span>
+    <c:if test="${not empty project.appenders}">
+      <span class="button">
+      <a href="<c:url
+        value="/auth/project/${project.name}/appender/copy.html" />">Copy Appender</a>
+      </span>
+    </c:if>
+  </div>
+  <c:choose>
+    <c:when test="${not empty project.appenders}">
+	    <table summary="Project appender listing">
+	      <tr>
+	        <th>Name</th>
+	        <th>Class</th>
+	        <th>Edit</th>
+	        <th>Delete</th>
+	      </tr>
+	      <c:forEach items="${project.appenders}" var="appender">
+	        <tr>
+	          <td class="button_row">${appender.name}</td>
+	          <td class="button_row">${appender.appenderClassName}</td>
+	          <td class="button_cell">
+	          <span class="button">
+	          <a href="<c:url
+	            value="/auth/project/${project.name}/appender/${appender.id}/edit.html" />">Edit</a>
+	          </span>
+	          </td>
+	          <td class="button_cell">
+	          <span class="button">
+            <a href="<c:url
+              value="/auth/project/${project.name}/appender/${appender.id}/delete.html" />">Delete</a>
+            </span>
+            </td>
+	        </tr>
+	      </c:forEach>
+	    </table>    
+		</c:when>
+		<c:otherwise>
+		  <p>No appenders defined.</p>
+		</c:otherwise>
+	</c:choose>
+  </fieldset>
+
+  <fieldset>
+  <legend>Allowed Clients</legend>
+  <div class="button_group">
+    <span class="button">
+    <a href="<c:url
+      value="/auth/project/${project.name}/client/add.html" />">Add Client</a>
+    </span>
+  </div>
+  <c:choose>
+    <c:when test="${not empty project.clients}">
+	    <table summary="Project allowed client listing">
+	      <tr>
+	        <th>Name/Address</th>
+	        <th>Edit</th>
+	        <th>Delete</th>
+	      </tr>
+	      <c:forEach items="${project.clients}" var="client">
+	        <tr>
+	          <td class="button_row">${client.name}</td>
+            <td class="button_cell">
+	          <span class="button">
+            <a href="<c:url
+              value="/auth/project/${project.name}/client/${client.id}/edit.html" />">Edit</a>
+            </span>
+            </td>
+            <td class="button_cell">
+	          <span class="button">
+            <a href="<c:url
+              value="/auth/project/${project.name}/client/${client.id}/delete.html" />">Delete</a>
+            </span>
+            </td>
+	        </tr>
+	      </c:forEach>
+	    </table>    
+		</c:when>
+		<c:otherwise>
+		  <p>No allowed clients defined.</p>
+		</c:otherwise>
+	</c:choose>
+  </fieldset>
+
+  </c:if>
+</form:form>
+
+<%@ include file="includes/bottom.jsp" %>
