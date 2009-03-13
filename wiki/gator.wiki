@@ -5,6 +5,8 @@
 Gator provides the following features/services:
   * Single point of configuration for log4j logging across multiple applications on multiple hosts
   * Aggregated logging from all applications/nodes on the host running Gator
+  * Web-based configuration manager
+  * Real-time Web-based log viewer
 
 = Background =
 
