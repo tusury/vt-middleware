@@ -9,7 +9,6 @@ Gator provides the following features/services:
   * Real-time Web-based log viewer
 
 = Background =
-
 A bit of background may help put the features above in context.  Gator evolved from an amalgam of JBoss and the log4j [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/net/SocketServer.html SocketServer] to address our need for consolidated logging across multiple nodes and tiers of an enterprise Java application.  We chose this solution for a few reasons:
   # Wanted per-node logging and consolidated logging for redundancy
   # The timestamps on the nodes were required to match exactly those on the server
@@ -19,5 +18,25 @@ Although the application used commons logging internally, we used the log4j engi
 And then we would need to modify the logger configuration for a node or aspect of the application.  The process was both tedious and error prone, and again, we had to lean on a single person in the group to help troubleshoot configuration errors.  After running into this problem a few times, and getting more insight into the architecture of our solution, I had a hunch we could do better.  And then the outline of Gator emerged from a week or so of hacking on a JDBC-backed log4j configuration engine and a new SocketServer implementation that understood the notion of a project containing both a log4j logger hierarchy and allowed clients.
 
 = Installation =
+Gator uses a source-based installation process that requires the following tools:
+  * Subversion
+  * Apache [http://maven.apache.org/download.html Maven 2]
+
+== Pre-Installation Considerations ==
+Gator stores configuration data in a relational database.  You must decide on a DB platform prior to installation.  All RDBMS platforms [http://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html supported by Hibernate] are available options.  HSQL likely provides the path of least resistance, but deployers should exercise caution when using it for production.
+
+Authentication and authorization should also be considered prior to installation.  The sample web.xml provides optional [http://www.jasig.org/cas CAS] integration for authentication, but authorization would require additional configuration.  For example, a security framework like [http://static.springframework.org/spring-security/site/ Spring Security] could be used to provide both authentication and authorization services with relatively little configuration work limited to web.xml and gator-servlet.xml.
+
+== Step-by-Step Install ==
+  # Subversion checkout: svn checkout http://vt-middleware.googlecode.com/svn/gator/tags/gator-1.0
+  # Create the following files in the project root directory using the .sample files as templates:
+    # log4j.properties
+    # runtime.properties
+    # web.xml
+  # Build the WAR deployable: mvn clean package
+  # Copy the JDBC driver for your RDBMS platform to a directory in your servlet container that is on the container classpath (e.g. $TOMCAT_HOME/lib in TC6.x or $TOMCAT_HOME/common/lib in TC5.x)
+  # Copy the Gator deployable in target/gator.war to the deploy location in your container (e.g. $TOMCAT_HOME/webapps)
+
+You may find it helpful to use the [http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html Maven WAR overlay] process to help manage customizations needed for your environment.
 
 = User Guide =
