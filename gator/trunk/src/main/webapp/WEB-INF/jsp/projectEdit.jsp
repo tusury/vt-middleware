@@ -11,7 +11,7 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/auth/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>${action} <em>${project.name}</em></span>
@@ -46,11 +46,11 @@
 	  <div class="button_group">
 	    <span class="button">
 		    <a href="<c:url
-		      value="/auth/project/${project.name}/category/add.html" />">Add Category</a>
+		      value="/secure/project/${project.name}/category/add.html" />">Add Category</a>
 	    </span>
 	    <span class="button">
 	      <a href="<c:url
-	        value="/auth/project/${project.name}/category/bulk_edit.html" />">Bulk Change</a>
+	        value="/secure/project/${project.name}/category/bulk_edit.html" />">Bulk Change</a>
       </span>
 	  </div>
 	  <c:choose>
@@ -77,13 +77,13 @@
 	            <td class="button_cell">
 	            <span class="button">
 	            <a href="<c:url
-	              value="/auth/project/${project.name}/category/${category.id}/edit.html" />">Edit</a>
+	              value="/secure/project/${project.name}/category/${category.id}/edit.html" />">Edit</a>
 	            </span>
 	            </td>
 	            <td class="button_cell">
 	            <span class="button">
 	            <a href="<c:url
-	              value="/auth/project/${project.name}/category/${category.id}/delete.html" />">Delete</a>
+	              value="/secure/project/${project.name}/category/${category.id}/delete.html" />">Delete</a>
 	            </span>
 	            </td>
 	          </tr>
@@ -101,12 +101,12 @@
   <div class="button_group">
     <span class="button">
     <a href="<c:url
-      value="/auth/project/${project.name}/appender/add.html" />">Add Appender</a>
+      value="/secure/project/${project.name}/appender/add.html" />">Add Appender</a>
     </span>
     <c:if test="${not empty project.appenders}">
       <span class="button">
       <a href="<c:url
-        value="/auth/project/${project.name}/appender/copy.html" />">Copy Appender</a>
+        value="/secure/project/${project.name}/appender/copy.html" />">Copy Appender</a>
       </span>
     </c:if>
   </div>
@@ -126,13 +126,13 @@
 	          <td class="button_cell">
 	          <span class="button">
 	          <a href="<c:url
-	            value="/auth/project/${project.name}/appender/${appender.id}/edit.html" />">Edit</a>
+	            value="/secure/project/${project.name}/appender/${appender.id}/edit.html" />">Edit</a>
 	          </span>
 	          </td>
 	          <td class="button_cell">
 	          <span class="button">
             <a href="<c:url
-              value="/auth/project/${project.name}/appender/${appender.id}/delete.html" />">Delete</a>
+              value="/secure/project/${project.name}/appender/${appender.id}/delete.html" />">Delete</a>
             </span>
             </td>
 	        </tr>
@@ -150,7 +150,7 @@
   <div class="button_group">
     <span class="button">
     <a href="<c:url
-      value="/auth/project/${project.name}/client/add.html" />">Add Client</a>
+      value="/secure/project/${project.name}/client/add.html" />">Add Client</a>
     </span>
   </div>
   <c:choose>
@@ -167,13 +167,13 @@
             <td class="button_cell">
 	          <span class="button">
             <a href="<c:url
-              value="/auth/project/${project.name}/client/${client.id}/edit.html" />">Edit</a>
+              value="/secure/project/${project.name}/client/${client.id}/edit.html" />">Edit</a>
             </span>
             </td>
             <td class="button_cell">
 	          <span class="button">
             <a href="<c:url
-              value="/auth/project/${project.name}/client/${client.id}/delete.html" />">Delete</a>
+              value="/secure/project/${project.name}/client/${client.id}/delete.html" />">Delete</a>
             </span>
             </td>
 	        </tr>

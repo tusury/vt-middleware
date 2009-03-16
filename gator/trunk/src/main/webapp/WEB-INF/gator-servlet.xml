@@ -67,7 +67,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="project"
     p:formView="projectEdit"
-    p:successView="redirect:/auth/list.html"
+    p:successView="redirect:/secure/list.html"
   />
 
   <bean id="projectDeleteController"
@@ -75,7 +75,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="spec"
     p:formView="projectDelete"
-    p:successView="redirect:/auth/list.html"
+    p:successView="redirect:/secure/list.html"
   />
   
   <bean id="projectCopyController"
@@ -83,7 +83,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="spec"
     p:formView="projectCopy"
-    p:successView="redirect:/auth/list.html"
+    p:successView="redirect:/secure/list.html"
   />
 
   <bean id="categoryEditController"
@@ -91,7 +91,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="wrapper"
     p:formView="categoryEdit"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="categoryBulkEditController"
@@ -99,7 +99,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="formData"
     p:formView="categoryBulkEdit"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="categoryDeleteController"
@@ -107,7 +107,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="spec"
     p:formView="deleteForm"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="appenderEditController"
@@ -115,7 +115,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="wrapper"
     p:formView="appenderEdit"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="appenderCopyController"
@@ -123,7 +123,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="spec"
     p:formView="appenderCopy"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="appenderDeleteController"
@@ -131,7 +131,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="spec"
     p:formView="deleteForm"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
   
   <bean id="clientEditController"
@@ -139,7 +139,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="client"
     p:formView="clientEdit"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="clientDeleteController"
@@ -147,7 +147,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     parent="baseFormController"
     p:commandName="spec"
     p:formView="deleteForm"
-    p:successView="redirect:/auth/project/@PROJECT_NAME@/edit.html"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
 
   <bean id="xmlConfigViewController"
@@ -178,23 +178,23 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
     <property name="mappings">
       <props>
-        <prop key="/auth/list.html">projectListController</prop>
-        <prop key="/auth/project/add.html">projectEditController</prop>
-        <prop key="/auth/project/copy.html">projectCopyController</prop>
-        <prop key="/auth/project/*/edit.html">projectEditController</prop>
-        <prop key="/auth/project/*/delete.html">projectDeleteController</prop>
-        <prop key="/auth/project/*/category/add.html">categoryEditController</prop>
-        <prop key="/auth/project/*/category/bulk_edit.html">categoryBulkEditController</prop>
-        <prop key="/auth/project/*/category/*/edit.html">categoryEditController</prop>
-        <prop key="/auth/project/*/category/*/delete.html">categoryDeleteController</prop>
-        <prop key="/auth/project/*/appender/add.html">appenderEditController</prop>
-        <prop key="/auth/project/*/appender/copy.html">appenderCopyController</prop>
-        <prop key="/auth/project/*/appender/*/edit.html">appenderEditController</prop>
-        <prop key="/auth/project/*/appender/*/delete.html">appenderDeleteController</prop>
-        <prop key="/auth/project/*/client/add.html">clientEditController</prop>
-        <prop key="/auth/project/*/client/*/edit.html">clientEditController</prop>
-        <prop key="/auth/project/*/client/*/delete.html">clientDeleteController</prop>
-        <prop key="/auth/project/*/watch.html">logWatcherFormController</prop>
+        <prop key="/secure/list.html">projectListController</prop>
+        <prop key="/secure/project/add.html">projectEditController</prop>
+        <prop key="/secure/project/copy.html">projectCopyController</prop>
+        <prop key="/secure/project/*/edit.html">projectEditController</prop>
+        <prop key="/secure/project/*/delete.html">projectDeleteController</prop>
+        <prop key="/secure/project/*/category/add.html">categoryEditController</prop>
+        <prop key="/secure/project/*/category/bulk_edit.html">categoryBulkEditController</prop>
+        <prop key="/secure/project/*/category/*/edit.html">categoryEditController</prop>
+        <prop key="/secure/project/*/category/*/delete.html">categoryDeleteController</prop>
+        <prop key="/secure/project/*/appender/add.html">appenderEditController</prop>
+        <prop key="/secure/project/*/appender/copy.html">appenderCopyController</prop>
+        <prop key="/secure/project/*/appender/*/edit.html">appenderEditController</prop>
+        <prop key="/secure/project/*/appender/*/delete.html">appenderDeleteController</prop>
+        <prop key="/secure/project/*/client/add.html">clientEditController</prop>
+        <prop key="/secure/project/*/client/*/edit.html">clientEditController</prop>
+        <prop key="/secure/project/*/client/*/delete.html">clientDeleteController</prop>
+        <prop key="/secure/project/*/watch.html">logWatcherFormController</prop>
         <prop key="/project/*/log4j.xml">xmlConfigViewController</prop>
       </props>    
     </property>

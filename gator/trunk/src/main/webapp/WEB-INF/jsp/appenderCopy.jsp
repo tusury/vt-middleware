@@ -2,11 +2,11 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/auth/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>
-    <a href="<c:url value="/auth/project/${project.name}/edit.html" />">Edit <em>${project.name}</em></a>
+    <a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit <em>${project.name}</em></a>
   </span>
   <span>&raquo;</span>
   <span>Copy Appender</span>

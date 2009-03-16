@@ -4,10 +4,10 @@
 
 <p>
 <span class="button"><a href="<c:url
-  value="/auth/project/add.html" />">Create Project</a></span>
+  value="/secure/project/add.html" />">Create Project</a></span>
 <c:if test="${not empty model.projects}">
 	<span class="button"><a href="<c:url
-	  value="/auth/project/copy.html" />">Copy Project</a></span>
+	  value="/secure/project/copy.html" />">Copy Project</a></span>
 </c:if>
 
 </p>
@@ -20,12 +20,12 @@
     style="font-size:1.1em">${project.name}</td>
   <td class="button_row">
 		<span class="button">
-		<a href="<c:url value="/auth/project/${project.name}/edit.html" />">Edit</a>
+		<a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit</a>
 		</span>
   </td>
   <td class="button_row">
 		<span class="button">
-		<a href="<c:url value="/auth/project/${project.name}/watch.html" />">Watch&nbsp;Logs</a>
+		<a href="<c:url value="/secure/project/${project.name}/watch.html" />">Watch&nbsp;Logs</a>
 	  </span>
   </td>
   <td class="button_row">
@@ -35,9 +35,8 @@
   </td>
   <td class="button_row">
 		<span class="button">
-		<a href="<c:url value="/auth/project/${project.name}/delete.html" />">Delete</a>
+		<a href="<c:url value="/secure/project/${project.name}/delete.html" />">Delete</a>
 	  </span>
-	  <span>Confirmation&nbsp;Req'd</span>
   </td>
 	</tr>
 </c:forEach>
