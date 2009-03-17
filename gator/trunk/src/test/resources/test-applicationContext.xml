@@ -53,4 +53,8 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     <property name="clientRootLogDirectory" value="target/logs" />
   </bean>
 
+  <bean id="aclService"
+    class="edu.vt.middleware.gator.security.ConfigAclService"
+    p:configManager-ref="configManager"
+  />
 </beans>
