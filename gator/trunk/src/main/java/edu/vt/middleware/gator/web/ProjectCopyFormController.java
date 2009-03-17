@@ -76,6 +76,10 @@ public class ProjectCopyFormController extends BaseFormController
     }
     final ProjectConfig newProject = ControllerHelper.cloneProject(source);
     newProject.setName(spec.getNewProjectName());
+    // Add all permissions to new project for current user principal
+    newProject.addPermission(
+      ControllerHelper.createAllPermissions(
+        request.getUserPrincipal().getName()));
     configManager.save(newProject);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), newProject));

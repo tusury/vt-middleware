@@ -37,6 +37,9 @@ import javax.persistence.Transient;
   allocationSize = 1)
 public class LayoutParamConfig extends ParamConfig
 {
+  /** LayoutParamConfig.java */
+  private static final long serialVersionUID = 6865570215727728635L;
+
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 32768;
 

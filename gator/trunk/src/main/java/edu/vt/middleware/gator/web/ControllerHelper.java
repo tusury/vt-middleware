@@ -15,12 +15,16 @@ package edu.vt.middleware.gator.web;
 
 import java.util.Calendar;
 
+import org.springframework.security.acls.Permission;
+
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.AppenderParamConfig;
 import edu.vt.middleware.gator.CategoryConfig;
 import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.LayoutParamConfig;
+import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
+import edu.vt.middleware.gator.security.ProjectAcl;
 
 /**
  * Utility class provides common controller operations.
@@ -139,4 +143,22 @@ public class ControllerHelper
     return viewName.replace("@PROJECT_NAME@", project.getName());
   }
 
+
+  /**
+   * Create a permission configuration containing all permissions for the
+   * given security identifier.
+   * @param sid Security identifier; either a username or role name.
+   * @return Permission config with all permissions set for given SID.
+   */
+  public static PermissionConfig createAllPermissions(final String sid)
+  {
+    final PermissionConfig perm = new PermissionConfig();
+    perm.setName(sid);
+    int permBits = 0;
+    for (Permission p : ProjectAcl.ALL_PERMISSIONS) {
+      permBits |= p.getMask();
+    }
+    perm.setPermissionBits(permBits);
+    return perm;
+  }
 }

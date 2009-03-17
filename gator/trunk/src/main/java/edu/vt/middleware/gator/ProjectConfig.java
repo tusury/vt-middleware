@@ -46,6 +46,9 @@ import javax.persistence.Transient;
   allocationSize = 1)
 public class ProjectConfig extends Config
 {
+  /** ProjectConfig.java */
+  private static final long serialVersionUID = -3702934794623134856L;
+
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 1024;
  
@@ -63,6 +66,9 @@ public class ProjectConfig extends Config
  
   /** Appenders defined in this project */
   private Set<AppenderConfig> appenders;
+ 
+  /** Permissions defined on this project */
+  private Set<PermissionConfig> permissions;
   
 
   /** {@inheritDoc} */
@@ -386,7 +392,7 @@ public class ProjectConfig extends Config
   /**
    * Adds an category to this project.
    * Category names must be unique within a project.
-   * @param Category to add.
+   * @param category Category to add.
    */
   public void addCategory(final CategoryConfig category)
   {
@@ -406,6 +412,69 @@ public class ProjectConfig extends Config
   {
     category.setProject(null);
     getCategoriesInternal().remove(category);
+  }
+
+  /**
+   * Gets project security permissions.
+   * @return Set of security permissions for this project.
+   */
+  @OneToMany(
+    mappedBy = "project",
+    cascade = CascadeType.ALL)
+  private Set<PermissionConfig> getPermissionsInternal()
+  {
+    if (permissions == null) {
+      permissions = new HashSet<PermissionConfig>();
+    }
+    return permissions;
+  }
+
+  /**
+   * Sets project security permissions.
+   * @param Set of project permissions.
+   */
+  protected void setPermissionsInternal(final Set<PermissionConfig> permissions)
+  {
+    this.permissions = permissions;
+  }
+
+  /**
+   * Gets an immutable set of all security permissions defined on this
+   * project.
+   * @return Immutable set of project permissions.
+   */
+  @Transient
+  public Set<PermissionConfig> getPermissions()
+  {
+    return getPermissionsInternal();
+  }
+
+  /**
+   * Adds a security permission to this project.
+   * Permission names (principal or role) must be unique within a project.
+   * @param perm Permission to add.
+   */
+  public void addPermission(final PermissionConfig perm)
+  {
+    for (PermissionConfig p : getPermissionsInternal()) {
+      if (p.getName().equalsIgnoreCase(perm.getName())) {
+	      throw new IllegalArgumentException(
+	        "Permission names (principal/role) must be unique within a project.");
+        
+      }
+    }
+    perm.setProject(this);
+    getPermissionsInternal().add(perm);
+  }
+  
+  /**
+   * Removes a security permission from this project.
+   * @param perm To be removed.
+   */
+  public void removePermission(final PermissionConfig perm)
+  {
+    perm.setProject(null);
+    getPermissionsInternal().remove(perm);
   }
 
   /** {@inheritDoc} */

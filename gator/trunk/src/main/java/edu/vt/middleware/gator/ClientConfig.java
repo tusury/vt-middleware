@@ -38,10 +38,13 @@ import javax.persistence.Transient;
 @Table(name = "log_clients")
 @SequenceGenerator(
   name = "client_sequence",
-  sequenceName = "log_seq_categories",
+  sequenceName = "log_seq_clients",
   allocationSize = 1)
 public class ClientConfig extends Config
 {
+  /** ClientConfig.java */
+  private static final long serialVersionUID = -8758342722734231737L;
+
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 8192;
 

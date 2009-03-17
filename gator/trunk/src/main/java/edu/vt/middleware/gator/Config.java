@@ -13,6 +13,8 @@
  */
 package edu.vt.middleware.gator;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
@@ -25,8 +27,11 @@ import javax.persistence.Transient;
  *
  */
 @MappedSuperclass
-public abstract class Config
+public abstract class Config implements Serializable
 {
+  /** Config.java */
+  private static final long serialVersionUID = 5079357889969322910L;
+
   protected int id;
 
   protected String name;

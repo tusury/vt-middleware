@@ -15,6 +15,8 @@ package edu.vt.middleware.gator;
 
 import java.util.List;
 
+import org.springframework.security.annotation.Secured;
+
 /**
  * Manages the lifecycle (CRUD) operations on config objects.
  *
@@ -38,6 +40,7 @@ public interface ConfigManager
    * @return List of all existing configuration objects of given type in
    * underlying data store.
    */
+  @Secured("AFTER_ACL_COLLECTION_READ")
   <T extends Config> List<T> findAll(Class<T> type);
 
   /**
@@ -46,6 +49,7 @@ public interface ConfigManager
    * @param id ID of object to load.
    * @return Config object or null if none exists for given type/ID.
    */
+  @Secured("AFTER_ACL_READ")
   <T extends Config> T find(Class<T> type, int id);
 
   /**
@@ -54,6 +58,7 @@ public interface ConfigManager
    * @param name Project name.
    * @return Project configuration object or null if none exists for given name.
    */
+  @Secured("AFTER_ACL_READ")
   ProjectConfig findProject(String name);
 
   /**
@@ -62,6 +67,14 @@ public interface ConfigManager
    * @return List of projects that contain the given client name.
    */
   List<ProjectConfig> findProjectsByClientName(String name);
+  
+  /**
+   * Gets the project to which the configuration object belongs.
+   * @param config Configuration object.
+   * @return Project configuration containing given configuration item or
+   * null if no project is found. 
+   */
+  ProjectConfig getProject(Config config);
 
   /**
    * Determines whether a config object exists in persistent storage.
@@ -74,11 +87,13 @@ public interface ConfigManager
    * Saves changes to the given object or creates it if it does not exist.
    * @param config Object to save.
    */
+  @Secured("ACL_PROJECT_EDIT")
   void save(Config config);
   
   /**
    * Deletes the given configuration object(s) from persistent storage.
    * @param objects One or more configuration objects.
    */
+  @Secured("ACL_PROJECT_DELETE")
   void delete(Config ... objects);
 }

@@ -41,6 +41,10 @@ public class ProjectEditFormController extends BaseFormController
       RequestParamExtractor.getProjectName(request));
     if (project == null) {
       project = new ProjectConfig();
+      // Add all permissions to new project for current user principal
+      project.addPermission(
+        ControllerHelper.createAllPermissions(
+          request.getUserPrincipal().getName()));
     }
     return project;
   }

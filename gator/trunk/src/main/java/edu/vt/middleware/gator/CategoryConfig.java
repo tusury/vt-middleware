@@ -46,6 +46,9 @@ import org.apache.log4j.Level;
   allocationSize = 1)
 public class CategoryConfig extends Config
 {
+  /** CategoryConfig.java */
+  private static final long serialVersionUID = -1021970964264194991L;
+
   /** Special category name for root appender */
   public static final String ROOT_CATEGORY_NAME = "root";
 

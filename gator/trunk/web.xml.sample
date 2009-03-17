@@ -7,8 +7,18 @@
   <display-name>Gator Log Aggregating Server</display-name>
 
   <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      /WEB-INF/applicationContext.xml
+      /WEB-INF/applicationContext-authz.xml
+      /WEB-INF/securityContext.xml
+      /WEB-INF/gator-servlet.xml
+    </param-value>
+  </context-param>
+
+  <context-param>
     <param-name>log4jConfigLocation</param-name>
-    <param-value>/WEB-INF/log4j.properties</param-value>
+    <param-value>classpath:log4j.properties</param-value>
   </context-param>
 
   <context-param>

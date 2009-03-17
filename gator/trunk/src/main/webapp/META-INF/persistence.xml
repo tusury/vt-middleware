@@ -12,6 +12,7 @@
     <class>edu.vt.middleware.gator.ClientConfig</class>
     <class>edu.vt.middleware.gator.LayoutParamConfig</class>
     <class>edu.vt.middleware.gator.ParamConfig</class>
+    <class>edu.vt.middleware.gator.PermissionConfig</class>
     <class>edu.vt.middleware.gator.ProjectConfig</class>
     <exclude-unlisted-classes />
   </persistence-unit>

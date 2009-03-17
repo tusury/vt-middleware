@@ -10,11 +10,9 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
 
-  <bean id="runtimeProperties"
+  <bean id="runtimeProperties1"
     class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-    p:ignoreResourceNotFound="true"
-    p:systemPropertiesMode="1"
-    p:location="/WEB-INF/runtime.properties"
+    p:location="classpath:runtime.properties"
   />
 
 
@@ -37,7 +35,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <!-- Message source for this application -->
   <bean id="messageSource"
     class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
-    p:basename="WEB-INF/messages"
+    p:basename="/WEB-INF/messages"
     p:cacheSeconds="600"
   />
   

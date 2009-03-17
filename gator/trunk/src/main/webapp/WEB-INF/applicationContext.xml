@@ -2,16 +2,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:sec="http://www.springframework.org/schema/security"
   xmlns:tx="http://www.springframework.org/schema/tx"
   xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd
 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
     
-  <bean id="runtimeProperties"
+  <bean id="runtimeProperties2"
     class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-    p:ignoreResourceNotFound="true"
-    p:systemPropertiesMode="1"
-    p:location="/WEB-INF/runtime.properties"
+    p:location="classpath:runtime.properties"
   />
  
   <!-- DAO-related beans -->
@@ -35,7 +35,8 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   <bean id="entityManagerFactory"
     class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="dataSource" ref="dataSource"/>
-    <property name="persistenceXmlLocation" value="/META-INF/persistence.xml" />
+    <property name="persistenceXmlLocation"
+      value="classpath:META-INF/persistence.xml" />
     <property name="jpaVendorAdapter">
       <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="generateDdl" value="true"/>
@@ -60,8 +61,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
 
   <!-- Domain-specific beans -->
-  <bean id="configManager"
-    class="edu.vt.middleware.gator.JpaConfigManager">
+  <bean id="configManager" class="edu.vt.middleware.gator.JpaConfigManager">
     <property name="entityManagerFactory" ref="entityManagerFactory" />
     <property name="configChangeListeners">
       <list>
@@ -88,6 +88,11 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   
   <bean id="log4jXmlFilter"
     class="edu.vt.middleware.gator.servlet.Log4jXmlFilter"
+    p:configManager-ref="configManager"
+  />
+
+  <bean id="aclService"
+    class="edu.vt.middleware.gator.security.ConfigAclService"
     p:configManager-ref="configManager"
   />
 </beans>

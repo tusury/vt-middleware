@@ -47,6 +47,9 @@ import javax.persistence.Transient;
   allocationSize = 1)
 public class AppenderConfig extends Config
 {
+  /** AppenderConfig.java */
+  private static final long serialVersionUID = -8271442546718020967L;
+
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 2048;
 

@@ -154,6 +154,24 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
 
 
   /** {@inheritDoc} */
+  public ProjectConfig getProject(final Config config) {
+    ProjectConfig project = null;
+    if (config instanceof ProjectConfig) {
+      project = (ProjectConfig) config;
+    } else if(config instanceof AppenderConfig) {
+      project = ((AppenderConfig) config).getProject();
+    } else if(config instanceof CategoryConfig) {
+      project = ((CategoryConfig) config).getProject();
+    } else if(config instanceof ClientConfig) {
+      project = ((ClientConfig) config).getProject();
+    } else if(config instanceof ParamConfig) {
+      project = ((ParamConfig) config).getAppender().getProject();
+    }
+    return project;
+  }
+
+
+  /** {@inheritDoc} */
   @Transactional(
     readOnly = true,
     propagation = Propagation.REQUIRED)
@@ -211,28 +229,4 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     return SharedEntityManagerCreator.createSharedEntityManager(
       entityManagerFactory);
   }
-  
- 
-  /**
-   * Gets the project to which the configuration object belongs.
-   * @param config Configuration object.
-   * @return Project configuration containing given configuration item or
-   * null if no project is found. 
-   */
-  protected ProjectConfig getProject(final Config config) {
-    ProjectConfig project = null;
-    if (config instanceof ProjectConfig) {
-      project = (ProjectConfig) config;
-    } else if(config instanceof AppenderConfig) {
-      project = ((AppenderConfig) config).getProject();
-    } else if(config instanceof CategoryConfig) {
-      project = ((CategoryConfig) config).getProject();
-    } else if(config instanceof ClientConfig) {
-      project = ((ClientConfig) config).getProject();
-    } else if(config instanceof ParamConfig) {
-      project = ((ParamConfig) config).getAppender().getProject();
-    }
-    return project;
-  }
- 
 }

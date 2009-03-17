@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+  <bean id="aclProjectEditVoter"
+    class="org.springframework.security.vote.AclEntryVoter">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg value="ACL_PROJECT_EDIT"/>
+    <constructor-arg>
+      <list>
+        <util:constant static-field="org.springframework.security.acls.domain.BasePermission.WRITE"/>
+      </list>
+    </constructor-arg>
+    <property name="processDomainObjectClass" value="edu.vt.middleware.gator.Config"/>
+  </bean>
+  
+  <bean id="aclProjectDeleteVoter"
+    class="org.springframework.security.vote.AclEntryVoter">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg value="ACL_PROJECT_DELETE"/>
+    <constructor-arg>
+      <list>
+        <util:constant static-field="org.springframework.security.acls.domain.BasePermission.DELETE"/>
+      </list>
+    </constructor-arg>
+    <property name="processDomainObjectClass" value="edu.vt.middleware.gator.ProjectConfig"/>
+  </bean>
+  
+  <bean id="projectAccessDecisionManager"
+    class="org.springframework.security.vote.AffirmativeBased">
+    <property name="allowIfAllAbstainDecisions" value="false"/>
+    <property name="decisionVoters">
+      <list>
+        <ref local="aclProjectEditVoter"/>
+        <ref local="aclProjectDeleteVoter"/>
+      </list>
+    </property>
+  </bean>
+  
+  <!-- Processes AFTER_ACL_COLLECTION_READ configuration settings -->
+  <bean id="afterAclCollectionRead"
+    class="org.springframework.security.afterinvocation.AclEntryAfterInvocationCollectionFilteringProvider">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg>
+      <list>
+        <util:constant static-field="org.springframework.security.acls.domain.BasePermission.READ"/>
+      </list>
+    </constructor-arg>
+    <property name="processDomainObjectClass" value="edu.vt.middleware.gator.ProjectConfig"/>
+  </bean>
+
+  <!-- Processes AFTER_ACL_READ configuration settings -->
+  <bean id="afterAclRead"
+    class="org.springframework.security.afterinvocation.AclEntryAfterInvocationProvider">
+    <constructor-arg ref="aclService"/>
+    <constructor-arg>
+      <list>
+        <util:constant static-field="org.springframework.security.acls.domain.BasePermission.READ"/>
+      </list>
+    </constructor-arg>
+    <property name="processDomainObjectClass" value="edu.vt.middleware.gator.ProjectConfig"/>
+  </bean>
+  
+  <bean id="afterInvocationManager"
+    class="org.springframework.security.afterinvocation.AfterInvocationProviderManager">
+    <property name="providers">
+      <list>
+        <ref local="afterAclRead"/>
+        <ref local="afterAclCollectionRead"/>
+      </list>
+    </property>
+  </bean>
+
+</beans>

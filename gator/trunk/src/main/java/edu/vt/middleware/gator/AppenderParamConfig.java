@@ -37,6 +37,9 @@ import javax.persistence.Transient;
   allocationSize = 1)
 public class AppenderParamConfig extends ParamConfig
 {
+  /** AppenderParamConfig.java */
+  private static final long serialVersionUID = -8172667809022516866L;
+
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 16384;
 

@@ -16,14 +16,6 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
       access="ROLE_ADMIN"
       requires-channel="https" />
     <sec:intercept-url
-      pattern="/secure/**/*edit.html"
-      access="ROLE_ADMIN"
-      requires-channel="https" />
-    <sec:intercept-url
-      pattern="/secure/**/*delete.html"
-      access="ROLE_ADMIN"
-      requires-channel="https" />
-    <sec:intercept-url
       pattern="/secure/**"
       access="ROLE_USER"
       requires-channel="https"/>
@@ -41,6 +33,10 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
       max-sessions="1"
       exception-if-maximum-exceeded="true"/>
   </sec:http>
+  
+  <sec:global-method-security
+    secured-annotations="enabled"
+    access-decision-manager-ref="projectAccessDecisionManager" />
 
   <sec:authentication-manager alias="authenticationManager" />
 

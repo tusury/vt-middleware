@@ -28,6 +28,9 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class ParamConfig extends Config
 {
+  /** ParamConfig.java */
+  private static final long serialVersionUID = -4157155815415246168L;
+
   private AppenderConfig appender;
 
   private String value;
