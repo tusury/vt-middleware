@@ -14,6 +14,7 @@
 package edu.vt.middleware.gator.web;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -151,6 +152,8 @@ public class AppenderEditFormController extends BaseFormController
       }
       configManager.save(appender);
     }
+    project.setModifiedDate(Calendar.getInstance());
+    configManager.save(project);
 
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));

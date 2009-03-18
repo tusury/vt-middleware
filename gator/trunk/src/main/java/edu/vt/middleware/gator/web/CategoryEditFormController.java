@@ -13,6 +13,7 @@
  */
 package edu.vt.middleware.gator.web;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,6 +90,8 @@ public class CategoryEditFormController extends BaseFormController
       project.addCategory(category);
     }
     configManager.save(category);
+    project.setModifiedDate(Calendar.getInstance());
+    configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));
   }

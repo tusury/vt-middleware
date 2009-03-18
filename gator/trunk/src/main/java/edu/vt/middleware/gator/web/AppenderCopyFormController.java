@@ -13,6 +13,7 @@
 */
 package edu.vt.middleware.gator.web;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +90,9 @@ public class AppenderCopyFormController extends BaseFormController
     final AppenderConfig newAppender = ControllerHelper.cloneAppender(source);
     newAppender.setName(spec.getNewName());
     project.addAppender(newAppender);
+    project.setModifiedDate(Calendar.getInstance());
     configManager.save(newAppender);
+    configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));
   }
