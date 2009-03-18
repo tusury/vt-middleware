@@ -15,6 +15,8 @@ package edu.vt.middleware.gator;
 
 import java.util.List;
 
+import org.springframework.security.annotation.Secured;
+
 /**
  * Manages the lifecycle (CRUD) operations on config objects.
  *
@@ -46,6 +48,7 @@ public interface ConfigManager
    * @param id ID of object to load.
    * @return Config object or null if none exists for given type/ID.
    */
+  @Secured("ACL_PROJECT_READ")
   <T extends Config> T find(Class<T> type, int id);
 
   /**
@@ -54,6 +57,7 @@ public interface ConfigManager
    * @param name Project name.
    * @return Project configuration object or null if none exists for given name.
    */
+  @Secured("ACL_PROJECT_READ")
   ProjectConfig findProject(String name);
 
   /**
@@ -82,11 +86,13 @@ public interface ConfigManager
    * Saves changes to the given object or creates it if it does not exist.
    * @param config Object to save.
    */
+  @Secured("ACL_PROJECT_EDIT")
   void save(Config config);
   
   /**
    * Deletes the given configuration object(s) from persistent storage.
    * @param objects One or more configuration objects.
    */
+  @Secured("ACL_PROJECT_DELETE")
   void delete(Config ... objects);
 }
