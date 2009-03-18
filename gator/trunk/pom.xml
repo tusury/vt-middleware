@@ -286,6 +286,12 @@
         </includes>
       </testResource>
       <testResource>
+        <directory>src/main/webapp</directory>
+        <includes>
+          <include>WEB-INF/**/*.xml</include>
+        </includes>
+      </testResource>
+      <testResource>
         <directory>src/test/resources</directory>
         <includes>
           <include>**/*</include>
@@ -296,6 +302,13 @@
         <includes>
           <include>*.properties</include>
         </includes>
+      </testResource>
+      <testResource>
+        <directory>${basedir}</directory>
+        <includes>
+          <include>securityContext.xml</include>
+        </includes>
+        <targetPath>WEB-INF</targetPath>
       </testResource>
     </testResources>
   </build>
