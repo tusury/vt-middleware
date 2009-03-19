@@ -2,7 +2,7 @@
 
 <h1>Login</h1>
 
-<form method="post" action="<c:url value="j_spring_security_check" />">
+<form method="post" action="<c:url value="/secure/login_validate" />">
   <c:if test="${param.error == 403}">
     <div id="error">Authentication failed.</div>
   </c:if>
