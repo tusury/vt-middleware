@@ -48,7 +48,6 @@ public interface ConfigManager
    * @param id ID of object to load.
    * @return Config object or null if none exists for given type/ID.
    */
-  @Secured("ACL_PROJECT_READ")
   <T extends Config> T find(Class<T> type, int id);
 
   /**
@@ -57,7 +56,6 @@ public interface ConfigManager
    * @param name Project name.
    * @return Project configuration object or null if none exists for given name.
    */
-  @Secured("ACL_PROJECT_READ")
   ProjectConfig findProject(String name);
 
   /**

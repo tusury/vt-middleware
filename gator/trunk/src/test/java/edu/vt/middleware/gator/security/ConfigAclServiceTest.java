@@ -97,10 +97,15 @@ public class ConfigAclServiceTest
   @Test
   public void testReadAclByIdObjectIdentity()
   {
-    final ObjectIdentity oid = new ObjectIdentityImpl(
+    final ObjectIdentity projectOid = new ObjectIdentityImpl(
       ProjectConfig.class, testProject);
     Assert.assertEquals(
       ProjectAcl.ALL_PERMISSIONS.length + 1,
-      aclService.readAclById(oid).getEntries().length);
+      aclService.readAclById(projectOid).getEntries().length);
+    final ObjectIdentity appenderOid = new ObjectIdentityImpl(
+      ProjectConfig.class, testProject.getAppender("FILE"));
+    Assert.assertEquals(
+      ProjectAcl.ALL_PERMISSIONS.length + 1,
+      aclService.readAclById(appenderOid).getEntries().length);
   }
 }
