@@ -96,7 +96,14 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
       "SELECT t FROM %s t",
       type.getSimpleName());
     logger.debug("Executing query " + queryString);
-    return em.createQuery(queryString).getResultList();
+    final List<T> results = em.createQuery(queryString).getResultList();
+    if (type.equals(ProjectConfig.class)) {
+      for (T result : results) {
+        // Touch project permissions to force lazy load
+        getProject(result).getPermissions().size();
+      }
+    }
+    return results;
   }
 
 
@@ -109,7 +116,12 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     final EntityManager em = getEntityManager();
     logger.debug(
       String.format("Querying for %s ID=%s", type.getSimpleName(), id));
-    return em.find(type, id);
+    final T result = em.find(type, id);
+    if (result != null) {
+      // Touch project permissions to force lazy load
+      getProject(result).getPermissions().size();
+    }
+    return result;
   }
 
 
@@ -127,7 +139,12 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     logger.debug("Executing query " + queryString);
     logger.debug("Query params: name=" + name);
     try {
-      return (ProjectConfig) query.getSingleResult();
+      final ProjectConfig project = (ProjectConfig) query.getSingleResult();
+      if (project != null) {
+	      // Touch permissions to force lazy load
+	      project.getPermissions().size();
+      }
+      return project;
     } catch (NoResultException e) {
       return null;
     }
@@ -166,6 +183,8 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
       project = ((ClientConfig) config).getProject();
     } else if(config instanceof ParamConfig) {
       project = ((ParamConfig) config).getAppender().getProject();
+    } else if(config instanceof PermissionConfig) {
+      project = ((PermissionConfig) config).getProject();
     }
     return project;
   }
