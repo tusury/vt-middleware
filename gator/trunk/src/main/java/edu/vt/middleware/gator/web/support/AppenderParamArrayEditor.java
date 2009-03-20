@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package edu.vt.middleware.gator.support;
+package edu.vt.middleware.gator.web.support;
 
 import edu.vt.middleware.gator.AppenderParamConfig;
 import edu.vt.middleware.gator.ParamConfig;

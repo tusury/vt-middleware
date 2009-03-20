@@ -11,13 +11,13 @@
   Version: $Revision$
   Updated: $Date$
 */
-package edu.vt.middleware.gator.web;
+package edu.vt.middleware.gator.web.support;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import edu.vt.middleware.gator.web.RequestParamExtractor;
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Unit test for {@link RequestParamExtractor} class.

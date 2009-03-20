@@ -11,14 +11,14 @@
   Version: $Revision$
   Updated: $Date$
  */
-package edu.vt.middleware.gator.support;
+package edu.vt.middleware.gator.web.support;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.vt.middleware.gator.AppenderParamConfig;
-import edu.vt.middleware.gator.support.AppenderParamArrayEditor;
+import edu.vt.middleware.gator.web.support.AppenderParamArrayEditor;
 
 /**
  * Unit test for {@link AppenderParamArrayEditor} class.

@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package edu.vt.middleware.gator.web;
+package edu.vt.middleware.gator.web.support;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -25,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.ProjectConfig;
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Handles copying an existing appender to a new one with a different name.

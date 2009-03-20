@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.ProjectConfig;
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Handle deletion of client configuration elements.

@@ -24,6 +24,7 @@ import edu.vt.middleware.gator.ParamConfig;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.log4j.SocketServer;
 import edu.vt.middleware.gator.util.FileHelper;
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 import org.springframework.web.servlet.ModelAndView;
 

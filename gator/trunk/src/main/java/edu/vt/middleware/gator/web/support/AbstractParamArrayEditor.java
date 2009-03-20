@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
  */
-package edu.vt.middleware.gator.support;
+package edu.vt.middleware.gator.web.support;
 
 import java.beans.PropertyEditorSupport;
 import java.util.ArrayList;

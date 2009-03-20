@@ -39,6 +39,7 @@ import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.log4j.LoggingEventCollector;
 import edu.vt.middleware.gator.log4j.LoggingEventHandler;
 import edu.vt.middleware.gator.log4j.SocketServer;
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Controller for watching collected logging events in real time.
