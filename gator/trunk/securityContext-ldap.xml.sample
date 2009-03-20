@@ -4,45 +4,71 @@
   xsi:schemaLocation="
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
-              
+
+
+  <!--
+  TODO: Change ROLE_USER below to a role in your organization
+  Other changes should only be made by those wishing to modify/extend core
+  functionality.  A solid understanding of Spring Security is required.
+  -->
+  <global-method-security
+    secured-annotations="enabled"
+    access-decision-manager-ref="projectAccessDecisionManager">
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.findAll(..))"
+      access="AFTER_ACL_COLLECTION_READ,ROLE_USER"/>
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.save(..))"
+      access="ACL_PROJECT_EDIT"/>
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.delete(..))"
+      access="ACL_PROJECT_DELETE"/>
+  </global-method-security>
+
+
+  <!--
+  TODO: Change ROLE_USER and ROLE_ADMIN below to roles in your organization
+  ROLE_ADMIN - Can create new projects
+  ROLE_USER - Required for all people who can view or modify project config data
+  -->
   <http>
     <intercept-url
-      pattern="/secure/**/*add.html"
+      pattern="/secure/project/add.html"
       access="ROLE_ADMIN"
       requires-channel="https" />
     <intercept-url
-      pattern="/secure/**/*copy.html"
+      pattern="/secure/project/copy.html"
       access="ROLE_ADMIN"
+      requires-channel="https" />
+    <intercept-url
+      pattern="/secure/login*"
+      access="IS_AUTHENTICATED_ANONYMOUSLY"
       requires-channel="https" />
     <intercept-url
       pattern="/secure/**"
       access="ROLE_USER"
       requires-channel="https"/>
-    <intercept-url
-      pattern="/login.jsp"
-      access="IS_AUTHENTICATED_ANONYMOUSLY"
-      requires-channel="https"/>
-    <intercept-url
-      pattern="/**"
-      access="IS_AUTHENTICATED_ANONYMOUSLY" />
 
     <form-login
-      login-page="/login.jsp"
-      authentication-failure-url="/login.jsp?error=403"/>
-    
+      login-page="/secure/login.jsp"
+      login-processing-url="/secure/login_validate"
+      authentication-failure-url="/secure/login.jsp?error=403"/>
+      
     <anonymous />
-
+    
     <concurrent-session-control
       max-sessions="1"
       exception-if-maximum-exceeded="true" />
   </http>
-    
-  <global-method-security
-    secured-annotations="enabled"
-    access-decision-manager-ref="projectAccessDecisionManager" />
 
+  <!--
+  TODO: Configure LDAP host for your environment.
+  -->
   <ldap-server url="ldaps://directory.example.com" />
   
+  <!--
+  TODO: Configure LDAP DNs/filters for your environment.
+  -->
   <ldap-authentication-provider
     user-search-filter="uid={0}"
     user-search-base="ou=people,dc=example,dc=com"
