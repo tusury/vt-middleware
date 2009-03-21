@@ -96,14 +96,7 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
       "SELECT t FROM %s t",
       type.getSimpleName());
     logger.debug("Executing query " + queryString);
-    final List<T> results = em.createQuery(queryString).getResultList();
-    if (type.equals(ProjectConfig.class)) {
-      for (T result : results) {
-        // Touch project permissions to force lazy load
-        getProject(result).getPermissions().size();
-      }
-    }
-    return results;
+    return em.createQuery(queryString).getResultList();
   }
 
 
@@ -116,12 +109,7 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     final EntityManager em = getEntityManager();
     logger.debug(
       String.format("Querying for %s ID=%s", type.getSimpleName(), id));
-    final T result = em.find(type, id);
-    if (result != null) {
-      // Touch project permissions to force lazy load
-      getProject(result).getPermissions().size();
-    }
-    return result;
+    return em.find(type, id);
   }
 
 
@@ -139,12 +127,7 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     logger.debug("Executing query " + queryString);
     logger.debug("Query params: name=" + name);
     try {
-      final ProjectConfig project = (ProjectConfig) query.getSingleResult();
-      if (project != null) {
-	      // Touch permissions to force lazy load
-	      project.getPermissions().size();
-      }
-      return project;
+      return (ProjectConfig) query.getSingleResult();
     } catch (NoResultException e) {
       return null;
     }
@@ -167,26 +150,6 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     logger.debug("Executing query " + queryString);
     logger.debug("Query params: name=" + name);
     return query.getResultList();
-  }
-
-
-  /** {@inheritDoc} */
-  public ProjectConfig getProject(final Config config) {
-    ProjectConfig project = null;
-    if (config instanceof ProjectConfig) {
-      project = (ProjectConfig) config;
-    } else if(config instanceof AppenderConfig) {
-      project = ((AppenderConfig) config).getProject();
-    } else if(config instanceof CategoryConfig) {
-      project = ((CategoryConfig) config).getProject();
-    } else if(config instanceof ClientConfig) {
-      project = ((ClientConfig) config).getProject();
-    } else if(config instanceof ParamConfig) {
-      project = ((ParamConfig) config).getAppender().getProject();
-    } else if(config instanceof PermissionConfig) {
-      project = ((PermissionConfig) config).getProject();
-    }
-    return project;
   }
 
 

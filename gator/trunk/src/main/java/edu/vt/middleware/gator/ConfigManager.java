@@ -64,14 +64,6 @@ public interface ConfigManager
    * @return List of projects that contain the given client name.
    */
   List<ProjectConfig> findProjectsByClientName(String name);
-  
-  /**
-   * Gets the project to which the configuration object belongs.
-   * @param config Configuration object.
-   * @return Project configuration containing given configuration item or
-   * null if no project is found. 
-   */
-  ProjectConfig getProject(Config config);
 
   /**
    * Determines whether a config object exists in persistent storage.
