@@ -116,6 +116,11 @@
       <artifactId>aspectjtools</artifactId>
       <version>1.6.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+      <version>3.4.0.GA</version>
+    </dependency>
     
   	<dependency>
   		<groupId>aopalliance</groupId>
@@ -248,7 +253,6 @@
                     <file>${basedir}/runtime.properties</file>
                     <file>${basedir}/log4j.properties</file>
                     <file>${basedir}/securityContext.xml</file>
-                    <file>${basedir}/web.xml</file>
                   </files>
                 </requireFilesExist>
               </rules>
@@ -262,7 +266,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.0.2</version>
         <configuration>
-          <webXml>${basedir}/web.xml</webXml>
           <webResources>
             <resource>
               <directory>${basedir}</directory>
@@ -293,7 +296,9 @@
       <testResource>
         <directory>src/main/webapp</directory>
         <includes>
-          <include>WEB-INF/**/*.xml</include>
+          <include>WEB-INF/applicationContext*.xml</include>
+          <include>WEB-INF/gator-servlet.xml</include>
+          <include>WEB-INF/messages.properties</include>
         </includes>
       </testResource>
       <testResource>
