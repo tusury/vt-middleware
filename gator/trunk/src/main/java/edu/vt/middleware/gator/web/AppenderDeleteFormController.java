@@ -77,7 +77,6 @@ public class AppenderDeleteFormController extends BaseFormController
     for (CategoryConfig cat : project.getCategories()) {
       cat.getAppenders().remove(appender);
     }
-    configManager.delete(appender);
     project.setModifiedDate(Calendar.getInstance());
     configManager.save(project);
     return new ModelAndView(

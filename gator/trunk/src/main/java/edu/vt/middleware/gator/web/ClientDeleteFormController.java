@@ -74,7 +74,6 @@ public class ClientDeleteFormController extends BaseFormController
       spec.getId());
     final ProjectConfig project = client.getProject();
     project.removeClient(client);
-    configManager.delete(client);
     project.setModifiedDate(Calendar.getInstance());
     configManager.save(project);
     return new ModelAndView(

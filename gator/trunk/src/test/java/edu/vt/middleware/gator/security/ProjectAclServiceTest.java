@@ -35,7 +35,7 @@ import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.UnitTestHelper;
 
 /**
- * Unit test for {@link ConfigAclService} class.
+ * Unit test for {@link ProjectAclService} class.
  *
  * @author Middleware
  * @version $Revision$
@@ -45,7 +45,7 @@ import edu.vt.middleware.gator.UnitTestHelper;
 @ContextConfiguration(locations={"/test-applicationContext.xml"})
 @TransactionConfiguration(transactionManager="txManager", defaultRollback=false)
 @Transactional
-public class ConfigAclServiceTest
+public class ProjectAclServiceTest
 {
   /** Test project configuration */
   private ProjectConfig testProject;
@@ -60,7 +60,7 @@ public class ConfigAclServiceTest
 
   /** ACL service */
   @Autowired
-  private ConfigAclService aclService;
+  private ProjectAclService aclService;
 
 
   /**
@@ -81,7 +81,7 @@ public class ConfigAclServiceTest
   }
 
   /**
-   * Test method for {@link ConfigAclService#findChildren(ObjectIdentity)}.
+   * Test method for {@link ProjectAclService#findChildren(ObjectIdentity)}.
    */
   @Test
   public void testFindChildren()
@@ -92,20 +92,15 @@ public class ConfigAclServiceTest
   }
 
   /**
-   * Test method for {@link ConfigAclService#readAclById(ObjectIdentity)}.
+   * Test method for {@link ProjectAclService#readAclById(ObjectIdentity)}.
    */
   @Test
   public void testReadAclByIdObjectIdentity()
   {
-    final ObjectIdentity projectOid = new ObjectIdentityImpl(
+    final ObjectIdentity oid = new ObjectIdentityImpl(
       ProjectConfig.class, testProject);
     Assert.assertEquals(
       ProjectAcl.ALL_PERMISSIONS.length + 1,
-      aclService.readAclById(projectOid).getEntries().length);
-    final ObjectIdentity appenderOid = new ObjectIdentityImpl(
-      ProjectConfig.class, testProject.getAppender("FILE"));
-    Assert.assertEquals(
-      ProjectAcl.ALL_PERMISSIONS.length + 1,
-      aclService.readAclById(appenderOid).getEntries().length);
+      aclService.readAclById(oid).getEntries().length);
   }
 }

@@ -17,28 +17,27 @@ import org.springframework.security.acls.objectidentity.ObjectIdentity;
 import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
 import org.springframework.security.acls.objectidentity.ObjectIdentityRetrievalStrategy;
 
-import edu.vt.middleware.gator.Config;
+import edu.vt.middleware.gator.ProjectConfig;
 
 /**
- * Domain object retrieval strategy for configuration objects.  Uses the
- * object itself as the identifier.
+ * Domain object retrieval strategy for project configurations.
  *
  * @author Middleware
  * @version $Revision$
  *
  */
-public class ConfigRetrievalStrategy implements ObjectIdentityRetrievalStrategy
+public class ProjectRetrievalStrategy implements ObjectIdentityRetrievalStrategy
 {
   /** {@inheritDoc} */
   public ObjectIdentity getObjectIdentity(final Object domainObject)
   {
-    if (!(domainObject instanceof Config)) {
+    if (!(domainObject instanceof ProjectConfig)) {
       throw new IllegalArgumentException(
-        "Domain object must be instance of Config.");
+        "Domain object must be instance of ProjectConfig.");
     }
     return new ObjectIdentityImpl(
       domainObject.getClass(),
-      (Config) domainObject);
+      (ProjectConfig) domainObject);
   }
 
 }

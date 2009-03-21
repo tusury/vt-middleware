@@ -81,16 +81,16 @@ public interface ConfigManager
   boolean exists(Config config);
 
   /**
-   * Saves changes to the given object or creates it if it does not exist.
-   * @param config Object to save.
+   * Saves changes to the given project or creates it if not exists.
+   * @param project Project to save.
    */
   @Secured("ACL_PROJECT_EDIT")
-  void save(Config config);
+  void save(ProjectConfig project);
   
   /**
-   * Deletes the given configuration object(s) from persistent storage.
-   * @param objects One or more configuration objects.
+   * Deletes the given project.
+   * @param project To be deleted.
    */
   @Secured("ACL_PROJECT_DELETE")
-  void delete(Config ... objects);
+  void delete(ProjectConfig project);
 }

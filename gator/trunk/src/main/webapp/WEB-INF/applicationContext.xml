@@ -92,7 +92,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   />
 
   <bean id="aclService"
-    class="edu.vt.middleware.gator.security.ConfigAclService"
-    p:configManager-ref="configManager"
+    class="edu.vt.middleware.gator.security.ProjectAclService"
   />
 </beans>

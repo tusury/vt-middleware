@@ -202,37 +202,32 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
 
   /** {@inheritDoc} */
   @Transactional(propagation = Propagation.REQUIRED)
-  public void save(final Config config)
+  public void save(final ProjectConfig project)
   {
     final EntityManager em = getEntityManager();
-    logger.debug("Saving " + config);
-    if (config.getId() == 0) {
-      em.persist(config);
+    logger.debug("Saving " + project);
+    ProjectConfig liveProject;
+    if (project.getId() == 0) {
+      em.persist(project);
+      liveProject = find(ProjectConfig.class, project.getId());
     } else {
-      em.merge(config);
+      liveProject = em.merge(project);
     }
-    final ProjectConfig project = find(
-      ProjectConfig.class,
-      getProject(config).getId());
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
-      listener.projectChanged(this, project);
+      listener.projectChanged(this, liveProject);
     }
   }
 
 
   /** {@inheritDoc} */
   @Transactional(propagation = Propagation.REQUIRED)
-  public void delete(final Config ... objects)
+  public void delete(final ProjectConfig project)
   {
     final EntityManager em = getEntityManager();
-    for (Config o : objects) {
-	    logger.debug("Deleting " + o);
-	    em.remove(o);
-	    if (o instanceof ProjectConfig) {
-	      for (ConfigChangeListener listener : getConfigChangeListeners()) {
-	        listener.projectRemoved(this, (ProjectConfig) o);
-	      }
-	    }
+    logger.debug("Deleting " + project);
+    em.remove(project);
+    for (ConfigChangeListener listener : getConfigChangeListeners()) {
+      listener.projectRemoved(this, project);
     }
   }
   

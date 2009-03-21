@@ -43,6 +43,9 @@ public class CategoryBulkEditFormController extends BaseFormController
   {
     final ProjectConfig project = configManager.findProject(
       RequestParamExtractor.getProjectName(request));
+    // Touch categories and appenders to force lazy load
+    project.getCategories().size();
+    project.getAppenders().size();
     if (project == null) {
       throw new IllegalArgumentException("Project not found.");
     }
@@ -74,26 +77,23 @@ public class CategoryBulkEditFormController extends BaseFormController
   {
     final BulkCategoryEditFormData formData =
       (BulkCategoryEditFormData) command;
+    final ProjectConfig project = formData.getProject();
     for (int categoryId : formData.getCategoryIds()) {
-      final CategoryConfig category = configManager.find(
-        CategoryConfig.class,
-        categoryId);
+      final CategoryConfig category = project.getCategory(categoryId);
       if (category != null) {
         category.setLevel(formData.getLevel());
         if (formData.isClearExistingAppenders()) {
           category.getAppenders().clear();
         }
         for (int appenderId : formData.getAppenderIds()) {
-          final AppenderConfig appender = configManager.find(
-              AppenderConfig.class,
-              appenderId);
+          final AppenderConfig appender = project.getAppender(appenderId);
           if (appender != null) {
             category.getAppenders().add(appender);
           }
         }
-        configManager.save(category);
       }
     }
+    configManager.save(project);
     return new ModelAndView(
       ControllerHelper.filterViewName(getSuccessView(), formData.getProject()));
   }

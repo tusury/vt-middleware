@@ -24,6 +24,7 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +32,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
 
 /**
  * Project is the top-level class in the configuration hierarchy.
@@ -128,6 +131,7 @@ public class ProjectConfig extends Config
   @OneToMany(
     mappedBy = "project",
     cascade = CascadeType.ALL)
+  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   protected Set<ClientConfig> getClientsInternal()
   {
     if (clients == null) {
@@ -227,6 +231,7 @@ public class ProjectConfig extends Config
   @OneToMany(
     mappedBy = "project",
     cascade = CascadeType.ALL)
+  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   protected Set<AppenderConfig> getAppendersInternal()
   {
     if (appenders == null) {
@@ -323,7 +328,8 @@ public class ProjectConfig extends Config
    */
   @OneToMany(
     mappedBy = "project",
-    cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE})
+    cascade = CascadeType.ALL)
+  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   protected Set<CategoryConfig> getCategoriesInternal()
   {
     if (categories == null) {
@@ -420,7 +426,9 @@ public class ProjectConfig extends Config
    */
   @OneToMany(
     mappedBy = "project",
-    cascade = CascadeType.ALL)
+    cascade = CascadeType.ALL,
+    fetch = FetchType.EAGER)
+  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   private Set<PermissionConfig> getPermissionsInternal()
   {
     if (permissions == null) {

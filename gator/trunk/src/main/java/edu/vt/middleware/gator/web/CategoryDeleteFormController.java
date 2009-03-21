@@ -75,7 +75,6 @@ public class CategoryDeleteFormController extends BaseFormController
     final ProjectConfig project = category.getProject();
     project.removeCategory(category);
     project.setModifiedDate(Calendar.getInstance());
-    configManager.delete(category);
     configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));

@@ -12,7 +12,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
   <bean id="configRetrievalStrategy"
-    class="edu.vt.middleware.gator.security.ConfigRetrievalStrategy" />
+    class="edu.vt.middleware.gator.security.ProjectRetrievalStrategy" />
 
   <bean id="aclProjectEditVoter"
     class="org.springframework.security.vote.AclEntryVoter">
@@ -23,7 +23,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <util:constant static-field="org.springframework.security.acls.domain.BasePermission.WRITE"/>
       </list>
     </constructor-arg>
-    <property name="processDomainObjectClass" value="edu.vt.middleware.gator.Config"/>
+    <property name="processDomainObjectClass" value="edu.vt.middleware.gator.ProjectConfig"/>
     <property name="objectIdentityRetrievalStrategy" ref="configRetrievalStrategy" />
   </bean>
   

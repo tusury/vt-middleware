@@ -16,16 +16,12 @@ package edu.vt.middleware.gator.security;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.acls.Acl;
 import org.springframework.security.acls.AclService;
 import org.springframework.security.acls.NotFoundException;
 import org.springframework.security.acls.objectidentity.ObjectIdentity;
 import org.springframework.security.acls.sid.Sid;
-import org.springframework.util.Assert;
 
-import edu.vt.middleware.gator.Config;
-import edu.vt.middleware.gator.ConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
 
 /**
@@ -39,26 +35,8 @@ import edu.vt.middleware.gator.ProjectConfig;
  * @version $Revision: $
  *
  */
-public class ConfigAclService implements AclService, InitializingBean
+public class ProjectAclService implements AclService
 {
-  /** Configuration manager */
-  private ConfigManager configManager;
-  
-
-  /**
-   * @param configManager the configManager to set
-   */
-  public void setConfigManager(final ConfigManager configManager)
-  {
-    this.configManager = configManager;
-  }
-
-  /** {@inheritDoc} */
-  public void afterPropertiesSet() throws Exception
-  {
-    Assert.notNull(configManager, "configManger cannot be null.");
-  }
-
   /**
    * ACL inheritance is not supported.
    * @param parentIdentity Parent object.
@@ -73,14 +51,11 @@ public class ConfigAclService implements AclService, InitializingBean
   public Acl readAclById(final ObjectIdentity object) throws NotFoundException
   {
     final Object id = object.getIdentifier();
-    if (id instanceof Config) {
-      final ProjectConfig project = configManager.getProject((Config) id);
-      if (project == null) {
-        throw new NotFoundException("Could not find project for " + id);
-      }
-      return new ProjectAcl(project);
+    if (id instanceof ProjectConfig) {
+      return new ProjectAcl((ProjectConfig) id);
     } else {
-      throw new NotFoundException("Invalid object identity " + object);
+      throw new NotFoundException(
+        String.format("Invalid object identity '%s'", id));
     }
   }
 

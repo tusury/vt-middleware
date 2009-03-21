@@ -90,7 +90,6 @@ public class CategoryEditFormController extends BaseFormController
     if (!configManager.exists(category)) {
       project.addCategory(category);
     }
-    configManager.save(category);
     project.setModifiedDate(Calendar.getInstance());
     configManager.save(project);
     return new ModelAndView(

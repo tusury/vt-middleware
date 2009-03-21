@@ -20,6 +20,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -66,6 +68,7 @@ public class AppenderCopyFormController extends BaseFormController
 
   /** {@inheritDoc} */
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   protected ModelAndView onSubmit(
       final HttpServletRequest request,
       final HttpServletResponse response,
@@ -92,7 +95,6 @@ public class AppenderCopyFormController extends BaseFormController
     newAppender.setName(spec.getNewName());
     project.addAppender(newAppender);
     project.setModifiedDate(Calendar.getInstance());
-    configManager.save(newAppender);
     configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));

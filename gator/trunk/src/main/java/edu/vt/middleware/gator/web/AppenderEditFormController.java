@@ -101,9 +101,7 @@ public class AppenderEditFormController extends BaseFormController
 
   /** {@inheritDoc} */
   @Override
-  @Transactional(
-    readOnly = true,
-    propagation = Propagation.REQUIRED)
+  @Transactional(propagation = Propagation.REQUIRED)
   public ModelAndView onSubmit(
       final HttpServletRequest request,
       final HttpServletResponse response,
@@ -112,12 +110,10 @@ public class AppenderEditFormController extends BaseFormController
   {
     final AppenderWrapper wrapper = (AppenderWrapper) command;
     final AppenderConfig appender = wrapper.getAppender();
-    final AppenderConfig appenderFromDb = configManager.find(
-      AppenderConfig.class,
-      appender.getId());
+    final boolean isNew = !configManager.exists(appender);
     final ProjectConfig project = appender.getProject();
     // Ensure appender name is unique within project
-    if (appenderFromDb == null || nameChanged(appender)) {
+    if (isNew || nameChanged(appender)) {
       for (AppenderConfig a : project.getAppenders()) {
         if (a.getName().equals(appender.getName())) {
           errors.rejectValue(
@@ -133,26 +129,11 @@ public class AppenderEditFormController extends BaseFormController
         }
       }
     }
-    if (appenderFromDb != null) {
-      appenderFromDb.setAppenderClassName(appender.getAppenderClassName());
-      appenderFromDb.setErrorHandlerClassName(
-        appender.getErrorHandlerClassName());
-      appenderFromDb.setLayoutClassName(appender.getLayoutClassName());
-      appenderFromDb.setName(appender.getName());
-      mergeAppenderParams(appenderFromDb, wrapper.getAppenderParams());
-      mergeLayoutParams(appenderFromDb, wrapper.getLayoutParams());
-      configManager.save(appenderFromDb);
-    } else {
-      // New appender
+    if (isNew) {
       project.addAppender(appender);
-      for (AppenderParamConfig p : wrapper.getAppenderParams()) {
-        appender.addAppenderParam(p);
-      }
-      for (LayoutParamConfig p : wrapper.getLayoutParams()) {
-        appender.addLayoutParam(p);
-      }
-      configManager.save(appender);
     }
+    mergeAppenderParams(appender, wrapper.getAppenderParams());
+    mergeLayoutParams(appender, wrapper.getLayoutParams());
     project.setModifiedDate(Calendar.getInstance());
     configManager.save(project);
 
@@ -174,10 +155,7 @@ public class AppenderEditFormController extends BaseFormController
     tbd.addAll(appender.getAppenderParams());
     tbd.removeAll(Arrays.asList(appenderParams));
     for (AppenderParamConfig p : tbd) {
-      final AppenderParamConfig managedParam =
-        appender.getAppenderParam(p.getName());
-      appender.removeAppenderParam(managedParam);
-      configManager.delete(managedParam);
+      appender.removeAppenderParam( appender.getAppenderParam(p.getName()));
     }
     for (AppenderParamConfig p : appenderParams) {
       final AppenderParamConfig param = appender.getAppenderParam(p.getName());
@@ -203,10 +181,7 @@ public class AppenderEditFormController extends BaseFormController
     tbd.addAll(appender.getLayoutParams());
     tbd.removeAll(Arrays.asList(layoutParams));
     for (LayoutParamConfig p : tbd) {
-      final LayoutParamConfig managedParam =
-        appender.getLayoutParam(p.getName());
-      appender.removeLayoutParam(managedParam);
-      configManager.delete(managedParam);
+      appender.removeLayoutParam(appender.getLayoutParam(p.getName()));
     }
     for (LayoutParamConfig p : layoutParams) {
       final LayoutParamConfig param = appender.getLayoutParam(p.getName());

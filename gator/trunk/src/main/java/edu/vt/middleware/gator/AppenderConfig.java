@@ -23,6 +23,7 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -32,6 +33,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
 
 /**
  * Configuration for log4j appenders.
@@ -156,7 +159,9 @@ public class AppenderConfig extends Config
    */
   @OneToMany(
     mappedBy = "appender",
-    cascade = CascadeType.ALL)
+    cascade = CascadeType.ALL,
+    fetch = FetchType.EAGER)
+  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   protected Set<AppenderParamConfig> getAppenderParamsInternal()
   {
     if (appenderParams == null) {
@@ -259,7 +264,9 @@ public class AppenderConfig extends Config
    */
   @OneToMany(
     mappedBy = "appender",
-    cascade = CascadeType.ALL)
+    cascade = CascadeType.ALL,
+    fetch = FetchType.EAGER)
+  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   protected Set<LayoutParamConfig> getLayoutParamsInternal()
   {
     if (layoutParams == null) {
