@@ -1,0 +1,73 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
+
+  <!--
+  TODO: Change ROLE_USER below to a role defined in the
+  authentication-provider element below.
+  Other changes should only be made by those wishing to modify/extend core
+  functionality.  A solid understanding of Spring Security is required.
+  -->
+  <global-method-security
+    secured-annotations="enabled"
+    access-decision-manager-ref="projectAccessDecisionManager">
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.findAll(..))"
+      access="AFTER_ACL_COLLECTION_READ,ROLE_USER"/>
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.save(..))"
+      access="ACL_PROJECT_EDIT"/>
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.delete(..))"
+      access="ACL_PROJECT_DELETE"/>
+  </global-method-security>
+
+
+  <!--
+  TODO: Change ROLE_USER and ROLE_ADMIN below to roles defined in the
+  authentication-provider element below.
+  ROLE_ADMIN - Can create new projects
+  ROLE_USER - Required for all people who can view or modify project config data
+  -->
+  <http>
+    <intercept-url
+      pattern="/secure/project/add.html"
+      access="ROLE_ADMIN"
+      requires-channel="https" />
+    <intercept-url
+      pattern="/secure/project/copy.html"
+      access="ROLE_ADMIN"
+      requires-channel="https" />
+    <intercept-url
+      pattern="/secure/login*"
+      access="IS_AUTHENTICATED_ANONYMOUSLY"
+      requires-channel="https" />
+    <intercept-url
+      pattern="/secure/**"
+      access="ROLE_USER"
+      requires-channel="https"/>
+
+    <form-login
+      login-page="/secure/login.jsp"
+      login-processing-url="/secure/login_validate"
+      authentication-failure-url="/secure/login.jsp?error=403"/>
+      
+    <anonymous />
+    
+    <concurrent-session-control
+      max-sessions="1"
+      exception-if-maximum-exceeded="true" />
+  </http>
+
+  <authentication-provider>
+    <user-service>
+      <user name="admin" password="pass" authorities="ROLE_USER, ROLE_ADMIN" />
+      <user name="user" password="pass" authorities="ROLE_USER" />
+    </user-service>
+  </authentication-provider>
+  
+</beans:beans>
