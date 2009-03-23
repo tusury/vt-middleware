@@ -38,14 +38,11 @@ public class ProjectEditFormController extends BaseFormController
   protected Object formBackingObject(final HttpServletRequest request)
       throws Exception
   {
-    ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
+    final String name = RequestParamExtractor.getProjectName(request);
+    final ProjectConfig project = configManager.findProject(name);
     if (project == null) {
-      project = new ProjectConfig();
-      // Add all permissions to new project for current user principal
-      project.addPermission(
-        ControllerHelper.createAllPermissions(
-          request.getUserPrincipal().getName()));
+      throw new IllegalArgumentException(
+        String.format("Project '%s' not found.", name));
     }
     return project;
   }
@@ -62,9 +59,8 @@ public class ProjectEditFormController extends BaseFormController
       throws Exception
   {
     final ProjectConfig project = (ProjectConfig) command;
-    final boolean isNew = !configManager.exists(project);
-    // Ensure project name is unique
-    if (isNew || nameChanged(project)) {
+    if (nameChanged(project)) {
+      // Ensure project name is unique
       if (configManager.findProject(project.getName()) != null) {
         errors.rejectValue(
           "name",

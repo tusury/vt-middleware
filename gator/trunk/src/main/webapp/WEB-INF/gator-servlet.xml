@@ -60,6 +60,15 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:viewName="projectList"
   />
 
+  <bean id="projectCreateController"
+    class="edu.vt.middleware.gator.web.ProjectCreateFormController"
+    parent="baseFormController"
+    p:commandName="project"
+    p:commandClass="edu.vt.middleware.gator.ProjectConfig"
+    p:formView="projectEdit"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
+  />
+
   <bean id="projectEditController"
     class="edu.vt.middleware.gator.web.ProjectEditFormController"
     parent="baseFormController"
@@ -193,7 +202,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <property name="mappings">
       <props>
         <prop key="/secure/list.html">projectListController</prop>
-        <prop key="/secure/project/add.html">projectEditController</prop>
+        <prop key="/secure/project/add.html">projectCreateController</prop>
         <prop key="/secure/project/copy.html">projectCopyController</prop>
         <prop key="/secure/project/*/edit.html">projectEditController</prop>
         <prop key="/secure/project/*/delete.html">projectDeleteController</prop>
