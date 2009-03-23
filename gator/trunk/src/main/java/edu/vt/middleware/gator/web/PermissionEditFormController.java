@@ -81,11 +81,20 @@ public class PermissionEditFormController extends BaseFormController
   {
     final PermissionConfig perm = (PermissionConfig) command;
     final ProjectConfig project = perm.getProject();
-    if (ControllerHelper.isLastFullPermission(project, perm)) {
-      errors.reject(
-        "error.edit.lastAllPermissions",
-        "Cannot modify last permission entry with full permissions.");
-      return showForm(request, errors, getFormView());
+    if (perm.getId() > 0) {
+      final PermissionConfig permFromDb = configManager.find(
+        PermissionConfig.class,
+        perm.getId());
+      if (permFromDb != null) {
+        final boolean isLastFullPerm = ControllerHelper.isLastFullPermissions(
+            permFromDb.getProject(), permFromDb.getId());
+        if (isLastFullPerm) {
+          errors.reject(
+              "error.edit.lastAllPermissions",
+          "Cannot modify last permission entry with full permissions.");
+          return showForm(request, errors, getFormView());
+        }
+      }
     }
     // Operate on the database version of the project which contains
     // existing permissions.

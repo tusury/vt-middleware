@@ -164,25 +164,25 @@ public class ControllerHelper
    * Determines whether the given permission is the last full permission in
    * the given project.
    * @param project Project to test.
-   * @param perm Permission to test.
+   * @param permissionId ID of permission to check.
    * @return True if given permission is last full permission in the given
    * project.
    */
-  public static boolean isLastFullPermission(
+  public static boolean isLastFullPermissions(
     final ProjectConfig project,
-    final PermissionConfig perm)
+    final int permissionId)
   {
     int count = 0;
-    PermissionConfig fullPerms = null;
-    for (PermissionConfig existingPerm : project.getPermissions()) {
-      if (existingPerm.hasPermission(BasePermission.READ) &&
-          existingPerm.hasPermission(BasePermission.WRITE) &&
-          existingPerm.hasPermission(BasePermission.DELETE))
+    int fullPermissionId = 0;
+    for (PermissionConfig perm : project.getPermissions()) {
+      if (perm.hasPermission(BasePermission.READ) &&
+          perm.hasPermission(BasePermission.WRITE) &&
+          perm.hasPermission(BasePermission.DELETE))
       {
         count++;
-        fullPerms = existingPerm;
+        fullPermissionId = perm.getId();
       }
     }
-    return count <= 1 && fullPerms == perm;
+    return count <= 1 && fullPermissionId == permissionId;
   }
 }

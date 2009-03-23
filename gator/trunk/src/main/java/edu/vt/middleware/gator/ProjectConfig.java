@@ -485,7 +485,7 @@ public class ProjectConfig extends Config
   public PermissionConfig getPermission(final String sid)
   {
     for (PermissionConfig perm : getPermissionsInternal()) {
-      if (perm.getName() == sid) {
+      if (perm.getName().equals(sid)) {
         return perm;
       }
     }

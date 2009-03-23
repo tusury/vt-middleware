@@ -74,7 +74,7 @@ public class PermissionDeleteFormController extends BaseFormController
       PermissionConfig.class,
       spec.getId());
     final ProjectConfig project = perm.getProject();
-    if (ControllerHelper.isLastFullPermission(project, perm)) {
+    if (ControllerHelper.isLastFullPermissions(project, spec.getId())) {
       errors.reject(
         "error.delete.lastAllPermissions",
         "Cannot delete last permission entry with full permissions.");

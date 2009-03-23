@@ -199,7 +199,7 @@
     </span>
   </div>
   <c:choose>
-    <c:when test="${not empty project.clients}">
+    <c:when test="${not empty project.permissions}">
       <table summary="Security permissions table">
         <tr>
           <th>Security ID</th>
@@ -228,7 +228,7 @@
       </table>    
     </c:when>
     <c:otherwise>
-      <p>No allowed clients defined.</p>
+      <p>No security permissions defined.</p>
     </c:otherwise>
   </c:choose>
   </fieldset>
