@@ -21,3 +21,4 @@
 </a>
 </div>
 <div id="content">
+<div id="logout"><a href="<c:url value="/secure/logout" />">Log out</a></div>

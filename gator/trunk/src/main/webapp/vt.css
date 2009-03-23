@@ -150,7 +150,11 @@ div.button_group {
   margin-bottom:12px;
 }
 
-#div.crumbs {
+div#crumbs {
   margin-bottom:5px;
   font-size:0.8em;
+}
+
+div#logout {
+  float:right;
 }
