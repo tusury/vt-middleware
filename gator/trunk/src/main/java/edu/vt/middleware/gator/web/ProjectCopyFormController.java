@@ -69,11 +69,13 @@ public class ProjectCopyFormController extends BaseFormController
     final ProjectConfig source = configManager.find(
       ProjectConfig.class,
       spec.sourceProjectId);
-    if (source.getName().equals(spec.getNewProjectName())) {
+    final ProjectConfig existing = configManager.findProject(
+      spec.getNewProjectName());
+    if (existing != null) {
       errors.rejectValue(
         "newProjectName",
         "error.project.uniqueName",
-        new Object[] {source.getName()},
+        new Object[] {existing.getName()},
         "Project name must be unique.");
       return showForm(request, errors, getFormView());
     }
