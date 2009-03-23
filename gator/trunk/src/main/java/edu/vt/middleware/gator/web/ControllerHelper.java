@@ -120,9 +120,6 @@ public class ControllerHelper
     for (CategoryConfig category : source.getCategories()) {
       clone.addCategory(cloneCategory(clone, category));
     }
-    for (ClientConfig client : source.getClients()) {
-      clone.addClient(cloneClient(client));
-    }
     return clone;
   }
 
