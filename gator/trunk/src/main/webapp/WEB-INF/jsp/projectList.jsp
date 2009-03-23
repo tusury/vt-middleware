@@ -19,9 +19,11 @@
   <td class="button_row" width="35%"
     style="font-size:1.1em">${project.name}</td>
   <td class="button_row">
-		<span class="button">
-		<a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit</a>
-		</span>
+    <security:accesscontrollist hasPermission="2" domainObject="${project}">
+  		<span class="button">
+  		<a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit</a>
+  		</span>
+		</security:accesscontrollist>
   </td>
   <td class="button_row">
 		<span class="button">
@@ -34,9 +36,11 @@
 	  </span>
   </td>
   <td class="button_row">
-		<span class="button">
-		<a href="<c:url value="/secure/project/${project.name}/delete.html" />">Delete</a>
-	  </span>
+    <security:accesscontrollist hasPermission="8" domainObject="${project}">
+  		<span class="button">
+  		<a href="<c:url value="/secure/project/${project.name}/delete.html" />">Delete</a>
+  	  </span>
+		</security:accesscontrollist>
   </td>
 	</tr>
 </c:forEach>
