@@ -34,7 +34,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
   ROLE_ADMIN - Can create new projects
   ROLE_USER - Required for all people who can view or modify project config data
   -->
-  <http>
+  <http access-denied-page="/unauthorized.jsp">
     <intercept-url
       pattern="/secure/project/add.html"
       access="ROLE_ADMIN"
