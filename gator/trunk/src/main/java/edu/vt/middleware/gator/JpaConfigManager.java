@@ -14,6 +14,7 @@
 package edu.vt.middleware.gator;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -193,7 +194,50 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
       listener.projectRemoved(this, project);
     }
   }
-  
+
+
+  /** {@inheritDoc} */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public void savePermissions(
+    final ProjectConfig project,
+    final String sid,
+    final int bits)
+  {
+    final EntityManager em = getEntityManager();
+    logger.debug(
+      String.format(
+        "Setting permissions for %s to %s on %s.",
+        sid,
+        bits,
+        project));
+    final PermissionConfig perm = project.getPermission(sid);
+    if (perm == null) {
+      project.addPermission(new PermissionConfig(sid, bits));
+    } else {
+      perm.setPermissionBits(bits);
+    }
+    project.setModifiedDate(Calendar.getInstance());
+    em.merge(project);
+  }
+
+
+  /** {@inheritDoc} */
+  @Transactional(propagation = Propagation.REQUIRED)
+  public void deletePermissions(
+    final ProjectConfig project,
+    final int permissionId)
+  {
+    final EntityManager em = getEntityManager();
+    logger.debug(
+      String.format(
+        "Deleting permission ID=%s from %s.",
+        project,
+        permissionId));
+    project.removePermission(project.getPermission(permissionId));
+    project.setModifiedDate(Calendar.getInstance());
+    em.merge(project);
+  }  
+ 
  
   /**
    * Creates an entity manager from the factory.

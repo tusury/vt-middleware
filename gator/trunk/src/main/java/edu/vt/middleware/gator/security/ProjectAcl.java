@@ -22,7 +22,6 @@ import org.springframework.security.acls.NotFoundException;
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.UnloadedSidException;
 import org.springframework.security.acls.domain.AccessControlEntryImpl;
-import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.objectidentity.ObjectIdentity;
 import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
 import org.springframework.security.acls.sid.GrantedAuthoritySid;
@@ -42,15 +41,6 @@ import edu.vt.middleware.gator.ProjectConfig;
  */
 public class ProjectAcl implements Acl
 {
-  /** All relevant Spring security permissions */
-  public static final Permission[] ALL_PERMISSIONS = new Permission[] {
-    BasePermission.ADMINISTRATION,
-    BasePermission.CREATE,
-    BasePermission.READ,
-    BasePermission.WRITE,
-    BasePermission.DELETE,
-  };
- 
   /** ProjectAcl.java */
   private static final long serialVersionUID = 7764134389962328091L;
 
@@ -157,7 +147,7 @@ public class ProjectAcl implements Acl
   {
     final List<AccessControlEntry> aceList =
       new ArrayList<AccessControlEntry>();
-    for (Permission p : ALL_PERMISSIONS) {
+    for (Permission p : PermissionConfig.ALL_PERMISSIONS) {
       int result = p.getMask() & perm.getPermissionBits();
       if (result > 0) {
         Sid sid = null;

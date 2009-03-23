@@ -39,6 +39,9 @@ public class RequestParamExtractor
   protected static final Pattern CLIENT_ID_PATTERN =
     Pattern.compile("/client/(\\d+)/");
 
+  protected static final Pattern PERMISSION_ID_PATTERN =
+    Pattern.compile("/perm/(\\d+)/");
+
   /**
    * Extracts the project name from a request URI of the form
    * /project/NAME/file.html.
@@ -84,7 +87,18 @@ public class RequestParamExtractor
   {
     return getParam(CLIENT_ID_PATTERN, request.getRequestURI());
   }
- 
+
+  /**
+   * Extracts the permission ID from a request URI of the form
+   * /project/ID/perm/PERMISSIONID/file.html.
+   * @param request Request to extract permission ID from.
+   * @return Permission ID in given request.
+   */
+  public static int getPermissionId(final HttpServletRequest request)
+  {
+    return getParam(PERMISSION_ID_PATTERN, request.getRequestURI());
+  }
+
   /**
    * Extracts a parameter from a URL string using the given pattern.
    * @param pattern Pattern that contains a capture expression to extract

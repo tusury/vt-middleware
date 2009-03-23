@@ -31,6 +31,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import edu.vt.middleware.gator.ConfigManager;
+import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.UnitTestHelper;
 
@@ -100,7 +101,7 @@ public class ProjectAclServiceTest
     final ObjectIdentity oid = new ObjectIdentityImpl(
       ProjectConfig.class, testProject);
     Assert.assertEquals(
-      ProjectAcl.ALL_PERMISSIONS.length + 1,
+      PermissionConfig.ALL_PERMISSIONS.length + 1,
       aclService.readAclById(oid).getEntries().length);
   }
 }

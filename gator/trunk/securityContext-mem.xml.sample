@@ -22,6 +22,9 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
       expression="execution(* edu.vt.middleware.gator.ConfigManager.save(..))"
       access="ACL_PROJECT_EDIT"/>
     <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.*Permissions(..))"
+      access="ACL_PROJECT_EDIT"/>
+    <protect-pointcut
       expression="execution(* edu.vt.middleware.gator.ConfigManager.delete(..))"
       access="ACL_PROJECT_DELETE"/>
   </global-method-security>
@@ -43,7 +46,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
       access="ROLE_ADMIN"
       requires-channel="https" />
     <intercept-url
-      pattern="/secure/login*"
+      pattern="/secure/log*"
       access="IS_AUTHENTICATED_ANONYMOUSLY"
       requires-channel="https" />
     <intercept-url
@@ -55,8 +58,13 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
       login-page="/secure/login.jsp"
       login-processing-url="/secure/login_validate"
       authentication-failure-url="/secure/login.jsp?error=403"/>
+
+    <logout
+      logout-url="/secure/logout"
+      logout-success-url="/logged_out.jsp" />
       
     <anonymous />
+    
     
     <concurrent-session-control
       max-sessions="1"

@@ -16,6 +16,7 @@ package edu.vt.middleware.gator.web;
 import java.util.Calendar;
 
 import org.springframework.security.acls.Permission;
+import org.springframework.security.acls.domain.BasePermission;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.AppenderParamConfig;
@@ -24,7 +25,6 @@ import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.LayoutParamConfig;
 import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.security.ProjectAcl;
 
 /**
  * Utility class provides common controller operations.
@@ -155,10 +155,37 @@ public class ControllerHelper
     final PermissionConfig perm = new PermissionConfig();
     perm.setName(sid);
     int permBits = 0;
-    for (Permission p : ProjectAcl.ALL_PERMISSIONS) {
+    for (Permission p : PermissionConfig.ALL_PERMISSIONS) {
       permBits |= p.getMask();
     }
     perm.setPermissionBits(permBits);
     return perm;
+  }
+  
+
+  /**
+   * Determines whether the given permission is the last full permission in
+   * the given project.
+   * @param project Project to test.
+   * @param perm Permission to test.
+   * @return True if given permission is last full permission in the given
+   * project.
+   */
+  public static boolean isLastFullPermission(
+    final ProjectConfig project,
+    final PermissionConfig perm)
+  {
+    int count = 0;
+    PermissionConfig fullPerms = null;
+    for (PermissionConfig existingPerm : project.getPermissions()) {
+      if (existingPerm.hasPermission(BasePermission.READ) &&
+          existingPerm.hasPermission(BasePermission.WRITE) &&
+          existingPerm.hasPermission(BasePermission.DELETE))
+      {
+        count++;
+        fullPerms = existingPerm;
+      }
+    }
+    return count <= 1 && fullPerms == perm;
   }
 }

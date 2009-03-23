@@ -50,7 +50,7 @@ import org.hibernate.annotations.Cascade;
 public class ProjectConfig extends Config
 {
   /** ProjectConfig.java */
-  private static final long serialVersionUID = -3702934794623134856L;
+  private static final long serialVersionUID = -2968760653575992537L;
 
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 1024;
@@ -455,6 +455,41 @@ public class ProjectConfig extends Config
   public Set<PermissionConfig> getPermissions()
   {
     return getPermissionsInternal();
+  }
+
+  /**
+   * Gets a permission bound to this project by its database ID.
+   * @param permId Permission ID of permission to fetch.
+   * @return Permission object whose ID matches the given value or null if
+   * none exists.
+   */
+  @Transient
+  public PermissionConfig getPermission(final int permId)
+  {
+    for (PermissionConfig perm : getPermissionsInternal()) {
+      if (perm.getId() == permId) {
+        return perm;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Gets a permission bound to this project by the security ID of the principal
+   * to which the permission applies.
+   * @param sid Security identifier of principal to which permission applies.
+   * @return Permission object whose sid matches the given value or null if
+   * none exists.
+   */
+  @Transient
+  public PermissionConfig getPermission(final String sid)
+  {
+    for (PermissionConfig perm : getPermissionsInternal()) {
+      if (perm.getName() == sid) {
+        return perm;
+      }
+    }
+    return null;
   }
 
   /**

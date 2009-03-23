@@ -78,11 +78,28 @@ public interface ConfigManager
    */
   @Secured("ACL_PROJECT_EDIT")
   void save(ProjectConfig project);
-  
+
   /**
    * Deletes the given project.
    * @param project To be deleted.
    */
   @Secured("ACL_PROJECT_DELETE")
   void delete(ProjectConfig project);
+
+  /**
+   * Sets project permissions for the given security principal.
+   * @param project Whose permissions are to be modified.
+   * @param sid Security identifier of principal to which permissions apply.
+   * @param bits Permission bits.
+   */
+  @Secured("ACL_PROJECT_EDIT")
+  void savePermissions(ProjectConfig project, String sid, int bits);
+
+  /**
+   * Deletes the given security permissions from the project.
+   * @param project Whose permissions are to be modified.
+   * @param permissionId ID of the permission to remove.
+   */
+  @Secured("ACL_PROJECT_EDIT")
+  void deletePermissions(ProjectConfig project, int permissionId);
 }

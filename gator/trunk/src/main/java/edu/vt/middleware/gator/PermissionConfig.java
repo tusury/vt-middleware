@@ -24,6 +24,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.springframework.security.acls.Permission;
+import org.springframework.security.acls.domain.BasePermission;
+
 /**
  * Stores security permissions for principals/roles on a project.
  *
@@ -39,8 +42,15 @@ import javax.persistence.Transient;
   allocationSize = 1)
 public class PermissionConfig extends Config
 {
+  /** All relevant Spring security permissions */
+  public static final Permission[] ALL_PERMISSIONS = new Permission[] {
+    BasePermission.READ,
+    BasePermission.WRITE,
+    BasePermission.DELETE,
+  };
+
   /** PermissionConfig.java */
-  private static final long serialVersionUID = -1996976284469566605L;
+  private static final long serialVersionUID = 8440240083147241221L;
 
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 65536;
@@ -63,6 +73,31 @@ public class PermissionConfig extends Config
   {
     setName(sid);
     setPermissionBits(permBits);
+  }
+
+  /**
+   * Parses a permission string of the form 'rwd' into an integer where each
+   * of the permission bits is set according to the given string.
+   * @param permissionString Unix-style permission string, e.g. rwd.
+   * @return Integer whose bits are set according to the given string.  Returns
+   * 0 for a null or empty string.
+   */
+  public static int parsePermissions(final String permissionString)
+  {
+    int bits = 0;
+    for (int i = 0; i < permissionString.length(); i++) {
+      final char c = permissionString.charAt(i);
+      if (c == 'r') {
+        bits += BasePermission.READ.getMask();
+      } else if (c == 'w') {
+        bits += BasePermission.WRITE.getMask();
+      } else if (c == 'd') {
+        bits += BasePermission.DELETE.getMask();
+      } else {
+        throw new IllegalArgumentException("Invalid permission character " + c);
+      }
+    }
+    return bits;
   }
 
   /** {@inheritDoc} */
@@ -93,6 +128,61 @@ public class PermissionConfig extends Config
   public void setPermissionBits(final int bits)
   {
     this.permissionBits = bits;
+  }
+  
+  /**
+   * Gets the permissions as a unix-style string, e.g. rwd.
+   * <ul>
+   *   <li>r - Read permission</li>
+   *   <li>w - Write permission</li>
+   *   <li>d - Delete permission</li>
+   * </ul>
+   * @return Permissions as a unix-style string.
+   */
+  @Transient
+  public String getPermissions()
+  {
+    final StringBuilder sb = new StringBuilder(3);
+    if (hasPermission(BasePermission.READ)) {
+      sb.append('r');
+    }
+    if (hasPermission(BasePermission.WRITE)) {
+      sb.append('w');
+    }
+    if (hasPermission(BasePermission.DELETE)) {
+      sb.append('d');
+    }
+    return sb.toString();
+  }
+
+  /**
+   * Sets the permission bits from a unix-style permission string representing
+   * the bits to set.
+   * @param perms Unix-style permission string, e.g. rwd.
+   */
+  public void setPermissions(final String perms)
+  {
+    this.permissionBits = parsePermissions(perms);
+  }
+
+  /**
+   * Determines whether this instance has the given permission.
+   * @param perm Permission object.
+   * @return True if this instance has the given permission, false otherwise.
+   */
+  public boolean hasPermission(final Permission perm)
+  {
+    return hasPermission(perm.getMask());
+  }
+
+  /**
+   * Determines whether this instance has the given permission.
+   * @param perm Integer value of permission.
+   * @return True if this instance has the given permission, false otherwise.
+   */
+  public boolean hasPermission(int perm)
+  {
+    return (perm & permissionBits) > 0;
   }
 
   /**

@@ -21,6 +21,7 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.sid.PrincipalSid;
 import org.springframework.security.acls.sid.Sid;
 
+import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.UnitTestHelper;
 
@@ -41,7 +42,7 @@ public class ProjectAclTest
   {
     final ProjectAcl acl = new ProjectAcl(UnitTestHelper.createTestProject());
     Assert.assertEquals(
-      ProjectAcl.ALL_PERMISSIONS.length + 1,
+      PermissionConfig.ALL_PERMISSIONS.length + 1,
       acl.getEntries().length);
   }
 

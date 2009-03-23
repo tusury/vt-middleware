@@ -19,6 +19,10 @@
 
 <h1>${action}</h1>
 
+<c:if test="${project.id > 0}">
+  <div>Last Modified: <strong>${project.modifiedDate.time}</strong></div>
+</c:if>
+
 <form:form method="post" commandName="project">
   <form:errors id="error" path="*" element="div" />
   
@@ -184,6 +188,49 @@
 		  <p>No allowed clients defined.</p>
 		</c:otherwise>
 	</c:choose>
+  </fieldset>
+
+  <fieldset>
+  <legend>Security Permissions</legend>
+  <div class="button_group">
+    <span class="button">
+    <a href="<c:url
+      value="/secure/project/${project.name}/perm/add.html" />">Add Permissons</a>
+    </span>
+  </div>
+  <c:choose>
+    <c:when test="${not empty project.clients}">
+      <table summary="Security permissions table">
+        <tr>
+          <th>Security ID</th>
+          <th>Permission</th>
+	        <th>Edit</th>
+	        <th>Delete</th>
+        </tr>
+        <c:forEach items="${project.permissions}" var="perm">
+          <tr>
+            <td class="button_row">${perm.name}</td>
+            <td class="button_row">${perm.permissions}</td>
+            <td class="button_cell">
+            <span class="button">
+            <a href="<c:url
+              value="/secure/project/${project.name}/perm/${perm.id}/edit.html" />">Edit</a>
+            </span>
+            </td>
+            <td class="button_cell">
+            <span class="button">
+            <a href="<c:url
+              value="/secure/project/${project.name}/perm/${perm.id}/delete.html" />">Delete</a>
+            </span>
+            </td>
+          </tr>
+        </c:forEach>
+      </table>    
+    </c:when>
+    <c:otherwise>
+      <p>No allowed clients defined.</p>
+    </c:otherwise>
+  </c:choose>
   </fieldset>
 
   </c:if>

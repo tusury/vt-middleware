@@ -147,6 +147,22 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:formView="deleteForm"
     p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
   />
+  
+  <bean id="permEditController"
+    class="edu.vt.middleware.gator.web.PermissionEditFormController"
+    parent="baseFormController"
+    p:commandName="perm"
+    p:formView="permEdit"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
+  />
+
+  <bean id="permDeleteController"
+    class="edu.vt.middleware.gator.web.PermissionDeleteFormController"
+    parent="baseFormController"
+    p:commandName="spec"
+    p:formView="deleteForm"
+    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
+  />
 
   <bean id="xmlConfigViewController"
     class="edu.vt.middleware.gator.web.XmlConfigViewController"
@@ -192,6 +208,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <prop key="/secure/project/*/client/add.html">clientEditController</prop>
         <prop key="/secure/project/*/client/*/edit.html">clientEditController</prop>
         <prop key="/secure/project/*/client/*/delete.html">clientDeleteController</prop>
+        <prop key="/secure/project/*/perm/add.html">permEditController</prop>
+        <prop key="/secure/project/*/perm/*/edit.html">permEditController</prop>
+        <prop key="/secure/project/*/perm/*/delete.html">permDeleteController</prop>
         <prop key="/secure/project/*/watch.html">logWatcherFormController</prop>
         <prop key="/project/*/log4j.xml">xmlConfigViewController</prop>
       </props>    
