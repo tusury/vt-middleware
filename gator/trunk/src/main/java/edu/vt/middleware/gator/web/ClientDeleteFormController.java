@@ -13,8 +13,6 @@
 */
 package edu.vt.middleware.gator.web;
 
-import java.util.Calendar;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,7 +72,6 @@ public class ClientDeleteFormController extends BaseFormController
       spec.getId());
     final ProjectConfig project = client.getProject();
     project.removeClient(client);
-    project.setModifiedDate(Calendar.getInstance());
     configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));

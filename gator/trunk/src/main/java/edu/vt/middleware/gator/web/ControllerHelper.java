@@ -13,8 +13,6 @@
  */
 package edu.vt.middleware.gator.web;
 
-import java.util.Calendar;
-
 import org.springframework.security.acls.Permission;
 import org.springframework.security.acls.domain.BasePermission;
 
@@ -116,7 +114,6 @@ public class ControllerHelper
     final ProjectConfig clone = new ProjectConfig();
     clone.setName(source.getName());
     clone.setClientLogDir(source.getClientLogDir());
-    clone.setModifiedDate(Calendar.getInstance());
     for (AppenderConfig appender : source.getAppenders()) {
       clone.addAppender(cloneAppender(appender));
     }

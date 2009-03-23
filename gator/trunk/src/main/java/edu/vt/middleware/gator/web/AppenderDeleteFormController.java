@@ -13,8 +13,6 @@
  */
 package edu.vt.middleware.gator.web;
 
-import java.util.Calendar;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -77,7 +75,6 @@ public class AppenderDeleteFormController extends BaseFormController
     for (CategoryConfig cat : project.getCategories()) {
       cat.getAppenders().remove(appender);
     }
-    project.setModifiedDate(Calendar.getInstance());
     configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));

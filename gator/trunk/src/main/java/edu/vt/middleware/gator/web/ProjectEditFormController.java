@@ -13,8 +13,6 @@
 */
 package edu.vt.middleware.gator.web;
 
-import java.util.Calendar;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -76,7 +74,6 @@ public class ProjectEditFormController extends BaseFormController
         return showForm(request, errors, getFormView());
       }
     }
-    project.setModifiedDate(Calendar.getInstance());
     configManager.save(project);
     return new ModelAndView(
       ControllerHelper.filterViewName(getSuccessView(), project));
