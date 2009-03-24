@@ -22,7 +22,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+import edu.vt.middleware.gator.util.RequestParamExtractor;
 
 /**
  * Controller that handles editing projects.

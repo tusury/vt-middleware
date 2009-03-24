@@ -26,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+import edu.vt.middleware.gator.util.RequestParamExtractor;
 
 /**
  * Handles additions and changes to project security permissions.

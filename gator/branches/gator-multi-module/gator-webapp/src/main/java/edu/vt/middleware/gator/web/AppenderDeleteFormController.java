@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.CategoryConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+import edu.vt.middleware.gator.util.RequestParamExtractor;
 
 /**
  * Handles deletion of appender configuration elements.
