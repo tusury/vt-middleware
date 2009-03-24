@@ -22,7 +22,6 @@ import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.LayoutParamConfig;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.log4j.SocketServer;
-import edu.vt.middleware.gator.web.ControllerHelper;
 
 /**
  * Test helper utility class.
@@ -92,8 +91,10 @@ public class UnitTestHelper
     project.addCategory(category);
     project.addClient(client);
     
-    project.addPermission(ControllerHelper.createAllPermissions("admin"));
-    project.addPermission(new PermissionConfig("user", 1));
+    project.addPermission(
+      new PermissionConfig("admin", PermissionConfig.parsePermissions("rwd")));
+    project.addPermission(
+      new PermissionConfig("user", PermissionConfig.parsePermissions("r")));
 
     return project;
   }
