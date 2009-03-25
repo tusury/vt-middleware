@@ -1,0 +1,17 @@
+#!/bin/sh
+
+JAVA=`/usr/bin/which java`
+if [ "x$JAVA" = "x" ]; then
+  if [ "x$JAVA_HOME" = "x" ]; then
+    echo "Cannot execute script."
+    echo "The jave executable is not on your path, "
+    echo 'and $JAVA_HOME is not defined.'
+    echo "The script requires one or the other to execute."
+    exit
+  else
+    JAVA="$JAVA_HOME/jre/bin/java"
+  fi
+fi
+JAR_PATH="gator-core/target/gator-jar-with-dependencies.jar"
+
+$JAVA -jar $JAR_PATH
