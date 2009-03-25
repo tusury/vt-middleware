@@ -14,4 +14,4 @@ if [ "x$JAVA" = "x" ]; then
 fi
 JAR_PATH="gator-core/target/gator-jar-with-dependencies.jar"
 
-$JAVA -jar $JAR_PATH
+$JAVA -jar $JAR_PATH $@

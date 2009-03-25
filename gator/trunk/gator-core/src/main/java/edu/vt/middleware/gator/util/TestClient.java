@@ -33,8 +33,13 @@ import edu.vt.middleware.gator.log4j.SocketServer;
 public class TestClient
 {
   /**
-   * Test client main method.
-   * @param args Arguments are ignored.
+   * Test client entry point.
+   *
+   * @param args Expects the following arguments:
+   * <ol>
+   * <li>0 - host name</li>
+   * <li>1 - port number</li>
+   * </ol>
    */
   public static void main(final String[] args)
   {
