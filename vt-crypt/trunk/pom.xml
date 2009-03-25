@@ -51,9 +51,9 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8.1</version>
+      <version>5.8</version>
       <scope>test</scope>
-      <classifier>jdk14</classifier>
+      <classifier>jdk15</classifier>
     </dependency>
   </dependencies>
 
@@ -65,7 +65,11 @@
         <configuration>
           <fork>true</fork>
           <debug>true</debug>
-          <showDeprecation>false</showDeprecation>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <compilerArgument>-Xlint:unchecked</compilerArgument>
+          <source>1.5</source>
+          <target>1.5</target>
         </configuration>
       </plugin>
       <plugin>
@@ -109,7 +113,6 @@
             <phase>package</phase>
             <goals>
               <goal>jar</goal>
-              <goal>javadoc</goal>
             </goals>
           </execution>
         </executions>
@@ -146,7 +149,7 @@
         <configuration>
           <appendAssemblyId>true</appendAssemblyId>
           <descriptors>
-            <descriptor>${assembly.dir}/dist.xml</descriptor>
+            <descriptor>${assembly.dir}/vt-middleware.xml</descriptor>
           </descriptors>
           <tarLongFileMode>omit</tarLongFileMode>
         </configuration>
@@ -163,10 +166,6 @@
     </plugins>
   </build>
   <repositories>
-    <repository>
-      <id>repo1.maven.org</id>
-      <url>http://repo1.maven.org/maven2/</url>
-    </repository>
     <repository>
       <id>vt-middleware.googlecode.com.repo</id>
       <url>http://vt-middleware.googlecode.com/svn/maven2</url>
