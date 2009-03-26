@@ -26,6 +26,8 @@ import edu.vt.middleware.crypt.digest.MD2;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link CryptReader} and {@link CryptWriter} classes.
@@ -47,9 +49,8 @@ public class CryptReaderWriterTest
    * @return  Public key test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="pubkeydata"
    */
+  @DataProvider(name = "pubkeydata")
   public Object[][] createPubKeyTestData()
     throws Exception
   {
@@ -69,9 +70,8 @@ public class CryptReaderWriterTest
    * @return  Private key test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="privkeydata"
    */
+  @DataProvider(name = "privkeydata")
   public Object[][] createPrivKeyTestData()
     throws Exception
   {
@@ -94,9 +94,8 @@ public class CryptReaderWriterTest
    * @return  Private key test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="readderprivkeydata"
    */
+  @DataProvider(name = "readderprivkeydata")
   public Object[][] createReadDerPrivKeyTestData()
     throws Exception
   {
@@ -112,9 +111,8 @@ public class CryptReaderWriterTest
    * @return  Public key test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="readderpubkeydata"
    */
+  @DataProvider(name = "readderpubkeydata")
   public Object[][] createReadDerPubKeyTestData()
     throws Exception
   {
@@ -129,9 +127,8 @@ public class CryptReaderWriterTest
    * @return  Private key test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="readpemprivkeydata"
    */
+  @DataProvider(name = "readpemprivkeydata")
   public Object[][] createReadPemPrivKeyTestData()
     throws Exception
   {
@@ -146,9 +143,8 @@ public class CryptReaderWriterTest
    * @return  Public key test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="readpempubkeydata"
    */
+  @DataProvider(name = "readpempubkeydata")
   public Object[][] createReadPemPubKeyTestData()
     throws Exception
   {
@@ -163,9 +159,8 @@ public class CryptReaderWriterTest
    * @param  alg  Cipher algorithm of key.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "readderprivkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "readderprivkeydata")
   public void testReadDerPrivateKey(final String file, final String alg)
     throws Exception
   {
@@ -180,9 +175,8 @@ public class CryptReaderWriterTest
    * @param  alg  Cipher algorithm of key.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "readderpubkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "readderpubkeydata")
   public void testReadDerPublicKey(final String file, final String alg)
     throws Exception
   {
@@ -194,9 +188,8 @@ public class CryptReaderWriterTest
 
   /**
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util"
    */
+  @Test(groups = {"functest", "util"})
   public void testReadDerCertificate()
     throws Exception
   {
@@ -212,9 +205,8 @@ public class CryptReaderWriterTest
    * key is not encrypted.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "readpemprivkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "readpemprivkeydata")
   public void testReadPemPrivateKey(final String file, final char[] password)
     throws Exception
   {
@@ -228,9 +220,8 @@ public class CryptReaderWriterTest
    * @param  file  Public key file to read.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "readpempubkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "readpempubkeydata")
   public void testReadPemPublicKey(final String file)
     throws Exception
   {
@@ -242,9 +233,8 @@ public class CryptReaderWriterTest
 
   /**
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util"
    */
+  @Test(groups = {"functest", "util"})
   public void testReadPemCertificate()
     throws Exception
   {
@@ -259,9 +249,8 @@ public class CryptReaderWriterTest
    * @param  password  Key encryption password.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "privkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "privkeydata")
   public void testReadWriteEncodedPrivateKey(
     final PrivateKey key,
     final char[] password)
@@ -282,9 +271,8 @@ public class CryptReaderWriterTest
    * @param  key  Key to write and read.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "pubkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "pubkeydata")
   public void testReadWriteEncodedPublicKey(final PublicKey key)
     throws Exception
   {
@@ -304,9 +292,8 @@ public class CryptReaderWriterTest
    * @param  password  Key encryption password.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "privkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "privkeydata")
   public void testReadWritePemPrivateKey(
     final PrivateKey key,
     final char[] password)
@@ -329,9 +316,8 @@ public class CryptReaderWriterTest
    * @param  key  Key to write and read.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "pubkeydata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "pubkeydata")
   public void testReadWritePemPublicKey(final PublicKey key)
     throws Exception
   {

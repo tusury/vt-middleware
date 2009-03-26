@@ -19,6 +19,8 @@ import edu.vt.middleware.crypt.FileHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link SymmetricCli} class.
@@ -47,9 +49,8 @@ public class SymmetricCliTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -83,9 +84,8 @@ public class SymmetricCliTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdatapbe"
    */
+  @DataProvider(name = "testdatapbe")
   public Object[][] createPbeTestData()
     throws Exception
   {
@@ -119,9 +119,8 @@ public class SymmetricCliTest
    * uniqueness and to facilitate post-mortem on failed tests.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "cli symmetric" dataProvider = "testdata"
    */
+  @Test(groups = {"cli", "symmetric"}, dataProvider = "testdata")
   public void testSymmetricCli(final String cliFragment, final String nameId)
     throws Exception
   {
@@ -168,9 +167,8 @@ public class SymmetricCliTest
    * uniqueness and to facilitate post-mortem on failed tests.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "cli symmetric" dataProvider = "testdatapbe"
    */
+  @Test(groups = {"cli", "symmetric"}, dataProvider = "testdatapbe")
   public void testSymmetricCliPbe(final String cliFragment, final String nameId)
     throws Exception
   {

@@ -19,6 +19,8 @@ import edu.vt.middleware.crypt.FileHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link AsymmetricCli} class.
@@ -28,6 +30,14 @@ import org.testng.AssertJUnit;
  */
 public class AsymmetricCliTest
 {
+  /** Small key length */
+  private static final int SMALL_KEY_LENGTH = 1024;
+
+  /** Medium key length */
+  private static final int MEDIUM_KEY_LENGTH = 1536;
+
+  /** Large key length */
+  private static final int LARGE_KEY_LENGTH = 2048;
 
   /**
    * Classpath location of large plaintext data file. Must ensure we choose keys
@@ -45,9 +55,8 @@ public class AsymmetricCliTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -57,17 +66,17 @@ public class AsymmetricCliTest
         {
           "rsa",
           null,
-          new Integer(1024),
+          new Integer(SMALL_KEY_LENGTH),
         },
         {
           "RSA",
           "base64",
-          new Integer(1536),
+          new Integer(MEDIUM_KEY_LENGTH),
         },
         {
           "RSA",
           "hex",
-          new Integer(2048),
+          new Integer(LARGE_KEY_LENGTH),
         },
       };
   }
@@ -78,9 +87,8 @@ public class AsymmetricCliTest
    * @param  keySize  Size of keys in bits.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "cli asymmetric" dataProvider = "testdata"
    */
+  @Test(groups = {"cli", "asymmetric"}, dataProvider = "testdata")
   public void testAsymmetricCli(
     final String cipherName,
     final String encoding,

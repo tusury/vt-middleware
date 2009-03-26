@@ -63,7 +63,7 @@ public final class X509DnUtil
     final X509Certificate certificate,
     final String attribute)
   {
-    final List results = new ArrayList();
+    final List<String> results = new ArrayList<String>();
     final StringBuffer newAttribute = new StringBuffer(attribute.toLowerCase());
     newAttribute.append("=");
 
@@ -81,6 +81,6 @@ public final class X509DnUtil
         }
       }
     }
-    return (String[]) results.toArray(new String[0]);
+    return results.toArray(new String[results.size()]);
   }
 }

@@ -188,10 +188,10 @@ public class KeyStoreCli extends AbstractCli
     validateOptions(line);
 
     final KeyStore store = readKeyStore(line);
-    final Enumeration aliases = store.aliases();
+    final Enumeration<String> aliases = store.aliases();
     System.out.println("");
     while (aliases.hasMoreElements()) {
-      final String alias = (String) aliases.nextElement();
+      final String alias = aliases.nextElement();
       System.out.println("Alias name: " + alias);
       System.out.println("Creation date: " + store.getCreationDate(alias));
       if (store.isKeyEntry(alias)) {

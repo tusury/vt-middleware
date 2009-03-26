@@ -23,6 +23,8 @@ import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 
 /**
@@ -45,7 +47,8 @@ public class DigestAlgorithmTest
    * Map of hash alg names to hash values calculated with GNU utility like
    * md5sum, sha1sum, etc on CLEARTEXT string.
    */
-  private static final Map REFERENCE_HASHES = new HashMap();
+  private static final Map<String, String> REFERENCE_HASHES =
+    new HashMap<String, String>();
 
 
   /**
@@ -62,9 +65,8 @@ public class DigestAlgorithmTest
 
   /**
    * @return  Test data.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
   {
     final SecureRandom secrnd = new SecureRandom();
@@ -140,9 +142,8 @@ public class DigestAlgorithmTest
 
   /**
    * @return  Test data.
-   *
-   * @testng.data-provider  name="testdataconv"
    */
+  @DataProvider(name = "testdataconv")
   public Object[][] createTestDataForConvert()
   {
     final MD5 md5 = new MD5();
@@ -159,9 +160,8 @@ public class DigestAlgorithmTest
 
   /**
    * @return  Test data.
-   *
-   * @testng.data-provider  name="testdataref"
    */
+  @DataProvider(name = "testdataref")
   public Object[][] createTestDataForRefTest()
   {
     return new Object[][] {
@@ -176,9 +176,8 @@ public class DigestAlgorithmTest
    * @param  salt  Initial salt data.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest digest" dataProvider = "testdata"
    */
+  @Test(groups = {"functest", "digest"}, dataProvider = "testdata")
   public void testDigest(final DigestAlgorithm digest, final byte[] salt)
     throws Exception
   {
@@ -200,9 +199,8 @@ public class DigestAlgorithmTest
    * @param  converter  Converter used to convert digest output bytes to string.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest digest" dataProvider = "testdataconv"
    */
+  @Test(groups = {"functest", "digest"}, dataProvider = "testdataconv")
   public void testDigestConvert(
     final DigestAlgorithm digest,
     final Converter converter)
@@ -223,9 +221,8 @@ public class DigestAlgorithmTest
    * @param  converter  Converter used to convert digest output bytes to string.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest digest" dataProvider = "testdataconv"
    */
+  @Test(groups = {"functest", "digest"}, dataProvider = "testdataconv")
   public void testDigestStream(
     final DigestAlgorithm digest,
     final Converter converter)
@@ -258,9 +255,8 @@ public class DigestAlgorithmTest
    * @param  digest  A digest instance to test.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest digest" dataProvider = "testdataref"
    */
+  @Test(groups = {"functest", "digest"}, dataProvider = "testdataref")
   public void testHashCalculationAgainstReference(final DigestAlgorithm digest)
     throws Exception
   {

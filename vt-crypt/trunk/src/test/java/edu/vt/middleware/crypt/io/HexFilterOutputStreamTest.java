@@ -23,6 +23,7 @@ import edu.vt.middleware.crypt.FileHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link HexFilterOutputStream} class.
@@ -43,9 +44,8 @@ public class HexFilterOutputStreamTest
 
   /**
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest io testEncodeHex"
    */
+  @Test(groups = {"functest", "io", "encodeHex"})
   public void testEncodeHex()
     throws Exception
   {

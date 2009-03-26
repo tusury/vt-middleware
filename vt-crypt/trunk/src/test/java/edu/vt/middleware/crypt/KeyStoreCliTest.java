@@ -19,6 +19,8 @@ import java.io.PrintStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link KeyStoreCli} class.
@@ -47,9 +49,8 @@ public class KeyStoreCliTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -78,9 +79,8 @@ public class KeyStoreCliTest
    * @param  partialLine  Partial command line with additional optional args.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "cli keystore" dataProvider = "testdata"
    */
+  @Test(groups = {"cli", "keystore"}, dataProvider = "testdata")
   public void testKeyStoreCli(
     final String keyStore,
     final String cert,

@@ -22,6 +22,8 @@ import edu.vt.middleware.crypt.FileHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link Base64FilterInputStream}.
@@ -43,9 +45,8 @@ public class Base64FilterInputStreamTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdatab64"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestDataBase64()
     throws Exception
   {
@@ -62,10 +63,8 @@ public class Base64FilterInputStreamTest
    * @param  charsPerLine  Number of characters per line in encoded data file.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest io testDecodeBase64" dataProvider =
-   * "testdatab64"
    */
+  @Test(groups = {"functest", "io", "decodeBase64"}, dataProvider = "testdata")
   public void testDecodeBase64(final Integer charsPerLine)
     throws Exception
   {

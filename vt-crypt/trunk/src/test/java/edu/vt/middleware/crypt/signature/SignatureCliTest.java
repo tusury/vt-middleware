@@ -25,6 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link SignatureCli} class.
@@ -51,9 +53,8 @@ public class SignatureCliTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -99,9 +100,8 @@ public class SignatureCliTest
    * @param  privKey  Private key file.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "cli signature" dataProvider = "testdata"
    */
+  @Test(groups = {"cli", "signature"}, dataProvider = "testdata")
   public void testSignatureCli(
     final String partialLine,
     final String pubKey,

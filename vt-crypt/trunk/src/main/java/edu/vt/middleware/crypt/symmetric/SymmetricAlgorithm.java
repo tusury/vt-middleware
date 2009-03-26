@@ -48,33 +48,28 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
   private static final int CHUNK_SIZE = COMMON_BLOCK_SIZE * 128;
 
   /** Map of digest algorithm names to classes. */
-  private static final Map NAME_CLASS_MAP = new HashMap();
+  private static final Map<String, Class<? extends SymmetricAlgorithm>>
+  NAME_CLASS_MAP = new HashMap<String, Class<? extends SymmetricAlgorithm>>();
 
 
   /**
    * Class initializer.
    */
   static {
-    NAME_CLASS_MAP.put("AES", "edu.vt.middleware.crypt.symmetric.AES");
-    NAME_CLASS_MAP.put(
-      "BLOWFISH",
-      "edu.vt.middleware.crypt.symmetric.Blowfish");
-    NAME_CLASS_MAP.put("CAST5", "edu.vt.middleware.crypt.symmetric.CAST5");
-    NAME_CLASS_MAP.put("CAST6", "edu.vt.middleware.crypt.symmetric.CAST6");
-    NAME_CLASS_MAP.put("DES", "edu.vt.middleware.crypt.symmetric.DES");
-    NAME_CLASS_MAP.put("DESEDE", "edu.vt.middleware.crypt.symmetric.DESede");
-    NAME_CLASS_MAP.put("RC2", "edu.vt.middleware.crypt.symmetric.RC2");
-    NAME_CLASS_MAP.put("RC4", "edu.vt.middleware.crypt.symmetric.RC4");
-    NAME_CLASS_MAP.put("RC5", "edu.vt.middleware.crypt.symmetric.RC5");
-    NAME_CLASS_MAP.put("RC6", "edu.vt.middleware.crypt.symmetric.RC6");
-    NAME_CLASS_MAP.put(
-      "RIJNDAEL",
-      "edu.vt.middleware.crypt.symmetric.Rijndael");
-    NAME_CLASS_MAP.put("SERPENT", "edu.vt.middleware.crypt.symmetric.Serpent");
-    NAME_CLASS_MAP.put(
-      "SKIPJACK",
-      "edu.vt.middleware.crypt.symmetric.Skipjack");
-    NAME_CLASS_MAP.put("TWOFISH", "edu.vt.middleware.crypt.symmetric.Twofish");
+    NAME_CLASS_MAP.put("AES", AES.class);
+    NAME_CLASS_MAP.put("BLOWFISH", Blowfish.class);
+    NAME_CLASS_MAP.put("CAST5", CAST5.class);
+    NAME_CLASS_MAP.put("CAST6", CAST6.class);
+    NAME_CLASS_MAP.put("DES", DES.class);
+    NAME_CLASS_MAP.put("DESEDE", DESede.class);
+    NAME_CLASS_MAP.put("RC2", RC2.class);
+    NAME_CLASS_MAP.put("RC4", RC4.class);
+    NAME_CLASS_MAP.put("RC5", RC5.class);
+    NAME_CLASS_MAP.put("RC6", RC6.class);
+    NAME_CLASS_MAP.put("RIJNDAEL", Rijndael.class);
+    NAME_CLASS_MAP.put("SERPENT", Serpent.class);
+    NAME_CLASS_MAP.put("SKIPJACK", Skipjack.class);
+    NAME_CLASS_MAP.put("TWOFISH", Twofish.class);
   }
 
   /** Initialization vector used for encryption. */
@@ -145,22 +140,17 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
     final String cipherModeName,
     final String cipherPadding)
   {
-    final String className = (String) NAME_CLASS_MAP.get(
-      cipherAlgorithm.toUpperCase());
-    if (className != null) {
+    final Class<? extends SymmetricAlgorithm> clazz =
+      NAME_CLASS_MAP.get(cipherAlgorithm.toUpperCase());
+    if (clazz != null) {
       try {
-        final Class clazz = Class.forName(className);
-        final Constructor cons = clazz.getConstructor(
-          new Class[] {
-            String.class,
-            String.class,
+        final Constructor<? extends SymmetricAlgorithm> cons =
+          clazz.getConstructor(new Class[] {String.class, String.class});
+        return cons.newInstance(
+          new Object[] {
+            cipherModeName,
+            cipherPadding,
           });
-        return
-          (SymmetricAlgorithm) cons.newInstance(
-            new Object[] {
-              cipherModeName,
-              cipherPadding,
-            });
       } catch (Exception ex) {
         throw new IllegalArgumentException(ex.getMessage());
       }

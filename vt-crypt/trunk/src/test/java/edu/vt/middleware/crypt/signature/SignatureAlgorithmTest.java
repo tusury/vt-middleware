@@ -27,6 +27,8 @@ import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 
 /**
@@ -53,9 +55,8 @@ public class SignatureAlgorithmTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -117,9 +118,8 @@ public class SignatureAlgorithmTest
    * @param  converter  Converter used to convert sig bytes to String.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest signature" dataProvider = "testdata"
    */
+  @Test(groups = {"functest", "signature"}, dataProvider = "testdata")
   public void testSignVerify(
     final SignatureAlgorithm signature,
     final KeyPair keys,
@@ -153,9 +153,8 @@ public class SignatureAlgorithmTest
    * @param  converter  Converter used to convert sig bytes to String.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest signature" dataProvider = "testdata"
    */
+  @Test(groups = {"functest", "signature"}, dataProvider = "testdata")
   public void testRandomizedSignVerify(
     final SignatureAlgorithm signature,
     final KeyPair keys,
@@ -190,9 +189,8 @@ public class SignatureAlgorithmTest
    * @param  converter  Converter used to convert sig bytes to String.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest signature" dataProvider = "testdata"
    */
+  @Test(groups = {"functest", "signature"}, dataProvider = "testdata")
   public void testSignVerifyOnStream(
     final SignatureAlgorithm signature,
     final KeyPair keys,

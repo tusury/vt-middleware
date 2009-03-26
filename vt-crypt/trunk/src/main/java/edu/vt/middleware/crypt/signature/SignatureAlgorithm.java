@@ -36,16 +36,17 @@ import edu.vt.middleware.crypt.util.Converter;
 public class SignatureAlgorithm extends AbstractAlgorithm
 {
 
-  /** Map of digest algorithm names to classes. */
-  private static final Map NAME_CLASS_MAP = new HashMap();
+  /** Map of signature algorithm names to classes */
+  private static final Map<String, Class<? extends SignatureAlgorithm>>
+  NAME_CLASS_MAP = new HashMap<String, Class<? extends SignatureAlgorithm>>();
 
 
   /**
    * Class initializer.
    */
   static {
-    NAME_CLASS_MAP.put("DSA", "edu.vt.middleware.crypt.signature.DSASignature");
-    NAME_CLASS_MAP.put("RSA", "edu.vt.middleware.crypt.signature.RSASignature");
+    NAME_CLASS_MAP.put("DSA", DSASignature.class);
+    NAME_CLASS_MAP.put("RSA", RSASignature.class);
   }
 
   /** Private key used for signing. */
@@ -79,14 +80,14 @@ public class SignatureAlgorithm extends AbstractAlgorithm
    */
   public static SignatureAlgorithm newInstance(final String algorithm)
   {
-    final String className = (String) NAME_CLASS_MAP.get(
-      algorithm.toUpperCase());
-    if (className == null) {
+    final Class<? extends SignatureAlgorithm> clazz =
+      NAME_CLASS_MAP.get(algorithm.toUpperCase());
+    if (clazz == null) {
       throw new IllegalArgumentException(
         "Signature " + algorithm + " is not available.");
     }
     try {
-      return (SignatureAlgorithm) Class.forName(className).newInstance();
+      return clazz.newInstance();
     } catch (Exception ex) {
       throw new IllegalArgumentException(ex.getMessage());
     }
@@ -106,19 +107,17 @@ public class SignatureAlgorithm extends AbstractAlgorithm
     final String algorithm,
     final String digestAlgorithm)
   {
-    final String className = (String) NAME_CLASS_MAP.get(
-      algorithm.toUpperCase());
-    if (className == null) {
+    final Class<? extends SignatureAlgorithm> clazz =
+      NAME_CLASS_MAP.get(algorithm.toUpperCase());
+    if (clazz == null) {
       throw new IllegalArgumentException(
         "Signature " + algorithm + " is not available.");
     }
     try {
-      final Class clazz = Class.forName(className);
-      final Constructor cons = clazz.getConstructor(
-        new Class[] {DigestAlgorithm.class});
-      return
-        (SignatureAlgorithm) cons.newInstance(
-          new Object[] {DigestAlgorithm.newInstance(digestAlgorithm)});
+      final Constructor<? extends SignatureAlgorithm> cons =
+        clazz.getConstructor(new Class[] {DigestAlgorithm.class});
+      return cons.newInstance(
+        new Object[] {DigestAlgorithm.newInstance(digestAlgorithm)});
     } catch (Exception ex) {
       throw new IllegalArgumentException(ex.getMessage());
     }

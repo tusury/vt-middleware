@@ -43,14 +43,15 @@ public class AsymmetricAlgorithm extends AbstractEncryptionAlgorithm
   private static final int CHUNK_SIZE = 2048;
 
   /** Map of digest algorithm names to classes. */
-  private static final Map NAME_CLASS_MAP = new HashMap();
+  private static final Map<String, Class<? extends AsymmetricAlgorithm>>
+  NAME_CLASS_MAP = new HashMap<String, Class<? extends AsymmetricAlgorithm>>();
 
 
   /**
    * Class initializer.
    */
   static {
-    NAME_CLASS_MAP.put("RSA", "edu.vt.middleware.crypt.asymmetric.RSA");
+    NAME_CLASS_MAP.put("RSA", RSA.class);
   }
 
 
@@ -69,23 +70,24 @@ public class AsymmetricAlgorithm extends AbstractEncryptionAlgorithm
   /**
    * Creates a new instance that uses a cipher of the given name.
    *
-   * @param  name  Cipher algorithm name.
+   * @param  algorithm  Cipher algorithm name.
    *
    * @return  Asymmetric algorithm instance that implements the given cipher
    * algorithm.
    */
-  public static AsymmetricAlgorithm newInstance(final String name)
+  public static AsymmetricAlgorithm newInstance(final String algorithm)
   {
-    final String className = (String) NAME_CLASS_MAP.get(name.toUpperCase());
-    if (className != null) {
+    final Class<? extends AsymmetricAlgorithm> clazz =
+      NAME_CLASS_MAP.get(algorithm.toUpperCase());
+    if (clazz != null) {
       try {
-        return (AsymmetricAlgorithm) Class.forName(className).newInstance();
+        return clazz.newInstance();
       } catch (Exception ex) {
         throw new IllegalArgumentException(ex.getMessage());
       }
     } else {
       // Search provider
-      return new AsymmetricAlgorithm(name);
+      return new AsymmetricAlgorithm(algorithm);
     }
   }
 

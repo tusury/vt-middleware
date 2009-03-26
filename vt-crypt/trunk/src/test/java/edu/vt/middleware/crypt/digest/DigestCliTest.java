@@ -19,6 +19,8 @@ import edu.vt.middleware.crypt.CliHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link DigestCli} class.
@@ -41,9 +43,8 @@ public class DigestCliTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -129,9 +130,8 @@ public class DigestCliTest
    * @param  expected  Expected result of digest operation.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "cli digest" dataProvider = "testdata"
    */
+  @Test(groups = {"cli", "digest"}, dataProvider = "testdata")
   public void testDigestCli(final String partialLine, final String expected)
     throws Exception
   {

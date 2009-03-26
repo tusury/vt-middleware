@@ -31,6 +31,8 @@ import edu.vt.middleware.crypt.util.HexConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for all subclasses of {@link SymmetricAlgorithm}.
@@ -56,9 +58,8 @@ public class SymmetricAlgorithmTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -111,9 +112,8 @@ public class SymmetricAlgorithmTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdatapbe"
    */
+  @DataProvider(name = "testdatapbe")
   public Object[][] createTestDataForPbe()
     throws Exception
   {
@@ -253,9 +253,8 @@ public class SymmetricAlgorithmTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdataconv"
    */
+  @DataProvider(name = "testdataconv")
   public Object[][] createTestDataForConv()
     throws Exception
   {
@@ -271,9 +270,8 @@ public class SymmetricAlgorithmTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdatastreams"
    */
+  @DataProvider(name = "testdatastreams")
   public Object[][] createTestDataForStreams()
     throws Exception
   {
@@ -312,9 +310,8 @@ public class SymmetricAlgorithmTest
    * @param  key  Symmetric encryption key.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest symmetric" dataProvider = "testdata"
    */
+  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdata")
   public void testEncryptDecryptText(
     final SymmetricAlgorithm symmetric,
     final Key key)
@@ -342,9 +339,8 @@ public class SymmetricAlgorithmTest
    * @param  converter  Converts ciphertext to/from string representation.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest symmetric" dataProvider = "testdataconv"
    */
+  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdataconv")
   public void testEncryptDecryptTextConverter(
     final SymmetricAlgorithm symmetric,
     final Converter converter)
@@ -372,10 +368,8 @@ public class SymmetricAlgorithmTest
    * @param  symmetric  A symmetric crypt algorithm to test.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest symmetric" dataProvider =
-   * "testdatastreams"
    */
+  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatastreams")
   public void testEncryptDecryptStream(final SymmetricAlgorithm symmetric)
     throws Exception
   {
@@ -413,10 +407,8 @@ public class SymmetricAlgorithmTest
    * @param  symmetric  A symmetric crypt algorithm to test.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest symmetric" dataProvider =
-   * "testdatastreams"
    */
+  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatastreams")
   public void testEncryptDecryptStreamHex(final SymmetricAlgorithm symmetric)
     throws Exception
   {
@@ -454,10 +446,8 @@ public class SymmetricAlgorithmTest
    * @param  symmetric  A symmetric crypt algorithm to test.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest symmetric" dataProvider =
-   * "testdatastreams"
    */
+  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatastreams")
   public void testEncryptDecryptStreamBase64(final SymmetricAlgorithm symmetric)
     throws Exception
   {
@@ -497,10 +487,8 @@ public class SymmetricAlgorithmTest
    * @param  decryptionKey  Cipher decryption key.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest symmetric pbe" dataProvider =
-   * "testdatapbe"
    */
+  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatapbe")
   public void testPbeEncryptDecrypt(
     final SymmetricAlgorithm symmetric,
     final SecretKey encryptionKey,

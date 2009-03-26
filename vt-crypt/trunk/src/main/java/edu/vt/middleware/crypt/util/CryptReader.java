@@ -471,7 +471,7 @@ public class CryptReader
       in = new BufferedInputStream(chainStream);
     }
 
-    final List certList = new ArrayList();
+    final List<Certificate> certList = new ArrayList<Certificate>();
     try {
       while (in.available() > 0) {
         final Certificate cert = cf.generateCertificate(in);
@@ -484,10 +484,7 @@ public class CryptReader
     } catch (IOException e) {
       throw new CryptException("Stream I/O error.");
     }
-
-    final Certificate[] certs = new Certificate[certList.size()];
-    certList.toArray(certs);
-    return certs;
+    return certList.toArray(new Certificate[certList.size()]);
   }
 
 

@@ -16,6 +16,8 @@ package edu.vt.middleware.crypt.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link Base64Encoder} class.
@@ -45,9 +47,8 @@ public class ConverterTest
    * @return  Test data.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -64,9 +65,8 @@ public class ConverterTest
    * @param  converter  Converter to test.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest util" dataProvider = "testdata"
    */
+  @Test(groups = {"functest", "util"}, dataProvider = "testdata")
   public void testConvert(final Converter converter)
     throws Exception
   {

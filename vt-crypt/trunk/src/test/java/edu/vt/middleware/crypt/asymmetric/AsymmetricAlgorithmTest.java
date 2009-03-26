@@ -17,6 +17,8 @@ import java.security.KeyPair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for all subclasses of {@link AsymmetricAlgorithm}.
@@ -38,9 +40,8 @@ public class AsymmetricAlgorithmTest
    * @return  Test datsymmetric.
    *
    * @throws  Exception  On test data generation failure.
-   *
-   * @testng.data-provider  name="testdata"
    */
+  @DataProvider(name = "testdata")
   public Object[][] createTestData()
     throws Exception
   {
@@ -64,9 +65,8 @@ public class AsymmetricAlgorithmTest
    * @param  keys  Key pair used for encryption/decryption.
    *
    * @throws  Exception  On test failure.
-   *
-   * @testng.test  groups = "functest asymmetric" dataProvider = "testdata"
    */
+  @Test(groups = {"functest", "asymmetric"}, dataProvider = "testdata")
   public void testAsymmetricAlgorithm(
     final AsymmetricAlgorithm asymmetric,
     final KeyPair keys)

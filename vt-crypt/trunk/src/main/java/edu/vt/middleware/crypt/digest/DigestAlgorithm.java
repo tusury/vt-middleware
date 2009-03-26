@@ -35,30 +35,31 @@ public class DigestAlgorithm extends AbstractRandomizableAlgorithm
   public static final int CHUNK_SIZE = 4096;
 
   /** Map of digest algorithm names to classes. */
-  private static final Map NAME_CLASS_MAP = new HashMap();
+  private static final Map<String, Class<? extends DigestAlgorithm>>
+  NAME_CLASS_MAP = new HashMap<String, Class<? extends DigestAlgorithm>>();
 
 
   /**
    * Class initializer.
    */
   static {
-    NAME_CLASS_MAP.put("MD2", "edu.vt.middleware.crypt.digest.MD2");
-    NAME_CLASS_MAP.put("MD4", "edu.vt.middleware.crypt.digest.MD4");
-    NAME_CLASS_MAP.put("MD5", "edu.vt.middleware.crypt.digest.MD5");
-    NAME_CLASS_MAP.put("RIPEMD128", "edu.vt.middleware.crypt.digest.RipeMD128");
-    NAME_CLASS_MAP.put("RIPEMD160", "edu.vt.middleware.crypt.digest.RipeMD160");
-    NAME_CLASS_MAP.put("RIPEMD256", "edu.vt.middleware.crypt.digest.RipeMD256");
-    NAME_CLASS_MAP.put("RIPEMD320", "edu.vt.middleware.crypt.digest.RipeMD320");
-    NAME_CLASS_MAP.put("SHA1", "edu.vt.middleware.crypt.digest.SHA1");
-    NAME_CLASS_MAP.put("SHA-1", "edu.vt.middleware.crypt.digest.SHA1");
-    NAME_CLASS_MAP.put("SHA256", "edu.vt.middleware.crypt.digest.SHA256");
-    NAME_CLASS_MAP.put("SHA-256", "edu.vt.middleware.crypt.digest.SHA256");
-    NAME_CLASS_MAP.put("SHA384", "edu.vt.middleware.crypt.digest.SHA384");
-    NAME_CLASS_MAP.put("SHA-384", "edu.vt.middleware.crypt.digest.SHA384");
-    NAME_CLASS_MAP.put("SHA512", "edu.vt.middleware.crypt.digest.SHA512");
-    NAME_CLASS_MAP.put("SHA-512", "edu.vt.middleware.crypt.digest.SHA512");
-    NAME_CLASS_MAP.put("TIGER", "edu.vt.middleware.crypt.digest.Tiger");
-    NAME_CLASS_MAP.put("WHIRLPOOL", "edu.vt.middleware.crypt.digest.Whirlpool");
+    NAME_CLASS_MAP.put("MD2", MD2.class);
+    NAME_CLASS_MAP.put("MD4", MD4.class);
+    NAME_CLASS_MAP.put("MD5", MD5.class);
+    NAME_CLASS_MAP.put("RIPEMD128", RipeMD128.class);
+    NAME_CLASS_MAP.put("RIPEMD160", RipeMD160.class);
+    NAME_CLASS_MAP.put("RIPEMD256", RipeMD256.class);
+    NAME_CLASS_MAP.put("RIPEMD320", RipeMD320.class);
+    NAME_CLASS_MAP.put("SHA1", SHA1.class);
+    NAME_CLASS_MAP.put("SHA-1", SHA1.class);
+    NAME_CLASS_MAP.put("SHA256", SHA256.class);
+    NAME_CLASS_MAP.put("SHA-256", SHA256.class);
+    NAME_CLASS_MAP.put("SHA384", SHA384.class);
+    NAME_CLASS_MAP.put("SHA-384", SHA384.class);
+    NAME_CLASS_MAP.put("SHA512", SHA512.class);
+    NAME_CLASS_MAP.put("SHA-512", SHA512.class);
+    NAME_CLASS_MAP.put("TIGER", Tiger.class);
+    NAME_CLASS_MAP.put("WHIRLPOOL", Whirlpool.class);
   }
 
   /** Digest instance used for digest computation. */
@@ -84,19 +85,20 @@ public class DigestAlgorithm extends AbstractRandomizableAlgorithm
    * Creates a new digest algorithm instance from its name, e.g. SHA-1 for a
    * SHA1 digest.
    *
-   * @param  name  Name of a message digest algorithm.
+   * @param  algorithm  Name of a message digest algorithm.
    *
    * @return  Digest algorithm instance that provides the requested algorithm.
    */
-  public static DigestAlgorithm newInstance(final String name)
+  public static DigestAlgorithm newInstance(final String algorithm)
   {
-    final String className = (String) NAME_CLASS_MAP.get(name.toUpperCase());
-    if (className == null) {
+    final Class<? extends DigestAlgorithm> clazz =
+      NAME_CLASS_MAP.get(algorithm.toUpperCase());
+    if (clazz == null) {
       throw new IllegalArgumentException(
-        "Digest " + name + " is not available.");
+        "Digest " + algorithm + " is not available.");
     }
     try {
-      return (DigestAlgorithm) Class.forName(className).newInstance();
+      return clazz.newInstance();
     } catch (Exception ex) {
       throw new IllegalArgumentException(ex.getMessage());
     }
