@@ -30,7 +30,7 @@ import edu.vt.middleware.gator.util.RequestParamExtractor;
  * @version $Revision$
  *
  */
-public class ClientDeleteFormController extends BaseFormController
+public class ClientDeleteFormController extends BaseDeleteFromController
 {
   /** {@inheritDoc} */
   @Override
@@ -61,10 +61,7 @@ public class ClientDeleteFormController extends BaseFormController
       throws Exception
   {
     final DeleteSpec spec = (DeleteSpec) command;
-    if (!spec.getConfirmationFlag()) {
-      errors.reject(
-          "error.delete.confirmation",
-          "Delete confirmation required.");
+    if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
     final ClientConfig client = configManager.find(

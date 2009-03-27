@@ -30,7 +30,7 @@ import edu.vt.middleware.gator.util.RequestParamExtractor;
  * @author Marvin S. Addison
  *
  */
-public class AppenderDeleteFormController extends BaseFormController
+public class AppenderDeleteFormController extends BaseDeleteFromController
 {
   /** {@inheritDoc} */
   @Override
@@ -61,10 +61,7 @@ public class AppenderDeleteFormController extends BaseFormController
       throws Exception
   {
     final DeleteSpec spec = (DeleteSpec) command;
-    if (!spec.getConfirmationFlag()) {
-      errors.reject(
-          "error.delete.confirmation",
-          "Delete confirmation required.");
+    if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
     final AppenderConfig appender = configManager.find(
