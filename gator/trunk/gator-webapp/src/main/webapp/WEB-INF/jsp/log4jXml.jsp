@@ -49,7 +49,9 @@
   </root>
   </c:when>
   <c:otherwise>
+    <c:if test="${not empty category.appenders}">
 		<appender-ref ref="SOCKET" />
+		</c:if>
 	</category>
 	</c:otherwise>
 	</c:choose>
