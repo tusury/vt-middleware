@@ -13,7 +13,7 @@ VT Crypt is a high level Java cryptograhic library that meets the following desi
 It is important to note that no cryptographic algorithms are implemented; [http://www.bouncycastle.org/java.html Bouncy Castle] provides all cryptographic algorithms where required.
 
 = Installation =
-The latest version can be downloaded at:
+The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
 
 If you would like to use this project in your maven build, include the following in your pom.xml:
 {{{
