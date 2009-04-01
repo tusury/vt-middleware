@@ -223,6 +223,9 @@ public class SocketServer
       InetAddress inetAddress = null;
       try {
         socket = serverSocket.accept();
+        // Explicitly enable TCP keep alives to try to help reclaim resources
+        // from dead clients
+        socket.setKeepAlive(true);
         inetAddress =  socket.getInetAddress();
         logger.info("Accepted connection from client " + inetAddress);
         logger.info("Configuring logger repository for " + inetAddress);
