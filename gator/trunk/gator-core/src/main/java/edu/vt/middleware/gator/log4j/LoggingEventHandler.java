@@ -26,8 +26,10 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.TTCCLayout;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -118,10 +120,15 @@ public class LoggingEventHandler implements Runnable
   /** {@inheritDoc} */
   public void run() {
     logger.info("Ready to handle remote logging events from socket.");
+    final Layout eventTraceLayout = new TTCCLayout();
     try {
       if (ois != null) {
         while(true) {
           final LoggingEvent event = (LoggingEvent) ois.readObject();
+          if (logger.isTraceEnabled()) {
+            logger.info("Read logging event from socket: " +
+              eventTraceLayout.format(event));
+          }
           final Logger remoteLogger =
             repository.getLogger(event.getLoggerName());
           final Level level = remoteLogger.getEffectiveLevel();
