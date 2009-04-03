@@ -1,0 +1,23 @@
+# Sample LDAP properties file
+# This file is required when security.provider=ldap
+# The path to this file should be specified by the servlet
+# context parameter securityLdapPropertiesLocation
+
+# LDAP server URL
+ldap.url=ldaps://directory.example.com
+
+# LDAP filter used to lookup a DN given a user principal name
+ldap.user.searchFilter=uid={0}
+
+# LDAP search base for user queries
+ldap.user.searchBase=ou=people,dc=example,dc=com
+
+# LDAP filter to search for groups containing a given user DN
+ldap.group.searchFilter=groupMember={0}
+
+# LDAP search base for group queries
+ldap.group.searchBase=ou=groups,dc=example,dc=com
+
+# LDAP group attribute name to be used to create spring security granted
+# authority role names (e.g. ROLE_IT-STAFF for the LDAP group it-staff)
+ldap.group.roleAttribute=groupName

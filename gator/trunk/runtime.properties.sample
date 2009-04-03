@@ -41,4 +41,28 @@ log4j.server.port=8000
 
 # Root directory where client logs will be written
 # A subdirectory for each project will be created under root
-log4j.client.root.dir=/home/user/logs/gator-client
+log4j.client.root.dir=/home/gator/logs
+
+# Name of a security provider strategy, one of following:
+#
+# mem  - Memory-backed and loaded via properties file with users/roles.
+#        You must provide a list of users and roles in a properties file
+#        of the format described at
+#        http://static.springframework.org/spring-security/site/reference/html/authentication-common-auth-services.html#in-memory-service
+#        and specify the path to the properties file via a servlet context
+#        parameter named securityUserPropertiesLocation.
+#
+# ldap - Users and roles obtained from LDAP.
+#        This provider requires an ldap.properties file
+#        (see ldap.properties.sample for an example).  The path to the LDAP
+#        properties file must be specified by the servlet context parameter
+#        securityLdapPropertiesLocation.
+security.provider=mem
+
+# Name of security role that allows basic access to the application
+security.roleUser=ROLE_USER
+
+# Name of security role that allows for creation of new projects
+security.roleAdmin=ROLE_ADMIN
+
+security.mem.userPropertiesFile
