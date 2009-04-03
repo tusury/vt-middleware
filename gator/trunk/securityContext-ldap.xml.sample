@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/security"
   xmlns:beans="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -7,7 +8,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
 
 
   <!--
-  TODO: Change ROLE_USER below to a role in your organization
+  TODO: Change ROLE_USER below to a role in your organization.
   Other changes should only be made by those wishing to modify/extend core
   functionality.  A solid understanding of Spring Security is required.
   -->
@@ -30,7 +31,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
 
 
   <!--
-  TODO: Change ROLE_USER and ROLE_ADMIN below to roles in your organization
+  TODO: Change ROLE_USER and ROLE_ADMIN below to roles in your organization.
   ROLE_ADMIN - Can create new projects
   ROLE_USER - Required for all people who can view or modify project config data
   -->
@@ -74,7 +75,15 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
   <ldap-server url="ldaps://directory.example.com" />
   
   <!--
-  TODO: Configure LDAP DNs/filters for your environment.
+  TODO: Configure LDAP authentication provider for your environment.
+  
+  user-search-filter   - Filter used to lookup a DN given a user principal name.
+  user-search-base     - Search base for user queries.
+  group-search-filter  - Filter to search for groups containing a given user DN.
+  group-search-base    - Search base for group queries.
+  group-role-attribute - Group attribute name to be used to create spring
+                         security granted authority role names
+                         (e.g. ROLE_IT-STAFF for the LDAP group it-staff)
   -->
   <ldap-authentication-provider
     user-search-filter="uid={0}"

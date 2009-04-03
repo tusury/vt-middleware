@@ -66,14 +66,12 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
       
     <anonymous />
     
+    
     <concurrent-session-control
       max-sessions="1"
       exception-if-maximum-exceeded="true" />
   </http>
 
-  <!--
-  TODO:  Add/modify users and roles as necessary.
-  -->
   <authentication-provider>
     <user-service>
       <user name="admin" password="pass" authorities="ROLE_USER, ROLE_ADMIN" />

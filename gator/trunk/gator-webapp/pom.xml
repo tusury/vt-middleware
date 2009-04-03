@@ -84,64 +84,6 @@
   </dependencies>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <encoding>ASCII</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-files</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireFilesExist>
-                  <files>
-                    <file>${basedir}/runtime.properties</file>
-                    <file>${basedir}/log4j.properties</file>
-                    <file>${basedir}/securityContext.xml</file>
-                  </files>
-                </requireFilesExist>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <webResources>
-            <resource>
-              <directory>${basedir}</directory>
-              <targetPath>WEB-INF/classes</targetPath>
-              <includes>
-                <include>log4j.properties</include>
-                <include>runtime.properties</include>
-              </includes>
-            </resource>
-            <resource>
-              <directory>${basedir}</directory>
-              <targetPath>WEB-INF</targetPath>
-              <includes>
-                <include>securityContext.xml</include>
-              </includes>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
-    </plugins>
     <testResources>
       <testResource>
         <directory>src/main/webapp</directory>
@@ -152,29 +94,9 @@
       <testResource>
         <directory>src/main/webapp</directory>
         <includes>
-          <include>WEB-INF/applicationContext*.xml</include>
-          <include>WEB-INF/gator-servlet.xml</include>
+          <include>WEB-INF/*.xml</include>
           <include>WEB-INF/messages.properties</include>
         </includes>
-      </testResource>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>${basedir}</directory>
-        <includes>
-          <include>*.properties</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>${basedir}</directory>
-        <includes>
-          <include>securityContext.xml</include>
-        </includes>
-        <targetPath>WEB-INF</targetPath>
       </testResource>
     </testResources>
   </build>

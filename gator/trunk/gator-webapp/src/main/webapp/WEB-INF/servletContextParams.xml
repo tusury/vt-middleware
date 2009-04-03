@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+  
+  <bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"
+    p:order="1"
+    p:ignoreUnresolvablePlaceholders="false"
+    p:contextOverride="true">
+    <property name="properties">
+      <!-- Define defaults -->
+      <props>
+        <prop key="db.dialect">org.hibernate.dialect.HSQLDialect</prop>
+        <prop key="db.batchSize">0</prop>
+        <prop key="jdbc.driverClass">org.hsqldb.jdbcDriver</prop>
+        <prop key="jdbc.url">jdbc:hsqldb:mem:gator</prop>
+        <prop key="jdbc.user">sa</prop>
+        <prop key="jdbc.pass"></prop>
+        <prop key="jdbc.pool.initSize">1</prop>
+        <prop key="jdbc.pool.maxIdle">1</prop>
+        <prop key="jdbc.pool.maxActive">3</prop>
+        <prop key="log4j.server.bindAddress">127.0.0.1</prop>
+        <prop key="log4j.server.port">8000</prop>
+        <prop key="log4j.client.rootDir">gator-logs</prop>
+      </props>
+    </property>
+  </bean>
+  
+</beans>

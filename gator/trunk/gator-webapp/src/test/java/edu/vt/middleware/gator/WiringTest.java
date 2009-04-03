@@ -32,7 +32,12 @@ public class WiringTest
   public void testWiring()
   {
     final ClassPathXmlApplicationContext context =
-      new ClassPathXmlApplicationContext("/WEB-INF/*.xml");
+      new ClassPathXmlApplicationContext(new String[] {
+         "/WEB-INF/applicationContext.xml",
+         "/WEB-INF/applicationContext-authz.xml",
+         "/WEB-INF/securityContext.xml",
+         "/WEB-INF/gator-servlet.xml",
+      });
     Assert.assertTrue(context.getBeanDefinitionCount() > 0);
   }
 }
