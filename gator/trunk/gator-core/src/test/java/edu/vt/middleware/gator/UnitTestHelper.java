@@ -32,6 +32,9 @@ import edu.vt.middleware.gator.log4j.SocketServer;
  */
 public class UnitTestHelper
 {
+  /** Test appender name */
+  public static final String TEST_APPENDER = "FILE";
+
   /** Creates a new instance */
   protected UnitTestHelper() {}
 
@@ -43,7 +46,7 @@ public class UnitTestHelper
   public static ProjectConfig createTestProject()
   {
     final AppenderConfig fileAppender = new AppenderConfig();
-    fileAppender.setName("FILE");
+    fileAppender.setName(TEST_APPENDER);
     fileAppender.setAppenderClassName("org.apache.log4j.FileAppender");
     fileAppender.setLayoutClassName("org.apache.log4j.PatternLayout");
     final AppenderParamConfig fileParam = new AppenderParamConfig();

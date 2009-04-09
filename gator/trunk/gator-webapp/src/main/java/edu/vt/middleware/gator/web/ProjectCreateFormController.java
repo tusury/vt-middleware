@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import edu.vt.middleware.gator.AppenderPolicy;
 import edu.vt.middleware.gator.ProjectConfig;
 
 /**
@@ -32,6 +33,33 @@ import edu.vt.middleware.gator.ProjectConfig;
  */
 public class ProjectCreateFormController extends BaseFormController
 {
+  /** Appender policy to be used for newly-created projects */
+  private AppenderPolicy appenderPolicy;
+  
+  
+  /**
+   * Sets the appender policy to be used for newly-created projects.
+   * @param appenderPolicy Appender policy applied to all categories in project.
+   */
+  public void setAppenderPolicy(final AppenderPolicy appenderPolicy)
+  {
+    this.appenderPolicy = appenderPolicy;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  protected Object formBackingObject(final HttpServletRequest request)
+      throws Exception
+  {
+    final ProjectConfig project = new ProjectConfig();
+    if (appenderPolicy != null) {
+      project.setAppenderPolicy(appenderPolicy);
+    }
+    return project;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   @Transactional(propagation = Propagation.REQUIRED)

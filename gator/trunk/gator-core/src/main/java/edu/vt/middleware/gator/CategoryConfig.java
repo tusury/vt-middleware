@@ -176,6 +176,28 @@ public class CategoryConfig extends Config
   {
     return isRoot();
   }
+ 
+  /**
+   * Determine whether the socket appender reference is allowed on this
+   * category based on the appender policy of the parent project.
+   * @return True if socket appender reference is allowed, false otherwise.
+   */
+  @Transient
+  public boolean allowSocketAppenderReference()
+  {
+    return project.getAppenderPolicy().allowSocketAppender(this);
+  }
+ 
+  /**
+   * Javabean-compliant alias for {@link #allowSocketAppenderReference()}.
+   * @return True if socket appender reference is allowed, false otherwise.
+   * @see #allowSocketAppenderReference()
+   */
+  @Transient
+  public boolean isAllowSocketAppenderReference()
+  {
+    return allowSocketAppenderReference();
+  }
 
   /** {@inheritDoc} */
   @Transient

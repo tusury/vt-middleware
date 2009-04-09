@@ -44,14 +44,14 @@
 		<c:forEach items="${category.appenders}" var="appender">
 	  <appender-ref ref="${appender.name}" />
 		</c:forEach>
+		<c:if test="${category.allowSocketAppenderReference}">
+		<appender-ref ref="SOCKET" />
+		</c:if>
   <c:choose>
   <c:when test="${category.root}">
   </root>
   </c:when>
   <c:otherwise>
-    <c:if test="${not empty category.appenders}">
-		<appender-ref ref="SOCKET" />
-		</c:if>
 	</category>
 	</c:otherwise>
 	</c:choose>

@@ -90,6 +90,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:formView="projectCopy"
     p:successView="redirect:/secure/list.html"
   />
+  
+  <bean id="categoryValidator"
+    class="edu.vt.middleware.gator.web.CategoryValidator" />
 
   <bean id="categoryEditController"
     class="edu.vt.middleware.gator.web.CategoryEditFormController"
@@ -97,6 +100,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:commandName="wrapper"
     p:formView="categoryEdit"
     p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
+    p:validator-ref="categoryValidator"
   />
 
   <bean id="categoryBulkEditController"

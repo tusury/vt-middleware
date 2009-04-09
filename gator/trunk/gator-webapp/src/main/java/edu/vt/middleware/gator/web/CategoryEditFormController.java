@@ -55,7 +55,6 @@ public class CategoryEditFormController extends BaseFormController
     } else {
       wrapper = new CategoryWrapper(category);
     }
-    wrapper.setOwningProject(project);
     return wrapper;
   }
 
@@ -86,6 +85,15 @@ public class CategoryEditFormController extends BaseFormController
     final CategoryWrapper wrapper = (CategoryWrapper) command;
     final CategoryConfig category = wrapper.getCategory();
     final ProjectConfig project = category.getProject();
+    category.getAppenders().clear();
+    for (int id : wrapper.getAppenderIds()) {
+      final AppenderConfig appender = project.getAppender(id);
+      if (appender == null) {
+        throw new IllegalArgumentException(String.format(
+            "Appender ID=%s does not exist in project.", id));
+      }
+      category.getAppenders().add(appender);
+    }
     if (!configManager.exists(category)) {
       project.addCategory(category);
     }
@@ -105,8 +113,8 @@ public class CategoryEditFormController extends BaseFormController
   public static class CategoryWrapper
   {
     private CategoryConfig category;
-
-    private ProjectConfig owningProject; 
+    
+    private int[] appenderIds;
 
 
     /**
@@ -116,6 +124,12 @@ public class CategoryEditFormController extends BaseFormController
     public CategoryWrapper(final CategoryConfig wrapped)
     {
       setCategory(wrapped);
+      final int[] ids = new int[wrapped.getAppenders().size()];
+      int i = 0;
+      for (AppenderConfig appender : wrapped.getAppenders()) {
+        ids[i++] = appender.getId();
+      }
+      setAppenderIds(ids);
     }
 
     /**
@@ -135,26 +149,12 @@ public class CategoryEditFormController extends BaseFormController
     }
 
     /**
-     * Sets the project to which this category belongs.
-     * @param project Owning project of category.
-     */
-    public void setOwningProject(final ProjectConfig project)
-    {
-      this.owningProject = project;
-    }
-
-    /**
      * Gets the IDs of all appenders this category sends logging events to.
      * @return Array of IDs of associated appenders.
      */
     public int[] getAppenderIds()
     {
-      final int[] ids = new int[category.getAppenders().size()];
-      int i = 0;
-      for (AppenderConfig appender : category.getAppenders()) {
-        ids[i++] = appender.getId();
-      }
-      return ids;
+      return appenderIds;
     }
 
     /**
@@ -163,15 +163,7 @@ public class CategoryEditFormController extends BaseFormController
      */
     public void setAppenderIds(final int[] ids)
     {
-      category.getAppenders().clear();
-      for (int id : ids) {
-        final AppenderConfig appender = owningProject.getAppender(id);
-        if (appender == null) {
-          throw new IllegalArgumentException(String.format(
-              "Appender ID=%s does not exist in project.", id));
-        }
-        category.getAppenders().add(appender);
-      }
+      appenderIds = ids;
     }
   }
 }
