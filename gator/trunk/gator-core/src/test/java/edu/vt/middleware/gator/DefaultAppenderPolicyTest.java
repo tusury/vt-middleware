@@ -112,6 +112,10 @@ public class DefaultAppenderPolicyTest
     Assert.assertFalse(
       policy.allowSocketAppender(
         testProject.getCategory(TEST_CAT_FOO_BAR)));
+    policy.setAllowSocketAppenderOnRootCategory(true);
+    Assert.assertTrue(
+      policy.allowSocketAppender(
+        testProject.getCategory(CategoryConfig.ROOT_CATEGORY_NAME)));
   }
 
 }

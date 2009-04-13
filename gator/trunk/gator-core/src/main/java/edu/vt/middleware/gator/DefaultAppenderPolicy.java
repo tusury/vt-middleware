@@ -22,7 +22,9 @@ import org.apache.commons.logging.LogFactory;
  * <li>Explicitly-defined appenders are allowed on categories in all cases,
  * i.e. the {@link #allow(CategoryConfig, AppenderConfig)} method always returns
  * true.</li>
- * <li>Socket appender is not allowed on the root category.</li>
+ * <li>Socket appender is not allowed on the root category by default,
+ * but my be allowed by setting {@link #allowSocketAppenderOnRootCategory} to
+ * true.</li>
  * <li>Socket appender is not allowed on a category if a parent category
  * is also defined with appender references.  This policy exists to prevent
  * duplicate logging events on the server.</li>
@@ -39,7 +41,28 @@ public class DefaultAppenderPolicy implements AppenderPolicy
 {
   /** Logger instance */
   private final Log logger = LogFactory.getLog(getClass());
+ 
+  /** Flag determines whether socket appender is allowed on root category */
+  private boolean allowSocketAppenderOnRootCategory;
 
+
+  /**
+   * @param allowRoot True to allow socket appender reference on root category,
+   * false otherwise.
+   */
+  public void setAllowSocketAppenderOnRootCategory(final boolean allowRoot)
+  {
+    allowSocketAppenderOnRootCategory = allowRoot;
+  }
+
+  /**
+   * @return True if socket appender reference is allowed on root category,
+   * false otherwise.
+   */
+  public boolean isAllowSocketAppenderOnRootCategory()
+  {
+    return allowSocketAppenderOnRootCategory;
+  }
 
   /** {@inheritDoc} */
   public boolean allow(
@@ -52,13 +75,17 @@ public class DefaultAppenderPolicy implements AppenderPolicy
   /** {@inheritDoc} */
   public boolean allowSocketAppender(final CategoryConfig category)
   {
-    if (CategoryConfig.ROOT_CATEGORY_NAME.equals(category.getName()) ||
-        hasParentWithAppenders(category) ||
-        category.getAppenders().size() == 0) {
-      return false;
-    } else { 
-      return true;
+    boolean result = true;
+    if (CategoryConfig.ROOT_CATEGORY_NAME.equals(category.getName()))
+    {
+      result = allowSocketAppenderOnRootCategory;
     }
+    else if (hasParentWithAppenders(category) ||
+             category.getAppenders().size() == 0)
+    {
+      result = false;
+    }
+    return result;
   }
 
   /**
@@ -85,4 +112,5 @@ public class DefaultAppenderPolicy implements AppenderPolicy
     }
     return false;
   }
+
 }
