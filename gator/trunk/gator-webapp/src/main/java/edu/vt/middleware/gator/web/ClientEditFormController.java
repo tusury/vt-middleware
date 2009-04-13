@@ -14,6 +14,7 @@
 package edu.vt.middleware.gator.web;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -80,11 +81,46 @@ public class ClientEditFormController extends BaseFormController
   {
     final ClientConfig client = (ClientConfig) command;
     final ProjectConfig project = client.getProject();
-    if (!configManager.exists(client)) {
-      project.addClient(client);
+    // For new clients or name changes, ensure name is unique within project
+    final ClientConfig clientFromDb = configManager.find(
+        ClientConfig.class,
+        client.getId());
+    ProjectConfig checkProject = null;
+    if (clientFromDb == null) {
+      checkProject = project;
+    } else if (!clientFromDb.getName().equals(client.getName())) {
+      checkProject = clientFromDb.getProject();
     }
-    configManager.save(project);
-    return new ModelAndView(
-        ControllerHelper.filterViewName(getSuccessView(), project));
+    if (checkProject.getClient(client.getName()) != null) {
+      errors.rejectValue(
+        "name",
+        "error.client.uniqueName",
+        new Object[] {client.getName()},
+      "Client name must be unique in project.");
+    }
+    // Ensure this client does not exist in any other projects
+    final List<ProjectConfig> otherProjects =
+      configManager.findProjectsByClientName(client.getName());
+    for (ProjectConfig p : otherProjects)
+    {
+      if (!p.equals(project)) {
+        errors.rejectValue(
+          "name",
+          "error.client.globallyUnique",
+          new Object[] {client.getName(), p.getName()},
+          "A client is only allowed in a single project.");
+      }
+    }
+    if (errors.hasErrors()) {
+      return showForm(request, response, errors);
+    } else {
+      if (clientFromDb == null) {
+        project.addClient(client);
+      }
+      configManager.save(project);
+      return new ModelAndView(
+          ControllerHelper.filterViewName(getSuccessView(), project));
+    }
+
   }
 }

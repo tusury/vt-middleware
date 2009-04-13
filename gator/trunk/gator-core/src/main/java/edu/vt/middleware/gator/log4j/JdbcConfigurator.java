@@ -85,15 +85,7 @@ public class JdbcConfigurator implements Configurator, InitializingBean
     final LoggerRepository repository)
     throws UnknownClientException, ConfigurationException
   {
-    final Set<ProjectConfig> projects = getProjects(addr);
-    // Client must be registered with at least one project
-    if (projects.size() == 0) {
-      throw new UnknownClientException(
-          String.format("%s not registered with any projects.", addr));
-    }
-    for (ProjectConfig p : projects) {
-      configure(p, repository);
-    }
+    configure(getProject(addr), repository);
   }
 
 
@@ -141,12 +133,16 @@ public class JdbcConfigurator implements Configurator, InitializingBean
 
 
   /**
-   * Gets all the projects of which the host possessing the given IP address
+   * Gets first project to which the host possessing the given IP address
    * is a member.
    * @param addr IP address.
-   * @return Set of projects of which addr is a member.
+   * @return First project to which the client at the given IP address
+   * is a member.
+   * @throws UnknownClientException If given client is not a member of any
+   * projects.
    */
-  private Set<ProjectConfig> getProjects(final InetAddress addr) {
+  private ProjectConfig getProject(final InetAddress addr)
+    throws UnknownClientException {
     final Set<ProjectConfig> projects = new HashSet<ProjectConfig>();
    
     // Add projects that contain the given client by host or IP address
@@ -154,6 +150,11 @@ public class JdbcConfigurator implements Configurator, InitializingBean
       configManager.findProjectsByClientName(addr.getHostAddress()));
     projects.addAll(
       configManager.findProjectsByClientName(addr.getHostName()));
-    return projects;
+    if (projects.size() > 0) {
+      return projects.iterator().next();
+    } else {
+      throw new UnknownClientException(
+          String.format("%s not registered with any projects.", addr));
+    }
   }
 }
