@@ -45,8 +45,8 @@ public class ClientDeleteFormController extends BaseDeleteFromController
           "Illegal attempt to delete non-existent client.");
     }
     final DeleteSpec spec = new DeleteSpec();
-    spec.setId(client.getId());
-    spec.setName(client.getName());
+    spec.setProject(client.getProject());
+    spec.setConfigToBeDeleted(client);
     spec.setTypeName("Client");
     return spec;
   }
@@ -64,11 +64,8 @@ public class ClientDeleteFormController extends BaseDeleteFromController
     if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
-    final ClientConfig client = configManager.find(
-      ClientConfig.class,
-      spec.getId());
-    final ProjectConfig project = client.getProject();
-    project.removeClient(client);
+    final ProjectConfig project = spec.getProject();
+    project.removeClient((ClientConfig) spec.getConfigToBeDeleted());
     configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));

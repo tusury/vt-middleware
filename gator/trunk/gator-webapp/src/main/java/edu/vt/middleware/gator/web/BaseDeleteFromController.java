@@ -13,15 +13,7 @@
 */
 package edu.vt.middleware.gator.web;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.validation.BindException;
-
-import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.util.RequestParamExtractor;
 
 /**
  * Superclass for all delete controllers.
@@ -32,18 +24,6 @@ import edu.vt.middleware.gator.util.RequestParamExtractor;
  */
 public class BaseDeleteFromController extends BaseFormController
 {
-  /** {@inheritDoc} */
-  @Override
-  protected Map<String, Object> referenceData(final HttpServletRequest request)
-      throws Exception
-  {
-    final Map<String, Object> refData = new HashMap<String, Object>();
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    refData.put("project", project);
-    return refData;
-  }
-
   /**
    * Validates the given delete specification.
    * @param errors Form binding errors.

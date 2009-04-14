@@ -45,8 +45,8 @@ public class CategoryDeleteFormController extends BaseDeleteFromController
           "Illegal attempt to delete non-existent category.");
     }
     final DeleteSpec spec = new DeleteSpec();
-    spec.setId(category.getId());
-    spec.setName(category.getName());
+    spec.setConfigToBeDeleted(category);
+    spec.setProject(category.getProject());
     spec.setTypeName("Category");
     return spec;
   }
@@ -64,11 +64,8 @@ public class CategoryDeleteFormController extends BaseDeleteFromController
     if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
-    final CategoryConfig category = configManager.find(
-      CategoryConfig.class,
-      spec.getId());
-    final ProjectConfig project = category.getProject();
-    project.removeCategory(category);
+    final ProjectConfig project = spec.getProject();
+    project.removeCategory((CategoryConfig) spec.getConfigToBeDeleted());
     configManager.save(project);
     return new ModelAndView(
         ControllerHelper.filterViewName(getSuccessView(), project));

@@ -41,4 +41,15 @@ public interface ConfigChangeListener
    * @param project Project configuration that was deleted.
    */
   void projectRemoved(Object sender, ProjectConfig project);
+  
+ 
+  /**
+   * Callback method is invoked on registered listeners whenever a client
+   * is removed from a project.
+   *
+   * @param sender Change publisher.
+   * @param project Project configuration that formerly contained the client.
+   * @param clientName The name of the removed client.
+   */
+  void clientRemoved(Object sender, ProjectConfig project, String clientName);
 }

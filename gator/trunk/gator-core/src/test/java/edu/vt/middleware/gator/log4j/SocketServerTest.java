@@ -113,6 +113,7 @@ public class SocketServerTest
         });
     server = new SocketServer();
     server.setConfigurator(configurator);
+    server.setClientRemovalPolicy(new NoopClientRemovalPolicy());
     server.setStartOnInit(true);
     server.init();
   }

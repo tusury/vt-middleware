@@ -74,9 +74,13 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     p:clientRootLogDirectory="${log4j.client.rootDir}"
   />
   
+  <bean id="clientRemovalPolicy"
+    class="${log4j.client.removalPolicy}" />
+  
   <bean id="log4jSocketServer"
     class="edu.vt.middleware.gator.log4j.SocketServer"
     p:configurator-ref="log4jConfigurator"
+    p:clientRemovalPolicy-ref="clientRemovalPolicy"
     p:startOnInit="true"
     p:bindAddress="${log4j.server.bindAddress}"
     p:port="${log4j.server.port}"

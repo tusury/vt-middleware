@@ -6,7 +6,7 @@
   </span>
   <span>&raquo;</span>
   <span>
-    <a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit <em>${project.name}</em></a>
+    <a href="<c:url value="/secure/project/${spec.project.name}/edit.html" />">Edit <em>${spec.project.name}</em></a>
   </span>
   <span>&raquo;</span>
   <span>Delete ${spec.typeName}</span>
@@ -18,12 +18,12 @@
   <form:errors id="error" path="*" element="div" />
   
   <fieldset>
-    <legend>Delete Appender</legend>
+    <legend>Delete ${spec.typeName}</legend>
     <div class="field">
       <div class="checkboxes">
         <form:checkbox id="delete" path="confirmationFlag"
           value="confirmationFlag"
-          label="Confirm deletion of <strong>${spec.name}</strong>" />
+          label="Confirm deletion of <strong>${spec.configToBeDeleted.name}</strong>" />
       </div>
     </div>
     <div class="field">

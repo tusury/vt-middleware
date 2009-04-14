@@ -15,7 +15,9 @@ package edu.vt.middleware.gator;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -169,6 +171,7 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
   public void save(final ProjectConfig project)
   {
     final EntityManager em = getEntityManager();
+    final Set<ClientConfig> removedClients = new HashSet<ClientConfig>();
     logger.debug("Saving " + project);
     ProjectConfig liveProject;
     project.setModifiedDate(Calendar.getInstance());
@@ -176,10 +179,26 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
       em.persist(project);
       liveProject = find(ProjectConfig.class, project.getId());
     } else {
+      // Determine removed clients
+      final ProjectConfig pDb = find(ProjectConfig.class, project.getId());
+      for (ClientConfig client : pDb.getClients()) {
+        if (project.getClient(client.getId()) == null) {
+          removedClients.add(client);
+        }
+      }
       liveProject = em.merge(project);
     }
+    // Notify registered listeners of project changes
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
       listener.projectChanged(this, liveProject);
+    }
+    // Notify registered listeners of removed clients
+    for (ClientConfig client : removedClients) {
+      if (liveProject.getClient(client.getId()) == null) {
+        for (ConfigChangeListener listener : getConfigChangeListeners()) {
+          listener.clientRemoved(this, liveProject, client.getName());
+        }
+      }
     }
   }
 
@@ -190,9 +209,13 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
   {
     final EntityManager em = getEntityManager();
     logger.debug("Deleting " + project);
-    em.remove(project);
+    ProjectConfig liveProject = project;
+    if (!em.contains(project)) {
+      liveProject = find(ProjectConfig.class, project.getId());
+    }
+    em.remove(liveProject);
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
-      listener.projectRemoved(this, project);
+      listener.projectRemoved(this, liveProject);
     }
   }
 

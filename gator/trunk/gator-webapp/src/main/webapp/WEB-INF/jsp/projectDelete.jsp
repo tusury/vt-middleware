@@ -19,7 +19,7 @@
       <div class="checkboxes">
         <form:checkbox id="delete" path="confirmationFlag"
           value="confirmationFlag"
-          label="Confirm deletion of project <strong>${spec.name}</strong>" />
+          label="Confirm deletion of project <strong>${spec.configToBeDeleted.name}</strong>" />
       </div>
     </div>
     <div class="field">

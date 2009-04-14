@@ -133,7 +133,8 @@ public class ProjectConfig extends Config
    */
   @OneToMany(
     mappedBy = "project",
-    cascade = CascadeType.ALL)
+    cascade = CascadeType.ALL,
+    fetch = FetchType.EAGER)
   @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
   protected Set<ClientConfig> getClientsInternal()
   {

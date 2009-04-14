@@ -106,6 +106,15 @@ public class LoggingEventHandler implements Runnable
   {
     return repository;
   }
+  
+  /**
+   * Gets the socket used to read logging events from remote clients.
+   * @return Socket used to read logging events.
+   */
+  public Socket getSocket()
+  {
+    return socket;
+  }
  
   /**
    * Gets the IP address of the remote host for which this handler services

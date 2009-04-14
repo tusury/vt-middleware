@@ -43,8 +43,7 @@ public class ProjectDeleteFormController extends BaseDeleteFromController
           "Illegal attempt to delete non-existent project.");
     }
     final DeleteSpec spec = new DeleteSpec();
-    spec.setId(project.getId());
-    spec.setName(project.getName());
+    spec.setConfigToBeDeleted(project);
     return spec;
   }
 
@@ -62,10 +61,7 @@ public class ProjectDeleteFormController extends BaseDeleteFromController
     if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
-    final ProjectConfig projectFromDb = configManager.find(
-      ProjectConfig.class,
-      spec.getId());
-    configManager.delete(projectFromDb);
+    configManager.delete((ProjectConfig) spec.getConfigToBeDeleted());
     return new ModelAndView(getSuccessView());
   }
 }

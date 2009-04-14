@@ -121,4 +121,17 @@ filesystem in the directory /home/gator.
     value="/home/gator/logs"
     override="false" />
 
+  <!--
+  Name of a class that implements a client removal policy, which defines
+  what happens when a client is removed from a project.
+  The following are provided out of the box, in order of increasing
+  aggressiveness for dealing with deleted clients:
+  edu.vt.middleware.gator.log4j.NoopClientRemovalPolicy
+  edu.vt.middleware.gator.log4j.DeleteLoggerRepositoryClientRemovalPolicy
+  edu.vt.middleware.gator.log4j.SocketCloseClientRemovalPolicy
+  -->
+  <Parameter
+    name="log4j.client.removalPolicy"
+    value="edu.vt.middleware.gator.log4j.DeleteLoggerRepositoryClientRemovalPolicy"
+    override="false" />
 </Context>

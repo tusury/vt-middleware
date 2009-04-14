@@ -13,6 +13,9 @@
 */
 package edu.vt.middleware.gator.web;
 
+import edu.vt.middleware.gator.Config;
+import edu.vt.middleware.gator.ProjectConfig;
+
 /**
  * Represents a request to delete a configuration object.
  *
@@ -22,13 +25,46 @@ package edu.vt.middleware.gator.web;
  */
 public class DeleteSpec
 {
+  private ProjectConfig project;
+  
+  private Config configToBeDeleted;
+
   private boolean confirmationFlag;
   
   private String typeName;
   
-  private String name;
-  
-  private int id;
+
+  /**
+   * @return the project
+   */
+  public ProjectConfig getProject()
+  {
+    return project;
+  }
+
+  /**
+   * @param p the project to set
+   */
+  public void setProject(final ProjectConfig p)
+  {
+    project = p;
+  }
+
+  /**
+   * @return the config
+   */
+  public Config getConfigToBeDeleted()
+  {
+    return configToBeDeleted;
+  }
+
+  /**
+   * @param config the config to set
+   */
+  public void setConfigToBeDeleted(final Config config)
+  {
+    configToBeDeleted = config;
+  }
 
   /**
    * @return the confirmationFlag
@@ -46,37 +82,6 @@ public class DeleteSpec
     this.confirmationFlag = confirm;
   }
 
-  /**
-   * @return the name
-   */
-  public String getName()
-  {
-    return name;
-  }
-
-  /**
-   * @param name the name to set
-   */
-  public void setName(final String name)
-  {
-    this.name = name;
-  }
-
-  /**
-   * @return the id
-   */
-  public int getId()
-  {
-    return id;
-  }
-
-  /**
-   * @param id the id to set
-   */
-  public void setId(final int id)
-  {
-    this.id = id;
-  }
 
   /**
    * @param typeName the typeName to set

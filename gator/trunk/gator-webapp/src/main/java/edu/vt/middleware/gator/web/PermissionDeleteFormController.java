@@ -47,8 +47,8 @@ public class PermissionDeleteFormController extends BaseDeleteFromController
           "Illegal attempt to delete non-existent security permission.");
     }
     final DeleteSpec spec = new DeleteSpec();
-    spec.setId(perm.getId());
-    spec.setName(perm.getName());
+    spec.setConfigToBeDeleted(perm);
+    spec.setProject(perm.getProject());
     spec.setTypeName("Permission");
     return spec;
   }
@@ -67,11 +67,10 @@ public class PermissionDeleteFormController extends BaseDeleteFromController
     if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
-    final PermissionConfig perm = configManager.find(
-      PermissionConfig.class,
-      spec.getId());
-    final ProjectConfig project = perm.getProject();
-    if (ControllerHelper.isLastFullPermissions(project, spec.getId())) {
+    final PermissionConfig perm =
+      (PermissionConfig) spec.getConfigToBeDeleted();
+    final ProjectConfig project = spec.getProject();
+    if (ControllerHelper.isLastFullPermissions(project, perm.getId())) {
       errors.reject(
         "error.delete.lastAllPermissions",
         "Cannot delete last permission entry with full permissions.");

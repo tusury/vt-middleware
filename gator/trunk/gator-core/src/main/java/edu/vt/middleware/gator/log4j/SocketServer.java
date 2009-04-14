@@ -86,6 +86,9 @@ public class SocketServer
   
   /** Runs the socket server */
   protected Thread socketServerThread;
+ 
+  /** Defines behavior when clients are removed from projects */
+  protected ClientRemovalPolicy clientRemovalPolicy;
 
 
 
@@ -131,9 +134,27 @@ public class SocketServer
    */
   public void setPort(final int n)
   {
-    this.port = n;
+    port = n;
   }
   
+  /**
+   * Gets the policy applied when clients are removed from a project.
+   * @return Client removal policy.
+   */
+  public ClientRemovalPolicy getClientRemovalPolicy()
+  {
+    return clientRemovalPolicy;
+  }
+
+  /**
+   * Sets the policy applied when clients are removed from a project.
+   * @param policy Client removal policy.
+   */
+  public void setClientRemovalPolicy(final ClientRemovalPolicy policy)
+  {
+    clientRemovalPolicy = policy;
+  }
+
   /**
    * Gets a collection of all registered logging event handlers.
    * @return Immutable collection of logging event handlers.
@@ -165,6 +186,7 @@ public class SocketServer
   public void init() throws Exception
   {
     Assert.notNull(configurator, "Configurator cannot be null.");
+    Assert.notNull(clientRemovalPolicy, "ClientRemovalPolicy cannot be null.");
     try {
       inetBindAddress = InetAddress.getByName(bindAddress);
     } catch (UnknownHostException e) {
@@ -297,6 +319,40 @@ public class SocketServer
     final ProjectConfig project)
   {
     logger.info(String.format("Got notice that %s was removed.", project));
+    for (InetAddress addr : eventHandlerMap.keySet()) {
+      for (ClientConfig client : project.getClients()) {
+        if (addr.getHostName().equals(client.getName()) ||
+            addr.getHostAddress().equals(client.getName()))
+        {
+          eventHandlerMap.get(addr).getRepository().resetConfiguration();
+	        clientRemovalPolicy.clientRemoved(
+	          client.getName(),
+	          eventHandlerMap.get(addr));
+        }
+      }
+    }
+  }
+
+  /** {@inheritDoc} */
+  public synchronized void clientRemoved(
+    final Object sender,
+    final ProjectConfig project,
+    final String clientName)
+  {
+    logger.info(
+      String.format(
+        "Got notice that client %s was removed from %s.",
+        clientName,
+        project));
+    for (InetAddress addr : eventHandlerMap.keySet()) {
+      if (addr.getHostName().equals(clientName) ||
+          addr.getHostAddress().equals(clientName))
+      {
+        clientRemovalPolicy.clientRemoved(
+          clientName,
+          eventHandlerMap.get(addr));
+      }
+    }
   }
 
   /** {@inheritDoc} */

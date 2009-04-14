@@ -45,8 +45,8 @@ public class AppenderDeleteFormController extends BaseDeleteFromController
 	        "Illegal attempt to delete non-existent appender.");
     }
     final DeleteSpec spec = new DeleteSpec();
-    spec.setId(appender.getId());
-    spec.setName(appender.getName());
+    spec.setConfigToBeDeleted(appender);
+    spec.setProject(appender.getProject());
     spec.setTypeName("Appender");
     return spec;
   }
@@ -64,10 +64,9 @@ public class AppenderDeleteFormController extends BaseDeleteFromController
     if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
-    final AppenderConfig appender = configManager.find(
-      AppenderConfig.class,
-      spec.getId());
-    final ProjectConfig project = appender.getProject();
+    final AppenderConfig appender =
+      (AppenderConfig) spec.getConfigToBeDeleted();
+    final ProjectConfig project = spec.getProject();
     project.removeAppender(appender);
     for (CategoryConfig cat : project.getCategories()) {
       cat.getAppenders().remove(appender);
