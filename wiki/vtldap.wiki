@@ -1,0 +1,136 @@
+#summary vt-ldap documentation.
+
+= Introduction =
+VT Ldap is a Java library for interfacing with version 3 LDAPs.
+This library meets the following design goals:
+ # Easy and flexible to configure. Configuration can be done with a properties file located on your classpath or via Spring.
+ # Ease of use for common ldap operations. Searching, comparing, adding, and replacing all require only a few lines of code.
+ # Automatic connection handling. Timed out connections automatically retry and TLS/SSL is negotiated transparently.
+ # Support for sasl external operations. Digest-MD5, CRAM-MD5, GSSAPI, and SASL external are all supported.
+ # Command line interface for common operations.
+
+= Installation =
+The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
+
+If you would like to use this project in your maven build, include the following in your pom.xml:
+{{{
+...
+<repositories>
+  <repository>
+    <id>vt-middleware.repo</id>
+    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+  </repository>
+</repositories>
+...
+}}}
+
+If you would like to use this project's maven plugin, include the following in your pom.xml:
+{{{
+...
+<pluginRepositories>
+  <pluginRepository>
+    <id>vt-middleware.repo</id>
+    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+  </pluginRepository>
+</pluginRepositories>
+...
+}}}
+
+= Code Samples =
+Unless otherwise noted, classes appearing in the following samples are included in the JSE libraries or VT Ldap.
+
+== Searching ==
+
+=== Compare ===
+Perform a compare on the entry 'uid=818037,ou=People,dc=vt,dc=edu', checking for an attribute value of 'mail=dfisher@vt.edu'
+{{{
+Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+if (ldap.compare("uid=818037,ou=People,dc=vt,dc=edu", "mail=dfisher@vt.edu")) {
+  System.out.println("Compare succeeded");
+} else {
+  System.out.println("Compare failed");
+}
+}}}
+
+=== Subtree search ===
+Perform a search for 'sn=Fisher' and output all attributes in LDIF format to System.out.
+{{{
+Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+(new Ldif()).outputLdif(ldap.search("sn=Fisher"), System.out);
+}}}
+
+=== Attribute search ===
+Perform a search for all entries containing an attribute matching 'mail=dfisher@vt.edu', and output the attributes 'sn' and 'givenName' in DSMLv1 format to System.out.
+{{{
+Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+(new Dsmlv1()).outputDsml(ldap.searchAttributes(new BasicAttributes("mail", "dfisher@vt.edu"), new String[]{"sn", "givenName"}), System.out);
+}}}
+
+== Authentication ==
+Authenticate a user whose entry resides in the 'ou=People' branch of the ldap.
+TLS is required for all connections and the username must equal the attribute value of the attributes 'uid' or 'mail'.
+{{{
+AuthenticatorConfig config = new AuthenticatorConfig("ldap://authn.directory.vt.edu", "ou=People,dc=vt,dc=edu");
+config.setTls(true);
+config.setUserField(new String[]{"uid", "mail"}); // attribute to search for user with
+Authenticator auth = new Authenticator(config);
+auth.useTls(true);
+if (auth.authenticate(user, credential)) {
+  System.out.println("Authentication succeeded");
+} else {
+  System.out.println("Authentication failed");
+}
+}}}
+
+Same example as above, but also authorize the user on 'eduPersonAffiliation'.
+{{{
+AuthenticatorConfig config = new AuthenticatorConfig("ldap://authn.directory.vt.edu", "ou=People,dc=vt,dc=edu");
+config.setTls(true);
+config.setUserField(new String[]{"uid", "mail"}); // attribute to search for user with
+Authenticator auth = new Authenticator(config);
+auth.useTls(true);
+if (auth.authenticate(user, credential, "eduPersonAffiliation=staff")) {
+  System.out.println("Authentication/Authorization succeeded");
+} else {
+  System.out.println("Authentication/Authorization failed");
+}
+}}}
+
+== Pooling ==
+Create a new soft limit pool, accepting all the default configuration properties. Check a ldap object out from the pool, perform a search, and return the object to the pool.
+{{{
+DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
+pool.initialize()
+Ldap ldap = null;
+try {
+  ldap = pool.checkOut();
+  ...
+  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  ...
+} finally {
+  pool.checkIn(ldap);
+}
+...
+pool.close();
+}}}
+
+= Scripts =
+Script execution requirements vary by platform.  For the following platform-specific instructions, let VTLDAP_HOME be the location where the VT Ldap distribution was unpacked.
+
+*Unix*
+ # Ensure the java executable is on your path.
+ # Ensure $VTLDAP_HOME/bin is on your path.
+ # If you encounter classpath problems executing the scripts, export VTLDAP_HOME as a separate shell variable.  This is not necessary in most cases (e.g. Linux, OSX, FreeBSD).
+
+== ldapsearch - Search Operations ==
+Perform a subtree search for any entry containing 'mail=dfisher@vt.edu' and return the attributes givenName and sn in LDIF format.
+{{{
+ldapsearch -ldapUrl ldap://directory.vt.edu -base ou=People,dc=vt,dc=edu -query mail=dfisher@vt.edu givenName sn
+}}}
+
+== ldapauth - Authentication Operations ==
+Authenticate a user using the 'mail' attribute. You will be prompted for username and credential. Note that your credential will be visible in your terminal.
+{{{
+ldapauth -ldapUrl ldap://authn.directory.vt.edu -base ou=People,dc=vt,dc=edu -tls true -userField mail
+}}}
