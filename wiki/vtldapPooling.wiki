@@ -1,3 +1,7 @@
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
+
 = Introduction =
 This library provides support for pooling ldap objects.<br/>
 Pooling ldap objects provides a way to mitigate the overhead of creating a LDAP connection for every operation, especially when performance is critical.<br/>
