@@ -168,7 +168,7 @@ Properties used for connecting, binding, and searching.
 || edu.vt.middleware.ldap.operationRetry || 1 || specifies the number of times an operation will be retried if a CommunicationException occurs when an operation is attempted ||
 || edu.vt.middleware.ldap.logCredentials || false || whether bind credentials should be logged; logging occurs at debug level ||
 
-=== SearchControl Properties ===
+=== !SearchControl Properties ===
 Properties that map to: [http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/directory/SearchControls.html javax.naming.directory.SearchControls]
 || *Property Name* || *Default Value* || *Description* ||
 || edu.vt.middleware.ldap.searchScope || SUBTREE (2) || specifies the scope of searches; must be one of OBJECT (0), ONELEVEL (1), or SUBTREE (2) ||
