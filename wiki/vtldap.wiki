@@ -12,6 +12,7 @@ This library meets the following design goals:
  # Support for sasl external operations. Digest-MD5, CRAM-MD5, GSSAPI, and SASL external are all supported.
  # Command line interface for common operations.
 
+----
 = Installation =
 The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
 
@@ -39,6 +40,7 @@ If you would like to use this project's maven plugin, include the following in y
 ...
 }}}
 
+----
 = Code Samples =
 Unless otherwise noted, classes appearing in the following samples are included in the JSE libraries or VT Ldap.
 
@@ -118,6 +120,7 @@ try {
 pool.close();
 }}}
 
+----
 = Configuration Properties =
 The Ldap and Authenticator objects can be configured from a properties file. This is useful for maintaining a ldap configuration outside of your source code. Simply create a file called _ldap.properties_ and place it in your root classpath.
 {{{
@@ -131,36 +134,59 @@ ldap.loadFromProperties("/classpath/to/your/propertiesFile");
 }}}
 
 == Properties ==
-|| *Property Name* || *Default Value* || Description ||
+Any property provided that does not match the following property names is placed directly into the JNDI context. This allows the user to provide ad-hoc environment properties.
+
+=== Context Properties ===
+Properties injected directly into the JNDI context.
+|| *Property Name* || *Default Value* || *Description* ||
 || edu.vt.middleware.ldap.contextFactory || com.sun.jndi.ldap.LdapCtxFactory || fully qualified class name of the context factory that JNDI should use ||
-|| edu.vt.middleware.ldap.sslSocketFactory || _none_ || fully qualified class name which implements javax.net.ssl.SSLSocketFactory ||
-|| edu.vt.middleware.ldap.hostnameVerifier || _none_ || fully qualified class name which implements javax.net.ssl.HostnameVerifier ||
-|| edu.vt.middleware.ldap.ldapUrl || _none_ || fully qualified URL of the ldap. e.g. ldap://directory.vt.edu:389 ||
-|| edu.vt.middleware.ldap.base || _none_ || base dn used for operations ||
-|| edu.vt.middleware.ldap.serviceUser || _none_ || dn to bind as before performing operations ||
-|| edu.vt.middleware.ldap.serviceCredential || _none_ || credential for the service user ||
-|| edu.vt.middleware.ldap.searchScope || SUBTREE (2) || specifies the scope of searches; must be one of OBJECT (0), ONELEVEL (1), or SUBTREE (2) ||
-|| edu.vt.middleware.ldap.authtype || simple || LDAP authentication mechanism; must be one of none, simple, strong, DIGEST-MD5, CRAM-MD5, GSSAPI, or EXTERNAL ||
-|| edu.vt.middleware.ldap.authoritative || false || require an authoritative source ||
-|| edu.vt.middleware.ldap.pooled ||
-|| edu.vt.middleware.ldap.ignoreCase ||
-|| edu.vt.middleware.ldap.timeLimit || 0 || the amount of time in milliseconds that search operations will block; a value of 0 means blocking indefinitely ||
-|| edu.vt.middleware.ldap.countLimit || 0 || the maximum number of entries that search operations will return; a value of 0 means return all results ||
-|| edu.vt.middleware.ldap.operationRetry || 1 || specifies the number of times an operation will be retried if a CommunicationException occurs when an operation is attempted ||
-|| edu.vt.middleware.ldap.derefLinkFlag ||
-|| edu.vt.middleware.ldap.returningObjFlag ||
+|| edu.vt.middleware.ldap.sslSocketFactory || _none_ || fully qualified class name which implements javax.net.ssl.SSLSocketFactory; will be used for all TLS/SSL connections ||
+|| edu.vt.middleware.ldap.hostnameVerifier || _none_ || fully qualified class name which implements javax.net.ssl.HostnameVerifier; will be used for all TLS connections ||
+|| edu.vt.middleware.ldap.ldapUrl || _none_ || fully qualified URL to the ldap. e.g. ldap://directory.vt.edu:389 ||
+|| edu.vt.middleware.ldap.timeout || -1 || the amount of time in milliseconds that connect operations will block; a value of -1 means use the network timeout value ||
+|| edu.vt.middleware.ldap.authoritative || false || whether authoritative responses are accepted from DNS servers ||
 || edu.vt.middleware.ldap.batchSize || -1 || the batch size to use when returning results; a value of -1 means use no batch size ||
 || edu.vt.middleware.ldap.dnsUrl || _none_ || the DNS url to use for hostname resolution ||
 || edu.vt.middleware.ldap.language || _none_ || the preferred language ||
 || edu.vt.middleware.ldap.referral || _none_ || specifies how referrals should be handled; must be one of 'throw', 'ignore', or 'follow' ||
 || edu.vt.middleware.ldap.derefAliases || _none_ || specifies how aliases should be handled; must be one of 'always', 'never', 'finding', or 'searching' ||
 || edu.vt.middleware.ldap.binaryAttributes || _none_ || space delimited list of attributes which should be treated as binary; e.g. userSMIMECertificate jpegPhoto ||
-|| edu.vt.middleware.ldap.saslAuthorizationId ||
-|| edu.vt.middleware.ldap.saslRealm ||
+|| edu.vt.middleware.ldap.saslAuthorizationId || _none_ || entity for which access control checks should be made if the authentication succeeds ||
+|| edu.vt.middleware.ldap.saslRealm || _none_ || identifies the realm or domain from which the principal name should be chosen ||
 || edu.vt.middleware.ldap.typesOnly || false || only return attribute type names ||
 || edu.vt.middleware.ldap.ssl || false || whether SSL should be used for LDAP connections ||
 || edu.vt.middleware.ldap.tls || false || whether TLS should be used for LDAP connections ||
 
+=== Search Properties ===
+Properties used for connecting, binding, and searching.
+|| *Property Name* || *Default Value* || *Description* ||
+|| edu.vt.middleware.ldap.base || _none_ || base dn used for operations ||
+|| edu.vt.middleware.ldap.serviceUser || _none_ || dn to bind as before performing operations ||
+|| edu.vt.middleware.ldap.serviceCredential || _none_ || credential for the service user ||
+|| edu.vt.middleware.ldap.authtype || simple || LDAP authentication mechanism; must be one of 'none', 'simple', 'strong', 'DIGEST-MD5', 'CRAM-MD5', 'GSSAPI', or 'EXTERNAL' ||
+|| edu.vt.middleware.ldap.ignoreCase || true || whether to ignore case in attribute names ||
+|| edu.vt.middleware.ldap.operationRetry || 1 || specifies the number of times an operation will be retried if a CommunicationException occurs when an operation is attempted ||
+|| edu.vt.middleware.ldap.logCredentials || false || whether bind credentials should be logged; logging occurs at debug level ||
+
+=== SearchControl Properties ===
+Properties that map to: [http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/directory/SearchControls.html SearchControls]
+|| *Property Name* || *Default Value* || *Description* ||
+|| edu.vt.middleware.ldap.searchScope || SUBTREE (2) || specifies the scope of searches; must be one of OBJECT (0), ONELEVEL (1), or SUBTREE (2) ||
+|| edu.vt.middleware.ldap.timeLimit || 0 || the amount of time in milliseconds that search operations will block; a value of 0 means blocking indefinitely ||
+|| edu.vt.middleware.ldap.countLimit || 0 || the maximum number of entries that search operations will return; a value of 0 means return all results ||
+|| edu.vt.middleware.ldap.derefLinkFlag || false || whether links will be dereferenced during the search ||
+|| edu.vt.middleware.ldap.returningObjFlag || false || whether objects will be returned as part of the result ||
+
+=== Authenticator Properties ===
+Properties used specifically for authentication.
+All the previous properties are inherited by the Authenticator and can be overridden as necessary.
+|| *Property Name* || *Default Value* || *Description* ||
+|| edu.vt.middleware.ldap.auth.userField || uid || LDAP attribute which contains the user identifier to search on; supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.auth.constructDn || false || whether the authentication dn should be constructed or looked up in the LDAP; a constructed dn takes the form: userField=user,baseDn  ||
+|| edu.vt.middleware.ldap.auth.subtreeSearch || false  || whether the authentication dn should be searched for over the entire base; default value is onelevel  ||
+|| edu.vt.middleware.ldap.auth.authorizationFilter || _none_ || ldap filter to use for performing authorization after successful authentication  ||
+
+----
 = Scripts =
 Script execution requirements vary by platform.  For the following platform-specific instructions, let VTLDAP_HOME be the location where the VT Ldap distribution was unpacked.
 
