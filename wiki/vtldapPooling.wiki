@@ -1,0 +1,93 @@
+= Introduction =
+This library provides support for pooling ldap objects.<br/>
+Pooling ldap objects provides a way to mitigate the overhead of creating a LDAP connection for every operation, especially when performance is critical.<br/>
+JNDI provides it's own [http://java.sun.com/products/jndi/tutorial/ldap/connect/pool.html pooling implementation], but it is limited in it's configuration options and most importantly does not support pooling of TLS connections.
+
+= Properties =
+|| *Property Name* || *Default Value* || *Description* ||
+|| edu.vt.middleware.ldap.pool.minPoolSize || 3 || Size the pool should be initialized to and pruned to ||
+|| edu.vt.middleware.ldap.pool.maxPoolSize || 10 || Maximum size the pool can grow to ||
+|| edu.vt.middleware.ldap.pool.validateOnCheckIn || false || whether connections should be validated when objects are returned to the pool ||
+|| edu.vt.middleware.ldap.pool.validateOnCheckOut || false || whether connections should be validated when objects are loaned out from the pool ||
+|| edu.vt.middleware.ldap.pool.pruneTimerPeriod || 300000 (5 min) || period at which pool should be pruned ||
+|| edu.vt.middleware.ldap.pool.expirationTime || 600000 (10 min) || time an object can stay in the pool before it is considered stale and available for pruning ||
+
+= Implementations =
+
+== BlockingLdapPool ==
+Implements a pool of ldap objects that has a set minimum and maximum size.<br/>
+The pool will not grow beyond the maximum size and when the pool is exhausted, requests for new objects will block.<br/>
+The length of time the pool will block before throwing an exception is configurable.<br/>
+By default the pool will block indefinitely and there is no guarantee that waiting threads will be serviced in the order in which they made their request.<br/>
+This implementation should be used when you need to control the <em>exact</em> number of ldap connections that can be created.
+
+=== Sample Code ===
+{{{
+DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+BlockingLdapPool pool = new BlockingLdapPool(factory);
+pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
+pool.initialize()
+Ldap ldap = null;
+try {
+  ldap = pool.checkOut();
+  ...
+  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  ...
+} catch (BlockingTimeoutException e) {
+  log.error("Gave up waiting on the pool", e);
+} finally {
+  pool.checkIn(ldap);
+}
+...
+pool.close();
+}}}
+
+== SoftLimitLdapPool ==
+Implements a pool of ldap objects that has a set minimum size and will grow as necessary based on it's current load.<br/>
+Pool size will return to it's minimum based on the configuration of the prune timer.<br/>
+This implementation should be used when you have some flexibility in the number of ldap connections that can created to handle spikes in load.<br/>
+Note that this pool will begin blocking if it cannot create new ldap connections.
+
+{{{
+DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
+pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
+pool.initialize()
+Ldap ldap = null;
+try {
+  ldap = pool.checkOut();
+  ...
+  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  ...
+} catch (BlockingTimeoutException e) {
+  log.error("Serious problem with the ldap, connection could not be created", e);
+} finally {
+  pool.checkIn(ldap);
+}
+...
+pool.close();
+}}}
+
+== SharedLdapPool ==
+Implements a pool of ldap objects that has a set minimum and maximum size.<br/>
+The pool will not grow beyond the maximum size and when the pool is exhausted, requests for new objects will be serviced by objects that are already in use.<br/>
+Since Ldap objects are thread safe object this implementation leverages that by sharing ldap objects among requests.<br/>
+See http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/ldap/LdapContext.html#newInstance(javax.naming.ldap.Control[]) for more information about how JNDI contexts can be used in a thread safe manner.<br/>
+This implementation should be used when you want some control over the maximum number of ldap connections, but can tolerate some new connections under high load.
+
+{{{
+DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+SharedLdapPool pool = new SharedLdapPool(factory);
+pool.initialize()
+Ldap ldap = null;
+try {
+  ldap = pool.checkOut();
+  ...
+  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  ...
+} finally {
+  pool.checkIn(ldap);
+}
+...
+pool.close();
+}}}
