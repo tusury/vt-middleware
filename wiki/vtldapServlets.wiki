@@ -1,3 +1,7 @@
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
+
 = Introduction =
 This library includes servlets for searching and authentication for use with web applications.
 
