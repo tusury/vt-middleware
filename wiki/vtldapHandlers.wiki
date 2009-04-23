@@ -1,0 +1,25 @@
+= Introduction =
+Handlers provide a programmatic interface for post processing of search results and attributes.<br/>
+All results must be processed by a handler, even if the handler is simply copying results.<br/>
+By default all search results are processed by the FqdnSearchResultHandler, which ensures that the DN of each result is fully qualified.
+
+= Code Samples =
+Perform a search and with *no* processing of results.
+{{{
+Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+Iterator<SearchResult> iter = ldap.search("ou=People,dc=vt,dc=edu", "sn=Fisher", null, new String[]{"givenName", "mail"}, null);
+}}}
+
+Retrieve all attributes for a specific entry and encode any attribute values of type `byte[]` into Base64.
+{{{
+Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+Attributes attrs = ldap.getAttributes("uid=818037,ou=People,dc=vt,dc=edu", null, new BinaryAttributeHandler());
+}}}
+
+Perform a search and encode any attribute values of type `byte[]` into Base64.
+{{{
+Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+FqdnSearchResultHandler handler = new FqdnSearchResultHandler();
+handler.setAttributeHandler(new BinaryAttributeHandler());
+Iterator<SearchResult> iter = ldap.search("ou=People,dc=vt,dc=edu", "sn=Fisher", null, null, handler);
+}}}
