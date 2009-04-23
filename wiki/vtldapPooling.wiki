@@ -5,7 +5,8 @@
 = Introduction =
 This library provides support for pooling ldap objects.<br/>
 Pooling ldap objects provides a way to mitigate the overhead of creating a LDAP connection for every operation, especially when performance is critical.<br/>
-JNDI provides it's own [http://java.sun.com/products/jndi/tutorial/ldap/connect/pool.html pooling implementation], but it is limited in it's configuration options and most importantly does not support pooling of TLS connections.
+JNDI provides it's own [http://java.sun.com/products/jndi/tutorial/ldap/connect/pool.html pooling implementation], but it is limited in it's configuration options and most importantly does not support pooling of TLS connections.<br/>
+The main design requirement for these implementations is to provide a pool that does not block when creating or closing ldap connections.
 
 = Properties =
 || *Property Name* || *Default Value* || *Description* ||
