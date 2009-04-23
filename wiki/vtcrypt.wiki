@@ -1,6 +1,8 @@
 ﻿#summary vt-crypt documentation.
 #labels java,crypto,bouncycastle
 
+<wiki:toc max_depth="2" />
+
 = Introduction =
 VT Crypt is a high level Java cryptograhic library that meets the following design goals:
  # Flexible JCE provider.  Prefers the [http://www.bouncycastle.org/java.html Bouncy Castle Java Provider], but can fall back to other providers defined in the environment for algorithms not implemented by BC.
