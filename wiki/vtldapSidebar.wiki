@@ -1,3 +1,4 @@
   * [vtldap Overview]
   * [http://vt-middleware.googlecode.com/svn/vt-ldap/javadoc/vt-ldap-3.0/index.html JavaDoc]
   * [vtldapReleaseNotes Release Notes]
+  * [http://code.google.com/p/vt-middleware/downloads/list Download]
