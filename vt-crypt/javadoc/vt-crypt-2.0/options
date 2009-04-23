@@ -1,0 +1,17 @@
+-classpath '/Users/dfisher/Documents/middleware/vt-crypt-2.0/target/classes:/Users/dfisher/.m2/repository/org/apache/ant/ant/1.7.1/ant-1.7.1.jar:/Users/dfisher/.m2/repository/org/apache/ant/ant-launcher/1.7.1/ant-launcher-1.7.1.jar:/Users/dfisher/.m2/repository/bouncycastle/bcprov-jdk14/140/bcprov-jdk14-140.jar:/Users/dfisher/.m2/repository/commons-cli/commons-cli/1.1/commons-cli-1.1.jar:/Users/dfisher/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar'
+ -protected
+-sourcepath
+'/Users/dfisher/Documents/middleware/vt-crypt-2.0/src/main/java'
+-author
+-bottom
+'<i>Copyright &#169; 2008 Virginia Tech. All Rights Reserved.</i>'
+-charset
+'ISO-8859-1'
+-d
+'/Users/dfisher/Documents/middleware/vt-crypt-2.0/target/apidocs'
+-doctitle
+'VT Crypt Libraries 2.0 API'
+-use
+-version
+-windowtitle
+'VT Crypt Libraries 2.0 API'
