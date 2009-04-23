@@ -1,3 +1,7 @@
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
+
 = Introduction =
 Handlers provide a programmatic interface for post processing of search results and attributes.<br/>
 All results must be processed by a handler, even if the handler is simply copying results.<br/>
