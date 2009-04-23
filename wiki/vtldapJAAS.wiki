@@ -1,3 +1,7 @@
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
+
 = Introduction =
 This library provides a JAAS LoginModule for authentication and authorization against a LDAP.
 
