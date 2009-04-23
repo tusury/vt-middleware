@@ -18,7 +18,7 @@ JNDI provides it's own [http://java.sun.com/products/jndi/tutorial/ldap/connect/
 
 = Implementations =
 
-== BlockingLdapPool ==
+== !BlockingLdapPool ==
 Implements a pool of ldap objects that has a set minimum and maximum size.<br/>
 The pool will not grow beyond the maximum size and when the pool is exhausted, requests for new objects will block.<br/>
 The length of time the pool will block before throwing an exception is configurable.<br/>
@@ -46,7 +46,7 @@ try {
 pool.close();
 }}}
 
-== SoftLimitLdapPool ==
+== !SoftLimitLdapPool ==
 Implements a pool of ldap objects that has a set minimum size and will grow as necessary based on it's current load.<br/>
 Pool size will return to it's minimum based on the configuration of the prune timer.<br/>
 This implementation should be used when you have some flexibility in the number of ldap connections that can created to handle spikes in load.<br/>
@@ -72,7 +72,7 @@ try {
 pool.close();
 }}}
 
-== SharedLdapPool ==
+== !SharedLdapPool ==
 Implements a pool of ldap objects that has a set minimum and maximum size.<br/>
 The pool will not grow beyond the maximum size and when the pool is exhausted, requests for new objects will be serviced by objects that are already in use.<br/>
 Since Ldap objects are thread safe object this implementation leverages that by sharing ldap objects among requests.<br/>
