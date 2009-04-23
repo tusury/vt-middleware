@@ -1,4 +1,6 @@
-#summary vt-ldap documentation.
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
 
 = Introduction =
 VT Ldap is a Java library for interfacing with version 3 LDAPs.
