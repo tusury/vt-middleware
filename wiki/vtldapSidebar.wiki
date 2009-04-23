@@ -5,5 +5,6 @@
   * [vtldapServlets Ldap Servlets]
   * [vtldapJAAS JAAS Support]
   * [vtldapGSSAPI GSSAPI Support]
+  * [vtldapSpring Spring Integration]
   * [vtldapReleaseNotes Release Notes]
   * [http://code.google.com/p/vt-middleware/downloads/list Download]
