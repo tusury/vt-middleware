@@ -1,5 +1,4 @@
-﻿#summary vt-crypt documentation.
-#labels java,crypto,bouncycastle
+﻿#labels java,crypto,bouncycastle
 #sidebar vtcryptSidebar
 
 <wiki:toc max_depth="2" />
