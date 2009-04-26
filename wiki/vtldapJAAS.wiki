@@ -3,7 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Introduction =
-This library provides a JAAS LoginModule for authentication and authorization against a LDAP.
+This library provides a JAAS !LoginModule for authentication and authorization against a LDAP.
 
 ----
 = Configuration =
@@ -36,7 +36,7 @@ vt-ldap {
 
 ----
 = Options =
-Each option corresponds to a [vtldap#Configuration_Properties Ldap Property] without the domain prefix.<br/>
+Each option corresponds to a [vtldap#Properties Ldap Property] without the domain prefix.<br/>
 In addition each role option can be used to override any existing option.<br/>
 For example, if you want to get your role data from a different host, simply set roleLdapUrl=“ldap://my.host.domain”.<br/>
 There are 3 options which do not correspond to Ldap properties and those are explained below: 
