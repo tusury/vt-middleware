@@ -44,6 +44,10 @@ try {
   ...
 } catch (BlockingTimeoutException e) {
   log.error("Gave up waiting on the pool", e);
+} catch (PoolInterruptedException e) {
+  log.error("Someone interrupted me", e);
+} catch (LdapPoolException e) {
+  log.error("Serious problem with the ldap, connection could not be created and the pool is empty", e);
 } finally {
   pool.checkIn(ldap);
 }
@@ -69,7 +73,11 @@ try {
   Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (BlockingTimeoutException e) {
-  log.error("Serious problem with the ldap, connection could not be created", e);
+  log.error("Gave up waiting on the pool", e);
+} catch (PoolInterruptedException e) {
+  log.error("Someone interrupted me", e);
+} catch (LdapPoolException e) {
+  log.error("Serious problem with the ldap, connection could not be created and the pool is empty", e);
 } finally {
   pool.checkIn(ldap);
 }
@@ -94,6 +102,8 @@ try {
   ...
   Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
   ...
+} catch (LdapPoolException e) {
+  log.error("Serious problem with the ldap, connection could not be created and the pool is empty", e);
 } finally {
   pool.checkIn(ldap);
 }
