@@ -45,6 +45,8 @@ There are 3 options which do not correspond to Ldap properties and those are exp
 || roleAttribute || An attribute(s) that exists on any role entries found with the roleFilter. The value(s) of these attributes will be added as roles for this user. Comma delimited for multiple attributes. ||
 || userRoleAttribute || An attribute(s) that exists on the user entry. The value(s) of these attributes will be added as roles for this user. Comma delimited for multiple attributes. ||
 
+Any options supplied that do not map to a defined property will be passed directly to the JNDI context.
+
 ----
 = Sample Code =
 Once the `java.security.auth.login.config` property has been set, you can use the JAAS module with a LoginContext.
