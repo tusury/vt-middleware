@@ -8,15 +8,19 @@ Pooling ldap objects provides a way to mitigate the overhead of creating a LDAP 
 JNDI provides it's own [http://java.sun.com/products/jndi/tutorial/ldap/connect/pool.html pooling implementation], but it is limited in it's configuration options and most importantly does not support pooling of TLS connections.<br/>
 The main design requirement for these implementations is to provide a pool that does not block when creating or closing ldap connections.
 
+----
 = Properties =
 || *Property Name* || *Default Value* || *Description* ||
 || edu.vt.middleware.ldap.pool.minPoolSize || 3 || Size the pool should be initialized to and pruned to ||
 || edu.vt.middleware.ldap.pool.maxPoolSize || 10 || Maximum size the pool can grow to ||
 || edu.vt.middleware.ldap.pool.validateOnCheckIn || false || whether connections should be validated when objects are returned to the pool ||
 || edu.vt.middleware.ldap.pool.validateOnCheckOut || false || whether connections should be validated when objects are loaned out from the pool ||
+|| edu.vt.middleware.ldap.pool.validatePeriodically || false || whether connections should be validated periodically when the pool is idle ||
 || edu.vt.middleware.ldap.pool.pruneTimerPeriod || 300000 (5 min) || period at which pool should be pruned ||
+|| edu.vt.middleware.ldap.pool.validateTimerPeriod || 1800000 (30 min) || period at which pool should be validated ||
 || edu.vt.middleware.ldap.pool.expirationTime || 600000 (10 min) || time an object can stay in the pool before it is considered stale and available for pruning ||
 
+----
 = Implementations =
 
 == !BlockingLdapPool ==
