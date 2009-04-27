@@ -5,6 +5,7 @@
 = Introduction =
 This library includes servlets for searching and authentication for use with web applications.
 
+----
 = Login/Logout Servlets =
 {{{
     <!-- Servlet which can be used to perform ldap authentication --> 
@@ -89,6 +90,7 @@ Sample HTML for using the login servlet:
     </form>
 }}}
 
+----
 = Search Servlet =
 {{{
     <!-- Servlet which can be used to provide a LDAP gateway --> 
