@@ -9,7 +9,7 @@ This library meets the following design goals:
  # Easy and flexible to configure. Configuration can be done with a properties file located on your classpath or via Spring.
  # Ease of use for common ldap operations. Searching, comparing, adding, and replacing all require only a few lines of code.
  # Automatic connection handling. Timed out connections automatically retry and TLS/SSL is negotiated transparently.
- # Support for sasl external operations. Digest-MD5, CRAM-MD5, GSSAPI, and SASL external are all supported.
+ # Support for sasl operations. Digest-MD5, CRAM-MD5, GSSAPI, and EXTERNAL are all supported.
  # Command line interface for common operations.
 
 ----
