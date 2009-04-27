@@ -5,7 +5,7 @@
 = Introduction =
 Handlers provide a programmatic interface for post processing of search results and attributes.<br/>
 All results must be processed by a handler, even if the handler is simply copying results.<br/>
-By default all search results are processed by the FqdnSearchResultHandler, which ensures that the DN of each result is fully qualified.
+By default all search results are processed by the !FqdnSearchResultHandler, which ensures that the DN of each result is fully qualified.
 
 ----
 = Code Samples =
