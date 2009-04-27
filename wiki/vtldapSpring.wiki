@@ -57,8 +57,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     <constructor-arg index="0" ref="ldapConfig"/>
   </bean>
   
-  <bean id="ldapPool" init-method="initialize"
-    class="edu.vt.middleware.ldap.pool.BlockingLdapPool">
+  <bean id="ldapPool"
+    class="edu.vt.middleware.ldap.pool.BlockingLdapPool"
+    init-method="initialize"
+    p:blockWaitTime="5000">
     <constructor-arg index="0">
       <bean class="edu.vt.middleware.ldap.pool.LdapPoolConfig"
         p:minPoolSize="5"
@@ -67,7 +69,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         p:validateTimerPeriod="30000"
         p:expirationTime="600000"
         p:pruneTimerPeriod="60000"
-        p:blockWaitTime="5000"
       />
     </constructor-arg>
     <constructor-arg index="1" ref="ldapFactory"/>
