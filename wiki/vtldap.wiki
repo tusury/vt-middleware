@@ -101,6 +101,8 @@ try {
   ...
   Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
   ...
+} catch (LdapPoolException e) {
+  log.error("Error using the ldap pool.", e);
 } finally {
   pool.checkIn(ldap);
 }
