@@ -179,47 +179,6 @@ All the previous properties are inherited by the Authenticator and can be overri
 || edu.vt.middleware.ldap.auth.authorizationFilter || _none_ || ldap filter to use for performing authorization after successful authentication  ||
 
 ----
-= Spring Integration =
-The following Spring context XML provides a basic example of wiring up an Ldap object for use in a Spring application.
-{{{
-<beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:p="http://www.springframework.org/schema/p"
-  xmlns:util="http://www.springframework.org/schema/util"
-  xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
-
-  <bean id="ldap"
-    class="edu.vt.middleware.ldap.Ldap"
-    p:ldapConfig-ref="ldapConfig"
-  />
-  
-  <bean id="ldapConfig"
-    class="edu.vt.middleware.ldap.LdapConfig"
-    p:ldapUrl="ldap://ed-dev.middleware.iad.vt.edu:10389"
-    p:tls="true"
-    p:pooled="true"
-    p:authtype="EXTERNAL">
-    <property name="sslSocketFactory">
-      <bean class="edu.vt.middleware.ldap.LdapTLSSocketFactory"
-        init-method="initialize"
-        p:keyStoreName="/app.keystore"
-        p:keyStorePathType="CLASSPATH"
-        p:keyStoreType="BKS"
-        p:trustStoreName="/app.truststore"
-        p:trustStorePathType="CLASSPATH"
-        p:trustStoreType="BKS"/>
-    </property>
-    <property name="searchScope">
-      <util:constant static-field="javax.naming.directory.SearchControls.SUBTREE_SCOPE"/>
-    </property>
-  </bean>
-  
-</beans>
-}}}
-
-----
 = Scripts =
 Script execution requirements vary by platform.  For the following platform-specific instructions, let VTLDAP_HOME be the location where the VT Ldap distribution was unpacked.
 
