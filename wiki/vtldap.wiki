@@ -37,7 +37,8 @@ Unless otherwise noted, classes appearing in the following samples are included 
 === Compare ===
 Perform a compare on the entry 'uid=818037,ou=People,dc=vt,dc=edu', checking for an attribute value of 'mail=dfisher@vt.edu'
 {{{
-Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+Ldap ldap = new Ldap(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 if (ldap.compare("uid=818037,ou=People,dc=vt,dc=edu", "mail=dfisher@vt.edu")) {
   System.out.println("Compare succeeded");
 } else {
@@ -48,22 +49,29 @@ if (ldap.compare("uid=818037,ou=People,dc=vt,dc=edu", "mail=dfisher@vt.edu")) {
 === Subtree search ===
 Perform a search for 'sn=Fisher' and output all attributes in LDIF format to System.out.
 {{{
-Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
-(new Ldif()).outputLdif(ldap.search("sn=Fisher"), System.out);
+Ldap ldap = new Ldap(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+(new Ldif()).outputLdif(
+  ldap.search("sn=Fisher"), System.out);
 }}}
 
 === Attribute search ===
 Perform a search for all entries containing an attribute matching 'mail=dfisher@vt.edu', and output the attributes 'sn' and 'givenName' in DSMLv1 format to System.out.
 {{{
-Ldap ldap = new Ldap(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
-(new Dsmlv1()).outputDsml(ldap.searchAttributes(new BasicAttributes("mail", "dfisher@vt.edu"), new String[]{"sn", "givenName"}), System.out);
+Ldap ldap = new Ldap(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+(new Dsmlv1()).outputDsml(
+  ldap.searchAttributes(
+    new BasicAttributes("mail", "dfisher@vt.edu"),
+    new String[]{"sn", "givenName"}), System.out);
 }}}
 
 == Authentication ==
 Authenticate a user whose entry resides in the 'ou=People' branch of the ldap.
 TLS is required for all connections and the username must equal the attribute value of the attributes 'uid' or 'mail'.
 {{{
-AuthenticatorConfig config = new AuthenticatorConfig("ldap://authn.directory.vt.edu", "ou=People,dc=vt,dc=edu");
+AuthenticatorConfig config = new AuthenticatorConfig(
+  "ldap://authn.directory.vt.edu", "ou=People,dc=vt,dc=edu");
 config.setTls(true);
 config.setUserField(new String[]{"uid", "mail"}); // attribute to search for user with
 Authenticator auth = new Authenticator(config);
@@ -77,7 +85,8 @@ if (auth.authenticate(user, credential)) {
 
 Same example as above, but also authorize the user on 'eduPersonAffiliation'.
 {{{
-AuthenticatorConfig config = new AuthenticatorConfig("ldap://authn.directory.vt.edu", "ou=People,dc=vt,dc=edu");
+AuthenticatorConfig config = new AuthenticatorConfig(
+  "ldap://authn.directory.vt.edu", "ou=People,dc=vt,dc=edu");
 config.setTls(true);
 config.setUserField(new String[]{"uid", "mail"}); // attribute to search for user with
 Authenticator auth = new Authenticator(config);
@@ -92,14 +101,16 @@ if (auth.authenticate(user, credential, "eduPersonAffiliation=staff")) {
 == Pooling ==
 Create a new soft limit pool, accepting all the default configuration properties. Check a ldap object out from the pool, perform a search, and return the object to the pool.
 {{{
-DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+DefaultLdapFactory factory = new DefaultLdapFactory(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.initialize()
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
   ...
-  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  Iterator<SearchResult> i = ldap.search(
+    "givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (LdapPoolException e) {
   log.error("Error using the ldap pool.", e);
