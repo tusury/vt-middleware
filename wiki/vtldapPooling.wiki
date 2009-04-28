@@ -31,7 +31,8 @@ By default the pool will block indefinitely and there is no guarantee that waiti
 This implementation should be used when you need to control the <em>exact</em> number of ldap connections that can be created.
 
 {{{
-DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+DefaultLdapFactory factory = new DefaultLdapFactory(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 BlockingLdapPool pool = new BlockingLdapPool(factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
 pool.initialize()
@@ -39,7 +40,8 @@ Ldap ldap = null;
 try {
   ldap = pool.checkOut();
   ...
-  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  Iterator<SearchResult> i = ldap.search(
+    "givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (BlockingTimeoutException e) {
   log.error("Gave up waiting on the pool", e);
@@ -61,7 +63,8 @@ This implementation should be used when you have some flexibility in the number 
 Note that this pool will begin blocking if it cannot create new ldap connections.
 
 {{{
-DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+DefaultLdapFactory factory = new DefaultLdapFactory(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
 pool.initialize()
@@ -69,7 +72,8 @@ Ldap ldap = null;
 try {
   ldap = pool.checkOut();
   ...
-  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  Iterator<SearchResult> i = ldap.search(
+    "givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (BlockingTimeoutException e) {
   log.error("Gave up waiting on the pool", e);
@@ -92,14 +96,16 @@ See http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/ldap/LdapContext.html#n
 This implementation should be used when you want some control over the maximum number of ldap connections, but can tolerate some new connections under high load.
 
 {{{
-DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+DefaultLdapFactory factory = new DefaultLdapFactory(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 SharedLdapPool pool = new SharedLdapPool(factory);
 pool.initialize()
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
   ...
-  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  Iterator<SearchResult> i = ldap.search(
+    "givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (LdapPoolException e) {
   log.error("Serious problem with the ldap, connection could not be created and the pool is empty", e);
@@ -122,7 +128,8 @@ The following example demonstrates a pool configured to connect whenever an obje
 This is a contrived example to demonstrate how to configure activators and passivators, as this sort of configuration will yield no performance gains from connection pooling.<br/>
 Note that if you are using the `DefaultLdapFactory`, it will attempt to connect ldap objects before making them available to the pool, therefore you only need to use an activator if you specifically want to attempt a connection on every check out.
 {{{
-DefaultLdapFactory factory = new DefaultLdapFactory(new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+DefaultLdapFactory factory = new DefaultLdapFactory(
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 factory.setConnectOnCreate(false);
 factory.setLdapActivator(new ConnectLdapActivator());
 factory.setLdapPassivator(new CloseLdapPassivator());
@@ -133,7 +140,8 @@ Ldap ldap = null;
 try {
   ldap = pool.checkOut();
   ...
-  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  Iterator<SearchResult> i = ldap.search(
+    "givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (LdapActivationException e) {
   log.error("Ldap object failed activation...", e);
@@ -161,10 +169,13 @@ Validators provide an easy hook for checking whether an object is still fit to r
 Objects that fail validation are evicted from the pool.<br/>
 The following is an example of validating an object by using a compare operation.<br/>
 {{{
-LdapPoolConfig config = new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
+LdapPoolConfig config = new LdapConfig(
+  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
 config.setValidateOnCheckOut(true);
 DefaultLdapFactory factory = new DefaultLdapFactory(config);
-factory.setLdapValidator(new CompareLdapValidator("ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
+factory.setLdapValidator(
+  new CompareLdapValidator(
+    "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
 pool.initialize()
@@ -172,7 +183,8 @@ Ldap ldap = null;
 try {
   ldap = pool.checkOut();
   ...
-  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  Iterator<SearchResult> i = ldap.search(
+    "givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (LdapValidationException e) {
   log.error("Ldap object failed compare validation...", e);
@@ -195,17 +207,21 @@ If no validation is configured, it will simply ensure your pool stays at it's mi
 However, you can also configure validation to occur when the pool is idle and not during check outs and check ins.<br/>
 This will improve performance during peak periods of load.
 {{{
-LdapPoolConfig config = new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
+LdapPoolConfig config = new LdapConfig(
+  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
 config.setValidatePeriodically(true); // by default validate the pool every 30 min, if idle
 DefaultLdapFactory factory = new DefaultLdapFactory(config);
-factory.setLdapValidator(new CompareLdapValidator("ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
+factory.setLdapValidator(
+  new CompareLdapValidator(
+    "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.initialize()
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
   ...
-  Iterator<SearchResult> i = ldap.search("givenName=Daniel", new String[]{"uid", "mail"});
+  Iterator<SearchResult> i = ldap.search(
+    "givenName=Daniel", new String[]{"uid", "mail"});
   ...
 } catch (LdapPoolException e) {
   log.error("Problems using the pool, see your error log...", e);
