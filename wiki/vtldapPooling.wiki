@@ -190,7 +190,7 @@ pool.close();
 }}}
 
 == Periodic Validation ==
-By default the ValidatePoolTask is always running.<br/>
+By default the !ValidatePoolTask is always running.<br/>
 If no validation is configured, it will simply ensure your pool stays at it's minimum size.<br/>
 However, you can also configure validation to occur when the pool is idle and not during check outs and check ins.<br/>
 This will improve performance during peak periods of load.
