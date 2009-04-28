@@ -1,4 +1,6 @@
-#summary VT LDAP Spring integration samples.
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
 
 = Spring Integration =
 The VT LDAP library was designed with Spring integration in mind.  Most if not all classes are Javabean compliant, and therefore are candidates for configuration via Spring XML context files.
