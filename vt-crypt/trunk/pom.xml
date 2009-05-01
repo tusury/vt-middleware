@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>bouncycastle</groupId>
-      <artifactId>bcprov-jdk14</artifactId>
+      <artifactId>bcprov-jdk15</artifactId>
       <version>140</version>
     </dependency>
     <dependency>
