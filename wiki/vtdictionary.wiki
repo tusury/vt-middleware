@@ -5,7 +5,7 @@
 
 = Introduction =
 VT Dictionary is a Java library for searching and sorting a dictionary or words.<br/>
-The dictionary is implemented using a ternary tree, and supports the following types of searches:
+The dictionary is implemented using a [http://en.wikipedia.org/wiki/Ternary_search_tries ternary tree], and supports the following types of searches:
   * exact match
   * partial search
   * near search.
