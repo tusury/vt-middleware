@@ -12,9 +12,6 @@
   Updated: $Date$
 */
 package edu.vt.middleware.crypt.util;
-//
-// import java.io.ByteArrayOutputStream;
-// import java.io.IOException;
 
 import org.bouncycastle.util.encoders.Base64Encoder;
 import org.bouncycastle.util.encoders.Encoder;
