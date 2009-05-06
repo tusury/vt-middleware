@@ -24,19 +24,19 @@ package edu.vt.middleware.dictionary;
 public class TernaryNode
 {
 
-  /** character of this node */
+  /** character of this node. */
   private char splitchar;
 
-  /** whether this character is the end of a word */
+  /** whether this character is the end of a word. */
   private boolean endOfWord;
 
-  /** low child of this node */
+  /** low child of this node. */
   private TernaryNode lokid;
 
-  /** equal child of this node */
+  /** equal child of this node. */
   private TernaryNode eqkid;
 
-  /** high child of this node */
+  /** high child of this node. */
   private TernaryNode hikid;
 
 

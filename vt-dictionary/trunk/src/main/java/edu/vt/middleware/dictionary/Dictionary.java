@@ -52,16 +52,16 @@ import java.util.StringTokenizer;
 public class Dictionary
 {
 
-  /** ternary tree */
+  /** ternary tree. */
   private TernaryTree tree = new TernaryTree();
 
-  /** store all words in the dictionary */
+  /** store all words in the dictionary. */
   private List<String> words = new ArrayList<String>();
 
-  /** whether to insert data using the median of that data */
+  /** whether to insert data using the median of that data. */
   private boolean median;
 
-  /** whether to ignore case when inserting data */
+  /** whether to ignore case when inserting data. */
   private boolean ignoreCase;
 
 

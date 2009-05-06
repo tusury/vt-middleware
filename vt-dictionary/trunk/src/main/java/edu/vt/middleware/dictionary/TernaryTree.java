@@ -32,11 +32,11 @@ import java.util.StringTokenizer;
 public class TernaryTree
 {
 
-  /** File system line separator */
+  /** File system line separator. */
   private static final String LINE_SEPARATOR = System.getProperty(
     "line.separator");
 
-  /** root node of the ternary tree */
+  /** root node of the ternary tree. */
   private TernaryNode root;
 
 
