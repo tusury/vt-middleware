@@ -1,0 +1,15 @@
+#!/bin/sh
+
+JAVA=java
+
+if [ "x$VTDICT_HOME" = "x" ]; then
+  PREFIX=`dirname $0`/..
+else
+  PREFIX="$VTDICT_HOME"
+fi
+
+CLASSPATH="${PREFIX}/jars/vt-dictionary-2.0.jar"
+
+${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \
+  edu.vt.middleware.dictionary.Dictionary $@
+
