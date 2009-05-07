@@ -1,0 +1,10 @@
+#sidebar vtcryptSidebar
+
+<wiki:toc max_depth="2" />
+
+= Version 2.0 =
+Initial google code release.
+
+== Known Issues ==
+  * README.txt was not updated and includes documentation from the 1.5 release.
+  * pom.xml incorrectly includes the jdk14 version of the Bouncy Castle provider.
