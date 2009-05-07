@@ -1,12 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><metadata>
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xsi:schemaLocation="http://maven.apache.org/METADATA/1.0.0 http://maven.apache.org/xsd/metadata-1.0.0.xsd" xmlns="http://maven.apache.org/METADATA/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <groupId>edu.vt.middleware</groupId>
   <artifactId>vt-ldap</artifactId>
   <version>3.0-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20090505.154224</timestamp>
-      <buildNumber>1</buildNumber>
+      <timestamp>20090507.140034</timestamp>
+      <buildNumber>2</buildNumber>
     </snapshot>
-    <lastUpdated>20090505154229</lastUpdated>
+    <lastUpdated>20090507140039</lastUpdated>
   </versioning>
 </metadata>
