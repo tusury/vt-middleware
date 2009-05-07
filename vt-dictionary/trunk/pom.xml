@@ -78,6 +78,7 @@
           <suiteXmlFiles>
             <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+          <argLine>-Xms96m -Xmx96m -XX:PermSize=48m -XX:MaxPermSize=48m</argLine>
         </configuration>
       </plugin>
       <plugin>
