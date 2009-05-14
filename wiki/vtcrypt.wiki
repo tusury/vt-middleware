@@ -38,14 +38,12 @@ If you would like to use this project in your maven build, include the following
 
 If you would like to use this project's maven plugin, include the following in your pom.xml:
 {{{
-...
 <pluginRepositories>
   <pluginRepository>
     <id>vt-middleware.repo</id>
     <url>http://vt-middleware.googlecode.com/svn/maven2</url>
   </pluginRepository>
 </pluginRepositories>
-...
 }}}
 
 = Code Samples =
