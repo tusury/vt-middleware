@@ -7,6 +7,34 @@
 This library includes servlet filters for several commons tasks.
 
 ----
+= Installation =
+The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
+
+If you would like to use this project in your maven build, include the following in your pom.xml:
+{{{
+...
+<dependencies>
+  ...
+  <dependency>
+      <groupId>edu.vt.middleware</groupId>
+      <artifactId>vt-servlet-filters</artifactId>
+      <version>2.0</version>
+  </dependency>
+  ...
+<dependencies>
+...
+<repositories>
+  ...
+  <repository>
+    <id>vt-middleware.repo</id>
+    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+  </repository>
+  ...
+</repositories>
+...
+}}}
+
+----
 = !ClientCertFilter =
 This filter allows you to restrict access to a servlet based on some attributes of a client certificate. 
 {{{
