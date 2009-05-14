@@ -1,0 +1,80 @@
+#labels java,servlet,filter
+#sidebar vtservletfiltersSidebar
+
+<wiki:toc max_depth="2" />
+
+= Introduction =
+This library includes servlet filters for several commons tasks.
+
+----
+= !ClientCertFilter =
+This filter allows you to restrict access to a servlet based on some attributes of a client certificate. 
+{{{
+<filter>
+  <filter-name>ClientCertFilter</filter-name>
+  <filter-class>edu.vt.middleware.filters.ClientCertFilter</filter-class>
+  <!-- Whether the request *must* send a client certificate in order to pass through this filter -->
+  <init-param>
+    <param-name>requireCert</param-name>
+    <param-value>true</param-value>
+  </init-param>
+  <!-- Regular expression which the subject DN of the client certificate must match in order to pass through this filter -->
+  <init-param>
+    <param-name>subjectDn</param-name>
+    <param-value>DC=edu, DC=vt, DC=middleware, CN=.*</param-value>
+  </init-param>
+  <!-- Regular expression which the issuer DN of the client certificate must match in order to pass through this filter -->
+  <init-param>
+    <param-name>issuerDn</param-name>
+    <param-value>DC=edu, DC=vt, DC=middleware, CN=Middleware CA</param-value>
+  </init-param>
+</filter>
+}}}
+
+----
+= !RequestMethodFilter =
+This filter allows you to restrict access to a servlet based on data from the servlet request object.<br/>
+Each param-name represents a method to be called on the request object, while the param-value is a regular expression the result of the method call must match.<br/>
+If you need to pass parameter(s) into the method, then they should appear after the method name using whitespace as a delimiter.
+{{{
+<filter>
+  <filter-name>RequestMethodFilter</filter-name>
+  <filter-class>edu.vt.middleware.filters.RequestMethodFilter</filter-class>
+  <!-- Call ServletRequest.getRemoteAddr(), it's result must match 10.0.10.* --> 
+  <init-param>
+    <param-name>getRemoteAddr</param-name>
+    <param-value>10.0.10.*</param-value>
+  </init-param>
+  <!-- Call HttpServletRequest.getMethod(), it's result must match 'GET' --> 
+  <init-param>
+    <param-name>getMethod</param-name>
+    <param-value>[Gg][Ee][Tt]</param-value>
+  </init-param>
+  <!-- Call HttpServletRequest.getHeader('user-agent'), it's result must match '.*Mozilla.*' --> 
+  <init-param>
+    <param-name>getHeader user-agent</param-name>
+    <param-value>.*Mozilla.*</param-value>
+  </init-param>
+</filter>
+}}}
+
+----
+= !SessionAttributeFilter =
+This filter allows you to restrict access to a servlet based on attributes from the HTTP session object.<br/>
+Each param-name represents an attribute name and regular expression value, while the param-value is a URL to forward the request to if the regular expression match fails.
+{{{
+<filter>
+  <filter-name>SessionAttributeFilter</filter-name>
+  <filter-class>edu.vt.middleware.filters.SessionAttributeFilter</filter-class>
+  <!-- Whether the attribute(s) *must* exist in order to pass through this filter -->
+  <init-param>
+    <param-name>requireAttribute</param-name>
+    <param-value>true</param-value>
+  </init-param>
+  <!-- Call HttpSession.getAttribute("user"), it's result must match .*, otherwise forward request to login.jsp --> 
+  <init-param>
+    <param-name>user .*</param-name>
+    <param-value>/login.jsp</param-value>
+  </init-param>
+</filter>
+}}}
