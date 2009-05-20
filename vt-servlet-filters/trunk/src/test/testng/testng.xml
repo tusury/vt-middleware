@@ -13,7 +13,7 @@
       </run>
     </groups>
     <packages>
-      <package name="edu.vt.middleware.filters.*" />
+      <package name="edu.vt.middleware.servlet.filter.*" />
     </packages>
   </test>
 </suite>

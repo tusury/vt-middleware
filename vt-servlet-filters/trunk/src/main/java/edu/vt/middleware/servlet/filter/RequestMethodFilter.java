@@ -12,7 +12,7 @@
   Updated: $Date$
 */
 
-package edu.vt.middleware.filters;
+package edu.vt.middleware.servlet.filter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

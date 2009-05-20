@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package edu.vt.middleware.filters;
+package edu.vt.middleware.servlet.filter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,13 +23,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * <code>FilterTestServlet</code> prints sessions variables
- * for testing purposes.
+ * <code>SessionTestServlet</code> sets session attributes based
+ * on request parameters.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class FilterTestServlet extends HttpServlet
+public class SessionTestServlet extends HttpServlet
 {
 
 
@@ -49,13 +49,17 @@ public class FilterTestServlet extends HttpServlet
   {
     final HttpSession session = request.getSession();
 
-    final PrintWriter out = response.getWriter();
-    out.println("FilterTestServlet");
+    final Enumeration params = request.getParameterNames();
+    while (params.hasMoreElements()) {
+      final String k = (String) params.nextElement();
+      session.setAttribute(k, request.getParameter(k));
+    }
 
-    final Enumeration e = session.getAttributeNames();
-    while (e.hasMoreElements()) {
-      final String k = (String) e.nextElement();
-      out.println(k + ":" + session.getAttribute(k));
+    if (request.getParameter("redirect") != null) {
+      response.sendRedirect(request.getParameter("redirect"));
+    } else {
+      final PrintWriter out = response.getWriter();
+      out.println("SessionTestServlet");
     }
   }
 }
