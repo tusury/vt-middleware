@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2009 Virginia Tech.
+  Copyright (C) 2003-2008 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -18,25 +18,24 @@ import java.io.IOException;
 import javax.servlet.ServletInputStream;
 
 /**
- * Implementation of {@link ServletInputStream} that is backed by a
- * {@link ByteArrayInputStream}.
+ * Implementation of {@link ServletInputStream} that is backed by a {@link
+ * ByteArrayInputStream}.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class ByteArrayServletInputStream extends ServletInputStream
 {
 
-  /** Wrapped byte array input stream */
+  /** Wrapped byte array input stream. */
   private ByteArrayInputStream in;
 
 
   /**
-   * Creates a new instance using the given buffer as the source of bytes
-   * for read operations.
+   * Creates a new instance using the given buffer as the source of bytes for
+   * read operations.
    *
-   * @param buffer Source of bytes.
+   * @param  buffer  Source of bytes.
    */
   public ByteArrayServletInputStream(final byte[] buffer)
   {
@@ -44,7 +43,7 @@ public class ByteArrayServletInputStream extends ServletInputStream
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public int read()
     throws IOException
   {
@@ -52,7 +51,7 @@ public class ByteArrayServletInputStream extends ServletInputStream
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @Override
   public int read(final byte[] b)
     throws IOException
@@ -61,7 +60,7 @@ public class ByteArrayServletInputStream extends ServletInputStream
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @Override
   public int read(final byte[] b, final int off, final int len)
     throws IOException

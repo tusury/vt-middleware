@@ -25,8 +25,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * <code>SetCertTestFilter</code> adds a certificate to the request
- * attributes to facilitate certificate filter testing.
+ * <code>SetCertTestFilter</code> adds a certificate to the request attributes
+ * to facilitate certificate filter testing.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -41,7 +41,7 @@ public class SetCertTestFilter implements Filter
   /**
    * Initialize this filter.
    *
-   * @param config <code>FilterConfig</code>
+   * @param  config  <code>FilterConfig</code>
    */
   public void init(final FilterConfig config)
   {
@@ -49,7 +49,7 @@ public class SetCertTestFilter implements Filter
       final CertificateFactory cf = CertificateFactory.getInstance("X.509");
       final X509Certificate c = (X509Certificate) cf.generateCertificate(
         new FileInputStream(config.getInitParameter("cert")));
-      certs = new X509Certificate[]{c};
+      certs = new X509Certificate[] {c};
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -72,15 +72,14 @@ public class SetCertTestFilter implements Filter
     final FilterChain chain)
     throws ServletException, IOException
   {
-    request.setAttribute(
-      "javax.servlet.request.X509Certificate", this.certs);
+    request.setAttribute("javax.servlet.request.X509Certificate", this.certs);
     chain.doFilter(request, response);
   }
 
 
   /**
-   * Called by the web container to indicate to a filter
-   * that it is being taken out of service.
+   * Called by the web container to indicate to a filter that it is being taken
+   * out of service.
    */
   public void destroy() {}
 }

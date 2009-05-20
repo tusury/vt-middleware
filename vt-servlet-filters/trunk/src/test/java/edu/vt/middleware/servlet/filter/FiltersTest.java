@@ -51,15 +51,14 @@ public class FiltersTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"filtertest"})
   public void sessionAttributeFilter()
     throws Exception
   {
     final ServletUnitClient sc = this.servletRunner.newClient();
     sc.setExceptionsThrownOnErrorStatus(false);
+
     WebRequest request = new GetMethodWebRequest(
       "http://filters.middleware.vt.edu/AttributeFilterTestServlet");
 
@@ -72,20 +71,19 @@ public class FiltersTest
     request.setParameter("user", "testuser");
     request.setParameter(
       "redirect",
-       "http://filters.middleware.vt.edu/AttributeFilterTestServlet");
+      "http://filters.middleware.vt.edu/AttributeFilterTestServlet");
 
     response = sc.getResponse(request);
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals(200, response.getResponseCode());
+
     final String responseText = response.getText();
     AssertJUnit.assertTrue(responseText.startsWith("FilterTestServlet"));
     AssertJUnit.assertTrue(responseText.indexOf("testuser") > 0);
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"filtertest"})
   public void requestMethodFilter()
     throws Exception
@@ -104,14 +102,13 @@ public class FiltersTest
     response = sc.getResponse(request);
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals(200, response.getResponseCode());
+
     final String responseText = response.getText();
     AssertJUnit.assertTrue(responseText.startsWith("FilterTestServlet"));
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"filtertest"})
   public void clientCertFilter()
     throws Exception
@@ -130,6 +127,7 @@ public class FiltersTest
     response = sc.getResponse(request);
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals(200, response.getResponseCode());
+
     final String responseText = response.getText();
     AssertJUnit.assertTrue(responseText.startsWith("FilterTestServlet"));
   }

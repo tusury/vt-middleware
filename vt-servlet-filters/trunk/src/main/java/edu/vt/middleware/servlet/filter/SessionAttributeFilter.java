@@ -1,17 +1,16 @@
 /*
   $Id$
 
-  Copyright (C) 2004 Virginia Tech, Daniel Fisher.
+  Copyright (C) 2003-2008 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Daniel Fisher
-  Email:   dfisher@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
-
 package edu.vt.middleware.servlet.filter;
 
 import java.io.IOException;
@@ -36,56 +35,57 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * <code>SessionAttributeFilter</code> is a filter which can be used
- * to redirect requests based on attributes found in the session.
+ * <code>SessionAttributeFilter</code> is a filter which can be used to redirect
+ * requests based on attributes found in the session.
  *
- * @author  <a href="mailto:dfisher@vt.edu">Daniel Fisher</a>
- * @version $Revision$
- * $Date$
+ * @author  Middleware Services
+ * @version  $Revision$ $Date$
  */
 
 public final class SessionAttributeFilter implements Filter
 {
-  /** Init param for setting requireAttribute */
+
+  /** Init param for setting requireAttribute. */
   public static final String REQUIRE_ATTRIBUTE = "requireAttribute";
 
-  /** Log for this class */
+  /** Log for this class. */
   private static final Log LOG = LogFactory.getLog(
     SessionAttributeFilter.class);
 
-  /** Whether attributes are required to exist by this filter */
+  /** Whether attributes are required to exist by this filter. */
   private boolean requireAttribute;
 
-  /** Used to forward requests */
+  /** Used to forward requests. */
   private ServletContext context;
 
-  /** Session attribute names and values */
+  /** Session attribute names and values. */
   private Map<String, Pattern> attributes = new HashMap<String, Pattern>();
 
-  /** Redirect URL for each session attribute */
+  /** Redirect URL for each session attribute. */
   private Map<String, String> redirects = new HashMap<String, String>();
 
 
   /**
    * Initialize this filter.
    *
-   * @param config <code>FilterConfig</code>
+   * @param  config  <code>FilterConfig</code>
    */
   public void init(final FilterConfig config)
   {
     this.context = config.getServletContext();
-    this.requireAttribute = Boolean.valueOf(config.getInitParameter(
-      REQUIRE_ATTRIBUTE)).booleanValue();
+    this.requireAttribute = Boolean.valueOf(
+      config.getInitParameter(REQUIRE_ATTRIBUTE)).booleanValue();
     if (LOG.isDebugEnabled()) {
-      LOG.debug("requireAttribute = "+this.requireAttribute);
+      LOG.debug("requireAttribute = " + this.requireAttribute);
     }
+
     final Enumeration e = config.getInitParameterNames();
     while (e.hasMoreElements()) {
       final String name = (String) e.nextElement();
       if (!name.equals(REQUIRE_ATTRIBUTE)) {
         final String value = config.getInitParameter(name);
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Loaded attribute name:value "+name+":"+value);
+          LOG.debug("Loaded attribute name:value " + name + ":" + value);
         }
 
         final StringTokenizer st = new StringTokenizer(name);
@@ -95,8 +95,9 @@ public final class SessionAttributeFilter implements Filter
         this.attributes.put(attrName, Pattern.compile(attrValue));
         this.redirects.put(attrName, value);
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Stored attribute "+attrName+" for pattern "+
-                    attrValue+" with redirect of "+value);
+          LOG.debug(
+            "Stored attribute " + attrName + " for pattern " + attrValue +
+            " with redirect of " + value);
         }
       }
     }
@@ -106,22 +107,24 @@ public final class SessionAttributeFilter implements Filter
   /**
    * Handle all requests sent to this filter.
    *
-   * @param request <code>ServletRequest</code>
-   * @param response <code>ServletResponse</code>
-   * @param chain <code>FilterChain</code>
-   * @throws ServletException if an error occurs
-   * @throws IOException if an error occurs
+   * @param  request  <code>ServletRequest</code>
+   * @param  response  <code>ServletResponse</code>
+   * @param  chain  <code>FilterChain</code>
+   *
+   * @throws  ServletException  if an error occurs
+   * @throws  IOException  if an error occurs
    */
-  public void doFilter(final ServletRequest request,
-                       final ServletResponse response,
-                       final FilterChain chain)
+  public void doFilter(
+    final ServletRequest request,
+    final ServletResponse response,
+    final FilterChain chain)
     throws IOException, ServletException
   {
     boolean success = false;
     String redirect = null;
     if (request instanceof HttpServletRequest) {
-      final HttpSession session =
-        ((HttpServletRequest) request).getSession(true);
+      final HttpSession session = ((HttpServletRequest) request).getSession(
+        true);
       final Iterator<String> i = this.attributes.keySet().iterator();
       boolean loop = true;
       while (i.hasNext() && loop) {
@@ -132,12 +135,12 @@ public final class SessionAttributeFilter implements Filter
           final String value = String.valueOf(sessionAttr);
           if (pattern.matcher(value).matches()) {
             if (LOG.isDebugEnabled()) {
-              LOG.debug(value+" matches "+pattern.pattern());
+              LOG.debug(value + " matches " + pattern.pattern());
             }
             success = true;
           } else {
             if (LOG.isDebugEnabled()) {
-              LOG.debug(value+" does not match "+pattern.pattern());
+              LOG.debug(value + " does not match " + pattern.pattern());
             }
             redirect = this.redirects.get(name);
             success = false;
@@ -145,7 +148,7 @@ public final class SessionAttributeFilter implements Filter
           }
         } else {
           if (LOG.isDebugEnabled()) {
-            LOG.debug("No session attribute found for "+name);
+            LOG.debug("No session attribute found for " + name);
           }
           if (this.requireAttribute) {
             redirect = this.redirects.get(name);
@@ -164,18 +167,21 @@ public final class SessionAttributeFilter implements Filter
         if (((HttpServletRequest) request).getRequestURI() != null) {
           url.append("?url=").append(
             URLEncoder.encode(
-              ((HttpServletRequest) request).getRequestURI(), "UTF-8"));
+              ((HttpServletRequest) request).getRequestURI(),
+              "UTF-8"));
           if (((HttpServletRequest) request).getQueryString() != null) {
             url.append(URLEncoder.encode("?", "UTF-8")).append(
               URLEncoder.encode(
-                ((HttpServletRequest) request).getQueryString(), "UTF-8"));
+                ((HttpServletRequest) request).getQueryString(),
+                "UTF-8"));
           }
         }
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Forwarding request to "+url.toString());
+          LOG.debug("Forwarding request to " + url.toString());
         }
-        this.context.getRequestDispatcher(
-          url.toString()).forward(request, response);
+        this.context.getRequestDispatcher(url.toString()).forward(
+          request,
+          response);
         return;
       } else {
         if (response instanceof HttpServletResponse) {
@@ -194,8 +200,8 @@ public final class SessionAttributeFilter implements Filter
 
 
   /**
-   * Called by the web container to indicate to a filter
-   * that it is being taken out of service.
+   * Called by the web container to indicate to a filter that it is being taken
+   * out of service.
    */
   public void destroy() {}
 }

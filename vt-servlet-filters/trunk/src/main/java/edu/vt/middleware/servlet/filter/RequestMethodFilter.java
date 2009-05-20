@@ -1,17 +1,16 @@
 /*
   $Id$
 
-  Copyright (C) 2004 Virginia Tech, Daniel Fisher.
+  Copyright (C) 2003-2008 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Daniel Fisher
-  Email:   dfisher@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
-
 package edu.vt.middleware.servlet.filter;
 
 import java.io.IOException;
@@ -36,39 +35,39 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * <code>RequestMethodFilter</code> is a filter which can be used
- * to restrict access to a servlet by using any of the methods
- * available in <code>javax.servlet.ServletRequest</code> or
- * <code>javax.servlet.http.HttpServletRequest</code>.
+ * <code>RequestMethodFilter</code> is a filter which can be used to restrict
+ * access to a servlet by using any of the methods available in <code>
+ * javax.servlet.ServletRequest</code> or <code>
+ * javax.servlet.http.HttpServletRequest</code>.
  *
- * @author  <a href="mailto:dfisher@vt.edu">Daniel Fisher</a>
- * @version $Revision$
- * $Date$
+ * @author  Middleware Services
+ * @version  $Revision$ $Date$
  */
 
 public class RequestMethodFilter implements Filter
 {
-  /** Log for this class */
+
+  /** Log for this class. */
   private static final Log LOG = LogFactory.getLog(RequestMethodFilter.class);
 
-  /** Methods to call on the request object */
+  /** Methods to call on the request object. */
   private Map<String, Method> servletMethods = new HashMap<String, Method>();
 
-  /** Methods to call on the request object */
+  /** Methods to call on the request object. */
   private Map<String, Method> httpServletMethods =
     new HashMap<String, Method>();
 
-  /** Arguments for the request object methods */
+  /** Arguments for the request object methods. */
   private Map<String, Object[]> arguments = new HashMap<String, Object[]>();
 
-  /** Pattern that method results must match */
+  /** Pattern that method results must match. */
   private Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 
 
   /**
    * Initialize this filter.
    *
-   * @param config <code>FilterConfig</code>
+   * @param  config  <code>FilterConfig</code>
    */
   public void init(final FilterConfig config)
   {
@@ -84,6 +83,7 @@ public class RequestMethodFilter implements Filter
       if (st.countTokens() > 0) {
         args = new Object[st.countTokens()];
         params = new Class[st.countTokens()];
+
         int i = 0;
         while (st.hasMoreTokens()) {
           final String token = st.nextToken();
@@ -93,37 +93,46 @@ public class RequestMethodFilter implements Filter
       }
       try {
         this.servletMethods.put(
-          methodName, ServletRequest.class.getMethod(methodName, params));
+          methodName,
+          ServletRequest.class.getMethod(methodName, params));
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Found method "+methodName+" for ServletRequest");
+          LOG.debug("Found method " + methodName + " for ServletRequest");
         }
       } catch (NoSuchMethodException ex) {
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Could not find method "+methodName+" for ServletRequest");
+          LOG.debug(
+            "Could not find method " + methodName + " for ServletRequest");
         }
       }
       try {
         this.httpServletMethods.put(
-          methodName, HttpServletRequest.class.getMethod(methodName, params));
+          methodName,
+          HttpServletRequest.class.getMethod(methodName, params));
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Found method "+methodName+" for HttpServletRequest");
+          LOG.debug("Found method " + methodName + " for HttpServletRequest");
         }
       } catch (NoSuchMethodException ex) {
         if (LOG.isDebugEnabled()) {
-          LOG.debug("Could not find method "+methodName+
-                    " for HttpServletRequest");
+          LOG.debug(
+            "Could not find method " + methodName + " for HttpServletRequest");
         }
       }
       this.arguments.put(methodName, args);
       this.patterns.put(methodName, Pattern.compile(value));
       if (LOG.isDebugEnabled()) {
         if (this.arguments.get(methodName) != null) {
-          LOG.debug("Stored method name = "+methodName+", pattern = "+value+
-                     " with these arguments "+
-                     Arrays.asList((Object[]) this.arguments.get(methodName)));
+          if (LOG.isDebugEnabled()) {
+            LOG.debug(
+              "Stored method name = " + methodName + ", pattern = " + value +
+              " with these arguments " +
+              Arrays.asList((Object[]) this.arguments.get(methodName)));
+          }
         } else {
-          LOG.debug("Stored method name = "+methodName+", pattern = "+value+
-                     " with no arguments");
+          if (LOG.isDebugEnabled()) {
+            LOG.debug(
+              "Stored method name = " + methodName + ", pattern = " + value +
+              " with no arguments");
+          }
         }
       }
     }
@@ -133,15 +142,17 @@ public class RequestMethodFilter implements Filter
   /**
    * Handle all requests sent to this filter.
    *
-   * @param request <code>ServletRequest</code>
-   * @param response <code>ServletResponse</code>
-   * @param chain <code>FilterChain</code>
-   * @throws ServletException if an error occurs
-   * @throws IOException if an error occurs
+   * @param  request  <code>ServletRequest</code>
+   * @param  response  <code>ServletResponse</code>
+   * @param  chain  <code>FilterChain</code>
+   *
+   * @throws  ServletException  if an error occurs
+   * @throws  IOException  if an error occurs
    */
-  public void doFilter(final ServletRequest request,
-                       final ServletResponse response,
-                       final FilterChain chain)
+  public void doFilter(
+    final ServletRequest request,
+    final ServletResponse response,
+    final FilterChain chain)
     throws IOException, ServletException
   {
     Set<Map.Entry<String, Method>> entries = null;
@@ -154,32 +165,41 @@ public class RequestMethodFilter implements Filter
       final String methodName = entry.getKey();
       if (LOG.isDebugEnabled()) {
         if (this.arguments.get(methodName) != null) {
-          LOG.debug("Calling "+methodName+" with these arguments "+
-                    Arrays.asList((Object[]) this.arguments.get(methodName)));
+          if (LOG.isDebugEnabled()) {
+            LOG.debug(
+              "Calling " + methodName + " with these arguments " +
+              Arrays.asList((Object[]) this.arguments.get(methodName)));
+          }
         } else {
-          LOG.debug("Calling "+methodName+" with no arguments");
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Calling " + methodName + " with no arguments");
+          }
         }
       }
+
       String methodResult = null;
       try {
-        methodResult = String.valueOf(entry.getValue().invoke(
-          request, (Object[]) this.arguments.get(methodName)));
+        methodResult = String.valueOf(
+          entry.getValue().invoke(
+            request,
+            (Object[]) this.arguments.get(methodName)));
         if (LOG.isDebugEnabled()) {
-          LOG.debug(methodName+" returned "+methodResult);
+          LOG.debug(methodName + " returned " + methodResult);
         }
       } catch (InvocationTargetException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Could not invoke method "+methodName, e);
+          LOG.error("Could not invoke method " + methodName, e);
         }
       } catch (IllegalAccessException e) {
         if (LOG.isErrorEnabled()) {
-          LOG.error("Could not access method "+methodName, e);
+          LOG.error("Could not access method " + methodName, e);
         }
       }
       if (!this.verifyResult(methodName, methodResult)) {
         if (response instanceof HttpServletResponse) {
           ((HttpServletResponse) response).sendError(
-            HttpServletResponse.SC_FORBIDDEN, "Request blocked by filter");
+            HttpServletResponse.SC_FORBIDDEN,
+            "Request blocked by filter");
           return;
         } else {
           throw new ServletException("Request blocked by filter");
@@ -191,13 +211,13 @@ public class RequestMethodFilter implements Filter
 
 
   /**
-   * This verifies that the supplied result matches the expected result
-   * for the supplied method name.
-   * This method returns true if result is null;
+   * This verifies that the supplied result matches the expected result for the
+   * supplied method name. This method returns true if result is null;
    *
-   * @param name of invoked method
-   * @param result of method invocation
-   * @return whether the supplied result is valid
+   * @param  name  of invoked method
+   * @param  result  of method invocation
+   *
+   * @return  whether the supplied result is valid
    */
   private boolean verifyResult(final String name, final String result)
   {
@@ -206,11 +226,11 @@ public class RequestMethodFilter implements Filter
       final Pattern pattern = this.patterns.get(name);
       if (!pattern.matcher(result).matches()) {
         if (LOG.isDebugEnabled()) {
-          LOG.debug(result+" does not match "+pattern.pattern());
+          LOG.debug(result + " does not match " + pattern.pattern());
         }
       } else {
         if (LOG.isDebugEnabled()) {
-          LOG.debug(result+" matches "+pattern.pattern());
+          LOG.debug(result + " matches " + pattern.pattern());
         }
         success = true;
       }
@@ -222,8 +242,8 @@ public class RequestMethodFilter implements Filter
 
 
   /**
-   * Called by the web container to indicate to a filter
-   * that it is being taken out of service.
+   * Called by the web container to indicate to a filter that it is being taken
+   * out of service.
    */
   public void destroy() {}
 }

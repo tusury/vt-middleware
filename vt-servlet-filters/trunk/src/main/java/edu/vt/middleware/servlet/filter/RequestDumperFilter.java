@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2009 Virginia Tech.
+  Copyright (C) 2003-2008 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -31,44 +31,44 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Example filter that dumps interesting state information about a request
- * to the associated servlet context log file, before allowing the servlet
- * to process the request in the usual way.  This can be installed as needed
- * to assist in debugging problems.
+ * Example filter that dumps interesting state information about a request to
+ * the associated servlet context log file, before allowing the servlet to
+ * process the request in the usual way. This can be installed as needed to
+ * assist in debugging problems.
  *
- * NOTE:
- * This is a modified version of the RequestDumperFilter that is distributed
- * with Tomcat.  It has the additional feature of dumping the request body
- * in addition to headers.  Another important change is that it uses commons
- * logging instead of {@link ServletContext#log()}.  The TRACE level must
- * be specified for this class to dump the request in the application log.
+ * <p>NOTE: This is a modified version of the RequestDumperFilter that is
+ * distributed with Tomcat. It has the additional feature of dumping the request
+ * body in addition to headers. Another important change is that it uses commons
+ * logging instead of {@link ServletContext#log()}. The TRACE level must be
+ * specified for this class to dump the request in the application log.</p>
  *
- * @author Craig McClanahan
- * @author Marvin S. Addison
- * @version $Revision$
+ * @author  Craig McClanahan
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 
 public final class RequestDumperFilter implements Filter
 {
 
-  /** Logger instance */
+  /** Logger instance. */
   private final Log logger = LogFactory.getLog(getClass());
 
   /**
-   * The filter configuration object we are associated with.  If this value
-   * is null, this filter instance is not currently configured.
+   * The filter configuration object we are associated with. If this value is
+   * null, this filter instance is not currently configured.
    */
   private FilterConfig config;
 
 
-  /** {@inheritDoc} */
-  public void init(final FilterConfig filterConfig) throws ServletException
+  /** {@inheritDoc}. */
+  public void init(final FilterConfig filterConfig)
+    throws ServletException
   {
     this.config = filterConfig;
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @SuppressWarnings(value = "unchecked")
   public void doFilter(
     final ServletRequest request,
@@ -101,6 +101,7 @@ public final class RequestDumperFilter implements Filter
     writer.println("       contentType=" + request.getContentType());
     writer.println("            locale=" + request.getLocale());
     writer.print("           locales=");
+
     final Enumeration<Locale> locales = request.getLocales();
     for (int i = 0; locales.hasMoreElements(); i++) {
       if (i > 0) {
@@ -109,10 +110,12 @@ public final class RequestDumperFilter implements Filter
       writer.print(locales.nextElement());
     }
     writer.println();
+
     final Enumeration<String> paramNames = request.getParameterNames();
     while (paramNames.hasMoreElements()) {
       final String name = paramNames.nextElement();
       writer.print("         parameter=" + name + "=");
+
       final String[] values = request.getParameterValues(name);
       for (int i = 0; i < values.length; i++) {
         if (i > 0) {
@@ -134,14 +137,17 @@ public final class RequestDumperFilter implements Filter
     if (request instanceof HttpServletRequest) {
       final HttpServletRequest hrequest = (HttpServletRequest) request;
       writer.println("       contextPath=" + hrequest.getContextPath());
+
       Cookie[] cookies = hrequest.getCookies();
       if (cookies == null) {
         cookies = new Cookie[0];
       }
       for (int i = 0; i < cookies.length; i++) {
-        writer.println("            cookie=" + cookies[i].getName() +
-                       "=" + cookies[i].getValue());
+        writer.println(
+          "            cookie=" + cookies[i].getName() + "=" +
+          cookies[i].getValue());
       }
+
       final Enumeration<String> headerNames = hrequest.getHeaderNames();
       while (headerNames.hasMoreElements()) {
         final String name = headerNames.nextElement();
@@ -174,20 +180,21 @@ public final class RequestDumperFilter implements Filter
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public void destroy()
   {
     this.config = null;
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @Override
   public String toString()
   {
     if (this.config == null) {
       return "RequestDumperFilter()";
     }
+
     final StringBuffer sb = new StringBuffer("RequestDumperFilter(");
     sb.append(this.config);
     sb.append(")");

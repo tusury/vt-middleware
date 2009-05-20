@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * <code>SessionTestServlet</code> sets session attributes based
- * on request parameters.
+ * <code>SessionTestServlet</code> sets session attributes based on request
+ * parameters.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

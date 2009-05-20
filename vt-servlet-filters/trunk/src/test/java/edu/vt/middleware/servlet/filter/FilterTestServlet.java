@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * <code>FilterTestServlet</code> prints sessions variables
- * for testing purposes.
+ * <code>FilterTestServlet</code> prints sessions variables for testing
+ * purposes.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

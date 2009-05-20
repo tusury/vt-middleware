@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2009 Virginia Tech.
+  Copyright (C) 2003-2008 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -24,31 +24,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * HTTP servlet request wrapper that provides input streams and readers based
- * on a byte array whose bytes were read from the wrapped request stream.
+ * HTTP servlet request wrapper that provides input streams and readers based on
+ * a byte array whose bytes were read from the wrapped request stream.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class ByteArrayRequestWrapper extends HttpServletRequestWrapper
 {
 
-  /** HTTP request body write buffer size */
+  /** HTTP request body write buffer size. */
   private static final int BUFFER_SIZE = 8092;
 
-  /** Byte buffer backing all streams and readers */
+  /** Byte buffer backing all streams and readers. */
   private final byte[] buffer;
 
 
   /**
-   * Creates a new instance around the given request.
-   * The data, if any, in the request will be read and assigned
-   * to an internal buffer that will be used to back streams,
-   * {@link #getInputStream()}, and readers {@link #getReader()} obtained
-   * from this class.
+   * Creates a new instance around the given request. The data, if any, in the
+   * request will be read and assigned to an internal buffer that will be used
+   * to back streams, {@link #getInputStream()}, and readers {@link
+   * #getReader()} obtained from this class.
    *
-   * @param request HTTP request to wrap.
+   * @param  request  HTTP request to wrap.
    */
   public ByteArrayRequestWrapper(final HttpServletRequest request)
   {
@@ -61,7 +59,7 @@ public class ByteArrayRequestWrapper extends HttpServletRequestWrapper
    * Gets the request body using the platform default character encoding to
    * convert the raw bytes of the input stream to characters.
    *
-   * @return HTTP request body as a string.
+   * @return  HTTP request body as a string.
    */
   public String getRequestBodyAsString()
   {
@@ -72,8 +70,9 @@ public class ByteArrayRequestWrapper extends HttpServletRequestWrapper
   /**
    * Gets a servlet input stream backed by a byte array.
    *
-   * @return A memory-backed input stream.
-   * @throws IOException On stream access failure.
+   * @return  A memory-backed input stream.
+   *
+   * @throws  IOException  On stream access failure.
    */
   @Override
   public ServletInputStream getInputStream()
@@ -86,24 +85,26 @@ public class ByteArrayRequestWrapper extends HttpServletRequestWrapper
   /**
    * Gets a buffered reader backed by a byte array.
    *
-   * @return A memory-backed reader.
-   * @throws IOException On reader access failure.
+   * @return  A memory-backed reader.
+   *
+   * @throws  IOException  On reader access failure.
    */
   @Override
   public BufferedReader getReader()
     throws IOException
   {
-    return new BufferedReader(
-      new InputStreamReader(new ByteArrayInputStream(buffer)));
+    return
+      new BufferedReader(
+        new InputStreamReader(new ByteArrayInputStream(buffer)));
   }
 
 
   /**
-   * Reads data from the entire request input stream and returns it in
-   * an array.
+   * Reads data from the entire request input stream and returns it in an array.
    *
-   * @param request HTTP request.
-   * @return Bytes read from input stream.
+   * @param  request  HTTP request.
+   *
+   * @return  Bytes read from input stream.
    */
   private byte[] readRequestData(final HttpServletRequest request)
   {
