@@ -105,7 +105,7 @@ Each param-name represents an attribute name and regular expression value, while
 
 ----
 = !RequestDumperFilter =
-The request dumper filter is a modified version of RequestDumperFilter example source that ships with the [http://tomcat.apache.org/ Apache Tomcat] servlet container distribution.  This filter is different in two notable aspects:
+The request dumper filter is a modified version of !RequestDumperFilter example source that ships with the [http://tomcat.apache.org/ Apache Tomcat] servlet container distribution.  This filter is different in two notable aspects:
   # Can dump the full request, including any data in the POST body
   # Uses [http://commons.apache.org/logging/ Commons Logging] to log request data
 
@@ -121,7 +121,7 @@ Request dumper filter configuration is very straightforward, an involves editing
   </filter-mapping>
 }}}
 
-Since this filter uses commons logging to print request data, the logging engine underlying commons logging must be set to TRACE for the edu.vt.middleware.servlet.filter.RequestDumperFilter category.  The following log4j.properties file provides a configuration sample for the log4j logging engine.
+Since this filter uses commons logging to print request data, the logging engine underlying commons logging must be set to TRACE for the edu.vt.middleware.servlet.filter.!RequestDumperFilter category.  The following log4j.properties file provides a configuration sample for the log4j logging engine.
 {{{
 log4j.rootLogger=ERROR, stdout, logfile
 
