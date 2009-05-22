@@ -139,3 +139,29 @@ log4j.appender.logfile.layout.ConversionPattern=%d %-5p [%c] - %m%n
 log4j.logger.com.example.application=DEBUG
 log4j.logger.edu.vt.middleware.servlet.filter.RequestDumperFilter=TRACE
 }}}
+
+== Performance Considerations ==
+The HTTP request stream containing the POST body can only be read once, so it must be read into a buffer to both print it and pass it to downstream filters and ultimately into the servlet that services the request.  This may have considerable performance impact on application throughput, particularly for applications that transfer large amounts of data via HTTP (e.g. file upload).
+
+The filter will only attempt to buffer and print the request if the edu.vt.middleware.servlet.filter.!RequestDumperFilter category is set to TRACE:
+
+{{{
+  public void doFilter(
+    final ServletRequest request,
+    final ServletResponse response,
+    final FilterChain chain)
+    throws IOException, ServletException
+  {
+    if (this.config == null) {
+      return;
+    }
+
+    // Just pass through to next filter if we're not at TRACE level
+    if (!logger.isTraceEnabled()) {
+      chain.doFilter(request, response);
+      return;
+    }
+...
+}
+}}}
+It is safe to leave the filter configured in the web.xml of a production application, while the logger configuration may be turned up to TRACE to engage the filter as needed to dump request data.
