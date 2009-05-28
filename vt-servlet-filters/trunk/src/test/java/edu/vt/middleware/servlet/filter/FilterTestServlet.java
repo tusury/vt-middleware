@@ -32,6 +32,9 @@ import javax.servlet.http.HttpSession;
 public class FilterTestServlet extends HttpServlet
 {
 
+  /** serial version uid. */
+  private static final long serialVersionUID = 3134947620166199431L;
+
 
   /**
    * Handle all requests sent to this servlet.
@@ -52,7 +55,7 @@ public class FilterTestServlet extends HttpServlet
     final PrintWriter out = response.getWriter();
     out.println("FilterTestServlet");
 
-    final Enumeration e = session.getAttributeNames();
+    final Enumeration<?> e = session.getAttributeNames();
     while (e.hasMoreElements()) {
       final String k = (String) e.nextElement();
       out.println(k + ":" + session.getAttribute(k));

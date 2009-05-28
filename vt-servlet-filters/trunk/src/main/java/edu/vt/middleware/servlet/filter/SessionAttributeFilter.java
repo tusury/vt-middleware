@@ -79,7 +79,7 @@ public final class SessionAttributeFilter implements Filter
       LOG.debug("requireAttribute = " + this.requireAttribute);
     }
 
-    final Enumeration e = config.getInitParameterNames();
+    final Enumeration<?> e = config.getInitParameterNames();
     while (e.hasMoreElements()) {
       final String name = (String) e.nextElement();
       if (!name.equals(REQUIRE_ATTRIBUTE)) {

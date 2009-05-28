@@ -32,6 +32,9 @@ import javax.servlet.http.HttpSession;
 public class SessionTestServlet extends HttpServlet
 {
 
+  /** serial version uid. */
+  private static final long serialVersionUID = -2908161041559614074L;
+
 
   /**
    * Handle all requests sent to this servlet.
@@ -49,7 +52,7 @@ public class SessionTestServlet extends HttpServlet
   {
     final HttpSession session = request.getSession();
 
-    final Enumeration params = request.getParameterNames();
+    final Enumeration<?> params = request.getParameterNames();
     while (params.hasMoreElements()) {
       final String k = (String) params.nextElement();
       session.setAttribute(k, request.getParameter(k));

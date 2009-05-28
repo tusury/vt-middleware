@@ -71,7 +71,7 @@ public class RequestMethodFilter implements Filter
    */
   public void init(final FilterConfig config)
   {
-    final Enumeration e = config.getInitParameterNames();
+    final Enumeration<?> e = config.getInitParameterNames();
     while (e.hasMoreElements()) {
       final String name = (String) e.nextElement();
       final String value = config.getInitParameter(name);
@@ -79,7 +79,7 @@ public class RequestMethodFilter implements Filter
       final StringTokenizer st = new StringTokenizer(name);
       final String methodName = st.nextToken();
       Object[] args = null;
-      Class[] params = null;
+      Class<?>[] params = null;
       if (st.countTokens() > 0) {
         args = new Object[st.countTokens()];
         params = new Class[st.countTokens()];

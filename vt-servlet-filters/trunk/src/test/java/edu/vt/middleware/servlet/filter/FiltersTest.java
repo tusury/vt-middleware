@@ -13,6 +13,7 @@
 */
 package edu.vt.middleware.servlet.filter;
 
+import java.io.File;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
@@ -47,7 +48,7 @@ public class FiltersTest
   public void setup(final String webXml)
     throws Exception
   {
-    this.servletRunner = new ServletRunner(webXml);
+    this.servletRunner = new ServletRunner(new File(webXml));
   }
 
 
