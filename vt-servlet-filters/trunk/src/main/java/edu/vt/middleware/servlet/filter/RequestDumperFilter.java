@@ -39,8 +39,9 @@ import org.apache.commons.logging.LogFactory;
  * <p>NOTE: This is a modified version of the RequestDumperFilter that is
  * distributed with Tomcat. It has the additional feature of dumping the request
  * body in addition to headers. Another important change is that it uses commons
- * logging instead of {@link ServletContext#log()}. The TRACE level must be
- * specified for this class to dump the request in the application log.</p>
+ * logging instead of {@link javax.servlet.ServletContext#log(String)}. The
+ * TRACE level must be specified for this class to dump the request in the
+ * application log.</p>
  *
  * @author  Craig McClanahan
  * @author  Middleware Services
