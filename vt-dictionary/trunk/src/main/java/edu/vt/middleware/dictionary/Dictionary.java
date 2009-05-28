@@ -402,7 +402,7 @@ public class Dictionary
    */
   public void print(final PrintWriter out)
   {
-    final Iterator i = this.words.iterator();
+    final Iterator<String> i = this.words.iterator();
     while (i.hasNext()) {
       out.println(i.next());
     }
