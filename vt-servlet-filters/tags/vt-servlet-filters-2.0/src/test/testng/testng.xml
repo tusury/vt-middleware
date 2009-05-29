@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="vt-servlet-filters" verbose="1" parallel="tests" thread-count="1">
+
+  <!-- test parameters -->
+  <parameter name="webXml" value="src/test/resources/web.xml"/>
+
+  <test name="coretests" parallel="methods" thread-count="2">
+    <groups>
+      <run>
+        <include name="filtertest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.servlet.filter.*" />
+    </packages>
+  </test>
+</suite>
