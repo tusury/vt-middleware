@@ -1,0 +1,6 @@
+#sidebar vtservletfiltersSidebar
+
+<wiki:toc max_depth="2" />
+
+= Version 2.0 =
+Initial google code release.
