@@ -1,0 +1,6 @@
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
+
+= Version 3.0 =
+Initial google code release.
