@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="vt-peoplesearch" verbose="1" parallel="tests" thread-count="1">
+
+  <!-- ldap test parameters -->
+  <parameter name="createEntry2"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-2.ldif"/>
+  <parameter name="createEntry3"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-3.ldif"/>
+  <parameter name="createEntry4"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-4.ldif"/>
+  <parameter name="createEntry5"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-5.ldif"/>
+  <parameter name="createEntry6"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-6.ldif"/>
+  <parameter name="createEntry7"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-7.ldif"/>
+  <parameter name="createEntry8"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-8.ldif"/>
+  <parameter name="createEntry9"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-9.ldif"/>
+  <parameter name="createEntry10"
+             value="/edu/vt/middleware/ldap/search/createLdapEntry-10.ldif"/>
+
+  <parameter name="searchResults2"
+             value="/edu/vt/middleware/ldap/search/searchResults-2.ldif"/>
+  <parameter name="searchResults3"
+             value="/edu/vt/middleware/ldap/search/searchResults-3.ldif"/>
+  <parameter name="searchResults4"
+             value="/edu/vt/middleware/ldap/search/searchResults-4.ldif"/>
+  <parameter name="searchResults5"
+             value="/edu/vt/middleware/ldap/search/searchResults-5.ldif"/>
+  <parameter name="searchResults6"
+             value="/edu/vt/middleware/ldap/search/searchResults-6.ldif"/>
+  <parameter name="searchResults7"
+             value="/edu/vt/middleware/ldap/search/searchResults-7.ldif"/>
+  <parameter name="searchResults8"
+             value="/edu/vt/middleware/ldap/search/searchResults-8.ldif"/>
+  <parameter name="searchResults9"
+             value="/edu/vt/middleware/ldap/search/searchResults-9.ldif"/>
+  <parameter name="searchResults10"
+             value="/edu/vt/middleware/ldap/search/searchResults-10.ldif"/>
+
+  <parameter name="webXml" value="src/test/resources/web.xml"/>
+
+  <parameter name="searchServletQuery" value="grf"/>
+  <parameter name="searchServletAttrs" value="departmentNumber|givenName|sn"/>
+  <parameter name="searchServletLdif" value="/edu/vt/middleware/ldap/search/searchResults-10.ldif"/>
+
+  <test name="coretests" parallel="methods" thread-count="3">
+    <groups>
+      <run>
+        <include name="invokertest" />
+        <include name="searchtest" />
+        <include name="servlettest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.ldap.search.*" />
+    </packages>
+  </test>
+</suite>

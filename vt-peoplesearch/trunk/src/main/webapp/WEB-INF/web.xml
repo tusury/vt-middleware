@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <display-name>XML People Search</display-name>
+  <description>
+    XML People Search is a servlet which accepts search queries
+    and returns best fit information from a LDAP.
+    This information is displayed in DSML format.
+    The DSML Gateway servlet is also loaded in this web application
+    to provide advanced search capabilities.
+  </description>
+
+  <!-- if using authentication, make sessions distributable
+  <distributable/>
+  -->
+
+  <!-- filters for controlling access to the Search Servlets -->
+
+  <!-- ClientCertFilter Options: -->
+  <!-- requireCert: Whether the request *must* send a client certificate
+                    in order to pass through this filter -->
+  <!-- subjectDn: Regular expression which the subject DN of the
+                  client certificate must match in order to pass
+                  through this filter -->
+  <!-- issuerDn: Regular expression which the issuer DN of the
+                 client certificate must match in order to pass
+                 through this filter -->
+  <!--
+  <filter>
+    <filter-name>ClientCertFilter</filter-name>
+    <filter-class>edu.vt.middleware.filters.ClientCertFilter</filter-class>
+    <init-param>
+      <param-name>requireCert</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>subjectDn</param-name>
+      <param-value>DC=edu, DC=vt, DC=middleware, CN=.*</param-value>
+    </init-param>
+    <init-param>
+      <param-name>issuerDn</param-name>
+      <param-value>DC=edu, DC=vt, DC=middleware, CN=Middleware CA</param-value>
+    </init-param>
+  </filter>
+  -->
+
+  <!-- RequestMethodFilter Options: -->
+  <!-- Each param-name represents a method to be called on the request object,
+       while the param-value is a regular expression the result of the method
+       call must match. -->
+  <!-- In this example call ServletRequest.getRemoteAddr(),
+       it's result must match 10.0.10.* -->
+  <!--
+  <filter>
+    <filter-name>RequestMethodFilter</filter-name>
+    <filter-class>edu.vt.middleware.filters.RequestMethodFilter</filter-class>
+    <init-param>
+      <param-name>getRemoteAddr</param-name>
+      <param-value>10.0.10.*</param-value>
+    </init-param>
+  </filter>
+  -->
+
+  <!-- SessionAttributeFilter Options: -->
+  <!-- requireAttribute: Whether the attribute(s) *must* exist
+                         in order to pass through this filter -->
+  <!-- Each param-name represents an attribute name and regular
+       expression value, while the param-value is a URL to forward
+       the request to if the regular expression match fails. -->
+  <!-- In this example call HttpSession.getAttribute("user"),
+       it's result must match .* -->
+  <!--
+  <filter>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <filter-class>edu.vt.middleware.filters.SessionAttributeFilter</filter-class>
+    <init-param>
+      <param-name>requireAttribute</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>peoplesearch.User .*</param-name>
+      <param-value>/login.jsp</param-value>
+    </init-param>
+  </filter>
+  -->
+
+  <!--
+  <filter-mapping>
+    <filter-name>ClientCertFilter</filter-name>
+    <url-pattern>/PeopleSearch</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>ClientCertFilter</filter-name>
+    <url-pattern>/Search</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>ClientCertFilter</filter-name>
+    <url-pattern>/AttributeSearch</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>RequestMethodFilter</filter-name>
+    <url-pattern>/PeopleSearch</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>RequestMethodFilter</filter-name>
+    <url-pattern>/Search</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>RequestMethodFilter</filter-name>
+    <url-pattern>/AttributeSearch</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <url-pattern>/PeopleSearch</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <url-pattern>/Search</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <url-pattern>/AttributeSearch</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <url-pattern>/howto.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <url-pattern>/howto_advanced.jsp</url-pattern>
+  </filter-mapping>
+  -->
+
+  <!-- Servlet which does fuzzy logic -->
+  <servlet>
+    <servlet-name>PeopleSearch</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.search.servlets.SearchServlet</servlet-class>
+    <!-- Type output to produce.  Acceptable values are:
+         DSML and LDIF -->
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.outputType</param-name>
+      <param-value>DSML</param-value>
+    </init-param>
+    <!-- Classpath location of the peoplesearch spring context -->
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.springContextPath</param-name>
+      <param-value>/peoplesearch-context.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <!-- Servlet which passes LDAP queries -->
+  <servlet>
+    <servlet-name>Search</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.servlets.propertiesFile</param-name>
+      <param-value>/peoplesearch.ldap.properties</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  <!-- Servlet which returns singular ldap attributes -->
+  <servlet>
+    <servlet-name>AttributeSearch</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.servlets.AttributeServlet</servlet-class>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.servlets.propertiesFile</param-name>
+      <param-value>/peoplesearch.ldap.properties</param-value>
+    </init-param>
+    <load-on-startup>3</load-on-startup>
+  </servlet>
+  <!-- Servlet which can be used to perform ldap authentication -->
+  <!--
+  <servlet>
+    <servlet-name>Login</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.servlets.LoginServlet</servlet-class>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.servlets.propertiesFile</param-name>
+      <param-value>/peoplesearch.ldap.properties</param-value>
+    </init-param>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.servlets.sessionId</param-name>
+      <param-value>peoplesearch.User</param-value>
+    </init-param>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.servlets.loginUrl</param-name>
+      <param-value>login.jsp</param-value>
+    </init-param>
+    <load-on-startup>4</load-on-startup>
+  </servlet>
+  -->
+  <!-- Servlet used to remove the session attribute set by Login -->
+  <!--
+  <servlet>
+    <servlet-name>Logout</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.servlets.LogoutServlet</servlet-class>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.servlets.sessionId</param-name>
+      <param-value>peoplesearch.User</param-value>
+    </init-param>
+    <load-on-startup>5</load-on-startup>
+  </servlet>
+  -->
+
+  <servlet-mapping>
+    <servlet-name>PeopleSearch</servlet-name>
+    <url-pattern>/PeopleSearch</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Search</servlet-name>
+    <url-pattern>/Search</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AttributeSearch</servlet-name>
+    <url-pattern>/AttributeSearch</url-pattern>
+  </servlet-mapping>
+  <!--
+  <servlet-mapping>
+    <servlet-name>Login</servlet-name>
+    <url-pattern>/Login</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>Logout</servlet-name>
+    <url-pattern>/Logout</url-pattern>
+  </servlet-mapping>
+  -->
+
+  <!--
+  <session-config>
+    <session-timeout>20</session-timeout>
+  </session-config>
+  -->
+
+  <!-- force HTTPS
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>peoplesearch</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+      <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+  -->
+
+</web-app>

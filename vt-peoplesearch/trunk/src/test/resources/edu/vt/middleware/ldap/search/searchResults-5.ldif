@@ -1,0 +1,5 @@
+dn: uid=5,ou=test,dc=vt,dc=edu
+departmentNumber: 1600
+givenName: Franklin
+sn: Roosevelt
+
