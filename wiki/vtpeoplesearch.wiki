@@ -1,0 +1,324 @@
+#labels java,servlet,ldap,jndi,fuzzylogic,search,people
+#sidebar vtpeoplesearchSidebar
+
+<wiki:toc max_depth="2" />
+
+= Introduction =
+VT People Search is a Java servlet that exposes a fuzzy logic search interface to a LDAP. <br/>
+Results can be returned in LDIF, DSML version 1, or DSML version 2 format. <br/>
+This provides a flexible means for displaying and parsing search results for display. <br/>
+<br/>
+Queries are executed based on the number of search terms that are supplied. <br/>
+For each configured search term count a specified number of queries are run in order.<br/>
+Results are then returned either additively or on a first hit basis.
+
+----
+= Installation =
+The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
+
+== War ==
+To configure the war, edit the following files:
+ * WEB-INF/web.xml
+ * WEB-INF/classes/peoplesearch.ldap.properties
+ * WEB-INF/classes/peoplesearch.ldap.pool.properties (optional)
+ * WEB-INF/classes/peoplesearch-context.xml
+
+Deploy the war in a servlet container.
+
+== Jar == 
+If you would like to use this project's jar library in your maven build, include the following in your pom.xml:
+{{{
+<dependencies>
+  <dependency>
+      <groupId>edu.vt.middleware</groupId>
+      <artifactId>vt-peoplesearch</artifactId>
+      <version>3.0</version>
+  </dependency>
+<dependencies>
+}}}
+{{{
+<repositories>
+  <repository>
+    <id>vt-middleware.repo</id>
+    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+  </repository>
+</repositories>
+}}}
+
+----
+= Configuration =
+
+== Servlet ==
+The !SearchServlet accepts the following configuration parameters:
+{{{
+  <servlet>
+    <servlet-name>PeopleSearch</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.search.servlets.SearchServlet</servlet-class>
+    <!-- Type output to produce.  Acceptable values are:
+         DSML and LDIF -->
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.outputType</param-name>
+      <param-value>DSML</param-value>
+    </init-param>
+    <!-- Classpath location of the peoplesearch spring context -->
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.springContextPath</param-name>
+      <param-value>/peoplesearch-context.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+}}}
+
+== Library ==
+The !PeopleSearch bean is configured via Spring context.<br/>
+Simple regular expression terms have been defined to aid in writing queries.<br/>
+Place the strings:
+ * `@@@QUERY_N@@@` to indicate the nth query parameter
+ * `@@@INITIAL_N@@@` to indicate the first letter of the nth query parameter
+
+_Regex Examples:_
+{{{
+(&amp;(givenName=@@@QUERY_1@@@)(sn=@@@QUERY_2@@@))
+}}}
+search for a givenName matching the first term and a last name matching the second term
+{{{
+(|(&amp;(givenName=@@@INITIAL_1@@@*)(sn=@@@QUERY_2@@@))(&amp;(middleName=@@@INITIAL_1@@@*)(sn=@@@QUERY_2@@@)))
+}}}
+search for a givenName or middleName starting with the first letter of the first search term and a last name matching the second search term
+
+=== !SearchInvoker Bean ==
+The !SearchInvoker contains all the configured Search beans:
+{{{
+  <bean id="searchInvoker" class="edu.vt.middleware.ldap.search.SearchInvoker">
+    <!--  Search configuration is defined in the following beans -->
+    <property name="searches">
+      <map>
+        <entry>
+          <key><value>1</value></key>
+          <ref bean="oneTermSearch"/>
+        </entry>
+        <entry>
+          <key><value>2</value></key>
+          <ref bean="twoTermSearch"/>
+        </entry>
+        <entry>
+          <key><value>3</value></key>
+          <ref bean="threeTermSearch"/>
+        </entry>
+      </map>
+    </property>
+  </bean>
+}}}
+
+==== Proxy SASL Authorization ====
+The !SearchInvoker can be configured to perform SASL authorization on behalf on the client.<br/>
+This setting will pass the _CN_ of a supplied certificate as a LDAP SASL authorization ID.<br/>
+Used in conjunction with the LDAP configuration, this will allow clients to proxy authentication to the LDAP.<br/>
+Add the following property to enable this feature:
+{{{
+    <property name="proxySaslAuthorization">
+      <value>true</value>
+    </property>
+}}}
+
+=== Search Bean ===
+Contains all the queries to execute if one search term is received.
+{{{
+  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.Search">
+    <property name="termCount"><value>1</value></property>
+
+    <!-- Whether a query should use results from all searches or
+         just the results from the first match -->
+    <property name="additive">
+      <value>true</value>
+    </property>
+
+    <property name="queries">
+      <map>
+        <!-- phone number search -->
+        <entry>
+          <key><value>1</value></key>
+          <value>(|(telephoneNumber=*@@@QUERY_1@@@)(localPhone=*@@@QUERY_1@@@))</value>
+        </entry>
+        <!-- name search -->
+        <entry>
+          <key><value>2</value></key>
+          <value>(|(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_1@@@*))</value>
+        </entry>
+        <!-- email search -->
+        </entry>
+        <entry>
+          <key><value>3</value></key>
+          <value>(|(uupid=*@@@QUERY_1@@@*)(mail=*@@@QUERY_1@@@*))</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+}}}
+Contains all the queries to execute if two search terms are received.
+{{{
+  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.Search">
+    <property name="termCount"><value>2</value></property>
+
+    <property name="queries">
+      <map>
+        <entry>
+          <key><value>1</value></key>
+          <value>(&amp;(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_2@@@*))</value>
+        </entry>
+        <entry>
+          <key><value>2</value></key>
+          <value>(cn=*@@@QUERY_1@@@* *@@@QUERY_2@@@*)</value>
+        </entry>
+        <entry>
+          <key><value>3</value></key>
+          <value>(|(&amp;(givenName=@@@INITIAL_1@@@*)(sn=@@@QUERY_2@@@))(&amp;(middleName=@@@INITIAL_1@@@*)(sn=@@@QUERY_2@@@)))</value>
+        </entry>
+        <entry>
+          <key><value>4</value></key>
+          <value>(sn=@@@QUERY_2@@@)</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+}}}
+Contains all the queries to execute if three search terms are received.
+{{{
+  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.Search">
+    <property name="termCount"><value>3</value></property>
+
+    <property name="queries">
+      <map>
+        <entry>
+          <key><value>1</value></key>
+          <value>(|(&amp;(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_3@@@*))(&amp;(givenName=*@@@QUERY_2@@@*)(sn=*@@@QUERY_3@@@*)))</value>
+        </entry>
+        <entry>
+          <key><value>2</value></key>
+          <value>(|(cn=*@@@QUERY_1@@@* *@@@QUERY_2@@@* *@@@QUERY_3@@@*)(cn=*@@@QUERY_2@@@* *@@@QUERY_1@@@* *@@@QUERY_3@@@*))</value>
+        </entry>
+        <entry>
+          <key><value>3</value></key>
+          <value>(|(&amp;p(givenName=@@@INITIAL_1@@@*)(middlename=@@@INITIAL_2@@@*)(sn=@@@QUERY_3@@@))(&amp;(givenName=@@@INITIAL_2@@@*)(middleName=@@@INITIAL_1@@@*)(sn=@@@QUERY_3@@@)))</value>
+        </entry>
+        <entry>
+          <key><value>4</value></key>
+          <value>(sn=@@@QUERY_3@@@)</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+}}}
+Additional search term resolution can continue as needed.<br/>
+
+==== Additive Searches ====
+Each search bean can be configured to be additive by adding the following property:
+{{{
+    <property name="additive">
+      <value>true</value>
+    </property>
+}}}
+This means that *all* searches configured will be executed, rather than stopping when the first search produces a result.
+
+==== Search Restrictions ====
+An overriding search restriction can be provided for each search bean by providing the following property:
+{{{
+    <property name="searchRestrictions">
+      <value>(objectClass=inetOrgPerson)</value>
+    </property>
+}}}
+This filter will be *anded* to each search in order to restrict the results.
+
+==== Post Processers ====
+Each search bean can be configured with a post processer.<br/>
+This library comes with the !QueryPostDataProcesser which adds the following attributes to all search results:
+ * ldapQuery - the LDAP filter which produced the result
+ * termCount - the term count which produced the result
+ * searchIteration - the iteration count which produced the result
+ * searchTime - the time in milliseconds it took for the LDAP filter to execute
+
+To leverage this processer, add the following property to all search bean.
+{{{
+    <property name="postProcessers">
+      <list>
+        <ref bean="queryDataPostProcesser"/>
+      </list>
+    </property>
+}}}
+
+== LDAP ==
+The !LdapPoolManager is configured with the classpath location of the ldap and pool properties files and the type of pool.<br/>
+For detailed descriptions of the [vtldap#Configuration_Properties ldap] and [vtldapPooling pool] configurations see the [vtldap VT Ldap library].<br/>
+If no ldapPoolProperties property is supplied than the default pooling configuration is used.
+{{{
+  <bean id="ldapPoolManager" class="edu.vt.middleware.ldap.search.LdapPoolManager">
+
+    <!-- Name of file located in your classpath which contains the ldap configuration -->
+    <property name="ldapProperties">
+      <value>/peoplesearch.ldap.properties</value>
+    </property>
+
+    <!-- Name of file located in your classpath which contains the ldap pool configuration -->
+    <property name="ldapPoolProperties">
+      <value>/peoplesearch.ldap.pool.properties</value>
+    </property>
+
+    <!-- Type of ldap pool to use.  Acceptable values are:
+         SOFT_LIMIT, BLOCKING, SHARED -->
+    <property name="poolType">
+      <value>SOFT_LIMIT</value>
+    </property>
+  </bean>
+}}}
+
+----
+= Usage =
+The Search servlet accepts the following parameters:
+|| *Parameter* || *Value* ||
+|| dsml-version || 1 or 2, if the servlet is configured to return DSML ||
+|| content-type || text or xml, if the servlet is configured to return DSML ||
+|| query || search terms to process ||
+|| attrs || LDAP attributes to return ||
+|| search-restrictions || LDAP filter to _AND_ with all LDAP searches ||
+|| from-result || search index to begin pagination from ||
+|| to-result || search index to end pagination at ||
+
+== Sample ==
+Request:
+{{{
+http://your.host.com/PeopleSearch?query=dfisher&attrs=givenName&attrs=sn
+}}}
+Response:
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dsml:dsml xmlns:dsml="http://www.dsml.org/DSML">
+  <dsml:directory-entries>
+    <dsml:entry dn="uid=818037,ou=People,dc=vt,dc=edu">
+      <dsml:attr name="sn">
+        <dsml:value>Fisher</dsml:value>
+      </dsml:attr>
+      <dsml:attr name="givenName">
+        <dsml:value>Daniel</dsml:value>
+      </dsml:attr>
+    </dsml:entry>
+  </dsml:directory-entries>
+</dsml:dsml>
+}}}
+
+Queries that use reserved characters should be submitted via POST so that they are properly encoded.
+
+----
+= Scripts =
+Script execution requirements vary by platform.  For the following platform-specific instructions, let VTPEOPLESEARCH_HOME be the location where the VT People Search distribution was unpacked.
+
+*Unix*
+ # Ensure the java executable is on your path.
+ # Ensure $VTPEOPLESEARCH_HOME/bin is on your path.
+ # If you encounter classpath problems executing the scripts, export VTPEOPLESEARCH_HOME as a separate shell variable.  This is not necessary in most cases (e.g. Linux, OSX, FreeBSD).
+
+== peoplesearch ==
+Perform a fuzzy logic search for the terms 'daniel fisher' and return the mail attribute.
+{{{
+peoplesearch -query 'daniel fisher' mail
+}}}
