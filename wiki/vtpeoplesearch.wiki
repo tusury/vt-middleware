@@ -112,7 +112,6 @@ The !SearchInvoker contains all the configured Search beans:
 
 ==== Proxy SASL Authorization ====
 The !SearchInvoker can be configured to perform SASL authorization on behalf on the client.<br/>
-This setting will pass the _CN_ of a supplied certificate as a LDAP SASL authorization ID.<br/>
 Used in conjunction with the LDAP configuration, this will allow clients to proxy authentication to the LDAP.<br/>
 Add the following property to enable this feature:
 {{{
@@ -120,6 +119,7 @@ Add the following property to enable this feature:
       <value>true</value>
     </property>
 }}}
+If using the !SearchServlet, this setting will pass the _CN_ of a supplied certificate as the LDAP SASL authorization ID.
 
 === Search Bean ===
 Contains all the queries to execute if one search term is received.
