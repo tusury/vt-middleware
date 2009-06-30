@@ -68,6 +68,12 @@ public class KeyStoreCliTest
           "rsa.pri.pem",
           "-storetype BKS -keyalg RSA",
         },
+        {
+          "store-3.p12",
+          "rsa.cert.pem",
+          "rsa.pri.pem",
+          "-storetype PKCS12 -keyalg RSA",
+        },
       };
   }
 
