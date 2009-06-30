@@ -197,7 +197,7 @@ public final class SearchServlet extends HttpServlet
     }
     try {
       final Query query = new Query();
-      query.setLdapQuery(request.getParameter("query"));
+      query.setRawQuery(request.getParameter("query"));
       query.setQueryAttributes(request.getParameterValues("attrs"));
       query.setSearchRestrictions(request.getParameter("search-restrictions"));
       query.setFromResult(fromResult);
@@ -225,7 +225,7 @@ public final class SearchServlet extends HttpServlet
   public void destroy()
   {
     try {
-      this.search.getSearchInvoker().getLdapPoolManager().close();
+      this.search.getLdapPoolManager().close();
     } catch (Exception e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("Error closing ldap connections", e);

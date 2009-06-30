@@ -13,7 +13,10 @@
 */
 package edu.vt.middleware.ldap.search;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * <code>Query</code> contains query related data.
@@ -25,7 +28,7 @@ public class Query
 {
 
   /** LDAP query to execute. */
-  private String ldapQuery;
+  private String rawQuery;
 
   /** Attributes to return with the ldap query. */
   private String[] queryAttributes;
@@ -51,24 +54,24 @@ public class Query
 
 
   /**
-   * This sets the ldap query for this <code>Query</code>.
+   * This sets the raw query for this <code>Query</code>.
    *
    * @param  s  <code>String</code>
    */
-  public void setLdapQuery(final String s)
+  public void setRawQuery(final String s)
   {
-    this.ldapQuery = s;
+    this.rawQuery = s;
   }
 
 
   /**
-   * This returns the ldap query for this <code>Query</code>.
+   * This returns the raw query for this <code>Query</code>.
    *
    * @return  <code>String</code>
    */
-  public String getLdapQuery()
+  public String getRawQuery()
   {
-    return this.ldapQuery;
+    return this.rawQuery;
   }
 
 
@@ -95,23 +98,39 @@ public class Query
 
 
   /**
-   * This sets the query parameters for this <code>Query</code>.
-   *
-   * @param  s  <code>String[]</code>
-   */
-  public void setQueryParameters(final String[] s)
-  {
-    this.queryParameters = s;
-  }
-
-
-  /**
-   * This returns the query parameters for this <code>Query</code>.
+   * This parses the raw query from a string into an array of separate
+   * parameters.
    *
    * @return  <code>String[]</code>
    */
   public String[] getQueryParameters()
   {
+    if (this.queryParameters == null) {
+      if (this.rawQuery != null) {
+        final List<String> params = new ArrayList<String>();
+        final StringTokenizer queryTokens = new StringTokenizer(
+          this.rawQuery.toLowerCase().trim());
+        while (queryTokens.hasMoreTokens()) {
+          String token = queryTokens.nextToken();
+
+          // don't allow an odd number of trailing backslashes, it breaks regex
+          int i = token.length() - 1;
+          int slashCount = 0;
+          while (i >= 0 && token.charAt(i--) == '\\') {
+            slashCount++;
+          }
+          if (slashCount % 2 == 1) {
+            token = token.concat("\\");
+          }
+
+          params.add(token);
+        }
+        this.queryParameters = params.toArray(new String[0]);
+      } else {
+        this.queryParameters = new String[0];
+      }
+    }
+
     return this.queryParameters;
   }
 
@@ -217,7 +236,7 @@ public class Query
       String.format(
         "{query=%s,attributes=%s,parameters=%s,searchRestrictions=%s," +
         "fromResult=%d,toResult=%d,saslAuthorizationId=%s}",
-        this.ldapQuery,
+        this.rawQuery,
         this.queryAttributes == null ? null
                                      : Arrays.asList(this.queryAttributes),
         this.queryParameters == null ? null

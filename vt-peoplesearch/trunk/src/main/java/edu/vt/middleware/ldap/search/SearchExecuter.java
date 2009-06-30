@@ -23,18 +23,19 @@ import java.util.TreeMap;
 import javax.naming.NamingException;
 import javax.naming.directory.SearchResult;
 import edu.vt.middleware.ldap.Ldap;
+import edu.vt.middleware.ldap.pool.LdapPool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * <code>Search</code> contains the basic methods necessary for performing an
- * Ldap query.
+ * <code>SearchExecuter</code> contains the basic methods necessary for
+ * performing a Ldap query.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
 
-public class Search
+public class SearchExecuter
 {
 
   /** Identifier in search string that should be replaced with query data. */
@@ -44,7 +45,7 @@ public class Search
   public static final String REGEX_INITIAL = "@@@INITIAL_1@@@";
 
   /** Log for this class. */
-  private static final Log LOG = LogFactory.getLog(Search.class);
+  private static final Log LOG = LogFactory.getLog(SearchExecuter.class);
 
   /** Appended to every search to restrict result sets. */
   private String searchRestrictions;
@@ -62,11 +63,11 @@ public class Search
   private int termCount;
 
   /** Search strings for this search module. */
-  private Map<Integer, String> queries = new HashMap<Integer, String>();
+  private Map<Integer, String> queryTemplates = new HashMap<Integer, String>();
 
 
   /** Default constructor. */
-  public Search() {}
+  public SearchExecuter() {}
 
 
   /**
@@ -74,7 +75,7 @@ public class Search
    *
    * @param  tc  <code>int</code> number to query terms for this search
    */
-  public Search(final int tc)
+  public SearchExecuter(final int tc)
   {
     this.termCount = tc;
   }
@@ -173,9 +174,9 @@ public class Search
    *
    * @return  <code>List</code> of attempt number to search string
    */
-  public Map<Integer, String> getQueries()
+  public Map<Integer, String> getQueryTemplates()
   {
-    return this.queries;
+    return this.queryTemplates;
   }
 
 
@@ -184,38 +185,41 @@ public class Search
    *
    * @param  m  map of attempt number to search string
    */
-  public void setQueries(final Map<Integer, String> m)
+  public void setQueryTemplates(final Map<Integer, String> m)
   {
-    this.queries = m;
+    this.queryTemplates = m;
   }
 
 
   /**
    * This performs a Ldap search with the supplied <code>Query</code>.
    *
-   * @param  ldap  <code>Ldap</code> to use for searching
+   * @param  ldapPool  <code>LdapPool</code> to use for searching
    * @param  query  <code>Query</code> to search for
    *
    * @return  <code>Iterator</code> - of search results
    *
    * @throws  PeopleSearchException  if an error occurs searching the Ldap
    */
-  public Iterator<SearchResult> search(final Ldap ldap, final Query query)
+  public Iterator<SearchResult> executeSearch(
+    final LdapPool<Ldap> ldapPool,
+    final Query query)
     throws PeopleSearchException
   {
     final SortedMap<Integer, SearchResult> m =
       new TreeMap<Integer, SearchResult>();
     final List<String> l = new ArrayList<String>();
 
-    if (this.queries != null && this.queries.size() > 0) {
-      final SearchThread[] threads = new SearchThread[this.queries.size()];
-      for (int i = 0; i < this.queries.size(); i++) {
+    if (this.queryTemplates != null && this.queryTemplates.size() > 0) {
+      final SearchThread[] threads =
+        new SearchThread[this.queryTemplates.size()];
+      for (int i = 0; i < this.queryTemplates.size(); i++) {
         final String ldapQuery = this.buildLdapQuery(
-          this.getQuery(query.getQueryParameters(), i),
+          this.getQueryTemplate(query.getQueryParameters(), i),
           query.getSearchRestrictions());
         if (ldapQuery != null) {
           threads[i] = new SearchThread(
-            ldap,
+            ldapPool,
             ldapQuery,
             query.getQueryAttributes());
         } else {
@@ -261,8 +265,8 @@ public class Search
                 if (LOG.isDebugEnabled()) {
                   if (LOG.isDebugEnabled()) {
                     LOG.debug(
-                      "Query " + (additive ? i : count) +
-                      " found: " + sr.getName());
+                      "Query " + (additive ? i : count) + " found: " +
+                      sr.getName());
                   }
                 }
               }
@@ -399,15 +403,15 @@ public class Search
    *
    * @return  <code>String</code> - ldap search string
    */
-  private String getQuery(final String[] queryParams, final int count)
+  private String getQueryTemplate(final String[] queryParams, final int count)
   {
     String query = null;
 
     if (
       queryParams != null &&
         queryParams.length > 0 &&
-        count < this.queries.size()) {
-      query = this.queries.get(new Integer(count));
+        count < this.queryTemplates.size()) {
+      query = this.queryTemplates.get(new Integer(count));
       if (query != null) {
 
         // clone the params array, it may need to be changed for this search

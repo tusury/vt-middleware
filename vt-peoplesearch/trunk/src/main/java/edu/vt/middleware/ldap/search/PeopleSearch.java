@@ -15,12 +15,17 @@ package edu.vt.middleware.ldap.search;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import javax.naming.directory.SearchResult;
+import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.dsml.Dsmlv1;
 import edu.vt.middleware.ldap.dsml.Dsmlv2;
 import edu.vt.middleware.ldap.ldif.Ldif;
+import edu.vt.middleware.ldap.pool.LdapPool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
@@ -54,8 +59,15 @@ public class PeopleSearch
     LDIF
   }
 
-  /** Class used to perform queries. */
-  private SearchInvoker searchInvoker;
+  /** Whether to proxy SASL authorization. */
+  private boolean proxySaslAuthz;
+
+  /** Search modules. */
+  private Map<Integer, SearchExecuter> searchExecuters =
+    new HashMap<Integer, SearchExecuter>();
+
+  /** Retrieve ldap objects for searching. */
+  private LdapPoolManager ldapPoolManager;
 
   /** Dsml version 1 object. */
   private Dsmlv1 dsmlv1 = new Dsmlv1();
@@ -69,18 +81,6 @@ public class PeopleSearch
 
   /** Default constructor. */
   public PeopleSearch() {}
-
-
-  /**
-   * This creates a new <code>PeopleSearch</code> with the supplied search
-   * invoker.
-   *
-   * @param  si  <code>SearchInvoker</code>
-   */
-  public PeopleSearch(final SearchInvoker si)
-  {
-    this.searchInvoker = si;
-  }
 
 
   /**
@@ -99,24 +99,68 @@ public class PeopleSearch
 
 
   /**
-   * Sets the invoker used to search the ldap.
+   * This returns whether to proxy sasl authorization.
    *
-   * @param  si  used for searching
+   * @return  <code>boolean</code>
    */
-  public void setSearchInvoker(final SearchInvoker si)
+  public boolean getProxySaslAuthorization()
   {
-    this.searchInvoker = si;
+    return this.proxySaslAuthz;
   }
 
 
   /**
-   * Returns the invoker used to search the ldap.
+   * Sets whether to proxy sasl authorization.
    *
-   * @return  <code>SearchInvoker</code>
+   * @param  b  whether to proxy sasl authorization
    */
-  public SearchInvoker getSearchInvoker()
+  public void setProxySaslAuthorization(final boolean b)
   {
-    return this.searchInvoker;
+    this.proxySaslAuthz = b;
+  }
+
+
+  /**
+   * This returns the ldap pool manager.
+   *
+   * @return  <code>LdapPoolManager</code>
+   */
+  public LdapPoolManager getLdapPoolManager()
+  {
+    return this.ldapPoolManager;
+  }
+
+
+  /**
+   * This sets the ldap pool manager.
+   *
+   * @param  lpm  <code>LdapPoolManager</code>
+   */
+  public void setLdapPoolManager(final LdapPoolManager lpm)
+  {
+    this.ldapPoolManager = lpm;
+  }
+
+
+  /**
+   * This returns the search objects used to formulate queries.
+   *
+   * @return  <code>Map</code> of term count to search
+   */
+  public Map<Integer, SearchExecuter> getSearchExecuters()
+  {
+    return this.searchExecuters;
+  }
+
+
+  /**
+   * This returns the search objects used to formulate queries.
+   *
+   * @param  m  map of term count to search
+   */
+  public void setSearchExecuters(final Map<Integer, SearchExecuter> m)
+  {
+    this.searchExecuters = m;
   }
 
 
@@ -210,13 +254,13 @@ public class PeopleSearch
     try {
       for (int i = 0; i < args.length; i++) {
         if (args[i].equals("-query")) {
-          query.setLdapQuery(args[++i]);
+          query.setRawQuery(args[++i]);
         } else {
           attrs.add(args[i]);
         }
       }
 
-      if (query.getLdapQuery() == null) {
+      if (query.getRawQuery() == null) {
         throw new ArrayIndexOutOfBoundsException();
       }
 
@@ -246,6 +290,51 @@ public class PeopleSearch
   private Iterator<SearchResult> doSearch(final Query query)
     throws PeopleSearchException
   {
-    return this.searchInvoker.find(query);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Query: " + query);
+    }
+
+    // get an ldap pool
+    LdapPool<Ldap> pool = null;
+    if (this.proxySaslAuthz) {
+      final String saslAuthzId = query.getSaslAuthorizationId();
+      if (saslAuthzId != null && !saslAuthzId.equals("")) {
+        pool = this.ldapPoolManager.getLdapPool(saslAuthzId);
+      } else {
+        throw new PeopleSearchException("No SASL Authorization ID found.");
+      }
+    } else {
+      pool = this.ldapPoolManager.getLdapPool();
+    }
+
+    // get a search object
+    SearchExecuter search = null;
+    if (query.getQueryParameters().length > 0) {
+
+      if (LOG.isDebugEnabled()) {
+        LOG.debug(
+          "Processing valid query: " +
+          Arrays.asList(query.getQueryParameters()));
+      }
+
+      Integer termCount = new Integer(query.getQueryParameters().length);
+      if (termCount.intValue() > this.searchExecuters.size()) {
+        termCount = this.searchExecuters.size() - 1;
+      }
+      search = this.searchExecuters.get(termCount);
+      if (LOG.isDebugEnabled()) {
+        if (search != null) {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("Found search module for query count of " + termCount);
+          }
+        } else {
+          if (LOG.isDebugEnabled()) {
+            LOG.debug("No search module found for query count of " + termCount);
+          }
+        }
+      }
+    }
+
+    return search.executeSearch(pool, query);
   }
 }

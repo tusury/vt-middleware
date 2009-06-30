@@ -8,18 +8,13 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
   <bean id="peopleSearch" class="edu.vt.middleware.ldap.search.PeopleSearch">
-    <property name="searchInvoker"><ref bean="searchInvoker"/></property>
-  </bean>
-
-  <bean id="searchInvoker" class="edu.vt.middleware.ldap.search.SearchInvoker">
-
     <!-- Whether to proxy SASL authorization from a supplied client certificate -->
     <property name="proxySaslAuthorization">
       <value>false</value>
     </property>
 
     <!--  Search configuration is defined in the following beans -->
-    <property name="searches">
+    <property name="searchExecuters">
       <map>
         <entry>
           <key><value>1</value></key>
@@ -38,7 +33,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
     <property name="ldapPoolManager"><ref bean="ldapPoolManager"/></property>
   </bean>
-
 
   <bean id="ldapPoolManager" class="edu.vt.middleware.ldap.search.LdapPoolManager">
 
@@ -74,7 +68,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- ONE TERM QUERIES -->
 
-  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.Search">
+  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
     <property name="termCount"><value>1</value></property>
     
     <!-- Whether a query should use results from all searches or
@@ -83,7 +77,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
       <value>false</value>
     </property>
 
-    <property name="queries">
+    <property name="queryTemplates">
       <map>
         <!-- phone number search -->
         <!-- note that openldap removes dashes and spaces for all phone number queries -->
@@ -127,7 +121,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- TWO TERM QUERIES -->
 
-  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.Search">
+  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
     <property name="termCount"><value>2</value></property>
 
     <!-- Whether a query should use results from all searches or
@@ -136,7 +130,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
       <value>false</value>
     </property>
 
-    <property name="queries">
+    <property name="queryTemplates">
       <map>
         <!-- name search -->
         <entry>
@@ -179,7 +173,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- THREE TERM QUERIES -->
 
-  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.Search">
+  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
     <property name="termCount"><value>3</value></property>
 
     <!-- Whether a query should use results from all searches or
@@ -188,7 +182,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
       <value>false</value>
     </property>
 
-    <property name="queries">
+    <property name="queryTemplates">
       <map>
         <!-- name search -->
         <entry>

@@ -19,6 +19,8 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.naming.directory.SearchResult;
 import edu.vt.middleware.ldap.Ldap;
+import edu.vt.middleware.ldap.pool.LdapPool;
+import edu.vt.middleware.ldap.pool.LdapPoolException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -42,7 +44,7 @@ public class SearchThread implements Runnable
   private String[] attrs;
 
   /** Ldap used to perform search. */
-  private Ldap ldap;
+  private LdapPool<Ldap> ldapPool;
 
   /** Ldap search results. */
   private List<QueryResult> results = new ArrayList<QueryResult>();
@@ -54,13 +56,13 @@ public class SearchThread implements Runnable
   /**
    * This creates a new <code>SearchThread</code>.
    *
-   * @param  l  <code>Ldap</code>
+   * @param  lp  <code>LdapPool</code>
    * @param  q  <code>String</code>
    * @param  a  <code>String[]</code>
    */
-  public SearchThread(final Ldap l, final String q, final String[] a)
+  public SearchThread(final LdapPool<Ldap> lp, final String q, final String[] a)
   {
-    this.ldap = l;
+    this.ldapPool = lp;
     this.ldapQuery = q;
     this.attrs = a;
     this.searchThread = new Thread(this);
@@ -99,11 +101,11 @@ public class SearchThread implements Runnable
   /** This executes the process of performing the Ldap search. */
   public void run()
   {
+    Ldap ldap = null;
     try {
+      ldap = this.ldapPool.checkOut();
       final long beginTime = System.currentTimeMillis();
-      final Iterator<SearchResult> i = this.ldap.search(
-        this.ldapQuery,
-        this.attrs);
+      final Iterator<SearchResult> i = ldap.search(this.ldapQuery, this.attrs);
       final long searchTime = System.currentTimeMillis() - beginTime;
       while (i.hasNext()) {
         final QueryResult q = new QueryResult(i.next());
@@ -121,6 +123,12 @@ public class SearchThread implements Runnable
       if (LOG.isErrorEnabled()) {
         LOG.error("Error occured performing LDAP search", e);
       }
+    } catch (LdapPoolException e) {
+      if (LOG.isErrorEnabled()) {
+        LOG.error("Error occured retrieving an object from the pool", e);
+      }
+    } finally {
+      this.ldapPool.checkIn(ldap);
     }
   }
 

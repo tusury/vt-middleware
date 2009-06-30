@@ -45,7 +45,7 @@ public class PeopleSearchTest
    * Initialize the map of entries.
    */
   static {
-    for (int i = 5; i <= 9; i++) {
+    for (int i = 2; i <= 9; i++) {
       entries.put(String.valueOf(i), new LdapEntry[2]);
     }
   }
@@ -54,7 +54,10 @@ public class PeopleSearchTest
   protected final Log logger = LogFactory.getLog(this.getClass());
 
   /** PeopleSearch to test. */
-  private PeopleSearch search;
+  private PeopleSearch search = new PeopleSearch();
+
+  /** PeopleSearch to test. */
+  private PeopleSearch saslSearch = new PeopleSearch();
 
 
   /**
@@ -65,40 +68,71 @@ public class PeopleSearchTest
   public PeopleSearchTest()
     throws Exception
   {
-    final SearchInvoker searchInvoker = new SearchInvoker();
-    searchInvoker.setProxySaslAuthorization(true);
+    // setup the people search object
+    this.search.setProxySaslAuthorization(false);
 
-    final Search s = new Search(1);
-    s.setAdditive(true);
-    s.getQueries().put(
+    final SearchExecuter s1 = new SearchExecuter(1);
+    s1.setAdditive(true);
+    s1.getQueryTemplates().put(
       new Integer(1),
       "(|(givenName=@@@QUERY_1@@@)(sn=@@@QUERY_1@@@))");
-    s.getQueries().put(
+    s1.getQueryTemplates().put(
       new Integer(2),
       "(|(givenName=@@@QUERY_1@@@*)(sn=@@@QUERY_1@@@*))");
-    s.getQueries().put(
+    s1.getQueryTemplates().put(
       new Integer(3),
       "(|(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_1@@@*))");
-    s.getQueries().put(
+    s1.getQueryTemplates().put(
       new Integer(4),
       "(|(departmentNumber=@@@QUERY_1@@@)(mail=@@@QUERY_1@@@))");
-    s.getQueries().put(
+    s1.getQueryTemplates().put(
       new Integer(5),
       "(|(departmentNumber=@@@QUERY_1@@@*)(mail=@@@QUERY_1@@@*))");
-    s.getQueries().put(
+    s1.getQueryTemplates().put(
       new Integer(6),
       "(|(departmentNumber=*@@@QUERY_1@@@*)(mail=*@@@QUERY_1@@@*))");
-    searchInvoker.getSearches().put(new Integer(1), s);
+    this.search.getSearchExecuters().put(new Integer(1), s1);
 
-    final LdapPoolManager lpm = new LdapPoolManager();
-    lpm.setLdapProperties("/ldap.properties");
-    searchInvoker.setLdapPoolManager(lpm);
+    final LdapPoolManager lpm1 = new LdapPoolManager();
+    lpm1.setLdapProperties("/ldap.properties");
+    this.search.setLdapPoolManager(lpm1);
 
-    this.search = new PeopleSearch(searchInvoker);
+    // setup the sasl people search object
+    this.saslSearch.setProxySaslAuthorization(true);
+
+    final SearchExecuter s2 = new SearchExecuter(1);
+    s2.setAdditive(true);
+    s2.getQueryTemplates().put(
+      new Integer(1),
+      "(|(givenName=@@@QUERY_1@@@)(sn=@@@QUERY_1@@@))");
+    s2.getQueryTemplates().put(
+      new Integer(2),
+      "(|(givenName=@@@QUERY_1@@@*)(sn=@@@QUERY_1@@@*))");
+    s2.getQueryTemplates().put(
+      new Integer(3),
+      "(|(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_1@@@*))");
+    s2.getQueryTemplates().put(
+      new Integer(4),
+      "(|(departmentNumber=@@@QUERY_1@@@)(mail=@@@QUERY_1@@@))");
+    s2.getQueryTemplates().put(
+      new Integer(5),
+      "(|(departmentNumber=@@@QUERY_1@@@*)(mail=@@@QUERY_1@@@*))");
+    s2.getQueryTemplates().put(
+      new Integer(6),
+      "(|(departmentNumber=*@@@QUERY_1@@@*)(mail=*@@@QUERY_1@@@*))");
+    this.saslSearch.getSearchExecuters().put(new Integer(1), s2);
+
+    final LdapPoolManager lpm2 = new LdapPoolManager();
+    lpm2.setLdapProperties("/ldap.digest-md5.properties");
+    lpm2.setLdapPoolProperties("/ldap.pool.properties");
+    this.saslSearch.setLdapPoolManager(lpm2);
   }
 
 
   /**
+   * @param  ldifFile2  to create.
+   * @param  ldifFile3  to create.
+   * @param  ldifFile4  to create.
    * @param  ldifFile5  to create.
    * @param  ldifFile6  to create.
    * @param  ldifFile7  to create.
@@ -109,6 +143,9 @@ public class PeopleSearchTest
    */
   @Parameters(
     {
+      "createEntry2",
+      "createEntry3",
+      "createEntry4",
       "createEntry5",
       "createEntry6",
       "createEntry7",
@@ -118,6 +155,9 @@ public class PeopleSearchTest
   )
   @BeforeClass(groups = {"searchtest"})
   public void createEntry(
+    final String ldifFile2,
+    final String ldifFile3,
+    final String ldifFile4,
     final String ldifFile5,
     final String ldifFile6,
     final String ldifFile7,
@@ -125,6 +165,12 @@ public class PeopleSearchTest
     final String ldifFile9)
     throws Exception
   {
+    entries.get("2")[0] = TestUtil.convertLdifToEntry(
+      TestUtil.readFileIntoString(ldifFile2));
+    entries.get("3")[0] = TestUtil.convertLdifToEntry(
+      TestUtil.readFileIntoString(ldifFile3));
+    entries.get("4")[0] = TestUtil.convertLdifToEntry(
+      TestUtil.readFileIntoString(ldifFile4));
     entries.get("5")[0] = TestUtil.convertLdifToEntry(
       TestUtil.readFileIntoString(ldifFile5));
     entries.get("6")[0] = TestUtil.convertLdifToEntry(
@@ -158,6 +204,9 @@ public class PeopleSearchTest
 
 
   /**
+   * @param  ldifFile2  to load.
+   * @param  ldifFile3  to load.
+   * @param  ldifFile4  to load.
    * @param  ldifFile5  to load.
    * @param  ldifFile6  to load.
    * @param  ldifFile7  to load.
@@ -168,6 +217,9 @@ public class PeopleSearchTest
    */
   @Parameters(
     {
+      "searchResults2",
+      "searchResults3",
+      "searchResults4",
       "searchResults5",
       "searchResults6",
       "searchResults7",
@@ -177,6 +229,9 @@ public class PeopleSearchTest
   )
   @BeforeClass(groups = {"searchtest"})
   public void loadSearchResults(
+    final String ldifFile2,
+    final String ldifFile3,
+    final String ldifFile4,
     final String ldifFile5,
     final String ldifFile6,
     final String ldifFile7,
@@ -184,6 +239,12 @@ public class PeopleSearchTest
     final String ldifFile9)
     throws Exception
   {
+    entries.get("2")[1] = TestUtil.convertLdifToEntry(
+      TestUtil.readFileIntoString(ldifFile2));
+    entries.get("3")[1] = TestUtil.convertLdifToEntry(
+      TestUtil.readFileIntoString(ldifFile3));
+    entries.get("4")[1] = TestUtil.convertLdifToEntry(
+      TestUtil.readFileIntoString(ldifFile4));
     entries.get("5")[1] = TestUtil.convertLdifToEntry(
       TestUtil.readFileIntoString(ldifFile5));
     entries.get("6")[1] = TestUtil.convertLdifToEntry(
@@ -203,6 +264,9 @@ public class PeopleSearchTest
     throws Exception
   {
     final Ldap ldap = TestUtil.createSetupLdap();
+    ldap.delete(entries.get("2")[0].getDn());
+    ldap.delete(entries.get("3")[0].getDn());
+    ldap.delete(entries.get("4")[0].getDn());
     ldap.delete(entries.get("5")[0].getDn());
     ldap.delete(entries.get("6")[0].getDn());
     ldap.delete(entries.get("7")[0].getDn());
@@ -220,12 +284,12 @@ public class PeopleSearchTest
   @DataProvider(name = "search-data")
   public Object[][] createTestData()
   {
-    final LdapResult allResults = new LdapResult();
-    allResults.addEntry(entries.get("5")[1]);
-    allResults.addEntry(entries.get("6")[1]);
-    allResults.addEntry(entries.get("7")[1]);
-    allResults.addEntry(entries.get("8")[1]);
-    allResults.addEntry(entries.get("9")[1]);
+    final LdapResult all1600 = new LdapResult();
+    all1600.addEntry(entries.get("5")[1]);
+    all1600.addEntry(entries.get("6")[1]);
+    all1600.addEntry(entries.get("7")[1]);
+    all1600.addEntry(entries.get("8")[1]);
+    all1600.addEntry(entries.get("9")[1]);
 
     final LdapResult allJames = new LdapResult();
     allJames.addEntry(entries.get("6")[1]);
@@ -241,7 +305,7 @@ public class PeopleSearchTest
         {
           "1600",
           "departmentNumber|givenName|sn",
-          allResults,
+          all1600,
         },
         {
           "james",
@@ -303,10 +367,78 @@ public class PeopleSearchTest
     throws Exception
   {
     final Query q = new Query();
-    q.setLdapQuery(query);
+    q.setRawQuery(query);
     q.setQueryAttributes(returnAttrs.split("\\|"));
 
     final String searchResult = this.search.searchToString(
+      q,
+      OutputFormat.LDIF);
+    AssertJUnit.assertEquals(
+      result,
+      TestUtil.convertLdifToResult(searchResult));
+  }
+
+
+  /**
+   * Sample user data.
+   *
+   * @return  user data
+   */
+  @DataProvider(name = "sasl-search-data")
+  public Object[][] createSaslTestData()
+  {
+    return
+      new Object[][] {
+        {
+          "Harry",
+          "departmentNumber|givenName|sn|mail",
+          "dn:uid=101,ou=test,dc=vt,dc=edu",
+          new LdapResult(entries.get("2")[1]),
+        },
+        {
+          "dwight",
+          "departmentNumber|givenName|sn|mail",
+          "dn:uid=102,ou=test,dc=vt,dc=edu",
+          new LdapResult(entries.get("3")[1]),
+        },
+        {
+          "john",
+          "departmentNumber|givenName|sn|mail",
+          "dn:uid=103,ou=test,dc=vt,dc=edu",
+          new LdapResult(entries.get("4")[1]),
+        },
+      };
+  }
+
+
+  /**
+   * @param  query  to search with.
+   * @param  returnAttrs  to search for.
+   * @param  saslAuthz  ID to authorize as.
+   * @param  result  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+    groups = {"searchtest"},
+    dataProvider = "sasl-search-data",
+    threadPoolSize = 3,
+    invocationCount = 50,
+    timeOut = 60000
+  )
+  public void saslSearch(
+    final String query,
+    final String returnAttrs,
+    final String saslAuthz,
+    final LdapResult result)
+    throws Exception
+  {
+    final Query q = new Query();
+    q.setRawQuery(query);
+    q.setQueryAttributes(returnAttrs.split("\\|"));
+    q.setSaslAuthorizationId(saslAuthz);
+
+    final String searchResult = this.saslSearch.searchToString(
       q,
       OutputFormat.LDIF);
     AssertJUnit.assertEquals(

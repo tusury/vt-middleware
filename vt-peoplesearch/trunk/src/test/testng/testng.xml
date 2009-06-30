@@ -51,7 +51,6 @@
   <test name="coretests" parallel="methods" thread-count="3">
     <groups>
       <run>
-        <include name="invokertest" />
         <include name="searchtest" />
         <include name="servlettest" />
       </run>
