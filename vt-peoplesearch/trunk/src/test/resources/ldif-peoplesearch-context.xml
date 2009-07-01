@@ -14,7 +14,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
 
     <!--  Search configuration is defined in the following beans -->
-    <property name="searchExecuters">
+    <property name="searchExecutors">
       <map>
         <entry>
           <key><value>1</value></key>
@@ -68,7 +68,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- ONE TERM QUERIES -->
 
-  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
+  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
     <property name="termCount"><value>1</value></property>
     
     <!-- Whether a query should use results from all searches or
@@ -121,7 +121,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- TWO TERM QUERIES -->
 
-  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
+  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
     <property name="termCount"><value>2</value></property>
 
     <!-- Whether a query should use results from all searches or
@@ -173,7 +173,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- THREE TERM QUERIES -->
 
-  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
+  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
     <property name="termCount"><value>3</value></property>
 
     <!-- Whether a query should use results from all searches or
@@ -226,8 +226,5 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
       </map>
     </property>
   </bean>
-
-  <bean id="queryDataPostProcesser"
-        class="edu.vt.middleware.ldap.search.QueryDataPostProcesser"/>
 
 </beans>

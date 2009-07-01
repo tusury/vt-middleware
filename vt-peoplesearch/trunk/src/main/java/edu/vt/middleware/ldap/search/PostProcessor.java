@@ -22,7 +22,7 @@ import javax.naming.NamingException;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface PostProcesser
+public interface PostProcessor
 {
 
 

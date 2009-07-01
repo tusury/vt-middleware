@@ -63,8 +63,8 @@ public class PeopleSearch
   private boolean proxySaslAuthz;
 
   /** Search modules. */
-  private Map<Integer, SearchExecuter> searchExecuters =
-    new HashMap<Integer, SearchExecuter>();
+  private Map<Integer, SearchExecutor> searchExecutors =
+    new HashMap<Integer, SearchExecutor>();
 
   /** Retrieve ldap objects for searching. */
   private LdapPoolManager ldapPoolManager;
@@ -147,9 +147,9 @@ public class PeopleSearch
    *
    * @return  <code>Map</code> of term count to search
    */
-  public Map<Integer, SearchExecuter> getSearchExecuters()
+  public Map<Integer, SearchExecutor> getSearchExecutors()
   {
-    return this.searchExecuters;
+    return this.searchExecutors;
   }
 
 
@@ -158,9 +158,9 @@ public class PeopleSearch
    *
    * @param  m  map of term count to search
    */
-  public void setSearchExecuters(final Map<Integer, SearchExecuter> m)
+  public void setSearchExecutors(final Map<Integer, SearchExecutor> m)
   {
-    this.searchExecuters = m;
+    this.searchExecutors = m;
   }
 
 
@@ -308,7 +308,7 @@ public class PeopleSearch
     }
 
     // get a search object
-    SearchExecuter search = null;
+    SearchExecutor search = null;
     if (query.getQueryParameters().length > 0) {
 
       if (LOG.isDebugEnabled()) {
@@ -318,10 +318,10 @@ public class PeopleSearch
       }
 
       Integer termCount = new Integer(query.getQueryParameters().length);
-      if (termCount.intValue() > this.searchExecuters.size()) {
-        termCount = this.searchExecuters.size() - 1;
+      if (termCount.intValue() > this.searchExecutors.size()) {
+        termCount = this.searchExecutors.size() - 1;
       }
-      search = this.searchExecuters.get(termCount);
+      search = this.searchExecutors.get(termCount);
       if (LOG.isDebugEnabled()) {
         if (search != null) {
           if (LOG.isDebugEnabled()) {

@@ -71,7 +71,7 @@ public class PeopleSearchTest
     // setup the people search object
     this.search.setProxySaslAuthorization(false);
 
-    final SearchExecuter s1 = new SearchExecuter(1);
+    final SearchExecutor s1 = new SearchExecutor(1);
     s1.setAdditive(true);
     s1.getQueryTemplates().put(
       new Integer(1),
@@ -91,7 +91,7 @@ public class PeopleSearchTest
     s1.getQueryTemplates().put(
       new Integer(6),
       "(|(departmentNumber=*@@@QUERY_1@@@*)(mail=*@@@QUERY_1@@@*))");
-    this.search.getSearchExecuters().put(new Integer(1), s1);
+    this.search.getSearchExecutors().put(new Integer(1), s1);
 
     final LdapPoolManager lpm1 = new LdapPoolManager();
     lpm1.setLdapProperties("/ldap.properties");
@@ -100,7 +100,7 @@ public class PeopleSearchTest
     // setup the sasl people search object
     this.saslSearch.setProxySaslAuthorization(true);
 
-    final SearchExecuter s2 = new SearchExecuter(1);
+    final SearchExecutor s2 = new SearchExecutor(1);
     s2.setAdditive(true);
     s2.getQueryTemplates().put(
       new Integer(1),
@@ -120,7 +120,7 @@ public class PeopleSearchTest
     s2.getQueryTemplates().put(
       new Integer(6),
       "(|(departmentNumber=*@@@QUERY_1@@@*)(mail=*@@@QUERY_1@@@*))");
-    this.saslSearch.getSearchExecuters().put(new Integer(1), s2);
+    this.saslSearch.getSearchExecutors().put(new Integer(1), s2);
 
     final LdapPoolManager lpm2 = new LdapPoolManager();
     lpm2.setLdapProperties("/ldap.digest-md5.properties");

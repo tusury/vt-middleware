@@ -35,7 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * @version  $Revision$ $Date$
  */
 
-public class SearchExecuter
+public class SearchExecutor
 {
 
   /** Identifier in search string that should be replaced with query data. */
@@ -45,7 +45,7 @@ public class SearchExecuter
   public static final String REGEX_INITIAL = "@@@INITIAL_1@@@";
 
   /** Log for this class. */
-  private static final Log LOG = LogFactory.getLog(SearchExecuter.class);
+  private static final Log LOG = LogFactory.getLog(SearchExecutor.class);
 
   /** Appended to every search to restrict result sets. */
   private String searchRestrictions;
@@ -57,7 +57,7 @@ public class SearchExecuter
   private boolean additive;
 
   /** Post processers for search results. */
-  private List<PostProcesser> postProcessers = new ArrayList<PostProcesser>();
+  private List<PostProcessor> postProcessors = new ArrayList<PostProcessor>();
 
   /** Number of query terms for this search module. */
   private int termCount;
@@ -67,7 +67,7 @@ public class SearchExecuter
 
 
   /** Default constructor. */
-  public SearchExecuter() {}
+  public SearchExecutor() {}
 
 
   /**
@@ -75,7 +75,7 @@ public class SearchExecuter
    *
    * @param  tc  <code>int</code> number to query terms for this search
    */
-  public SearchExecuter(final int tc)
+  public SearchExecutor(final int tc)
   {
     this.termCount = tc;
   }
@@ -126,24 +126,24 @@ public class SearchExecuter
 
 
   /**
-   * This returns the post processers to run on search results.
+   * This returns the post processors to run on search results.
    *
-   * @return  <code>List</code> of post processers
+   * @return  <code>List</code> of post processors
    */
-  public List<PostProcesser> getPostProcessers()
+  public List<PostProcessor> getPostProcessors()
   {
-    return this.postProcessers;
+    return this.postProcessors;
   }
 
 
   /**
-   * This sets the post processers to run on search results.
+   * This sets the post processors to run on search results.
    *
-   * @param  l  list of post processers
+   * @param  l  list of post processors
    */
-  public void setPostProcessers(final List<PostProcesser> l)
+  public void setPostProcessors(final List<PostProcessor> l)
   {
-    this.postProcessers = l;
+    this.postProcessors = l;
   }
 
 
@@ -380,7 +380,7 @@ public class SearchExecuter
   {
     // perform any post processing
     if (queryResult != null) {
-      for (PostProcesser p : postProcessers) {
+      for (PostProcessor p : postProcessors) {
         try {
           p.processResult(queryResult);
         } catch (NamingException e) {

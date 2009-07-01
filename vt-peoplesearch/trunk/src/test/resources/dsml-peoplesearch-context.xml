@@ -14,7 +14,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
 
     <!--  Search configuration is defined in the following beans -->
-    <property name="searchExecuters">
+    <property name="searchExecutors">
       <map>
         <entry>
           <key><value>1</value></key>
@@ -68,7 +68,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- ONE TERM QUERIES -->
 
-  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
+  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
     <property name="termCount"><value>1</value></property>
     
     <!-- Whether a query should use results from all searches or
@@ -78,11 +78,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
 
     <!-- These classes perform post processing of ldap search results
-         The QueryDataPostProcesser adds the query data which found the result 
+         The QueryDataPostProcessor adds the query data which found the result 
          as if it was an attribute in the ldap -->
-    <property name="postProcessers">
+    <property name="postProcessors">
       <list>
-        <ref bean="queryDataPostProcesser"/>
+        <ref bean="queryDataPostProcessor"/>
       </list>
     </property>
 
@@ -130,7 +130,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- TWO TERM QUERIES -->
 
-  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
+  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
     <property name="termCount"><value>2</value></property>
 
     <!-- Whether a query should use results from all searches or
@@ -140,11 +140,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
 
     <!-- These classes perform post processing of ldap search results
-         The QueryDataPostProcesser adds the query data which found the result 
+         The QueryDataPostProcessor adds the query data which found the result 
          as if it was an attribute in the ldap -->
-    <property name="postProcessers">
+    <property name="postProcessors">
       <list>
-        <ref bean="queryDataPostProcesser"/>
+        <ref bean="queryDataPostProcessor"/>
       </list>
     </property>
 
@@ -191,7 +191,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- THREE TERM QUERIES -->
 
-  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.SearchExecuter">
+  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
     <property name="termCount"><value>3</value></property>
 
     <!-- Whether a query should use results from all searches or
@@ -201,11 +201,11 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
 
     <!-- These classes perform post processing of ldap search results
-         The QueryDataPostProcesser adds the query data which found the result 
+         The QueryDataPostProcessor adds the query data which found the result 
          as if it was an attribute in the ldap -->
-    <property name="postProcessers">
+    <property name="postProcessors">
       <list>
-        <ref bean="queryDataPostProcesser"/>
+        <ref bean="queryDataPostProcessor"/>
       </list>
     </property>
 
@@ -254,7 +254,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </property>
   </bean>
 
-  <bean id="queryDataPostProcesser"
-        class="edu.vt.middleware.ldap.search.QueryDataPostProcesser"/>
+  <bean id="queryDataPostProcessor"
+        class="edu.vt.middleware.ldap.search.QueryDataPostProcessor"/>
 
 </beans>

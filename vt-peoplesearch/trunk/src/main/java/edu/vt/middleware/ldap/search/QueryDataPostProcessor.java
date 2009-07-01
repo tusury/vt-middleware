@@ -24,12 +24,12 @@ import javax.naming.directory.SearchResult;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class QueryDataPostProcesser implements PostProcesser
+public class QueryDataPostProcessor implements PostProcessor
 {
 
 
   /** Default constructor. */
-  public QueryDataPostProcesser() {}
+  public QueryDataPostProcessor() {}
 
 
   /**
