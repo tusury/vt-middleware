@@ -114,7 +114,7 @@ class PeopleSearch {
 </p>
 <hr/>
 <p>
-In addition to the fuzzy logic provide by the PeopleSearch servlet, there
+In addition to the fuzzy logic provided by the PeopleSearch servlet, there
 is also a servlet which provides direct access to the LDAP.
 More information is available <a href="howto_advanced.jsp">here</a>.
 </p>
