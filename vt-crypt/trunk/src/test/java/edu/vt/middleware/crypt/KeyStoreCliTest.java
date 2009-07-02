@@ -38,9 +38,6 @@ public class KeyStoreCliTest
   private static final String KEY_DIR_PATH =
     "src/test/resources/edu/vt/middleware/crypt/";
 
-  /** Alias of test entry created in keystore. */
-  private static final String TEST_ALIAS = "testng";
-
   /** Logger instance. */
   private final Log logger = LogFactory.getLog(this.getClass());
 
@@ -60,19 +57,50 @@ public class KeyStoreCliTest
           "store-1.jks",
           "rsa.cert.der",
           "rsa.pri-pkcs8.der",
+          "vtcrypt",
           null,
         },
         {
           "store-2.bks",
           "rsa.cert.pem",
           "rsa.pri.pem",
+          "VT Crypt",
           "-storetype BKS -keyalg RSA",
         },
         {
           "store-3.p12",
           "rsa.cert.pem",
           "rsa.pri.pem",
+          "vt,crypt",
           "-storetype PKCS12 -keyalg RSA",
+        },
+        {
+          "store-4.jks",
+          "rsa.cert.pem",
+          "rsa.pri.pem",
+          "vt:crypt",
+          null,
+        },
+        {
+          "store-5.jks",
+          "rsa.cert.pem",
+          "rsa.pri.pem",
+          "vt;crypt",
+          null,
+        },
+        {
+          "store-6.jks",
+          "rsa.cert.pem",
+          "rsa.pri.pem",
+          "vt'crypt",
+          null,
+        },
+        {
+          "store-7.jks",
+          "rsa.cert.pem",
+          "rsa.pri.pem",
+          "vt-crypt",
+          null,
         },
       };
   }
@@ -82,6 +110,7 @@ public class KeyStoreCliTest
    * @param  keyStore  Keystore file.
    * @param  cert  Certificate file.
    * @param  privKey  Private key file.
+   * @param  alias  Alias of keypair inside keystore.
    * @param  partialLine  Partial command line with additional optional args.
    *
    * @throws  Exception  On test failure.
@@ -91,6 +120,7 @@ public class KeyStoreCliTest
     final String keyStore,
     final String cert,
     final String privKey,
+    final String alias,
     final String partialLine)
     throws Exception
   {
@@ -108,7 +138,7 @@ public class KeyStoreCliTest
 
       String commandLine = partialLine + " -import " +
         " -cert " + certPath + " -key " + privKeyPath + " -keystore " +
-        keyStorePath + " -alias " + TEST_ALIAS + " -storepass changeit";
+        keyStorePath + " -alias " + alias + " -storepass changeit";
 
       logger.info(
         "Importing keypair into keystore with command line " + commandLine);
@@ -121,7 +151,7 @@ public class KeyStoreCliTest
 
       final String output = outStream.toString();
       logger.info("Keystore listing output:\n" + output);
-      AssertJUnit.assertTrue(output.indexOf(TEST_ALIAS) != -1);
+      AssertJUnit.assertTrue(output.indexOf(alias) != -1);
 
       outStream.reset();
 
@@ -129,7 +159,7 @@ public class KeyStoreCliTest
       final String exportKeyPath = TEST_OUTPUT_DIR + keyStore + "." + privKey;
       commandLine = partialLine + " -export " +
         " -cert " + exportCertPath + " -key " + exportKeyPath + " -keystore " +
-        keyStorePath + " -alias " + TEST_ALIAS + " -storepass changeit";
+        keyStorePath + " -alias " + alias + " -storepass changeit";
       logger.info(
         "Exporting keypair from keystore with command line " + commandLine);
       KeyStoreCli.main(CliHelper.splitArgs(commandLine));
