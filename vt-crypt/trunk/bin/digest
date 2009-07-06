@@ -15,4 +15,4 @@ for JAR in `ls ${PREFIX}/lib/*.jar` ; do
 done
 
 $JAVA $JAVA_OPTS -cp $CLASSPATH \
-  edu.vt.middleware.crypt.digest.DigestCli $@
+  edu.vt.middleware.crypt.digest.DigestCli "$@"
