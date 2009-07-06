@@ -13,6 +13,8 @@
 */
 package edu.vt.middleware.crypt;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -43,5 +45,54 @@ public class CliHelper
   public static String[] splitArgs(final String commandLine)
   {
     return WHITESPACE_PATTERN.split(commandLine);
+  }
+
+
+  /**
+   * Combines one or more {@link OptionData} objects into a String array that
+   * would be created from parsing a command line containing those options.
+   * Any options that are null are ignored.
+   *
+   * @param  options  One or more command line options.
+   *
+   * @return  Array of arguments.
+   */
+  public static String[] toArgs(final OptionData ... options)
+  {
+    final List<String> argList = new ArrayList<String>();
+    for (OptionData option : options) {
+      if (option != null) {
+        argList.add("-" + option.getOption());
+        if (option.getArgument() != null) {
+          argList.add(option.getArgument());
+        }
+      }
+    }
+    final String[] args = new String[argList.size()];
+    argList.toArray(args);
+    return args;
+  }
+
+
+  /**
+   * Combines one or more {@link OptionData} objects into a command line that,
+   * when parsed, would produce the the given options.
+   * Any options that are null are ignored.
+   *
+   * @param  options  One or more command line options.
+   *
+   * @return  Composite command line built from given options.
+   */
+  public static String toCommandLine(final OptionData ... options)
+  {
+    final StringBuilder sb = new StringBuilder();
+    int i = 0;
+    for (String arg : toArgs(options)) {
+      if (i++ > 0) {
+        sb.append(' ');
+      }
+      sb.append(arg);
+    }
+    return sb.toString();
   }
 }
