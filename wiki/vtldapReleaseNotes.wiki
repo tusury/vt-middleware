@@ -9,6 +9,7 @@
   * [http://code.google.com/p/vt-middleware/issues/detail?id=6 vtldap-6] - Binary attribute values are now properly encoded for DSML output
   * [http://code.google.com/p/vt-middleware/issues/detail?id=5 vtldap-5] - Changed !LdapAttribute.hashCode() to use String.hashCode() rather than Object.hashCode()
   * [http://code.google.com/p/vt-middleware/issues/detail?id=3 vtldap-3] - Added new !SearchResultHandler which injects a !SearchResult DN as an attribute of the result set
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=2 vtldap-2] - Updated property based methods that accept a string filename to accept an input stream
 
 = Version 3.0 =
 Initial google code release.
