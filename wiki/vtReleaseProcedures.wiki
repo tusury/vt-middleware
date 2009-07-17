@@ -1,7 +1,13 @@
+#labels Phase-Implementation,versioning,release
 = Release Procedures =
   # Verify the maven package command succeeds in trunk.
   {{{
   mvn package
+  }}}
+  # Assuming the project adheres to the [vtVersioning versioning policy], increment the version number in the project POM and relevant module POMs to the final release version number, VERSION, and commit the change:
+  {{{
+  vi pom.xml MODULEA/pom.xml MODULEB/pom.xml
+  svn commit -m"Upgrade POM version numbers to final release version."
   }}}
   # Tag your release:
   {{{
