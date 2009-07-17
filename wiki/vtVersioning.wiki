@@ -1,0 +1,41 @@
+#summary Versioning policy for all VT Middleware projects.
+#labels Phase-Implementation,versioning
+
+= Versioning Policy =
+
+== Prior to Release ==
+During day-to-day development, such as what occurs prior to a release, the version number should contain the maven snapshot identifier to indicate that the project is currently in a snapshot state.  The base version number should be for the _next_ pending release version.  The following example demonstrates the {{{vt-crypt/trunk/pom.xml}}} during active development toward the 2.0.1 release:
+
+{{{
+<project>
+...
+  <artifactId>vt-crypt</artifactId>
+  <packaging>jar</packaging>
+  <version>2.0.1-SNAPSHOT</version>
+...
+</project>
+}}}
+
+== Release Versioning ==
+When a release version is ready to be tagged according to the [vtReleaseProcedures release procedures], the snapshot identifier is simply truncated from the version and *immdiately committed* _prior_ to tagging the final release.  The following example demonstrates the {{{vt-crypt/trunk/pom.xml}}} immediately before tagging the {{{2.0.1}}} release in the {{{tags}}} branch.
+{{{
+<project>
+...
+  <artifactId>vt-crypt</artifactId>
+  <packaging>jar</packaging>
+  <version>2.0.1</version>
+...
+</project>
+}}}
+
+== Post Release ==
+The next time _any_ change is committed to trunk after a release, the version number should be incremented to the next point number version, e.g. {{{2.0.1 -> 2.0.2}}}, and designated a snapshot.  The only exception to this rule would be for situations where substantial changes are planned for the next release such that it would merit a minor or major number change.  In any case the POM should contain a snapshot designation until the next release is cut from trunk.  The following example demonstrates the state of {{{vt-crypt/trunk/pom.xml}}} upon commiting the first change after the {{{2.0.1}}} release.
+{{{
+<project>
+...
+  <artifactId>vt-crypt</artifactId>
+  <packaging>jar</packaging>
+  <version>2.0.2-SNAPSHOT</version>
+...
+</project>
+}}}
