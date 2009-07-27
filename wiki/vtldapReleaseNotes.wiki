@@ -3,6 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.1-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=10 vtldap-10] - Pool initialization no longer throws exception if pool is empty
   * [http://code.google.com/p/vt-middleware/issues/detail?id=9 vtldap-9] - Updated !LdapConfig to contain a property for !SearchResultHandlers
   * [http://code.google.com/p/vt-middleware/issues/detail?id=8 vtldap-8] - Updated method signatures that accept a handler to accept an array of handlers
   * [http://code.google.com/p/vt-middleware/issues/detail?id=7 vtldap-7] - Converted string based servlet init parameters to use enums
