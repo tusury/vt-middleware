@@ -1,4 +1,5 @@
   * [vtcrypt Overview]
+  * [vtcryptVersusJasypt Comparison with Jasypt]
   * [http://vt-middleware.googlecode.com/svn/vt-crypt/javadoc/vt-crypt-2.0/index.html JavaDoc]
   * [vtcryptReleaseNotes Release Notes]
   * [http://code.google.com/p/vt-middleware/downloads/list Download]
