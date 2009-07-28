@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><metadata>
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
   <groupId>edu.vt.middleware</groupId>
   <artifactId>vt-ldap</artifactId>
   <version>3.0-SNAPSHOT</version>
@@ -8,6 +9,6 @@
       <version>3.0</version>
       <version>3.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20090724173545</lastUpdated>
+    <lastUpdated>20090728172242</lastUpdated>
   </versioning>
 </metadata>
