@@ -4,7 +4,7 @@
 <wiki:toc max_depth="2" />
 
 = Introduction =
-VT Crypt is a high level Java cryptograhic library that meets the following design goals:
+VT Crypt is a high level, general purpose Java cryptograhic library that meets the following design goals:
  # Flexible JCE provider.  Prefers the [http://www.bouncycastle.org/java.html Bouncy Castle Java Provider], but can fall back to other providers defined in the environment for algorithms not implemented by BC.
  # Ease of use for common cryptographic operations.  A one liner highlights this well; the following prints the MD5 hash of a password as a string of HEX characters:  {{{System.out.println(new MD5().digest(passBytes, new HexConverter()));}}}
  # Convenient and performant handling of cryptographic operations on large data streams.
