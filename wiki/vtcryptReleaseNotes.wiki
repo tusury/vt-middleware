@@ -2,12 +2,12 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 2.0.1-SNAPSHOT =
+  * Fix for [http://code.google.com/p/vt-middleware/issues/detail?id=4 Issue 4], keystore incompatibility with keytool.
+
 = Version 2.0 =
 Initial google code release.
 
 == Known Issues ==
   * README.txt was not updated and includes documentation from the 1.5 release.
   * pom.xml incorrectly includes the jdk14 version of the Bouncy Castle provider.
-
-= Version 2.0.1 =
-  * Fix for [http://code.google.com/p/vt-middleware/issues/detail?id=4 Issue 4], keystore incompatibility with keytool.
