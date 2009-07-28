@@ -1,9 +1,9 @@
-#summary VT Crypt has a much different scope and set of uses than [http://www.jasypt.org/ Jasypt].
+#summary VT Crypt has a much different scope and set of uses than Jasypt.
 #labels Phase-Design,jasypt
 
 = Goals =
 
-It is instructive to compare the project summaries of VT Crypt and Jasypt.
+It is instructive to compare the project summaries of VT Crypt and [http://www.jasypt.org/ Jasypt].
 
 *VT Crypt* - VT Crypt is a high level, general purpose Java cryptograhic library that meets the following design goals... flexibility, performance, ease of use.
 
