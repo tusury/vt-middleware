@@ -3,7 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.1-SNAPSHOT =
-  * [http://code.google.com/p/vt-middleware/issues/detail?id=13 vtldap-13] - Added AuthenticationHandlers
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=13 vtldap-13] - Added !AuthenticationResultHandlers
   * [http://code.google.com/p/vt-middleware/issues/detail?id=12 vtldap-12] - !SearchCriteria now receives Context.getNameInNamespace() for the DN if it exists, otherwise it receives the DN of the search
   * [http://code.google.com/p/vt-middleware/issues/detail?id=11 vtldap-11] - !LdapConfig base dn now defaults to ''
   * [http://code.google.com/p/vt-middleware/issues/detail?id=10 vtldap-10] - Pool initialization no longer throws exception if pool is empty
