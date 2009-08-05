@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package edu.vt.middleware.crypt.asymmetric;
+package edu.vt.middleware.crypt.x509;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
