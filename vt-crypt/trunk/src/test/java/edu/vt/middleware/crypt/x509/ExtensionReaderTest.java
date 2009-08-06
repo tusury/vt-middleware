@@ -19,9 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
+import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
-import edu.vt.middleware.crypt.x509.types.GeneralNames;
+import edu.vt.middleware.crypt.x509.types.PolicyInformation;
+import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
+import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -60,13 +64,35 @@ public class ExtensionReaderTest
     final Map<ExtensionType, Object> extMap1 =
       new HashMap<ExtensionType, Object>();
     extMap1.put(
-        ExtensionType.SubjectAlternativeName,
-        new GeneralNames(new GeneralName[] {
-          new GeneralName("eprov@vt.edu", GeneralNameType.RFC822Name),
-        }));
+      ExtensionType.SubjectAlternativeName,
+      new GeneralNameList(new GeneralName[] {
+        new GeneralName("eprov@vt.edu", GeneralNameType.RFC822Name),
+      }));
+    extMap1.put(ExtensionType.BasicConstraints, new BasicConstraints(false));
+    final PolicyInformation[] policies1 = new PolicyInformation[] {
+      new PolicyInformation("1.3.6.1.4.1.6760.5.2.2.2.1"),
+      new PolicyInformation("1.3.6.1.4.1.6760.5.2.2.1.1"),
+      new PolicyInformation(
+        "1.3.6.1.4.1.6760.5.2.2.4.1",
+        new PolicyQualifierInfo[] {
+          new PolicyQualifierInfo(
+            "http://www.pki.vt.edu/vtuca/cps/index.html"),
+        }),
+      new PolicyInformation("1.3.6.1.4.1.6760.5.2.2.3.1"),
+    };
+    extMap1.put(
+      ExtensionType.CertificatePolicies,
+      new PolicyInformationList(policies1));
+
+    final File testCert2 = new File(RESOURCE_DIR,
+        "thawte-premium-server-ca-cert.pem");
+    final Map<ExtensionType, Object> extMap2 =
+      new HashMap<ExtensionType, Object>();
+    extMap2.put(ExtensionType.BasicConstraints, new BasicConstraints(true));
 
     return new Object[][] {
       {testCert1, extMap1},
+      {testCert2, extMap2},
     };
   }
 
@@ -80,8 +106,8 @@ public class ExtensionReaderTest
    */
   @Test(groups = {"functest", "x509"}, dataProvider = "certdata")
   public void testReadAll(
-      final File certFile,
-      final Map<ExtensionType, Object> expectedExtensionMap)
+    final File certFile,
+    final Map<ExtensionType, Object> expectedExtensionMap)
     throws Exception
   {
     logger.info("Testing read all extended attributes from " + certFile);

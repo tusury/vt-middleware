@@ -21,7 +21,7 @@ package edu.vt.middleware.crypt.x509.types;
  * @param <T> Type of object contained in collection.
  *
  */
-public interface Collection<T>
+public interface List<T>
 {
   /**
    * @return  Array of items in the collection.

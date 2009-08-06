@@ -13,6 +13,8 @@
 */
 package edu.vt.middleware.crypt.x509.types;
 
+import java.util.Arrays;
+
 /**
  * Base class for all types that simply contain collections of other types.
  *
@@ -21,7 +23,7 @@ package edu.vt.middleware.crypt.x509.types;
  * @param <T> Type of object contained in collection.
  *
  */
-public abstract class AbstractCollection<T> implements Collection<T>
+public abstract class AbstractList<T> implements List<T>
 {
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
@@ -48,17 +50,7 @@ public abstract class AbstractCollection<T> implements Collection<T>
     } else if (obj == null || obj.getClass() != getClass()) {
       result = false;
     } else {
-      final Collection other = (Collection) obj;
-      if (other.getItems() != null && items != null &&
-          other.getItems().length == items.length)
-      {
-        for (int i = 0; i < items.length; i++) {
-          if (!items[i].equals(other.getItems()[i])) {
-            return false;
-          }
-        }
-        result = true;
-      }
+      result = Arrays.equals(items, ((List) obj).getItems());
     }
     return result;
   }
@@ -68,13 +60,7 @@ public abstract class AbstractCollection<T> implements Collection<T>
   @Override
   public int hashCode()
   {
-    int hash = getHashSeed();
-    if (items != null) {
-      for (T item : items) {
-        hash = HASH_FACTOR * hash + item.hashCode();
-      }
-    }
-    return hash;
+    return getHashSeed() + HASH_FACTOR * Arrays.hashCode(items);
   }
 
 
@@ -87,17 +73,7 @@ public abstract class AbstractCollection<T> implements Collection<T>
   @Override
   public String toString()
   {
-    final StringBuilder sb = new StringBuilder();
-    sb.append('[');
-    int i = 0;
-    for (T item : items) {
-      if (i++ > 0) {
-        sb.append(", ");
-      }
-      sb.append(item);
-    }
-    sb.append(']');
-    return sb.toString();
+    return Arrays.toString(items);
   }
 
 

@@ -22,7 +22,7 @@ import java.util.List;
  * @version $Revision$
  *
  */
-public class GeneralNames extends AbstractCollection<GeneralName>
+public class GeneralNameList extends AbstractList<GeneralName>
 {
   /** Hash code seed value */
   private static final int HASH_SEED = 21;
@@ -33,7 +33,7 @@ public class GeneralNames extends AbstractCollection<GeneralName>
    *
    * @param  listOfNames  List of names.
    */
-  public GeneralNames(final List<GeneralName> listOfNames)
+  public GeneralNameList(final List<GeneralName> listOfNames)
   {
     if (listOfNames == null) {
       throw new IllegalArgumentException("List of names cannot be null.");
@@ -47,7 +47,7 @@ public class GeneralNames extends AbstractCollection<GeneralName>
    *
    * @param  arrayOfNames  Array of names.
    */
-  public GeneralNames(final GeneralName[] arrayOfNames)
+  public GeneralNameList(final GeneralName[] arrayOfNames)
   {
     if (arrayOfNames == null) {
       throw new IllegalArgumentException("Array of names cannot be null.");

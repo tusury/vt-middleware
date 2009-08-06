@@ -16,11 +16,20 @@ package edu.vt.middleware.crypt.x509;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
+import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
-import edu.vt.middleware.crypt.x509.types.GeneralNames;
+import edu.vt.middleware.crypt.x509.types.NoticeReference;
+import edu.vt.middleware.crypt.x509.types.PolicyInformation;
+import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
+import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
+import edu.vt.middleware.crypt.x509.types.UserNotice;
 
-import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.DERInteger;
 
 /**
  * Creates X.509v3 extension types in the VT Crypt namespace from
@@ -41,7 +50,8 @@ public final class ExtensionFactory
    * corresponding Bouncy Castle extension type.
    *
    * @param  type  Type of extension.
-   * @param  bcExtension  Bouncy Castle ASN.1 type of X.509v3 extension.
+   * @param  encodedExtension  DER encoded data representing the extension
+   * field data.
    *
    * @return  An extension type from the
    * <code>edu.vt.middleware.crypt.x509.types</code> package that is
@@ -51,7 +61,7 @@ public final class ExtensionFactory
    * not compatible with the given extension type.
    */
   public static Object createInstance(
-      final ASN1Encodable bcExtension,
+      final DEREncodable encodedExtension,
       final ExtensionType type)
   {
     Object extension = null;
@@ -62,8 +72,10 @@ public final class ExtensionFactory
       case AuthorityKeyIdentifier:
         break;
       case BasicConstraints:
+        extension = createBasicConstraints(encodedExtension);
         break;
       case CertificatePolicies:
+        extension = createPolicyInformationList(encodedExtension);
         break;
       case CRLDistributionPoints:
         break;
@@ -71,7 +83,7 @@ public final class ExtensionFactory
         break;
       case IssuerAlternativeName:
       case SubjectAlternativeName:
-        extension = createGeneralNames(bcExtension);
+        extension = createGeneralNameList(encodedExtension);
         break;
       case KeyUsage:
         break;
@@ -90,30 +102,205 @@ public final class ExtensionFactory
       }
     } catch (Exception e) {
       throw new IllegalArgumentException(
-          String.format("%s is not compatible with %s.", bcExtension, type, e));
+          String.format("%s is not compatible with %s.",
+              encodedExtension, type, e));
     }
     return extension;
   }
 
 
   /**
-   * Creates a {@link GeneralNames} object from the corresponding Bouncy Castle
-   * type.
+   * Creates a {@link GeneralNameList} object from DER data.
    *
-   * @param  names  ASN.1 encoded general names data.
+   * @param  enc  DER encoded general names data.
    *
-   * @return  Object that is semantically equivalent to given BC type.
+   * @return  Collection of general names.
    */
-  public static GeneralNames createGeneralNames(final ASN1Encodable names)
+  public static GeneralNameList createGeneralNameList(final DEREncodable enc)
   {
     final List<GeneralName> nameList = new ArrayList<GeneralName>();
     for (org.bouncycastle.asn1.x509.GeneralName name :
-      org.bouncycastle.asn1.x509.GeneralNames.getInstance(names).getNames())
+      org.bouncycastle.asn1.x509.GeneralNames.getInstance(enc).getNames())
     {
       nameList.add(new GeneralName(
           name.getName().toString(),
           GeneralNameType.fromTagNumber(name.getTagNo())));
     }
-    return new GeneralNames(nameList);
+    return new GeneralNameList(nameList);
+  }
+
+
+  /**
+   * Creates a {@link BasicConstraints} object from DER data.
+   *
+   * @param  enc  DER encoded basic constraints data.
+   *
+   * @return  Basic constraints.
+   */
+  public static BasicConstraints createBasicConstraints(final DEREncodable enc)
+  {
+    final org.bouncycastle.asn1.x509.BasicConstraints constraints =
+      org.bouncycastle.asn1.x509.BasicConstraints.getInstance(enc);
+    if (constraints.getPathLenConstraint() != null) {
+      return new BasicConstraints(
+          constraints.isCA(),
+          constraints.getPathLenConstraint().intValue());
+    } else {
+      return new BasicConstraints(constraints.isCA());
+    }
+  }
+
+
+  /**
+   * Creates a {@link PolicyInformationList} object from DER data.
+   *
+   * @param  enc  DER encoded policy information data;
+   * must be <code>ASN1Sequence</code>.
+   *
+   * @return  Certificate policy information listing.
+   */
+  public static PolicyInformationList createPolicyInformationList(
+    final DEREncodable enc)
+  {
+    if (!(enc instanceof ASN1Sequence)) {
+      throw new IllegalArgumentException(
+        "Expected ASN.1 sequence but got " + enc);
+    }
+    final ASN1Sequence seq = (ASN1Sequence) enc;
+    final List<PolicyInformation> policies =
+      new ArrayList<PolicyInformation>(seq.size());
+    for (int i = 0; i < seq.size(); i++) {
+      policies.add(createPolicyInformation(seq.getObjectAt(i)));
+    }
+    return new PolicyInformationList(
+        policies.toArray(new PolicyInformation[policies.size()]));
+  }
+
+
+  /**
+   * Creates a {@link PolicyInformation} object from DER data.
+   *
+   * @param  enc  DER encoded policy information data.
+   *
+   * @return  Certificate policy information object.
+   */
+  public static PolicyInformation createPolicyInformation(
+    final DEREncodable enc)
+  {
+    final org.bouncycastle.asn1.x509.PolicyInformation info =
+      org.bouncycastle.asn1.x509.PolicyInformation.getInstance(enc);
+    final ASN1Sequence encodedQualifiers = info.getPolicyQualifiers();
+    if (encodedQualifiers != null) {
+      final int size = encodedQualifiers.size();
+      final List<PolicyQualifierInfo> qualifiers =
+        new ArrayList<PolicyQualifierInfo>(size);
+      for (int i = 0; i < size; i++) {
+        final DEREncodable item = encodedQualifiers.getObjectAt(i);
+        qualifiers.add(createPolicyQualifierInfo(item));
+      }
+      return new PolicyInformation(
+        info.getPolicyIdentifier().toString(),
+        qualifiers.toArray(new PolicyQualifierInfo[size]));
+    } else {
+      return new PolicyInformation(info.getPolicyIdentifier().toString());
+    }
+  }
+
+
+  /**
+   * Creates a {@link PolicyQualifierInfo} object from DER data.
+   *
+   * @param  enc  DER encoded policy information data.
+   *
+   * @return  Certificate policy qualifier.
+   */
+  public static PolicyQualifierInfo createPolicyQualifierInfo(
+    final DEREncodable enc)
+  {
+    final org.bouncycastle.asn1.x509.PolicyQualifierInfo policyQualifier =
+      org.bouncycastle.asn1.x509.PolicyQualifierInfo.getInstance(enc);
+    final DEREncodable qualifier = policyQualifier.getQualifier();
+    if (qualifier instanceof DERIA5String) {
+      return new PolicyQualifierInfo(qualifier.toString());
+    } else {
+      return new PolicyQualifierInfo(createUserNotice(qualifier));
+    }
+  }
+
+
+  /**
+   * Creates a {@link UserNotice} object from DER data.
+   *
+   * @param  enc  DER encoded user notice; must be <code>ASN1Sequence</code>.
+   *
+   * @return  User notice.
+   */
+  public static UserNotice createUserNotice(final DEREncodable enc)
+  {
+    if (!(enc instanceof ASN1Sequence)) {
+      throw new IllegalArgumentException(
+        "Expected ASN.1 sequence but got " + enc);
+    }
+    final ASN1Sequence seq = (ASN1Sequence) enc;
+    UserNotice result = null;
+    if (seq.size() == 0) {
+      // Bouncy Castle will throw an exception if sequence size is 0
+      // which is reasonable, since an empty user notice is nonsense.
+      // However this is not strictly conformant to RFC 2459 section 4.2.1.5
+      // where both UserNotice fields are optional, which would allow
+      // for an empty notice.
+      // We allow an empty UserNotice to be more strictly conformant.
+      result = new UserNotice();
+    } else {
+      final org.bouncycastle.asn1.x509.UserNotice notice =
+        new org.bouncycastle.asn1.x509.UserNotice(seq);
+      if (notice.getExplicitText() != null) {
+        if (notice.getNoticeRef() != null) {
+          result = new UserNotice(
+            createNoticeReference(notice.getNoticeRef()),
+            notice.getExplicitText().getString());
+        } else {
+          result = new UserNotice(notice.getExplicitText().getString());
+        }
+      } else {
+        // UserNotice must contain NoticeReference since
+        // there is no explicitText yet seq has non-zero size
+        result = new UserNotice(createNoticeReference(notice.getNoticeRef()));
+      }
+    }
+    return result;
+  }
+
+
+  /**
+   * Creates a {@link NoticeReference} object from DER data.
+   *
+   * @param  enc  DER encoded user notice; must be either
+   * <code>ASN1Sequence</code> or
+   * <code>org.bouncycastle.asn1.x509.NoticeReference</code> object.
+   *
+   * @return  Notice reference.
+   */
+  public static NoticeReference createNoticeReference(final DEREncodable enc)
+  {
+    org.bouncycastle.asn1.x509.NoticeReference notRef = null;
+    if (enc instanceof ASN1Sequence) {
+      notRef = new org.bouncycastle.asn1.x509.NoticeReference(
+          (ASN1Sequence) enc);
+    } else if (enc instanceof org.bouncycastle.asn1.x509.NoticeReference) {
+      notRef = (org.bouncycastle.asn1.x509.NoticeReference) enc;
+    }
+    if (notRef == null) {
+      throw new IllegalArgumentException(
+          "Expected ASN1Sequence or NoticeReference but got " + enc);
+    }
+    // Build the array of notice numbers
+    final int[] notNums = new int[notRef.getNoticeNumbers().size()];
+    for (int i = 0; i < notNums.length; i++) {
+      final DERInteger num =
+        (DERInteger) notRef.getNoticeNumbers().getObjectAt(i);
+      notNums[i] = num.getValue().intValue();
+    }
+    return new NoticeReference(notRef.getOrganization().toString(), notNums);
   }
 }

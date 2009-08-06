@@ -73,7 +73,7 @@ public class GeneralName
   @Override
   public String toString()
   {
-    return getName();
+    return name;
   }
 
 
@@ -88,8 +88,8 @@ public class GeneralName
       result = false;
     } else {
       final GeneralName other = (GeneralName) obj;
-      result = other.getName().equals(getName()) &&
-        other.getType().equals(getType());
+      result = other.getName().equals(name) &&
+        other.getType().equals(type);
     }
     return result;
   }
@@ -100,9 +100,8 @@ public class GeneralName
   public int hashCode()
   {
     int hash = HASH_SEED;
-    hash = HASH_FACTOR * hash + getType().ordinal();
-    hash = HASH_FACTOR * hash + getName().hashCode();
+    hash = HASH_FACTOR * hash + type.ordinal();
+    hash = HASH_FACTOR * hash + name.hashCode();
     return hash;
   }
-
 }
