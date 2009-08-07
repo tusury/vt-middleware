@@ -14,7 +14,8 @@
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Representation of UserNotice type defined in RFC 2459.
+ * Representation of the <code>UserNotice</code> type defined in
+ * section 4.2.1.5 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$
@@ -36,8 +37,9 @@ public class UserNotice
 
 
   /**
-   * Creates a new instance with notice reference and explicit display text
-   * undefined.
+   * Creates an empty user notice.  Although this is technically supported by
+   * RFC 2459, an empty user notice is meaningless.  We support it here to be
+   * strictly conformant with the RFC.
    */
   public UserNotice() {}
 
@@ -96,7 +98,10 @@ public class UserNotice
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * @return  String representation containing the ExplicitText and
+   * NoticeReference fields.
+   */
   @Override
   public String toString()
   {
@@ -128,16 +133,13 @@ public class UserNotice
       result = false;
     } else {
       final UserNotice other = (UserNotice) obj;
-      if (noticeRef != null) {
-        result &= noticeRef.equals(other.getNoticeRef());
-      } else {
-        result &= other.getNoticeRef() == null;
-      }
-      if (explicitText != null) {
-        result &= explicitText.equals(other.getExplicitText());
-      } else {
-        result &= other.getExplicitText() == null;
-      }
+      result =
+        (noticeRef != null
+          ? noticeRef.equals(other.getNoticeRef())
+          : other.getNoticeRef() == null) &&
+        (explicitText != null
+          ? noticeRef.equals(other.getNoticeRef())
+          : other.getNoticeRef() == null);
     }
     return result;
   }

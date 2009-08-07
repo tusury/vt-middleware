@@ -16,7 +16,8 @@ package edu.vt.middleware.crypt.x509.types;
 import java.util.Arrays;
 
 /**
- * Representation of PolicyInformation type defined in RFC 2459.
+ * Representation of the <code>PolicyInformation</code> type defined in
+ * section 4.2.1.5 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$
@@ -88,7 +89,10 @@ public class PolicyInformation
 
 
 
-  /** {@inheritDoc} */
+  /**
+   * @return  Policy OID string followed by the policy qualifiers, if any,
+   * formatted as a string.
+   */
   @Override
   public String toString()
   {
@@ -116,12 +120,11 @@ public class PolicyInformation
       result = false;
     } else {
       final PolicyInformation other = (PolicyInformation) obj;
-      result = policyIdentifier.equals(other.getPolicyIdentifier());
-      if (policyQualifiers != null) {
-        result &= Arrays.equals(policyQualifiers, other.getPolicyQualifiers());
-      } else {
-        result &= other.getPolicyQualifiers() == null;
-      }
+      result =
+        policyIdentifier.equals(other.getPolicyIdentifier()) &&
+        (policyQualifiers != null
+          ? Arrays.equals(policyQualifiers, other.getPolicyQualifiers())
+          : other.getPolicyQualifiers() == null);
     }
     return result;
   }

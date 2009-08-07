@@ -20,8 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.vt.middleware.crypt.CryptException;
+import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
+import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 
 import org.apache.commons.logging.Log;
@@ -184,6 +186,38 @@ public final class ExtensionReader
         readObject(ExtensionType.CertificatePolicies));
   }
 
+
+  /**
+   * Reads the value of the <code>SubjectKeyIdentifier</code> extension field
+   * of the certificate.
+   *
+   * @return  Subject key identifier.
+   *
+   * @throws  CryptException  On errors reading encoded certificate extension
+   * field data.
+   */
+  public KeyIdentifier readSubjectKeyIdentifier() throws CryptException
+  {
+    return ExtensionFactory.createKeyIdentifier(
+        readObject(ExtensionType.SubjectKeyIdentifier));
+  }
+
+
+  /**
+   * Reads the value of the <code>AuthorityKeyIdentifier</code> extension field
+   * of the certificate.
+   *
+   * @return  Authority key identifier.
+   *
+   * @throws  CryptException  On errors reading encoded certificate extension
+   * field data.
+   */
+  public AuthorityKeyIdentifier readAuthorityKeyIdentifier()
+    throws CryptException
+  {
+    return ExtensionFactory.createAuthorityKeyIdentifier(
+        readObject(ExtensionType.AuthorityKeyIdentifier));
+  }
 
   /**
    * Attempts to read all extensions defined in section 4.2 of RFC 2459

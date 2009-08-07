@@ -14,7 +14,8 @@
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Representation of GeneralName type defined in RFC 2459.
+ * Representation of the <code>GeneralName</code> type defined in
+ * section 4.2.1.7 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$
@@ -69,7 +70,9 @@ public class GeneralName
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * @return Value of {@link #getName()}.
+   */
   @Override
   public String toString()
   {

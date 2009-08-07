@@ -19,10 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
+import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
@@ -83,6 +85,14 @@ public class ExtensionReaderTest
     extMap1.put(
       ExtensionType.CertificatePolicies,
       new PolicyInformationList(policies1));
+    extMap1.put(
+      ExtensionType.SubjectKeyIdentifier,
+      new KeyIdentifier(
+        "25:48:2F:28:EC:5D:19:BB:1D:25:AE:94:93:B1:7B:B5:35:96:24:66"));
+    extMap1.put(
+      ExtensionType.AuthorityKeyIdentifier,
+      new AuthorityKeyIdentifier(new KeyIdentifier(
+        "38:E0:6F:AE:48:ED:5E:23:F6:22:9B:1E:E7:9C:19:16:47:B8:7E:92")));
 
     final File testCert2 = new File(RESOURCE_DIR,
         "thawte-premium-server-ca-cert.pem");

@@ -14,7 +14,8 @@
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Representation of BasicConstraints type defined in RFC 2459.
+ * Representation of the <code>BasicConstraints</code> type defined in
+ * section 4.2.1.10 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$
@@ -84,7 +85,10 @@ public class BasicConstraints
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * @return  String representation containing the CA and PathLengthConstraint
+   * fields.
+   */
   @Override
   public String toString()
   {
@@ -110,12 +114,11 @@ public class BasicConstraints
       result = false;
     } else {
       final BasicConstraints other = (BasicConstraints) obj;
-      result = cA == other.isCA();
-      if (pathLengthConstraint != null) {
-        result &= pathLengthConstraint.equals(other.getPathLengthConstraint());
-      } else {
-        result &= other.getPathLengthConstraint() == null;
-      }
+      result =
+        cA == other.isCA() &&
+        (pathLengthConstraint != null
+          ? pathLengthConstraint.equals(other.getPathLengthConstraint())
+          : other.getPathLengthConstraint() == null);
     }
     return result;
   }

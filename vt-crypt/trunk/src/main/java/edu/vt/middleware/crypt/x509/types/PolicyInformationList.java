@@ -16,8 +16,9 @@ package edu.vt.middleware.crypt.x509.types;
 import java.util.List;
 
 /**
- * Encapsulates a collection of {@link PolicyInformation} objects as would
- * appear in Certificate Policies extension field of an X.509v3 certificate.
+ * Stores a list of {@link PolicyInformation} objects that could represent
+ * the data in the <code>CertificatePolicies</code> extension field defined in
+ * section 4.2.1.5 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$

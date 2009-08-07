@@ -16,7 +16,8 @@ package edu.vt.middleware.crypt.x509.types;
 import java.util.List;
 
 /**
- * Representation of GeneralNames type defined in RFC 2459.
+ * Representation of the <code>GeneralNames</code> type defined in section
+ * 4.2.1.7 of RFC 2459, which simply stores a list of {@link GeneralName} items.
  *
  * @author Middleware
  * @version $Revision$

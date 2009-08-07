@@ -15,7 +15,8 @@ package edu.vt.middleware.crypt.x509.types;
 
 /**
  * Representation of the options in the CHOICE element describing various
- * categories of the GeneralName type defined in RFC 2459.
+ * categories of the <code>GeneralName</code> type defined in
+ * section 4.2.1.7 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$

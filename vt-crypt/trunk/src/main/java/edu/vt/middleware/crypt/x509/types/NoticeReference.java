@@ -16,7 +16,8 @@ package edu.vt.middleware.crypt.x509.types;
 import java.util.Arrays;
 
 /**
- * Representation of NoticeReference type defined in RFC 2459.
+ * Representation of the <code>NoticeReference</code> type defined
+ * in section 4.2.1.5 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$
@@ -81,7 +82,9 @@ public class NoticeReference
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * @return  Tuple of the organization name and notice numbers.
+   */
   @Override
   public String toString()
   {

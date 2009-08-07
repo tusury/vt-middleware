@@ -16,16 +16,19 @@ package edu.vt.middleware.crypt.x509;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
+import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.NoticeReference;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
 import edu.vt.middleware.crypt.x509.types.UserNotice;
 
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERIA5String;
@@ -70,6 +73,7 @@ public final class ExtensionFactory
       case AuthorityInfoAccess:
         break;
       case AuthorityKeyIdentifier:
+        extension = createAuthorityKeyIdentifier(encodedExtension);
         break;
       case BasicConstraints:
         extension = createBasicConstraints(encodedExtension);
@@ -96,6 +100,7 @@ public final class ExtensionFactory
       case SubjectDirectoryAttributes:
         break;
       case SubjectKeyIdentifier:
+        extension = createKeyIdentifier(encodedExtension);
         break;
       default:
         break;
@@ -164,7 +169,7 @@ public final class ExtensionFactory
   {
     if (!(enc instanceof ASN1Sequence)) {
       throw new IllegalArgumentException(
-        "Expected ASN.1 sequence but got " + enc);
+        "Expected ASN1Sequence but got " + enc);
     }
     final ASN1Sequence seq = (ASN1Sequence) enc;
     final List<PolicyInformation> policies =
@@ -239,7 +244,7 @@ public final class ExtensionFactory
   {
     if (!(enc instanceof ASN1Sequence)) {
       throw new IllegalArgumentException(
-        "Expected ASN.1 sequence but got " + enc);
+        "Expected ASN1Sequence but got " + enc);
     }
     final ASN1Sequence seq = (ASN1Sequence) enc;
     UserNotice result = null;
@@ -283,17 +288,8 @@ public final class ExtensionFactory
    */
   public static NoticeReference createNoticeReference(final DEREncodable enc)
   {
-    org.bouncycastle.asn1.x509.NoticeReference notRef = null;
-    if (enc instanceof ASN1Sequence) {
-      notRef = new org.bouncycastle.asn1.x509.NoticeReference(
-          (ASN1Sequence) enc);
-    } else if (enc instanceof org.bouncycastle.asn1.x509.NoticeReference) {
-      notRef = (org.bouncycastle.asn1.x509.NoticeReference) enc;
-    }
-    if (notRef == null) {
-      throw new IllegalArgumentException(
-          "Expected ASN1Sequence or NoticeReference but got " + enc);
-    }
+    final org.bouncycastle.asn1.x509.NoticeReference notRef =
+      org.bouncycastle.asn1.x509.NoticeReference.getInstance(enc);
     // Build the array of notice numbers
     final int[] notNums = new int[notRef.getNoticeNumbers().size()];
     for (int i = 0; i < notNums.length; i++) {
@@ -302,5 +298,52 @@ public final class ExtensionFactory
       notNums[i] = num.getValue().intValue();
     }
     return new NoticeReference(notRef.getOrganization().toString(), notNums);
+  }
+
+
+  /**
+   * Creates a {@link KeyIdentifier} object from DER data.
+   *
+   * @param  enc  DER encoded policy information data;
+   * must be <code>ASN1OctetString</code>.
+   *
+   * @return  Key identifier.
+   */
+  public static KeyIdentifier createKeyIdentifier(final DEREncodable enc)
+  {
+    if (!(enc instanceof ASN1OctetString)) {
+      throw new IllegalArgumentException(
+        "Expected ASN1OctetString but got " + enc);
+    }
+    final ASN1OctetString os = (ASN1OctetString) enc;
+    return new KeyIdentifier(os.getOctets());
+  }
+
+
+  /**
+   * Creates a {@link AuthorityKeyIdentifier} object from DER data.
+   *
+   * @param  enc  DER encoded authority key identifier data.
+   *
+   * @return  Authority key identifier.
+   */
+  public static AuthorityKeyIdentifier createAuthorityKeyIdentifier(
+    final DEREncodable enc)
+  {
+    final org.bouncycastle.asn1.x509.AuthorityKeyIdentifier aki =
+      org.bouncycastle.asn1.x509.AuthorityKeyIdentifier.getInstance(enc);
+    KeyIdentifier keyIdentifier = null;
+    if (aki.getKeyIdentifier() != null) {
+      keyIdentifier = new KeyIdentifier(aki.getKeyIdentifier());
+    }
+    GeneralNameList issuerNames = null;
+    if (aki.getAuthorityCertIssuer() != null) {
+      issuerNames = createGeneralNameList(aki.getAuthorityCertIssuer());
+    }
+    Integer issuerSerial = null;
+    if (aki.getAuthorityCertSerialNumber() != null) {
+      issuerSerial = aki.getAuthorityCertSerialNumber().intValue();
+    }
+    return new AuthorityKeyIdentifier(keyIdentifier, issuerNames, issuerSerial);
   }
 }

@@ -14,7 +14,8 @@
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Representation of PolicyQualifierInfo type defined in RFC 2459.
+ * Representation of the <code>PolicyQualifierInfo</code> type defined in
+ * section 4.2.1.5 of RFC 2459.
  *
  * @author Middleware
  * @version $Revision$
@@ -91,7 +92,10 @@ public class PolicyQualifierInfo
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * @return  String indicating the type of qualifier followed by a string
+   * representation of the qualifier.
+   */
   @Override
   public String toString()
   {
