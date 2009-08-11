@@ -24,6 +24,7 @@ import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.KeyUsage;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 
 import org.apache.commons.logging.Log;
@@ -218,6 +219,23 @@ public final class ExtensionReader
     return ExtensionFactory.createAuthorityKeyIdentifier(
         readObject(ExtensionType.AuthorityKeyIdentifier));
   }
+
+
+  /**
+   * Reads the value of the <code>KeyUsage</code> extension field
+   * of the certificate.
+   *
+   * @return  Key usage data.
+   *
+   * @throws  CryptException  On errors reading encoded certificate extension
+   * field data.
+   */
+  public KeyUsage readKeyUsage() throws CryptException
+  {
+    return ExtensionFactory.createKeyUsage(
+        readObject(ExtensionType.KeyUsage));
+  }
+
 
   /**
    * Attempts to read all extensions defined in section 4.2 of RFC 2459

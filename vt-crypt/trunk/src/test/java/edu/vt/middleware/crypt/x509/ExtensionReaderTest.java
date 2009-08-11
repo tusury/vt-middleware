@@ -25,6 +25,8 @@ import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
 import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.KeyUsage;
+import edu.vt.middleware.crypt.x509.types.KeyUsageBits;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
@@ -93,6 +95,13 @@ public class ExtensionReaderTest
       ExtensionType.AuthorityKeyIdentifier,
       new AuthorityKeyIdentifier(new KeyIdentifier(
         "38:E0:6F:AE:48:ED:5E:23:F6:22:9B:1E:E7:9C:19:16:47:B8:7E:92")));
+    extMap1.put(
+      ExtensionType.KeyUsage,
+      new KeyUsage(
+        new KeyUsageBits[] {
+          KeyUsageBits.DigitalSignature,
+          KeyUsageBits.NonRepudiation,
+        }));
 
     final File testCert2 = new File(RESOURCE_DIR,
         "thawte-premium-server-ca-cert.pem");
@@ -124,6 +133,11 @@ public class ExtensionReaderTest
     final ExtensionReader reader = new ExtensionReader(
         (X509Certificate) CryptReader.readCertificate(certFile));
     final Map<ExtensionType, Object> actualExtensionMap = reader.readAll();
+
+    logger.info("Attributes found:");
+    for (ExtensionType type : actualExtensionMap.keySet()) {
+      logger.info("\t" + actualExtensionMap.get(type));
+    }
 
     AssertJUnit.assertEquals(
       expectedExtensionMap.size(),

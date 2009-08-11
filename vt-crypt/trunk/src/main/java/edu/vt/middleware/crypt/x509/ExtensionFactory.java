@@ -22,6 +22,7 @@ import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
 import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.KeyUsage;
 import edu.vt.middleware.crypt.x509.types.NoticeReference;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
@@ -30,6 +31,7 @@ import edu.vt.middleware.crypt.x509.types.UserNotice;
 
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.DERInteger;
@@ -90,6 +92,7 @@ public final class ExtensionFactory
         extension = createGeneralNameList(encodedExtension);
         break;
       case KeyUsage:
+        extension = createKeyUsage(encodedExtension);
         break;
       case PolicyConstraints:
         break;
@@ -345,5 +348,20 @@ public final class ExtensionFactory
       issuerSerial = aki.getAuthorityCertSerialNumber().intValue();
     }
     return new AuthorityKeyIdentifier(keyIdentifier, issuerNames, issuerSerial);
+  }
+
+
+  /**
+   * Creates a {@link KeyUsage} object from DER data.
+   *
+   * @param  enc  DER encoded key usage data.
+   *
+   * @return  Key usage data.
+   */
+  public static KeyUsage createKeyUsage(final DEREncodable enc)
+  {
+    final DERBitString usage =
+      org.bouncycastle.asn1.x509.KeyUsage.getInstance(enc);
+    return new KeyUsage(usage.getBytes());
   }
 }
