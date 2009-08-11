@@ -24,6 +24,7 @@ import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.KeyPurposeIdList;
 import edu.vt.middleware.crypt.x509.types.KeyUsage;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 
@@ -234,6 +235,22 @@ public final class ExtensionReader
   {
     return ExtensionFactory.createKeyUsage(
         readObject(ExtensionType.KeyUsage));
+  }
+
+
+  /**
+   * Reads the value of the <code>ExtendedKeyUsage</code> extension field
+   * of the certificate.
+   *
+   * @return  List of supported extended key usages.
+   *
+   * @throws  CryptException  On errors reading encoded certificate extension
+   * field data.
+   */
+  public KeyPurposeIdList readExtendedKeyUsage() throws CryptException
+  {
+    return ExtensionFactory.createKeyPurposeIdList(
+        readObject(ExtensionType.ExtendedKeyUsage));
   }
 
 

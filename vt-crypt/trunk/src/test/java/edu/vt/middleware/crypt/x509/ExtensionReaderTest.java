@@ -25,6 +25,8 @@ import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
 import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.KeyPurposeId;
+import edu.vt.middleware.crypt.x509.types.KeyPurposeIdList;
 import edu.vt.middleware.crypt.x509.types.KeyUsage;
 import edu.vt.middleware.crypt.x509.types.KeyUsageBits;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
@@ -102,6 +104,13 @@ public class ExtensionReaderTest
           KeyUsageBits.DigitalSignature,
           KeyUsageBits.NonRepudiation,
         }));
+    extMap1.put(
+      ExtensionType.ExtendedKeyUsage,
+      new KeyPurposeIdList(new KeyPurposeId[] {
+        KeyPurposeId.EmailProtection,
+        KeyPurposeId.ClientAuth,
+        KeyPurposeId.SmartCardLogin,
+      }));
 
     final File testCert2 = new File(RESOURCE_DIR,
         "thawte-premium-server-ca-cert.pem");

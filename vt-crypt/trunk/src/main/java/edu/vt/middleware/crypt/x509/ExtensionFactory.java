@@ -22,6 +22,8 @@ import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
 import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.KeyPurposeId;
+import edu.vt.middleware.crypt.x509.types.KeyPurposeIdList;
 import edu.vt.middleware.crypt.x509.types.KeyUsage;
 import edu.vt.middleware.crypt.x509.types.NoticeReference;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
@@ -86,6 +88,7 @@ public final class ExtensionFactory
       case CRLDistributionPoints:
         break;
       case ExtendedKeyUsage:
+        extension = createKeyPurposeIdList(encodedExtension);
         break;
       case IssuerAlternativeName:
       case SubjectAlternativeName:
@@ -111,7 +114,7 @@ public final class ExtensionFactory
     } catch (Exception e) {
       throw new IllegalArgumentException(
           String.format("%s is not compatible with %s.",
-              encodedExtension, type, e));
+              encodedExtension.getClass().getName(), type, e));
     }
     return extension;
   }
@@ -363,5 +366,24 @@ public final class ExtensionFactory
     final DERBitString usage =
       org.bouncycastle.asn1.x509.KeyUsage.getInstance(enc);
     return new KeyUsage(usage.getBytes());
+  }
+
+
+  /**
+   * Creates a {@link KeyPurposeIdList} object from DER data.
+   *
+   * @param  enc  DER encoded key purpose identifier data.
+   *
+   * @return  Key purpose ID list object.
+   */
+  public static KeyPurposeIdList createKeyPurposeIdList(final DEREncodable enc)
+  {
+    final org.bouncycastle.asn1.x509.ExtendedKeyUsage usages =
+      org.bouncycastle.asn1.x509.ExtendedKeyUsage.getInstance(enc);
+    final List<KeyPurposeId> idList = new ArrayList<KeyPurposeId>();
+    for (Object usage : usages.getUsages()) {
+      idList.add(KeyPurposeId.getByOid(usage.toString()));
+    }
+    return new KeyPurposeIdList(idList);
   }
 }
