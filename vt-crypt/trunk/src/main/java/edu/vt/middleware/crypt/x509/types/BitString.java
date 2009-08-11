@@ -33,9 +33,6 @@ public class BitString
   /** Unsigned byte bitmask */
   protected static final int UNSIGNED_BYTE_MASK = 0xFF;
 
-  /** Hash code seed value */
-  private static final int HASH_SEED = 57;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -114,6 +111,6 @@ public class BitString
   @Override
   public int hashCode()
   {
-    return HASH_FACTOR * HASH_SEED + Arrays.hashCode(octets);
+    return HASH_FACTOR * getClass().hashCode() + Arrays.hashCode(octets);
   }
 }
