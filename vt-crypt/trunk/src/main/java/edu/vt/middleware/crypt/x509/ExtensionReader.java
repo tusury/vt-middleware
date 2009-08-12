@@ -22,6 +22,7 @@ import java.util.Map;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
+import edu.vt.middleware.crypt.x509.types.DistributionPointList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.KeyPurposeIdList;
@@ -253,6 +254,21 @@ public final class ExtensionReader
         readObject(ExtensionType.ExtendedKeyUsage));
   }
 
+
+  /**
+   * Reads the value of the <code>CRLDistributionPoints</code> extension field
+   * of the certificate.
+   *
+   * @return  List of CRL distribution points.
+   *
+   * @throws  CryptException  On errors reading encoded certificate extension
+   * field data.
+   */
+  public DistributionPointList readCRLDistributionPoints() throws CryptException
+  {
+    return ExtensionFactory.createDistributionPointList(
+        readObject(ExtensionType.CRLDistributionPoints));
+  }
 
   /**
    * Attempts to read all extensions defined in section 4.2 of RFC 2459

@@ -26,10 +26,6 @@ import java.util.List;
  */
 public class PolicyInformationList extends AbstractList<PolicyInformation>
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 47;
-
-
   /**
    * Constructs a new instance from the given list of policies.
    *
@@ -56,13 +52,5 @@ public class PolicyInformationList extends AbstractList<PolicyInformation>
       throw new IllegalArgumentException("Array of policies cannot be null.");
     }
     items = arrayOfPolicies;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected int getHashSeed()
-  {
-    return HASH_SEED;
   }
 }

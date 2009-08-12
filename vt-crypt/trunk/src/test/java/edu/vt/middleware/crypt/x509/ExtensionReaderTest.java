@@ -15,12 +15,15 @@ package edu.vt.middleware.crypt.x509;
 
 import java.io.File;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
+import edu.vt.middleware.crypt.x509.types.DistributionPoint;
+import edu.vt.middleware.crypt.x509.types.DistributionPointList;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
@@ -66,6 +69,7 @@ public class ExtensionReaderTest
   public Object[][] createCertificateTestData()
     throws Exception
   {
+    // VT User CA client certificate
     final File testCert1 = new File(RESOURCE_DIR, "serac-dev-test-cert.pem");
     final Map<ExtensionType, Object> extMap1 =
       new HashMap<ExtensionType, Object>();
@@ -112,15 +116,66 @@ public class ExtensionReaderTest
         KeyPurposeId.SmartCardLogin,
       }));
 
+
+    // Thawte Premium Server CA cert
     final File testCert2 = new File(RESOURCE_DIR,
         "thawte-premium-server-ca-cert.pem");
     final Map<ExtensionType, Object> extMap2 =
       new HashMap<ExtensionType, Object>();
     extMap2.put(ExtensionType.BasicConstraints, new BasicConstraints(true));
 
+
+    // Microsoft Web server cert for login.live.com
+    final File testCert3 = new File(RESOURCE_DIR,
+        "login.live.com-cert.pem");
+    final Map<ExtensionType, Object> extMap3 =
+      new HashMap<ExtensionType, Object>();
+    extMap3.put(ExtensionType.BasicConstraints, new BasicConstraints(false));
+    extMap3.put(
+      ExtensionType.SubjectKeyIdentifier,
+      new KeyIdentifier(
+        "31:AE:F1:7C:98:67:E9:1F:19:69:A2:A7:84:1E:67:5C:AA:C3:6B:75"));
+    extMap3.put(
+      ExtensionType.KeyUsage,
+      new KeyUsage(
+        new KeyUsageBits[] {
+          KeyUsageBits.DigitalSignature,
+          KeyUsageBits.KeyEncipherment,
+        }));
+    extMap3.put(
+      ExtensionType.CertificatePolicies,
+      new PolicyInformationList(
+        Collections.singletonList(
+          new PolicyInformation(
+            "2.16.840.1.113733.1.7.23.6",
+            new PolicyQualifierInfo[] {
+              new PolicyQualifierInfo("https://www.verisign.com/rpa"),
+            }))));
+    extMap3.put(
+      ExtensionType.ExtendedKeyUsage,
+      new KeyPurposeIdList(new KeyPurposeId[] {
+        KeyPurposeId.ClientAuth,
+        KeyPurposeId.ServerAuth,
+      }));
+    extMap3.put(
+      ExtensionType.AuthorityKeyIdentifier,
+      new AuthorityKeyIdentifier(new KeyIdentifier(
+        "FC:8A:50:BA:9E:B9:25:5A:7B:55:85:4F:95:00:63:8F:E9:58:6B:43")));
+    extMap3.put(
+      ExtensionType.CRLDistributionPoints,
+      new DistributionPointList(Collections.singletonList(
+        new DistributionPoint(
+          new GeneralNameList(Collections.singletonList(
+            new GeneralName(
+              "http://EVSecure-crl.verisign.com/EVSecure2006.crl",
+              GeneralNameType.UniformResourceIdentifier))),
+          null,
+          null))));
+
     return new Object[][] {
       {testCert1, extMap1},
       {testCert2, extMap2},
+      {testCert3, extMap3},
     };
   }
 

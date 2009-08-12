@@ -23,9 +23,6 @@ package edu.vt.middleware.crypt.x509.types;
  */
 public class GeneralName
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 19;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -102,7 +99,7 @@ public class GeneralName
   @Override
   public int hashCode()
   {
-    int hash = HASH_SEED;
+    int hash = getClass().hashCode();
     hash = HASH_FACTOR * hash + type.ordinal();
     hash = HASH_FACTOR * hash + name.hashCode();
     return hash;

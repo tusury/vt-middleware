@@ -23,9 +23,6 @@ package edu.vt.middleware.crypt.x509.types;
  */
 public class AuthorityKeyIdentifier
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 57;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -165,7 +162,7 @@ public class AuthorityKeyIdentifier
   @Override
   public int hashCode()
   {
-    int hash = HASH_SEED;
+    int hash = getClass().hashCode();
     if (keyIdentifier != null) {
       hash = HASH_FACTOR * hash + keyIdentifier.hashCode();
     }

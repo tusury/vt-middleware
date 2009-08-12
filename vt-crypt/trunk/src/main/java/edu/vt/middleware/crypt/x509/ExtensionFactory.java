@@ -18,6 +18,8 @@ import java.util.List;
 
 import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
+import edu.vt.middleware.crypt.x509.types.DistributionPoint;
+import edu.vt.middleware.crypt.x509.types.DistributionPointList;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
@@ -29,6 +31,7 @@ import edu.vt.middleware.crypt.x509.types.NoticeReference;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
+import edu.vt.middleware.crypt.x509.types.ReasonFlags;
 import edu.vt.middleware.crypt.x509.types.UserNotice;
 
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -86,6 +89,7 @@ public final class ExtensionFactory
         extension = createPolicyInformationList(encodedExtension);
         break;
       case CRLDistributionPoints:
+        extension = createDistributionPointList(encodedExtension);
         break;
       case ExtendedKeyUsage:
         extension = createKeyPurposeIdList(encodedExtension);
@@ -385,5 +389,55 @@ public final class ExtensionFactory
       idList.add(KeyPurposeId.getByOid(usage.toString()));
     }
     return new KeyPurposeIdList(idList);
+  }
+
+
+  /**
+   * Creates a {@link DistributionPointList} object from DER data.
+   *
+   * @param  enc  DER encoded distribution point list.
+   *
+   * @return  List of CRL distribution points.
+   */
+  public static DistributionPointList createDistributionPointList(
+    final DEREncodable enc)
+  {
+    if (!(enc instanceof ASN1Sequence)) {
+      throw new IllegalArgumentException(
+        "Expected ASN1Sequence but got " + enc);
+    }
+    final ASN1Sequence seq = (ASN1Sequence) enc;
+    final List<DistributionPoint> distPoints =
+      new ArrayList<DistributionPoint>();
+    for (int i = 0; i < seq.size(); i++) {
+      final org.bouncycastle.asn1.x509.DistributionPoint dp =
+        org.bouncycastle.asn1.x509.DistributionPoint.getInstance(
+          seq.getObjectAt(i));
+      Object name = null;
+      if (dp.getDistributionPoint() != null) {
+        if (dp.getDistributionPoint().getType() ==
+          org.bouncycastle.asn1.x509.DistributionPointName.FULL_NAME)
+        {
+          name = createGeneralNameList(dp.getDistributionPoint().getName());
+        } else {
+          name = dp.getDistributionPoint().toString();
+        }
+      }
+      ReasonFlags reasons = null;
+      if (dp.getReasons() != null) {
+        reasons = new ReasonFlags(dp.getReasons().getBytes());
+      }
+      GeneralNameList issuer = null;
+      if (dp.getCRLIssuer() != null) {
+        issuer = createGeneralNameList(dp.getCRLIssuer());
+      }
+      if (name instanceof GeneralNameList) {
+        distPoints.add(
+          new DistributionPoint((GeneralNameList) name, reasons, issuer));
+      } else {
+        distPoints.add(new DistributionPoint((String) name, reasons, issuer));
+      }
+    }
+    return new DistributionPointList(distPoints);
   }
 }

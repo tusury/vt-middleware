@@ -29,9 +29,6 @@ public class PolicyQualifierInfo
   /** OID for policy qualifier containing user notice */
   public static final String POLICY_QUALIFIER_ID_UNOTICE = "1.3.6.1.5.5.7.2.2";
 
-  /** Hash code seed value */
-  private static final int HASH_SEED = 41;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -129,7 +126,7 @@ public class PolicyQualifierInfo
   @Override
   public int hashCode()
   {
-    int hash = HASH_SEED;
+    int hash = getClass().hashCode();
     hash = HASH_FACTOR * hash + policyQualifierId.hashCode();
     hash = HASH_FACTOR * hash + qualifier.hashCode();
     return hash;

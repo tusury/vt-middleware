@@ -25,9 +25,6 @@ import java.util.Arrays;
  */
 public class NoticeReference
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 31;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -115,7 +112,7 @@ public class NoticeReference
   @Override
   public int hashCode()
   {
-    int hash = HASH_SEED;
+    int hash = getClass().hashCode();
     hash = HASH_FACTOR * hash + organization.hashCode();
     hash = HASH_FACTOR * hash + Arrays.hashCode(noticeNumbers);
     return hash;

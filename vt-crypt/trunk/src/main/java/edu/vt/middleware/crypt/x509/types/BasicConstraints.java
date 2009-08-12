@@ -23,9 +23,6 @@ package edu.vt.middleware.crypt.x509.types;
  */
 public class BasicConstraints
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 29;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -128,7 +125,7 @@ public class BasicConstraints
   @Override
   public int hashCode()
   {
-    int hash = HASH_SEED;
+    int hash = getClass().hashCode();
     hash = HASH_FACTOR * hash + (cA ? 1 : 0);
     if (pathLengthConstraint != null) {
       hash = HASH_FACTOR * hash + pathLengthConstraint.hashCode();

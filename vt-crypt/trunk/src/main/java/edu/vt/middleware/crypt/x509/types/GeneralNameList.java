@@ -25,10 +25,6 @@ import java.util.List;
  */
 public class GeneralNameList extends AbstractList<GeneralName>
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 21;
-
-
   /**
    * Constructs a new instance from the given list of names.
    *
@@ -54,13 +50,5 @@ public class GeneralNameList extends AbstractList<GeneralName>
       throw new IllegalArgumentException("Array of names cannot be null.");
     }
     items = arrayOfNames;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected int getHashSeed()
-  {
-    return HASH_SEED;
   }
 }

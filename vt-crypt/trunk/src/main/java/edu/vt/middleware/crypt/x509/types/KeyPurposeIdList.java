@@ -26,10 +26,6 @@ import java.util.List;
  */
 public class KeyPurposeIdList extends AbstractList<KeyPurposeId>
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 61;
-
-
   /**
    * Constructs a new instance from the given list of key purpose identifiers.
    *
@@ -59,13 +55,4 @@ public class KeyPurposeIdList extends AbstractList<KeyPurposeId>
     }
     items = arrayOfKeyPurposeIds;
   }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected int getHashSeed()
-  {
-    return HASH_SEED;
-  }
-
 }

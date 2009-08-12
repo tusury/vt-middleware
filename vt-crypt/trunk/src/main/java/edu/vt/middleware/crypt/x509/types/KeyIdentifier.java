@@ -27,9 +27,6 @@ import edu.vt.middleware.crypt.util.HexConverter;
  */
 public class KeyIdentifier
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 53;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -104,6 +101,6 @@ public class KeyIdentifier
   @Override
   public int hashCode()
   {
-    return HASH_FACTOR * HASH_SEED + Arrays.hashCode(identifier);
+    return HASH_FACTOR * getClass().hashCode() + Arrays.hashCode(identifier);
   }
 }

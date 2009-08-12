@@ -23,9 +23,6 @@ package edu.vt.middleware.crypt.x509.types;
  */
 public class UserNotice
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 37;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -149,7 +146,7 @@ public class UserNotice
   @Override
   public int hashCode()
   {
-    int hash = HASH_SEED;
+    int hash = getClass().hashCode();
     if (noticeRef != null) {
       hash = HASH_FACTOR * hash + noticeRef.hashCode();
     }

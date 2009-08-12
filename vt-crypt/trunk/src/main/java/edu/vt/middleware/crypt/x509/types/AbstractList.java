@@ -60,7 +60,7 @@ public abstract class AbstractList<T> implements List<T>
   @Override
   public int hashCode()
   {
-    return getHashSeed() + HASH_FACTOR * Arrays.hashCode(items);
+    return getClass().hashCode() + HASH_FACTOR * Arrays.hashCode(items);
   }
 
 
@@ -75,12 +75,4 @@ public abstract class AbstractList<T> implements List<T>
   {
     return Arrays.toString(items);
   }
-
-
-  /**
-   * Gets the hash code seed value for this class.
-   *
-   * @return  Hash code seed value.
-   */
-  protected abstract int getHashSeed();
 }

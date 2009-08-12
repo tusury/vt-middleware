@@ -25,9 +25,6 @@ import java.util.Arrays;
  */
 public class PolicyInformation
 {
-  /** Hash code seed value */
-  private static final int HASH_SEED = 43;
-
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
@@ -134,7 +131,7 @@ public class PolicyInformation
   @Override
   public int hashCode()
   {
-    int hash = HASH_SEED;
+    int hash = getClass().hashCode();
     hash = HASH_FACTOR * hash + policyIdentifier.hashCode();
     if (policyQualifiers != null) {
       hash = HASH_FACTOR * hash + Arrays.hashCode(policyQualifiers);
