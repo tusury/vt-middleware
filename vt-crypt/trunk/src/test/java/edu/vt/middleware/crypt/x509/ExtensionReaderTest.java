@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.x509.types.AccessDescription;
+import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
+import edu.vt.middleware.crypt.x509.types.AccessMethod;
 import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.DistributionPoint;
@@ -171,6 +174,21 @@ public class ExtensionReaderTest
               GeneralNameType.UniformResourceIdentifier))),
           null,
           null))));
+    extMap3.put(
+      ExtensionType.AuthorityInformationAccess,
+      new AccessDescriptionList(
+        new AccessDescription[] {
+          new AccessDescription(
+            AccessMethod.OCSP,
+            new GeneralName(
+              "http://EVSecure-ocsp.verisign.com",
+              GeneralNameType.UniformResourceIdentifier)),
+          new AccessDescription(
+            AccessMethod.CAIssuers,
+            new GeneralName(
+              "http://EVSecure-aia.verisign.com/EVSecure2006.cer",
+              GeneralNameType.UniformResourceIdentifier)),
+        }));
 
     return new Object[][] {
       {testCert1, extMap1},

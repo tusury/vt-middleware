@@ -34,7 +34,8 @@ public class DistributionPointList extends AbstractList<DistributionPoint>
   public DistributionPointList(final List<DistributionPoint> listOfDistPoints)
   {
     if (listOfDistPoints == null) {
-      throw new IllegalArgumentException("List of policies cannot be null.");
+      throw new IllegalArgumentException(
+        "List of distribution points cannot be null.");
     }
     items = listOfDistPoints.toArray(
       new DistributionPoint[listOfDistPoints.size()]);

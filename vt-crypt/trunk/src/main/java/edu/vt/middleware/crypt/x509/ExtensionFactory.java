@@ -16,6 +16,9 @@ package edu.vt.middleware.crypt.x509;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.vt.middleware.crypt.x509.types.AccessDescription;
+import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
+import edu.vt.middleware.crypt.x509.types.AccessMethod;
 import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.DistributionPoint;
@@ -77,7 +80,8 @@ public final class ExtensionFactory
     Object extension = null;
     try {
       switch (type) {
-      case AuthorityInfoAccess:
+      case AuthorityInformationAccess:
+        extension = createAccessDescriptionList(encodedExtension);
         break;
       case AuthorityKeyIdentifier:
         extension = createAuthorityKeyIdentifier(encodedExtension);
@@ -100,6 +104,8 @@ public final class ExtensionFactory
         break;
       case KeyUsage:
         extension = createKeyUsage(encodedExtension);
+        break;
+      case NameConstraints:
         break;
       case PolicyConstraints:
         break;
@@ -137,11 +143,26 @@ public final class ExtensionFactory
     for (org.bouncycastle.asn1.x509.GeneralName name :
       org.bouncycastle.asn1.x509.GeneralNames.getInstance(enc).getNames())
     {
-      nameList.add(new GeneralName(
-          name.getName().toString(),
-          GeneralNameType.fromTagNumber(name.getTagNo())));
+      nameList.add(createGeneralName(name));
     }
     return new GeneralNameList(nameList);
+  }
+
+
+  /**
+   * Creates a {@link GeneralName} object from DER data.
+   *
+   * @param  enc  DER encoded general names data.
+   *
+   * @return  General name.
+   */
+  public static GeneralName createGeneralName(final DEREncodable enc)
+  {
+    final org.bouncycastle.asn1.x509.GeneralName name =
+      org.bouncycastle.asn1.x509.GeneralName.getInstance(enc);
+    return new GeneralName(
+        name.getName().toString(),
+        GeneralNameType.fromTagNumber(name.getTagNo()));
   }
 
 
@@ -439,5 +460,31 @@ public final class ExtensionFactory
       }
     }
     return new DistributionPointList(distPoints);
+  }
+
+
+  /**
+   * Creates a {@link AccessDescriptionList} object from DER data.
+   *
+   * @param  enc  DER encoded distribution point list.
+   *
+   * @return  List of access descriptions.
+   */
+  public static AccessDescriptionList createAccessDescriptionList(
+    final DEREncodable enc)
+  {
+    final org.bouncycastle.asn1.x509.AuthorityInformationAccess info =
+      org.bouncycastle.asn1.x509.AuthorityInformationAccess.getInstance(enc);
+    final List<AccessDescription> accessDescList =
+      new ArrayList<AccessDescription>();
+    for (org.bouncycastle.asn1.x509.AccessDescription desc :
+      info.getAccessDescriptions())
+    {
+      accessDescList.add(
+        new AccessDescription(
+          AccessMethod.getByOid(desc.getAccessMethod().toString()),
+          createGeneralName(desc.getAccessLocation())));
+    }
+    return new AccessDescriptionList(accessDescList);
   }
 }

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.vt.middleware.crypt.CryptException;
+import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
 import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
 import edu.vt.middleware.crypt.x509.types.DistributionPointList;
@@ -270,6 +271,25 @@ public final class ExtensionReader
         readObject(ExtensionType.CRLDistributionPoints));
   }
 
+
+  /**
+   * Reads the value of the <code>AuthorityInformationAccess</code> extension
+   * field
+   * of the certificate.
+   *
+   * @return  List of CRL distribution points.
+   *
+   * @throws  CryptException  On errors reading encoded certificate extension
+   * field data.
+   */
+  public AccessDescriptionList readAuthorityInformationAccess()
+    throws CryptException
+  {
+    return ExtensionFactory.createAccessDescriptionList(
+        readObject(ExtensionType.AuthorityInformationAccess));
+  }
+
+
   /**
    * Attempts to read all extensions defined in section 4.2 of RFC 2459
    * and returns a map of all extensions defined on the certificate.
@@ -283,7 +303,7 @@ public final class ExtensionReader
   {
     final Map<ExtensionType, Object> extMap =
       new HashMap<ExtensionType, Object>(ExtensionType.values().length);
-    for (ExtensionType type : ExtensionType.ALL_EXTENSIONS) {
+    for (ExtensionType type : ExtensionType.values()) {
       final Object extension = read(type);
       if (extension != null) {
         extMap.put(type, extension);

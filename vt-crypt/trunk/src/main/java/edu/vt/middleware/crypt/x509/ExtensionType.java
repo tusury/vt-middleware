@@ -23,7 +23,7 @@ package edu.vt.middleware.crypt.x509;
 public enum ExtensionType
 {
   /** AuthorityInfoAccess extension field */
-  AuthorityInfoAccess("1.3.6.1.5.5.7.1.1", false),
+  AuthorityInformationAccess("1.3.6.1.5.5.7.1.1", false),
 
   /** AuthorityKeyIdentifier extension field */
   AuthorityKeyIdentifier("2.5.29.35", false),
@@ -68,26 +68,6 @@ public enum ExtensionType
   SubjectDirectoryAttributes("2.5.29.9", false);
 
 
-  /** All X.509v3 extension fields. */
-  public static final ExtensionType[] ALL_EXTENSIONS = new ExtensionType[] {
-    AuthorityInfoAccess,
-    AuthorityKeyIdentifier,
-    BasicConstraints,
-    CertificatePolicies,
-    CRLDistributionPoints,
-    ExtendedKeyUsage,
-    IssuerAlternativeName,
-    KeyUsage,
-    NameConstraints,
-    PolicyConstraints,
-    PolicyMappings,
-    PrivateKeyUsagePeriod,
-    SubjectAlternativeName,
-    SubjectKeyIdentifier,
-    SubjectDirectoryAttributes,
-  };
-
-
   /** Oid value */
   private String oid;
 
@@ -120,7 +100,7 @@ public enum ExtensionType
    */
   public static ExtensionType fromOid(final String oid)
   {
-    for (ExtensionType ext : ALL_EXTENSIONS) {
+    for (ExtensionType ext : values()) {
       if (ext.getOid().equals(oid)) {
         return ext;
       }
