@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.vt.middleware</groupId>
+  <artifactId>vt-catalina</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <name>VT Catalina Libraries</name>
+  <url>http://code.google.com/p/vt-middleware/wiki/vtcatalina</url>
+  <licenses>
+    <license>
+      <name>Apache License version 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:https://vt-middleware.googlecode.com/svn/vt-catalina/trunk</connection>
+    <url>http://vt-middleware.googlecode.com/svn/vt-catalina/trunk</url>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>tomcat</groupId>
+      <artifactId>catalina</artifactId>
+      <version>5.5.9</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <debug>true</debug>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <compilerArgument>-Xlint:unchecked</compilerArgument>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <distributionManagement>
+    <repository>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>svn:https://vt-middleware.googlecode.com/svn/maven2</url>
+    </repository>
+  </distributionManagement>
+</project>
