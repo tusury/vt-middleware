@@ -1,0 +1,93 @@
+<wiki:toc max_depth="2" />
+
+= Introduction =
+!RemoteUserAuthenticator is a Java class that provides a Catalina Authenticator for use in the Tomcat servlet container. <br/>
+This authenticator checks for the existence of a principal and re-authenticates them using a provided Tomcat realm. <br/>
+This is particularly useful in Single-Sign-On environments where you need to integrate an existing application that leverages container security. <br/>
+Tomcat realms that used with this authenticator must be prepared to accept a null password, the assumption being that this user has already authenticated and the realm exists solely to provide role data. <br/>
+
+----
+= Installation =
+  # Checkout the current release version:
+  {{{
+  svn co http://vt-middleware.googlecode.com/svn/vt-catalina/tags/vt-catalina-1.0
+  }}}
+  # Build the jar:
+  {{{
+  cd vt-catalina-1.0
+  mvn package
+  }}}
+  # Copy the jar to Tomcat:
+  {{{
+  cp target/vt-catalina-1.0.jar $CATALINA_HOME/lib
+  }}}
+  # Extract Authenticators.properties:
+  {{{
+  jar xvf $CATALINA_HOME/lib/catalina.jar org/apache/catalina/startup/Authenticators.properties
+  }}}
+  # Add the following line to the end of Authenticators.properties:
+  {{{
+  REMOTE-USER=edu.vt.middleware.catalina.authenticator.RemoteUserAuthenticator
+  }}}
+  # Update Authenticators.properties
+  {{{
+  jar uvf $CATALINA_HOME/lib/catalina.jar org/apache/catalina/startup/Authenticators.properties
+  }}}
+
+Tomcat now recognizes the REMOTE-USER authentication method.
+
+----
+= Configuration =
+
+== Tomcat ==
+You must now add a realm to Tomcat that supports authentication without a password.<br/>
+The following example will use the !LdapRoleAuthorizationModule, as it expects to be stacked with a module that has performed authentication.<br/>
+<br/>
+  # Edit $CATALINA_HOME/conf/server.xml and add your realm:
+  {{{
+  <Realm className="org.apache.catalina.realm.JAASRealm"
+         appName="vt-ldap-authz"
+         userClassNames="edu.vt.middleware.ldap.jaas.LdapPrincipal"
+         roleClassNames="edu.vt.middleware.ldap.jaas.LdapRole"
+         debug="99"/>
+  }}}
+  # Since a JAAS Realm is being used, create a JAAS config:
+  {{{
+  vt-ldap-authz {
+   edu.vt.middleware.ldap.jaas.LdapDnAuthorizationModule required
+     storePass="true"
+     ldapUrl="ldap://authn.directory.vt.edu/ou=people,dc=vt,dc=edu"
+     tls="true"
+     userField="uupid";
+   edu.vt.middleware.ldap.jaas.LdapRoleAuthorizationModule required
+     useFirstPass="true"
+     ldapUrl="ldap://authn.directory.vt.edu/ou=groups,dc=vt,dc=edu"
+     tls="true"
+     roleFilter="(member={0})"
+     roleAttribute="uugid";
+  };
+  }}}
+
+== Web Application ==
+Update your web.xml to include security directives for the new authentication method.
+  # Edit your web.xml:
+  {{{
+  <security-constraint>
+    <web-resource-collection>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>ROLE-FROM-LDAP</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>REMOTE-USER</auth-method>
+  </login-config>
+  }}}
+
+Your web application is now ready to accept the REMOTE_USER header from an external source and populate role data from a realm.
+
+----
+= Notes =
+  * Any URLs that are protected but do not receive the REMOTE_USER header will fail authentication and the user will see a HTTP 403 error.
+  * If you believe your web application should be receiving the REMOTE_USER header, but it is not, try setting tomcatAuthentication="false" on your connector in server.xml
