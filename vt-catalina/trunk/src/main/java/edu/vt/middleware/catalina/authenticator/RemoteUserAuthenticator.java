@@ -18,7 +18,6 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.authenticator.AuthenticatorBase;
-import org.apache.catalina.authenticator.Constants;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
@@ -26,7 +25,7 @@ import org.apache.catalina.deploy.LoginConfig;
 /**
  * An <b>Authenticator</b> and <b>Valve</b> implementation of authentication
  * that utilizes the REMOTE_USER header to invoke a realm.
- * Authentication is implied by the existance of the REMOTE_USER.
+ * Authentication is implied by the existence of the REMOTE_USER.
  * Any realm invoked by this authenticator must be prepared to accept a null password.
  *
  * @author  Middleware Services
@@ -74,23 +73,18 @@ public class RemoteUserAuthenticator extends AuthenticatorBase {
         Principal principal = request.getUserPrincipal();
 
         if (principal == null) {
-            if (containerLog.isDebugEnabled())
-                containerLog.debug("  No principal included with this request");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                                "Principal not found");
             return (false);
         }
 
-        if (containerLog.isDebugEnabled())
-            containerLog.debug("Found principal '" + principal.getName() + "'");
         // Re-authenticate the principal
         Principal newPrincipal = context.getRealm().authenticate(
             principal.getName(), (String) null);
         if (newPrincipal == null) {
-            if (containerLog.isDebugEnabled())
-                containerLog.debug("  Realm.authenticate() returned false");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-                               sm.getString("authenticator.unauthorized"));
+            response.sendError(
+                HttpServletResponse.SC_UNAUTHORIZED,
+                "Cannot authenticate with the provided credentials");
             return (false);
         }
 
