@@ -1,10 +1,9 @@
 <wiki:toc max_depth="2" />
 
 = Introduction =
-!RemoteUserAuthenticator is a Java class that provides a Catalina Authenticator for use in the Tomcat servlet container. <br/>
-This authenticator checks for the existence of a principal and re-authenticates them using a provided Tomcat realm. <br/>
-This is particularly useful in Single-Sign-On environments where you need to integrate an existing application that leverages container security. <br/>
-Tomcat realms that used with this authenticator must be prepared to accept a null password, the assumption being that this user has already authenticated and the realm exists solely to provide role data. <br/>
+!RemoteUserAuthenticator is a Java class that provides a trust-based Catalina [http://tomcat.apache.org/tomcat-5.5-doc/catalina/docs/api/org/apache/catalina/Authenticator.html Authenticator] for use in the Tomcat servlet container.  This authenticator checks for the existence of a principal, commonly set by Tomcat processing the REMOTE_USER header, and re-authenticates them using a provided Tomcat [http://tomcat.apache.org/tomcat-5.5-doc/catalina/docs/api/org/apache/catalina/Realm.html Realm].  This is particularly useful in Single-Sign-On environments where you need to integrate an existing application that leverages container security.
+
+Tomcat realms used with this authenticator *must be prepared to accept a null password*, the assumption being that this user has already authenticated and the realm exists solely to provide role data.  It is important to consider the security implications made by !RemoteUserAuthenticator in trusting the REMOTE_USER (or other) header in determining prior authentication.
 
 ----
 = Installation =
@@ -51,7 +50,7 @@ The following example will use the !LdapRoleAuthorizationModule, as it expects t
          roleClassNames="edu.vt.middleware.ldap.jaas.LdapRole"
          debug="99"/>
   }}}
-  # Since a JAAS Realm is being used, create a JAAS config:
+  # Since a JAAS Realm is being used, create a JAAS config file, e.g. $CATALINA_HOME/jaas.config:
   {{{
   vt-ldap-authz {
    edu.vt.middleware.ldap.jaas.LdapDnAuthorizationModule required
@@ -67,6 +66,12 @@ The following example will use the !LdapRoleAuthorizationModule, as it expects t
      roleAttribute="uugid";
   };
   }}}
+  # Set the `java.security.auth.login.config` system property to point to the JAAS config file by editing $CATALINA_HOME/bin/setenv.sh:
+  {{{
+  CATALINA_OPTS="$CATALINA_OPTS -Djava.security.auth.login.config=$CATALINA_HOME/jaas.config"
+  export CATALINA_OPTS
+  }}}
+  # Copy vt-ldap.jar containing the JAAS classes used above to $CATALINA_HOME/lib.
 
 == Web Application ==
 Update your web.xml to include security directives for the new authentication method.
