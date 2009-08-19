@@ -47,8 +47,7 @@ The following example will use the !LdapRoleAuthorizationModule, as it expects t
   <Realm className="org.apache.catalina.realm.JAASRealm"
          appName="vt-ldap-authz"
          userClassNames="edu.vt.middleware.ldap.jaas.LdapPrincipal"
-         roleClassNames="edu.vt.middleware.ldap.jaas.LdapRole"
-         debug="99"/>
+         roleClassNames="edu.vt.middleware.ldap.jaas.LdapRole" />
   }}}
   # Since a JAAS Realm is being used, create a JAAS config file, e.g. $CATALINA_HOME/jaas.config:
   {{{
