@@ -95,4 +95,13 @@ Your web application is now ready to accept the REMOTE_USER header from an exter
 ----
 = Notes =
   * Any URLs that are protected but do not receive the REMOTE_USER header will fail authentication and the user will see a HTTP 403 error.
-  * If you believe your web application should be receiving the REMOTE_USER header, but it is not, try setting tomcatAuthentication="false" on your connector in server.xml
+  * If you are using the Tomcat AJP connector and getting a 401 "Principal not found" error, then the REMOTE_USER header is absent from the request.  This can commonly be fixed by adding tomcatAuthentication="false" to the AJP connector in server.xml:
+  {{{
+  <Connector
+    protocol="org.apache.coyote.ajp.AjpAprProtocol"
+    port="8009"
+    maxThreads="150"
+    connectionTimeout="10000"
+    enableLookups="false"
+    tomcatAuthentication="false" />
+  }}}
