@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.security.Principal;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.Session;
 import org.apache.catalina.authenticator.AuthenticatorBase;
+import org.apache.catalina.authenticator.Constants;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.deploy.LoginConfig;
@@ -78,6 +80,17 @@ public class RemoteUserAuthenticator extends AuthenticatorBase {
             return (false);
         }
 
+        // See if we have already authenticated this principal
+        Session session = request.getSessionInternal(true);
+        if (REMOTE_USER_METHOD.equals(session.getAuthType())) {
+            // Associate the session with any existing SSO session in order
+            // to get coordinated session invalidation at logout
+            String ssoId = (String) request.getNote(Constants.REQ_SSOID_NOTE);
+            if (ssoId != null) {
+                associate(ssoId, request.getSessionInternal(true));
+            }
+            return (true);
+        }
         // Re-authenticate the principal
         Principal newPrincipal = context.getRealm().authenticate(
             principal.getName(), (String) null);
@@ -90,7 +103,7 @@ public class RemoteUserAuthenticator extends AuthenticatorBase {
 
         // Cache the new principal (if requested) and record this authentication
         register(request, response, newPrincipal, REMOTE_USER_METHOD,
-                 null, null);
+                 principal.getName(), null);
         return (true);
     }
 
