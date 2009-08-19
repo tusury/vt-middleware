@@ -3,6 +3,9 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.1-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=16 vtldap-16] - JAAS modules now support the tryFirstPass, useFirstPass, storePass options
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=15 vtldap-15] - JAAS role based functionality moved to separate login modules
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=14 vtldap-14] - JAAS modules now support returning all attributes from searches
   * [http://code.google.com/p/vt-middleware/issues/detail?id=13 vtldap-13] - Added !AuthenticationResultHandlers
   * [http://code.google.com/p/vt-middleware/issues/detail?id=12 vtldap-12] - !SearchCriteria now receives Context.getNameInNamespace() for the DN if it exists, otherwise it receives the DN of the search
   * [http://code.google.com/p/vt-middleware/issues/detail?id=11 vtldap-11] - !LdapConfig base dn now defaults to ''
