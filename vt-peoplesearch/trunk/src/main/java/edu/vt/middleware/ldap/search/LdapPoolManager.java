@@ -192,14 +192,16 @@ public class LdapPoolManager
     final String ldapProps,
     final String ldapPoolProps)
   {
-    final LdapConfig lc = LdapConfig.createFromProperties(ldapProps);
+    final LdapConfig lc = LdapConfig.createFromProperties(
+      LdapPoolManager.class.getResourceAsStream(ldapProps));
     if (!DEFAULT_KEY.equals(name)) {
       lc.setSaslAuthorizationId(name);
     }
 
     LdapPoolConfig lpc = null;
     if (ldapPoolProps != null) {
-      lpc = LdapPoolConfig.createFromProperties(ldapPoolProps);
+      lpc = LdapPoolConfig.createFromProperties(
+        LdapPoolManager.class.getResourceAsStream(ldapPoolProps));
     } else {
       lpc = new LdapPoolConfig();
     }

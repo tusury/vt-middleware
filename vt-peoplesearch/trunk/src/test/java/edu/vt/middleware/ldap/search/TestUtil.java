@@ -42,7 +42,8 @@ public final class TestUtil
     throws Exception
   {
     final Ldap l = new Ldap();
-    l.loadFromProperties("/ldap.setup.properties");
+    l.loadFromProperties(
+      TestUtil.class.getResourceAsStream("/ldap.setup.properties"));
     return l;
   }
 
@@ -57,7 +58,8 @@ public final class TestUtil
     throws Exception
   {
     final Ldap l = new Ldap();
-    l.loadFromProperties("/ldap.properties");
+    l.loadFromProperties(
+      TestUtil.class.getResourceAsStream("/ldap.properties"));
     return l;
   }
 
@@ -72,7 +74,8 @@ public final class TestUtil
     throws Exception
   {
     final Ldap l = new Ldap();
-    l.loadFromProperties("/ldap.digest-md5.properties");
+    l.loadFromProperties(
+      TestUtil.class.getResourceAsStream("/ldap.digest-md5.properties"));
     return l;
   }
 
