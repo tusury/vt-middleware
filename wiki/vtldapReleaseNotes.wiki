@@ -2,7 +2,7 @@
 
 <wiki:toc max_depth="2" />
 
-= Version 3.1-SNAPSHOT =
+= Version 3.1 =
   * Updated LGPL from version 2.1 to 3.0
   * [http://code.google.com/p/vt-middleware/issues/detail?id=16 vtldap-16] - JAAS modules now support the tryFirstPass, useFirstPass, storePass options
   * [http://code.google.com/p/vt-middleware/issues/detail?id=15 vtldap-15] - JAAS role based functionality moved to separate login modules
