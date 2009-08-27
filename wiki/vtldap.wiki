@@ -22,7 +22,7 @@ If you would like to use this project in your maven build, include the following
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-ldap</artifactId>
-      <version>3.0</version>
+      <version>3.1</version>
   </dependency>
 <dependencies>
 }}}
@@ -132,7 +132,7 @@ pool.close();
 = Configuration Properties =
 The Ldap and Authenticator objects can be configured from a properties file.<br/>
 This is useful for maintaining a ldap configuration outside of your source code.<br/>
-Simply create a file called _ldap.properties_ and place it in your root classpath.
+Simply create a file called _ldap.properties_ and load it in your code.
 {{{
 Ldap ldap = new Ldap();
 ldap.loadFromProperties();
@@ -140,7 +140,7 @@ ldap.loadFromProperties();
 If you prefer to use a different filename and/or classpath location:
 {{{
 Ldap ldap = new Ldap();
-ldap.loadFromProperties("/classpath/to/your/propertiesFile");
+ldap.loadFromProperties(MyClass.class.getResourceAsStream("/classpath/to/your/propertiesFile"));
 }}}
 
 == Properties ==
@@ -177,6 +177,7 @@ Properties used for connecting, binding, and searching.
 || edu.vt.middleware.ldap.ignoreCase || true || whether to ignore case in attribute names ||
 || edu.vt.middleware.ldap.operationRetry || 1 || specifies the number of times an operation will be retried if a CommunicationException occurs when an operation is attempted ||
 || edu.vt.middleware.ldap.logCredentials || false || whether bind credentials should be logged; logging occurs at debug level ||
+|| edu.vt.middleware.ldap.searchResultHandlers || {!FqdnSearchResultHandler} || performs post processing of results, see [vtldapHandlers] ||
 
 === !SearchControl Properties ===
 Properties that map to: [http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/directory/SearchControls.html javax.naming.directory.SearchControls]
@@ -195,6 +196,7 @@ All the previous properties are inherited by the Authenticator and can be overri
 || edu.vt.middleware.ldap.auth.constructDn || false || whether the authentication dn should be constructed or looked up in the LDAP; a constructed dn takes the form: userField=user,baseDn  ||
 || edu.vt.middleware.ldap.auth.subtreeSearch || false  || whether the authentication dn should be searched for over the entire base; default value is onelevel  ||
 || edu.vt.middleware.ldap.auth.authorizationFilter || _none_ || ldap filter to use for performing authorization after successful authentication  ||
+|| edu.vt.middleware.ldap.auth.authenticationResultHandlers || _none_ || performs post processing of authentication results, see [vtldapHandlers] ||
 
 ----
 = Scripts =
