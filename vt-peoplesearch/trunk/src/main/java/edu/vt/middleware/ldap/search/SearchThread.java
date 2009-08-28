@@ -105,6 +105,9 @@ public class SearchThread implements Runnable
     try {
       ldap = this.ldapPool.checkOut();
       final long beginTime = System.currentTimeMillis();
+      if (LOG.isDebugEnabled()) {
+        LOG.debug(this.ldapQuery + " started at " + beginTime);
+      }
       final Iterator<SearchResult> i = ldap.search(this.ldapQuery, this.attrs);
       final long searchTime = System.currentTimeMillis() - beginTime;
       while (i.hasNext()) {
