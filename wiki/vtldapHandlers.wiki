@@ -3,8 +3,11 @@
 <wiki:toc max_depth="2" />
 
 = Introduction =
-Handlers provide a programmatic interface for post processing of search results and attributes.<br/>
-All results must be processed by a handler, even if the handler is simply copying results.<br/>
+Result handlers allow operations to be performed after results have been gathered from the LDAP.<br/>
+
+== !SearchResultHandler ==
+!SearchResultHandlers provide a programmatic interface for post processing of search results and attributes.<br/>
+All search results must be processed by a handler, even if the handler is simply copying results.<br/>
 By default all search results are processed by the !FqdnSearchResultHandler, which ensures that the DN of each result is fully qualified.
 
 ----
@@ -38,3 +41,11 @@ handler.setAttributeHandler(new BinaryAttributeHandler());
 Iterator<SearchResult> iter = ldap.search(
   "ou=People,dc=vt,dc=edu", "sn=Fisher", null, null, handler);
 }}}
+
+== !AuthenticationResultHandler ==
+!AuthenticationResultHandlers provide a programmatic interface for post processing of authentication results.<br/>
+There is no default authentication result handler and this distribution does not currently provide any implementations.<br/>
+Potential use cases for authentication result handlers include:
+  * updating a database on success or failure
+  * sending notifications after a number of authentication failures
+  * storing authentication statistics
