@@ -228,12 +228,15 @@ public class LdapPoolManager
   {
     LdapPool<Ldap> pool = null;
     if (PoolType.BLOCKING == type) {
-      pool = new SoftLimitLdapPool(lpc, new DefaultLdapFactory(lc));
-    } else if (PoolType.SOFT_LIMIT == type) {
       pool = new BlockingLdapPool(lpc, new DefaultLdapFactory(lc));
+    } else if (PoolType.SOFT_LIMIT == type) {
+      pool = new SoftLimitLdapPool(lpc, new DefaultLdapFactory(lc));
     } else if (PoolType.SHARED == type) {
       pool = new SharedLdapPool(lpc, new DefaultLdapFactory(lc));
+    } else {
+      throw new IllegalArgumentException("Unknown pool type: " + poolType);
     }
+    pool.initialize();
     return pool;
   }
 }
