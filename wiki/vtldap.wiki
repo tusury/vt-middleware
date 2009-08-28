@@ -132,7 +132,7 @@ pool.close();
 = Configuration Properties =
 The Ldap and Authenticator objects can be configured from a properties file.<br/>
 This is useful for maintaining a ldap configuration outside of your source code.<br/>
-Simply create a file called _ldap.properties_ and load it in your code.
+Simply create a file called _ldap.properties_ and place it in your root classpath..
 {{{
 Ldap ldap = new Ldap();
 ldap.loadFromProperties();
@@ -141,6 +141,11 @@ If you prefer to use a different filename and/or classpath location:
 {{{
 Ldap ldap = new Ldap();
 ldap.loadFromProperties(MyClass.class.getResourceAsStream("/classpath/to/your/propertiesFile"));
+}}}
+If you prefer to use a system filepath:
+{{{
+Ldap ldap = new Ldap();
+ldap.loadFromProperties(new FileInputStream("/path/to/your/propertiesFile"));
 }}}
 
 == Properties ==
