@@ -5,8 +5,14 @@
 
 <module name="Checker">
   <module name="NewlineAtEndOfFile"/>
+  
   <module name="TreeWalker">
     <property name="tabWidth" value="2"/>
+
+    <!-- header -->
+    <module name="RegexpHeader">
+      <property name="headerFile" value="${checkstyle.header.file}" />
+    </module>
 
     <!-- javadocs -->
     <module name="JavadocType">
