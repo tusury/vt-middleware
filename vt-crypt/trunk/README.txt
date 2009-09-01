@@ -1,6 +1,6 @@
-CRYPT 2.0 README
+CRYPT ${project.version} README
 
-    This is the 2.0 release of the VT Crypt Java libraries.
+    This is the ${project.version} release of the VT Crypt Java libraries.
     If you have questions or comments about this library contact
     Daniel Fisher (dfisher@vt.edu)
 
