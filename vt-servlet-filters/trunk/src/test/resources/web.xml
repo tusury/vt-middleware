@@ -73,6 +73,18 @@
       <param-value>CN=Bad Certificate,.*</param-value>
     </init-param>
   </filter>
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>edu.vt.middleware.servlet.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>requestCharsetName</param-name>
+      <param-value>UTF-16</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseCharsetName</param-name>
+      <param-value>UTF-16</param-value>
+    </init-param>
+  </filter>
   <filter-mapping>
     <filter-name>SessionAttributeFilter</filter-name>
     <servlet-name>AttributeFilterTestServlet</servlet-name>
@@ -97,6 +109,10 @@
     <filter-name>FailClientCertFilter</filter-name>
     <servlet-name>FailClientCertFilterTestServlet</servlet-name>
   </filter-mapping>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <servlet-name>CharacterEncodingTestServlet</servlet-name>
+  </filter-mapping>
   <servlet>
     <servlet-name>AttributeFilterTestServlet</servlet-name>
     <servlet-class>edu.vt.middleware.servlet.filter.FilterTestServlet</servlet-class>
@@ -117,6 +133,10 @@
     <servlet-name>SessionTestServlet</servlet-name>
     <servlet-class>edu.vt.middleware.servlet.filter.SessionTestServlet</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>CharacterEncodingTestServlet</servlet-name>
+    <servlet-class>edu.vt.middleware.servlet.filter.FilterTestServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>AttributeFilterTestServlet</servlet-name>
     <url-pattern>/AttributeFilterTestServlet</url-pattern>
@@ -136,5 +156,9 @@
   <servlet-mapping>
     <servlet-name>SessionTestServlet</servlet-name>
     <url-pattern>/SessionTestServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CharacterEncodingTestServlet</servlet-name>
+    <url-pattern>/CharacterEncodingTestServlet</url-pattern>
   </servlet-mapping>
 </web-app>

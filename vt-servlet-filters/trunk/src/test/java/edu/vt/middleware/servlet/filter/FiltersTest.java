@@ -18,6 +18,7 @@ import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.PostMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
+import com.meterware.servletunit.InvocationContext;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import org.testng.AssertJUnit;
@@ -131,5 +132,19 @@ public class FiltersTest
 
     final String responseText = response.getText();
     AssertJUnit.assertTrue(responseText.startsWith("FilterTestServlet"));
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = {"filtertest"})
+  public void charsetEncodingFilter() throws Exception
+  {
+    final ServletUnitClient sc = this.servletRunner.newClient();
+    sc.setExceptionsThrownOnErrorStatus(false);
+    final InvocationContext ic = sc.newInvocation(
+        "http://filters.middleware.vt.edu/CharacterEncodingTestServlet");
+    ic.service();
+    AssertJUnit.assertEquals("UTF-16", ic.getRequest().getCharacterEncoding());
+    AssertJUnit.assertEquals("UTF-16", ic.getResponse().getCharacterEncoding());
   }
 }
