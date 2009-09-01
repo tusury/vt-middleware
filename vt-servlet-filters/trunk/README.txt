@@ -1,6 +1,6 @@
-FILTERS 2.0 README
+FILTERS ${project.version} README
 
-    This is the 2.0 release of the Virginia Tech Filters library.
+    This is the ${project.version} release of the Virginia Tech Filters library.
     It is licensed under the LGPL.
     If you have questions or comments about this library contact
     Daniel Fisher (dfisher@vt.edu)
