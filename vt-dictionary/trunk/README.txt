@@ -1,6 +1,6 @@
-DICTIONARY 2.0 README
+DICTIONARY ${project.version} README
 
-    This is the 2.0 release of the VT DICTIONARY Java libraries.
+    This is the ${project.version} release of the VT DICTIONARY Java libraries.
     It is licensed under the LGPL.
     If you have questions or comments about this library contact
     Daniel Fisher (dfisher@vt.edu)

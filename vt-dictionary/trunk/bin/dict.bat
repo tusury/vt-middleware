@@ -6,7 +6,7 @@ if not defined VTDICT_HOME goto no_vtdict_home
 
 set JAVA=%JAVA_HOME%\bin\java
 
-set DICT_JAR=%VTDICT_HOME%\jars\vt-dictionary-2.0.jar
+set DICT_JAR=%VTDICT_HOME%\jars\vt-dictionary-${project.version}.jar
 
 set CLASSPATH=%DICT_JAR%
 
