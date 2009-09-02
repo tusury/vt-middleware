@@ -15,6 +15,9 @@ package edu.vt.middleware.ldap.search;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.SSLSocketFactory;
+
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.LdapConfig;
 import edu.vt.middleware.ldap.pool.BlockingLdapPool;
@@ -63,6 +66,9 @@ public class LdapPoolManager
 
   /** Ldap pool configuration. */
   private String ldapPoolProperties;
+ 
+  /** SSL socket factory to use for SSL/TLS connections */
+  private SSLSocketFactory sslSocketFactory;
 
   /** Map of name to ldap pools. */
   private Map<String, LdapPool<Ldap>> ldapPools =
@@ -136,6 +142,24 @@ public class LdapPoolManager
 
 
   /**
+   * @return  SSL socket factory instance used for SSL/TLS connections.
+   */
+  public SSLSocketFactory getSslSocketFactory()
+  {
+    return sslSocketFactory;
+  }
+
+
+  /**
+   * @param  factory  SSL socket factory instance used for SSL/TLS connections.
+   */
+  public void setSslSocketFactory(final SSLSocketFactory factory)
+  {
+    this.sslSocketFactory = factory;
+  }
+
+
+  /**
    * Returns a ldap pool.
    *
    * @return  <code>LdapPool</code>
@@ -196,6 +220,9 @@ public class LdapPoolManager
       LdapPoolManager.class.getResourceAsStream(ldapProps));
     if (!DEFAULT_KEY.equals(name)) {
       lc.setSaslAuthorizationId(name);
+    }
+    if (this.sslSocketFactory != null) {
+      lc.setSslSocketFactory(this.sslSocketFactory);
     }
 
     LdapPoolConfig lpc = null;
