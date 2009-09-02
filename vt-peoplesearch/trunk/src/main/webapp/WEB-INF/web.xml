@@ -124,6 +124,11 @@
       <param-name>edu.vt.middleware.ldap.search.springContextPath</param-name>
       <param-value>/peoplesearch-context.xml</param-value>
     </init-param>
+    <!-- Name of PeopleSearch bean in spring context -->
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.peopleSearchBeanName</param-name>
+      <param-value>peopleSearch</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 

@@ -87,14 +87,18 @@ public class PeopleSearch
    * Creates a <code>PeopleSearch</code> using a spring bean configuration
    * context at the supplied path.
    *
-   * @param  path  to context on the classpath
+   * @param  path  Classpath location of Spring context.
+   * @param  beanName  Name of the <code>PeopleSearch</code> bean in the spring
+   *                   context.
    *
    * @return  <code>PeopleSearch</code>
    */
-  public static PeopleSearch createFromSpringContext(final String path)
+  public static PeopleSearch createFromSpringContext(
+      final String path,
+      final String beanName)
   {
     final ApplicationContext context = new ClassPathXmlApplicationContext(path);
-    return (PeopleSearch) context.getBean("peopleSearch");
+    return (PeopleSearch) context.getBean(beanName);
   }
 
 
@@ -247,7 +251,7 @@ public class PeopleSearch
     throws Exception
   {
     final PeopleSearch ps = createFromSpringContext(
-      "/peoplesearch-context.xml");
+      "/peoplesearch-context.xml", "peopleSearch");
     final Query query = new Query();
     final List<String> attrs = new ArrayList<String>();
 

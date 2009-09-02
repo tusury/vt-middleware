@@ -56,6 +56,13 @@ public final class SearchServlet extends HttpServlet
   public static final String DEFAULT_SPRING_CONTEXT_PATH =
     "/peoplesearch-context.xml";
 
+  /** Name of PeopleSearch bean in Spring context. */
+  public static final String PEOPLE_SEARCH_BEAN_NAME = PROPERTIES_DOMAIN +
+    "peopleSearchBeanName";
+
+  /** Default output type. */
+  public static final String DEFAULT_PEOPLE_SEARCH_BEAN_NAME = "peopleSearch";
+
   /** serial version uid. */
   private static final long serialVersionUID = -2489565202170951966L;
 
@@ -99,7 +106,15 @@ public final class SearchServlet extends HttpServlet
     if (LOG.isDebugEnabled()) {
       LOG.debug(SPRING_CONTEXT_PATH + " = " + springContextPath);
     }
-    this.search = PeopleSearch.createFromSpringContext(springContextPath);
+    String peopleSearchBeanName = getInitParameter(PEOPLE_SEARCH_BEAN_NAME);
+    if (peopleSearchBeanName == null) {
+      peopleSearchBeanName = DEFAULT_PEOPLE_SEARCH_BEAN_NAME;
+    }
+    if (LOG.isDebugEnabled()) {
+      LOG.debug(PEOPLE_SEARCH_BEAN_NAME + " = " + peopleSearchBeanName);
+    }
+    this.search = PeopleSearch.createFromSpringContext(
+        springContextPath, peopleSearchBeanName);
 
     // determine output type
     String outputType = getInitParameter(OUTPUT_TYPE);
