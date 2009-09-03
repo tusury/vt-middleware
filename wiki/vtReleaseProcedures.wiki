@@ -1,5 +1,7 @@
 #labels Phase-Implementation,versioning,release
 = Release Procedures =
+  # Run jalopy source clean up on both the main and test source trees. Commit any changes.
+  # Update any info related files, such as, README, LICENSE, NOTICE, etc.
   # Verify the maven package command succeeds in trunk.
   {{{
   mvn package
@@ -33,6 +35,18 @@
     -Durl=svn:https://vt-middleware.googlecode.com/svn/maven2 \
     -DrepositoryId=vt-middleware.googlecode.com.repo
   }}}
+  # Deploy the source jar to the maven repo (requires maven >= 2.1.0)
+  {{{
+  mvn deploy:deploy-file \
+    -DgroupId=edu.vt.middleware \
+    -DartifactId=project-name \
+    -Dversion=VERSION \
+    -DgeneratePom=false \
+    -Dpackaging=java-source \
+    -Dfile=target/project-name-VERSION-sources.jar \
+    -Durl=svn:https://vt-middleware.googlecode.com/svn/maven2 \
+    -DrepositoryId=vt-middleware.googlecode.com.repo
+  }}}
   # Commit the javadocs
     {{{
     svn mkdir $GSVN/project-name/javadoc/project-name-VERSION
@@ -46,4 +60,4 @@
       find ./ -type f -name "*.css" -exec svn propset svn:mime-type text/css '{}' \;
       find ./ -type f -name "*.gif" -exec svn propset svn:mime-type image/gif '{}' \;
       }}}
-  # Update the release notes on the wiki
+  # Update the release notes on the wiki and any other documentation that requires changes.
