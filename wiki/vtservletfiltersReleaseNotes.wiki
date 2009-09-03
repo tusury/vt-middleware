@@ -4,7 +4,7 @@
 
 = Version 2.0.1-SNAPSHOT =
   * Updated LGPL from version 2.1 to 3.0
-  * Added CharacterEncodingFilter which allows setting character set name of HTTP request/response.
+  * Added [vtservletfilters#CharacterEncodingFilter CharacterEncodingFilter] which allows setting character set name of HTTP request/response.
 
 = Version 2.0 =
 Initial google code release.
