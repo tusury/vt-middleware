@@ -2,11 +2,13 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 2.1-SNAPSHOT =
+  * Add API for reading X.509 certificate extended attributes, [http://code.google.com/p/vt-middleware/issues/detail?id=1].
+  * Add capability to format X.509 subject and issuer DNs, [http://code.google.com/p/vt-middleware/issues/detail?id=18].
+
 = Version 2.0.1-SNAPSHOT =
   * Updated LGPL from version 2.1 to 3.0
   * Fix for [http://code.google.com/p/vt-middleware/issues/detail?id=4 Issue 4], keystore incompatibility with keytool.
-  * Add API for reading X.509 certificate extended attributes, [http://code.google.com/p/vt-middleware/issues/detail?id=1].
-  * Add capability to format X.509 subject and issuer DNs, [http://code.google.com/p/vt-middleware/issues/detail?id=18].
 
 = Version 2.0 =
 Initial google code release.
