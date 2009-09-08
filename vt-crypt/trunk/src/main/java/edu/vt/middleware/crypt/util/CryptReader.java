@@ -14,6 +14,7 @@
 package edu.vt.middleware.crypt.util;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,8 +33,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.DERObject;
 
 /**
  * Helper class for performing I/O read operations on cryptographic data.
@@ -46,6 +54,9 @@ public class CryptReader
 
   /** X.509 certificate type. */
   public static final String DEFAULT_CERTIFICATE_TYPE = "X.509";
+
+  /** Class logger */
+  private static final Log LOGGER = LogFactory.getLog(CryptReader.class);
 
   /** Buffer size for read operations. */
   private static final int BUFFER_SIZE = 4096;
@@ -489,6 +500,44 @@ public class CryptReader
 
 
   /**
+   * Attempts to create a Bouncy Castle <code>DERObject</code> from a byte
+   * array representing ASN.1 encoded data.
+   *
+   * @param  data  ASN.1 encoded data as byte array.
+   * @param  discardWrapper  In some cases the value of the encoded data may
+   * itself be encoded data, where the latter encoded data is desired.
+   * Recall ASN.1 data is of the form {TAG, SIZE, DATA}.  Set this flag to true
+   * to skip the first two bytes, e.g. TAG and SIZE, and treat the remaining
+   * bytes as the encoded data.
+   *
+   * @return  DER object.
+   *
+   * @throws  IOException  On I/O errors.
+   */
+  public static DERObject readEncodedBytes(
+      final byte[] data,
+      final boolean discardWrapper) throws IOException
+  {
+    final ByteArrayInputStream inBytes = new ByteArrayInputStream(data);
+    int size = data.length;
+    if (discardWrapper) {
+      inBytes.skip(2);
+      size = data.length - 2;
+    }
+    final ASN1InputStream in = new ASN1InputStream(inBytes, size);
+    try {
+      return in.readObject();
+    } finally {
+      try {
+        in.close();
+      } catch (IOException e) {
+        LOGGER.warn("Error closing ASN.1 input stream.", e);
+      }
+    }
+  }
+
+
+  /**
    * Reads a PEM object from an input stream into a string.
    *
    * @param  in  Input stream containing PEM-encoded data.
@@ -525,7 +574,11 @@ public class CryptReader
         bos.write(buffer, 0, count);
       }
     } finally {
-      in.close();
+      try {
+        in.close();
+      } catch (IOException e) {
+        LOGGER.warn("Error closing input stream.", e);
+      }
     }
     return bos.toByteArray();
   }
