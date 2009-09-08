@@ -49,5 +49,7 @@ The version associated with a project should generally follow the following guid
   * The initial non-beta release should be 1.0. Until that time the major number should be 0.
   * Major version numbers should be bumped for large refactoring of the code base.
     * Moving to a newer version of the JDK may also apply
-  * Minor version numbers should be bumped for destructive interface changes. Any change that has the potential to break a client using the current minor version should use the next minor version.
+  * Minor version numbers should be bumped for destructive interface changes and new functionality.
+    * Any change that has the potential to break a client using the current minor version should use the next minor version.
+    * Any change that provides new functionality such that it should be distinguished from previous releases.
   * Revision version numbers should be bumped for all other changes.
