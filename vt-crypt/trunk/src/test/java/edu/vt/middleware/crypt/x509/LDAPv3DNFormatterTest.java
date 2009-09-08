@@ -87,7 +87,7 @@ public class LDAPv3DNFormatterTest
     final String expectedIssuerDn)
     throws Exception
   {
-    logger.info("Testing read all extended attributes from " + certFile);
+    logger.info("Testing formatting subject and issuer DNs of " + certFile);
     final X509Certificate cert =
       (X509Certificate) CryptReader.readCertificate(certFile);
     final LDAPv3DNFormatter formatter = new LDAPv3DNFormatter();
