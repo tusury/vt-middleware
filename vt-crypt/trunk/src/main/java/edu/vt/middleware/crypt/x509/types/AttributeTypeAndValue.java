@@ -40,7 +40,7 @@ public class AttributeTypeAndValue
   /** Hash code scale factor */
   private static final int HASH_FACTOR = 31;
 
-  /** Attribute type string; either OID or well-known type abbreviation */
+  /** Attribute type OID */
   private String type;
 
   /** Attribute value as a string */
@@ -72,12 +72,7 @@ public class AttributeTypeAndValue
       final String typeOid,
       final String attributeValue)
   {
-    final AttributeType attrType = AttributeType.fromOid(typeOid);
-    if (attrType != null) {
-      type = attrType.getName();
-    } else {
-      type = typeOid;
-    }
+    type = typeOid;
     value = attributeValue;
   }
 
@@ -92,17 +87,27 @@ public class AttributeTypeAndValue
       final AttributeType attributeType,
       final String attributeValue)
   {
-    type = attributeType.getName();
-    value = attributeValue;
+    this(attributeType.getOid(), attributeValue);
   }
 
 
   /**
-   * @return  Attribute type.
+   * @return  Attribute type OID.
    */
   public String getType()
   {
     return type;
+  }
+
+
+  /**
+   * @return  Attribute type short name or null if no short name exists for
+   * the type.
+   */
+  public String getTypeName()
+  {
+    final AttributeType attrType = AttributeType.fromOid(type);
+    return attrType != null ? attrType.getName() : null;
   }
 
 
@@ -125,7 +130,12 @@ public class AttributeTypeAndValue
   public String toString()
   {
     final StringBuilder sb = new StringBuilder(70);
-    sb.append(type);
+    final String typeName = getTypeName();
+    if (typeName != null) {
+      sb.append(typeName);
+    } else {
+      sb.append(type);
+    }
     sb.append('=');
     // Start and end of the value have additional considerations
     // - Must escape # or space at start
