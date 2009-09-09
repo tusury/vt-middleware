@@ -7,6 +7,8 @@
   * Fix for [http://code.google.com/p/vt-middleware/issues/detail?id=4 Issue 4], keystore incompatibility with keytool.
   * Add API for reading X.509 certificate extended attributes, [http://code.google.com/p/vt-middleware/issues/detail?id=1].
   * Add capability to format X.509 subject and issuer DNs, [http://code.google.com/p/vt-middleware/issues/detail?id=18].
+  * Refactor X509DnUtil into DNUtils to leverage new DN formatting classes and
+to operate on X500Principal classes instead of X509Certificate directly.
 
 = Version 2.0 =
 Initial google code release.
