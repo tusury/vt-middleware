@@ -38,17 +38,21 @@ public class KeyStoreCliTest
   private static final String KEY_DIR_PATH =
     "src/test/resources/edu/vt/middleware/crypt/";
 
+  /** Path to directory containing certificates. */
+  private static final String CERT_DIR_PATH =
+    "src/test/resources/edu/vt/middleware/crypt/x509/";
+
   /** Logger instance. */
   private final Log logger = LogFactory.getLog(this.getClass());
 
 
   /**
-   * @return  Test data.
+   * @return  Test data for creating key pair entries.
    *
    * @throws  Exception  On test data generation failure.
    */
-  @DataProvider(name = "testdata")
-  public Object[][] createTestData()
+  @DataProvider(name = "keypairdata")
+  public Object[][] createKeyPairTestData()
     throws Exception
   {
     return
@@ -114,6 +118,36 @@ public class KeyStoreCliTest
 
 
   /**
+   * @return  Test data for creating trusted cert entries.
+   *
+   * @throws  Exception  On test data generation failure.
+   */
+  @DataProvider(name = "trustedcertdata")
+  public Object[][] createTrustedCertTestData()
+    throws Exception
+  {
+    return
+      new Object[][] {
+        {
+          "store-8.jks",
+          null,
+          "vtmwca.pem",
+        },
+        {
+          "store-9.bks",
+          "BKS",
+          "thawte-premium-server-ca-cert.pem",
+        },
+        {
+          "store-A.p12",
+          "PKCS12",
+          "vtmwca.pem",
+        },
+      };
+  }
+
+
+  /**
    * @param  keyStore  Keystore file.
    * @param  storeType  Keystore type.  Uses default type if null.
    * @param  cert  Certificate file.
@@ -123,8 +157,8 @@ public class KeyStoreCliTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"cli", "keystore"}, dataProvider = "testdata")
-  public void testKeyStoreCli(
+  @Test(groups = {"cli", "keystore"}, dataProvider = "keypairdata")
+  public void testImportExportKeyPair(
     final String keyStore,
     final String storeType,
     final String cert,
@@ -202,6 +236,73 @@ public class KeyStoreCliTest
       KeyStoreCli.main(CliHelper.toArgs(exportOptions));
       AssertJUnit.assertTrue(new File(exportCertPath).exists());
       AssertJUnit.assertTrue(new File(exportKeyPath).exists());
+    } finally {
+      // Restore STDOUT
+      System.setOut(oldStdOut);
+    }
+  }
+
+
+  /**
+   * @param  keyStore  Path to JKS keystore file.
+   * @param  storeType  Keystore type.  Uses default type if null.
+   * @param  cert  Certificate/certificate chain file.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"cli", "keystore"}, dataProvider = "trustedcertdata")
+  public void testImportTrustedCert(
+    final String keyStore,
+    final String storeType,
+    final String cert)
+    throws Exception
+  {
+    new File(TEST_OUTPUT_DIR).mkdir();
+
+    final PrintStream oldStdOut = System.out;
+    final String keyStorePath = TEST_OUTPUT_DIR + keyStore;
+
+    final String testAlias = "testng";
+    final OptionData keyStoreOption = new OptionData("keystore", keyStorePath);
+    final OptionData storeTypeOption = storeType == null
+      ? null
+      : new OptionData("storetype", storeType);
+    final OptionData storePassOption = new OptionData("storepass", "changeit");
+    final OptionData aliasOption = new OptionData("alias", testAlias);
+    final OptionData[] listOptions = new OptionData[] {
+      new OptionData("list"),
+      keyStoreOption,
+      storeTypeOption,
+      storePassOption,
+    };
+    final OptionData[] importOptions = new OptionData[] {
+      new OptionData("import"),
+      keyStoreOption,
+      storeTypeOption,
+      storePassOption,
+      new OptionData("cert", CERT_DIR_PATH + cert),
+      aliasOption,
+    };
+    try {
+      final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+      System.setOut(new PrintStream(outStream));
+
+      logger.info(
+        "Importing trusted cert into keystore with command line " +
+          CliHelper.toCommandLine(importOptions));
+      KeyStoreCli.main(CliHelper.toArgs(importOptions));
+      AssertJUnit.assertTrue(new File(keyStorePath).exists());
+
+      // Verify imported entry is present and has correct length
+      // when we list contents
+      outStream.reset();
+      KeyStoreCli.main(CliHelper.toArgs(listOptions));
+
+      final String output = outStream.toString();
+      logger.info("Keystore listing output:\n" + output);
+      AssertJUnit.assertTrue(output.indexOf(testAlias) != -1);
+
+      outStream.reset();
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);
