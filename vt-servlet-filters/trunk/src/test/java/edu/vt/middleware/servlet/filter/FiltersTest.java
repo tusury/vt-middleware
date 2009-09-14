@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2009 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -137,12 +137,14 @@ public class FiltersTest
 
   /** @throws  Exception  On test failure. */
   @Test(groups = {"filtertest"})
-  public void charsetEncodingFilter() throws Exception
+  public void charsetEncodingFilter()
+    throws Exception
   {
     final ServletUnitClient sc = this.servletRunner.newClient();
     sc.setExceptionsThrownOnErrorStatus(false);
+
     final InvocationContext ic = sc.newInvocation(
-        "http://filters.middleware.vt.edu/CharacterEncodingTestServlet");
+      "http://filters.middleware.vt.edu/CharacterEncodingTestServlet");
     ic.service();
     AssertJUnit.assertEquals("UTF-16", ic.getRequest().getCharacterEncoding());
     AssertJUnit.assertEquals("UTF-16", ic.getResponse().getCharacterEncoding());
