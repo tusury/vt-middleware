@@ -2,8 +2,9 @@
 
 <wiki:toc max_depth="2" />
 
-= Version 3.1.1-SNAPSHOT =
+= Version 3.2-SNAPSHOT =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=24 vtldap-24] - Add size() methods to LdapResult and LdapAttributes
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=17 vtldap-19] - Refactored attribute modification methods on Ldap
   * [http://code.google.com/p/vt-middleware/issues/detail?id=17 vtldap-17] - Fixed Properties based setter to allow overriding of properties
 
 = Version 3.1 =
