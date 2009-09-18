@@ -19,6 +19,7 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.naming.directory.SearchResult;
 import edu.vt.middleware.ldap.Ldap;
+import edu.vt.middleware.ldap.SearchFilter;
 import edu.vt.middleware.ldap.pool.LdapPool;
 import edu.vt.middleware.ldap.pool.LdapPoolException;
 import org.apache.commons.logging.Log;
@@ -108,7 +109,8 @@ public class SearchThread implements Runnable
       if (LOG.isDebugEnabled()) {
         LOG.debug(this.ldapQuery + " started at " + beginTime);
       }
-      final Iterator<SearchResult> i = ldap.search(this.ldapQuery, this.attrs);
+      final Iterator<SearchResult> i = ldap.search(
+        new SearchFilter(this.ldapQuery), this.attrs);
       final long searchTime = System.currentTimeMillis() - beginTime;
       while (i.hasNext()) {
         final QueryResult q = new QueryResult(i.next());
