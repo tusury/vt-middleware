@@ -3,8 +3,11 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.2-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=26 vtldap-26] - Added userFilter and userFilterArgs for custom lookups of authentication DNs
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=25 vtldap-25] - Added authorization filter arguments
   * [http://code.google.com/p/vt-middleware/issues/detail?id=24 vtldap-24] - Add size() methods to !LdapResult and !LdapAttributes
   * [http://code.google.com/p/vt-middleware/issues/detail?id=23 vtldap-23] - Added Ldap.rename() implementation
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=22 vtldap-22] - Added !SearchFilter class as argument for all methods that accept filters
   * [http://code.google.com/p/vt-middleware/issues/detail?id=21 vtldap-21] - Updated compare() to accept filter arguments
   * [http://code.google.com/p/vt-middleware/issues/detail?id=17 vtldap-19] - Refactored attribute modification methods on Ldap
   * [http://code.google.com/p/vt-middleware/issues/detail?id=17 vtldap-17] - Fixed Properties based setter to allow overriding of properties
