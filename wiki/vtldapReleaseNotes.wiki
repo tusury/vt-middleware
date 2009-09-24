@@ -3,6 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.2-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=31 vtldap-31] - Added ability to ignore any specific naming exceptions when executing a search operation
   * [http://code.google.com/p/vt-middleware/issues/detail?id=30 vtldap-30] - Moved !LdapUtil.searchAttributesRecursive() to !RecursiveAttributeHandler
   * [http://code.google.com/p/vt-middleware/issues/detail?id=29 vtldap-29] - Changed !SearchResultHandler.setAttributeHandler() to accept an array of handlers
   * [http://code.google.com/p/vt-middleware/issues/detail?id=26 vtldap-26] - Added userFilter and userFilterArgs for custom lookups of authentication DNs
