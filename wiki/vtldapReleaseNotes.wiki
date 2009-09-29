@@ -3,6 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.2-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=32 vtldap-32] - Added !MergeSearchResultHandler
   * [http://code.google.com/p/vt-middleware/issues/detail?id=31 vtldap-31] - Added ability to ignore any specific naming exceptions encountered by a handler
   * [http://code.google.com/p/vt-middleware/issues/detail?id=30 vtldap-30] - Moved !LdapUtil.searchAttributesRecursive() to !RecursiveAttributeHandler
   * [http://code.google.com/p/vt-middleware/issues/detail?id=29 vtldap-29] - Changed !SearchResultHandler.setAttributeHandler() to accept an array of handlers
