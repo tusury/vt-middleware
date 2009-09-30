@@ -1,3 +1,4 @@
+#labels java,jndi,activedirectory,ldap
 #sidebar vtldapSidebar
 
 <wiki:toc max_depth="2" />
@@ -24,7 +25,7 @@ If you are confident that all the referrals returned by the Active Directory can
 
 === Throwing Referrals ===
 Set the property: _edu.vt.middleware.ldap.referral=throw_<br/>
-Using this option will result in {{{org.sun.jndi.LdapReferralException: Continuation Reference}}} being thrown when the search results are read. This option exists to allow you to decide whether to follow or ignore each referral. In order to use this option you will need to implement a custom [vtldapHandler search result handler] to process the results as you see fit.
+Using this option will result in {{{org.sun.jndi.LdapReferralException: Continuation Reference}}} being thrown when the search results are read. This option exists to allow you to decide whether to follow or ignore each referral. In order to use this option you will need to implement a custom [vtldapHandlers search result handler] to process the results as you see fit.
 
 === Global Catalog ===
 The Global Catalog enables searching for Active Directory objects in any domain in the forest without the need for subordinate referrals.
