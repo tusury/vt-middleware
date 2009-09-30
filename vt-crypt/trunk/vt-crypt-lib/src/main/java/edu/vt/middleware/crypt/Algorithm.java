@@ -1,0 +1,54 @@
+/*
+  $Id: Algorithm.java 3 2008-11-11 20:58:48Z dfisher $
+
+  Copyright (C) 2003-2008 Virginia Tech.
+  All rights reserved.
+
+  SEE LICENSE FOR MORE INFORMATION
+
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
+  Version: $Revision: 3 $
+  Updated: $Date: 2008-11-11 15:58:48 -0500 (Tue, 11 Nov 2008) $
+*/
+package edu.vt.middleware.crypt;
+
+import java.security.SecureRandom;
+
+/**
+ * Describes the basic behavior of all crytographic algorithms.
+ *
+ * @author  Middleware Services
+ * @version  $Revision: 3 $
+ */
+public interface Algorithm
+{
+
+  /**
+   * Gets the algorithm name.
+   *
+   * @return  Algorithm name.
+   */
+  String getAlgorithm();
+
+
+  /**
+   * Sets the source of random data for cryptographic operations needing a
+   * random data source, such as generating a random salt value.
+   *
+   * @param  random  Provider of cryptographically strong random data.
+   */
+  void setRandomProvider(final SecureRandom random);
+
+
+  /**
+   * Gets random bytes from the random provider of this instance in the amount
+   * specified.
+   *
+   * @param  nBytes  Number of bytes of random data to retrieve.
+   *
+   * @return  Byte array of random data.
+   */
+  byte[] getRandomData(final int nBytes);
+
+}

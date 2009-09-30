@@ -5,57 +5,31 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.vt.middleware</groupId>
   <artifactId>vt-crypt</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <version>2.1-SNAPSHOT</version>
-  <name>VT Crypt Libraries</name>
+  <name>Root Module</name>
   <url>http://code.google.com/p/vt-middleware/wiki/vtcrypt</url>
+  
   <licenses>
     <license>
       <name>GNU Lesser General Public License</name>
       <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
     </license>
   </licenses>
+
   <scm>
     <connection>scm:svn:https://vt-middleware.googlecode.com/svn/vt-crypt/trunk</connection>
     <url>http://vt-middleware.googlecode.com/svn/vt-crypt/trunk</url>
   </scm>
 
+  <modules>
+    <module>vt-crypt-lib</module>
+    <module>maven-crypt-plugin</module>
+  </modules>
+
   <properties>
-    <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <testng.dir>src/test/testng</testng.dir>
     <assembly.dir>src/main/assembly</assembly.dir>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>bouncycastle</groupId>
-      <artifactId>bcprov-jdk15</artifactId>
-      <version>140</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.1.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ant</groupId>
-      <artifactId>ant</artifactId>
-      <version>1.7.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
-      <version>5.8</version>
-      <scope>test</scope>
-      <classifier>jdk15</classifier>
-    </dependency>
-  </dependencies>
 
   <build>
     <plugins>
@@ -69,7 +43,8 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/package-info</outputDirectory>              <resources>
+              <outputDirectory>${basedir}/target/package-info</outputDirectory>
+              <resources>
                 <resource>
                   <directory>${basedir}</directory>
                   <filtering>true</filtering>
@@ -114,91 +89,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <fork>true</fork>
-          <debug>true</debug>
-          <showDeprecation>true</showDeprecation>
-          <showWarnings>true</showWarnings>
-          <compilerArgument>-Xlint:unchecked</compilerArgument>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>${checkstyle.dir}/checkstyle_checks.xml</configLocation>
-          <headerLocation>${checkstyle.dir}/checkstyle_header</headerLocation>
-          <suppressionsLocation>${checkstyle.dir}/suppressions.xml</suppressionsLocation>
-          <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <failsOnError>true</failsOnError>
-        </configuration>
-        <executions>
-          <execution>
-            <id>checkstyle</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <bottom><![CDATA[<i>Copyright &#169; 2003-2009 Virginia Tech. All Rights Reserved.</i>]]></bottom>
-        </configuration>
-        <executions>
-          <execution>
-            <id>javadoc</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>source</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <appendAssemblyId>true</appendAssemblyId>
@@ -211,7 +101,7 @@
             <id>assembly</id>
             <phase>package</phase>
             <goals>
-              <goal>attached</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>
@@ -225,18 +115,21 @@
       </extension>
     </extensions>
   </build>
+
   <repositories>
     <repository>
       <id>vt-middleware.googlecode.com.repo</id>
       <url>http://vt-middleware.googlecode.com/svn/maven2</url>
     </repository>
   </repositories>
+
   <pluginRepositories>
     <pluginRepository>
       <id>vt-middleware.googlecode.com.repo</id>
       <url>http://vt-middleware.googlecode.com/svn/maven2</url>
     </pluginRepository>
   </pluginRepositories>
+
   <distributionManagement>
     <repository>
       <id>vt-middleware.googlecode.com.repo</id>
