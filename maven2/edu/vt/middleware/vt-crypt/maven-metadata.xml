@@ -11,4 +11,11 @@
     </versions>
     <lastUpdated>20090930160006</lastUpdated>
   </versioning>
+  <plugins>
+    <plugin>
+      <name>VT Crypt Maven Plugin</name>
+      <prefix>crypt</prefix>
+      <artifactId>maven-crypt-plugin</artifactId>
+    </plugin>
+  </plugins>
 </metadata>
