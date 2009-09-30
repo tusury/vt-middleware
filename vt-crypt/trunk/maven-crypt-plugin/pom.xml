@@ -55,36 +55,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <encoding>iso-8859-1</encoding>
-          <fork>true</fork>
-          <debug>true</debug>
-          <showDeprecation>true</showDeprecation>
-          <showWarnings>true</showWarnings>
-          <compilerArgument>-Xlint:unchecked</compilerArgument>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <configLocation>${checkstyle.dir}/checkstyle_checks.xml</configLocation>
-          <headerLocation>${checkstyle.dir}/checkstyle_header</headerLocation>
-          <suppressionsLocation>${checkstyle.dir}/suppressions.xml</suppressionsLocation>
-          <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <failsOnError>true</failsOnError>
-        </configuration>
-        <executions>
-          <execution>
-          	<id>checkstyle</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
