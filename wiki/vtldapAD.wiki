@@ -4,20 +4,22 @@
 <wiki:toc max_depth="2" />
 
 = Windows Active Directory =
-Active Directory provides a LDAPv3 compliant interface for performing operations. However users should be aware of several pitfalls that are unique to Active Directory. This document attempts to explain those pitfalls and detail how to overcome them with vt-ldap library.
+Active Directory provides a LDAPv3 compliant interface for performing operations. However users should be aware of several pitfalls that are unique to Active Directory. This document attempts to explain these pitfalls and how to overcome them when using the vt-ldap library.
 
 == Referrals ==
-JNDI provides three ways in which to handle LDAP referrals: 'ignore', 'follow', and 'throw'. The way in which you configure this setting will determine how your search operations behave. Note that Active Directory will typically use referrals for any search bases that reside wholly in the domain component. e.g. dc=mydomain,dc=org.
+JNDI provides three ways in which to handle LDAP referrals: 'ignore', 'follow', and 'throw'. The way in which you configure this setting will determine how your search operations behave. Note that Active Directory will typically use referrals for any search bases that access domain DNS objects at the root level. e.g. dc=mydomain,dc=org.
 
 === Ignoring Referrals ===
 Set the property: _edu.vt.middleware.ldap.referral=ignore_<br/>
-The is the default setting, if you don't specify a value this is the behavior you will experience. Using this value causes JNDI to invoke the [http://www.faqs.org/rfcs/rfc3296.html Manage Referral] LDAP control which provides a mechanism to tell the LDAP server to return referral entries as ordinary entries. Active Directory does not support this control which results in a {{{javax.naming.PartialResultException: Unprocessed Continuation Reference(s)}}} when the search results are read by the client.<br/><br/>
+The is the default setting, if you don't specify a value this is the behavior you will experience. Using this value causes JNDI to invoke the [http://www.faqs.org/rfcs/rfc3296.html Manage Referral] LDAP control which provides a mechanism to tell the LDAP server to return referral entries as ordinary entries. Active Directory does not support this control which results in a {{{javax.naming.PartialResultException: Unprocessed Continuation Reference(s)}}} when the search results are read by the client if referrals were encountered.<br/><br/>
 
 To work around this issue you can set: 
 {{{
-edu.vt.middleware.ldap.handlerIgnoreExceptions=javax.naming.LimitExceededExcepiton,javax.naming.PartialResultException
+edu.vt.middleware.ldap.handlerIgnoreExceptions=javax.naming.LimitExceededException,javax.naming.PartialResultException
 }}}
-This will will instruct the search result handler to ignore exceptions of type {{{LimitExceededException}}} and {{{PartialResultException}}}.
+This will will instruct the search result handler to ignore exceptions of type {{{LimitExceededException}}} and {{{PartialResultException}}}.<br/><br/>
+
+<insert comments here with definitive answer on whether AD always returns referrals last/>
 
 === Following Referrals ===
 Set the property: _edu.vt.middleware.ldap.referral=follow_<br/>
@@ -25,11 +27,11 @@ If you are confident that all the referrals returned by the Active Directory can
 
 === Throwing Referrals ===
 Set the property: _edu.vt.middleware.ldap.referral=throw_<br/>
-Using this option will result in {{{org.sun.jndi.LdapReferralException: Continuation Reference}}} being thrown when the search results are read. This option exists to allow you to decide whether to follow or ignore each referral. In order to use this option you will need to implement a custom [vtldapHandlers search result handler] to process the results as you see fit.
+Using this option will result in a {{{org.sun.jndi.LdapReferralException: Continuation Reference}}} being thrown when the search results are read. This option exists to allow you to decide whether to follow or ignore each referral. In order to use this option you will need to implement a custom [vtldapHandlers search result handler] to process the results as you see fit.
 
 === Global Catalog ===
 The Global Catalog enables searching for Active Directory objects in any domain in the forest without the need for subordinate referrals.
-Because the Global Catalog contains only a subset of the attributes of an object, this solution is viable only if the attributes requested for the search results are stored in the Global Catalog. (Note the GC is accessible on port 3268, not the standard LDAP ports of 389/636.)
+Because the Global Catalog contains only a subset of the attributes of an object, this solution is viable only if the attributes requested for the search results are stored in the Global Catalog. (Note the GC is accessible on port 3268/3269, not the standard LDAP ports of 389/636.)
 
 == Binary Attributes ==
 Some attributes in the Active Directory may be binary and need to be declared as such when they are retrieved.<br/><br/>
@@ -38,4 +40,4 @@ To work around this issue you can set:
 {{{
 edu.vt.middleware.ldap.binaryAttributes=objectSid objectGUID
 }}}
-This will allow you to properly retrieve these attribute as byte arrays.
+This will allow you to properly retrieve these attributes as byte arrays.
