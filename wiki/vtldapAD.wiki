@@ -4,14 +4,14 @@
 <wiki:toc max_depth="2" />
 
 = Windows Active Directory =
-Active Directory provides a LDAPv3 compliant interface for performing operations. However users should be aware of several pitfalls that are unique to Active Directory. This document attempts to explain these pitfalls and how to overcome them when using the vt-ldap library.
+Active Directory provides an LDAPv3 compliant interface for performing operations. However, users should be aware of several pitfalls that are unique to Active Directory. This document attempts to explain these pitfalls and how to overcome them when using the vt-ldap library.
 
 == Referrals ==
 JNDI provides three ways in which to handle LDAP referrals: 'ignore', 'follow', and 'throw'. The way in which you configure this setting will determine how your search operations behave. Note that Active Directory will typically use referrals for any search bases that access domain DNS objects at the root level. e.g. dc=mydomain,dc=org.
 
 === Ignoring Referrals ===
 Set the property: _edu.vt.middleware.ldap.referral=ignore_<br/>
-The is the default setting, if you don't specify a value this is the behavior you will experience. Using this value causes JNDI to invoke the [http://www.faqs.org/rfcs/rfc3296.html Manage Referral] LDAP control which provides a mechanism to tell the LDAP server to return referral entries as ordinary entries. Active Directory does not support this control which results in a {{{javax.naming.PartialResultException: Unprocessed Continuation Reference(s)}}} when the search results are read by the client if referrals were encountered. (Note that all other settings will not send the {{{Manage Referral}}} control.)<br/><br/>
+The is the default setting, if you don't specify a value this is the behavior you will experience. Using this value causes JNDI to invoke the [http://www.faqs.org/rfcs/rfc3296.html ManageDsaIT] LDAP control which provides a mechanism to tell the LDAP server to return referral entries as ordinary entries. Active Directory does not support this control which results in a {{{javax.naming.PartialResultException: Unprocessed Continuation Reference(s)}}} when the search results are read by the client if referrals were encountered. (Note that all other settings will not send the {{{Manage Referral}}} control.)<br/><br/>
 
   * to ignore the partial result exceptions you can set:
 {{{
