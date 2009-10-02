@@ -14,7 +14,6 @@
 package edu.vt.middleware.crypt.maven;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 
 import edu.vt.middleware.crypt.CryptException;
@@ -52,7 +51,7 @@ public class DecryptMojo extends AbstractCryptMojo
    * @parameter expression="${property}"
    * @required
    */
-  protected List<String> properties;
+  protected String[] properties;
 
   /** Holds plaintext after decryption */
   private String plainText;
