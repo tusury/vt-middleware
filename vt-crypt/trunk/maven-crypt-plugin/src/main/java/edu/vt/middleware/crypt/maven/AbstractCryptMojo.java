@@ -95,7 +95,7 @@ public abstract class AbstractCryptMojo extends AbstractMojo
    */
   protected void logSettings()
   {
-    getLog().info("Encryption Settings:");
+    getLog().info("maven-crypt-plugin settings:");
     getLog().info("keyFile=" + keyFile);
     getLog().info("algorithm=" + algorithm);
     getLog().info("mode=" + mode);

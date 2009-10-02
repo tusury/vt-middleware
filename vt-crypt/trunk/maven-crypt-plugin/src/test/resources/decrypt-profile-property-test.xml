@@ -10,8 +10,10 @@
           <iv>63366164343061393663356661353062</iv>
           <mode>CBC</mode>
           <padding>PKCS5Padding</padding>
-          <cipherTextProperty>password.crypt</cipherTextProperty>
-          <plainTextProperty>password.plain</plainTextProperty>
+          <properties>
+            <property>test.password.1</property>
+            <property>test.password.2</property>
+          </properties>
         </configuration>
       </plugin>
     </plugins>
@@ -23,12 +25,10 @@
         <activeByDefault/>
       </activation>
       <properties>
-        <password.crypt>Hpvc/gZ/1DGqG0dzIeNlvw==</password.crypt>
+        <test.password.1>Hpvc/gZ/1DGqG0dzIeNlvw==</test.password.1>
+        <test.password.2>5J/RKd3EGBgqmxqWlNucjA==</test.password.2>
       </properties>
     </profile>
   </profiles>
-  <properties>
-    <password.plain></password.plain>
-  </properties>
 </project>
 

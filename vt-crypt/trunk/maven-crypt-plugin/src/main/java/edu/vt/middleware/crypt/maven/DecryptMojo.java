@@ -14,6 +14,7 @@
 package edu.vt.middleware.crypt.maven;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import edu.vt.middleware.crypt.CryptException;
@@ -45,21 +46,13 @@ public class DecryptMojo extends AbstractCryptMojo
   protected MavenProject project;
 
   /**
-   * The name of the property containing the base-64-encoded cipher
-   * text to decrypt.  The property value will be set to the resulting
+   * The names of properties whose values are base-64-encoded ciphertext
+   * to be decrypted.  The property value will be set to the resulting
    * plain text after decryption.
-   * @parameter expression="${cipherTextProperty}"
+   * @parameter expression="${property}"
    * @required
    */
-  protected String cipherTextProperty;
-
-  /**
-   * The name of the property that will receive the resulting decrypted
-   * plaintext after decryption.
-   * @parameter expression="${plainTextProperty}"
-   * @required
-   */
-  protected String plainTextProperty;
+  protected List<String> properties;
 
   /** Holds plaintext after decryption */
   private String plainText;
@@ -80,37 +73,40 @@ public class DecryptMojo extends AbstractCryptMojo
     } catch (CryptException crex) {
       throw new MojoExecutionException("Invalid decryption key file.", crex);
     }
-    final Properties srcProps = getProps(cipherTextProperty);
-    if (srcProps == null) {
-      throw new MojoExecutionException(
-        String.format("Property \"%s\" not found in project.",
-          cipherTextProperty));
-    }
-    final Properties dstProps = getProps(plainTextProperty);
-    if (dstProps == null) {
-      throw new MojoExecutionException(
-        String.format("Property \"%s\" not found in project.",
-            plainTextProperty));
-    }
     logSettings();
-    final String cipherText = srcProps.getProperty(cipherTextProperty);
     try {
-      plainText = new String(cipher.decrypt(cipherText, b64Converter));
-      dstProps.setProperty(plainTextProperty, plainText);
+      for (String property : properties) {
+        decrypt(cipher, property);
+      }
     } catch (CryptException crex) {
       throw new MojoExecutionException("Decryption error.", crex);
     }
   }
 
+
   /**
-   * Gets the plaintext that resulted from the most recent decryption.
-   * @return Plaintext result of last decryption.
+   * Decrypts the base-64-encoded ciphertext in the given property and
+   * sets the property to resulting plaintext.
    *
+   * @param  cipher  Decryption cipher.
+   * @param  property  Name of property whose value will be decrypted.
+   *
+   * @throws  MojoExecutionException  On configuration errors.
+   * @throws  CryptException  On decryption errors.
    */
-  public String getPlainText()
+  private void decrypt(final SymmetricAlgorithm cipher, final String property)
+    throws CryptException, MojoExecutionException
   {
-    return plainText;
+    final Properties props = getProps(property);
+    if (props == null) {
+      throw new MojoExecutionException(
+        String.format("Property \"%s\" not found in project.", property));
+    }
+    plainText = new String(
+        cipher.decrypt(props.getProperty(property), b64Converter));
+    props.setProperty(property, plainText);
   }
+
 
   /**
    * Looks for a set of properties in the project containing the given key.
@@ -120,18 +116,18 @@ public class DecryptMojo extends AbstractCryptMojo
    */
   private Properties getProps(final String key)
   {
-    Properties properties = null;
+    Properties props = null;
     if (project.getProperties().containsKey(key)) {
-      properties = project.getProperties();
+      props = project.getProperties();
     } else {
       for (Object o : project.getModel().getProfiles()) {
         final Profile p = (Profile) o;
         if (p.getProperties().containsKey(key)) {
-          properties = p.getProperties();
+          props = p.getProperties();
           break;
         }
       }
     }
-    return properties;
+    return props;
   }
 }
