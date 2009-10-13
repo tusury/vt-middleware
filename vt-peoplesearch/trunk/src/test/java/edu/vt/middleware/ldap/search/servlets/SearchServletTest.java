@@ -20,6 +20,7 @@ import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import edu.vt.middleware.ldap.Ldap;
+import edu.vt.middleware.ldap.SearchFilter;
 import edu.vt.middleware.ldap.bean.LdapEntry;
 import edu.vt.middleware.ldap.dsml.DsmlResult;
 import edu.vt.middleware.ldap.search.TestUtil;
@@ -70,8 +71,8 @@ public class SearchServletTest
     ldap = TestUtil.createLdap();
     while (
       !ldap.compare(
-          testLdapEntry.getDn(),
-          testLdapEntry.getDn().split(",")[0])) {
+        testLdapEntry.getDn(),
+        new SearchFilter(testLdapEntry.getDn().split(",")[0]))) {
       Thread.sleep(100);
     }
     ldap.close();

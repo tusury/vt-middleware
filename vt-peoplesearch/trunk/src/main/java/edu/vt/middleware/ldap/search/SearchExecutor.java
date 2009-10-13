@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import javax.naming.NamingException;
 import javax.naming.directory.SearchResult;
 import edu.vt.middleware.ldap.Ldap;
@@ -425,7 +426,7 @@ public class SearchExecutor
             if (qi[i - 1] != null) {
               query = query.replaceAll(
                 regexInitial.replaceAll("1", Integer.toString(i)),
-                qi[i - 1]);
+                Matcher.quoteReplacement(qi[i - 1]));
             }
           }
         }
@@ -436,7 +437,7 @@ public class SearchExecutor
           if (qp[i - 1] != null) {
             query = query.replaceAll(
               regexQuery.replaceAll("1", Integer.toString(i)),
-              qp[i - 1]);
+              Matcher.quoteReplacement(qp[i - 1]));
           }
         }
       }

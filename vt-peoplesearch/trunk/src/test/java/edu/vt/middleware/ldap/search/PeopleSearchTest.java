@@ -16,6 +16,7 @@ package edu.vt.middleware.ldap.search;
 import java.util.HashMap;
 import java.util.Map;
 import edu.vt.middleware.ldap.Ldap;
+import edu.vt.middleware.ldap.SearchFilter;
 import edu.vt.middleware.ldap.bean.LdapEntry;
 import edu.vt.middleware.ldap.bean.LdapResult;
 import edu.vt.middleware.ldap.search.PeopleSearch.OutputFormat;
@@ -195,7 +196,7 @@ public class PeopleSearchTest
       while (
         !ldap.compare(
             e.getValue()[0].getDn(),
-            e.getValue()[0].getDn().split(",")[0])) {
+            new SearchFilter(e.getValue()[0].getDn().split(",")[0]))) {
         Thread.sleep(100);
       }
     }
@@ -376,6 +377,20 @@ public class PeopleSearchTest
     AssertJUnit.assertEquals(
       result,
       TestUtil.convertLdifToResult(searchResult));
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"searchtest"})
+  public void searchIllegalCharacters()
+    throws Exception
+  {
+    final Query q = new Query();
+    q.setRawQuery("dfish$r");
+
+    this.search.searchToString(q, OutputFormat.LDIF);
   }
 
 
