@@ -388,7 +388,7 @@ public class SearchExecutor
           if (LOG.isErrorEnabled()) {
             LOG.error("Error occured during post processing", e);
           }
-          throw new PeopleSearchException(e.getMessage());
+          throw new PeopleSearchException(e);
         }
       }
     }

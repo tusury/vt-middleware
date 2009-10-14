@@ -13,6 +13,7 @@
 */
 package edu.vt.middleware.ldap.search;
 
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import edu.vt.middleware.ldap.Ldap;
@@ -371,12 +372,11 @@ public class PeopleSearchTest
     q.setRawQuery(query);
     q.setQueryAttributes(returnAttrs.split("\\|"));
 
-    final String searchResult = this.search.searchToString(
-      q,
-      OutputFormat.LDIF);
+    final StringWriter writer = new StringWriter();
+    this.search.search(q, OutputFormat.LDIF, writer);
     AssertJUnit.assertEquals(
       result,
-      TestUtil.convertLdifToResult(searchResult));
+      TestUtil.convertLdifToResult(writer.toString()));
   }
 
 
@@ -390,7 +390,7 @@ public class PeopleSearchTest
     final Query q = new Query();
     q.setRawQuery("dfish$r");
 
-    this.search.searchToString(q, OutputFormat.LDIF);
+    this.search.search(q, OutputFormat.LDIF, new StringWriter());
   }
 
 
@@ -453,11 +453,10 @@ public class PeopleSearchTest
     q.setQueryAttributes(returnAttrs.split("\\|"));
     q.setSaslAuthorizationId(saslAuthz);
 
-    final String searchResult = this.saslSearch.searchToString(
-      q,
-      OutputFormat.LDIF);
+    final StringWriter writer = new StringWriter();
+    this.saslSearch.search(q, OutputFormat.LDIF, writer);
     AssertJUnit.assertEquals(
       result,
-      TestUtil.convertLdifToResult(searchResult));
+      TestUtil.convertLdifToResult(writer.toString()));
   }
 }

@@ -13,7 +13,9 @@
 */
 package edu.vt.middleware.ldap.search;
 
-import java.io.OutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -174,69 +176,44 @@ public class PeopleSearch
    *
    * @param  query  <code>Query</code> to search for
    * @param  format  <code>OutputFormat</code> to return
-   * @param  out  <code>OutputStream</code> to write to
+   * @param  writer  <code>Writer</code> to write to
    *
    * @throws  PeopleSearchException  if an error occurs while searching
    */
   public void search(
     final Query query,
     final OutputFormat format,
-    final OutputStream out)
+    final Writer writer)
     throws PeopleSearchException
   {
     if (format == OutputFormat.DSMLV2) {
       try {
-        this.dsmlv2.outputDsml(this.doSearch(query), out);
+        this.dsmlv2.outputDsml(this.doSearch(query), writer);
       } catch (Exception e) {
         if (LOG.isErrorEnabled()) {
           LOG.error("Error outputting DSML", e);
         }
-        throw new PeopleSearchException(e.getMessage());
+        throw new PeopleSearchException(e);
       }
     } else if (format == OutputFormat.LDIF) {
       try {
-        this.ldif.outputLdif(this.doSearch(query), out);
+        this.ldif.outputLdif(this.doSearch(query), writer);
       } catch (Exception e) {
         if (LOG.isErrorEnabled()) {
           LOG.error("Error outputting LDIF", e);
         }
-        throw new PeopleSearchException(e.getMessage());
+        throw new PeopleSearchException(e);
       }
     } else {
       try {
-        this.dsmlv1.outputDsml(this.doSearch(query), out);
+        this.dsmlv1.outputDsml(this.doSearch(query), writer);
       } catch (Exception e) {
         if (LOG.isErrorEnabled()) {
           LOG.error("Error outputting DSML", e);
         }
-        throw new PeopleSearchException(e.getMessage());
+        throw new PeopleSearchException(e);
       }
     }
-  }
-
-
-  /**
-   * This will perform a LDAP search with the supplied <code>Query</code>.
-   *
-   * @param  query  <code>Query</code> to search for
-   * @param  format  <code>OutputFormat</code> to return
-   *
-   * @return  <code>String</code> of results
-   *
-   * @throws  PeopleSearchException  if an error occurs while searching
-   */
-  public String searchToString(final Query query, final OutputFormat format)
-    throws PeopleSearchException
-  {
-    final String results;
-    if (format == OutputFormat.DSMLV2) {
-      results = this.dsmlv2.outputDsmlToString(this.doSearch(query));
-    } else if (format == OutputFormat.LDIF) {
-      results = this.ldif.createLdif(this.doSearch(query));
-    } else {
-      results = this.dsmlv1.outputDsmlToString(this.doSearch(query));
-    }
-    return results;
   }
 
 
@@ -271,7 +248,10 @@ public class PeopleSearch
       if (!attrs.isEmpty()) {
         query.setQueryAttributes(attrs.toArray(new String[0]));
       }
-      ps.search(query, OutputFormat.LDIF, System.out);
+      ps.search(
+        query,
+        OutputFormat.LDIF,
+        new BufferedWriter(new OutputStreamWriter(System.out)));
 
     } catch (ArrayIndexOutOfBoundsException e) {
       System.out.println(

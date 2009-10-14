@@ -13,6 +13,9 @@
 */
 package edu.vt.middleware.ldap.search.servlets;
 
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 import javax.servlet.ServletConfig;
@@ -223,7 +226,10 @@ public final class SearchServlet extends HttpServlet
       if (LOG.isInfoEnabled()) {
         LOG.info("Performing search with: " + query);
       }
-      this.search.search(query, format, response.getOutputStream());
+      this.search.search(
+        query,
+        format,
+        new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
     } catch (PeopleSearchException e) {
       if (LOG.isErrorEnabled()) {
         LOG.error("Error performing search", e);
