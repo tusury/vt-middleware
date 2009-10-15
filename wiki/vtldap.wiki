@@ -111,7 +111,7 @@ Create a new soft limit pool, accepting all the default configuration properties
 DefaultLdapFactory factory = new DefaultLdapFactory(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
-pool.initialize()
+pool.initialize();
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
