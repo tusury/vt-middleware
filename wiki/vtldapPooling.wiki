@@ -35,7 +35,7 @@ DefaultLdapFactory factory = new DefaultLdapFactory(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 BlockingLdapPool pool = new BlockingLdapPool(factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
-pool.initialize()
+pool.initialize();
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
@@ -67,7 +67,7 @@ DefaultLdapFactory factory = new DefaultLdapFactory(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
-pool.initialize()
+pool.initialize();
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
@@ -99,7 +99,7 @@ This implementation should be used when you want some control over the maximum n
 DefaultLdapFactory factory = new DefaultLdapFactory(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 SharedLdapPool pool = new SharedLdapPool(factory);
-pool.initialize()
+pool.initialize();
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
@@ -135,7 +135,7 @@ factory.setLdapActivator(new ConnectLdapActivator());
 factory.setLdapPassivator(new CloseLdapPassivator());
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
-pool.initialize()
+pool.initialize();
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
@@ -178,7 +178,7 @@ factory.setLdapValidator(
     "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
-pool.initialize()
+pool.initialize();
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
@@ -215,7 +215,7 @@ factory.setLdapValidator(
   new CompareLdapValidator(
     "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
-pool.initialize()
+pool.initialize();
 Ldap ldap = null;
 try {
   ldap = pool.checkOut();
