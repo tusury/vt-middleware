@@ -52,7 +52,7 @@ if (ldap.compare("uid=818037,ou=People,dc=vt,dc=edu", "mail=dfisher@vt.edu")) {
   System.out.println("Compare failed");
 }
 }}}
-_Note that in order to perform a real LDAP compare operation, your filter must be of the form '(name=value)'. Any other type of filter, using expressions or wildcards, will results in an object level ldap search. This will produce the desired result, but implementers examining their LDAP logs may notice this discrepancy.-
+_Note that in order to perform a real LDAP compare operation, your filter must be of the form '(name=value)'. Any other type of filter, using expressions or wildcards, will results in an object level ldap search. This will produce the desired result, but implementers examining their LDAP logs may notice this discrepancy._
 
 === Subtree search ===
 Perform a search for 'sn=Fisher' and output all attributes in LDIF format to System.out.
