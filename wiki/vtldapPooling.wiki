@@ -172,7 +172,7 @@ The following is an example of validating an object by using a compare operation
 LdapPoolConfig config = new LdapPoolConfig();
 config.setValidateOnCheckOut(true);
 DefaultLdapFactory factory = new DefaultLdapFactory(
-  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 factory.setLdapValidator(
   new CompareLdapValidator(
     "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
@@ -210,7 +210,7 @@ By performing validation periodically rather than for every checkIn/checkOut you
 LdapPoolConfig config = new LdapPoolConfig();
 config.setValidatePeriodically(true); // by default validate the pool every 30 min, if idle
 DefaultLdapFactory factory = new DefaultLdapFactory(
-  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
+  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 factory.setLdapValidator(
   new CompareLdapValidator(
     "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
