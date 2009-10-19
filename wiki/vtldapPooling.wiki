@@ -169,14 +169,14 @@ Validators provide an easy hook for checking whether an object is still fit to r
 Objects that fail validation are evicted from the pool.<br/>
 The following is an example of validating an object by using a compare operation.<br/>
 {{{
-LdapPoolConfig config = new LdapPoolConfig(
-  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
+LdapPoolConfig config = new LdapPoolConfig();
 config.setValidateOnCheckOut(true);
-DefaultLdapFactory factory = new DefaultLdapFactory(config);
+DefaultLdapFactory factory = new DefaultLdapFactory(
+  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
 factory.setLdapValidator(
   new CompareLdapValidator(
     "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
-SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
+SoftLimitLdapPool pool = new SoftLimitLdapPool(config, factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
 pool.initialize();
 Ldap ldap = null;
@@ -207,14 +207,14 @@ If no validation is configured, it will simply ensure your pool stays at it's mi
 However, you can also configure validation to occur when the pool is idle and not during check outs and check ins.<br/>
 By performing validation periodically rather than for every checkIn/checkOut you will improve performance during peak periods of load.
 {{{
-LdapPoolConfig config = new LdapConfig(
-  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
+LdapPoolConfig config = new LdapPoolConfig();
 config.setValidatePeriodically(true); // by default validate the pool every 30 min, if idle
-DefaultLdapFactory factory = new DefaultLdapFactory(config);
+DefaultLdapFactory factory = new DefaultLdapFactory(
+  "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
 factory.setLdapValidator(
   new CompareLdapValidator(
     "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
-SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
+SoftLimitLdapPool pool = new SoftLimitLdapPool(config, factory);
 pool.initialize();
 Ldap ldap = null;
 try {
