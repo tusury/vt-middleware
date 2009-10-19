@@ -1,5 +1,6 @@
 #labels Phase-Implementation,versioning,release
 = Release Procedures =
+  # Verify if any serializable classes need their serialVersionUid updated
   # Run jalopy source clean up on both the main and test source trees. Commit any changes.
   # Update any info related files, such as, README, LICENSE, NOTICE, etc.
   # Verify the maven package command succeeds in trunk.
