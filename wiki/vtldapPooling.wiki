@@ -169,7 +169,7 @@ Validators provide an easy hook for checking whether an object is still fit to r
 Objects that fail validation are evicted from the pool.<br/>
 The following is an example of validating an object by using a compare operation.<br/>
 {{{
-LdapPoolConfig config = new LdapConfig(
+LdapPoolConfig config = new LdapPoolConfig(
   "ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
 config.setValidateOnCheckOut(true);
 DefaultLdapFactory factory = new DefaultLdapFactory(config);
