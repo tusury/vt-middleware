@@ -4,10 +4,10 @@
 
 = Version 2.1-SNAPSHOT =
   * Updated LGPL from version 2.1 to 3.0
-  * Fix for [http://code.google.com/p/vt-middleware/issues/detail?id=4 Issue 4], keystore incompatibility with keytool.
-  * Add API for reading X.509 certificate extended attributes, [http://code.google.com/p/vt-middleware/issues/detail?id=1].
-  * Add capability to format X.509 subject and issuer DNs, [http://code.google.com/p/vt-middleware/issues/detail?id=18].
-  * Refactor !X509DnUtil into DNUtils to leverage new DN formatting classes and to operate on [http://java.sun.com/j2se/1.5.0/docs/api/javax/security/auth/x500/X500Principal.html X500Principal] instances instead of [http://java.sun.com/j2se/1.5.0/docs/api/java/security/cert/X509Certificate.html X509Certificate].
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=1 vt-crypt-1] - Create API for Reading X.509v3 Certificate Extended Properties.
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=4 vt-crypt-4] - Keystore Incompatibility with keytool.
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=18 vt-crypt-18] - X.509 Certificate DN Formatter.
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=33 vt-crypt-33] - Add Support for Property Encryption/Decryption Under Maven
 
 = Version 2.0 =
 Initial google code release.
