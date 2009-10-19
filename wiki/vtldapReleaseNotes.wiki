@@ -3,7 +3,11 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.2-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=38 vtldap-38] - Updated JAAS principals to include any ldap attributes requested as roles
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=37 vtldap-37] - Added support for Authorization handlers as part of the authentication process
   * [http://code.google.com/p/vt-middleware/issues/detail?id=14 vtldap-14] - JAAS modules now default to return no attributes as roles. Use '`*`' to return all attributes.
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=35 vtldap-35] - Refactored Ldif and Dsml APIs for consistency
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=34 vtldap-34] - Added support for parsing LDIF files
   * [http://code.google.com/p/vt-middleware/issues/detail?id=32 vtldap-32] - Added !MergeSearchResultHandler
   * [http://code.google.com/p/vt-middleware/issues/detail?id=31 vtldap-31] - Added ability to ignore any specific naming exceptions encountered by a handler
   * [http://code.google.com/p/vt-middleware/issues/detail?id=30 vtldap-30] - Moved !LdapUtil.searchAttributesRecursive() to !RecursiveAttributeHandler
