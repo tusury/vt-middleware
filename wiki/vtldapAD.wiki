@@ -61,7 +61,7 @@ This will allow you to properly retrieve these attributes as byte arrays.
 == Range Attributes ==
 Active Directory may not return all the values of an attribute, electing instead to provide the client with a range of attribute values. This practice is documented in an expired RFC: [http://www.tkk.fi/cc/docs/kerberos/draft-kashi-incremental-00.txt Incremental Retrieval of Multi-valued Properties]. For instance, requests for the `member` attribute may return a result like: `member;Range=0-1000`. The client is then expected to request additional attribute values of the form `member;Range=1001-2000` and so forth until all values have been retrieved.
 
-=== !RangleResultHandler ===
+=== !RangleSearchResultHandler ===
 A search result handler can be used to process these attribute values.
 {{{
 import java.util.regex.Matcher;
