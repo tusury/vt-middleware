@@ -57,3 +57,105 @@ To work around this issue you can set:
 edu.vt.middleware.ldap.binaryAttributes=objectSid objectGUID
 }}}
 This will allow you to properly retrieve these attributes as byte arrays.
+
+== Range Attributes ==
+Active Directory may not return all the values of an attribute, electing instead to provide the client with a range of attribute values. This practice is documented in an expired RFC: [http://www.tkk.fi/cc/docs/kerberos/draft-kashi-incremental-00.txt Incremental Retrieval of Multi-valued Properties]. For instance, requests for the `member` attribute may return a result like: `member;Range=0-1000`. The client is then expected to request additional attribute values of the form `member;Range=1001-2000` and so forth until all values have been retrieved.
+
+=== !RangleResultHandler ===
+A search result handler can be used to process these attribute values.
+{{{
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.SearchResult;
+import edu.vt.middleware.ldap.Ldap;
+import edu.vt.middleware.ldap.handler.CopySearchResultHandler;
+import edu.vt.middleware.ldap.handler.SearchCriteria;
+
+public class RangeSearchResultHandler extends CopySearchResultHandler
+{
+
+  /** The string expression matching the attribute ID. */
+  private static final String RANGE_PATTERN_STRING =
+    "^(.*?);range=([\\d\\*]+)-([\\d\\*]+)";
+
+  /** The attribute ID pattern. */
+  private static final Pattern PATTERN = Pattern.compile(RANGE_PATTERN_STRING);
+
+  /** Ldap object for searching. */
+  private Ldap ldap;
+
+
+  /** Constructor. */
+  public RangeSearchResultHandler(Ldap ldap)
+  {
+    this.ldap = ldap;
+  }
+
+
+  /** {@inheritDoc} */
+  protected Attributes processAttributes(SearchCriteria sc, SearchResult sr)
+    throws NamingException
+  {
+    Attributes attrs = sr.getAttributes();
+    Attributes newAttrs = new BasicAttributes(attrs.isCaseIgnored());
+    NamingEnumeration<? extends Attribute> en = attrs.getAll();
+    while (en.hasMore()) {
+      Attribute attr = en.next();
+
+      // does attribute match the range pattern ?
+      Matcher matcher = PATTERN.matcher(attr.getID());
+
+      // if no match, just store the attribute
+      if (!matcher.find()) {
+        newAttrs.put(attr);
+      } else {
+        // the attribute name without the range syntax
+        String attributeNameWithoutRange = matcher.group(1);
+
+        // return an attribute whose ID has the range syntax removed
+        Attribute newAttr = new BasicAttribute(
+          attributeNameWithoutRange, attr.isOrdered());
+        newAttrs.put(newAttr);
+
+        // copy the values
+        NamingEnumeration<?> e = attr.getAll();
+        while (e.hasMore()) {
+          newAttr.add(e.next());
+        }
+
+        // if the attribute ID ends with * we're done, otherwise perform additional searches
+        while (attr != null && !attr.getID().endsWith("*")) {
+          // determine next attribute ID
+          int end = Integer.parseInt(matcher.group(3));
+          String nextAttribute = attributeNameWithoutRange + ";range=" +
+            Integer.toString(end + 1) + "-*";
+
+          Attributes attributes = this.ldap.getAttributes(
+            sr.getName(), new String[] { nextAttribute });
+          attr = attributes.get(nextAttribute);
+
+          // copy the values
+          if (attr != null) {
+            e = attr.getAll();
+            while (e.hasMore()) {
+              newAttr.add(e.next());
+            }
+          }
+        }
+      }
+    }
+    return newAttrs;
+  }
+}
+}}}
+
+=== Useful Links ===
+  * [http://www.openldap.org/its/index.cgi?findid=5472]
+  * [http://www.openldap.org/lists/ietf-ldapbis/200404/msg00047.html]
+  * [http://www.openldap.org/lists/openldap-bugs/200406/msg00108.html]
