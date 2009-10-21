@@ -3,7 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.2-SNAPSHOT =
-  * [http://code.google.com/p/vt-middleware/issues/detail?id=40 vtldap-40] - Exposed search methods that accept SearchControls
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=40 vtldap-40] - Exposed search methods that accept !SearchControls
   * [http://code.google.com/p/vt-middleware/issues/detail?id=39 vtldap-39] - Added !PagedResultsControl implementation
   * [http://code.google.com/p/vt-middleware/issues/detail?id=38 vtldap-38] - Updated JAAS principals to include any ldap attributes requested as roles
   * [http://code.google.com/p/vt-middleware/issues/detail?id=37 vtldap-37] - Added support for Authorization handlers as part of the authentication process
