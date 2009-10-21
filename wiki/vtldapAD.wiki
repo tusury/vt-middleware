@@ -62,10 +62,11 @@ This will allow you to properly retrieve these attributes as byte arrays.
 Active Directory may not return all the values of an attribute, electing instead to provide the client with a range of attribute values. This practice is documented in an expired RFC: [http://www.tkk.fi/cc/docs/kerberos/draft-kashi-incremental-00.txt Incremental Retrieval of Multi-valued Properties]. For instance, requests for the `member` attribute may return a result like: `member;Range=0-1000`. The client is then expected to request additional attribute values of the form `member;Range=1001-2000` and so forth until all values have been retrieved.
 
 === !RangleSearchResultHandler ===
-A search result handler can be used to process these attribute values.
+A [vtldapHandlers search result handler] can be used to process these attribute values.
 {{{
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -73,16 +74,19 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.SearchResult;
+
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.handler.CopySearchResultHandler;
 import edu.vt.middleware.ldap.handler.SearchCriteria;
 
-public class RangeSearchResultHandler extends CopySearchResultHandler
-{
+/**
+ * The <code>RangeSearchResultHandler</code> rewrites attributes returned from Active
+ * Directory to include all values.
+ */
+public class RangeSearchResultHandler extends CopySearchResultHandler {
 
   /** The string expression matching the attribute ID. */
-  private static final String RANGE_PATTERN_STRING =
-    "^(.*?);range=([\\d\\*]+)-([\\d\\*]+)";
+  private static final String RANGE_PATTERN_STRING = "^(.*?);range=([\\d\\*]+)-([\\d\\*]+)";
 
   /** The attribute ID pattern. */
   private static final Pattern PATTERN = Pattern.compile(RANGE_PATTERN_STRING);
@@ -90,70 +94,76 @@ public class RangeSearchResultHandler extends CopySearchResultHandler
   /** Ldap object for searching. */
   private Ldap ldap;
 
-
-  /** Constructor. */
-  public RangeSearchResultHandler(Ldap ldap)
-  {
+  public RangeSearchResultHandler(final Ldap ldap) {
     this.ldap = ldap;
   }
 
-
-  /** {@inheritDoc} */
-  protected Attributes processAttributes(SearchCriteria sc, SearchResult sr)
-    throws NamingException
-  {
+  protected Attributes processAttributes(final SearchCriteria sc, final SearchResult sr) throws NamingException {
     Attributes attrs = sr.getAttributes();
     Attributes newAttrs = new BasicAttributes(attrs.isCaseIgnored());
     NamingEnumeration<? extends Attribute> en = attrs.getAll();
     while (en.hasMore()) {
       Attribute attr = en.next();
 
-      // does attribute match the range pattern ?
+      // Match attribute ID against the pattern ?
       Matcher matcher = PATTERN.matcher(attr.getID());
 
-      // if no match, just store the attribute
+      // If the attribute ID does not match the pattern, just copy the attribute
       if (!matcher.find()) {
         newAttrs.put(attr);
       } else {
-        // the attribute name without the range syntax
-        String attributeNameWithoutRange = matcher.group(1);
+        // Determine the attribute name without the range syntax
+        final String attributeNameWithoutRange = matcher.group(1);
+        this.logger.debug("Original attribute ID '" + attr.getID() + "' new '" + attributeNameWithoutRange + "'");
 
-        // return an attribute whose ID has the range syntax removed
-        Attribute newAttr = new BasicAttribute(
-          attributeNameWithoutRange, attr.isOrdered());
-        newAttrs.put(newAttr);
+        // Create or update the attribute whose ID has the range syntax removed
+        Attribute newAttr = attrs.get(attributeNameWithoutRange);
+        if (newAttr == null) {
+          newAttr = new BasicAttribute(attributeNameWithoutRange, attr.isOrdered());
+          newAttrs.put(newAttr);
+        }
 
-        // copy the values
+        // Copy values
         NamingEnumeration<?> e = attr.getAll();
         while (e.hasMore()) {
           newAttr.add(e.next());
         }
 
-        // if the attribute ID ends with * we're done, otherwise perform additional searches
-        while (attr != null && !attr.getID().endsWith("*")) {
-          // determine next attribute ID
+        // If the attribute ID ends with * we're done, otherwise increment
+        if (attr != null && !attr.getID().endsWith("*")) {
+          // Determine next attribute ID
+          int start = Integer.parseInt(matcher.group(2));
           int end = Integer.parseInt(matcher.group(3));
-          String nextAttribute = attributeNameWithoutRange + ";range=" +
-            Integer.toString(end + 1) + "-*";
+          int diff = end - start;
+          String nextAttributeID = attributeNameWithoutRange + ";range=" + Integer.toString(end + 1) + "-"
+              + Integer.toString(end + diff + 1);
 
-          Attributes attributes = this.ldap.getAttributes(
-            sr.getName(), new String[] { nextAttribute });
-          attr = attributes.get(nextAttribute);
-
-          // copy the values
-          if (attr != null) {
-            e = attr.getAll();
-            while (e.hasMore()) {
-              newAttr.add(e.next());
+          this.logger.debug("Searching for next attribute '" + nextAttributeID + "'");
+          Attributes attributes = this.ldap.getAttributes(sr.getNameInNamespace(), new String[] { nextAttributeID });
+          NamingEnumeration<? extends Attribute> nextEn = attributes.getAll();
+          while (nextEn.hasMore()) {
+            Attribute nextAttribute = nextEn.next();
+            if (nextAttribute != null) {
+              this.logger.debug("Searching for next attribute found '" + nextAttribute.getID() + "'");
+              newAttrs.put(nextAttribute);
             }
           }
+
+          // Include the next attribute in the search result
+          sr.setAttributes(newAttrs);
+
+          // Iterate
+          newAttrs = processAttributes(sc, sr);
         }
       }
     }
+
     return newAttrs;
   }
 }
 }}}
+
+_Thanks to Tom Zeller @ Memphis for this implemenation_
 
 === Useful Links ===
   * [http://www.openldap.org/its/index.cgi?findid=5472]
