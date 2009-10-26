@@ -58,13 +58,13 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
-class DsmlSearch {
-  public static void main(String[] args) {
+public class PeopleSearch {
+  public static void main(String[] args) throws Exception {
 
     try {
 
       String query = null;
-      ArrayList attrsArrayList = new ArrayList();
+      ArrayList<String> attrsArrayList = new ArrayList<String>();
 
       for (int i = 0; i < args.length; i++) {
         if (args[i].equals("-h")) {
@@ -78,25 +78,25 @@ class DsmlSearch {
         }
       }
 
-      String[] attrs = (String[]) attrsArrayList.toArray(new String[0]);
+      String[] attrs = attrsArrayList.toArray(new String[0]);
 
       StringBuffer url = new StringBuffer("<%= myAddress %>/Search");
       if (query != null) {
-        url.append("?query=").append(URLEncoder.encode(query));
+        url.append("?query=").append(URLEncoder.encode(query, "UTF-8"));
         if (attrs != null) {
           for (int i = 0; i < attrs.length; i++) {
-            url.append("&attrs=").append(URLEncoder.encode(attrs[i]));
+            url.append("&attrs=").append(URLEncoder.encode(attrs[i], "UTF-8"));
           }
         }
       }
 
-      Document search = new SAXReader().read(new URL(url.toString()));
+      Document doc = new SAXReader().read(new URL(url.toString()));
       XMLWriter writer = new XMLWriter(System.out,
                                        OutputFormat.createPrettyPrint());
       writer.write(doc);
 
     } catch (ArrayIndexOutOfBoundsException e) {
-      System.out.println("Usage: DsmlSearch <options>");
+      System.out.println("Usage: PeopleSearch <options>");
       System.out.println("where &lt;options&gt; includes:");
       System.out.println("  -q query");
       System.out.println("  -a &lt;attributes&gt;");
@@ -104,8 +104,6 @@ class DsmlSearch {
       System.out.println("  a space delimited list of return attributes");
       System.exit(1);
 
-    } catch (Exception e) {
-      e.printStackTrace();
     }
   }
 }
