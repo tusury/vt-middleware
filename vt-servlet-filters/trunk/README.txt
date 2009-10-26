@@ -1,7 +1,7 @@
 FILTERS ${project.version} README
 
     This is the ${project.version} release of the Virginia Tech Filters library.
-    It is licensed under the LGPL.
+    It is dual licensed under both the LGPL and Apache 2.
     If you have questions or comments about this library contact
     Middleware Services (middleware@vt.edu).
 
