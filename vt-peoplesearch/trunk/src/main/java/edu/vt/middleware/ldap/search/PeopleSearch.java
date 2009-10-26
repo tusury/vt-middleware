@@ -319,6 +319,10 @@ public class PeopleSearch
       }
     }
 
-    return search.executeSearch(pool, query);
+    if (search != null) {
+      return search.executeSearch(pool, query);
+    } else {
+      return null;
+    }
   }
 }
