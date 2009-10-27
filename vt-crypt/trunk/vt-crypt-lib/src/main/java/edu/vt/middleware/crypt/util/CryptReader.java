@@ -55,9 +55,6 @@ public class CryptReader
   /** X.509 certificate type. */
   public static final String DEFAULT_CERTIFICATE_TYPE = "X.509";
 
-  /** Class logger */
-  private static final Log LOGGER = LogFactory.getLog(CryptReader.class);
-
   /** Buffer size for read operations. */
   private static final int BUFFER_SIZE = 4096;
 
@@ -531,7 +528,10 @@ public class CryptReader
       try {
         in.close();
       } catch (IOException e) {
-        LOGGER.warn("Error closing ASN.1 input stream.", e);
+        final Log logger = LogFactory.getLog(CryptReader.class);
+        if (logger.isWarnEnabled()) {
+          logger.warn("Error closing ASN.1 input stream.", e);
+        }
       }
     }
   }
@@ -577,7 +577,10 @@ public class CryptReader
       try {
         in.close();
       } catch (IOException e) {
-        LOGGER.warn("Error closing input stream.", e);
+        final Log logger = LogFactory.getLog(CryptProvider.class);
+        if (logger.isWarnEnabled()) {
+          logger.warn("Error closing input stream.", e);
+        }
       }
     }
     return bos.toByteArray();
