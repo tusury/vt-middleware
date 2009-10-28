@@ -56,7 +56,7 @@ public class CharacterEncodingFilter implements Filter
   private String responseCharsetName;
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   public void init(final FilterConfig filterConfig)
     throws ServletException
   {
@@ -70,7 +70,7 @@ public class CharacterEncodingFilter implements Filter
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   public void doFilter(
     final ServletRequest request,
     final ServletResponse response,
@@ -87,6 +87,6 @@ public class CharacterEncodingFilter implements Filter
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   public void destroy() {}
 }

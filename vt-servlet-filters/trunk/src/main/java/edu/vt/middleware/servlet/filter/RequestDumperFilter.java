@@ -61,7 +61,7 @@ public final class RequestDumperFilter implements Filter
   private FilterConfig config;
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   public void init(final FilterConfig filterConfig)
     throws ServletException
   {
@@ -69,7 +69,7 @@ public final class RequestDumperFilter implements Filter
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   @SuppressWarnings(value = "unchecked")
   public void doFilter(
     final ServletRequest request,
@@ -181,14 +181,14 @@ public final class RequestDumperFilter implements Filter
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   public void destroy()
   {
     this.config = null;
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

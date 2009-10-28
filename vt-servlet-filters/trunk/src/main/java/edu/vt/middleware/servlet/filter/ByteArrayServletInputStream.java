@@ -43,7 +43,7 @@ public class ByteArrayServletInputStream extends ServletInputStream
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   public int read()
     throws IOException
   {
@@ -51,7 +51,7 @@ public class ByteArrayServletInputStream extends ServletInputStream
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   @Override
   public int read(final byte[] b)
     throws IOException
@@ -60,7 +60,7 @@ public class ByteArrayServletInputStream extends ServletInputStream
   }
 
 
-  /** {@inheritDoc}. */
+  /** {@inheritDoc} */
   @Override
   public int read(final byte[] b, final int off, final int len)
     throws IOException
