@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="vt-dictionary" verbose="1" parallel="tests" thread-count="1">
+
+  <!-- test parameters -->
+  <parameter name="dictionaryFile" value="src/test/resources/web2"/>
+  <parameter name="dictionaryCount" value="235882"/>
+
+  <parameter name="searchWord" value="manipular"/>
+
+  <parameter name="partialSearchWord" value=".e.e.e.e"/>
+  <parameter name="partialSearchResultsCS" value="Genevese|reserene|teleseme|terebene"/>
+  <parameter name="partialSearchResultsCI" value="genevese|reserene|teleseme|terebene"/>
+
+  <parameter name="nearSearchWord" value="Jicaque"/>
+  <parameter name="nearSearchDistance" value="2"/>
+  <parameter name="nearSearchResultsCS" value="Jicaque|Jicaquean|Xicaque|macaque"/>
+  <parameter name="nearSearchResultsCI" value="jicaque|jicaquean|jocoque|macaque|xicaque"/>
+
+  <test name="coretests" parallel="methods" thread-count="2">
+    <groups>
+      <run>
+        <include name="dicttest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.dictionary.*" />
+    </packages>
+  </test>
+</suite>
