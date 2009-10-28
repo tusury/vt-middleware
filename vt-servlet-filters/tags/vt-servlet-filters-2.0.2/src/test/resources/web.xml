@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <filter>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <filter-class>edu.vt.middleware.servlet.filter.SessionAttributeFilter</filter-class>
+    <!-- Whether the attribute(s) *must* exist in order to pass through this filter -->
+    <init-param>
+      <param-name>requireAttribute</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <!-- Call HttpSession.getAttribute("user"), it's result must match .*, otherwise forward request to login.jsp -->
+    <init-param>
+      <param-name>user .*</param-name>
+      <param-value></param-value>
+    </init-param>
+  </filter>
+  <filter>
+    <filter-name>RequestMethodFilter</filter-name>
+    <filter-class>edu.vt.middleware.servlet.filter.RequestMethodFilter</filter-class>
+    <!-- Call ServletRequest.getRemoteAddr(), it's result must match 10.0.10.* -->
+    <init-param>
+      <param-name>getRemoteAddr</param-name>
+      <param-value>127.0.0.1</param-value>
+    </init-param>
+    <!-- Call HttpServletRequest.getMethod(), it's result must match 'GET' -->
+    <init-param>
+      <param-name>getMethod</param-name>
+      <param-value>[Gg][Ee][Tt]</param-value>
+    </init-param>
+    <!-- Call HttpServletRequest.getHeader('user-agent'), it's result must match '.*Mozilla.*' -->
+    <init-param>
+      <param-name>getHeader user-agent</param-name>
+      <param-value>httpunit/1.5</param-value>
+    </init-param>
+  </filter>
+  <filter>
+    <filter-name>SetCertTestFilter</filter-name>
+    <filter-class>edu.vt.middleware.servlet.filter.SetCertTestFilter</filter-class>
+    <init-param>
+      <param-name>cert</param-name>
+      <param-value>src/test/resources/cert.der</param-value>
+    </init-param>
+  </filter>
+  <filter>
+    <filter-name>ClientCertFilter</filter-name>
+    <filter-class>edu.vt.middleware.servlet.filter.ClientCertFilter</filter-class>
+    <!-- Whether the request *must* send a client certificate in order to pass through this filter -->
+    <init-param>
+      <param-name>requireCert</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <!-- Regular expression which the subject DN of the client certificate must match in order to pass through this filter -->
+    <init-param>
+      <param-name>subjectDn</param-name>
+      <param-value>CN=Test Certificate,.*</param-value>
+    </init-param>
+    <!-- Regular expression which the issuer DN of the client certificate must match in order to pass through this filter -->
+    <init-param>
+      <param-name>issuerDn</param-name>
+      <param-value>.*,OU=Middleware Services,O=Virginia Tech,L=Blacksburg,ST=Virginia,C=US</param-value>
+    </init-param>
+  </filter>
+  <filter>
+    <filter-name>FailClientCertFilter</filter-name>
+    <filter-class>edu.vt.middleware.servlet.filter.ClientCertFilter</filter-class>
+    <!-- Regular expression which the subject DN of the client certificate must match in order to pass through this filter -->
+    <init-param>
+      <param-name>subjectDn</param-name>
+      <param-value>CN=Bad Certificate,.*</param-value>
+    </init-param>
+  </filter>
+  <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>edu.vt.middleware.servlet.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>requestCharsetName</param-name>
+      <param-value>UTF-16</param-value>
+    </init-param>
+    <init-param>
+      <param-name>responseCharsetName</param-name>
+      <param-value>UTF-16</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>SessionAttributeFilter</filter-name>
+    <servlet-name>AttributeFilterTestServlet</servlet-name>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>RequestMethodFilter</filter-name>
+    <servlet-name>RequestMethodFilterTestServlet</servlet-name>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SetCertTestFilter</filter-name>
+    <servlet-name>ClientCertFilterTestServlet</servlet-name>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>ClientCertFilter</filter-name>
+    <servlet-name>ClientCertFilterTestServlet</servlet-name>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>SetCertTestFilter</filter-name>
+    <servlet-name>FailClientCertFilterTestServlet</servlet-name>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>FailClientCertFilter</filter-name>
+    <servlet-name>FailClientCertFilterTestServlet</servlet-name>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <servlet-name>CharacterEncodingTestServlet</servlet-name>
+  </filter-mapping>
+  <servlet>
+    <servlet-name>AttributeFilterTestServlet</servlet-name>
+    <servlet-class>edu.vt.middleware.servlet.filter.FilterTestServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>RequestMethodFilterTestServlet</servlet-name>
+    <servlet-class>edu.vt.middleware.servlet.filter.FilterTestServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>ClientCertFilterTestServlet</servlet-name>
+    <servlet-class>edu.vt.middleware.servlet.filter.FilterTestServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>FailClientCertFilterTestServlet</servlet-name>
+    <servlet-class>edu.vt.middleware.servlet.filter.FilterTestServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>SessionTestServlet</servlet-name>
+    <servlet-class>edu.vt.middleware.servlet.filter.SessionTestServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>CharacterEncodingTestServlet</servlet-name>
+    <servlet-class>edu.vt.middleware.servlet.filter.FilterTestServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AttributeFilterTestServlet</servlet-name>
+    <url-pattern>/AttributeFilterTestServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>RequestMethodFilterTestServlet</servlet-name>
+    <url-pattern>/RequestMethodFilterTestServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ClientCertFilterTestServlet</servlet-name>
+    <url-pattern>/ClientCertFilterTestServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>FailClientCertFilterTestServlet</servlet-name>
+    <url-pattern>/FailClientCertFilterTestServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SessionTestServlet</servlet-name>
+    <url-pattern>/SessionTestServlet</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CharacterEncodingTestServlet</servlet-name>
+    <url-pattern>/CharacterEncodingTestServlet</url-pattern>
+  </servlet-mapping>
+</web-app>
