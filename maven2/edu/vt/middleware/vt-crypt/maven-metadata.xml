@@ -8,8 +8,9 @@
       <version>2.0</version>
       <version>2.0.1-SNAPSHOT</version>
       <version>2.1-SNAPSHOT</version>
+      <version>2.0.1</version>
     </versions>
-    <lastUpdated>20091002192221</lastUpdated>
+    <lastUpdated>20091028212516</lastUpdated>
   </versioning>
   <plugins>
     <plugin>
