@@ -6,10 +6,10 @@ if not defined VTCRYPT_HOME goto no_vtcrypt_home
 
 set JAVA=%JAVA_HOME%\bin\java
 
-set CRYPT_JAR=%VTCRYPT_HOME%\jars\vt-crypt-2.0.jar
+set CRYPT_JAR=%VTCRYPT_HOME%\jars\vt-crypt-${project.version}.jar
 set LIBDIR=%VTCRYPT_HOME%\lib
 
-set CLASSPATH=%LIBDIR%\commons-cli-1.1.jar;%LIBDIR%\commons-logging-1.1.1.jar;%LIBDIR%\bcprov-jdk14-140.jar;%CRYPT_JAR%
+set CLASSPATH=%LIBDIR%\commons-cli-1.1.jar;%LIBDIR%\commons-logging-1.1.1.jar;%LIBDIR%\bcprov-jdk15-140.jar;%CRYPT_JAR%
 
 call "%JAVA%" -cp "%CLASSPATH%" edu.vt.middleware.crypt.symmetric.SymmetricCli %*
 goto end

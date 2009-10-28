@@ -9,10 +9,10 @@ else
   PREFIX="$VTCRYPT_HOME"
 fi
 
-CLASSPATH="${PREFIX}/jars/vt-crypt-2.0.jar"
+CLASSPATH="${PREFIX}/jars/vt-crypt-${project.version}.jar"
 for JAR in `ls ${PREFIX}/lib/*.jar` ; do
   CLASSPATH=$CLASSPATH:$JAR
 done
 
 ${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \
-  edu.vt.middleware.crypt.symmetric.SymmetricCli $@
+  edu.vt.middleware.crypt.symmetric.SymmetricCli "$@"
