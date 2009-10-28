@@ -1,0 +1,47 @@
+- Generate a new 256-bit AES key
+
+  enc -genkey -cipher AES -keysize 256 -out aes.key
+  
+
+- Encrypt a file with AES cipher in default CBC mode
+
+  enc -encrypt -cipher AES -key path/to/aes.key \
+      -iv 3858f62230ac3c915f300c664312c63f \
+      -in path/to/plain.txt -out path/to/cipher.out
+        
+
+- Decrypt a file with AES cipher in default CBC mode
+
+  enc -decrypt -cipher AES -key path/to/aes.key \
+      -iv 3858f62230ac3c915f300c664312c63f \
+      -in path/to/cipher.out -out path/to/plain.txt
+
+
+- Encrypt a file with AES cipher in OFB mode producing base-64-encoded
+  ciphertext
+
+  enc -encrypt -cipher AES -key path/to/aes.key -mode OFB -encoding base64 \
+      -iv 3858f62230ac3c915f300c664312c63f \
+      -in path/to/plain.txt -out path/to/cipher.out
+
+
+- Decrypt a base-64-encoded ciphertext file using AES in OFB mode
+
+  enc -decrypt -cipher AES -key path/to/aes.key -mode OFB -encoding base64 \
+      -iv 3858f62230ac3c915f300c664312c63f \
+      -in path/to/cipher.out -out path/to/plain.txt
+      
+
+- Encrypt a file using PKCS#5s2 password-based encryption with AES cipher
+
+  enc -encrypt -cipher AES -pbe Seekr1t -pbemode pkcs5s2 \
+      -salt A1B2C3D4E5F6 -keysize 256 \
+      -in path/to/plain.txt -out path/to/cipher.out
+      
+
+- Decrypt a file that was originally encrypted with PKCS#5s2 password-based
+  encryption using AES cipher
+
+  enc -decrypt -cipher AES -pbe Seekr1t -pbemode pkcs5s2 \
+      -salt A1B2C3D4E5F6 -keysize 256 \
+      -in path/to/cipher.out -out path/to/plain.txt

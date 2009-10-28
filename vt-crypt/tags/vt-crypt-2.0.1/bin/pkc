@@ -1,0 +1,18 @@
+#!/bin/sh
+
+JAVA=java
+JAVA_OPTS="$JAVA_OPTS"
+
+if [ "x$VTCRYPT_HOME" = "x" ]; then
+  PREFIX=`dirname $0`/..
+else
+  PREFIX="$VTCRYPT_HOME"
+fi
+
+CLASSPATH="${PREFIX}/jars/vt-crypt-2.0.jar"
+for JAR in `ls ${PREFIX}/lib/*.jar` ; do
+  CLASSPATH=$CLASSPATH:$JAR
+done
+
+${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \
+  edu.vt.middleware.crypt.asymmetric.AsymmetricCli $@
