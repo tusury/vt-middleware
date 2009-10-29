@@ -76,6 +76,7 @@ Ldap ldap = new Ldap(
     AttributesFactory.createAttributes("mail", "dfisher@vt.edu"),
     new String[]{"sn", "givenName"}),
   new BufferedWriter(new OutputStreamWriter(System.out)));
+ldap.close();
 }}}
 
 == Authentication ==
