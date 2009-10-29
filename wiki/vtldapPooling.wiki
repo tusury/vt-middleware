@@ -41,7 +41,7 @@ try {
   ldap = pool.checkOut();
   ...
   Iterator<SearchResult> i = ldap.search(
-    "givenName=Daniel", new String[]{"uid", "mail"});
+    new SearchFilter("givenName=Daniel"), new String[]{"uid", "mail"});
   ...
 } catch (BlockingTimeoutException e) {
   log.error("Gave up waiting on the pool", e);
@@ -73,7 +73,7 @@ try {
   ldap = pool.checkOut();
   ...
   Iterator<SearchResult> i = ldap.search(
-    "givenName=Daniel", new String[]{"uid", "mail"});
+    new SearchFilter("givenName=Daniel"), new String[]{"uid", "mail"});
   ...
 } catch (BlockingTimeoutException e) {
   log.error("Gave up waiting on the pool", e);
@@ -105,7 +105,7 @@ try {
   ldap = pool.checkOut();
   ...
   Iterator<SearchResult> i = ldap.search(
-    "givenName=Daniel", new String[]{"uid", "mail"});
+    new SearchFilter("givenName=Daniel"), new String[]{"uid", "mail"});
   ...
 } catch (LdapPoolException e) {
   log.error("Serious problem with the ldap, connection could not be created and the pool is empty", e);
@@ -141,7 +141,7 @@ try {
   ldap = pool.checkOut();
   ...
   Iterator<SearchResult> i = ldap.search(
-    "givenName=Daniel", new String[]{"uid", "mail"});
+    new SearchFilter("givenName=Daniel"), new String[]{"uid", "mail"});
   ...
 } catch (LdapActivationException e) {
   log.error("Ldap object failed activation...", e);
@@ -175,7 +175,7 @@ DefaultLdapFactory factory = new DefaultLdapFactory(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 factory.setLdapValidator(
   new CompareLdapValidator(
-    "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
+    "ou=People,dc=vt,dc=edu", new SearchFilter("ou=People"))); // perform a simple compare
 SoftLimitLdapPool pool = new SoftLimitLdapPool(config, factory);
 pool.setBlockWaitTime(5000); // wait for 5sec for an object to be available
 pool.initialize();
@@ -184,7 +184,7 @@ try {
   ldap = pool.checkOut();
   ...
   Iterator<SearchResult> i = ldap.search(
-    "givenName=Daniel", new String[]{"uid", "mail"});
+    new SearchFilter("givenName=Daniel"), new String[]{"uid", "mail"});
   ...
 } catch (LdapValidationException e) {
   log.error("Ldap object failed compare validation...", e);
@@ -213,7 +213,7 @@ DefaultLdapFactory factory = new DefaultLdapFactory(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 factory.setLdapValidator(
   new CompareLdapValidator(
-    "ou=People,dc=vt,dc=edu", "ou=People")); // perform a simple compare
+    "ou=People,dc=vt,dc=edu", new SearchFilter("ou=People"))); // perform a simple compare
 SoftLimitLdapPool pool = new SoftLimitLdapPool(config, factory);
 pool.initialize();
 Ldap ldap = null;
@@ -221,7 +221,7 @@ try {
   ldap = pool.checkOut();
   ...
   Iterator<SearchResult> i = ldap.search(
-    "givenName=Daniel", new String[]{"uid", "mail"});
+    new SearchFilter("givenName=Daniel"), new String[]{"uid", "mail"});
   ...
 } catch (LdapPoolException e) {
   log.error("Problems using the pool, see your error log...", e);
