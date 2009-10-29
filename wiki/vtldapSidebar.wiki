@@ -1,5 +1,5 @@
   * [vtldap Overview]
-  * [http://vt-middleware.googlecode.com/svn/vt-ldap/javadoc/vt-ldap-3.1/index.html JavaDoc]
+  * [http://vt-middleware.googlecode.com/svn/vt-ldap/javadoc/vt-ldap-3.2/index.html JavaDoc]
   * [vtldapHandlers Ldap Handlers]
   * [vtldapPooling Ldap Pooling]
   * [vtldapServlets Ldap Servlets]
