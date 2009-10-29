@@ -6,5 +6,6 @@
   * [vtldapJAAS JAAS Support]
   * [vtldapGSSAPI GSSAPI Support]
   * [vtldapSpring Spring Integration]
+  * [vtldapAD Active Directory]
   * [vtldapReleaseNotes Release Notes]
   * [http://code.google.com/p/vt-middleware/downloads/list Download]
