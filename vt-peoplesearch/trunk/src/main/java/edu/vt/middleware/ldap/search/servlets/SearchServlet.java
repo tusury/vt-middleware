@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2009 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -14,9 +14,8 @@
 package edu.vt.middleware.ldap.search.servlets;
 
 import java.io.BufferedWriter;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.security.cert.X509Certificate;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -109,6 +108,7 @@ public final class SearchServlet extends HttpServlet
     if (LOG.isDebugEnabled()) {
       LOG.debug(SPRING_CONTEXT_PATH + " = " + springContextPath);
     }
+
     String peopleSearchBeanName = getInitParameter(PEOPLE_SEARCH_BEAN_NAME);
     if (peopleSearchBeanName == null) {
       peopleSearchBeanName = DEFAULT_PEOPLE_SEARCH_BEAN_NAME;
@@ -117,7 +117,8 @@ public final class SearchServlet extends HttpServlet
       LOG.debug(PEOPLE_SEARCH_BEAN_NAME + " = " + peopleSearchBeanName);
     }
     this.search = PeopleSearch.createFromSpringContext(
-        springContextPath, peopleSearchBeanName);
+      springContextPath,
+      peopleSearchBeanName);
 
     // determine output type
     String outputType = getInitParameter(OUTPUT_TYPE);

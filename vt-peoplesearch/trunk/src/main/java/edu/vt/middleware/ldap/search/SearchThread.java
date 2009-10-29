@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2009 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -105,12 +105,15 @@ public class SearchThread implements Runnable
     Ldap ldap = null;
     try {
       ldap = this.ldapPool.checkOut();
+
       final long beginTime = System.currentTimeMillis();
       if (LOG.isDebugEnabled()) {
         LOG.debug(this.ldapQuery + " started at " + beginTime);
       }
+
       final Iterator<SearchResult> i = ldap.search(
-        new SearchFilter(this.ldapQuery), this.attrs);
+        new SearchFilter(this.ldapQuery),
+        this.attrs);
       final long searchTime = System.currentTimeMillis() - beginTime;
       while (i.hasNext()) {
         final QueryResult q = new QueryResult(i.next());

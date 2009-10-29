@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2009 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -71,8 +71,8 @@ public class SearchServletTest
     ldap = TestUtil.createLdap();
     while (
       !ldap.compare(
-        testLdapEntry.getDn(),
-        new SearchFilter(testLdapEntry.getDn().split(",")[0]))) {
+          testLdapEntry.getDn(),
+          new SearchFilter(testLdapEntry.getDn().split(",")[0]))) {
       Thread.sleep(100);
     }
     ldap.close();

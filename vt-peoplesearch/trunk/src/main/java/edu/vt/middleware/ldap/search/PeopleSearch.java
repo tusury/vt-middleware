@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2009 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -91,13 +91,13 @@ public class PeopleSearch
    *
    * @param  path  Classpath location of Spring context.
    * @param  beanName  Name of the <code>PeopleSearch</code> bean in the spring
-   *                   context.
+   * context.
    *
    * @return  <code>PeopleSearch</code>
    */
   public static PeopleSearch createFromSpringContext(
-      final String path,
-      final String beanName)
+    final String path,
+    final String beanName)
   {
     final ApplicationContext context = new ClassPathXmlApplicationContext(path);
     return (PeopleSearch) context.getBean(beanName);
@@ -228,7 +228,8 @@ public class PeopleSearch
     throws Exception
   {
     final PeopleSearch ps = createFromSpringContext(
-      "/peoplesearch-context.xml", "peopleSearch");
+      "/peoplesearch-context.xml",
+      "peopleSearch");
     final Query query = new Query();
     final List<String> attrs = new ArrayList<String>();
 

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2009 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -15,9 +15,7 @@ package edu.vt.middleware.ldap.search;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.net.ssl.SSLSocketFactory;
-
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.LdapConfig;
 import edu.vt.middleware.ldap.pool.BlockingLdapPool;
@@ -66,8 +64,8 @@ public class LdapPoolManager
 
   /** Ldap pool configuration. */
   private String ldapPoolProperties;
- 
-  /** SSL socket factory to use for SSL/TLS connections */
+
+  /** SSL socket factory to use for SSL/TLS connections. */
   private SSLSocketFactory sslSocketFactory;
 
   /** Map of name to ldap pools. */
@@ -141,9 +139,7 @@ public class LdapPoolManager
   }
 
 
-  /**
-   * @return  SSL socket factory instance used for SSL/TLS connections.
-   */
+  /** @return  SSL socket factory instance used for SSL/TLS connections. */
   public SSLSocketFactory getSslSocketFactory()
   {
     return sslSocketFactory;
