@@ -1,0 +1,5 @@
+dn: uid=7,ou=test,dc=vt,dc=edu
+departmentNumber: 1600
+givenName: James
+sn: Garfield
+
