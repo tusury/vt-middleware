@@ -18,10 +18,10 @@ Ldap ldap = new Ldap(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 Iterator<SearchResult> iter = ldap.search(
   "ou=People,dc=vt,dc=edu",
-  "sn=Fisher",
-  null,
+  new SearchFilter("sn=Fisher"),
   new String[]{"givenName", "mail"},
-  null);
+  (SearchResultHandler[]) null);
+ldap.close();
 }}}
 
 Retrieve all attributes for a specific entry and encode any attribute values of type `byte[]` into Base64.
@@ -30,6 +30,7 @@ Ldap ldap = new Ldap(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 Attributes attrs = ldap.getAttributes(
   "uid=818037,ou=People,dc=vt,dc=edu", null, new BinaryAttributeHandler());
+ldap.close();
 }}}
 
 Perform a search and encode any attribute values of type `byte[]` into Base64.
@@ -37,9 +38,10 @@ Perform a search and encode any attribute values of type `byte[]` into Base64.
 Ldap ldap = new Ldap(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 FqdnSearchResultHandler handler = new FqdnSearchResultHandler();
-handler.setAttributeHandler(new BinaryAttributeHandler());
+handler.setAttributeHandler(new AttributeHandler[] {new BinaryAttributeHandler()});
 Iterator<SearchResult> iter = ldap.search(
-  "ou=People,dc=vt,dc=edu", "sn=Fisher", null, null, handler);
+  "ou=People,dc=vt,dc=edu", new SearchFilter("sn=Fisher"), (String[]) null, handler);
+ldap.close();
 }}}
 
 Perform a search and include the entry DN as an attribute in the search results.<br/>
@@ -48,7 +50,8 @@ Note that search result handlers are executed in the order in which they are pro
 LdapConfig config = new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu");
 config.setSearchResultHandlers(new SearchResultHandler[]{new FqdnSearchResultHandler(), new EntryDnSearchResultHandler()});
 Ldap ldap = new Ldap(config);
-Iterator<SearchResult> iter = ldap.search("sn=Fisher");
+Iterator<SearchResult> iter = ldap.search(new SearchFilter("sn=Fisher"));
+ldap.close();
 }}}
 
 == !AuthenticationResultHandler ==
@@ -58,3 +61,9 @@ Potential use cases for authentication result handlers include:
   * updating a database on success or failure
   * sending notifications after a number of authentication failures
   * storing authentication statistics
+
+== !AuthorizationHandler ==
+!AuthorizationHandlers provide a programmatic interface for performing authorization after an authentication has succeeded.<br/>
+The only implementation provided by in this project is the !CompareAuthorizationHandler.<br/>
+It is used by default whenever the {{{edu.vt.middleware.ldap.auth.authorizationFilter}}} property is used.<br/>
+Note that implementations should throw !AuthenticationException on an authorization failure.
