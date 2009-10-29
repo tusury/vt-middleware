@@ -4,7 +4,7 @@
 <wiki:toc max_depth="2" />
 
 = Introduction =
-VT People Search is a Java servlet that exposes a fuzzy logic search interface to a LDAP. <br/>
+VT People Search is a Java servlet that exposes a fuzzy logic search interface to an LDAP. <br/>
 Results can be returned in LDIF, DSML version 1, or DSML version 2 format. <br/>
 This provides a flexible means for displaying and parsing search results for display. <br/>
 <br/>
