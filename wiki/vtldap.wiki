@@ -22,7 +22,7 @@ If you would like to use this project in your maven build, include the following
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-ldap</artifactId>
-      <version>3.1</version>
+      <version>3.2</version>
   </dependency>
 <dependencies>
 }}}
@@ -46,11 +46,12 @@ Perform a compare on the entry 'uid=818037,ou=People,dc=vt,dc=edu', checking for
 {{{
 Ldap ldap = new Ldap(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
-if (ldap.compare("uid=818037,ou=People,dc=vt,dc=edu", "mail=dfisher@vt.edu")) {
+if (ldap.compare("uid=818037,ou=People,dc=vt,dc=edu", new SearchFilter("mail=dfisher@vt.edu"))) {
   System.out.println("Compare succeeded");
 } else {
   System.out.println("Compare failed");
 }
+ldap.close();
 }}}
 _Note that in order to perform a real LDAP compare operation, your filter must be of the form '(name=value)'. Any other type of filter, using expressions or wildcards, will results in an object level ldap search. This will produce the desired result, but implementers examining their LDAP logs may notice this discrepancy._
 
@@ -60,7 +61,9 @@ Perform a search for 'sn=Fisher' and output all attributes in LDIF format to Sys
 Ldap ldap = new Ldap(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 (new Ldif()).outputLdif(
-  ldap.search("sn=Fisher"), System.out);
+  ldap.search(new SearchFilter("sn=Fisher")),
+  new BufferedWriter(new OutputStreamWriter(System.out)));
+ldap.close();
 }}}
 
 === Attribute search ===
@@ -70,8 +73,9 @@ Ldap ldap = new Ldap(
   new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
 (new Dsmlv1()).outputDsml(
   ldap.searchAttributes(
-    new BasicAttributes("mail", "dfisher@vt.edu"),
-    new String[]{"sn", "givenName"}), System.out);
+    AttributesFactory.createAttributes("mail", "dfisher@vt.edu"),
+    new String[]{"sn", "givenName"}),
+  new BufferedWriter(new OutputStreamWriter(System.out)));
 }}}
 
 == Authentication ==
@@ -83,7 +87,6 @@ AuthenticatorConfig config = new AuthenticatorConfig(
 config.setTls(true);
 config.setUserField(new String[]{"uid", "mail"}); // attribute to search for user with
 Authenticator auth = new Authenticator(config);
-auth.useTls(true);
 if (auth.authenticate(user, credential)) {
   System.out.println("Authentication succeeded");
 } else {
@@ -98,8 +101,7 @@ AuthenticatorConfig config = new AuthenticatorConfig(
 config.setTls(true);
 config.setUserField(new String[]{"uid", "mail"}); // attribute to search for user with
 Authenticator auth = new Authenticator(config);
-auth.useTls(true);
-if (auth.authenticate(user, credential, "eduPersonAffiliation=staff")) {
+if (auth.authenticate(user, credential, new SearchFilter("eduPersonAffiliation=staff"))) {
   System.out.println("Authentication/Authorization succeeded");
 } else {
   System.out.println("Authentication/Authorization failed");
@@ -118,7 +120,7 @@ try {
   ldap = pool.checkOut();
   ...
   Iterator<SearchResult> i = ldap.search(
-    "givenName=Daniel", new String[]{"uid", "mail"});
+    new SearchFilter("givenName=Daniel"), new String[]{"uid", "mail"});
   ...
 } catch (LdapPoolException e) {
   log.error("Error using the ldap pool.", e);
@@ -183,7 +185,8 @@ Properties used for connecting, binding, and searching.
 || edu.vt.middleware.ldap.ignoreCase || true || whether to ignore case in attribute names ||
 || edu.vt.middleware.ldap.operationRetry || 1 || specifies the number of times an operation will be retried if a CommunicationException occurs when an operation is attempted ||
 || edu.vt.middleware.ldap.logCredentials || false || whether bind credentials should be logged; logging occurs at debug level ||
-|| edu.vt.middleware.ldap.searchResultHandlers || {!FqdnSearchResultHandler} || performs post processing of results, see [vtldapHandlers] ||
+|| edu.vt.middleware.ldap.searchResultHandlers || {!FqdnSearchResultHandler} || performs post processing of results; supports a comma delimited list for multiple values. See [vtldapHandlers] ||
+|| edu.vt.middleware.ldap.handlerIgnoreExceptions || {!LimitExceededException} || exception classes that should be ignored when processing result sets; supports a comma delimited list for multiple values ||
 
 === !SearchControl Properties ===
 Properties that map to: [http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/directory/SearchControls.html javax.naming.directory.SearchControls]
@@ -198,11 +201,16 @@ Properties that map to: [http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/di
 Properties used specifically for authentication.
 All the previous properties are inherited by the Authenticator and can be overridden as necessary.
 || *Property Name* || *Default Value* || *Description* ||
-|| edu.vt.middleware.ldap.auth.userField || uid || LDAP attribute which contains the user identifier to search on; supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.auth.userField || {uid} || LDAP attribute(s) which contain the user identifier to search on; supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.auth.userFilter || _none_ || LDAP filter to search for users. Mutually exclusive with the userField propery. ||
+|| edu.vt.middleware.ldap.auth.userFilterArgs || _none_ || LDAP filter arguments for the userFilter property. The {0} argument is automatically populated with the supplied user value. Any arguments provided here will start at {1}. Supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.auth.constructDn || false || whether the authentication dn should be constructed or looked up in the LDAP; a constructed dn takes the form: userField=user,baseDn  ||
+|| edu.vt.middleware.ldap.auth.allowMultipleDns || false || whether an exception should be thrown if multiple DNs are found when the user is searched for; default behavior is to throw a !NamingException  ||
 || edu.vt.middleware.ldap.auth.subtreeSearch || false  || whether the authentication dn should be searched for over the entire base; default value is onelevel  ||
 || edu.vt.middleware.ldap.auth.authorizationFilter || _none_ || ldap filter to use for performing authorization after successful authentication  ||
-|| edu.vt.middleware.ldap.auth.authenticationResultHandlers || _none_ || performs post processing of authentication results, see [vtldapHandlers] ||
+|| edu.vt.middleware.ldap.auth.authorizationFilterArgs || _none_ || LDAP filter arguments for the authorizationFilter property. Supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.auth.authenticationResultHandlers || _none_ || performs post processing of authentication results, see [vtldapHandlers]. Supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.auth.authorizationHandlers || _none_ || performs post processing of authorization once authentication has succeeded, see [vtldapHandlers]. Supports a comma delimited list for multiple values ||
 
 ----
 = Scripts =
