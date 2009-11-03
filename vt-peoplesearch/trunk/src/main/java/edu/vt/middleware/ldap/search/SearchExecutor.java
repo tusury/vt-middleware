@@ -214,17 +214,17 @@ public class SearchExecutor
     if (this.queryTemplates != null && this.queryTemplates.size() > 0) {
       final SearchThread[] threads =
         new SearchThread[this.queryTemplates.size()];
-      for (int i = 0; i < this.queryTemplates.size(); i++) {
+      for (int i = 1; i <= this.queryTemplates.size(); i++) {
         final String ldapQuery = this.buildLdapQuery(
           this.getQueryTemplate(query.getQueryParameters(), i),
           query.getSearchRestrictions());
         if (ldapQuery != null) {
-          threads[i] = new SearchThread(
+          threads[i - 1] = new SearchThread(
             ldapPool,
             ldapQuery,
             query.getQueryAttributes());
         } else {
-          threads[i] = null;
+          threads[i - 1] = null;
         }
       }
       if (LOG.isDebugEnabled()) {
@@ -411,7 +411,7 @@ public class SearchExecutor
     if (
       queryParams != null &&
         queryParams.length > 0 &&
-        count < this.queryTemplates.size()) {
+        count <= this.queryTemplates.size()) {
       query = this.queryTemplates.get(new Integer(count));
       if (query != null) {
 

@@ -392,6 +392,67 @@ public class PeopleSearchTest
   }
 
 
+  /** @throws  Exception  On test failure. */
+  @Test(groups = {"searchtest"})
+  public void searchAllTemplates()
+    throws Exception
+  {
+    Query q = new Query();
+    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setRawQuery("truman");
+    StringWriter writer = new StringWriter();
+    this.search.search(q, OutputFormat.LDIF, writer);
+    AssertJUnit.assertEquals(
+      entries.get("2")[1],
+      TestUtil.convertLdifToEntry(writer.toString()));
+
+    q = new Query();
+    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setRawQuery("truma");
+    writer = new StringWriter();
+    this.search.search(q, OutputFormat.LDIF, writer);
+    AssertJUnit.assertEquals(
+      entries.get("2")[1],
+      TestUtil.convertLdifToEntry(writer.toString()));
+
+    q = new Query();
+    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setRawQuery("ruma");
+    writer = new StringWriter();
+    this.search.search(q, OutputFormat.LDIF, writer);
+    AssertJUnit.assertEquals(
+      entries.get("2")[1],
+      TestUtil.convertLdifToEntry(writer.toString()));
+
+    q = new Query();
+    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setRawQuery("hst@vt.edu");
+    writer = new StringWriter();
+    this.search.search(q, OutputFormat.LDIF, writer);
+    AssertJUnit.assertEquals(
+      entries.get("2")[1],
+      TestUtil.convertLdifToEntry(writer.toString()));
+
+    q = new Query();
+    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setRawQuery("hst@vt.ed");
+    writer = new StringWriter();
+    this.search.search(q, OutputFormat.LDIF, writer);
+    AssertJUnit.assertEquals(
+      entries.get("2")[1],
+      TestUtil.convertLdifToEntry(writer.toString()));
+
+    q = new Query();
+    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setRawQuery("st@vt.ed");
+    writer = new StringWriter();
+    this.search.search(q, OutputFormat.LDIF, writer);
+    AssertJUnit.assertEquals(
+      entries.get("2")[1],
+      TestUtil.convertLdifToEntry(writer.toString()));
+  }
+
+
   /**
    * Sample user data.
    *
