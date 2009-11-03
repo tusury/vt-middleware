@@ -1,4 +1,4 @@
   * [vtpeoplesearch Overview]
-  * [http://vt-middleware.googlecode.com/svn/vt-peoplesearch/javadoc/vt-peoplesearch-3.0/index.html JavaDoc]
+  * [http://vt-middleware.googlecode.com/svn/vt-peoplesearch/javadoc/vt-peoplesearch-3.0.1/index.html JavaDoc]
   * [vtpeoplesearchReleaseNotes Release Notes]
   * [http://code.google.com/p/vt-middleware/downloads/list Download]
