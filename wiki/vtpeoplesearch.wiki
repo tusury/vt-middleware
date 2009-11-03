@@ -32,7 +32,7 @@ If you would like to use this project's jar library in your maven build, include
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-peoplesearch</artifactId>
-      <version>3.0</version>
+      <version>3.0.1</version>
   </dependency>
 <dependencies>
 }}}
