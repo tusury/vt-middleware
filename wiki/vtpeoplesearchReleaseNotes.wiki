@@ -2,5 +2,8 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 3.0.1 =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=44 vtpeoplesearch-44] - Bug fix where the last query template was not being used
+
 = Version 3.0 =
 Initial google code release.
