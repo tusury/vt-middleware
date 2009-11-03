@@ -398,8 +398,9 @@ public class PeopleSearchTest
     throws Exception
   {
     Query q = new Query();
-    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setQueryAttributes(new String[] {"departmentNumber", "givenName", "sn"});
     q.setRawQuery("truman");
+
     StringWriter writer = new StringWriter();
     this.search.search(q, OutputFormat.LDIF, writer);
     AssertJUnit.assertEquals(
@@ -407,7 +408,7 @@ public class PeopleSearchTest
       TestUtil.convertLdifToEntry(writer.toString()));
 
     q = new Query();
-    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setQueryAttributes(new String[] {"departmentNumber", "givenName", "sn"});
     q.setRawQuery("truma");
     writer = new StringWriter();
     this.search.search(q, OutputFormat.LDIF, writer);
@@ -416,7 +417,7 @@ public class PeopleSearchTest
       TestUtil.convertLdifToEntry(writer.toString()));
 
     q = new Query();
-    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setQueryAttributes(new String[] {"departmentNumber", "givenName", "sn"});
     q.setRawQuery("ruma");
     writer = new StringWriter();
     this.search.search(q, OutputFormat.LDIF, writer);
@@ -425,7 +426,7 @@ public class PeopleSearchTest
       TestUtil.convertLdifToEntry(writer.toString()));
 
     q = new Query();
-    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setQueryAttributes(new String[] {"departmentNumber", "givenName", "sn"});
     q.setRawQuery("hst@vt.edu");
     writer = new StringWriter();
     this.search.search(q, OutputFormat.LDIF, writer);
@@ -434,7 +435,7 @@ public class PeopleSearchTest
       TestUtil.convertLdifToEntry(writer.toString()));
 
     q = new Query();
-    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setQueryAttributes(new String[] {"departmentNumber", "givenName", "sn"});
     q.setRawQuery("hst@vt.ed");
     writer = new StringWriter();
     this.search.search(q, OutputFormat.LDIF, writer);
@@ -443,7 +444,7 @@ public class PeopleSearchTest
       TestUtil.convertLdifToEntry(writer.toString()));
 
     q = new Query();
-    q.setQueryAttributes(new String[]{"departmentNumber", "givenName", "sn"});
+    q.setQueryAttributes(new String[] {"departmentNumber", "givenName", "sn"});
     q.setRawQuery("st@vt.ed");
     writer = new StringWriter();
     this.search.search(q, OutputFormat.LDIF, writer);
