@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+  <bean id="peopleSearch" class="edu.vt.middleware.ldap.search.PeopleSearch">
+    <!-- Whether to proxy SASL authorization from a supplied client certificate -->
+    <property name="proxySaslAuthorization">
+      <value>false</value>
+    </property>
+
+    <!--  Search configuration is defined in the following beans -->
+    <property name="searchExecutors">
+      <map>
+        <entry>
+          <key><value>1</value></key>
+          <ref bean="oneTermSearch"/>
+        </entry>
+        <entry>
+          <key><value>2</value></key>
+          <ref bean="twoTermSearch"/>
+        </entry>
+        <entry>
+          <key><value>3</value></key>
+          <ref bean="threeTermSearch"/>
+        </entry>
+      </map>
+    </property>
+
+    <property name="ldapPoolManager"><ref bean="ldapPoolManager"/></property>
+  </bean>
+
+  <bean id="ldapPoolManager" class="edu.vt.middleware.ldap.search.LdapPoolManager">
+
+    <!-- Name of file located in your classpath which contains the ldap configuration -->
+    <property name="ldapProperties">
+      <value>/ldap.properties</value>
+    </property>
+
+    <!-- Name of file located in your classpath which contains the ldap pool configuration -->
+    <property name="ldapPoolProperties">
+      <value>/ldap.pool.properties</value>
+    </property>
+
+    <!-- Type of ldap pool to use.  Acceptable values are:
+         SOFT_LIMIT, BLOCKING, SHARED -->
+    <property name="poolType">
+      <value>BLOCKING</value>
+    </property>
+  </bean>
+
+  <!-- SEARCH CONFIG -->
+
+  <!-- searches are defined in the following section
+       A bean is defined to handle a specific number of query terms.
+       When a query arrives the searches are executed that match the number of
+       terms entered.
+       The following syntax is used to regex query terms:
+       @@@QUERY_1@@@ == the first query term entered
+       @@@QUERY_2@@@ == the second query term entered, and so forth
+       @@@INITIAL_1@@@ == the first letter of the first query term entered
+       in this manner you can construct query strings such as:
+       (givenName=@@@QUERY_1@@@)(middleName=@@@INITIAL_2@@@*)(sn=@@@QUERY_3@@@) -->
+
+  <!-- ONE TERM QUERIES -->
+
+  <bean id="oneTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
+    <property name="termCount"><value>1</value></property>
+    
+    <!-- Whether a query should use results from all searches or
+         just the results from the first match -->
+    <property name="additive">
+      <value>true</value>
+    </property>
+
+    <!-- These classes perform post processing of ldap search results
+         The QueryDataPostProcessor adds the query data which found the result 
+         as if it was an attribute in the ldap -->
+    <property name="postProcessors">
+      <list>
+        <ref bean="queryDataPostProcessor"/>
+      </list>
+    </property>
+
+    <property name="queryTemplates">
+      <map>
+        <!-- phone number search -->
+        <!-- note that openldap removes dashes and spaces for all phone number queries -->
+        <entry>
+          <key><value>1</value></key>
+          <value>(|(telephoneNumber=@@@QUERY_1@@@)(localPhone=@@@QUERY_1@@@))</value>
+        </entry>
+        <entry>
+          <key><value>2</value></key>
+          <value>(|(telephoneNumber=*@@@QUERY_1@@@)(localPhone=*@@@QUERY_1@@@))</value>
+        </entry>
+        <!-- name search -->
+        <entry>
+          <key><value>3</value></key>
+          <value>(|(givenName=@@@QUERY_1@@@)(sn=@@@QUERY_1@@@))</value>
+        </entry>
+        <entry>
+          <key><value>4</value></key>
+          <value>(|(givenName=@@@QUERY_1@@@*)(sn=@@@QUERY_1@@@*))</value>
+        </entry>
+        <entry>
+          <key><value>5</value></key>
+          <value>(|(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_1@@@*))</value>
+        </entry>
+        <!-- email search -->
+        <entry>
+          <key><value>6</value></key>
+          <value>(|(uupid=@@@QUERY_1@@@)(mail=@@@QUERY_1@@@))</value>
+        </entry>
+        <entry>
+          <key><value>7</value></key>
+          <value>(|(uupid=@@@QUERY_1@@@*)(mail=@@@QUERY_1@@@*))</value>
+        </entry>
+        <entry>
+          <key><value>8</value></key>
+          <value>(|(uupid=*@@@QUERY_1@@@*)(mail=*@@@QUERY_1@@@*))</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <!-- TWO TERM QUERIES -->
+
+  <bean id="twoTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
+    <property name="termCount"><value>2</value></property>
+
+    <!-- Whether a query should use results from all searches or
+         just the results from the first match -->
+    <property name="additive">
+      <value>true</value>
+    </property>
+
+    <!-- These classes perform post processing of ldap search results
+         The QueryDataPostProcessor adds the query data which found the result 
+         as if it was an attribute in the ldap -->
+    <property name="postProcessors">
+      <list>
+        <ref bean="queryDataPostProcessor"/>
+      </list>
+    </property>
+
+    <property name="queryTemplates">
+      <map>
+        <!-- name search -->
+        <entry>
+          <key><value>1</value></key>
+          <value>(&amp;(givenName=@@@QUERY_1@@@)(sn=@@@QUERY_2@@@))</value>
+        </entry>
+        <entry>
+          <key><value>2</value></key>
+          <value>(cn=@@@QUERY_1@@@ @@@QUERY_2@@@)</value>
+        </entry>
+        <entry>
+          <key><value>3</value></key>
+          <value>(&amp;(givenName=@@@QUERY_1@@@*)(sn=@@@QUERY_2@@@*))</value>
+        </entry>
+        <entry>
+          <key><value>4</value></key>
+          <value>(cn=@@@QUERY_1@@@* @@@QUERY_2@@@*)</value>
+        </entry>
+        <entry>
+          <key><value>5</value></key>
+          <value>(&amp;(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_2@@@*))</value>
+        </entry>
+        <entry>
+          <key><value>6</value></key>
+          <value>(cn=*@@@QUERY_1@@@* *@@@QUERY_2@@@*)</value>
+        </entry>
+        <!-- initial search -->
+        <entry>
+          <key><value>7</value></key>
+          <value>(|(&amp;(givenName=@@@INITIAL_1@@@*)(sn=@@@QUERY_2@@@))(&amp;(middleName=@@@INITIAL_1@@@*)(sn=@@@QUERY_2@@@)))</value>
+        </entry>
+        <!-- last name search -->
+        <entry>
+          <key><value>8</value></key>
+          <value>(sn=@@@QUERY_2@@@)</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <!-- THREE TERM QUERIES -->
+
+  <bean id="threeTermSearch" class="edu.vt.middleware.ldap.search.SearchExecutor">
+    <property name="termCount"><value>3</value></property>
+
+    <!-- Whether a query should use results from all searches or
+         just the results from the first match -->
+    <property name="additive">
+      <value>true</value>
+    </property>
+
+    <!-- These classes perform post processing of ldap search results
+         The QueryDataPostProcessor adds the query data which found the result 
+         as if it was an attribute in the ldap -->
+    <property name="postProcessors">
+      <list>
+        <ref bean="queryDataPostProcessor"/>
+      </list>
+    </property>
+
+    <property name="queryTemplates">
+      <map>
+        <!-- name search -->
+        <entry>
+          <key><value>1</value></key>
+          <value>(|(&amp;(givenName=@@@QUERY_1@@@)(sn=@@@QUERY_3@@@))(&amp;(givenName=@@@QUERY_2@@@)(sn=@@@QUERY_3@@@)))</value>
+        </entry>
+        <entry>
+          <key><value>2</value></key>
+          <value>(|(cn=@@@QUERY_1@@@ @@@QUERY_2@@@ @@@QUERY_3@@@)(cn=@@@QUERY_2@@@ @@@QUERY_1@@@ @@@QUERY_3@@@))</value>
+        </entry>
+        <entry>
+          <key><value>3</value></key>
+          <value>(|(&amp;(givenName=@@@QUERY_1@@@*)(sn=@@@QUERY_3@@@*))(&amp;(givenName=@@@QUERY_2@@@*)(sn=@@@QUERY_3@@@*)))</value>
+        </entry>
+        <entry>
+          <key><value>4</value></key>
+          <value>(|(cn=@@@QUERY_1@@@* @@@QUERY_2@@@* @@@QUERY_3@@@*)(cn=@@@QUERY_2@@@* @@@QUERY_1@@@* @@@QUERY_3@@@*))</value>
+        </entry>
+        <entry>
+          <key><value>5</value></key>
+          <value>(|(&amp;(givenName=*@@@QUERY_1@@@*)(sn=*@@@QUERY_3@@@*))(&amp;(givenName=*@@@QUERY_2@@@*)(sn=*@@@QUERY_3@@@*)))</value>
+        </entry>
+        <entry>
+          <key><value>6</value></key>
+          <value>(|(cn=*@@@QUERY_1@@@* *@@@QUERY_2@@@* *@@@QUERY_3@@@*)(cn=*@@@QUERY_2@@@* *@@@QUERY_1@@@* *@@@QUERY_3@@@*))</value>
+        </entry>
+        <!-- initial search -->
+        <entry>
+          <key><value>7</value></key>
+          <value>(|(&amp;(givenName=@@@QUERY_1@@@)(middleName=@@@INITIAL_2@@@*)(sn=@@@QUERY_3@@@))(&amp;(givenName=@@@QUERY_2@@@)(middleName=@@@INITIAL_1@@@*)(sn=@@@QUERY_3@@@)))</value>
+        </entry>
+        <entry>
+          <key><value>8</value></key>
+          <value>(|(&amp;p(givenName=@@@INITIAL_1@@@*)(middlename=@@@INITIAL_2@@@*)(sn=@@@QUERY_3@@@))(&amp;(givenName=@@@INITIAL_2@@@*)(middleName=@@@INITIAL_1@@@*)(sn=@@@QUERY_3@@@)))</value>
+        </entry>
+        <!-- last name search -->
+        <entry>
+          <key><value>9</value></key>
+          <value>(sn=@@@QUERY_3@@@)</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean id="queryDataPostProcessor"
+        class="edu.vt.middleware.ldap.search.QueryDataPostProcessor"/>
+
+</beans>

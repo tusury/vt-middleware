@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+  <servlet>
+    <servlet-name>LdifPeopleSearch</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.search.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.outputType</param-name>
+      <param-value>LDIF</param-value>
+    </init-param>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.springContextPath</param-name>
+      <param-value>/ldif-peoplesearch-context.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet>
+    <servlet-name>DsmlPeopleSearch</servlet-name>
+    <servlet-class>edu.vt.middleware.ldap.search.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.outputType</param-name>
+      <param-value>DSML</param-value>
+    </init-param>
+    <init-param>
+      <param-name>edu.vt.middleware.ldap.search.springContextPath</param-name>
+      <param-value>/dsml-peoplesearch-context.xml</param-value>
+    </init-param>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>LdifPeopleSearch</servlet-name>
+    <url-pattern>/LdifPeopleSearch</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>DsmlPeopleSearch</servlet-name>
+    <url-pattern>/DsmlPeopleSearch</url-pattern>
+  </servlet-mapping>
+
+</web-app>
