@@ -2,6 +2,10 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 3.2.1-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=48 vtldap-48] - Authenticator does not honor operation retry configuration
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=47 vtldap-47] - Added configuration options to control operation retry exceptions and operation retry wait
+
 = Version 3.2 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=41 vtldap-41] - Added property to allow/disallow multiple DNs when performing binds
   * [http://code.google.com/p/vt-middleware/issues/detail?id=40 vtldap-40] - Exposed search methods that accept !SearchControls
