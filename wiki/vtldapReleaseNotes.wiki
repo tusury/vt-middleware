@@ -3,6 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.2.1-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=49 vtldap-49] - Provide way to set class type properties to null
   * [http://code.google.com/p/vt-middleware/issues/detail?id=48 vtldap-48] - Authenticator does not honor operation retry configuration
   * [http://code.google.com/p/vt-middleware/issues/detail?id=47 vtldap-47] - Added configuration options to control operation retry exceptions and operation retry wait
 
