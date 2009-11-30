@@ -122,6 +122,36 @@ lc.login()
 }}}
 
 ----
+= JBoss =
+The JAAS module can be used in JBoss.<br/>
+
+== Instructions ==
+  # Put the vt-ldap jar in the JBoss server classpath
+  # Add a new application-policy to the JBoss login-config.xml file:
+    {{{
+        <application-policy name="LdapAuth">
+          <authentication>
+            <login-module
+              code="edu.vt.middleware.ldap.jaas.LdapLoginModule"
+              flag="required">
+
+              <module-option name="ldapUrl">
+                ${ldap.url}
+              </module-option>
+              <module-option name="base">
+                ${ldap.base}
+              </module-option>
+              <module-option name="tls">true</module-option>
+              <module-option name="userFilter">
+                ${ldap.userFilter}
+              </module-option>
+            </login-module>
+          </authentication>
+        </application-policy>
+    }}}
+  # Restart JBoss
+
+----
 = Tomcat Realm =
 The JAAS module can be used as a Tomcat realm.<br/>
 
