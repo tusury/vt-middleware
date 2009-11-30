@@ -5,7 +5,6 @@
 = Version 3.3-SNAPSHOT =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=50 vtldap-50] - Added authentication handlers to provide an API for custom authentication implementations
   * [http://code.google.com/p/vt-middleware/issues/detail?id=49 vtldap-49] - Provide way to set class type properties to null
-  * [http://code.google.com/p/vt-middleware/issues/detail?id=48 vtldap-48] - Authenticator does not honor operation retry configuration
   * [http://code.google.com/p/vt-middleware/issues/detail?id=47 vtldap-47] - Added configuration options to control operation retry exceptions and operation retry wait
   * [http://code.google.com/p/vt-middleware/issues/detail?id=45 vtldap-45] - Added connection handlers to provide an API for custom connection strategies
 
