@@ -5,6 +5,7 @@
 = Version 3.3-SNAPSHOT =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=55 vtldap-55] - Added !AuthorizationException to distinguish authentication and authorization errors
   * [http://code.google.com/p/vt-middleware/issues/detail?id=54 vtldap-54] - Added support for infinite operation retries and a linear backoff on operation retries
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=53 vtldap-53] - Added support for setting default roles in the !LdapLoginModule
   * [http://code.google.com/p/vt-middleware/issues/detail?id=50 vtldap-50] - Added authentication handlers to provide an API for custom authentication implementations
     * *NOTE* authentication related classes have moved into the _edu.vt.middleware.ldap.auth_ package
   * [http://code.google.com/p/vt-middleware/issues/detail?id=49 vtldap-49] - Provide way to set class type properties to null
