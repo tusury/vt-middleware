@@ -6,7 +6,7 @@
   <groupId>edu.vt.middleware</groupId>
   <artifactId>vt-peoplesearch</artifactId>
   <packaging>jar</packaging>
-  <version>3.0.1</version>
+  <version>3.0.2-SNAPSHOT</version>
   <name>VT People Search</name>
   <url>http://code.google.com/p/vt-middleware/wiki/vtpeoplesearch</url>
   <licenses>
