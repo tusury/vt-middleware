@@ -1,9 +1,9 @@
 DICTIONARY ${project.version} README
 
-    This is the ${project.version} release of the VT DICTIONARY Java libraries.
+    This is the ${project.version} release of the VT Dictionary Java libraries.
     It is dual licensed under both the LGPL and Apache 2.
-    If you have questions or comments about this library contact
-    Middleware Services (middleware@vt.edu).
+    If you have questions or comments about this library send e-mail to
+    vt-middleware-users@googlegroups.com.
 
 DOCUMENTATION
     See the wiki: http://code.google.com/p/vt-middleware/wiki/vtdictionary
