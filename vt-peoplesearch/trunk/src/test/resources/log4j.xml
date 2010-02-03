@@ -17,12 +17,14 @@
     <appender-ref ref="CONSOLE"/>
   </category>
 
-  <category name="edu.vt.middleware.ldap.search">
+  <category name="edu.vt.middleware.ldap.search"
+            additivity="false">
     <priority value="INFO"/>
     <appender-ref ref="CONSOLE"/>
   </category>
 
-  <category name="edu.vt.middleware.ldap">
+  <category name="edu.vt.middleware.ldap"
+            additivity="false">
     <priority value="INFO"/>
     <appender-ref ref="CONSOLE"/>
   </category>
