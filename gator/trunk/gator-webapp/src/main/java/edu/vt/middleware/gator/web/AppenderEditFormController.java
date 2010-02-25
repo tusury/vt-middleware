@@ -32,9 +32,9 @@ import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.AppenderParamConfig;
 import edu.vt.middleware.gator.LayoutParamConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.util.RequestParamExtractor;
 import edu.vt.middleware.gator.web.support.AppenderParamArrayEditor;
 import edu.vt.middleware.gator.web.support.LayoutParamArrayEditor;
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Handles appender configuration additions/updates.

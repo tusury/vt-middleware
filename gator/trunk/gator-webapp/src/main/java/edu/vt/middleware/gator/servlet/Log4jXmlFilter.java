@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
 
 import edu.vt.middleware.gator.ConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.util.RequestParamExtractor;
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Servlet filter operates on responses that presumably contain a log4j XML
