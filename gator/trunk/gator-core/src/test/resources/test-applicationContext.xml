@@ -20,8 +20,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   <bean id="entityManagerFactory"
     class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="dataSource" ref="dataSource"/>
-    <property name="persistenceXmlLocation"
-      value="classpath:persistence.xml" />
     <property name="jpaVendorAdapter">
       <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="generateDdl" value="true"/>

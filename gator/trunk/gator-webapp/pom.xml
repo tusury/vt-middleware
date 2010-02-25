@@ -151,12 +151,6 @@
       <testResource>
         <directory>src/main/webapp</directory>
         <includes>
-          <include>META-INF/**</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>src/main/webapp</directory>
-        <includes>
           <include>WEB-INF/*.xml</include>
           <include>WEB-INF/messages.properties</include>
         </includes>
