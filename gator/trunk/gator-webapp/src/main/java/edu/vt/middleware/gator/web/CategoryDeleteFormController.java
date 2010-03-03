@@ -64,7 +64,8 @@ public class CategoryDeleteFormController extends BaseDeleteFromController
     if (!validate(errors, spec)) {
       return showForm(request, errors, getFormView());
     }
-    final ProjectConfig project = spec.getProject();
+    final ProjectConfig project = configManager.find(
+        ProjectConfig.class, spec.getProject().getId());
     project.removeCategory((CategoryConfig) spec.getConfigToBeDeleted());
     configManager.save(project);
     return new ModelAndView(
