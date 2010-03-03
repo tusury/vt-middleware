@@ -66,7 +66,8 @@ public class AppenderDeleteFormController extends BaseDeleteFromController
     }
     final AppenderConfig appender =
       (AppenderConfig) spec.getConfigToBeDeleted();
-    final ProjectConfig project = spec.getProject();
+    final ProjectConfig project = configManager.find(
+        ProjectConfig.class, spec.getProject().getId());
     project.removeAppender(appender);
     for (CategoryConfig cat : project.getCategories()) {
       cat.getAppenders().remove(appender);
