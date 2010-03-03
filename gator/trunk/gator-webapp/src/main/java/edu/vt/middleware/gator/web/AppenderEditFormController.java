@@ -113,7 +113,9 @@ public class AppenderEditFormController extends BaseFormController
     final ProjectConfig project = appender.getProject();
     // Ensure appender name is unique within project
     if (isNew || nameChanged(appender)) {
-      for (AppenderConfig a : project.getAppenders()) {
+      final ProjectConfig projectFromDb = configManager.find(
+          ProjectConfig.class, project.getId());
+      for (AppenderConfig a : projectFromDb.getAppenders()) {
         if (a.getName().equals(appender.getName())) {
           errors.rejectValue(
               "appender.name",
