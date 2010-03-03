@@ -37,7 +37,7 @@
 	<root>
 	</c:when>
 	<c:otherwise>
-	<category name="${category.name}">
+	<category name="${category.name}" additivity="${category.additivity}">
 	</c:otherwise>
 	</c:choose>
 		<priority value="${category.level}" />

@@ -68,6 +68,8 @@ public class CategoryConfig extends Config
 
   private String level;
   
+  private boolean additivity = true;
+  
   private ProjectConfig project;
 
   /** Appenders that receive logging events from this category */
@@ -100,6 +102,23 @@ public class CategoryConfig extends Config
     this.level = l;
   }
  
+  /**
+   * @return the additivity
+   */
+  @Column(name = "additivity", nullable = false)
+  public boolean getAdditivity()
+  {
+    return additivity;
+  }
+
+  /**
+   * @param additivity the additivity to set
+   */
+  public void setAdditivity(final boolean flag)
+  {
+    this.additivity = flag;
+  }
+
   /**
    * Gets the corresponding Log4j log level associated with the level string.
    * @return Log4j logger level.

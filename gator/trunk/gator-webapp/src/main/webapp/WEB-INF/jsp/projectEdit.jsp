@@ -63,6 +63,7 @@
 	        <tr>
 	          <th>Name</th>
 	          <th>Level</th>
+	          <th>Additivity</th>
 		        <th>Appenders</th>
 	          <th>Edit</th>
 	          <th>Delete</th>
@@ -70,7 +71,8 @@
 	        <c:forEach items="${project.categories}" var="category">
 	          <tr>
 	            <td class="button_row">${category.name}</td>
-	            <td class="button_row">${category.level}</td>
+	            <td class="button_row" align="center">${category.level}</td>
+	            <td class="button_row" align="center">${category.additivity}</td>
 	            <td class="button_row">
 	            	<c:forEach items="${category.appenders}"
 	            	 var="appender"

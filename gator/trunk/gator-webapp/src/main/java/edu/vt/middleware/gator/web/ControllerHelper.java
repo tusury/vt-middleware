@@ -79,6 +79,7 @@ public class ControllerHelper
     final CategoryConfig clone = new CategoryConfig();
     clone.setName(source.getName());
     clone.setLevel(source.getLevel());
+    clone.setAdditivity(source.getAdditivity());
     for (AppenderConfig appender : source.getAppenders()) {
       final AppenderConfig appenderRef = parent.getAppender(appender.getName());
       if (appenderRef != null) {

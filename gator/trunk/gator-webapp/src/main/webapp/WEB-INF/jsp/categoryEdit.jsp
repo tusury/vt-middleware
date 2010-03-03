@@ -38,6 +38,13 @@
     <div><form:select id="level" path="category.level" items="${logLevels}" /></div>
   </div>
   <div class="field">
+    <div class="label">Additivity</div>
+    <div class="checkboxes">
+      <form:checkbox id="level" path="category.additivity"
+        label="Enable additivity for this category" />
+    </div>
+  </div>
+  <div class="field">
     <div><label for="appenderIds">Category Appenders</label></div>
 		<div class="note">Send logging events to these appenders.</div>
     <div style="margin:5px">

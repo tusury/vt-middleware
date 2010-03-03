@@ -95,7 +95,7 @@ legend {
   padding-bottom:8px;
 }
 
-label {
+label, .label {
   margin-left:5px;
   font-weight:bold;
 }
@@ -105,7 +105,7 @@ div.checkboxes label,
 div.checkboxes div label {
   font-weight:normal;
   position:relative;
-  top:-3px;
+  top:-2px;
 }
 
 div.field {
