@@ -13,7 +13,7 @@
  */
 package edu.vt.middleware.gator.web;
 
-import org.springframework.security.acls.Permission;
+import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.domain.BasePermission;
 
 import edu.vt.middleware.gator.AppenderConfig;

@@ -14,13 +14,14 @@
 package edu.vt.middleware.gator.security;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.acls.Acl;
-import org.springframework.security.acls.AclService;
-import org.springframework.security.acls.NotFoundException;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.sid.Sid;
+import org.springframework.security.acls.model.Acl;
+import org.springframework.security.acls.model.AclService;
+import org.springframework.security.acls.model.NotFoundException;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.Sid;
 
 import edu.vt.middleware.gator.ProjectConfig;
 
@@ -42,7 +43,7 @@ public class ProjectAclService implements AclService
    * @param parentIdentity Parent object.
    * @return null -- inheritance is not supported.
    */
-  public ObjectIdentity[] findChildren(final ObjectIdentity parentIdentity)
+  public List<ObjectIdentity> findChildren(final ObjectIdentity parentIdentity)
   {
     return null;
   }
@@ -60,18 +61,18 @@ public class ProjectAclService implements AclService
   }
 
   /** {@inheritDoc} */
-  public Acl readAclById(final ObjectIdentity object, final Sid[] sids)
+  public Acl readAclById(final ObjectIdentity object, final List<Sid> sids)
     throws NotFoundException
   {
     return readAclById(object);
   }
 
   /** {@inheritDoc} */
-  public Map<ObjectIdentity, Acl> readAclsById(final ObjectIdentity[] objects)
-    throws NotFoundException
+  public Map<ObjectIdentity, Acl> readAclsById(
+      final List<ObjectIdentity> objects) throws NotFoundException
   {
     final Map<ObjectIdentity, Acl> map =
-      new HashMap<ObjectIdentity, Acl>(objects.length);
+      new HashMap<ObjectIdentity, Acl>(objects.size());
     for (ObjectIdentity object : objects) {
       map.put(object, readAclById(object));
     }
@@ -80,16 +81,15 @@ public class ProjectAclService implements AclService
 
   /** {@inheritDoc} */
   public Map<ObjectIdentity, Acl> readAclsById(
-    final ObjectIdentity[] objects,
-    final Sid[] sids)
+    final List<ObjectIdentity> objects,
+    final List<Sid> sids)
     throws NotFoundException
   {
     final Map<ObjectIdentity, Acl> map =
-      new HashMap<ObjectIdentity, Acl>(objects.length);
+      new HashMap<ObjectIdentity, Acl>(objects.size());
     for (ObjectIdentity object : objects) {
       map.put(object, readAclById(object, sids));
     }
     return map;
   }
-
 }

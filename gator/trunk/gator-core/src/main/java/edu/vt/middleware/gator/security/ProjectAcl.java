@@ -16,17 +16,17 @@ package edu.vt.middleware.gator.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.security.acls.AccessControlEntry;
-import org.springframework.security.acls.Acl;
-import org.springframework.security.acls.NotFoundException;
-import org.springframework.security.acls.Permission;
-import org.springframework.security.acls.UnloadedSidException;
+import org.springframework.security.acls.model.AccessControlEntry;
+import org.springframework.security.acls.model.Acl;
+import org.springframework.security.acls.model.NotFoundException;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.acls.model.Sid;
+import org.springframework.security.acls.model.UnloadedSidException;
 import org.springframework.security.acls.domain.AccessControlEntryImpl;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
-import org.springframework.security.acls.sid.GrantedAuthoritySid;
-import org.springframework.security.acls.sid.PrincipalSid;
-import org.springframework.security.acls.sid.Sid;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
+import org.springframework.security.acls.domain.GrantedAuthoritySid;
+import org.springframework.security.acls.domain.PrincipalSid;
 
 import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
@@ -45,7 +45,7 @@ public class ProjectAcl implements Acl
   private static final long serialVersionUID = 7764134389962328091L;
 
 
-  private final AccessControlEntry[] entries;
+  private final List<AccessControlEntry> entries;
   
   private final ObjectIdentity objectIdentity;
 
@@ -57,17 +57,14 @@ public class ProjectAcl implements Acl
   public ProjectAcl(final ProjectConfig object)
   {
     objectIdentity = new ObjectIdentityImpl(ProjectConfig.class, object);
-    final List<AccessControlEntry> entryList = 
-      new ArrayList<AccessControlEntry>();
+    entries = new ArrayList<AccessControlEntry>();
     for (PermissionConfig perm : object.getPermissions()) {
-      entryList.addAll(getAces(perm));
+      entries.addAll(getAces(perm));
     }
-    entries = new AccessControlEntry[entryList.size()];
-    entryList.toArray(entries);
   }
 
   /** {@inheritDoc} */
-  public AccessControlEntry[] getEntries()
+  public List<AccessControlEntry> getEntries()
   {
     return entries;
   }
@@ -107,8 +104,8 @@ public class ProjectAcl implements Acl
 
   /** {@inheritDoc} */
   public boolean isGranted(
-    final Permission[] permission,
-    final Sid[] sids,
+    final List<Permission> permission,
+    final List<Sid> sids,
     final boolean administrativeMode)
     throws NotFoundException, UnloadedSidException
   {
@@ -132,7 +129,7 @@ public class ProjectAcl implements Acl
    * All SIDs are loaded by default, so this method always returns true.
    * @return true
    */
-  public boolean isSidLoaded(final Sid[] sids)
+  public boolean isSidLoaded(final List<Sid> sids)
   {
     return true;
   }
@@ -169,4 +166,5 @@ public class ProjectAcl implements Acl
     }
     return aceList;
   }
+
 }

@@ -15,7 +15,7 @@ package edu.vt.middleware.gator;
 
 import java.util.List;
 
-import org.springframework.security.annotation.Secured;
+import org.springframework.security.access.annotation.Secured;
 
 /**
  * Manages the lifecycle (CRUD) operations on config objects.

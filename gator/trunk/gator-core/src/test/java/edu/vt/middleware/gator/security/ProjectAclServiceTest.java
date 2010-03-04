@@ -18,8 +18,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.BeforeTransaction;
@@ -102,6 +102,6 @@ public class ProjectAclServiceTest
       ProjectConfig.class, testProject);
     Assert.assertEquals(
       PermissionConfig.ALL_PERMISSIONS.length + 1,
-      aclService.readAclById(oid).getEntries().length);
+      aclService.readAclById(oid).getEntries().size());
   }
 }

@@ -13,13 +13,15 @@
 */
 package edu.vt.middleware.gator.security;
 
+import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.springframework.security.acls.Permission;
+import org.springframework.security.acls.model.Permission;
+import org.springframework.security.acls.model.Sid;
 import org.springframework.security.acls.domain.BasePermission;
-import org.springframework.security.acls.sid.PrincipalSid;
-import org.springframework.security.acls.sid.Sid;
+import org.springframework.security.acls.domain.PrincipalSid;
 
 import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
@@ -43,7 +45,7 @@ public class ProjectAclTest
     final ProjectAcl acl = new ProjectAcl(UnitTestHelper.createTestProject());
     Assert.assertEquals(
       PermissionConfig.ALL_PERMISSIONS.length + 1,
-      acl.getEntries().length);
+      acl.getEntries().size());
   }
 
   /**
@@ -66,18 +68,18 @@ public class ProjectAclTest
     final ProjectAcl acl = new ProjectAcl(UnitTestHelper.createTestProject());
     Assert.assertTrue(
       acl.isGranted(
-        new Permission[] { BasePermission.WRITE, BasePermission.READ },
-        new Sid[] { new PrincipalSid("admin") },
+        Arrays.asList(new Permission[] { BasePermission.WRITE, BasePermission.READ }),
+        Arrays.asList(new Sid[] { new PrincipalSid("admin") }),
         false));
     Assert.assertTrue(
       acl.isGranted(
-        new Permission[] { BasePermission.READ },
-        new Sid[] { new PrincipalSid("user") },
+        Arrays.asList(new Permission[] { BasePermission.READ }),
+        Arrays.asList(new Sid[] { new PrincipalSid("user") }),
         false));
     Assert.assertFalse(
       acl.isGranted(
-        new Permission[] { BasePermission.WRITE },
-        new Sid[] { new PrincipalSid("user") },
+          Arrays.asList(new Permission[] { BasePermission.WRITE }),
+          Arrays.asList(new Sid[] { new PrincipalSid("user") }),
         false));
   }
 

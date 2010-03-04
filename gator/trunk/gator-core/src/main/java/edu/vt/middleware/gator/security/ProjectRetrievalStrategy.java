@@ -13,9 +13,9 @@
 */
 package edu.vt.middleware.gator.security;
 
-import org.springframework.security.acls.objectidentity.ObjectIdentity;
-import org.springframework.security.acls.objectidentity.ObjectIdentityImpl;
-import org.springframework.security.acls.objectidentity.ObjectIdentityRetrievalStrategy;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
 
 import edu.vt.middleware.gator.ProjectConfig;
 
