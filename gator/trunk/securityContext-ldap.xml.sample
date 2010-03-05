@@ -89,12 +89,14 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
                          security granted authority role names
                          (e.g. ROLE_IT-STAFF for the LDAP group it-staff)
   -->
-  <ldap-authentication-provider
-    user-search-filter="uid={0}"
-    user-search-base="ou=people,dc=example,dc=com"
-    group-search-filter="groupMember={0}"
-    group-search-base="ou=groups,dc=example,dc=com"
-    group-role-attribute="groupName"
-  />
+  <authentication-manager>
+	  <ldap-authentication-provider
+	    user-search-filter="uid={0}"
+	    user-search-base="ou=people,dc=example,dc=com"
+	    group-search-filter="groupMember={0}"
+	    group-search-base="ou=groups,dc=example,dc=com"
+	    group-role-attribute="groupName"
+	  />
+  </authentication-manager>
   
 </beans:beans>
