@@ -74,12 +74,14 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
     </session-management>
   </http>
 
-  <authentication-manager />
-  
-  <user-service>
-    <user name="admin" password="pass" authorities="ROLE_USER, ROLE_ADMIN" />
-    <user name="user" password="pass" authorities="ROLE_USER" />
-    <user name="mallory" password="pass" authorities="" />
-  </user-service>
+	<authentication-manager>
+	  <authentication-provider>
+	    <user-service>
+		    <user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
+		    <user name="user" password="user" authorities="ROLE_USER" />
+		    <user name="mallory" password="mallory" authorities="" />
+	    </user-service>
+	  </authentication-provider>
+	</authentication-manager>
   
 </beans:beans>
