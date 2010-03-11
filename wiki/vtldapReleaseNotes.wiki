@@ -3,6 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.3-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=66 vtldap-66] - Added JAAS options to support the creation of groups that contain principals and roles
   * [http://code.google.com/p/vt-middleware/issues/detail?id=63 vtldap-63] - !LdapLoginModule setLdapDnPrincipal default value changed to false
   * [http://code.google.com/p/vt-middleware/issues/detail?id=59 vtldap-59] - Removed !ConnectLdapValidator as the default validator in !DefaultLdapFactory
   * [http://code.google.com/p/vt-middleware/issues/detail?id=56 vtldap-56] - Added !RecursiveSearchResultHandler and updated !LdapRoleAuthorizationModule with an option to use it
