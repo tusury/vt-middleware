@@ -24,6 +24,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import edu.vt.middleware.gator.validation.UniqueName;
+
 /**
  * Configuration for log4j clients that belong to one or more projects.
  * "Client" in this sense is that of client-server computing, where the client
@@ -40,6 +42,7 @@ import javax.persistence.Transient;
   name = "client_sequence",
   sequenceName = "log_seq_clients",
   allocationSize = 1)
+@UniqueName(message = "{client.uniqueName}")
 public class ClientConfig extends Config
 {
   /** ClientConfig.java */

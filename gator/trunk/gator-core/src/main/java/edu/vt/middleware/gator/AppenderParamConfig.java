@@ -43,6 +43,22 @@ public class AppenderParamConfig extends ParamConfig
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 16384;
 
+ 
+  /** Default constructor */
+  public AppenderParamConfig() {}
+  
+
+  /**
+   * Creates a new appender parameter with the given name and value.
+   * @param name Appender parameter name.
+   * @param value Appender parameter value.
+   */
+  public AppenderParamConfig(final String name, final String value)
+  {
+    setName(name);
+    setValue(value);
+  }
+
 
   /** {@inheritDoc} */
   @Id

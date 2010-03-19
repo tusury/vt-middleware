@@ -13,7 +13,6 @@
  */
 package edu.vt.middleware.gator;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +35,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 
+import edu.vt.middleware.gator.validation.UniqueName;
+
 /**
  * Configuration for log4j appenders.
  *
@@ -48,6 +49,7 @@ import org.hibernate.annotations.Cascade;
   name = "appender_sequence",
   sequenceName = "log_seq_appenders",
   allocationSize = 1)
+@UniqueName(message = "{appender.uniqueName}")
 public class AppenderConfig extends Config
 {
   /** AppenderConfig.java */
@@ -180,17 +182,29 @@ public class AppenderConfig extends Config
   }
 
   /**
-   * Gets an immutable collection of the appender parameters of this appender.
+   * Gets an immutable set of the appender parameters of this appender.
    * The collection of parameters is returned in sorted name order.
    * @return Appender parameters.
    */
   @Transient
-  public Collection<AppenderParamConfig> getAppenderParams()
+  public Set<AppenderParamConfig> getAppenderParams()
   {
     final SortedSet<AppenderParamConfig> paramSet =
       new TreeSet<AppenderParamConfig>(new ConfigComparator());
     paramSet.addAll(getAppenderParamsInternal());
-    return Collections.unmodifiableCollection(paramSet);
+    return Collections.unmodifiableSet(paramSet);
+  }
+  
+  /**
+   * Sets the appender parameters from the given set.
+   * @param params Appender configuration parameters.
+   */
+  public void setAppenderParams(final Set<AppenderParamConfig> params)
+  {
+    removeAllAppenderParams();
+    for (AppenderParamConfig p : params) {
+      addAppenderParam(p);
+    }
   }
 
   /**
@@ -285,17 +299,29 @@ public class AppenderConfig extends Config
   }
 
   /**
-   * Gets an immutable collection of the layout parameters of this appender.
+   * Gets an immutable set of the layout parameters of this appender.
    * The collection of parameters is returned in sorted name order.
    * @return Layout parameters.
    */
   @Transient
-  public Collection<LayoutParamConfig> getLayoutParams()
+  public Set<LayoutParamConfig> getLayoutParams()
   {
     final SortedSet<LayoutParamConfig> paramSet =
       new TreeSet<LayoutParamConfig>(new ConfigComparator());
     paramSet.addAll(getLayoutParamsInternal());
-    return Collections.unmodifiableCollection(paramSet);
+    return Collections.unmodifiableSet(paramSet);
+  }
+  
+  /**
+   * Sets the layout parameters from the given set.
+   * @param params Layout configuration parameters.
+   */
+  public void setLayoutParams(final Set<LayoutParamConfig> params)
+  {
+    removeAllLayoutParams();
+    for (LayoutParamConfig p : params) {
+      addLayoutParam(p);
+    }
   }
 
   /**

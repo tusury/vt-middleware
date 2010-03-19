@@ -32,6 +32,8 @@ import javax.persistence.Transient;
 
 import org.apache.log4j.Level;
 
+import edu.vt.middleware.gator.validation.UniqueName;
+
 /**
  * Configuration for log4j logging categories.
  *
@@ -44,6 +46,7 @@ import org.apache.log4j.Level;
   name = "category_sequence",
   sequenceName = "log_seq_clients",
   allocationSize = 1)
+@UniqueName(message = "{category.uniqueName}")
 public class CategoryConfig extends Config
 {
   /** CategoryConfig.java */

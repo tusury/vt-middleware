@@ -18,6 +18,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * Abstract configuration class from which all concrete configuration classes
@@ -53,6 +55,10 @@ public abstract class Config implements Serializable
   /**
    * @return the name
    */
+  @NotNull(message = "{config.name.notNull}")
+  @Pattern(
+      regexp = "[A-Za-z0-9]+[A-Za-z0-9._ -]*",
+      message = "{config.name.pattern}")
   @Column(name = "name", nullable = false)
   public String getName() {
     return name;

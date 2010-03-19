@@ -33,6 +33,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import edu.vt.middleware.gator.validation.UniqueName;
+
 import org.hibernate.annotations.Cascade;
 
 /**
@@ -47,6 +49,7 @@ import org.hibernate.annotations.Cascade;
   name = "project_sequence",
   sequenceName = "log_seq_projects",
   allocationSize = 1)
+@UniqueName(message = "{project.uniqueName}")
 public class ProjectConfig extends Config
 {
   /** ProjectConfig.java */

@@ -43,6 +43,22 @@ public class LayoutParamConfig extends ParamConfig
   /** Hash code seed */
   private static final int HASH_CODE_SEED = 32768;
 
+  
+  /** Default constructor */
+  public LayoutParamConfig() {}
+  
+
+  /**
+   * Creates a new appender parameter with the given name and value.
+   * @param name Layout parameter name.
+   * @param value Layout parameter value.
+   */
+  public LayoutParamConfig(final String name, final String value)
+  {
+    setName(name);
+    setValue(value);
+  }
+
 
   /** {@inheritDoc} */
   @Id
