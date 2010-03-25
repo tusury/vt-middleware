@@ -42,7 +42,7 @@ public class ProjectAclTest
   @Test
   public void testGetEntries()
   {
-    final ProjectAcl acl = new ProjectAcl(UnitTestHelper.createTestProject());
+    final ProjectAcl acl = new ProjectAcl(createProject());
     Assert.assertEquals(
       PermissionConfig.ALL_PERMISSIONS.length + 1,
       acl.getEntries().size());
@@ -54,7 +54,7 @@ public class ProjectAclTest
   @Test
   public void testGetObjectIdentity()
   {
-    final ProjectConfig project = UnitTestHelper.createTestProject();
+    final ProjectConfig project = createProject();
     final ProjectAcl acl = new ProjectAcl(project);
     Assert.assertEquals(project, acl.getObjectIdentity().getIdentifier());
   }
@@ -65,22 +65,33 @@ public class ProjectAclTest
   @Test
   public void testIsGranted()
   {
-    final ProjectAcl acl = new ProjectAcl(UnitTestHelper.createTestProject());
+    final ProjectAcl acl = new ProjectAcl(createProject());
     Assert.assertTrue(
       acl.isGranted(
         Arrays.asList(new Permission[] { BasePermission.WRITE, BasePermission.READ }),
-        Arrays.asList(new Sid[] { new PrincipalSid("admin") }),
+        Arrays.asList(new Sid[] { new PrincipalSid("adm") }),
         false));
     Assert.assertTrue(
       acl.isGranted(
         Arrays.asList(new Permission[] { BasePermission.READ }),
-        Arrays.asList(new Sid[] { new PrincipalSid("user") }),
+        Arrays.asList(new Sid[] { new PrincipalSid("usr") }),
         false));
     Assert.assertFalse(
       acl.isGranted(
           Arrays.asList(new Permission[] { BasePermission.WRITE }),
-          Arrays.asList(new Sid[] { new PrincipalSid("user") }),
+          Arrays.asList(new Sid[] { new PrincipalSid("usr") }),
         false));
   }
 
+  
+  private static ProjectConfig createProject()
+  {
+    final ProjectConfig project = UnitTestHelper.createProject(
+        "p", "a1", "a2", "c1", "c2", "cat1", "cat2");
+    project.addPermission(
+        new PermissionConfig("adm", PermissionConfig.parsePermissions("rwd")));
+    project.addPermission(
+        new PermissionConfig("usr", PermissionConfig.parsePermissions("r")));
+    return project;
+  }
 }

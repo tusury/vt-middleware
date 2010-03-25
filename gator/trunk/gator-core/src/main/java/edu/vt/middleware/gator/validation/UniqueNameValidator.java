@@ -23,8 +23,10 @@ import javax.validation.ConstraintValidatorContext;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.CategoryConfig;
+import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.Config;
 import edu.vt.middleware.gator.ConfigManager;
+import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,8 @@ public class UniqueNameValidator
     SUPPORTED_CLASSES.add(ProjectConfig.class);
     SUPPORTED_CLASSES.add(AppenderConfig.class);
     SUPPORTED_CLASSES.add(CategoryConfig.class);
+    SUPPORTED_CLASSES.add(ClientConfig.class);
+    SUPPORTED_CLASSES.add(PermissionConfig.class);
   }
 
 
@@ -87,8 +91,10 @@ public class UniqueNameValidator
       // Name must be unique among peers
       for (Config c : getPeers(value)) {
         if (c.getName().equals(value.getName())) {
-          context.buildConstraintViolationWithTemplate(
-	          message).addNode("name").addConstraintViolation();
+          if (context != null) {
+	          context.buildConstraintViolationWithTemplate(
+		          message).addNode("name").addConstraintViolation();
+          }
           return false;
         }
       }
@@ -130,6 +136,10 @@ public class UniqueNameValidator
       peers = ((AppenderConfig) value).getProject().getAppenders();
     } else if (value instanceof CategoryConfig) {
       peers = ((CategoryConfig) value).getProject().getCategories();
+    } else if (value instanceof ClientConfig) {
+      peers = ((ClientConfig) value).getProject().getClients();
+    } else if (value instanceof PermissionConfig) {
+      peers = ((PermissionConfig) value).getProject().getPermissions();
     }
     return peers;
   }

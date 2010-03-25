@@ -77,6 +77,9 @@ public class SocketServerTest
   /** Text of test message */ 
   private static final String TEST_MESSAGE = "Test message from JUnit.";
  
+  /** Test logging event category */
+  private static final String TEST_CATEGORY = "edu.vt.middleware.foo";
+ 
   /** Test project configuration */
   private ProjectConfig testProject;
 
@@ -103,7 +106,9 @@ public class SocketServerTest
   @BeforeTransaction
   public void setUp() throws Exception
   {
-    testProject = UnitTestHelper.createTestProject();
+    testProject = UnitTestHelper.createProject(
+        "p", "a1", "a2",
+        SocketServer.DEFAULT_BIND_ADDRESS, "127.0.0.2", TEST_CATEGORY);
     new TransactionTemplate(txManager).execute(
         new TransactionCallbackWithoutResult() {
           protected void doInTransactionWithoutResult(
@@ -138,10 +143,9 @@ public class SocketServerTest
       // before sending a test logging event
       Thread.sleep(5000);
       LOGGER.debug("Sending test logging event.");
-      final String category = getClass().getName();
       final LoggingEvent event = new LoggingEvent(
-          category,
-          Logger.getLogger(category),
+          TEST_CATEGORY,
+          Logger.getLogger(TEST_CATEGORY),
           Level.DEBUG,
           TEST_MESSAGE,
           null);
@@ -160,7 +164,7 @@ public class SocketServerTest
       final String logFilePath = FileHelper.pathCat(
         CLIENT_ROOT_DIR,
         testProject.getName(),
-        appender.getAppenderParam("File").getValue());
+        appender.getAppenderParam("file").getValue());
       final String contents = readTextFile(logFilePath);
       Assert.assertTrue(contents.contains(TEST_MESSAGE));
     }

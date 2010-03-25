@@ -21,7 +21,6 @@ import edu.vt.middleware.gator.CategoryConfig;
 import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.LayoutParamConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.log4j.SocketServer;
 
 /**
  * Test helper utility class.
@@ -32,73 +31,70 @@ import edu.vt.middleware.gator.log4j.SocketServer;
  */
 public class UnitTestHelper
 {
-  /** Test appender name */
-  public static final String TEST_APPENDER = "FILE";
-
   /** Creates a new instance */
   protected UnitTestHelper() {}
-
-
-  /**
-   * Creates a fully-functional project configuration for use in testing.
-   * @return Functional test project.
-   */
-  public static ProjectConfig createTestProject()
+  
+  
+  public static ProjectConfig createProject(
+      final String projectName,
+      final String appender1Name,
+      final String appender2Name,
+      final String client1Name,
+      final String client2Name,
+      final String ... categories)
   {
-    final AppenderConfig fileAppender = new AppenderConfig();
-    fileAppender.setName(TEST_APPENDER);
-    fileAppender.setAppenderClassName("org.apache.log4j.FileAppender");
-    fileAppender.setLayoutClassName("org.apache.log4j.PatternLayout");
-    final AppenderParamConfig fileParam = new AppenderParamConfig();
-    fileParam.setName("file");
-    fileParam.setValue("file.log");
-    fileAppender.addAppenderParam(fileParam);
-    final LayoutParamConfig fileLayoutParam = new LayoutParamConfig();
-    fileLayoutParam.setName("conversionPattern");
-    fileLayoutParam.setValue("%d %-5p [%c] %m%n");
-    fileAppender.addLayoutParam(fileLayoutParam);
-    
-    final AppenderConfig rollingFileAppender = new AppenderConfig();
-    rollingFileAppender.setName("ROLLING_FILE");
-    rollingFileAppender.setAppenderClassName(
+    final ProjectConfig project = new ProjectConfig();
+    project.setName(projectName);
+    project.setModifiedDate(Calendar.getInstance());
+    project.setClientLogDir("target");
+    project.addAppender(createAppender(appender1Name));
+    project.addAppender(createAppender(appender2Name));
+    project.addClient(createClient(client1Name));
+    project.addClient(createClient(client2Name));
+    for (String category : categories) {
+      final CategoryConfig c = createCategory(category);
+      for (AppenderConfig appender : project.getAppenders()) {
+        c.getAppenders().add(appender);
+      }
+      project.addCategory(c);
+    }
+    return project;
+  }
+  
+  public static AppenderConfig createAppender(final String name)
+  {
+    final AppenderConfig appender = new AppenderConfig();
+    appender.setName(name);
+    appender.setAppenderClassName(
         "org.apache.log4j.RollingFileAppender");
-    rollingFileAppender.setLayoutClassName("org.apache.log4j.PatternLayout");
+    appender.setLayoutClassName("org.apache.log4j.PatternLayout");
     final AppenderParamConfig rollingFileParam1 = new AppenderParamConfig();
     rollingFileParam1.setName("file");
-    rollingFileParam1.setValue("rolling-file.log");
+    rollingFileParam1.setValue(name + "-file.log");
     final AppenderParamConfig rollingFileParam2 = new AppenderParamConfig();
     rollingFileParam2.setName("maxBackupIndex");
     rollingFileParam2.setValue("1");
-    rollingFileAppender.addAppenderParam(rollingFileParam1);
-    rollingFileAppender.addAppenderParam(rollingFileParam2);
+    appender.addAppenderParam(rollingFileParam1);
+    appender.addAppenderParam(rollingFileParam2);
     final LayoutParamConfig rollingFileLayoutParam = new LayoutParamConfig();
     rollingFileLayoutParam.setName("conversionPattern");
     rollingFileLayoutParam.setValue("%d %-5p [%c] %m%n");
-    rollingFileAppender.addLayoutParam(rollingFileLayoutParam);
-    
+    appender.addLayoutParam(rollingFileLayoutParam);
+    return appender;
+  }
+  
+  public static CategoryConfig createCategory(final String name)
+  {
     final CategoryConfig category = new CategoryConfig();
-    category.setName("edu.vt.middleware.gator");
+    category.setName(name);
     category.setLevel("DEBUG");
-    category.getAppenders().add(fileAppender);
-    category.getAppenders().add(rollingFileAppender);
-    
+    return category;
+  }
+  
+  public static ClientConfig createClient(final String name)
+  {
     final ClientConfig client = new ClientConfig();
-    client.setName(SocketServer.DEFAULT_BIND_ADDRESS);
-
-    final ProjectConfig project = new ProjectConfig();
-    project.setName("Test Project");
-    project.setModifiedDate(Calendar.getInstance());
-    project.setClientLogDir("target");
-    project.addAppender(fileAppender);
-    project.addAppender(rollingFileAppender);
-    project.addCategory(category);
-    project.addClient(client);
-    
-    project.addPermission(
-      new PermissionConfig("admin", PermissionConfig.parsePermissions("rwd")));
-    project.addPermission(
-      new PermissionConfig("user", PermissionConfig.parsePermissions("r")));
-
-    return project;
+    client.setName(name);
+    return client;
   }
 }

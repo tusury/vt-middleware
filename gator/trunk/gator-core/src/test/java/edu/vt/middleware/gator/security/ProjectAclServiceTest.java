@@ -71,7 +71,12 @@ public class ProjectAclServiceTest
   @BeforeTransaction
   public void setUp() throws Exception
   {
-    testProject = UnitTestHelper.createTestProject();
+    testProject = UnitTestHelper.createProject(
+        "p", "a1", "a2", "c1", "c2", "cat1", "cat2");
+    testProject.addPermission(
+        new PermissionConfig("adm", PermissionConfig.parsePermissions("rwd")));
+    testProject.addPermission(
+        new PermissionConfig("usr", PermissionConfig.parsePermissions("r")));
     new TransactionTemplate(txManager).execute(
         new TransactionCallbackWithoutResult() {
           protected void doInTransactionWithoutResult(

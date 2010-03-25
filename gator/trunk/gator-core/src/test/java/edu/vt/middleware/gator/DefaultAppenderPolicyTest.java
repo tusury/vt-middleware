@@ -51,30 +51,11 @@ public class DefaultAppenderPolicyTest
   @Before
   public void setUp() throws Exception
   {
-    testProject = UnitTestHelper.createTestProject();
-    final CategoryConfig catNone = new CategoryConfig();
-    catNone.setName(TEST_CAT_NONE);
-    final CategoryConfig catFoo = new CategoryConfig();
-    catFoo.setName(TEST_CAT_FOO);
-    catFoo.getAppenders().add(
-      testProject.getAppender(UnitTestHelper.TEST_APPENDER));
-    final CategoryConfig catFooBar = new CategoryConfig();
-    catFooBar.setName(TEST_CAT_FOOBAR);
-    catFooBar.getAppenders().add(
-      testProject.getAppender(UnitTestHelper.TEST_APPENDER));
-    final CategoryConfig catFooDotBar = new CategoryConfig();
-    catFooDotBar.setName(TEST_CAT_FOO_BAR);
-    catFooDotBar.getAppenders().add(
-      testProject.getAppender(UnitTestHelper.TEST_APPENDER));
-    final CategoryConfig catRoot = new CategoryConfig();
-    catRoot.setName(CategoryConfig.ROOT_CATEGORY_NAME);
-    catRoot.getAppenders().add(
-      testProject.getAppender(UnitTestHelper.TEST_APPENDER));
-    testProject.addCategory(catNone);
-    testProject.addCategory(catFoo);
-    testProject.addCategory(catFooBar);
-    testProject.addCategory(catFooDotBar);
-    testProject.addCategory(catRoot);
+    testProject = UnitTestHelper.createProject(
+        "p", "a1", "a2", "c1", "c2",
+        TEST_CAT_FOO, TEST_CAT_FOO_BAR, TEST_CAT_FOOBAR,
+        CategoryConfig.ROOT_CATEGORY_NAME);
+    testProject.addCategory(UnitTestHelper.createCategory(TEST_CAT_NONE));
   }
 
   /**
@@ -86,7 +67,7 @@ public class DefaultAppenderPolicyTest
   {
     final CategoryConfig category = testProject.getCategory(TEST_CAT_FOO);
     final AppenderConfig appender =
-      testProject.getAppender(UnitTestHelper.TEST_APPENDER);
+      testProject.getAppender("a1");
     Assert.assertTrue(policy.allow(category, appender));
   }
 

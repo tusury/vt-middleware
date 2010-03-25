@@ -68,7 +68,8 @@ public class JdbcConfiguratorTest
   @SuppressWarnings("unchecked")
   public void testConfigureProjectConfigLoggerRepository() throws Exception
   {
-    final ProjectConfig project = UnitTestHelper.createTestProject(); 
+    final ProjectConfig project = UnitTestHelper.createProject(
+        "p", "a1", "a2", "c1", "c2", "cat1", "cat2");
     final LoggerRepository repo =
       new Hierarchy(new RootLogger(Level.INFO));
     configurator.configure(project, repo);
