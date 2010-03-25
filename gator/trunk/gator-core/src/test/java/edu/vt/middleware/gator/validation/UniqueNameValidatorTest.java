@@ -69,56 +69,56 @@ public class UniqueNameValidatorTest
     // Project name validation
     final ProjectConfig goodProject = UnitTestHelper.createProject(
         "good", "a1", "a2", "client1", "client2", "cat1", "cat2");
-    Assert.assertEquals(true, validate(goodProject));
+    Assert.assertTrue(validate(goodProject));
     final ProjectConfig dupeProject = UnitTestHelper.createProject(
         "p2", "a1", "a2", "client1", "client2", "cat1", "cat2");
-    Assert.assertEquals(false, validate(dupeProject));
+    Assert.assertFalse(validate(dupeProject));
     project2.setName("p1");
-    Assert.assertEquals(false, validate(project2));
+    Assert.assertFalse(validate(project2));
 
     // Appender name validation
     final AppenderConfig goodAppender = UnitTestHelper.createAppender("foo");
     goodAppender.setProject(project1);
-    Assert.assertEquals(true, validate(goodAppender));
+    Assert.assertTrue(validate(goodAppender));
     final AppenderConfig dupeAppender = UnitTestHelper.createAppender("a2");
     dupeAppender.setProject(project1);
-    Assert.assertEquals(false, validate(dupeAppender));
+    Assert.assertFalse(validate(dupeAppender));
     final AppenderConfig existingAppender = project1.getAppender("a1");
     existingAppender.setName("a2");
-    Assert.assertEquals(false, validate(existingAppender));
+    Assert.assertFalse(validate(existingAppender));
 
     // Category name validation
     final CategoryConfig goodCategory = UnitTestHelper.createCategory("foo");
     goodCategory.setProject(project1);
-    Assert.assertEquals(true, validate(goodCategory));
+    Assert.assertTrue(validate(goodCategory));
     final CategoryConfig dupeCategory = UnitTestHelper.createCategory("cat2");
     dupeCategory.setProject(project1);
-    Assert.assertEquals(false, validate(dupeCategory));
+    Assert.assertFalse(validate(dupeCategory));
     final CategoryConfig existingCategory = project1.getCategory("cat1");
     existingCategory.setName("cat2");
-    Assert.assertEquals(false, validate(existingCategory));
+    Assert.assertFalse(validate(existingCategory));
 
     // Client name validation
     final ClientConfig goodClient = UnitTestHelper.createClient("foo");
     goodClient.setProject(project1);
-    Assert.assertEquals(true, validate(goodClient));
+    Assert.assertTrue(validate(goodClient));
     final ClientConfig dupeClient = UnitTestHelper.createClient("client2");
     dupeClient.setProject(project1);
-    Assert.assertEquals(false, validate(dupeClient));
+    Assert.assertFalse(validate(dupeClient));
     final ClientConfig existingClient = project1.getClient("client1");
     existingClient.setName("client2");
-    Assert.assertEquals(false, validate(existingClient));
+    Assert.assertFalse(validate(existingClient));
 
     // Permission name validation
     final PermissionConfig goodPerm = new PermissionConfig("foo", 1);
     goodPerm.setProject(project1);
-    Assert.assertEquals(true, validate(goodPerm));
+    Assert.assertTrue(validate(goodPerm));
     final PermissionConfig dupePerm = new PermissionConfig("a", 1);
     dupePerm.setProject(project1);
-    Assert.assertEquals(false, validate(dupePerm));
+    Assert.assertFalse(validate(dupePerm));
     final PermissionConfig existingPerm = project1.getPermission("a");
     existingPerm.setName("b");
-    Assert.assertEquals(false, validate(existingPerm));
+    Assert.assertFalse(validate(existingPerm));
   }
   
   
