@@ -33,8 +33,10 @@ public abstract class Config implements Serializable
 {
   /** Config.java */
   private static final long serialVersionUID = 5079357889969322910L;
+  
+  private static final int DEFAULT_ID = -1;
 
-  protected int id;
+  protected int id = DEFAULT_ID;
 
   protected String name;
   
@@ -50,6 +52,12 @@ public abstract class Config implements Serializable
    */
   protected void setId(final int id) {
     this.id = id;
+  }
+  
+  @Transient
+  public boolean isNew()
+  {
+    return id == DEFAULT_ID;
   }
 
   /**

@@ -32,7 +32,7 @@ public class AppenderConstraintValidator
   /** {@inheritDoc} */
   public void initialize(AppenderConstraint annotation)
   {
-    setMessagePrefix(annotation.messagePrefix());
+    setMessage(annotation.message());
   }
 
 

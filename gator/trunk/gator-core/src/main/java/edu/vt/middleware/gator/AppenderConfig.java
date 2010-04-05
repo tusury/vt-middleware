@@ -32,6 +32,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cascade;
 
@@ -107,6 +108,7 @@ public class AppenderConfig extends Config
   /**
    * @return the appenderClassName
    */
+  @NotNull(message = "{appender.appenderClassName.notNull}")
   @Column(name = "appender_class", nullable = false)
   public String getAppenderClassName()
   {
@@ -196,10 +198,24 @@ public class AppenderConfig extends Config
   }
   
   /**
-   * Sets the appender parameters from the given set.
+   * @return Appender parameters as an array.
+   */
+  @Transient
+  public AppenderParamConfig[] getAppenderParamArray()
+  {
+    final Set<AppenderParamConfig> params = getAppenderParams();
+    if (params != null) {
+	    return params.toArray(new AppenderParamConfig[params.size()]);
+    } else {
+      return new AppenderParamConfig[0];
+    }
+  }
+
+  /**
+   * Sets the appender parameters from the given array.
    * @param params Appender configuration parameters.
    */
-  public void setAppenderParams(final Set<AppenderParamConfig> params)
+  public void setAppenderParamArray(final AppenderParamConfig[] params)
   {
     removeAllAppenderParams();
     for (AppenderParamConfig p : params) {
@@ -313,10 +329,24 @@ public class AppenderConfig extends Config
   }
   
   /**
+   * @return Layout parameters as an array.
+   */
+  @Transient
+  public LayoutParamConfig[] getLayoutParamArray()
+  {
+    final Set<LayoutParamConfig> params = getLayoutParams();
+    if (params != null) {
+      return params.toArray(new LayoutParamConfig[params.size()]);
+    } else {
+      return new LayoutParamConfig[0];
+    }
+  }
+
+  /**
    * Sets the layout parameters from the given set.
    * @param params Layout configuration parameters.
    */
-  public void setLayoutParams(final Set<LayoutParamConfig> params)
+  public void setLayoutParamArray(final LayoutParamConfig[] params)
   {
     removeAllLayoutParams();
     for (LayoutParamConfig p : params) {

@@ -175,7 +175,7 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     logger.debug("Saving " + project);
     ProjectConfig liveProject;
     project.setModifiedDate(Calendar.getInstance());
-    if (project.getId() == 0) {
+    if (project.isNew()) {
       em.persist(project);
       liveProject = find(ProjectConfig.class, project.getId());
     } else {

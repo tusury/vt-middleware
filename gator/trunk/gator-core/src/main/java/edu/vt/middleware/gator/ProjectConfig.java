@@ -324,6 +324,9 @@ public class ProjectConfig extends Config
    */
   public void removeAppender(final AppenderConfig appender)
   {
+    for (CategoryConfig cat : this.getCategories()) {
+      cat.getAppenders().remove(appender);
+    }
     appender.setProject(null);
     getAppendersInternal().remove(appender);
   }

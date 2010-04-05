@@ -20,6 +20,7 @@ import java.util.Set;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import javax.validation.constraints.NotNull;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.CategoryConfig;
@@ -44,6 +45,8 @@ public class UniqueNameValidator
   /** Classes on which this validator supports the UniqueName attribute */
   public static final Set<Class<? extends Config>> SUPPORTED_CLASSES;
 
+  @Autowired
+  @NotNull
   private ConfigManager configManager;
   
   private String message;
@@ -65,7 +68,6 @@ public class UniqueNameValidator
    * Sets the configuration manager.
    * @param helper Configuration manager;
    */
-  @Autowired
   public void setConfigManager(final ConfigManager helper)
   {
     this.configManager = helper;

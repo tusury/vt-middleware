@@ -33,17 +33,17 @@ import edu.vt.middleware.gator.CategoryConfig;
 public abstract class AbstractAppenderConstraintValidator<A extends Annotation>
 	implements ConstraintValidator<A, CategoryConfig>
 {
-  private String messagePrefix;
+  private String message;
   
   
-  public void setMessagePrefix(final String prefix)
+  public void setMessage(final String prefix)
   {
     if (prefix.endsWith(" ")) {
-      messagePrefix = prefix;
+      message = prefix;
     } else if (prefix.endsWith(":")) {
-      messagePrefix = prefix + " ";
+      message = prefix + " ";
     } else {
-      messagePrefix = prefix + ": ";
+      message = prefix + ": ";
     }
   }
 
@@ -58,7 +58,7 @@ public abstract class AbstractAppenderConstraintValidator<A extends Annotation>
     if (invalid.size() > 0) {
       if (context != null) {
         context.buildConstraintViolationWithTemplate(
-            messagePrefix + invalid.toString()).addNode(
+            message + invalid.toString()).addNode(
             "appenders").addConstraintViolation();
       }
       return false;

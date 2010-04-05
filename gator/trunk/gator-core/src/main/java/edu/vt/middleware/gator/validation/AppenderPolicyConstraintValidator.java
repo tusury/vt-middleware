@@ -32,7 +32,7 @@ public class AppenderPolicyConstraintValidator
   /** {@inheritDoc} */
   public void initialize(AppenderPolicyConstraint annotation)
   {
-    setMessagePrefix(annotation.messagePrefix());
+    setMessage(annotation.message());
   }
 
 

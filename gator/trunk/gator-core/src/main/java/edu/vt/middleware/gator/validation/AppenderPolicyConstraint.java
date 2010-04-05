@@ -31,12 +31,12 @@ import javax.validation.Payload;
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = AppenderConstraintValidator.class)
+@Constraint(validatedBy = AppenderPolicyConstraintValidator.class)
 public @interface AppenderPolicyConstraint
 {
   /** Message that prefixes the list of invalid appenders */
-  String messagePrefix() default 
-    "One or more appenders do not satisfy the project appender policy: ";
+  String message() default 
+    "Following appenders do not satisfy project appender policy: ";
 
   /** Validation groups */
   Class<?>[] groups() default { };

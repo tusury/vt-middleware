@@ -27,6 +27,8 @@ import javax.persistence.Transient;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.domain.BasePermission;
 
+import edu.vt.middleware.gator.validation.UniqueName;
+
 /**
  * Stores security permissions for principals/roles on a project.
  *
@@ -40,6 +42,7 @@ import org.springframework.security.acls.domain.BasePermission;
   name = "permission_sequence",
   sequenceName = "log_seq_permissions",
   allocationSize = 1)
+@UniqueName(message = "{permission.uniqueName}")
 public class PermissionConfig extends Config
 {
   /** All relevant Spring security permissions */

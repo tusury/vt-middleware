@@ -13,6 +13,8 @@
 */
 package edu.vt.middleware.gator;
 
+import java.io.Serializable;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,8 +39,11 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  *
  */
-public class DefaultAppenderPolicy implements AppenderPolicy
+public class DefaultAppenderPolicy implements AppenderPolicy, Serializable
 {
+  /** DefaultAppenderPolicy.java */
+  private static final long serialVersionUID = 5623314094167715148L;
+
   /** Logger instance */
   private final Log logger = LogFactory.getLog(getClass());
  

@@ -33,9 +33,8 @@ import javax.validation.Payload;
 @Constraint(validatedBy = AppenderConstraintValidator.class)
 public @interface AppenderConstraint
 {
-  /** Message that prefixes the list of invalid appenders */
-  String messagePrefix() default
-    "One or more appenders do not belong to project: ";
+  /** Message that prefixes list of invalid appenders */
+  String message() default "Following appenders do not belong to project: ";
 
   /** Validation groups */
   Class<?>[] groups() default { };

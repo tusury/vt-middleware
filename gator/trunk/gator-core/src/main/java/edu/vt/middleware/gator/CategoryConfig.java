@@ -29,9 +29,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.apache.log4j.Level;
 
+import edu.vt.middleware.gator.validation.AppenderConstraint;
+import edu.vt.middleware.gator.validation.AppenderPolicyConstraint;
 import edu.vt.middleware.gator.validation.UniqueName;
 
 /**
@@ -47,6 +50,8 @@ import edu.vt.middleware.gator.validation.UniqueName;
   sequenceName = "log_seq_clients",
   allocationSize = 1)
 @UniqueName(message = "{category.uniqueName}")
+@AppenderConstraint(message = "{category.appenderConstraint}")
+@AppenderPolicyConstraint(message = "{category.appenderPolicyConstraint}")
 public class CategoryConfig extends Config
 {
   /** CategoryConfig.java */
@@ -93,6 +98,7 @@ public class CategoryConfig extends Config
   /**
    * @return the level
    */
+  @NotNull(message = "{category.level.notNull}")
   @Column(name = "level", nullable = false)
   public String getLevel() {
     return level;
@@ -172,7 +178,7 @@ public class CategoryConfig extends Config
    * Sets the appenders that logging events of this category will be sent to.
    * @param s Appenders for this category.
    */
-  protected void setAppenders(final Set<AppenderConfig> s)
+  public void setAppenders(final Set<AppenderConfig> s)
   {
     appenders = s;
   }
