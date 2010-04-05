@@ -13,19 +13,20 @@
 */
 package edu.vt.middleware.gator.web;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.CategoryConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Controller for performing the same edits to multiple categories in one step.
@@ -34,58 +35,58 @@ import edu.vt.middleware.gator.web.support.RequestParamExtractor;
  * @version $Revision$
  *
  */
-public class CategoryBulkEditFormController extends BaseFormController
+@Controller
+@RequestMapping("/secure")
+@SessionAttributes({ "bulkData", "projectAppenders", "projectCategories" })
+public class CategoryBulkEditFormController extends AbstractFormController
 {
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-      throws Exception
+  public static final String VIEW_NAME = "categoryBulkEdit";
+
+
+  /**
+   * @return Array of available logger levels, e.g. ERROR, INFO, DEBUG.
+   */
+  @ModelAttribute("logLevels")
+  public String[] getLogLevels()
   {
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    // Touch categories and appenders to force lazy load
-    project.getCategories().size();
-    project.getAppenders().size();
-    if (project == null) {
-      throw new IllegalArgumentException("Project not found.");
-    }
-    return new BulkCategoryEditFormData(project);
+    return CategoryConfig.LOG_LEVELS;
   }
 
-  /** {@inheritDoc} */
-  @Override
-  protected Map<String, Object> referenceData(final HttpServletRequest request)
-      throws Exception
+
+  @RequestMapping(
+      value = "/project/{projectName}/category/bulk_edit.html",
+      method = RequestMethod.GET)
+  public String getBulkData(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
   {
-    final Map<String, Object> refData = new HashMap<String, Object>();
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    refData.put("project", project);
-    refData.put("availableCategories", project.getCategories());
-    refData.put("availableAppenders", project.getAppenders());
-    refData.put("logLevels", CategoryConfig.LOG_LEVELS);
-    return refData;
+    final ProjectConfig project = getProject(projectName);
+    model.addAttribute("bulkData", new BulkCategoryEditFormData(project));
+    model.addAttribute("projectAppenders", project.getAppenders());
+    model.addAttribute("projectCategories", project.getCategories());
+    return VIEW_NAME;
   }
+ 
   
-  /** {@inheritDoc} */
-  @Override
-  protected ModelAndView onSubmit(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object command, final BindException errors)
-      throws Exception
+  @RequestMapping(
+      value = "/project/{projectName}/category/bulk_edit.html",
+      method = RequestMethod.POST)
+  public String saveChanges(
+      @Valid @ModelAttribute("bulkData") final BulkCategoryEditFormData bulkData,
+      final BindingResult result)
   {
-    final BulkCategoryEditFormData formData =
-      (BulkCategoryEditFormData) command;
-    final ProjectConfig project = formData.getProject();
-    for (int categoryId : formData.getCategoryIds()) {
+    if (result.hasErrors()) {
+      return VIEW_NAME;
+    }
+    final ProjectConfig project = bulkData.getProject();
+    for (int categoryId : bulkData.getCategoryIds()) {
       final CategoryConfig category = project.getCategory(categoryId);
       if (category != null) {
-        category.setLevel(formData.getLevel());
-        if (formData.isClearExistingAppenders()) {
+        category.setLevel(bulkData.getLevel());
+        if (bulkData.isClearExistingAppenders()) {
           category.getAppenders().clear();
         }
-        for (int appenderId : formData.getAppenderIds()) {
+        for (int appenderId : bulkData.getAppenderIds()) {
           final AppenderConfig appender = project.getAppender(appenderId);
           if (appender != null) {
             category.getAppenders().add(appender);
@@ -94,8 +95,8 @@ public class CategoryBulkEditFormController extends BaseFormController
       }
     }
     configManager.save(project);
-    return new ModelAndView(
-      ControllerHelper.filterViewName(getSuccessView(), formData.getProject()));
+    return String.format(
+        "redirect:/secure/project/%s/edit.html", project.getName());
   }
 
 

@@ -13,9 +13,15 @@
  */
 package edu.vt.middleware.gator.web.support;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 import edu.vt.middleware.gator.AppenderParamConfig;
 import edu.vt.middleware.gator.web.support.AppenderParamArrayEditor;
@@ -26,43 +32,84 @@ import edu.vt.middleware.gator.web.support.AppenderParamArrayEditor;
  * @author Marvin S. Addison
  *
  */
+@RunWith(Parameterized.class)
 public class AppenderParamArrayEditorTest
 {
-  private static final String TEST_PARAM_STRING =
-    "file=/apps/logs/file.log\n" +
-    "maxBackupIndex=1\n" +
-    "maxFileSize=10000\n";
-  
-  private static final AppenderParamConfig[] TEST_PARAMS =
-    new AppenderParamConfig[3];
+  /** String representation of property value */
+  private String stringValue;
+ 
+  /** Normalized string value resulting from conversion to string */
+  private String normalizedStringValue;
+ 
+  /** Property value */
+  private AppenderParamConfig[] paramValue;
+
+
+  public AppenderParamArrayEditorTest(
+      final String stringValue,
+      final String normalizedValue,
+      final AppenderParamConfig[] paramValue)
+  {
+    this.stringValue = stringValue;
+    this.normalizedStringValue = normalizedValue;
+    this.paramValue = paramValue;
+  }
+
 
   /**
-   * @throws java.lang.Exception
+   * Gets the unit test parameters.
+   *
+   * @return  Test parameter data.
+   * 
+   * @throws  Exception on parameter setup errors.
    */
-  @BeforeClass
-  public static void setUp() throws Exception
+  @Parameters
+  public static Collection<Object[]> getTestParameters() throws Exception
   {
-    TEST_PARAMS[0] = new AppenderParamConfig();
-    TEST_PARAMS[0].setName("file");
-    TEST_PARAMS[0].setValue("/apps/logs/file.log");
-    TEST_PARAMS[1] = new AppenderParamConfig();
-    TEST_PARAMS[1].setName("maxBackupIndex");
-    TEST_PARAMS[1].setValue("1");
-    TEST_PARAMS[2] = new AppenderParamConfig();
-    TEST_PARAMS[2].setName("maxFileSize");
-    TEST_PARAMS[2].setValue("10000");
+    final Collection<Object[]> params = new ArrayList<Object[]>();
+    
+    // Test parameter #1 -- pretty typical property values
+    final String stringValue1 =
+      "file=/apps/logs/file.log\n" +
+      "maxBackupIndex=1\n" +
+      "maxFileSize=10000\n";
+    final AppenderParamConfig[] appenderParams1 = new AppenderParamConfig[] {
+        new AppenderParamConfig("file", "/apps/logs/file.log"),
+        new AppenderParamConfig("maxBackupIndex", "1"),
+        new AppenderParamConfig("maxFileSize", "10000"),
+    };
+    params.add(new Object[] {stringValue1, stringValue1, appenderParams1});
+    
+    // Test parameter #2 -- empty string handling
+    params.add(new Object[] {"", "", new AppenderParamConfig[0]});
+    
+    // Test parameter #3 -- newline handling
+    final AppenderParamConfig[] appenderParams3 = new AppenderParamConfig[] {
+        new AppenderParamConfig("a", "b"),
+    };
+    params.add(new Object[] {"   \na=b", "a=b\n", appenderParams3});
+    
+    // Test parameter #4 -- values containing '=' character
+    final String stringValue4 = "name=some=crazy==value\n";
+    final AppenderParamConfig[] appenderParams4 = new AppenderParamConfig[] {
+        new AppenderParamConfig("name", "some=crazy==value"),
+    };
+    params.add(new Object[] {stringValue4, stringValue4, appenderParams4});
+
+    return params;
   }
+
 
   /**
    * Test method for {@link AppenderParamArrayEditor#getAsText()}.
    */
-  @Test
   public void testGetAsText()
   {
     final AppenderParamArrayEditor editor = new AppenderParamArrayEditor();
-    editor.setAsText(TEST_PARAM_STRING);
-    Assert.assertEquals(TEST_PARAM_STRING, editor.getAsText());
+    editor.setValue(paramValue);
+    Assert.assertEquals(normalizedStringValue, editor.getAsText());
   }
+
 
   /**
    * Test method for {@link AppenderParamArrayEditor#getValue()}.
@@ -70,62 +117,8 @@ public class AppenderParamArrayEditorTest
   @Test
   public void testGetValue() {
     final AppenderParamArrayEditor editor = new AppenderParamArrayEditor();
-    editor.setValue(TEST_PARAMS);
-    final AppenderParamConfig[] testValue =
-      (AppenderParamConfig[]) editor.getValue();
-    Assert.assertEquals(TEST_PARAMS.length, testValue.length);
-    for (int i = 0; i < TEST_PARAMS.length; i++) {
-      Assert.assertEquals(TEST_PARAMS[i].getName(), testValue[i].getName());
-      Assert.assertEquals(TEST_PARAMS[i].getValue(), testValue[i].getValue());
-    }
-    Assert.assertEquals(TEST_PARAM_STRING, editor.getAsText());
+    editor.setAsText(stringValue);
+    final Object actual = editor.getValue();
+    Assert.assertTrue(Arrays.equals(paramValue, (AppenderParamConfig[]) actual));
   }
-
-  /**
-   * Test method for {@link AppenderParamArrayEditor#setAsText(String)}.
-   */
-  @Test
-  public void testSetAsTextString() {
-    final AppenderParamArrayEditor editor = new AppenderParamArrayEditor();
-    editor.setAsText(TEST_PARAM_STRING);
-    AppenderParamConfig[] testValue = (AppenderParamConfig[]) editor.getValue();
-    Assert.assertEquals(TEST_PARAMS.length, testValue.length);
-    for (int i = 0; i < TEST_PARAMS.length; i++) {
-      Assert.assertEquals(TEST_PARAMS[i].getName(), testValue[i].getName());
-      Assert.assertEquals(TEST_PARAMS[i].getValue(), testValue[i].getValue());
-    }
-    
-    // Ensure setting empty string and whitespace string works
-    editor.setAsText("");
-    Assert.assertEquals(0, ((AppenderParamConfig[]) editor.getValue()).length);
-    editor.setAsText(" \n");
-    Assert.assertEquals(0, ((AppenderParamConfig[]) editor.getValue()).length);
-    
-    // Test that a name/value pair not terminated with new line works
-    editor.setAsText("name=value");
-    Assert.assertEquals(1, ((AppenderParamConfig[]) editor.getValue()).length);
-    
-    // Ensure we can handle values containing equals signs
-    editor.setAsText("name=some=crazy=value");
-    testValue = (AppenderParamConfig[]) editor.getValue();
-    Assert.assertEquals(1, testValue.length);
-    Assert.assertEquals("some=crazy=value", testValue[0].getValue());
-  }
-
-  /**
-   * Test method for {@link AppenderParamArrayEditor#setValue(Object)}.
-   */
-  @Test
-  public void testSetValueObject() {
-    final AppenderParamArrayEditor editor = new AppenderParamArrayEditor();
-    editor.setValue(TEST_PARAMS);
-    final AppenderParamConfig[] testValue =
-      (AppenderParamConfig[]) editor.getValue();
-    Assert.assertEquals(TEST_PARAMS.length, testValue.length);
-    for (int i = 0; i < TEST_PARAMS.length; i++) {
-      Assert.assertEquals(TEST_PARAMS[i].getName(), testValue[i].getName());
-      Assert.assertEquals(TEST_PARAMS[i].getValue(), testValue[i].getValue());
-    }
-  }
-
 }

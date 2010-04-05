@@ -15,12 +15,17 @@ package edu.vt.middleware.gator.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import edu.vt.middleware.gator.CategoryConfig;
+import edu.vt.middleware.gator.ProjectConfig;
+import edu.vt.middleware.gator.log4j.LoggingEventCollector;
+import edu.vt.middleware.gator.log4j.LoggingEventHandler;
+import edu.vt.middleware.gator.log4j.SocketServer;
 
 import org.apache.log4j.Hierarchy;
 import org.apache.log4j.Level;
@@ -30,16 +35,17 @@ import org.apache.log4j.WriterAppender;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.RootLogger;
-import org.springframework.util.Assert;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
-
-import edu.vt.middleware.gator.CategoryConfig;
-import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.log4j.LoggingEventCollector;
-import edu.vt.middleware.gator.log4j.LoggingEventHandler;
-import edu.vt.middleware.gator.log4j.SocketServer;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  * Controller for watching collected logging events in real time.
@@ -51,69 +57,49 @@ import edu.vt.middleware.gator.web.support.RequestParamExtractor;
  * @version $Revision$
  *
  */
-public class LogWatcherFormController extends BaseFormController
+@Controller
+@RequestMapping("/secure")
+@SessionAttributes({"watchConfig", "project"})
+public class LogWatcherFormController extends AbstractFormController
 {
+  public static final String VIEW_NAME = "watchForm";
+
   /** Socket server */
+  @Autowired
+  @NotNull
   private SocketServer socketServer;
 
 
-  /**
-   * @param socketServer the socketServer to set
-   */
-  public void setSocketServer(final SocketServer socketServer)
+  @RequestMapping(
+      value = "/project/{projectName}/watch.html",
+      method = RequestMethod.GET) 
+  public String getWatchConfig(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
   {
-    this.socketServer = socketServer;
+    final ProjectConfig project = getProject(projectName);
+    model.addAttribute("project", project);
+    model.addAttribute("watchConfig", new WatchConfig(project.getId()));
+    return VIEW_NAME;
   }
 
-  /** {@inheritDoc} */
-  @Override
-  public void afterPropertiesSet() throws Exception
-  {
-    super.afterPropertiesSet();
-    Assert.notNull(socketServer, "SocketServer is required.");
-  }
 
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-    throws Exception
+  @RequestMapping(
+      value = "/project/{projectName}/watch.html",
+      method = RequestMethod.POST)
+  @Transactional(propagation = Propagation.REQUIRED)
+  public String saveProject(
+      @Valid @ModelAttribute("watchConfig") final WatchConfig watchConfig,
+      final BindingResult result,
+      final HttpServletResponse response)
   {
-    final ProjectConfig project = configManager.findProject(
-        RequestParamExtractor.getProjectName(request));
-    if (project == null) {
-      throw new IllegalArgumentException("No project specified.");
+    if (result.hasErrors()) {
+      return VIEW_NAME;
     }
-    final WatchConfig wc = new WatchConfig();
-    wc.setProjectId(project.getId());
-    return wc;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  protected Map<String, Object> referenceData(final HttpServletRequest request)
-    throws Exception
-  {
-    final Map<String, Object> data = new HashMap<String, Object>();
-    data.put(
-      "project",
-      configManager.findProject(RequestParamExtractor.getProjectName(request)));
-    return data;
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  protected ModelAndView onSubmit(
-    final HttpServletRequest request,
-    final HttpServletResponse response,
-    final Object command,
-    final BindException errors)
-    throws Exception
-  {
-    final WatchConfig wc = (WatchConfig) command;
     final LoggingEventCollector collector = new LoggingEventCollector(1000);
     try {
       addLoggingEventCollector(collector);
-      writeResponse(response, wc, collector);
+      writeResponse(response, watchConfig, collector);
     } catch (IOException e) {
       logger.debug("Caught IO exception while writing logging events.");
     } finally {
@@ -123,6 +109,7 @@ public class LogWatcherFormController extends BaseFormController
     // data inside the controller and don't need to render a view
     return null;
   }
+
 
   /**
    * Writes logging events received by the collector to a
@@ -238,6 +225,12 @@ public class LogWatcherFormController extends BaseFormController
     /** Array of enabled category IDs */
     private int[] categoryIds;
 
+
+    public WatchConfig(int projectId)
+    {
+      setProjectId(projectId);
+    }
+
     /**
      * @return the projectId
      */
@@ -265,6 +258,7 @@ public class LogWatcherFormController extends BaseFormController
     /**
      * @param layoutConversionPattern the layoutConversionPattern to set
      */
+    @NotNull(message = "{watchConfig.layoutConversionPattern.notNull}")
     public void setLayoutConversionPattern(String layoutConversionPattern)
     {
       this.layoutConversionPattern = layoutConversionPattern;

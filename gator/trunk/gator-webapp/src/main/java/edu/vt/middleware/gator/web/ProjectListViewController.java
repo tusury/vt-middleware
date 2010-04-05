@@ -13,39 +13,35 @@
 */
 package edu.vt.middleware.gator.web;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import edu.vt.middleware.gator.ConfigComparator;
 import edu.vt.middleware.gator.ProjectConfig;
 
 /**
- * Handles displaying a list of log4j project configurations.
+ * Handles displaying a list of project configurations.
  *
  * @author Marvin S. Addison
  * @version $Revision$
  *
  */
-public class ProjectListViewController extends BaseViewController
+@Controller
+@RequestMapping("/secure")
+public class ProjectListViewController extends AbstractController
 {
-  /** {@inheritDoc} */
-  protected ModelAndView handleRequestInternal(
-      final HttpServletRequest request,
-      final HttpServletResponse response) throws Exception
+  @RequestMapping(value = "/project/list.html", method = RequestMethod.GET)
+  public String getProjects(final Model model)
   {
-    final Map<String, Object> model = new HashMap<String, Object>();
     final SortedSet<ProjectConfig> sortedProjects =
       new TreeSet<ProjectConfig>(new ConfigComparator());
     sortedProjects.addAll(configManager.findAll(ProjectConfig.class));
-    model.put("projects", sortedProjects);
-    return new ModelAndView(getViewName(), "model", model);
+    model.addAttribute("projects", sortedProjects);
+    return "projectList";
   }
-
 }

@@ -1,18 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
   xmlns:p="http://www.springframework.org/schema/p"
   xmlns:tx="http://www.springframework.org/schema/tx"
   xmlns:util="http://www.springframework.org/schema/util"
   xsi:schemaLocation="
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 
-  
   <import resource="servletContextParams.xml" />
-
+  
+  <!-- Scan for annotated controllers -->
+  <context:component-scan base-package="edu.vt.middleware.gator.web"/>
+  
+  <!-- 
+  Some controllers are transactional.
+  MUST use CGLib class proxies due to mixing of @Controller and @Transactional.
+  See https://jira.springsource.org/browse/SPR-5935 for more info.
+  -->
+  <tx:annotation-driven
+    transaction-manager="transactionManager"
+    proxy-target-class="true"
+  />
+  
+  <mvc:annotation-driven />
+  
+  <mvc:interceptors>
+	  <bean
+	      class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor"
+	      p:entityManagerFactory-ref="entityManagerFactory" />
+  </mvc:interceptors>
 
   <!-- Default View Resolver -->
   <bean id="viewResolver"
@@ -25,10 +48,12 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
 
   <!-- Exception handling -->
+  <!--
   <bean id="defaultExceptionHandler"
       class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver"
     p:defaultErrorView="errGeneral">
   </bean>
+  -->
   
   <!-- Message source for this application -->
   <bean id="messageSource"
@@ -36,196 +61,24 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:basename="/WEB-INF/messages"
     p:cacheSeconds="600"
   />
-  
-  
-  <!-- Some controllers are transactional -->
-  <tx:annotation-driven transaction-manager="transactionManager"/>
+ 
+ 
+  <!-- Validators --> 
+  <bean id="permissionValidator"
+    class ="edu.vt.middleware.gator.validation.PermissonValidator" />
+
+  <bean id="projectCopyValidator"
+    class ="edu.vt.middleware.gator.web.validation.ProjectCopyValidator" />
+
+  <bean id="appenderCopyValidator"
+    class ="edu.vt.middleware.gator.web.validation.AppenderCopyValidator" />
 
 
-  <!-- Controllers -->
-  <bean id="baseViewController" abstract="true"
-    p:configManager-ref="configManager"
-  />
-  
-  <bean id="baseFormController" abstract="true"
-    p:sessionForm="true"
-    p:configManager-ref="configManager"
-  />
-
-  <bean id="projectListController"
-    class="edu.vt.middleware.gator.web.ProjectListViewController"
-    parent="baseViewController"
-    p:viewName="projectList"
-  />
-
-  <bean id="projectCreateController"
-    class="edu.vt.middleware.gator.web.ProjectCreateFormController"
-    parent="baseFormController"
-    p:commandName="project"
-    p:commandClass="edu.vt.middleware.gator.ProjectConfig"
-    p:formView="projectEdit"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
-  <bean id="projectEditController"
-    class="edu.vt.middleware.gator.web.ProjectEditFormController"
-    parent="baseFormController"
-    p:commandName="project"
-    p:formView="projectEdit"
-    p:successView="redirect:/secure/list.html"
-  />
-
-  <bean id="projectDeleteController"
-    class="edu.vt.middleware.gator.web.ProjectDeleteFormController"
-    parent="baseFormController"
-    p:commandName="spec"
-    p:formView="projectDelete"
-    p:successView="redirect:/secure/list.html"
-  />
-  
-  <bean id="projectCopyController"
-    class="edu.vt.middleware.gator.web.ProjectCopyFormController"
-    parent="baseFormController"
-    p:commandName="spec"
-    p:formView="projectCopy"
-    p:successView="redirect:/secure/list.html"
-  />
-  
-  <bean id="categoryValidator"
-    class="edu.vt.middleware.gator.web.CategoryValidator" />
-
-  <bean id="categoryEditController"
-    class="edu.vt.middleware.gator.web.CategoryEditFormController"
-    parent="baseFormController"
-    p:commandName="wrapper"
-    p:formView="categoryEdit"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-    p:validator-ref="categoryValidator"
-  />
-
-  <bean id="categoryBulkEditController"
-    class="edu.vt.middleware.gator.web.CategoryBulkEditFormController"
-    parent="baseFormController"
-    p:commandName="formData"
-    p:formView="categoryBulkEdit"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
-  <bean id="categoryDeleteController"
-    class="edu.vt.middleware.gator.web.CategoryDeleteFormController"
-    parent="baseFormController"
-    p:commandName="spec"
-    p:formView="deleteForm"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
-  <bean id="appenderEditController"
-    class="edu.vt.middleware.gator.web.AppenderEditFormController"
-    parent="baseFormController"
-    p:commandName="wrapper"
-    p:formView="appenderEdit"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
-  <bean id="appenderCopyController"
-    class="edu.vt.middleware.gator.web.AppenderCopyFormController"
-    parent="baseFormController"
-    p:commandName="spec"
-    p:formView="appenderCopy"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
-  <bean id="appenderDeleteController"
-    class="edu.vt.middleware.gator.web.AppenderDeleteFormController"
-    parent="baseFormController"
-    p:commandName="spec"
-    p:formView="deleteForm"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-  
-  <bean id="clientEditController"
-    class="edu.vt.middleware.gator.web.ClientEditFormController"
-    parent="baseFormController"
-    p:commandName="client"
-    p:formView="clientEdit"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
-  <bean id="clientDeleteController"
-    class="edu.vt.middleware.gator.web.ClientDeleteFormController"
-    parent="baseFormController"
-    p:commandName="spec"
-    p:formView="deleteForm"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-  
-  <bean id="permEditController"
-    class="edu.vt.middleware.gator.web.PermissionEditFormController"
-    parent="baseFormController"
-    p:commandName="perm"
-    p:formView="permEdit"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
-  <bean id="permDeleteController"
-    class="edu.vt.middleware.gator.web.PermissionDeleteFormController"
-    parent="baseFormController"
-    p:commandName="spec"
-    p:formView="deleteForm"
-    p:successView="redirect:/secure/project/@PROJECT_NAME@/edit.html"
-  />
-
+  <!-- Explicitly-defined controllers -->
   <bean id="xmlConfigViewController"
     class="edu.vt.middleware.gator.web.XmlConfigViewController"
-    parent="baseViewController"
-    p:viewName="log4jXml"
     p:bindAddress="${log4j.server.bindAddress}"
     p:port="${log4j.server.port}"
   />
-    
-  <bean id="logWatcherFormController"
-    class="edu.vt.middleware.gator.web.LogWatcherFormController"
-    parent="baseFormController"
-    p:commandName="watchConfig"
-    p:formView="watchForm"
-    p:socketServer-ref="log4jSocketServer"
-  />
-
-  <!-- Maps URLs onto controllers -->
-  <bean id="urlMapping" 
-      class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-    <property name="interceptors">
-      <list>
-        <bean
-          class="org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor"
-          p:entityManagerFactory-ref="entityManagerFactory" /> 
-      </list>
-    </property>
-    <property name="mappings">
-      <props>
-        <prop key="/secure/list.html">projectListController</prop>
-        <prop key="/secure/project/add.html">projectCreateController</prop>
-        <prop key="/secure/project/copy.html">projectCopyController</prop>
-        <prop key="/secure/project/*/edit.html">projectEditController</prop>
-        <prop key="/secure/project/*/delete.html">projectDeleteController</prop>
-        <prop key="/secure/project/*/category/add.html">categoryEditController</prop>
-        <prop key="/secure/project/*/category/bulk_edit.html">categoryBulkEditController</prop>
-        <prop key="/secure/project/*/category/*/edit.html">categoryEditController</prop>
-        <prop key="/secure/project/*/category/*/delete.html">categoryDeleteController</prop>
-        <prop key="/secure/project/*/appender/add.html">appenderEditController</prop>
-        <prop key="/secure/project/*/appender/copy.html">appenderCopyController</prop>
-        <prop key="/secure/project/*/appender/*/edit.html">appenderEditController</prop>
-        <prop key="/secure/project/*/appender/*/delete.html">appenderDeleteController</prop>
-        <prop key="/secure/project/*/client/add.html">clientEditController</prop>
-        <prop key="/secure/project/*/client/*/edit.html">clientEditController</prop>
-        <prop key="/secure/project/*/client/*/delete.html">clientDeleteController</prop>
-        <prop key="/secure/project/*/perm/add.html">permEditController</prop>
-        <prop key="/secure/project/*/perm/*/edit.html">permEditController</prop>
-        <prop key="/secure/project/*/perm/*/delete.html">permDeleteController</prop>
-        <prop key="/secure/project/*/watch.html">logWatcherFormController</prop>
-        <prop key="/project/*/log4j.xml">xmlConfigViewController</prop>
-      </props>    
-    </property>
-  </bean>
 
 </beans>

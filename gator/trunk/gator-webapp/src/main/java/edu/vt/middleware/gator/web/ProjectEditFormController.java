@@ -13,16 +13,20 @@
 */
 package edu.vt.middleware.gator.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
+import javax.validation.Valid;
 
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  * Controller that handles editing projects.
@@ -31,67 +35,40 @@ import edu.vt.middleware.gator.web.support.RequestParamExtractor;
  * @version $Revision$
  *
  */
-public class ProjectEditFormController extends BaseFormController
+@Controller
+@RequestMapping("/secure")
+@SessionAttributes("project")
+public class ProjectEditFormController extends AbstractFormController
 {
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-      throws Exception
+  public static final String VIEW_NAME = "projectEdit";
+
+
+  @RequestMapping(
+      value = "/project/{projectName}/edit.html",
+      method = RequestMethod.GET)
+  public String getProject(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
   {
-    final String name = RequestParamExtractor.getProjectName(request);
-    final ProjectConfig project = configManager.findProject(name);
-    if (project == null) {
-      throw new IllegalArgumentException(
-        String.format("Project '%s' not found.", name));
-    }
-    return project;
+    model.addAttribute("project", getProject(projectName));
+    return VIEW_NAME;
   }
 
 
-  /** {@inheritDoc} */
-  @Override
+  @RequestMapping(
+      value = "/project/{projectName}/edit.html",
+      method = RequestMethod.POST)
   @Transactional(propagation = Propagation.REQUIRED)
-  protected ModelAndView onSubmit(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object command,
-      final BindException errors)
-      throws Exception
+  public String saveProject(
+      @Valid @ModelAttribute("project") final ProjectConfig project,
+      final BindingResult result)
   {
-    final ProjectConfig project = (ProjectConfig) command;
-    if (nameChanged(project)) {
-      // Ensure project name is unique
-      if (configManager.findProject(project.getName()) != null) {
-        errors.rejectValue(
-          "name",
-          "error.project.uniqueName",
-          new Object[] {project.getName()},
-          "Project name must be unique.");
-        return showForm(request, errors, getFormView());
-      }
+    if (result.hasErrors()) {
+      return VIEW_NAME;
     }
+    logger.debug("Saving " + project);
     configManager.save(project);
-    return new ModelAndView(
-      ControllerHelper.filterViewName(getSuccessView(), project));
-  }
- 
- 
-  /**
-   * Determines whether the name of the given project has changed from
-   * what is recorded in the DB.
-   * @param project Project to evaluate.
-   * @return True if name of given project is different from that in the DB,
-   * false otherwise.  Returns false if project does not exist in DB.
-   */
-  private boolean nameChanged(final ProjectConfig project)
-  {
-    final ProjectConfig projectFromDb = configManager.find(
-      ProjectConfig.class,
-      project.getId());
-    if (projectFromDb != null) {
-      return !projectFromDb.getName().equals(project.getName());
-    } else {
-      return false;
-    }
+    return String.format(
+        "redirect:/secure/project/%s/edit.html", project.getName());
   }
 }

@@ -102,11 +102,6 @@
         <version>${spring.security.version}</version>
       </dependency>
       <dependency>
-        <groupId>javax.persistence</groupId>
-        <artifactId>persistence-api</artifactId>
-        <version>1.0</version>
-      </dependency>
-      <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjrt</artifactId>
         <version>${aspectj.version}</version>
@@ -125,6 +120,11 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-entitymanager</artifactId>
         <version>${hibernate.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>${hibernate-validator.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -147,6 +147,21 @@
         <artifactId>hsqldb</artifactId>
         <version>1.8.0.7</version>
       </dependency>
+			<dependency>
+			  <groupId>javax.xml.bind</groupId>
+			  <artifactId>jaxb-api</artifactId>
+			  <version>2.2</version>
+			  <exclusions>
+			    <exclusion>
+			      <artifactId>stax-api</artifactId>
+			      <groupId>javax.xml.stream</groupId>
+			    </exclusion>
+			    <exclusion>
+			      <artifactId>activation</artifactId>
+			      <groupId>javax.activation</groupId>
+			    </exclusion>
+			  </exclusions>
+			</dependency>
 
       <!-- Test Dependencies -->
       <dependency>
@@ -182,24 +197,37 @@
   <repositories>
     <repository>
       <id>repo1.maven.org</id>
-      <url>http://repo1.maven.org/maven2/</url>
+      <url>http://repo1.maven.org/maven2</url>
       <name>Maven Central Repository</name>
     </repository>
     <repository>
-      <id>http://repository.jboss.com/maven2/</id>
-      <url>http://repository.jboss.com/maven2/</url>
+      <id>repository.jboss.com</id>
+      <url>http://repository.jboss.com/maven2</url>
       <name>JBoss Maven2 Repository</name>
     </repository>
     <repository>
-      <id>http://developer.ja-sig.org/maven2/</id>
-      <url>http://developer.ja-sig.org/maven2/</url>
-      <name>JASIG Maven2 Repository</name>
+      <id>snapshots.jboss.com</id>
+      <url>http://snapshots.jboss.org/maven2</url>
+      <name>JBoss Snapshot Repository</name>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>
 
   <properties>
     <aspectj.version>1.6.2</aspectj.version>
-    <hibernate.version>3.4.0.GA</hibernate.version>
+    <hibernate.version>3.5.0-CR-2</hibernate.version>
+
+    <!--
+    Use 4.1.0 version to fix bug caused by JPATraversableResolver.
+    See https://forum.hibernate.org/viewtopic.php?f=9&t=1001354&start=0.
+     -->
+    <hibernate-validator.version>4.1.0.Beta1</hibernate-validator.version>
+
     <spring.version>3.0.1.RELEASE</spring.version>
     <spring.security.version>3.0.2.RELEASE</spring.security.version>
   </properties>  

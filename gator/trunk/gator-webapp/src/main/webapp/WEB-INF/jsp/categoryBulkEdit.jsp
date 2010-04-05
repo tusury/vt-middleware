@@ -2,11 +2,12 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>
-    <a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit <em>${project.name}</em></a>
+    <a href="<c:url value="/secure/project/${category.project.name}/edit.html" />">
+    Edit <em>${category.project.name}</em></a>
   </span>
   <span>&raquo;</span>
   <span>Bulk Edit Categories</span>
@@ -14,7 +15,7 @@
 
 <h1>Bulk Edit Categories</h1>
 
-<form:form method="post" commandName="formData">
+<form:form method="post" commandName="bulkData">
   <form:errors id="error" path="*" element="div" />
   
   <fieldset>
@@ -30,7 +31,7 @@
     </div>
     <div class="checkboxes">
       <form:checkboxes id="categoryIds" path="categoryIds"
-       items="${availableCategories}" itemValue="id" itemLabel="name"
+       items="${projectCategories}" itemValue="id" itemLabel="name"
        element="div" />
     </div>
   </div>
@@ -52,7 +53,7 @@
     </div>
     <div class="checkboxes">
 	    <form:checkboxes id="appenderIds" path="appenderIds"
-	     items="${availableAppenders}" itemValue="id" itemLabel="name"
+	     items="${projectAppenders}" itemValue="id" itemLabel="name"
 	     element="div" />
 	  </div>
   </div>

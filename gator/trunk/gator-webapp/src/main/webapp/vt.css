@@ -114,8 +114,19 @@ div.field {
 }
 
 #error, .error {
-  font-size:110%;
+  font-size:1.2em;
   font-weight:bold;
+  color:#CC0000;
+}
+
+#validation-summary {
+  font-size:1.1em;
+  font-weight:bold;
+  color:#CC0000;
+}
+
+.field-error {
+  margin-left:5px;
   color:#CC0000;
 }
 

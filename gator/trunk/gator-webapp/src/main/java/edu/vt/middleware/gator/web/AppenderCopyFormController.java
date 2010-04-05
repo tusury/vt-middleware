@@ -13,20 +13,24 @@
 */
 package edu.vt.middleware.gator.web;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+import edu.vt.middleware.gator.web.validation.AppenderCopyValidator;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  * Handles copying an existing appender to a new one with a different name.
@@ -35,137 +39,64 @@ import edu.vt.middleware.gator.web.support.RequestParamExtractor;
  * @version $Revision$
  *
  */
-public class AppenderCopyFormController extends BaseFormController
+@Controller
+@RequestMapping("/secure")
+@SessionAttributes({ "spec", "project", "appenders" })
+public class AppenderCopyFormController extends AbstractFormController
 {
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-      throws Exception
+  public static final String VIEW_NAME = "appenderCopy";
+
+  @Autowired
+  @NotNull
+  private AppenderCopyValidator validator;
+
+
+  @InitBinder
+  public void initValidator(final WebDataBinder binder)
   {
-    final ProjectConfig project = configManager.findProject(
-        RequestParamExtractor.getProjectName(request));
-    if (project == null) {
-      throw new IllegalArgumentException("Project not found.");
+    if (binder.getTarget() != null &&
+        validator.supports(binder.getTarget().getClass()))
+    {
+	    binder.setValidator(validator);
     }
-    return new CopyAppenderSpec();
   }
 
 
-  /** {@inheritDoc} */
-  @Override
-  protected Map<String, Object> referenceData(final HttpServletRequest request)
-    throws Exception
+  @RequestMapping(
+      value = "/project/{projectName}/appender/copy.html",
+      method = RequestMethod.GET)
+  public String getAppenders(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
   {
-    final Map<String, Object> data = new HashMap<String, Object>();
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    data.put("project", project);
-    data.put("appenders", project.getAppenders());
-    return data;
+    final ProjectConfig project = getProject(projectName);
+    model.addAttribute("project", project);
+    model.addAttribute("appenders", project.getAppenders());
+    model.addAttribute("spec", new CopySpec(AppenderConfig.class));
+    return VIEW_NAME;
   }
 
 
-  /** {@inheritDoc} */
-  @Override
-  @Transactional(propagation = Propagation.REQUIRED)
-  protected ModelAndView onSubmit(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object command, final BindException errors)
-      throws Exception
+  @RequestMapping(
+      value = "/project/{projectName}/appender/copy.html",
+      method = RequestMethod.POST)
+  public String copy(
+      @Valid @ModelAttribute("spec") final CopySpec spec,
+      final BindingResult result)
   {
-    final CopyAppenderSpec spec = (CopyAppenderSpec) command;
+    if (result.hasErrors()) {
+      return VIEW_NAME;
+    }
     final AppenderConfig source = configManager.find(
       AppenderConfig.class,
-      spec.getSourceAppenderId());
+      spec.getSourceId());
     final ProjectConfig project = source.getProject();
-    // Ensure appender name is unique within project
-    for (AppenderConfig appender : project.getAppenders()) {
-      if (appender.getName().equals(spec.getNewName())) {
-        errors.rejectValue(
-            "newName",
-            "error.appender.uniqueName",
-            new Object[] { appender.getName() },
-            "Appender name must be unique.");
-        return showForm(request, errors, getFormView());
-      }
-    }
     final AppenderConfig newAppender = ControllerHelper.cloneAppender(source);
-    newAppender.setName(spec.getNewName());
+    newAppender.setName(spec.getName());
+    newAppender.setProject(project);
     project.addAppender(newAppender);
     configManager.save(project);
-    return new ModelAndView(
-        ControllerHelper.filterViewName(getSuccessView(), project));
-  }
-
-
-  /**
-   * Form backing object for {@link AppenderCopyFormController}.
-   *
-   * @author Middleware
-   * @version $Revision$
-   *
-   */
-  public static class CopyAppenderSpec
-  {
-    /** ID of project to which appenders belong */
-    private int projectId;
-
-    /** ID of appender to be copied */
-    private int sourceAppenderId;
-   
-    /** Name of new appender created from source */
-    private String newName;
-
-
-    /**
-     * @return Parent project ID.
-     */
-    public int getProjectId()
-    {
-      return projectId;
-    }
-
-    /**
-     * @param id Parent project ID.
-     */
-    public void setProjectId(final int id)
-    {
-      this.projectId = id;
-    }
-
-    /**
-     * @return ID of appender to be copied.
-     */
-    public int getSourceAppenderId()
-    {
-      return sourceAppenderId;
-    }
-
-    /**
-     * @param id ID of appender to be copied.
-     */
-    public void setSourceAppenderId(final int id)
-    {
-      this.sourceAppenderId = id;
-    }
-
-    /**
-     * @return Name of new appender created from copy.
-     */
-    public String getNewName()
-    {
-      return newName;
-    }
-
-    /**
-     * @param name Name of new appender created from copy.
-     */
-    public void setNewName(final String name)
-    {
-      this.newName = name;
-    }
-    
-    
+    return String.format(
+        "redirect:/secure/project/%s/edit.html", project.getName());
   }
 }

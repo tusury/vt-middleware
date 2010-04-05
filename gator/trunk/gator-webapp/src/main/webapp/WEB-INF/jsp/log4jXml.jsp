@@ -7,13 +7,13 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
   <appender name="SOCKET" class="org.apache.log4j.net.SocketAppender">
-    <param name="RemoteHost" value="${model.bindAddress}"/>
-    <param name="Port" value="${model.port}"/>
+    <param name="RemoteHost" value="${bindAddress}"/>
+    <param name="Port" value="${port}"/>
     <param name="ReconnectionDelay" value="60000"/>
     <param name="Threshold" value="ALL"/>
   </appender>
 
-<c:forEach items="${model.project.appenders}" var="appender">
+<c:forEach items="${project.appenders}" var="appender">
 	<appender name="${appender.name}" class="${appender.appenderClassName}">
 	<c:if test="${not empty appender.errorHandlerClassName}">
 	  <errorHandler class="${appender.errorHandlerClassName}"/>
@@ -31,7 +31,7 @@
 	</appender>
 </c:forEach>
 
-<c:forEach items="${model.project.categories}" var="category">
+<c:forEach items="${project.categories}" var="category">
   <c:choose>
   <c:when test="${category.root}">
 	<root>

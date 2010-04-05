@@ -14,7 +14,6 @@
 package edu.vt.middleware.gator.web;
 
 import org.springframework.security.acls.model.Permission;
-import org.springframework.security.acls.domain.BasePermission;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.AppenderParamConfig;
@@ -126,20 +125,6 @@ public class ControllerHelper
 
 
   /**
-   * Filter a view name containing placeholders for values that
-   * need to be replaced by data from a project.
-   * @param viewName View name to filter.
-   * @param project Project configuration.
-   * @return New view name with placeholders replaced.
-   */
-  public static String filterViewName(final String viewName,
-      final ProjectConfig project)
-  {
-    return viewName.replace("@PROJECT_NAME@", project.getName());
-  }
-
-
-  /**
    * Create a permission configuration containing all permissions for the
    * given security identifier.
    * @param sid Security identifier; either a username or role name.
@@ -155,32 +140,5 @@ public class ControllerHelper
     }
     perm.setPermissionBits(permBits);
     return perm;
-  }
-  
-
-  /**
-   * Determines whether the given permission is the last full permission in
-   * the given project.
-   * @param project Project to test.
-   * @param permissionId ID of permission to check.
-   * @return True if given permission is last full permission in the given
-   * project.
-   */
-  public static boolean isLastFullPermissions(
-    final ProjectConfig project,
-    final int permissionId)
-  {
-    int count = 0;
-    int fullPermissionId = 0;
-    for (PermissionConfig perm : project.getPermissions()) {
-      if (perm.hasPermission(BasePermission.READ) &&
-          perm.hasPermission(BasePermission.WRITE) &&
-          perm.hasPermission(BasePermission.DELETE))
-      {
-        count++;
-        fullPermissionId = perm.getId();
-      }
-    }
-    return count <= 1 && fullPermissionId == permissionId;
   }
 }

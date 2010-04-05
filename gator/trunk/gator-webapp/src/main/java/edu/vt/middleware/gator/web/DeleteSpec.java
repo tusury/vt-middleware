@@ -13,6 +13,8 @@
 */
 package edu.vt.middleware.gator.web;
 
+import javax.validation.constraints.AssertTrue;
+
 import edu.vt.middleware.gator.Config;
 import edu.vt.middleware.gator.ProjectConfig;
 
@@ -69,6 +71,7 @@ public class DeleteSpec
   /**
    * @return the confirmationFlag
    */
+  @AssertTrue(message = "{deleteSpec.confirmationFlag.assertTrue}")
   public boolean getConfirmationFlag()
   {
     return confirmationFlag;

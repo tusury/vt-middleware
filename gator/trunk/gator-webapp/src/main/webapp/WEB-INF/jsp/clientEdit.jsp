@@ -1,7 +1,7 @@
 <%@ include file="includes/top.jsp" %>
 
 <c:choose>
-  <c:when test="${client.id == 0}">
+  <c:when test="${client.new}">
     <c:set var="action" value="Add Client" />
   </c:when>
   <c:otherwise>
@@ -11,11 +11,12 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>
-    <a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit <em>${project.name}</em></a>
+    <a href="<c:url value="/secure/project/${client.project.name}/edit.html" />">
+    Edit <em>${client.project.name}</em></a>
   </span>
   <span>&raquo;</span>
   <span>${action}</span>

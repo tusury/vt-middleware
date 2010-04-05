@@ -2,7 +2,7 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>
@@ -15,11 +15,11 @@
 <h1>Delete ${spec.typeName}</h1>
 
 <form:form method="post" commandName="spec">
-  <form:errors id="error" path="*" element="div" />
   
   <fieldset>
     <legend>Delete ${spec.typeName}</legend>
     <div class="field">
+  	  <form:errors cssClass="error" path="confirmationFlag" element="div" />
       <div class="checkboxes">
         <form:checkbox id="delete" path="confirmationFlag"
           value="confirmationFlag"

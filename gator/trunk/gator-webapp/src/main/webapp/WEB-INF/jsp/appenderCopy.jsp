@@ -2,11 +2,12 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>
-    <a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit <em>${project.name}</em></a>
+    <a href="<c:url value="/secure/project/${project.name}/edit.html" />">
+    Edit <em>${project.name}</em></a>
   </span>
   <span>&raquo;</span>
   <span>Copy Appender</span>
@@ -21,13 +22,13 @@
   <legend>Create New Appender from Existing</legend>
   <div class="field">Project <em>${project.name}</em></div>
   <div class="field">
-    <div><label for="sourceAppenderId">Appender to Copy</label></div>
-    <div><form:select id="sourceAppenderId" path="sourceAppenderId"
+    <div><label for="sourceId">Appender to Copy</label></div>
+    <div><form:select id="sourceId" path="sourceId"
       items="${appenders}" itemValue="id" itemLabel="name"/></div>
   </div>
   <div class="field">
-    <div><label for="newName">New Appender Name</label></div>
-    <div><form:input id="newName" path="newName" size="30" /></div>
+    <div><label for="name">New Appender Name</label></div>
+    <div><form:input id="name" path="name" size="30" /></div>
   </div>
   <div class="field">
     <div><input type="submit" name="action" value="Copy" /></div>

@@ -13,157 +13,144 @@
  */
 package edu.vt.middleware.gator.web;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.beans.PropertyEditorSupport;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.CategoryConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
- * Handles edits to logging category configuration.
+ * Handles logging category configuration.
  *
  * @author Marvin S. Addison
  *
  */
-public class CategoryEditFormController extends BaseFormController
+@Controller
+@RequestMapping("/secure")
+@SessionAttributes({ "category", "projectAppenders" })
+public class CategoryEditFormController extends AbstractFormController
 {
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-      throws Exception
+  public static final String VIEW_NAME = "categoryEdit";
+
+
+  @InitBinder
+  public void initCategoryEditors(final WebDataBinder binder)
   {
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    if (project == null) {
-      throw new IllegalArgumentException("Project not found.");
-    }
-    final CategoryConfig category = project.getCategory(
-      RequestParamExtractor.getCategoryId(request));
-    CategoryWrapper wrapper = null;
-    if (category == null) {
-      final CategoryConfig newCategory = new CategoryConfig();
-      newCategory.setProject(project);
-      wrapper = new CategoryWrapper(newCategory);
-    } else {
-      wrapper = new CategoryWrapper(category);
-    }
-    return wrapper;
-  }
+    binder.registerCustomEditor(
+        AppenderConfig.class,
+        "appenders",
+        new PropertyEditorSupport()
+        {
+          private AppenderConfig value;
 
+          public Object getValue()
+          {
+            return value;
+          }
+          
+          public void setValue(final Object o)
+          {
+            value = (AppenderConfig) o;
+          }
+          
+          public String getAsText()
+          {
+            return Integer.toString(value.getId());
+          }
 
-  /** {@inheritDoc} */
-  @Override
-  protected Map<String, Object> referenceData(final HttpServletRequest request)
-      throws Exception
-  {
-    final Map<String, Object> refData = new HashMap<String, Object>();
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    refData.put("project", project);
-    refData.put("availableAppenders", project.getAppenders());
-    refData.put("logLevels", CategoryConfig.LOG_LEVELS);
-    return refData;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected ModelAndView onSubmit(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object command, final BindException errors)
-      throws Exception
-  {
-    final CategoryWrapper wrapper = (CategoryWrapper) command;
-    final CategoryConfig category = wrapper.getCategory();
-    final ProjectConfig project = category.getProject();
-    category.getAppenders().clear();
-    for (int id : wrapper.getAppenderIds()) {
-      final AppenderConfig appender = project.getAppender(id);
-      if (appender == null) {
-        throw new IllegalArgumentException(String.format(
-            "Appender ID=%s does not exist in project.", id));
-      }
-      category.getAppenders().add(appender);
-    }
-    if (!configManager.exists(category)) {
-      project.addCategory(category);
-    }
-    configManager.save(project);
-    return new ModelAndView(
-        ControllerHelper.filterViewName(getSuccessView(), project));
+          public void setAsText(final String text)
+          {
+            value = configManager.find(
+                AppenderConfig.class, Integer.parseInt(text));
+          }
+        });
   }
 
 
   /**
-  Wrapper class for {@link CategoryConfig} that exposes additional attributes
-   * needed for binding to forms.
-   *
-   * @author Marvin S. Addison
-   *
+   * @return Array of available logger levels, e.g. ERROR, INFO, DEBUG.
    */
-  public static class CategoryWrapper
+  @ModelAttribute("logLevels")
+  public String[] getLogLevels()
   {
-    private CategoryConfig category;
-    
-    private int[] appenderIds;
+    return CategoryConfig.LOG_LEVELS;
+  }
 
 
-    /**
-     * Creates a new wrapper around the given category configuration.
-     * @param wrapped Category configuration to wrap.
-     */
-    public CategoryWrapper(final CategoryConfig wrapped)
-    {
-      setCategory(wrapped);
-      final int[] ids = new int[wrapped.getAppenders().size()];
-      int i = 0;
-      for (AppenderConfig appender : wrapped.getAppenders()) {
-        ids[i++] = appender.getId();
-      }
-      setAppenderIds(ids);
+  @RequestMapping(
+      value = "/project/{projectName}/category/add.html",
+      method = RequestMethod.GET)
+  public String getNewCategory(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
+  {
+    final ProjectConfig project = getProject(projectName);
+    // Touch categories so they are available during validation
+    project.getCategories();
+    final CategoryConfig category = new CategoryConfig();
+    category.setProject(project);
+    model.addAttribute("category", category);
+    model.addAttribute("projectAppenders", project.getAppenders());
+    return VIEW_NAME;
+  }
+
+
+  @RequestMapping(
+      value = "/project/{projectName}/category/{categoryId}/edit.html",
+      method = RequestMethod.GET)
+  public String getCategory(
+      @PathVariable("projectName") final String projectName,
+      @PathVariable("categoryId") final int categoryId,
+      final Model model)
+  {
+    final ProjectConfig project = getProject(projectName);
+    final CategoryConfig category = project.getCategory(categoryId);
+    if (category == null) {
+      throw new IllegalArgumentException(
+          String.format("Category ID=%s not found in project '%s'.",
+              categoryId, projectName));
     }
+    model.addAttribute("category", category);
+    model.addAttribute("projectAppenders", project.getAppenders());
+    return VIEW_NAME;
+  }
 
-    /**
-     * @param category the category to set
-     */
-    public void setCategory(CategoryConfig category)
-    {
-      this.category = category;
-    }
 
-    /**
-     * @return the category
-     */
-    public CategoryConfig getCategory()
-    {
-      return category;
+  @RequestMapping(
+      value = {
+          "/project/{projectName}/category/add.html",
+          "/project/{projectName}/category/{categoryId}/edit.html"
+      },
+      method = RequestMethod.POST)
+  @Transactional(propagation = Propagation.REQUIRED)
+  public String saveCategory(
+      @Valid @ModelAttribute("category") final CategoryConfig category,
+      final BindingResult result)
+  {
+    if (result.hasErrors()) {
+      return VIEW_NAME;
     }
-
-    /**
-     * Gets the IDs of all appenders this category sends logging events to.
-     * @return Array of IDs of associated appenders.
-     */
-    public int[] getAppenderIds()
-    {
-      return appenderIds;
+    final ProjectConfig project = category.getProject();
+    if (!configManager.exists(category)) {
+      project.addCategory(category);
     }
-
-    /**
-     * Sets the IDs of all appenders this category sends logging events to.
-     * @param ids Array of IDs of associated appenders.
-     */
-    public void setAppenderIds(final int[] ids)
-    {
-      appenderIds = ids;
-    }
+    configManager.save(project);
+    return String.format(
+        "redirect:/secure/project/%s/edit.html", project.getName());
   }
 }

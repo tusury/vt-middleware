@@ -13,21 +13,23 @@
  */
 package edu.vt.middleware.gator.web;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
 /**
  * Handles changes to client configuration.
@@ -35,92 +37,83 @@ import edu.vt.middleware.gator.web.support.RequestParamExtractor;
  * @author Marvin S. Addison
  *
  */
-public class ClientEditFormController extends BaseFormController
+@Controller
+@RequestMapping("/secure")
+@SessionAttributes("client")
+public class ClientEditFormController extends AbstractFormController
 {
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-      throws Exception
+  public static final String VIEW_NAME = "clientEdit";
+
+
+  @RequestMapping(
+      value = "/project/{projectName}/client/add.html",
+      method = RequestMethod.GET)
+  public String getNewClient(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
   {
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    if (project == null) {
-      throw new IllegalArgumentException("Project not found.");
-    }
-    ClientConfig client = project.getClient(
-      RequestParamExtractor.getClientId(request));
+    final ProjectConfig project = getProject(projectName);
+    final ClientConfig client = new ClientConfig();
+    client.setProject(project);
+    model.addAttribute("client", client);
+    return VIEW_NAME;
+  }
+
+
+  @RequestMapping(
+      value = "/project/{projectName}/client/{clientId}/edit.html",
+      method = RequestMethod.GET)
+  public String getClient(
+      @PathVariable("projectName") final String projectName,
+      @PathVariable("clientId") final int clientId,
+      final Model model)
+  {
+    final ClientConfig client =
+      getProject(projectName).getClient(clientId);
     if (client == null) {
-      client = new ClientConfig();
-      client.setProject(project);
+      throw new IllegalArgumentException(
+        String.format("Client ID=%s not found in project '%s'.",
+            clientId, projectName));
     }
-    return client;
+    model.addAttribute("client", client);
+    return VIEW_NAME;
   }
 
 
-  /** {@inheritDoc} */
-  @Override
-  protected Map<String, Object> referenceData(final HttpServletRequest request)
-      throws Exception
-  {
-    final Map<String, Object> refData = new HashMap<String, Object>();
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
-    refData.put("project", project);
-    return refData;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
+  @RequestMapping(
+      value = {
+          "/project/{projectName}/client/add.html",
+          "/project/{projectName}/client/{clientId}/edit.html"
+      },
+      method = RequestMethod.POST)
   @Transactional(propagation = Propagation.REQUIRED)
-  protected ModelAndView onSubmit(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object command, final BindException errors)
-      throws Exception
+  public String saveClient(
+      @Valid @ModelAttribute("client") final ClientConfig client,
+      final BindingResult result)
   {
-    final ClientConfig client = (ClientConfig) command;
+    if (result.hasErrors()) {
+      return VIEW_NAME;
+    }
     final ProjectConfig project = client.getProject();
-    // For new clients or name changes, ensure name is unique within project
-    final ClientConfig clientFromDb = configManager.find(
-        ClientConfig.class,
-        client.getId());
-    ProjectConfig checkProject = null;
-    if (clientFromDb == null) {
-      checkProject = project;
-    } else if (!clientFromDb.getName().equals(client.getName())) {
-      checkProject = clientFromDb.getProject();
-    }
-    if (checkProject.getClient(client.getName()) != null) {
-      errors.rejectValue(
-        "name",
-        "error.client.uniqueName",
-        new Object[] {client.getName()},
-      "Client name must be unique in project.");
-    }
     // Ensure this client does not exist in any other projects
     final List<ProjectConfig> otherProjects =
       configManager.findProjectsByClientName(client.getName());
     for (ProjectConfig p : otherProjects)
     {
       if (!p.equals(project)) {
-        errors.rejectValue(
+        result.rejectValue(
           "name",
           "error.client.globallyUnique",
           new Object[] {client.getName(), p.getName()},
           "A client is only allowed in a single project.");
+        return VIEW_NAME;
       }
     }
-    if (errors.hasErrors()) {
-      return showForm(request, response, errors);
-    } else {
-      if (clientFromDb == null) {
-        project.addClient(client);
-      }
-      configManager.save(project);
-      return new ModelAndView(
-          ControllerHelper.filterViewName(getSuccessView(), project));
+    if (!configManager.exists(client)) {
+      project.addClient(client);
     }
-
+    configManager.save(project);
+    return String.format(
+        "redirect:/secure/project/%s/edit.html", project.getName());
   }
 }

@@ -13,14 +13,20 @@
 */
 package edu.vt.middleware.gator.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
+import javax.validation.Valid;
 
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  * Handles project deletion.
@@ -29,39 +35,48 @@ import edu.vt.middleware.gator.web.support.RequestParamExtractor;
  * @version $Revision$
  *
  */
-public class ProjectDeleteFormController extends BaseDeleteFromController
+@Controller
+@RequestMapping("/secure")
+@SessionAttributes("spec")
+public class ProjectDeleteFormController extends AbstractFormController
 {
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-      throws Exception
+  public static final String VIEW_NAME = "deleteForm";
+
+  @RequestMapping(
+      value = "/project/{projectName}/delete.html",
+      method = RequestMethod.GET)
+  public String getDeleteSpec(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
   {
-    final ProjectConfig project = configManager.findProject(
-      RequestParamExtractor.getProjectName(request));
+    final ProjectConfig project = configManager.findProject(projectName);
     if (project == null) {
       throw new IllegalArgumentException(
           "Illegal attempt to delete non-existent project.");
     }
     final DeleteSpec spec = new DeleteSpec();
+    spec.setTypeName("Project");
+    spec.setProject(project);
     spec.setConfigToBeDeleted(project);
-    return spec;
+    model.addAttribute("spec", spec);
+    return VIEW_NAME;
   }
 
 
-  /** {@inheritDoc} */
-  @Override
-  protected ModelAndView onSubmit(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object command,
-      final BindException errors)
-      throws Exception
+  @RequestMapping(
+      value = "/project/{projectName}/delete.html",
+      method = RequestMethod.POST)
+  @Transactional(propagation = Propagation.REQUIRED)
+  public String deleteProject(
+      @Valid @ModelAttribute("spec") final DeleteSpec spec,
+      final BindingResult result)
   {
-    final DeleteSpec spec = (DeleteSpec) command;
-    if (!validate(errors, spec)) {
-      return showForm(request, errors, getFormView());
+    if (result.hasErrors()) {
+      return VIEW_NAME;
     }
-    configManager.delete((ProjectConfig) spec.getConfigToBeDeleted());
-    return new ModelAndView(getSuccessView());
+    final ProjectConfig project = (ProjectConfig) spec.getConfigToBeDeleted();
+    logger.debug("Deleting " + project);
+    configManager.delete(project);
+    return "redirect:/secure/project/list.html";
   }
 }

@@ -13,20 +13,17 @@
  */
 package edu.vt.middleware.gator.web;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.ParamConfig;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.log4j.SocketServer;
 import edu.vt.middleware.gator.util.FileHelper;
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Handles delivering an XML view of the project configuration that could be
@@ -35,7 +32,8 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Marvin S. Addison
  *
  */
-public class XmlConfigViewController extends BaseViewController
+@Controller
+public class XmlConfigViewController extends AbstractController
 {
   /** IP address socket server is bound to */
   protected String bindAddress = SocketServer.DEFAULT_BIND_ADDRESS;
@@ -64,20 +62,14 @@ public class XmlConfigViewController extends BaseViewController
   }
 
 
-  /** {@inheritDoc} */
-  protected ModelAndView handleRequestInternal(
-      final HttpServletRequest request,
-      final HttpServletResponse response) throws Exception
+  @RequestMapping(
+      value = "/project/{projectName}/log4j.xml",
+      method = RequestMethod.GET) 
+  public String getLog4jXml(
+      @PathVariable("projectName") final String projectName,
+      final Model model)
   {
-    final Map<String, Object> model = new HashMap<String, Object>();
-    final String name = RequestParamExtractor.getProjectName(request);
-    if (name == null) {
-      throw new IllegalArgumentException("No project name specified.");
-    }
-    ProjectConfig project = configManager.findProject(name);
-    if (project == null) {
-      throw new IllegalArgumentException(name + " does not exist.");
-    }
+    ProjectConfig project = getProject(projectName);
     // Update file appender paths to be suitable for clients
     // Work on a clone so the original is unchanged
     project = ControllerHelper.cloneProject(project);
@@ -91,9 +83,9 @@ public class XmlConfigViewController extends BaseViewController
         fileParam.setValue(clientAppenderPath);
       }
     }
-    model.put("project", project);
-    model.put("bindAddress", bindAddress);
-    model.put("port", port);
-    return new ModelAndView(getViewName(), "model", model);
+    model.addAttribute("project", project);
+    model.addAttribute("bindAddress", bindAddress);
+    model.addAttribute("port", port);
+    return "log4jXml";
   }
 }

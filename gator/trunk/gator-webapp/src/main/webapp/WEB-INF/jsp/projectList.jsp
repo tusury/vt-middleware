@@ -5,7 +5,7 @@
 <p>
 <span class="button"><a href="<c:url
   value="/secure/project/add.html" />">Create Project</a></span>
-<c:if test="${not empty model.projects}">
+<c:if test="${not empty projects}">
 	<span class="button"><a href="<c:url
 	  value="/secure/project/copy.html" />">Copy Project</a></span>
 </c:if>
@@ -13,7 +13,7 @@
 </p>
 
 <table width="100%" summary="Project listing">
-<c:forEach items="${model.projects}" var="project" varStatus="stat">
+<c:forEach items="${projects}" var="project" varStatus="stat">
   <tr>
   <td class="button_row" style="font-size:1.1em">${stat.count}.</td>
   <td class="button_row" width="35%"

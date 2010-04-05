@@ -14,15 +14,20 @@
 package edu.vt.middleware.gator.web;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
+import javax.validation.Valid;
 
 import edu.vt.middleware.gator.AppenderPolicy;
 import edu.vt.middleware.gator.ProjectConfig;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Handles creation of new projects.
@@ -31,61 +36,46 @@ import edu.vt.middleware.gator.ProjectConfig;
  * @version $Revision: $
  *
  */
-public class ProjectCreateFormController extends BaseFormController
+@Controller
+@RequestMapping("/secure")
+public class ProjectCreateFormController extends AbstractFormController
 {
+  public static final String VIEW_NAME = "projectEdit";
+  
   /** Appender policy to be used for newly-created projects */
+  @Autowired
   private AppenderPolicy appenderPolicy;
-  
-  
-  /**
-   * Sets the appender policy to be used for newly-created projects.
-   * @param appenderPolicy Appender policy applied to all categories in project.
-   */
-  public void setAppenderPolicy(final AppenderPolicy appenderPolicy)
-  {
-    this.appenderPolicy = appenderPolicy;
-  }
 
 
-  /** {@inheritDoc} */
-  @Override
-  protected Object formBackingObject(final HttpServletRequest request)
-      throws Exception
+  @RequestMapping(value = "/project/add.html", method = RequestMethod.GET)
+  public String getNewProject(final Model model)
   {
     final ProjectConfig project = new ProjectConfig();
     if (appenderPolicy != null) {
       project.setAppenderPolicy(appenderPolicy);
     }
-    return project;
+    model.addAttribute("project", project);
+    return VIEW_NAME;
   }
 
 
-  /** {@inheritDoc} */
-  @Override
+  @RequestMapping(value = "/project/add.html", method = RequestMethod.POST)
   @Transactional(propagation = Propagation.REQUIRED)
-  protected ModelAndView onSubmit(
-      final HttpServletRequest request,
-      final HttpServletResponse response,
-      final Object command,
-      final BindException errors)
-      throws Exception
+  public String saveProject(
+      @Valid @ModelAttribute("project") final ProjectConfig project,
+      final BindingResult result,
+      final HttpServletRequest request)
   {
-    final ProjectConfig project = (ProjectConfig) command;
-    // Ensure project name is unique
-    if (configManager.findProject(project.getName()) != null) {
-      errors.rejectValue(
-          "name",
-          "error.project.uniqueName",
-          new Object[] {project.getName()},
-      "Project name must be unique.");
-      return showForm(request, errors, getFormView());
+    if (result.hasErrors()) {
+      return VIEW_NAME;
     }
     // Add all permissions to new project for current user principal
     project.addPermission(
       ControllerHelper.createAllPermissions(
         request.getUserPrincipal().getName()));
+    logger.debug("Saving " + project);
     configManager.save(project);
-    return new ModelAndView(
-      ControllerHelper.filterViewName(getSuccessView(), project));
+    return String.format(
+        "redirect:/secure/project/%s/edit.html", project.getName());
   }
 }

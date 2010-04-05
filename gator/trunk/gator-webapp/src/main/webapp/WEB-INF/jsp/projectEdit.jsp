@@ -11,7 +11,7 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>${action} <em>${project.name}</em></span>
@@ -24,12 +24,17 @@
 </c:if>
 
 <form:form method="post" commandName="project">
-  <form:errors id="error" path="*" element="div" />
   
   <fieldset>
   <legend>Project Properties</legend>
+
+	<spring:hasBindErrors name="project">
+	  <div id="validation-summary">Form data validation failed.</div>
+	</spring:hasBindErrors>
+
   <div class="field">
     <div><label for="name">Project Name</label></div>
+    <form:errors cssClass="field-error" path="name" element="div" />
     <div><form:input id="name" path="name" size="50" maxlength="50" /></div>
   </div>
   <div class="field">
