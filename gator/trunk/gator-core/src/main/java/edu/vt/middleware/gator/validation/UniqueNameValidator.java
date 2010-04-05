@@ -92,7 +92,7 @@ public class UniqueNameValidator
     if (!configManager.exists(value) || nameChanged(value)) {
       // Name must be unique among peers
       for (Config c : getPeers(value)) {
-        if (c.getName().equals(value.getName())) {
+        if (c.getName() != null && c.getName().equals(value.getName())) {
           if (context != null) {
 	          context.buildConstraintViolationWithTemplate(
 		          message).addNode("name").addConstraintViolation();

@@ -28,12 +28,34 @@ public class ConfigComparator implements Comparator<Config>
   /** {@inheritDoc} */
   public int compare(final Config a, final Config b)
   {
-    final int result = a.getName().compareToIgnoreCase(b.getName());
-    if (result == 0) {
-      return a.getId() - b.getId();
+    int result = 0;
+    if (a == null) {
+      if (b != null) {
+        result = -1;
+      }
     } else {
-      return result;
+      if (b == null) {
+        result = 1;
+      } else {
+        if (a.getName() == null) {
+          if (b.getName() == null) {
+            result = a.getId() - b.getId();
+          } else {
+            result = -1;
+          }
+        } else {
+          if (b.getName() == null) {
+            result = 1;
+          } else {
+				    result = a.getName().compareToIgnoreCase(b.getName());
+				    if (result == 0) {
+				      result = a.getId() - b.getId();
+				    }
+          }
+        }
+      }
     }
+    return result;
   }
 
 }
