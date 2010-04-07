@@ -13,15 +13,17 @@
  */
 package edu.vt.middleware.gator.web;
 
-import java.util.List;
-
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.ProjectConfig;
+import edu.vt.middleware.gator.validation.ClientValidator;
 
 /**
  * Handles changes to client configuration.
@@ -43,6 +46,21 @@ import edu.vt.middleware.gator.ProjectConfig;
 public class ClientEditFormController extends AbstractFormController
 {
   public static final String VIEW_NAME = "clientEdit";
+
+  @Autowired
+  @NotNull
+  private ClientValidator validator;
+  
+  
+  @InitBinder
+  public void initValidator(final WebDataBinder binder)
+  {
+    if (binder.getTarget() != null &&
+        validator.supports(binder.getTarget().getClass()))
+    {
+      binder.setValidator(validator);
+    }
+  }
 
 
   @RequestMapping(
@@ -95,20 +113,6 @@ public class ClientEditFormController extends AbstractFormController
       return VIEW_NAME;
     }
     final ProjectConfig project = client.getProject();
-    // Ensure this client does not exist in any other projects
-    final List<ProjectConfig> otherProjects =
-      configManager.findProjectsByClientName(client.getName());
-    for (ProjectConfig p : otherProjects)
-    {
-      if (!p.equals(project)) {
-        result.rejectValue(
-          "name",
-          "error.client.globallyUnique",
-          new Object[] {client.getName(), p.getName()},
-          "A client is only allowed in a single project.");
-        return VIEW_NAME;
-      }
-    }
     if (!configManager.exists(client)) {
       project.addClient(client);
     }

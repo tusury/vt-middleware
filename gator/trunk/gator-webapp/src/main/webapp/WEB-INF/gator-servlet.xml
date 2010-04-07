@@ -64,6 +64,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
  
  
   <!-- Validators --> 
+  <bean id="clientValidator"
+    class ="edu.vt.middleware.gator.validation.ClientValidator" />
+
   <bean id="permissionValidator"
     class ="edu.vt.middleware.gator.validation.PermissonValidator" />
 
