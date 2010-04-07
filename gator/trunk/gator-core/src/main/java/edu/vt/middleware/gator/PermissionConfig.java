@@ -24,6 +24,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.domain.BasePermission;
 
@@ -88,16 +90,18 @@ public class PermissionConfig extends Config
   public static int parsePermissions(final String permissionString)
   {
     int bits = 0;
-    for (int i = 0; i < permissionString.length(); i++) {
-      final char c = permissionString.charAt(i);
-      if (c == 'r') {
-        bits += BasePermission.READ.getMask();
-      } else if (c == 'w') {
-        bits += BasePermission.WRITE.getMask();
-      } else if (c == 'd') {
-        bits += BasePermission.DELETE.getMask();
-      } else {
-        throw new IllegalArgumentException("Invalid permission character " + c);
+    if (permissionString != null) {
+      for (int i = 0; i < permissionString.length(); i++) {
+        final char c = permissionString.charAt(i);
+        if (c == 'r') {
+          bits += BasePermission.READ.getMask();
+        } else if (c == 'w') {
+          bits += BasePermission.WRITE.getMask();
+        } else if (c == 'd') {
+          bits += BasePermission.DELETE.getMask();
+        } else {
+          throw new IllegalArgumentException("Invalid permission character " + c);
+        }
       }
     }
     return bits;
@@ -143,6 +147,7 @@ public class PermissionConfig extends Config
    * @return Permissions as a unix-style string.
    */
   @Transient
+  @NotEmpty(message = "{permission.permissions.notEmpty}")
   public String getPermissions()
   {
     final StringBuilder sb = new StringBuilder(3);
