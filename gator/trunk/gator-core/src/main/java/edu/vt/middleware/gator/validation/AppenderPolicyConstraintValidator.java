@@ -41,9 +41,11 @@ public class AppenderPolicyConstraintValidator
       final Set<AppenderConfig> invalid)
   {
     final AppenderPolicy policy = category.getProject().getAppenderPolicy();
-    for (AppenderConfig appender : category.getAppenders()) {
-      if (!policy.allow(category, appender)) {
-        invalid.add(appender);
+    if (category.getAppenders() != null) {
+      for (AppenderConfig appender : category.getAppenders()) {
+        if (!policy.allow(category, appender)) {
+          invalid.add(appender);
+        }
       }
     }
   }

@@ -40,9 +40,11 @@ public class AppenderConstraintValidator
       final CategoryConfig category,
       final Set<AppenderConfig> invalid)
   {
-    for (AppenderConfig appender : category.getAppenders()) {
-      if (category.getProject().getAppender(appender.getId()) == null) {
-        invalid.add(appender);
+    if (category.getAppenders() != null) {
+      for (AppenderConfig appender : category.getAppenders()) {
+        if (category.getProject().getAppender(appender.getId()) == null) {
+          invalid.add(appender);
+        }
       }
     }
   }
