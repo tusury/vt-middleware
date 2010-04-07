@@ -16,10 +16,13 @@
 <h1>Copy Appender</h1>
 
 <form:form method="post" commandName="spec">
-  <form:errors id="error" path="*" element="div" />
-  
   <fieldset>
   <legend>Create New Appender from Existing</legend>
+
+  <spring:hasBindErrors name="spec">
+    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+  </spring:hasBindErrors>
+
   <div class="field">Project <em>${project.name}</em></div>
   <div class="field">
     <div><label for="sourceId">Appender to Copy</label></div>
@@ -28,6 +31,7 @@
   </div>
   <div class="field">
     <div><label for="name">New Appender Name</label></div>
+    <form:errors cssClass="field-error" path="name" element="div" />
     <div><form:input id="name" path="name" size="30" /></div>
   </div>
   <div class="field">

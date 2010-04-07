@@ -25,12 +25,16 @@
 <h1>${action}</h1>
 
 <form:form method="post" commandName="client">
-  <form:errors id="error" path="*" element="div" />
-  
   <fieldset>
   <legend>Client Configuration</legend>
+
+  <spring:hasBindErrors name="client">
+    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+  </spring:hasBindErrors>
+
   <div class="field">
     <div><label for="name">Client Host Name/IP Address</label></div>
+    <form:errors cssClass="field-error" path="name" element="div" />
     <div><form:input id="name" path="name" size="50" /></div>
   </div>
   <div class="field">

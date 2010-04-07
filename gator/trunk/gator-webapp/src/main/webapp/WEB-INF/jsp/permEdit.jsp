@@ -25,26 +25,31 @@
 <h1>${action}</h1>
 
 <form:form method="post" commandName="perm">
-  <form:errors id="error" path="*" element="div" />
-  
   <fieldset>
   <legend>Security Permissions</legend>
+
+  <spring:hasBindErrors name="perm">
+    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+  </spring:hasBindErrors>
+
   <div class="field">
     <div><label for="name">Security Identifier</label></div>
+    <form:errors cssClass="field-error" path="name" element="div" />
     <div class="note">Examples: bob, ROLE_IT-STAFF</div>
     <div><form:input id="name" path="name" size="50" /></div>
   </div>
   <div class="field">
     <div><label for="permissions">Permissions</label></div>
     <div class="note">
-    <ul>
-      <li>r - Read permission</li>
-      <li>w - Write/Edit permission</li>
-      <li>d - Delete permission</li>
-    </ul>
-    <div>Examples: rwd, r, rw</div>
-    <div>Note that permissions only apply to whole projects.</div>
+	    <ul>
+	      <li>r - Read permission</li>
+	      <li>w - Write/Edit permission</li>
+	      <li>d - Delete permission</li>
+	    </ul>
+	    <div>Examples: rwd, r, rw</div>
+	    <div>Note that permissions only apply to whole projects.</div>
     </div>
+    <form:errors cssClass="field-error" path="permissions" element="div" />
     <div><form:input id="permissions" path="permissions" size="10" /></div>
   </div>
   <div class="field">

@@ -18,8 +18,13 @@
   
   <fieldset>
     <legend>Delete ${spec.typeName}</legend>
+	
+	  <spring:hasBindErrors name="spec">
+	    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+	  </spring:hasBindErrors>
+
     <div class="field">
-  	  <form:errors cssClass="error" path="confirmationFlag" element="div" />
+  	  <form:errors cssClass="field-error" path="confirmationFlag" element="div" />
       <div class="checkboxes">
         <form:checkbox id="delete" path="confirmationFlag"
           value="confirmationFlag"

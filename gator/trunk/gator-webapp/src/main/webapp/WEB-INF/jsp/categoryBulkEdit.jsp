@@ -16,10 +16,13 @@
 <h1>Bulk Edit Categories</h1>
 
 <form:form method="post" commandName="bulkData">
-  <form:errors id="error" path="*" element="div" />
-  
   <fieldset>
   <legend>Bulk Edit Form</legend>
+
+  <spring:hasBindErrors name="bulkData">
+    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+  </spring:hasBindErrors>
+
   <div class="field">
     <div>
       <label for="name">Categories to Change</label>

@@ -11,10 +11,13 @@
 <h1>Copy Project</h1>
 
 <form:form method="post" commandName="spec">
-  <form:errors id="error" path="*" element="div" />
-  
   <fieldset>
   <legend>Create New Project from Existing</legend>
+
+  <spring:hasBindErrors name="spec">
+    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+  </spring:hasBindErrors>
+
   <div class="field">
     <div><label for="sourceId">Project to Copy</label></div>
     <div><form:select id="sourceId" path="sourceId"
@@ -22,6 +25,7 @@
   </div>
   <div class="field">
     <div><label for="name">New Project Name</label></div>
+    <form:errors cssClass="field-error" path="name" element="div" />
     <div><form:input id="name" path="name" size="30" /></div>
   </div>
   <div class="field">

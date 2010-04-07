@@ -25,13 +25,17 @@
 <h1>${action}</h1>
 
 <form:form method="post" commandName="category">
-  <form:errors id="error" path="*" element="div" />
-  
   <fieldset>
   <legend>Category Configuration</legend>
+
+  <spring:hasBindErrors name="category">
+    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+  </spring:hasBindErrors>
+
   <div class="field">
     <div><label for="name">Category Name</label></div>
     <div class="note">Special name "root" indicates root category.</div>
+    <form:errors cssClass="field-error" path="name" element="div" />
     <div><form:input id="name" path="name" size="50" /></div>
   </div>
   <div class="field">
@@ -53,6 +57,7 @@
       <span>|</span>
       <span><a href="javascript:select('appenders', false)">Select None</a><span>
     </div>
+    <form:errors cssClass="field-error" path="appenders" element="div" />
     <div class="checkboxes">
 	    <form:checkboxes id="appenderIds" path="appenders"
 	     items="${projectAppenders}" itemValue="id" itemLabel="name"

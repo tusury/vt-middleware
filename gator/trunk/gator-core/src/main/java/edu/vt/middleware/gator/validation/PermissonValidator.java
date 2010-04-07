@@ -54,7 +54,8 @@ public class PermissonValidator extends AbstractAnnotationValidator
         ((PermissionConfig) target).getId());
     if (permFromDb != null) {
       if (isLastFullPermissions(permFromDb.getProject(), permFromDb.getId())) {
-        errors.reject(
+        errors.rejectValue(
+            "permissions",
             "error.edit.lastAllPermissions",
         "Cannot modify last permission entry with full permissions.");
       }

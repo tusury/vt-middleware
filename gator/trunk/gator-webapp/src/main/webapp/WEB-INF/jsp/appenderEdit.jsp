@@ -24,16 +24,21 @@
 <h1>${action}</h1>
 
 <form:form method="post" commandName="appender">
-  <form:errors id="error" path="*" element="div" />
-  
   <fieldset>
   <legend>Appender Configuration</legend>
+
+  <spring:hasBindErrors name="appender">
+    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
+  </spring:hasBindErrors>
+
   <div class="field">
     <div><label for="name">Appender Name</label></div>
+    <form:errors cssClass="field-error" path="name" element="div" />
     <div><form:input id="name" path="name" size="50" /></div>
   </div>
   <div class="field">
     <div><label for="appenderClassName">Fully Qualified Appender Class Name</label></div>
+    <form:errors cssClass="field-error" path="appenderClassName" element="div" />
     <div><form:input id="appenderClassName" path="appenderClassName"
       size="100" /></div>
   </div>
