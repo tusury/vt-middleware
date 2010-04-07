@@ -32,6 +32,7 @@ import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.Config;
 import edu.vt.middleware.gator.PermissionConfig;
 import edu.vt.middleware.gator.ProjectConfig;
+import edu.vt.middleware.gator.validation.PermissonValidator;
 
 /**
  * Handles deletion of project configuration elements.
@@ -85,6 +86,10 @@ public class DeleteFormController extends AbstractFormController
     final Config config = spec.getConfigToBeDeleted();
     final ProjectConfig project = configManager.find(
         ProjectConfig.class, spec.getProject().getId());
+    validateConfig(project, config, result);
+    if (result.hasErrors()) {
+      return VIEW_NAME;
+    }
     logger.debug(String.format("Deleting %s from %s", config, project));
     removeConfig(project, config);
     logger.debug("Saving " + project);
@@ -102,7 +107,7 @@ public class DeleteFormController extends AbstractFormController
       return CategoryConfig.class;
     } else if ("client".equals(typeName)) {
       return ClientConfig.class;
-    } else if ("permission".equals(typeName)) {
+    } else if ("perm".equals(typeName)) {
       return PermissionConfig.class;
     } else {
       throw new IllegalArgumentException(typeName + " not supported.");
@@ -137,6 +142,20 @@ public class DeleteFormController extends AbstractFormController
       project.removePermission((PermissionConfig)config);
     } else {
       throw new IllegalArgumentException(config + " not supported.");
+    }
+  }
+  
+  private void validateConfig(
+      final ProjectConfig project,
+      final Config config,
+      final BindingResult result)
+  {
+    if (config instanceof PermissionConfig) {
+      if (PermissonValidator.isLastFullPermissions(project, config.getId())) {
+        result.reject(
+            "error.permission.deleteLastAllPermissions",
+            "Cannot delete last permission.");
+      }
     }
   }
 }

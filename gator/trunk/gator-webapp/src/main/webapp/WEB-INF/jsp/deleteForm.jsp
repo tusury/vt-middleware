@@ -23,8 +23,8 @@
 	    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
 	  </spring:hasBindErrors>
 
+ 	  <form:errors cssClass="field-error" path="*" element="div" />
     <div class="field">
-  	  <form:errors cssClass="field-error" path="confirmationFlag" element="div" />
       <div class="checkboxes">
         <form:checkbox id="delete" path="confirmationFlag"
           value="confirmationFlag"
