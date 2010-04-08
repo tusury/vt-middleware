@@ -196,30 +196,18 @@ public class AppenderConfig extends Config
     paramSet.addAll(getAppenderParamsInternal());
     return Collections.unmodifiableSet(paramSet);
   }
-  
-  /**
-   * @return Appender parameters as an array.
-   */
-  @Transient
-  public AppenderParamConfig[] getAppenderParamArray()
-  {
-    final Set<AppenderParamConfig> params = getAppenderParams();
-    if (params != null) {
-	    return params.toArray(new AppenderParamConfig[params.size()]);
-    } else {
-      return new AppenderParamConfig[0];
-    }
-  }
 
   /**
-   * Sets the appender parameters from the given array.
-   * @param params Appender configuration parameters.
+   * Sets appender parameters to values in given set.  Note this causes all
+   * existing appender parameters to be replaced with those given.
+   * @param params Appender parameters to set.
    */
-  public void setAppenderParamArray(final AppenderParamConfig[] params)
+  public void setAppenderParams(final Set<AppenderParamConfig> params)
   {
-    removeAllAppenderParams();
-    for (AppenderParamConfig p : params) {
-      addAppenderParam(p);
+    getAppenderParamsInternal().clear();
+    for (AppenderParamConfig param : params) {
+      param.setAppender(this);
+      getAppenderParamsInternal().add(param);
     }
   }
 
@@ -327,30 +315,18 @@ public class AppenderConfig extends Config
     paramSet.addAll(getLayoutParamsInternal());
     return Collections.unmodifiableSet(paramSet);
   }
-  
-  /**
-   * @return Layout parameters as an array.
-   */
-  @Transient
-  public LayoutParamConfig[] getLayoutParamArray()
-  {
-    final Set<LayoutParamConfig> params = getLayoutParams();
-    if (params != null) {
-      return params.toArray(new LayoutParamConfig[params.size()]);
-    } else {
-      return new LayoutParamConfig[0];
-    }
-  }
 
   /**
-   * Sets the layout parameters from the given set.
-   * @param params Layout configuration parameters.
+   * Sets layout parameters to values in given set.  Note this causes all
+   * existing layout parameters to be replaced with those given.
+   * @param params Layout parameters to set.
    */
-  public void setLayoutParamArray(final LayoutParamConfig[] params)
+  public void setLayoutParams(final Set<LayoutParamConfig> params)
   {
-    removeAllLayoutParams();
-    for (LayoutParamConfig p : params) {
-      addLayoutParam(p);
+    getLayoutParamsInternal().clear();
+    for (LayoutParamConfig param : params) {
+      param.setAppender(this);
+      getLayoutParamsInternal().add(param);
     }
   }
 

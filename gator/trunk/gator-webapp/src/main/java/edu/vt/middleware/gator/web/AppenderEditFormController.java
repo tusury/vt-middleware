@@ -29,9 +29,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.vt.middleware.gator.AppenderConfig;
+import edu.vt.middleware.gator.AppenderParamConfig;
+import edu.vt.middleware.gator.LayoutParamConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.AppenderParamArrayEditor;
-import edu.vt.middleware.gator.web.support.LayoutParamArrayEditor;
+import edu.vt.middleware.gator.web.support.ParametersEditor;
 
 /**
  * Handles appender configuration changes.
@@ -56,12 +57,12 @@ public class AppenderEditFormController extends AbstractFormController
     // by Spring that causes ClassCastException in this case
     binder.registerCustomEditor(
       null,
-      "appenderParamArray",
-      new AppenderParamArrayEditor());
+      "appenderParams",
+      new ParametersEditor<AppenderParamConfig>(AppenderParamConfig.class));
     binder.registerCustomEditor(
       null,
-      "layoutParamArray",
-      new LayoutParamArrayEditor());
+      "layoutParams",
+      new ParametersEditor<LayoutParamConfig>(LayoutParamConfig.class));
   }
 
 

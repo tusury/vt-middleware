@@ -57,7 +57,7 @@
 			<label for="appenderParams">Appender Parameters</label>
 			<span class="note">Format is name=value, one per line.</span>
     </div>
-    <div><form:textarea id="appenderParams" path="appenderParamArray"
+    <div><form:textarea id="appenderParams" path="appenderParams"
       rows="8" cols="75" /></div>
   </div>
   <div class="field">
@@ -65,7 +65,7 @@
 			<label for="layoutParams">Layout Parameters</label>
 			<span class="note">Format is name=value, one per line.</span>
     </div>
-    <div><form:textarea id="layoutParams" path="layoutParamArray"
+    <div><form:textarea id="layoutParams" path="layoutParams"
       rows="8" cols="75" /></div>
   </div>
   <div class="field">
