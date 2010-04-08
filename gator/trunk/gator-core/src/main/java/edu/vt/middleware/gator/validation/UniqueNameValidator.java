@@ -96,6 +96,7 @@ public class UniqueNameValidator
             c.getName() != null && c.getName().equals(value.getName()))
         {
           if (context != null) {
+				    context.disableDefaultConstraintViolation();
 	          context.buildConstraintViolationWithTemplate(
 		          message).addNode("name").addConstraintViolation();
           }

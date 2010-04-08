@@ -57,6 +57,7 @@ public abstract class AbstractAppenderConstraintValidator<A extends Annotation>
     validateInternal(value, invalid);
     if (invalid.size() > 0) {
       if (context != null) {
+        context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(
             message + invalid.toString()).addNode(
             "appenders").addConstraintViolation();
