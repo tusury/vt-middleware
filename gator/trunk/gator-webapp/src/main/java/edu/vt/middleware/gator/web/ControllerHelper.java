@@ -48,18 +48,42 @@ public class ControllerHelper
     clone.setErrorHandlerClassName(source.getErrorHandlerClassName());
     clone.setLayoutClassName(source.getLayoutClassName());
     for (AppenderParamConfig param : source.getAppenderParams()) {
-      final AppenderParamConfig newParam = new AppenderParamConfig();
-      newParam.setName(param.getName());
-      newParam.setValue(param.getValue());
-      clone.addAppenderParam(newParam);
+      clone.addAppenderParam(cloneParameter(param));
     }
     for (LayoutParamConfig param : source.getLayoutParams()) {
-      final LayoutParamConfig newParam = new LayoutParamConfig();
-      newParam.setName(param.getName());
-      newParam.setValue(param.getValue());
-      clone.addLayoutParam(newParam);
+      clone.addLayoutParam(cloneParameter(param));
     }
     return clone;
+  }
+  
+
+  /**
+   * Creates a clone of the given appender parameter.
+   * @param source Source appender parameter to clone.
+   * @return Cloned parameter.
+   */
+  public static AppenderParamConfig cloneParameter(
+      final AppenderParamConfig source)
+  {
+    final AppenderParamConfig newParam = new AppenderParamConfig();
+    newParam.setName(source.getName());
+    newParam.setValue(source.getValue());
+    return newParam;
+  }
+  
+
+  /**
+   * Creates a clone of the given layout parameter.
+   * @param source Source layout parameter to clone.
+   * @return Cloned parameter.
+   */
+  public static LayoutParamConfig cloneParameter(
+      final LayoutParamConfig source)
+  {
+    final LayoutParamConfig newParam = new LayoutParamConfig();
+    newParam.setName(source.getName());
+    newParam.setValue(source.getValue());
+    return newParam;
   }
 
 

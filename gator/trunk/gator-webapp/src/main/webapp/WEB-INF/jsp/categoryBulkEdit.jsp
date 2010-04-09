@@ -25,7 +25,7 @@
 
   <div class="field">
     <div>
-      <label for="name">Categories to Change</label>
+      <label for="categoryIds">Categories to Change</label>
     </div>
     <div style="margin:5px">
       <span><a href="javascript:select('categoryIds', true)">Select All</a><span>

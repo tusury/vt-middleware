@@ -114,6 +114,10 @@
     <a href="<c:url
       value="/secure/project/${project.name}/appender/add.html" />">Add Appender</a>
     </span>
+    <span class="button">
+      <a href="<c:url
+        value="/secure/project/${project.name}/appender/bulk_edit.html" />">Bulk Change</a>
+    </span>
     <c:if test="${not empty project.appenders}">
       <span class="button">
       <a href="<c:url
