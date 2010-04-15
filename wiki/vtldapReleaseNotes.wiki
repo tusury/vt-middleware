@@ -10,6 +10,10 @@
   * [http://code.google.com/p/vt-middleware/issues/detail?id=62 vtldap-62] - Added support for configuring TLS/SSL trust and key material directly in the JAAS configuration file.
   * [http://code.google.com/p/vt-middleware/issues/detail?id=59 vtldap-59] - Removed !ConnectLdapValidator as the default validator in !DefaultLdapFactory
   * [http://code.google.com/p/vt-middleware/issues/detail?id=58 vtldap-58] - Added support for sorting LDAP results via bean factory implementation
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=58 vtldap-57] - Properties deprecated from peer review:
+    * serviceUser -> bindDn
+    * serviceCredential -> bindCredential
+    * base -> baseDn
   * [http://code.google.com/p/vt-middleware/issues/detail?id=56 vtldap-56] - Added !RecursiveSearchResultHandler and updated !LdapRoleAuthorizationModule with an option to use it
   * [http://code.google.com/p/vt-middleware/issues/detail?id=55 vtldap-55] - Added !AuthorizationException to distinguish authentication and authorization errors
   * [http://code.google.com/p/vt-middleware/issues/detail?id=54 vtldap-54] - Added support for infinite operation retries and a linear backoff on operation retries
