@@ -162,7 +162,7 @@ public final class SessionAttributeFilter implements Filter
     }
 
     if (!success) {
-      if (redirect != null && !redirect.equals("")) {
+      if (redirect != null && !"".equals(redirect)) {
         final StringBuffer url = new StringBuffer(redirect);
         if (((HttpServletRequest) request).getRequestURI() != null) {
           url.append("?url=").append(

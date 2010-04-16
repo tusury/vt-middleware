@@ -162,7 +162,7 @@ public final class TestUtil
       }
 
       final String[] parts = lines[i].trim().split(":* ", 2);
-      if (parts[0] != null && !parts[0].equals("")) {
+      if (parts[0] != null && !"".equals(parts[0])) {
         if (parts[0].equalsIgnoreCase("dn")) {
           entry.setDn(parts[1]);
         } else {

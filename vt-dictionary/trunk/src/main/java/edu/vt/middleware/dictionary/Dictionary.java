@@ -457,35 +457,35 @@ public class Dictionary
       int distance = 0;
 
       for (int i = 0; i < args.length; i++) {
-        if (args[i].equals("-m")) {
+        if ("-m".equals(args[i])) {
           dict.useMedian();
-        } else if (args[i].equals("-bsort")) {
+        } else if ("-bsort".equals(args[i])) {
           bsort = true;
-        } else if (args[i].equals("-ssort")) {
+        } else if ("-ssort".equals(args[i])) {
           ssort = true;
-        } else if (args[i].equals("-isort")) {
+        } else if ("-isort".equals(args[i])) {
           isort = true;
-        } else if (args[i].equals("-qsort")) {
+        } else if ("-qsort".equals(args[i])) {
           qsort = true;
-        } else if (args[i].equals("-ci")) {
+        } else if ("-ci".equals(args[i])) {
           dict.ignoreCase();
-        } else if (args[i].equals("-c")) {
+        } else if ("-c".equals(args[i])) {
           count = true;
-        } else if (args[i].equals("-s")) {
+        } else if ("-s".equals(args[i])) {
           search = true;
           word = args[++i];
-        } else if (args[i].equals("-ps")) {
+        } else if ("-ps".equals(args[i])) {
           partialSearch = true;
           word = args[++i];
-        } else if (args[i].equals("-ns")) {
+        } else if ("-ns".equals(args[i])) {
           nearSearch = true;
           word = args[++i];
           distance = Integer.parseInt(args[++i]);
-        } else if (args[i].equals("-p")) {
+        } else if ("-p".equals(args[i])) {
           print = true;
-        } else if (args[i].equals("-pt")) {
+        } else if ("-pt".equals(args[i])) {
           printTree = true;
-        } else if (args[i].equals("-h")) {
+        } else if ("-h".equals(args[i])) {
           throw new ArrayIndexOutOfBoundsException();
         } else {
           files.add(new File(args[i]));

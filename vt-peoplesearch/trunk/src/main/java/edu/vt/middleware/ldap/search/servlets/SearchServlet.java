@@ -175,14 +175,14 @@ public final class SearchServlet extends HttpServlet
       format = OutputFormat.LDIF;
     } else {
       final String dsmlVersion = request.getParameter("dsml-version");
-      if (dsmlVersion != null && dsmlVersion.equals("2")) {
+      if ("2".equals(dsmlVersion)) {
         format = OutputFormat.DSMLV2;
       } else {
         format = OutputFormat.DSMLV1;
       }
 
       final String content = request.getParameter("content-type");
-      if (content != null && content.equalsIgnoreCase("text")) {
+      if ("text".equalsIgnoreCase(content)) {
         response.setContentType("text/plain");
       } else {
         response.setContentType("text/xml");

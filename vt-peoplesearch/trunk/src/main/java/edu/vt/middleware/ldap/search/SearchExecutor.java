@@ -460,7 +460,7 @@ public class SearchExecutor
 
     for (int i = 0; i < initials.length; i++) {
       try {
-        if (queryParams[i] != null && !queryParams[i].equals("")) {
+        if (queryParams[i] != null && !"".equals(queryParams[i])) {
           initials[i] = queryParams[i].substring(0, 1);
         } else {
           initials[i] = null;

@@ -235,7 +235,7 @@ public class PeopleSearch
 
     try {
       for (int i = 0; i < args.length; i++) {
-        if (args[i].equals("-query")) {
+        if ("-query".equals(args[i])) {
           query.setRawQuery(args[++i]);
         } else {
           attrs.add(args[i]);
@@ -283,7 +283,7 @@ public class PeopleSearch
     LdapPool<Ldap> pool = null;
     if (this.proxySaslAuthz) {
       final String saslAuthzId = query.getSaslAuthorizationId();
-      if (saslAuthzId != null && !saslAuthzId.equals("")) {
+      if (saslAuthzId != null && !"".equals(saslAuthzId)) {
         pool = this.ldapPoolManager.getLdapPool(saslAuthzId);
       } else {
         throw new PeopleSearchException("No SASL Authorization ID found.");
