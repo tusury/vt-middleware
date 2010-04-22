@@ -25,11 +25,28 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  *
  */
-public class DeleteLoggerRepositoryClientRemovalPolicy implements
-    ClientRemovalPolicy
+public class DeleteLoggerRepositoryClientRemovalPolicy
+  implements ClientRemovalPolicy
 {
   /** Logger instance */
   protected final Log logger = LogFactory.getLog(getClass());
+ 
+  /** Default number of milliseconds to wait for event handler shutdown */
+  protected static final int DEFAULT_WAIT_MS = 10000;
+ 
+  /** Number of milliseconds to wait for event handler shutdown */
+  private int maxShutdownWaitTime = DEFAULT_WAIT_MS;
+
+
+  /**
+   * @param  maxWaitMilliseconds  Maximum number of milliseconds to wait for
+   * logging event handler to shutdown and close logger repository.
+   */
+  public void setMaxShutdownWaitTime(final int maxWaitMilliseconds)
+  {
+    this.maxShutdownWaitTime = maxWaitMilliseconds;
+  }
+
 
   /** {@inheritDoc} */
   public void clientRemoved(
@@ -37,7 +54,12 @@ public class DeleteLoggerRepositoryClientRemovalPolicy implements
     final LoggingEventHandler handler)
   {
     logger.info("Deleting logger repository for client " + clientName);
-    handler.getRepository().resetConfiguration();
+    handler.shutdown();
+    try {
+      handler.getRunner().join(maxShutdownWaitTime);
+    } catch (InterruptedException e) {
+      logger.warn("Timed out waiting for LoggingEventHandler shutdown");
+    }
   }
 
 }

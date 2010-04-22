@@ -26,7 +26,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  *
  */
-public class SocketCloseClientRemovalPolicy implements ClientRemovalPolicy
+public class SocketCloseClientRemovalPolicy
+  extends DeleteLoggerRepositoryClientRemovalPolicy
 {
   /** Logger instance */
   protected final Log logger = LogFactory.getLog(getClass());
@@ -36,6 +37,7 @@ public class SocketCloseClientRemovalPolicy implements ClientRemovalPolicy
       final String clientName,
       final LoggingEventHandler handler)
   {
+    super.clientRemoved(clientName, handler);
     try {
       logger.info("Closing socket for client " + clientName);
       handler.getSocket().close();

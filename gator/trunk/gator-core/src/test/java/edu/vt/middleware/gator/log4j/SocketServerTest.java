@@ -120,7 +120,6 @@ public class SocketServerTest
     server.setConfigurator(configurator);
     server.setClientRemovalPolicy(new NoopClientRemovalPolicy());
     server.setStartOnInit(true);
-    server.init();
   }
 
  
@@ -132,7 +131,7 @@ public class SocketServerTest
   @Test
   public void testConnectAndLog() throws Exception
   {
-
+    server.init();
     final Socket sock = new Socket();
     try {
       final SocketAddress addr = new InetSocketAddress(
@@ -168,6 +167,8 @@ public class SocketServerTest
       final String contents = readTextFile(logFilePath);
       Assert.assertTrue(contents.contains(TEST_MESSAGE));
     }
+    Assert.assertEquals(1, server.eventHandlerMap.keySet().size());
+    server.stop();
     Assert.assertEquals(0, server.eventHandlerMap.keySet().size());
   }
 
@@ -179,9 +180,6 @@ public class SocketServerTest
   @AfterTransaction
   public void tearDown() throws Exception
   {
-    if (server != null) {
-      server.stop();
-    }
     new TransactionTemplate(txManager).execute(
         new TransactionCallbackWithoutResult() {
           protected void doInTransactionWithoutResult(

@@ -56,7 +56,7 @@ public class SocketServer
   /** Default bind address is loopback address */
   public static final String DEFAULT_BIND_ADDRESS = "127.0.0.1";
  
-  /** Number of ms to wait for socket server to stop */
+  /** Number of ms to wait for async thread operations to stop */
   protected static final int STOP_TIMEOUT = 10000;
 
   /** Logger instance */
@@ -208,31 +208,43 @@ public class SocketServer
     serverSocket = new ServerSocket(port, 0, inetBindAddress);
     socketServerThread = new Thread(this);
     socketServerThread.start();
+    logger.info("Socket server started successfully.");
   }
  
   /**
-   * Stops the socket server from accepting incoming connections.
+   * Stops the socket server from accepting incoming connections and cleans
+   * up resources for handling logging events.
    */
   public void stop()
   {
-    if (!socketServerThread.isAlive()) {
-      logger.info("Socket server is already stopped.");
+    // Multiple invocations of stop() are safe
+    if (socketServerThread == null) {
+	    logger.info("Socket server is already stopped.");
       return;
     }
     logger.info("Stopping socket server...");
-    if (!serverSocket.isClosed()) {
-	    try {
-	      serverSocket.close();
-	    } catch (IOException e) {
-	      logger.error("Error closing server socket.", e);
-	    }
-    }
+
     try {
       socketServerThread.join(STOP_TIMEOUT);
     } catch (InterruptedException e) {
-      logger.warn("Interrupted waiting for socker server thread to finish.");
+      logger.warn("Times out waiting for socker server thread to finish.");
     }
+    
+    if (!serverSocket.isClosed()) {
+      try {
+        serverSocket.close();
+      } catch (IOException e) {
+        logger.error("Error closing server socket.", e);
+      }
+    }
+    
+    for (LoggingEventHandler h : eventHandlerMap.values()) {
+      shutdown(h);
+    }
+
+    eventHandlerMap.clear();
     serverSocket = null;
+    socketServerThread = null;
     logger.info("Socket server stopped.");
   }
 
@@ -302,8 +314,8 @@ public class SocketServer
         {
           try {
             configurator.configure(
-              project,
-              eventHandlerMap.get(addr).getRepository());
+                project,
+                eventHandlerMap.get(addr).getRepository());
           } catch (ConfigurationException e) {
             logger.error(String.format(
                 "Error updating configuration for %s.", project), e);
@@ -324,10 +336,10 @@ public class SocketServer
         if (addr.getHostName().equals(client.getName()) ||
             addr.getHostAddress().equals(client.getName()))
         {
-          eventHandlerMap.get(addr).getRepository().resetConfiguration();
 	        clientRemovalPolicy.clientRemoved(
 	          client.getName(),
 	          eventHandlerMap.get(addr));
+	        eventHandlerMap.remove(addr);
         }
       }
     }
@@ -351,6 +363,7 @@ public class SocketServer
         clientRemovalPolicy.clientRemoved(
           clientName,
           eventHandlerMap.get(addr));
+        eventHandlerMap.remove(addr);
       }
     }
   }
@@ -364,8 +377,27 @@ public class SocketServer
     final InetAddress addr = socket.getInetAddress();
     if (eventHandlerMap.containsKey(addr)) {
       logger.info(String.format(
-          "Removing logging event handler for %s due to socket close.", addr));
+          "Cleaning up resources held by %s due to socket close.", addr));
+      shutdown(eventHandlerMap.get(addr));
 	    eventHandlerMap.remove(addr);
+    }
+  }
+
+  /**
+   * Shuts down the given logging event handler and attempts to clean up
+   * resources held by it.
+   *
+   * @param  handler  Handler to clean up.
+   */
+  private void shutdown(final LoggingEventHandler handler)
+  {
+    handler.shutdown();
+    try {
+      handler.getRunner().join(STOP_TIMEOUT);
+    } catch (InterruptedException e) {
+      logger.warn("Timed out waiting for LoggingEventHandler shutdown");
+    } catch (Exception e) {
+      logger.warn("Error on logging event handler shutdown: " + e.getMessage());
     }
   }
 }

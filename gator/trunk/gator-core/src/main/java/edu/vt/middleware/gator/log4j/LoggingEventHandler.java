@@ -54,11 +54,16 @@ public class LoggingEventHandler implements Runnable
   protected final Set<SocketCloseListener> socketCloseListeners =
     new HashSet<SocketCloseListener>();
 
+  protected boolean isRunning;
+
   protected Socket socket;
   
   protected LoggerRepository repository;
   
   protected ObjectInputStream ois;
+  
+  protected Thread runner;
+  
 
 
   /**
@@ -126,34 +131,50 @@ public class LoggingEventHandler implements Runnable
     return socket.getInetAddress();
   }
 
+  /**
+   * @return  Thread that executes the {@link run()} method.
+   */
+  public Thread getRunner()
+  {
+    return runner;
+  }
+
+  /**
+   * Shuts down the loop that handles logging event messages.
+   */
+  public void shutdown()
+  {
+    isRunning = false;
+  }
+
   /** {@inheritDoc} */
   public void run() {
+    isRunning = true;
+    runner = Thread.currentThread();
     logger.info("Ready to handle remote logging events from socket.");
     final Layout eventTraceLayout = new TTCCLayout();
     try {
-      if (ois != null) {
-        while(true) {
-          final LoggingEvent event = (LoggingEvent) ois.readObject();
-          if (logger.isTraceEnabled()) {
-            logger.info("Read logging event from socket: " +
+      while(isRunning) {
+        final LoggingEvent event = (LoggingEvent) ois.readObject();
+        if (logger.isTraceEnabled()) {
+          logger.info("Read logging event from socket: " +
               eventTraceLayout.format(event));
-          }
-          final Logger remoteLogger =
-            repository.getLogger(event.getLoggerName());
-          final Level level = remoteLogger.getEffectiveLevel();
-          if(event.getLevel().isGreaterOrEqual(level)) {
-            remoteLogger.callAppenders(event);
-          }
-          // Attempt to call registered listeners
-          for (LoggingEventListener listener : getLoggingEventListeners()) {
-	          try {
-	            listener.eventReceived(event);
-	          } catch (Exception e) {
-	            logger.error(
-	              "Failed executing LoggingEventListener#eventReceived() on " +
-	                listener,
-	              e);
-	          }
+        }
+        final Logger remoteLogger =
+          repository.getLogger(event.getLoggerName());
+        final Level level = remoteLogger.getEffectiveLevel();
+        if(event.getLevel().isGreaterOrEqual(level)) {
+          remoteLogger.callAppenders(event);
+        }
+        // Attempt to call registered listeners
+        for (LoggingEventListener listener : getLoggingEventListeners()) {
+          try {
+            listener.eventReceived(event);
+          } catch (Exception e) {
+            logger.error(
+                "Failed executing LoggingEventListener#eventReceived() on " +
+                listener,
+                e);
           }
         }
       }
@@ -188,7 +209,8 @@ public class LoggingEventHandler implements Runnable
           socket = null;
         }
       }
-
+      repository.shutdown();
+      repository = null;
     }
   }
 }
