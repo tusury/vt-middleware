@@ -27,6 +27,7 @@ import edu.vt.middleware.gator.ProjectConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Appender;
+import org.apache.log4j.Hierarchy;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerRepository;
 import org.springframework.beans.factory.InitializingBean;
@@ -99,6 +100,12 @@ public class JdbcConfigurator implements Configurator, InitializingBean
     throws ConfigurationException
   {
     repository.resetConfiguration();
+    if (repository instanceof Hierarchy) {
+      // Clear internal storage of loggers/categories since categories may
+      // have changed dramatically and we want to purge unused categories
+      // for reasonable memory usage since repositories may be very long lived.
+      ((Hierarchy) repository).clear();
+    }
     // Map of appender names to log4j appenders
     final Map<String, Appender> appenderMap = new HashMap<String, Appender>();
     for (AppenderConfig appender : project.getAppenders()) {
