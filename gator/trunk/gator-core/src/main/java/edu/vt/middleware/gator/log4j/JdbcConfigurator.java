@@ -116,7 +116,7 @@ public class JdbcConfigurator implements Configurator, InitializingBean
       } else {
         logger = repository.getLogger(category.getName());
       }
-      logger.removeAllAppenders();
+      logger.setAdditivity(category.getAdditivity());
       logger.setLevel(category.getLog4jLevel());
       for (AppenderConfig catAppender : category.getAppenders()) {
         final Appender a = appenderMap.get(catAppender.getName());
