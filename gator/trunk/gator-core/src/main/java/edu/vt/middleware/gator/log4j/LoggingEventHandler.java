@@ -75,6 +75,12 @@ public class LoggingEventHandler implements Runnable
    */
   public LoggingEventHandler(final Socket socket, final LoggerRepository repo)
   {
+    if (socket == null) {
+      throw new IllegalArgumentException("Socket cannot be null.");
+    }
+    if (repo == null) {
+      throw new IllegalArgumentException("LoggerRepository cannot be null.");
+    }
     this.socket = socket;
     this.repository = repo;
     try {
@@ -145,6 +151,7 @@ public class LoggingEventHandler implements Runnable
   public void shutdown()
   {
     isRunning = false;
+    closeStreamIfNecessary();
   }
 
   /** {@inheritDoc} */
@@ -185,32 +192,46 @@ public class LoggingEventHandler implements Runnable
     } catch(Exception e) {
       logger.error("Unexpected exception. Quitting.", e);
     } finally {
-      if (ois != null) {
-        try {
-          ois.close();
-        } catch(IOException e) {
-          logger.error("Error closing object input stream.", e);
-        }
-      }
-      if (socket != null) {
-        try {
-          logger.info("Closing client socket.");
-          socket.close();
-        } catch(IOException e) {
-          logger.error("Error closing client socket.", e);
-        }
-        try {
-          for (SocketCloseListener listener : socketCloseListeners) {
-            listener.socketClosed(this, socket);
-          }
-        } catch (Exception e) {
-          logger.error("Error invoking socket close listeners.", e);
-        } finally {
-          socket = null;
-        }
-      }
+      closeStreamIfNecessary();
+      closeSocketIfNecessary();
       repository.shutdown();
       repository = null;
+      isRunning = false;
+    }
+  }
+  
+  private void closeStreamIfNecessary()
+  {
+    if (ois != null) {
+      try {
+        ois.close();
+      } catch(Exception e) {
+        logger.error("Error closing object input stream.", e);
+      } finally {
+        ois = null;
+      }
+    }
+  }
+  
+  private void closeSocketIfNecessary()
+  {
+    if (socket != null) {
+      try {
+        logger.info("Closing client socket.");
+        socket.close();
+      } catch(Exception e) {
+        logger.error("Error closing client socket.", e);
+      }
+      // We expect the socket to be unusable in any case at this point
+      // which we can safely consider "closed" here
+      for (SocketCloseListener listener : socketCloseListeners) {
+        try {
+          listener.socketClosed(this, socket);
+        } catch (Exception e) {
+          logger.error("Error invoking " + listener, e);
+        }
+      }
+      socket = null;
     }
   }
 }

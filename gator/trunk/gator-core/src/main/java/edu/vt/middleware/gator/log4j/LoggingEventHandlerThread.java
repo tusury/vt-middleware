@@ -47,7 +47,7 @@ public class LoggingEventHandlerThread extends Thread
     final Runnable target,
     final InetAddress addr)
   {
-    super(target, "LoggingEventHandlerThread for host " + addr);
+    super(target, "gator-handler-log4j-" + addr.getHostAddress());
     remoteAddress = addr;
   }
   

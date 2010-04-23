@@ -203,10 +203,13 @@ public class SocketServer
    */
   public void start() throws IOException
   {
+    final String listenIP = inetBindAddress.getHostAddress();
     logger.info("Starting SocketServer...");
-    logger.info(String.format("Listening on %s:%s", inetBindAddress, port));
+    logger.info(String.format("Listening on %s:%s", listenIP, port));
     serverSocket = new ServerSocket(port, 0, inetBindAddress);
-    socketServerThread = new Thread(this);
+    socketServerThread = new Thread(
+        this,
+        String.format("gator-server-%s-%s", listenIP, port));
     socketServerThread.start();
     logger.info("Socket server started successfully.");
   }
@@ -251,7 +254,7 @@ public class SocketServer
   /** {@inheritDoc} */
   public void run()
   {
-    while(true) {
+    while(serverSocket != null && serverSocket.isBound()) {
       logger.info("Waiting to accept a new client.");
       Socket socket = null;
       InetAddress inetAddress = null;
@@ -272,6 +275,7 @@ public class SocketServer
         eventHandlerMap.put(inetAddress, handler);
         new LoggingEventHandlerThread(handler, inetAddress).start();
       } catch(UnknownClientException e) {
+        eventHandlerMap.remove(inetAddress);
         logger.warn("Unknown client " + inetAddress +
           " connected but was rejected.");
         if (socket != null && !socket.isClosed()) {
@@ -283,20 +287,16 @@ public class SocketServer
           }
         }
       } catch(SocketException e) {
-        // May have received this due to a stop() invocation.
-        // Check whether socket is closed and abort.
-        if (serverSocket == null || serverSocket.isClosed()) {
-          logger.info("No listening socket available. Quitting.");
-          return;
+        // Check whether this is caused by a stop() invocation:
+        //   calling stop() closes server socket, which throws SocketException
+        //   from blocking accept() call
+        if (serverSocket == null) {
+          logger.info("Ignoring SocketException caused by stop() invocation.");
         } else {
           logger.error(e);
         }
       } catch(Exception e) {
         logger.error(e);
-        if (serverSocket == null || serverSocket.isClosed()) {
-          logger.info("No listening socket available. Quitting.");
-          return;
-        }
       }
     }
   }
@@ -339,7 +339,6 @@ public class SocketServer
 	        clientRemovalPolicy.clientRemoved(
 	          client.getName(),
 	          eventHandlerMap.get(addr));
-	        eventHandlerMap.remove(addr);
         }
       }
     }
@@ -363,7 +362,6 @@ public class SocketServer
         clientRemovalPolicy.clientRemoved(
           clientName,
           eventHandlerMap.get(addr));
-        eventHandlerMap.remove(addr);
       }
     }
   }
