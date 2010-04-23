@@ -57,14 +57,15 @@ public class DeleteFormController extends AbstractFormController
       @PathVariable("id") final int id,
       final Model model)
   {
-    final Config config = configManager.find(getConfigClass(configType), id);
+    final ProjectConfig project = getProject(projectName);
+    final Config config = getConfig(project, configType, id);
     if (config == null) {
       throw new IllegalArgumentException(
           "Illegal attempt to delete non-existent " + configType);
     }
     final DeleteSpec spec = new DeleteSpec();
     spec.setConfigToBeDeleted(config);
-    spec.setProject(getProject(config));
+    spec.setProject(project);
     spec.setTypeName(
         configType.substring(0, 1).toUpperCase() + configType.substring(1));
     model.addAttribute("spec", spec);
@@ -84,8 +85,7 @@ public class DeleteFormController extends AbstractFormController
       return VIEW_NAME;
     }
     final Config config = spec.getConfigToBeDeleted();
-    final ProjectConfig project = configManager.find(
-        ProjectConfig.class, spec.getProject().getId());
+    final ProjectConfig project = spec.getProject();
     validateConfig(project, config, result);
     if (result.hasErrors()) {
       return VIEW_NAME;
@@ -99,36 +99,24 @@ public class DeleteFormController extends AbstractFormController
   }
 
 
-  private static Class<? extends Config> getConfigClass(String typeName)
+  private static Config getConfig(
+      final ProjectConfig project,
+      final String typeName,
+      final int id)
   {
     if ("appender".equals(typeName)) {
-      return AppenderConfig.class;
+      return project.getAppender(id);
     } else if ("category".equals(typeName)) {
-      return CategoryConfig.class;
+      return project.getCategory(id);
     } else if ("client".equals(typeName)) {
-      return ClientConfig.class;
+      return project.getClient(id);
     } else if ("perm".equals(typeName)) {
-      return PermissionConfig.class;
+      return project.getPermission(id);
     } else {
       throw new IllegalArgumentException(typeName + " not supported.");
     }
   }
 
-
-  private static ProjectConfig getProject(final Config config)
-  {
-    if (config instanceof AppenderConfig) {
-      return ((AppenderConfig)config).getProject();
-    } else if (config instanceof CategoryConfig) {
-      return ((CategoryConfig)config).getProject();
-    } else if (config instanceof ClientConfig) {
-      return ((ClientConfig)config).getProject();
-    } else if (config instanceof PermissionConfig) {
-      return ((PermissionConfig)config).getProject();
-    } else {
-      throw new IllegalArgumentException(config + " not supported.");
-    }
-  }
   
   private void removeConfig(final ProjectConfig project, final Config config)
   {
@@ -151,7 +139,10 @@ public class DeleteFormController extends AbstractFormController
       final BindingResult result)
   {
     if (config instanceof PermissionConfig) {
-      if (PermissonValidator.isLastFullPermissions(project, config.getId())) {
+      // Operate on DB version of project for permissions checking
+      final ProjectConfig pFromDb = configManager.find(
+          ProjectConfig.class, project.getId()); 
+      if (PermissonValidator.isLastFullPermissions(pFromDb, config.getId())) {
         result.reject(
             "error.permission.deleteLastAllPermissions",
             "Cannot delete last permission.");
