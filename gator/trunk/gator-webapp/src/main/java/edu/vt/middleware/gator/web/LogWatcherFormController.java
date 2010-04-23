@@ -250,6 +250,7 @@ public class LogWatcherFormController extends AbstractFormController
     /**
      * @return the layoutConversionPattern
      */
+    @NotNull(message = "{watchConfig.layoutConversionPattern.notNull}")
     public String getLayoutConversionPattern()
     {
       return layoutConversionPattern;
@@ -258,7 +259,6 @@ public class LogWatcherFormController extends AbstractFormController
     /**
      * @param layoutConversionPattern the layoutConversionPattern to set
      */
-    @NotNull(message = "{watchConfig.layoutConversionPattern.notNull}")
     public void setLayoutConversionPattern(String layoutConversionPattern)
     {
       this.layoutConversionPattern = layoutConversionPattern;
