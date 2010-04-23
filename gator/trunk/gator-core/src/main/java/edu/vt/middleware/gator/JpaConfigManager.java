@@ -18,6 +18,8 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -27,7 +29,6 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,10 +41,16 @@ import org.springframework.util.Assert;
  * @version $Revision$
  *
  */
-public class JpaConfigManager implements ConfigManager, InitializingBean
+public class JpaConfigManager implements ConfigManager
 {
+  /** Size of thread pool used to publish events */
+  private static final int EXECUTOR_THREADPOOL_SIZE = 10;
+
   /** Logger instance */
   private final Log logger = LogFactory.getLog(getClass());
+ 
+  /** Responsible for publishing events to registered listeners */
+  private ExecutorService eventExecutor;
 
   /** Creates entity manager instances for persistence operations */
   private EntityManagerFactory entityManagerFactory;
@@ -81,9 +88,21 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
 
 
   /** {@inheritDoc} */
-  public void afterPropertiesSet() throws Exception
+  public void init() throws Exception
   {
     Assert.notNull(entityManagerFactory, "EntityManagerFactory is required");
+    eventExecutor = Executors.newFixedThreadPool(EXECUTOR_THREADPOOL_SIZE);
+  }
+ 
+  /**
+   * Performs cleanup of resources held by this instance that should be called
+   * prior to application shutdown.
+   *
+   * @throws  Exception  On errors.
+   */
+  public void destroy() throws Exception
+  {
+    eventExecutor.shutdown();
   }
 
 
@@ -188,17 +207,19 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
       }
       liveProject = em.merge(project);
     }
-    // Notify registered listeners of project changes
+    
+    // Touch all collections to lazy load dependent data so complete project
+    // configuration is available to event handlers
+    liveProject.getAppenders();
+    liveProject.getCategories();
+    liveProject.getClients();
+    liveProject.getPermissions();
+    
+    // Fire events on a separate thread so we do not disrupt client thread
+    // (e.g. avoid subscriber blocking)
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
-      listener.projectChanged(this, liveProject);
-    }
-    // Notify registered listeners of removed clients
-    for (ClientConfig client : removedClients) {
-      if (liveProject.getClient(client.getId()) == null) {
-        for (ConfigChangeListener listener : getConfigChangeListeners()) {
-          listener.clientRemoved(this, liveProject, client.getName());
-        }
-      }
+      eventExecutor.submit(
+          new ProjectChangedEvent(listener, liveProject, removedClients));
     }
   }
 
@@ -213,9 +234,19 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     if (!em.contains(project)) {
       liveProject = find(ProjectConfig.class, project.getId());
     }
+    // Touch all collections to lazy load dependent data so complete project
+    // configuration is available to event handlers
+    liveProject.getAppenders();
+    liveProject.getCategories();
+    liveProject.getClients();
+    liveProject.getPermissions();
+
     em.remove(liveProject);
+    
+    // Fire events on a separate thread so we do not disrupt client thread
+    // (e.g. avoid subscriber blocking)
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
-      listener.projectRemoved(this, liveProject);
+      eventExecutor.submit(new ProjectRemovedEvent(listener, liveProject));
     }
   }
 
@@ -273,5 +304,68 @@ public class JpaConfigManager implements ConfigManager, InitializingBean
     // if none is bound to current thread
     return SharedEntityManagerCreator.createSharedEntityManager(
       entityManagerFactory);
+  }
+  
+  
+  private abstract class AbstractEvent
+  {
+    protected ConfigChangeListener listener;
+    protected ProjectConfig project;
+
+    protected AbstractEvent(
+        final ConfigChangeListener listener,
+        final ProjectConfig project)
+    {
+      this.listener = listener;
+      this.project = project;
+    }
+  }
+  
+  
+  private class ProjectChangedEvent extends AbstractEvent implements Runnable
+  {
+    private final Set<ClientConfig> removedClients;
+
+    public ProjectChangedEvent(
+        final ConfigChangeListener listener,
+        final ProjectConfig project,
+        final Set<ClientConfig> removedClients)
+    {
+      super(listener, project);
+      this.removedClients = removedClients;
+    }
+
+
+    /** {@inheritDoc} */
+    public void run()
+    {
+      // Send client removed events before project changed events for efficiency
+      // Presumably, one of the main reasons to want to receive removed clients
+      // notices is to release resources, so we want to do this first to prevent
+      // config changes to clients that may have been removed.
+      for (ClientConfig client : removedClients) {
+        listener.clientRemoved(
+            JpaConfigManager.this, project, client.getName());
+      }
+      listener.projectChanged(JpaConfigManager.this, project);
+    }
+  }
+
+
+  private class ProjectRemovedEvent extends AbstractEvent implements Runnable
+  {
+    public ProjectRemovedEvent(
+        final ConfigChangeListener listener,
+        final ProjectConfig project)
+    {
+      super(listener, project);
+    }
+
+
+    /** {@inheritDoc} */
+    public void run()
+    {
+      listener.projectRemoved(JpaConfigManager.this, project);
+    }
   }
 }
