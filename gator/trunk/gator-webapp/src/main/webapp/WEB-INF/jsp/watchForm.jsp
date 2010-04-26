@@ -2,7 +2,7 @@
 
 <div class="crumbs">
   <span>
-    <a href="<c:url value="/secure/list.html" />">Project Listing</a>
+    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
   </span>
   <span>&raquo;</span>
   <span>Watch Logs</span>

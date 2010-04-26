@@ -88,7 +88,7 @@ public class LogWatcherFormController extends AbstractFormController
       value = "/project/{projectName}/watch.html",
       method = RequestMethod.POST)
   @Transactional(propagation = Propagation.REQUIRED)
-  public String saveProject(
+  public String watch(
       @Valid @ModelAttribute("watchConfig") final WatchConfig watchConfig,
       final BindingResult result,
       final HttpServletResponse response)
