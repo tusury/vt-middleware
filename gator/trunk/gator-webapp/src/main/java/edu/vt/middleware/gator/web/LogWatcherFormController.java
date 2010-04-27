@@ -115,14 +115,14 @@ public class LogWatcherFormController extends AbstractFormController
       new LoggingEventWriter(hierarchy, layout, response);
     try {
       logger.debug("Starting to watch logging events for connected clients.");
-      addLoggingEventWriter(logEventWriter);
+      addLoggingEventWriter(logEventWriter, project);
       logEventWriter.waitToFinish();
     } catch (Exception e) {
       logger.debug("Caught exception while writing logging events: " + e);
     } finally {
       logger.debug("Finished watching logs.");
       if (logEventWriter != null) {
-	      removeLoggingEventWriter(logEventWriter);
+	      removeLoggingEventWriter(logEventWriter, project);
       }
     }
     // Send null to signal Spring MVC that we've dealt with response
@@ -132,29 +132,41 @@ public class LogWatcherFormController extends AbstractFormController
 
 
   /**
-   * Adds the given logging event writer to all logging event handlers
-   * attached to the socket server.
+   * Adds the given logging event writer to all logging event handlers for
+   * clients that belong to the given project.
+   * 
    * @param writer Writer to add.
+   * @param project Project for which clients' handlers should have writer
+   * added.
    */
-  private void addLoggingEventWriter(final LoggingEventWriter writer)
+  private void addLoggingEventWriter(
+      final LoggingEventWriter writer, final ProjectConfig project)
   {
     for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers()) {
-	    logger.debug("Adding LoggingEventWriter to " + handler);
-      handler.getLoggingEventListeners().add(writer);
+      if (project.getClient(handler.getRemoteAddress()) != null) {
+		    logger.debug("Adding LoggingEventWriter to " + handler);
+	      handler.getLoggingEventListeners().add(writer);
+      }
     }
   }
 
 
   /**
    * Removes the given logging event writer from all logging event handlers
-   * attached to the socket server.
+   * for clients that belong to the given project.
+   *
    * @param writer Writer to remove.
+   * @param project Project for which clients' handlers should have writer
+   * added.
    */
-  private void removeLoggingEventWriter(final LoggingEventWriter writer)
+  private void removeLoggingEventWriter(
+      final LoggingEventWriter writer, final ProjectConfig project)
   {
     for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers()) {
-	    logger.debug("Removing LoggingEventWriter from " + handler);
-      handler.getLoggingEventListeners().remove(writer);
+      if (project.getClient(handler.getRemoteAddress()) != null) {
+		    logger.debug("Removing LoggingEventWriter from " + handler);
+	      handler.getLoggingEventListeners().remove(writer);
+      }
     }
   }  
 

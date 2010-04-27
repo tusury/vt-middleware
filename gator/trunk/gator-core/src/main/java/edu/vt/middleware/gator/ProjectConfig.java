@@ -13,6 +13,7 @@
  */
 package edu.vt.middleware.gator;
 
+import java.net.InetAddress;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Collection;
@@ -203,6 +204,23 @@ public class ProjectConfig extends Config
       }
     }
     return null;
+  }
+  
+  /**
+   * Gets a client by IP address belonging to this project.  The set of clients
+   * is searched first by hostname (case sensitive) then IP.
+   * @param address IP address of client to get.
+   * @return First client in this project with matching hostname or IP address
+   * or null if no matching client is found.
+   */
+  @Transient
+  public ClientConfig getClient(final InetAddress address)
+  {
+    ClientConfig client = getClient(address.getHostName());
+    if (client == null) {
+      client = getClient(address.getHostAddress());
+    }
+    return client;
   }
 
   /**
