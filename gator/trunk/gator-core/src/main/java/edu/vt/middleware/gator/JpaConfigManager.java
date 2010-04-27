@@ -111,7 +111,7 @@ public class JpaConfigManager implements ConfigManager
     final String queryString = String.format(
       "SELECT t FROM %s t",
       type.getSimpleName());
-    logger.debug("Executing query " + queryString);
+    logger.trace("Executing query " + queryString);
     return em.createQuery(queryString).getResultList();
   }
 
@@ -123,7 +123,7 @@ public class JpaConfigManager implements ConfigManager
   public <T extends Config> T find(final Class<T> type, final int id)
   {
     final EntityManager em = getEntityManager();
-    logger.debug(
+    logger.trace(
       String.format("Querying for %s ID=%s", type.getSimpleName(), id));
     return em.find(type, id);
   }
@@ -140,8 +140,8 @@ public class JpaConfigManager implements ConfigManager
       "SELECT p FROM ProjectConfig p WHERE p.name = :name";
     final Query query = em.createQuery(queryString);
     query.setParameter("name", name);
-    logger.debug("Executing query " + queryString);
-    logger.debug("Query params: name=" + name);
+    logger.trace("Executing query " + queryString);
+    logger.trace("Query params: name=" + name);
     try {
       return (ProjectConfig) query.getSingleResult();
     } catch (NoResultException e) {
@@ -163,8 +163,8 @@ public class JpaConfigManager implements ConfigManager
         "WHERE c.name = :name";
     final Query query = em.createQuery(queryString);
     query.setParameter("name", name);
-    logger.debug("Executing query " + queryString);
-    logger.debug("Query params: name=" + name);
+    logger.trace("Executing query " + queryString);
+    logger.trace("Query params: name=" + name);
     return query.getResultList();
   }
 
