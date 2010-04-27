@@ -98,11 +98,13 @@ public class LogWatcherFormController extends AbstractFormController
     }
     final LoggingEventCollector collector = new LoggingEventCollector(1000);
     try {
+      logger.debug("Watching log events for connected clients.");
       addLoggingEventCollector(collector);
       writeResponse(response, watchConfig, collector);
     } catch (IOException e) {
       logger.debug("Caught IO exception while writing logging events.");
     } finally {
+      logger.debug("Finished watching logs.");
       removeLoggingEventCollector(collector);
     }
     // Send null to signal Spring MVC that we've dealt with response
@@ -185,6 +187,7 @@ public class LogWatcherFormController extends AbstractFormController
   {
     for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers())
     {
+	    logger.debug("Adding LoggingEventCollector to " + handler);
       handler.getLoggingEventListeners().add(collector);
     }
   }
@@ -199,6 +202,7 @@ public class LogWatcherFormController extends AbstractFormController
   {
     for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers())
     {
+	    logger.debug("Removing LoggingEventCollector from " + handler);
       handler.getLoggingEventListeners().remove(collector);
     }
   }  

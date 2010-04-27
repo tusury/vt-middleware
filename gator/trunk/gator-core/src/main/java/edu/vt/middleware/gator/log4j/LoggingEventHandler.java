@@ -184,6 +184,13 @@ public class LoggingEventHandler implements Runnable
       isRunning = false;
     }
   }
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return "LoggingEventHandler for " + socket.getInetAddress();
+  }
   
   private void closeStreamIfNecessary(final InputStream in)
   {
