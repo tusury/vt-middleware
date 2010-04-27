@@ -28,7 +28,10 @@ public interface LoggingEventListener
   /**
    * Handler method that will be invoked on upon receipt of the given
    * logging event.
+   *
+   * @param sender LoggingEventHandler that processed the event and is
+   * rebroadcasting it to registered listeners.
    * @param event Logging event that was received.
    */
-  void eventReceived(LoggingEvent event);
+  void eventReceived(LoggingEventHandler sender, LoggingEvent event);
 }

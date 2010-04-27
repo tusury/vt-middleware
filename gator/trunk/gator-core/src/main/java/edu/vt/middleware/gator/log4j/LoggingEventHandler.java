@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
 import org.apache.log4j.TTCCLayout;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.LoggingEvent;
@@ -185,11 +186,21 @@ public class LoggingEventHandler implements Runnable
     }
   }
 
+  /**
+   * Configures properties about the remote host in the {@link MDC} of the
+   * current thread.
+   */
+  public void setupMDC()
+  {
+    MDC.put("host", getRemoteAddress().getHostName());
+    MDC.put("ip", getRemoteAddress().getHostAddress()); 
+  }
+
   /** {@inheritDoc} */
   @Override
   public String toString()
   {
-    return "LoggingEventHandler for " + socket.getInetAddress();
+    return "LoggingEventHandler for " + getRemoteAddress();
   }
   
   private void closeStreamIfNecessary(final InputStream in)
@@ -241,7 +252,7 @@ public class LoggingEventHandler implements Runnable
     public void run()
     {
       try {
-        listener.eventReceived(event);
+        listener.eventReceived(LoggingEventHandler.this, event);
       } catch (Exception e) {
         logger.error("Error invoking " + listener, e);
       }

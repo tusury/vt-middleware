@@ -15,6 +15,9 @@ package edu.vt.middleware.gator.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
@@ -23,11 +26,12 @@ import javax.validation.constraints.NotNull;
 
 import edu.vt.middleware.gator.CategoryConfig;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.log4j.LoggingEventCollector;
 import edu.vt.middleware.gator.log4j.LoggingEventHandler;
+import edu.vt.middleware.gator.log4j.LoggingEventListener;
 import edu.vt.middleware.gator.log4j.SocketServer;
 
 import org.apache.log4j.Hierarchy;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -96,16 +100,30 @@ public class LogWatcherFormController extends AbstractFormController
     if (result.hasErrors()) {
       return VIEW_NAME;
     }
-    final LoggingEventCollector collector = new LoggingEventCollector(1000);
+    final ProjectConfig project = configManager.find(
+        ProjectConfig.class,
+        watchConfig.getProjectId());
+    final Hierarchy hierarchy = new Hierarchy(new RootLogger(Level.ALL));
+    final PatternLayout layout = new PatternLayout();
+    layout.setConversionPattern(watchConfig.getLayoutConversionPattern());
+    for (int categoryId : watchConfig.getCategoryIds()) {
+      final CategoryConfig category = project.getCategory(categoryId);
+      final Logger logger = hierarchy.getLogger(category.getName());
+      logger.setLevel(category.getLog4jLevel());
+    }
+    final LoggingEventWriter logEventWriter =
+      new LoggingEventWriter(hierarchy, layout, response);
     try {
-      logger.debug("Watching log events for connected clients.");
-      addLoggingEventCollector(collector);
-      writeResponse(response, watchConfig, collector);
-    } catch (IOException e) {
-      logger.debug("Caught IO exception while writing logging events.");
+      logger.debug("Starting to watch logging events for connected clients.");
+      addLoggingEventWriter(logEventWriter);
+      logEventWriter.waitToFinish();
+    } catch (Exception e) {
+      logger.debug("Caught exception while writing logging events: " + e);
     } finally {
       logger.debug("Finished watching logs.");
-      removeLoggingEventCollector(collector);
+      if (logEventWriter != null) {
+	      removeLoggingEventWriter(logEventWriter);
+      }
     }
     // Send null to signal Spring MVC that we've dealt with response
     // data inside the controller and don't need to render a view
@@ -114,98 +132,32 @@ public class LogWatcherFormController extends AbstractFormController
 
 
   /**
-   * Writes logging events received by the collector to a
-   * {@link WriterAppender} that wraps the HTTP response stream.
-   *
-   * @param response HTTP response.
-   * @param wc Configuration object for watching logs.
-   * @param collector Receptor of logging events to write.
-   *
-   * @throws IOException On the first error flushing the HTTP response,
-   * which in many cases will occur on close. This exception should be
-   * handled as an end-of-stream case as well as an error condition.
+   * Adds the given logging event writer to all logging event handlers
+   * attached to the socket server.
+   * @param writer Writer to add.
    */
-  private void writeResponse(
-    final HttpServletResponse response,
-    final WatchConfig wc,
-    final LoggingEventCollector collector)
-    throws IOException
+  private void addLoggingEventWriter(final LoggingEventWriter writer)
   {
-    final ProjectConfig project = configManager.find(
-      ProjectConfig.class,
-      wc.getProjectId());
-    final PrintWriter writer = response.getWriter();
-    final LoggerRepository repo = new Hierarchy(new RootLogger(Level.ALL));
-    final WriterAppender appender = new WriterAppender();
-    appender.setWriter(writer);
-    final PatternLayout layout = new PatternLayout();
-    layout.setConversionPattern(wc.getLayoutConversionPattern());
-    appender.setLayout(layout);
-    for (int categoryId : wc.getCategoryIds()) {
-      final CategoryConfig category = project.getCategory(categoryId);
-      final Logger logger = repo.getLogger(category.getName());
-      logger.setLevel(category.getLog4jLevel());
-      logger.addAppender(appender);
-    }
-    response.setContentType("text/plain");
-    writer.println("Logging output will appear below as it is received.");
-    writer.println("===================================================");
-    response.flushBuffer();
-    int waitCycles = 0;
-    while (!writer.checkError()) {
-      try {
-        // Time out after a short wait to allow periodic stream close check
-        final LoggingEvent event =
-          collector.getEventQueue().poll(10, TimeUnit.SECONDS);
-        if (event != null) {
-          if (waitCycles > 0) {
-            writer.println();
-            waitCycles = 0;
-          }
-	        final Logger logger = repo.getLogger(event.getLoggerName());
-	        if(event.getLevel().isGreaterOrEqual(logger.getEffectiveLevel())) {
-	          logger.callAppenders(event);
-	        }
-        } else {
-          waitCycles++;
-          writer.print('.');
-        }
-      } catch (InterruptedException e) {
-        logger.debug("Interrupted waiting for logging event.");
-      } finally {
-        writer.flush();
-      }
+    for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers()) {
+	    logger.debug("Adding LoggingEventWriter to " + handler);
+      handler.getLoggingEventListeners().add(writer);
     }
   }
 
-  /**
-   * Adds the given logging event collector to all logging event handlers
-   * attached to the socket server.
-   * @param collector Collector to add.
-   */
-  private void addLoggingEventCollector(final LoggingEventCollector collector)
-  {
-    for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers())
-    {
-	    logger.debug("Adding LoggingEventCollector to " + handler);
-      handler.getLoggingEventListeners().add(collector);
-    }
-  }
 
   /**
-   * Removes the given logging event collector from all logging event handlers
+   * Removes the given logging event writer from all logging event handlers
    * attached to the socket server.
-   * @param collector Collector to add.
+   * @param writer Writer to remove.
    */
-  private void removeLoggingEventCollector(
-    final LoggingEventCollector collector)
+  private void removeLoggingEventWriter(final LoggingEventWriter writer)
   {
-    for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers())
-    {
-	    logger.debug("Removing LoggingEventCollector from " + handler);
-      handler.getLoggingEventListeners().remove(collector);
+    for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers()) {
+	    logger.debug("Removing LoggingEventWriter from " + handler);
+      handler.getLoggingEventListeners().remove(writer);
     }
   }  
+
 
   /**
    * Form backing object for log watching configuration.
@@ -282,6 +234,101 @@ public class LogWatcherFormController extends AbstractFormController
     public void setCategoryIds(int[] categoryIds)
     {
       this.categoryIds = categoryIds;
+    }
+  }
+
+
+  /**
+   * Handles writing logging events to the HTTP response stream.
+   *
+   * @author Middleware
+   * @version $Revision$
+   *
+   */
+  private class LoggingEventWriter implements LoggingEventListener
+  {
+    private int waitCount;
+    private PrintWriter writer;
+    private LoggerRepository repository;
+    private BlockingQueue<LoggingEvent> eventQueue =
+      new ArrayBlockingQueue<LoggingEvent>(10);
+
+
+    /**
+     * Creates a new instance that writes events to the given logger hierarchy
+     * using a {@link WriterAppender} wrapped around the given HTTP response.
+     *
+     * @param repo  Logging repository.
+     * @param layout Appender layout.
+     * @param response HTTP response to which events are written.
+     */
+    public LoggingEventWriter(
+        final LoggerRepository repo,
+        final Layout layout,
+        final HttpServletResponse response)
+    {
+      repository = repo;
+      try {
+        response.setContentType("text/plain");
+        writer = response.getWriter();
+        writer.println("Logging output will appear below as it is received.");
+        writer.println("===================================================");
+        writer.flush();
+        response.flushBuffer();
+	      final WriterAppender appender = new WriterAppender();
+	      appender.setWriter(writer);
+	      appender.setLayout(layout);
+	      final Enumeration<?> e = repo.getCurrentLoggers();
+	      while (e.hasMoreElements()) {
+	        ((Logger) e.nextElement()).addAppender(appender);
+	      }
+      } catch (IOException e) {
+        throw new RuntimeException(
+            "Failed initializing HTTP response stream writer.", e);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    public void eventReceived(
+        final LoggingEventHandler sender, final LoggingEvent event)
+    {
+      sender.setupMDC();
+      if (waitCount > 0) {
+        waitCount = 0;
+        writer.println();
+      }
+      final Logger logger = repository.getLogger(event.getLoggerName());
+      if(event.getLevel().isGreaterOrEqual(logger.getEffectiveLevel())) {
+        logger.callAppenders(event);
+      }
+      writer.flush();
+      eventQueue.offer(event);
+    }
+
+    
+    /**
+     * Blocks until the underlying {@link PrintWriter} encounters errors,
+     * presumably on stream close, during which time logging events are written.
+     */
+    public void waitToFinish()
+    {
+      while (!writer.checkError()) {
+        // Time out after a short wait to allow periodic stream close check
+        // and provide user feedback that something is happening
+        LoggingEvent event = null;
+        try {
+          event = eventQueue.poll(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+          logger.debug("Interrupted waiting for logging events.");
+          return;
+        }
+        if (event == null) {
+          waitCount++;
+          writer.print('.');
+          writer.flush();
+        }
+      }
     }
   }
 }

@@ -125,8 +125,7 @@ public class LoggingEventHandlerExecutor implements Executor
     @Override
     public void run()
     {
-      MDC.put("host", loggingEventHandler.getRemoteAddress().getHostName());
-      MDC.put("ip", loggingEventHandler.getRemoteAddress().getHostAddress());
+      loggingEventHandler.setupMDC();
       try {
 	      super.run();
       } catch (Exception e) {
