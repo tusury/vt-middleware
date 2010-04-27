@@ -34,7 +34,7 @@ import edu.vt.middleware.gator.util.FileHelper;
  * @version $Revision$
  *
  */
-public class Log4jConfigUtils
+public final class Log4jConfigUtils
 {
   /** Logger instance */
   private static final Log LOGGER = LogFactory.getLog(Log4jConfigUtils.class);
@@ -115,7 +115,7 @@ public class Log4jConfigUtils
   {
     Class<?> c;
     try {
-      LOGGER.debug("Instantiating new instance of " + name);
+      LOGGER.trace("Instantiating new instance of " + name);
       c = Class.forName(name);
     } catch (ClassNotFoundException e) {
       throw new ConfigurationException(
@@ -153,7 +153,7 @@ public class Log4jConfigUtils
     throws ConfigurationException
   {
     final PropertySetter ps = new PropertySetter(target);
-    LOGGER.debug(String.format(
+    LOGGER.trace(String.format(
         "Setting property %s on instance of %s",
         property,
         target.getClass()));
