@@ -79,7 +79,6 @@ public class XmlConfigViewController extends AbstractController
         final String clientAppenderPath = FileHelper.pathCat(
           project.getClientLogDir(),
           fileParam.getValue());
-        logger.debug("Updated appender file path to " + clientAppenderPath);
         fileParam.setValue(clientAppenderPath);
       }
     }

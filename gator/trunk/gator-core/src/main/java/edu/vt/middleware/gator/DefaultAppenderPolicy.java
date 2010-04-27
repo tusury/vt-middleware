@@ -107,7 +107,7 @@ public class DefaultAppenderPolicy implements AppenderPolicy, Serializable
       if (category.getName().startsWith(c.getName() + ".") && 
           category.getName().length() > c.getName().length() &&
           c.getAppenders().size() > 0) {
-        logger.debug(
+        logger.trace(
             String.format(
               "%s has parent %s with appenders defined.",
               category,
