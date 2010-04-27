@@ -18,8 +18,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -43,14 +42,11 @@ import org.springframework.util.Assert;
  */
 public class JpaConfigManager implements ConfigManager
 {
-  /** Size of thread pool used to publish events */
-  private static final int EXECUTOR_THREADPOOL_SIZE = 10;
-
   /** Logger instance */
   private final Log logger = LogFactory.getLog(getClass());
  
   /** Responsible for publishing events to registered listeners */
-  private ExecutorService eventExecutor;
+  private Executor eventExecutor;
 
   /** Creates entity manager instances for persistence operations */
   private EntityManagerFactory entityManagerFactory;
@@ -65,6 +61,15 @@ public class JpaConfigManager implements ConfigManager
   public void setEntityManagerFactory(final EntityManagerFactory factory)
   {
     entityManagerFactory = factory;
+  }
+
+
+  /**
+   * @param  executor  Executor service used to publish events.
+   */
+  public void setEventExecutor(final Executor executor)
+  {
+    this.eventExecutor = executor;
   }
 
 
@@ -91,18 +96,7 @@ public class JpaConfigManager implements ConfigManager
   public void init() throws Exception
   {
     Assert.notNull(entityManagerFactory, "EntityManagerFactory is required");
-    eventExecutor = Executors.newFixedThreadPool(EXECUTOR_THREADPOOL_SIZE);
-  }
- 
-  /**
-   * Performs cleanup of resources held by this instance that should be called
-   * prior to application shutdown.
-   *
-   * @throws  Exception  On errors.
-   */
-  public void destroy() throws Exception
-  {
-    eventExecutor.shutdown();
+    Assert.notNull(eventExecutor, "EventExecutor cannot be null.");
   }
 
 
@@ -218,7 +212,7 @@ public class JpaConfigManager implements ConfigManager
     // Fire events on a separate thread so we do not disrupt client thread
     // (e.g. avoid subscriber blocking)
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
-      eventExecutor.submit(
+      eventExecutor.execute(
           new ProjectChangedEvent(listener, liveProject, removedClients));
     }
   }
@@ -246,7 +240,7 @@ public class JpaConfigManager implements ConfigManager
     // Fire events on a separate thread so we do not disrupt client thread
     // (e.g. avoid subscriber blocking)
     for (ConfigChangeListener listener : getConfigChangeListeners()) {
-      eventExecutor.submit(new ProjectRemovedEvent(listener, liveProject));
+      eventExecutor.execute(new ProjectRemovedEvent(listener, liveProject));
     }
   }
 

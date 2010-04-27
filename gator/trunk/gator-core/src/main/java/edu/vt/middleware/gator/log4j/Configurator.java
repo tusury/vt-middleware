@@ -37,14 +37,14 @@ public interface Configurator
    * @param addr IP address of host to configure.
    * @param repository Logger repository to configure.
    *
-   * @throws UnknownClientException On attempting to configure a client that
+   * @throws UnauthorizedClientException On attempting to configure a client that
    * is not registered with any projects.
    * @throws ConfigurationException On configuration errors.
    */
   void configure(
     final InetAddress addr,
     final LoggerRepository repository)
-    throws UnknownClientException, ConfigurationException;
+    throws UnauthorizedClientException, ConfigurationException;
 
   /**
    * Configures a given logger repository based a configuration project.

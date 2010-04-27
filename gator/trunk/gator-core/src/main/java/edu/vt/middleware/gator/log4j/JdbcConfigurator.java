@@ -84,7 +84,7 @@ public class JdbcConfigurator implements Configurator, InitializingBean
   public void configure(
     final InetAddress addr,
     final LoggerRepository repository)
-    throws UnknownClientException, ConfigurationException
+    throws UnauthorizedClientException, ConfigurationException
   {
     configure(getProject(addr), repository);
   }
@@ -145,11 +145,11 @@ public class JdbcConfigurator implements Configurator, InitializingBean
    * @param addr IP address.
    * @return First project to which the client at the given IP address
    * is a member.
-   * @throws UnknownClientException If given client is not a member of any
+   * @throws UnauthorizedClientException If given client is not a member of any
    * projects.
    */
   private ProjectConfig getProject(final InetAddress addr)
-    throws UnknownClientException {
+    throws UnauthorizedClientException {
     final Set<ProjectConfig> projects = new HashSet<ProjectConfig>();
    
     // Add projects that contain the given client by host or IP address
@@ -160,7 +160,7 @@ public class JdbcConfigurator implements Configurator, InitializingBean
     if (projects.size() > 0) {
       return projects.iterator().next();
     } else {
-      throw new UnknownClientException(
+      throw new UnauthorizedClientException(addr,
           String.format("%s not registered with any projects.", addr));
     }
   }

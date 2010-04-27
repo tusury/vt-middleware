@@ -58,8 +58,9 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
 
   <!-- Domain-specific beans -->
   <bean id="configManager" class="edu.vt.middleware.gator.JpaConfigManager"
-    init-method="init" destroy-method="destroy">
-    <property name="entityManagerFactory" ref="entityManagerFactory" />
+    init-method="init"
+    p:entityManagerFactory-ref="entityManagerFactory"
+    p:eventExecutor-ref="pooledExecutor">
     <property name="configChangeListeners">
       <list>
         <ref bean="log4jSocketServer" />
@@ -80,9 +81,11 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     class="edu.vt.middleware.gator.log4j.SocketServer"
     p:configurator-ref="log4jConfigurator"
     p:clientRemovalPolicy-ref="clientRemovalPolicy"
+    p:eventExecutor-ref="pooledExecutor"
     p:startOnInit="true"
     p:bindAddress="${log4j.server.bindAddress}"
     p:port="${log4j.server.port}"
+    p:maxClients="${log4j.server.maxClients}"
     init-method="init"
     destroy-method="stop"
   />
@@ -98,5 +101,12 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   
   <bean id="appenderPolicy"
     class="edu.vt.middleware.gator.DefaultAppenderPolicy"
+  />
+
+  <bean id="pooledExecutor"
+    class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"
+    p:corePoolSize="30"
+    p:maxPoolSize="100"
+    p:keepAliveSeconds="120"
   />
 </beans>

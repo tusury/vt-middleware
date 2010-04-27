@@ -23,6 +23,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <prop key="jdbc.pool.maxActive">3</prop>
         <prop key="log4j.server.bindAddress">127.0.0.1</prop>
         <prop key="log4j.server.port">8000</prop>
+        <prop key="log4j.server.maxClients">30</prop>
         <prop key="log4j.client.rootDir">gator-logs</prop>
         <prop key="log4j.client.removalPolicy">
           edu.vt.middleware.gator.log4j.NoopClientRemovalPolicy

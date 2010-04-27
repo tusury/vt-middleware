@@ -15,13 +15,14 @@ package edu.vt.middleware.gator.log4j;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,11 +60,8 @@ public class LoggingEventHandler implements Runnable
   protected Socket socket;
   
   protected LoggerRepository repository;
-  
-  protected ObjectInputStream ois;
-  
-  protected Thread runner;
-  
+ 
+  protected Executor executor;
 
 
   /**
@@ -72,8 +70,13 @@ public class LoggingEventHandler implements Runnable
    * to the given logger repository.
    * @param socket Socket to read from.
    * @param repo Source of loggers to write to.
+   * @param eventExecutor Responsible for sending events to registered
+   * listeners.
    */
-  public LoggingEventHandler(final Socket socket, final LoggerRepository repo)
+  public LoggingEventHandler(
+      final Socket socket,
+      final LoggerRepository repo,
+      final Executor eventExecutor)
   {
     if (socket == null) {
       throw new IllegalArgumentException("Socket cannot be null.");
@@ -81,17 +84,12 @@ public class LoggingEventHandler implements Runnable
     if (repo == null) {
       throw new IllegalArgumentException("LoggerRepository cannot be null.");
     }
+    if (eventExecutor == null) {
+      throw new IllegalArgumentException("ExecutorService cannot be null.");
+    }
     this.socket = socket;
     this.repository = repo;
-    try {
-      ois = new ObjectInputStream(
-          new BufferedInputStream(socket.getInputStream()));
-    }
-    catch(IOException e) {
-      throw new IllegalStateException(
-        "Failed creating ObjectInputStream on " + socket,
-        e);
-    }
+    this.executor = eventExecutor;
   }
 
   /**
@@ -138,51 +136,38 @@ public class LoggingEventHandler implements Runnable
   }
 
   /**
-   * @return  Thread that executes the {@link run()} method.
-   */
-  public Thread getRunner()
-  {
-    return runner;
-  }
-
-  /**
    * Shuts down the loop that handles logging event messages.
    */
   public void shutdown()
   {
     isRunning = false;
-    closeStreamIfNecessary();
+    closeSocketIfNecessary();
   }
 
   /** {@inheritDoc} */
   public void run() {
     isRunning = true;
-    runner = Thread.currentThread();
     logger.info("Ready to handle remote logging events from socket.");
     final Layout eventTraceLayout = new TTCCLayout();
+    ObjectInputStream ois = null;
     try {
+      ois = new ObjectInputStream(
+          new BufferedInputStream(socket.getInputStream()));
       while(isRunning) {
         final LoggingEvent event = (LoggingEvent) ois.readObject();
         if (logger.isTraceEnabled()) {
           logger.info("Read logging event from socket: " +
               eventTraceLayout.format(event));
         }
-        final Logger remoteLogger =
+        final Logger serverLogger =
           repository.getLogger(event.getLoggerName());
-        final Level level = remoteLogger.getEffectiveLevel();
+        final Level level = serverLogger.getEffectiveLevel();
         if(event.getLevel().isGreaterOrEqual(level)) {
-          remoteLogger.callAppenders(event);
+          serverLogger.callAppenders(event);
         }
         // Attempt to call registered listeners
         for (LoggingEventListener listener : getLoggingEventListeners()) {
-          try {
-            listener.eventReceived(event);
-          } catch (Exception e) {
-            logger.error(
-                "Failed executing LoggingEventListener#eventReceived() on " +
-                listener,
-                e);
-          }
+          executor.execute(new LoggingEventReceivedEvent(listener, event));
         }
       }
     } catch(EOFException e) {
@@ -192,7 +177,7 @@ public class LoggingEventHandler implements Runnable
     } catch(Exception e) {
       logger.error("Unexpected exception. Quitting.", e);
     } finally {
-      closeStreamIfNecessary();
+      closeStreamIfNecessary(ois);
       closeSocketIfNecessary();
       repository.shutdown();
       repository = null;
@@ -200,15 +185,13 @@ public class LoggingEventHandler implements Runnable
     }
   }
   
-  private void closeStreamIfNecessary()
+  private void closeStreamIfNecessary(final InputStream in)
   {
-    if (ois != null) {
+    if (in != null) {
       try {
-        ois.close();
+        in.close();
       } catch(Exception e) {
-        logger.error("Error closing object input stream.", e);
-      } finally {
-        ois = null;
+        logger.error("Error closing input stream.", e);
       }
     }
   }
@@ -216,22 +199,69 @@ public class LoggingEventHandler implements Runnable
   private void closeSocketIfNecessary()
   {
     if (socket != null) {
-      try {
-        logger.info("Closing client socket.");
-        socket.close();
-      } catch(Exception e) {
-        logger.error("Error closing client socket.", e);
+      if (!socket.isClosed()) {
+	      try {
+	        logger.info("Closing client socket.");
+	        socket.shutdownInput();
+	        socket.close();
+	      } catch(Exception e) {
+	        logger.error("Error closing client socket.", e);
+	      }
       }
       // We expect the socket to be unusable in any case at this point
-      // which we can safely consider "closed" here
+      // which we can safely consider "closed" in this context
       for (SocketCloseListener listener : socketCloseListeners) {
-        try {
-          listener.socketClosed(this, socket);
-        } catch (Exception e) {
-          logger.error("Error invoking " + listener, e);
-        }
+        executor.execute(new SocketCloseEvent(listener, socket));
       }
       socket = null;
+    }
+  }
+  
+  private class LoggingEventReceivedEvent implements Runnable
+  {
+    private LoggingEventListener listener;
+    
+    private LoggingEvent event;
+    
+    public LoggingEventReceivedEvent(
+        final LoggingEventListener listener, final LoggingEvent event)
+    {
+      this.listener = listener;
+      this.event = event;
+    }
+
+    /** {@inheritDoc} */
+    public void run()
+    {
+      try {
+        listener.eventReceived(event);
+      } catch (Exception e) {
+        logger.error("Error invoking " + listener, e);
+      }
+    }
+  }
+  
+  private class SocketCloseEvent implements Runnable
+  {
+    private SocketCloseListener listener;
+    
+    private Socket socket;
+    
+    public SocketCloseEvent(
+        final SocketCloseListener listener, final Socket socket)
+    {
+      this.listener = listener;
+      this.socket = socket;
+    }
+
+    /** {@inheritDoc} */
+    public void run()
+    {
+      try {
+        listener.socketClosed(LoggingEventHandler.this, socket);
+      } catch (Exception e) {
+        logger.error("Error invoking " + listener, e);
+      }
     }
   }
 }

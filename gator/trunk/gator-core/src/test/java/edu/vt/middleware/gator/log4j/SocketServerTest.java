@@ -48,7 +48,6 @@ import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.ConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.UnitTestHelper;
-import edu.vt.middleware.gator.log4j.Configurator;
 import edu.vt.middleware.gator.log4j.SocketServer;
 import edu.vt.middleware.gator.util.FileHelper;
 
@@ -86,16 +85,13 @@ public class SocketServerTest
   /** Transaction manager */
   @Autowired
   private PlatformTransactionManager txManager;
-  
-  /** Handles log4j repository configuration */
-  @Autowired
-  private Configurator configurator;
  
   /** Handles persisting projects */
   @Autowired
   private ConfigManager configManager;
  
   /** Subject of test */
+  @Autowired
   private SocketServer server;
 
 
@@ -108,7 +104,7 @@ public class SocketServerTest
   {
     testProject = UnitTestHelper.createProject(
         "p", "a1", "a2",
-        SocketServer.DEFAULT_BIND_ADDRESS, "127.0.0.2", TEST_CATEGORY);
+        server.getBindAddress(), "127.0.0.2", TEST_CATEGORY);
     new TransactionTemplate(txManager).execute(
         new TransactionCallbackWithoutResult() {
           protected void doInTransactionWithoutResult(
@@ -116,10 +112,6 @@ public class SocketServerTest
             configManager.save(testProject);
           }
         });
-    server = new SocketServer();
-    server.setConfigurator(configurator);
-    server.setClientRemovalPolicy(new NoopClientRemovalPolicy());
-    server.setStartOnInit(true);
   }
 
  
@@ -131,16 +123,18 @@ public class SocketServerTest
   @Test
   public void testConnectAndLog() throws Exception
   {
-    server.init();
     final Socket sock = new Socket();
     try {
       final SocketAddress addr = new InetSocketAddress(
-          InetAddress.getByName(SocketServer.DEFAULT_BIND_ADDRESS),
-          SocketServer.DEFAULT_PORT);
+          InetAddress.getByName(server.getBindAddress()),
+          server.getPort());
       sock.connect(addr, SOCKET_CONNECT_TIMEOUT);
+      
       // Allow the socket server time to build the hierarchy
       // before sending a test logging event
-      Thread.sleep(5000);
+      Thread.sleep(2000);
+
+	    Assert.assertEquals(1, server.eventHandlerMap.keySet().size());
       LOGGER.debug("Sending test logging event.");
       final LoggingEvent event = new LoggingEvent(
           TEST_CATEGORY,
@@ -157,8 +151,13 @@ public class SocketServerTest
         sock.close();
       }
     }
+    
     // Pause to allow time for logging events to be written
-    Thread.sleep(1000);
+    Thread.sleep(2000);
+
+    // Client socket close should trigger cleanup of server handler mapping
+    Assert.assertEquals(0, server.eventHandlerMap.keySet().size());
+    
     for (AppenderConfig appender : testProject.getAppenders()) {
       final String logFilePath = FileHelper.pathCat(
         CLIENT_ROOT_DIR,
@@ -167,9 +166,6 @@ public class SocketServerTest
       final String contents = readTextFile(logFilePath);
       Assert.assertTrue(contents.contains(TEST_MESSAGE));
     }
-    Assert.assertEquals(1, server.eventHandlerMap.keySet().size());
-    server.stop();
-    Assert.assertEquals(0, server.eventHandlerMap.keySet().size());
   }
 
 

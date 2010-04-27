@@ -113,6 +113,15 @@ filesystem in the directory /home/gator.
     override="false" />
 
   <!--
+  Maximum number of clients that can connect to server.
+  A "client" in this sense is a connected socket.
+  -->
+  <Parameter
+    name="log4j.server.maxClients"
+    value="30"
+    override="false" />
+
+  <!--
   Root directory where client logs will be written.
   A subdirectory for each project will be created under the root directory.
   -->

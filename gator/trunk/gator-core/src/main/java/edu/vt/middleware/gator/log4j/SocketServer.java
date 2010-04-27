@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +53,7 @@ public class SocketServer
 {
   /** Default port number to listen for connections on */
   public static final int DEFAULT_PORT = 8000;
- 
+  
   /** Default bind address is loopback address */
   public static final String DEFAULT_BIND_ADDRESS = "127.0.0.1";
  
@@ -75,6 +76,9 @@ public class SocketServer
   /** Port server will listen on */
   protected int port = DEFAULT_PORT;
  
+  /** Maximum number of clients that can connect to server */
+  protected int maxClients;
+ 
   /** Flag indicating whether to start on intialization */
   protected boolean startOnInit;
  
@@ -89,7 +93,12 @@ public class SocketServer
  
   /** Defines behavior when clients are removed from projects */
   protected ClientRemovalPolicy clientRemovalPolicy;
+  
+  /** Executes logging event handlers for each connected client */
+  protected LoggingEventHandlerExecutor handlerExecutor;
 
+  /** Executor used to publish log events to registered listeners */
+  protected Executor eventExecutor;
 
 
   /**
@@ -138,6 +147,16 @@ public class SocketServer
   }
   
   /**
+   * Sets the maximum number of logging clients allowed by this server.
+   *
+   * @param  max  Maximum number of clients.
+   */
+  public void setMaxClients(final int max)
+  {
+    this.maxClients = max;
+  }
+
+  /**
    * Gets the policy applied when clients are removed from a project.
    * @return Client removal policy.
    */
@@ -175,6 +194,14 @@ public class SocketServer
   {
     this.startOnInit = startOnInit;
   }
+  
+  /**
+   * @param  executor  Executor service used to publish events.
+   */
+  public void setEventExecutor(final Executor executor)
+  {
+    this.eventExecutor = executor;
+  }
 
   /**
    * Initializes the socket server so it can begin accepting connections
@@ -187,6 +214,7 @@ public class SocketServer
   {
     Assert.notNull(configurator, "Configurator cannot be null.");
     Assert.notNull(clientRemovalPolicy, "ClientRemovalPolicy cannot be null.");
+    Assert.notNull(eventExecutor, "EventExecutor cannot be null.");
     try {
       inetBindAddress = InetAddress.getByName(bindAddress);
     } catch (UnknownHostException e) {
@@ -210,6 +238,7 @@ public class SocketServer
     socketServerThread = new Thread(
         this,
         String.format("gator-server-%s-%s", listenIP, port));
+    handlerExecutor = new LoggingEventHandlerExecutor();
     socketServerThread.start();
     logger.info("Socket server started successfully.");
   }
@@ -241,9 +270,7 @@ public class SocketServer
       }
     }
     
-    for (LoggingEventHandler h : eventHandlerMap.values()) {
-      shutdown(h);
-    }
+    handlerExecutor.shutdown();
 
     eventHandlerMap.clear();
     serverSocket = null;
@@ -260,24 +287,31 @@ public class SocketServer
       InetAddress inetAddress = null;
       try {
         socket = serverSocket.accept();
+        inetAddress =  socket.getInetAddress();
+        if (eventHandlerMap.keySet().size() >= maxClients) {
+          throw new UnauthorizedClientException(
+              inetAddress,
+              "Maximum number of clients exceeded.");
+        }
         // Explicitly enable TCP keep alives to try to help reclaim resources
         // from dead clients
         socket.setKeepAlive(true);
-        inetAddress =  socket.getInetAddress();
         logger.info("Accepted connection from client " + inetAddress);
         logger.info("Configuring logger repository for " + inetAddress);
         final LoggerRepository repo = new Hierarchy(new RootLogger(Level.ALL));
         configurator.configure(inetAddress, repo);
         logger.info("Logger repository configured successfully.");
         final LoggingEventHandler handler =
-          new LoggingEventHandler(socket, repo);
+          new LoggingEventHandler(socket, repo, eventExecutor);
         handler.getSocketCloseListeners().add(this);
         eventHandlerMap.put(inetAddress, handler);
-        new LoggingEventHandlerThread(handler, inetAddress).start();
-      } catch(UnknownClientException e) {
-        eventHandlerMap.remove(inetAddress);
-        logger.warn("Unknown client " + inetAddress +
-          " connected but was rejected.");
+        handlerExecutor.execute(handler);
+      } catch(UnauthorizedClientException e) {
+        eventHandlerMap.remove(e.getClient());
+        logger.warn(
+            String.format(
+	            "Unauthorized client %s rejected for reason: " + e.getMessage(),
+	            e.getClient()));
         if (socket != null && !socket.isClosed()) {
           logger.info("Closing socket for rejected host.");
           try {
@@ -376,26 +410,8 @@ public class SocketServer
     if (eventHandlerMap.containsKey(addr)) {
       logger.info(String.format(
           "Cleaning up resources held by %s due to socket close.", addr));
-      shutdown(eventHandlerMap.get(addr));
+      eventHandlerMap.get(addr).shutdown();
 	    eventHandlerMap.remove(addr);
-    }
-  }
-
-  /**
-   * Shuts down the given logging event handler and attempts to clean up
-   * resources held by it.
-   *
-   * @param  handler  Handler to clean up.
-   */
-  private void shutdown(final LoggingEventHandler handler)
-  {
-    handler.shutdown();
-    try {
-      handler.getRunner().join(STOP_TIMEOUT);
-    } catch (InterruptedException e) {
-      logger.warn("Timed out waiting for LoggingEventHandler shutdown");
-    } catch (Exception e) {
-      logger.warn("Error on logging event handler shutdown: " + e.getMessage());
     }
   }
 }
