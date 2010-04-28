@@ -14,11 +14,10 @@
 </head>
 <body>
 <div id="page-wrapper">
-<div id="page-header"
-  style="background-image:url(<c:url value="/background.png" />)">
+<div id="page-header">
 <a href="<c:url value="/"/>">
 <img src="<c:url value="/logo.png" />" alt="Gator logo" border="0" />
 </a>
 </div>
 <div id="content">
-<div id="logout"><a href="<c:url value="/secure/logout" />">Log out</a></div>
+<div id="logout"><a class="navlink" href="<c:url value="/secure/logout" />">Log out</a></div>

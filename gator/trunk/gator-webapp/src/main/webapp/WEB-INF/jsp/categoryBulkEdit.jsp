@@ -1,19 +1,15 @@
 <%@ include file="includes/top.jsp" %>
 
-<div class="crumbs">
-  <span>
-    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
-  </span>
-  <span>&raquo;</span>
-  <span>
-    <a href="<c:url value="/secure/project/${category.project.name}/edit.html" />">
-    Edit <em>${category.project.name}</em></a>
-  </span>
-  <span>&raquo;</span>
-  <span>Bulk Edit Categories</span>
+<div id="crumbs">
+  <ul>
+    <li class="first"><a class="navlink" href="<c:url value="/secure/project/list.html" />">Project Listing</a></li>
+    <li><a class="navlink" href="<c:url value="/secure/project/${bulkData.project.name}/edit.html" />">Edit <em>${bulkData.project.name}</em></a></li>
+    <li>Bulk Edit Categories</li>
+  </ul>
 </div>
+<div class="clear"></div>
 
-<h1>Bulk Edit Categories</h1>
+<div id="title">Bulk Edit Categories</div>
 
 <form:form method="post" commandName="bulkData">
   <fieldset>
@@ -61,7 +57,7 @@
 	  </div>
   </div>
   <div class="field">
-		<div><input type="submit" name="action" value="Apply" /></div>
+		<input class="button" type="submit" name="action" value="Apply" />
   </div>
   </fieldset>
 

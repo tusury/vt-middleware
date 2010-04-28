@@ -9,19 +9,16 @@
   </c:otherwise>
 </c:choose>
 
-<div class="crumbs">
-  <span>
-    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
-  </span>
-  <span>&raquo;</span>
-  <span>
-    <a href="<c:url value="/secure/project/${appender.project.name}/edit.html" />">Edit <em>${appender.project.name}</em></a>
-  </span>
-  <span>&raquo;</span>
-  <span>${action}</span>
+<div id="crumbs">
+  <ul>
+    <li class="first"><a class="navlink" href="<c:url value="/secure/project/list.html" />">Project Listing</a></li>
+    <li><a class="navlink" href="<c:url value="/secure/project/${appender.project.name}/edit.html" />">Edit <em>${appender.project.name}</em></a></li>
+    <li>${action}</li>
+  </ul>
 </div>
+<div class="clear"></div>
 
-<h1>${action}</h1>
+<div id="title">${action}</div>
 
 <form:form method="post" commandName="appender">
   <fieldset>
@@ -69,7 +66,7 @@
       rows="8" cols="75" /></div>
   </div>
   <div class="field">
-		<div><input type="submit" name="action" value="Update" /></div>
+		<input class="button" type="submit" name="action" value="Update" />
   </div>
   </fieldset>
 

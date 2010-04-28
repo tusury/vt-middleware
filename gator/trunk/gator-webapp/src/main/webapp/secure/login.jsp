@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/includes/top.jsp" %>
+<div class="clear"></div>
 
-<h1>Login</h1>
+<div id="title">Login</div>
 
 <form method="post" action="<c:url value="/secure/login_validate" />">
   <c:if test="${param.error == 403}">
@@ -18,7 +19,7 @@
     <div><input id="j_password" name="j_password" type="password" /></div>
   </div>
   <div class="field">
-    <div><input type="submit" name="action" value="Login" /></div>
+    <input class="button" type="submit" name="action" value="Login" />
   </div>
   </fieldset>
 

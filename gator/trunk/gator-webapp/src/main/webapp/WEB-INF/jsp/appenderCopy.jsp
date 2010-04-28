@@ -1,19 +1,15 @@
 <%@ include file="includes/top.jsp" %>
 
-<div class="crumbs">
-  <span>
-    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
-  </span>
-  <span>&raquo;</span>
-  <span>
-    <a href="<c:url value="/secure/project/${project.name}/edit.html" />">
-    Edit <em>${project.name}</em></a>
-  </span>
-  <span>&raquo;</span>
-  <span>Copy Appender</span>
+<div id="crumbs">
+  <ul>
+    <li class="first"><a class="navlink" href="<c:url value="/secure/project/list.html" />">Project Listing</a></li>
+    <li><a class="navlink" href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit <em>${project.name}</em></a></li>
+    <li>Copy Appender</li>
+  </ul>
 </div>
+<div class="clear"></div>
 
-<h1>Copy Appender</h1>
+<div id="title">Copy Appender</div>
 
 <form:form method="post" commandName="spec">
   <fieldset>
@@ -35,7 +31,7 @@
     <div><form:input id="name" path="name" size="30" /></div>
   </div>
   <div class="field">
-    <div><input type="submit" name="action" value="Copy" /></div>
+    <input class="button" type="submit" name="action" value="Copy" />
   </div>
   </fieldset>
 

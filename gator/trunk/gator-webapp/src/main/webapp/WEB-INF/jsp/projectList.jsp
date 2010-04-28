@@ -1,47 +1,38 @@
 <%@ include file="includes/top.jsp" %>
+<div class="clear"></div>
 
-<h1>Project Listing</h1>
+<div id="title">Project Listing</div>
 
-<p>
-<span class="button"><a href="<c:url
-  value="/secure/project/add.html" />">Create Project</a></span>
-<c:if test="${not empty projects}">
-	<span class="button"><a href="<c:url
-	  value="/secure/project/copy.html" />">Copy Project</a></span>
-</c:if>
+<div class="button_group">
+	<a class="button" href="<c:url
+	  value="/secure/project/add.html" />">Create Project</a>
+	<c:if test="${not empty projects}">
+		<a class="button" href="<c:url
+		  value="/secure/project/copy.html" />">Copy Project</a>
+	</c:if>
+</div>
 
-</p>
-
-<table width="100%" summary="Project listing">
+<table summary="Project listing">
 <c:forEach items="${projects}" var="project" varStatus="stat">
-  <tr>
-  <td class="button_row" style="font-size:1.1em">${stat.count}.</td>
-  <td class="button_row" width="35%"
-    style="font-size:1.1em">${project.name}</td>
-  <td class="button_row">
-    <security:accesscontrollist hasPermission="2" domainObject="${project}">
-  		<span class="button">
-  		<a href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit</a>
-  		</span>
-		</security:accesscontrollist>
-  </td>
-  <td class="button_row">
-		<span class="button">
-		<a href="<c:url value="/secure/project/${project.name}/watch.html" />">Watch&nbsp;Logs</a>
-	  </span>
-  </td>
-  <td class="button_row">
-		<span class="button">
-		<a href="<c:url value="/project/${project.name}/log4j.xml" />">Preview&nbsp;XML</a>
-	  </span>
-  </td>
-  <td class="button_row">
-    <security:accesscontrollist hasPermission="8" domainObject="${project}">
-  		<span class="button">
-  		<a href="<c:url value="/secure/project/${project.name}/delete.html" />">Delete</a>
-  	  </span>
-		</security:accesscontrollist>
-  </td>
+  <tr class="button_row">
+	  <td>${stat.count}.</td>
+	  <td>${project.name}</td>
+	  <td class="button_cell">
+	    <security:accesscontrollist hasPermission="2" domainObject="${project}">
+	  		<a class="button" href="<c:url value="/secure/project/${project.name}/edit.html" />">Edit</a>
+			</security:accesscontrollist>
+	  </td>
+	  <td class="button_cell">
+			<a class="button" href="<c:url value="/secure/project/${project.name}/watch.html" />">Watch&nbsp;Logs</a>
+	  </td>
+	  <td class="button_cell">
+			<a class="button" href="<c:url value="/project/${project.name}/log4j.xml" />">Preview&nbsp;XML</a>
+	  </td>
+	  <td class="button_cell">
+	    <security:accesscontrollist hasPermission="8" domainObject="${project}">
+	  		<a class="button" href="<c:url value="/secure/project/${project.name}/delete.html" />">Delete</a>
+			</security:accesscontrollist>
+	  </td>
 	</tr>
 </c:forEach>
 </table>

@@ -1,23 +1,20 @@
 <%@ include file="includes/top.jsp" %>
 
-<div class="crumbs">
-  <span>
-    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
-  </span>
-  <span>&raquo;</span>
-  <span>
-    <a href="<c:url value="/secure/project/${spec.project.name}/edit.html" />">Edit <em>${spec.project.name}</em></a>
-  </span>
-  <span>&raquo;</span>
-  <span>Delete ${spec.typeName}</span>
+<div id="crumbs">
+  <ul>
+    <li class="first"><a class="navlink" href="<c:url value="/secure/project/list.html" />">Project Listing</a></li>
+    <li><a class="navlink" href="<c:url value="/secure/project/${spec.project.name}/edit.html" />">Edit <em>${spec.project.name}</em></a></li>
+    <li>Delete ${spec.typeName}</li>
+  </ul>
 </div>
+<div class="clear"></div>
 
-<h1>Delete ${spec.typeName}</h1>
+<div id="title">Delete ${spec.typeName}</div>
 
 <form:form method="post" commandName="spec">
   
   <fieldset>
-    <legend>Delete ${spec.typeName}</legend>
+    <legend>Delete Confirmation</legend>
 	
 	  <spring:hasBindErrors name="spec">
 	    <div id="validation-summary"><spring:message code="error.validationSummary" /></div>
@@ -32,7 +29,7 @@
       </div>
     </div>
     <div class="field">
-      <input type="submit" name="action" value="Delete" />
+      <input class="button" type="submit" name="action" value="Delete" />
     </div>
   </fieldset>
 </form:form>

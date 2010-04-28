@@ -9,15 +9,15 @@
   </c:otherwise>
 </c:choose>
 
-<div class="crumbs">
-  <span>
-    <a href="<c:url value="/secure/project/list.html" />">Project Listing</a>
-  </span>
-  <span>&raquo;</span>
-  <span>${action} <em>${project.name}</em></span>
+<div id="crumbs">
+  <ul>
+    <li class="first"><a class="navlink" href="<c:url value="/secure/project/list.html" />">Project Listing</a></li>
+    <li>${action}</li>
+  </ul>
 </div>
+<div class="clear"></div>
 
-<h1>${action}</h1>
+<div id="title">${action}</div>
 
 <c:if test="${project.id > 0}">
   <div>Last Modified: <strong>${project.modifiedDate.time}</strong></div>
@@ -45,40 +45,50 @@
       maxlength="100" /></div>
   </div>
   <div class="field">
-		<div><input type="submit" name="action" value="Update" /></div>
+		<input class="button" type="submit" name="action" value="Update" />
   </div>
   </fieldset>
-
+ 
   <c:if test="${project.id > 0}">
+
+  <div class="infobox">
+    <p>Jump to configuration section:
+      <a class="navlink" href="#appender">Appenders</a>
+      <a class="navlink" href="#client">Clients</a>
+      <a class="navlink" href="#perm">Permissions</a>
+    </p>
+  </div>
+
+  <h2><a name="category">Categories</a></h2>
 	<fieldset>
-	  <legend>Categories</legend>
+	  <legend>Edit Categories</legend>
 	  <div class="button_group">
-	    <span class="button">
-		    <a href="<c:url
-		      value="/secure/project/${project.name}/category/add.html" />">Add Category</a>
-	    </span>
-	    <span class="button">
-	      <a href="<c:url
-	        value="/secure/project/${project.name}/category/bulk_edit.html" />">Bulk Change</a>
-      </span>
+	    <a class="button" href="<c:url
+	      value="/secure/project/${project.name}/category/add.html" />">Add Category</a>
+      <a class="button" href="<c:url
+        value="/secure/project/${project.name}/category/bulk_edit.html" />">Bulk Change</a>
 	  </div>
 	  <c:choose>
 	    <c:when test="${not empty project.categories}">
 	      <table summary="Project category listing">
 	        <tr>
+	          <th>Edit</th>
 	          <th>Name</th>
 	          <th>Level</th>
 	          <th>Additivity</th>
 		        <th>Appenders</th>
-	          <th>Edit</th>
 	          <th>Delete</th>
 	        </tr>
 	        <c:forEach items="${project.categories}" var="category">
-	          <tr>
-	            <td class="button_row">${category.name}</td>
-	            <td class="button_row" align="center">${category.level}</td>
-	            <td class="button_row" align="center">${category.additivity}</td>
-	            <td class="button_row">
+	          <tr class="button_row">
+	            <td class="button_cell">
+		            <a class="button" href="<c:url
+		              value="/secure/project/${project.name}/category/${category.id}/edit.html" />">Edit</a>
+	            </td>
+	            <td>${category.name}</td>
+	            <td>${category.level}</td>
+	            <td>${category.additivity}</td>
+	            <td>
 	            	<c:forEach items="${category.appenders}"
 	            	 var="appender"
 		             varStatus="stat">
@@ -86,16 +96,8 @@
 		            </c:forEach>
 	            </td>
 	            <td class="button_cell">
-	            <span class="button">
-	            <a href="<c:url
-	              value="/secure/project/${project.name}/category/${category.id}/edit.html" />">Edit</a>
-	            </span>
-	            </td>
-	            <td class="button_cell">
-	            <span class="button">
-	            <a href="<c:url
-	              value="/secure/project/${project.name}/category/${category.id}/delete.html" />">Delete</a>
-	            </span>
+		            <a class="button" href="<c:url
+		              value="/secure/project/${project.name}/category/${category.id}/delete.html" />">Delete</a>
 	            </td>
 	          </tr>
 	        </c:forEach>
@@ -107,48 +109,39 @@
 	  </c:choose>
 	</fieldset>
 
+  <h2><a name="appender">Appenders</a></h2>
   <fieldset>
-  <legend>Appenders</legend>
+  <legend>Edit Appenders</legend>
   <div class="button_group">
-    <span class="button">
-    <a href="<c:url
+    <a class="button" href="<c:url
       value="/secure/project/${project.name}/appender/add.html" />">Add Appender</a>
-    </span>
-    <span class="button">
-      <a href="<c:url
-        value="/secure/project/${project.name}/appender/bulk_edit.html" />">Bulk Change</a>
-    </span>
+    <a class="button" href="<c:url
+      value="/secure/project/${project.name}/appender/bulk_edit.html" />">Bulk Change</a>
     <c:if test="${not empty project.appenders}">
-      <span class="button">
-      <a href="<c:url
+      <a class="button" href="<c:url
         value="/secure/project/${project.name}/appender/copy.html" />">Copy Appender</a>
-      </span>
     </c:if>
   </div>
   <c:choose>
     <c:when test="${not empty project.appenders}">
 	    <table summary="Project appender listing">
 	      <tr>
+	        <th>Edit</th>
 	        <th>Name</th>
 	        <th>Class</th>
-	        <th>Edit</th>
 	        <th>Delete</th>
 	      </tr>
 	      <c:forEach items="${project.appenders}" var="appender">
-	        <tr>
-	          <td class="button_row">${appender.name}</td>
-	          <td class="button_row">${appender.appenderClassName}</td>
+	        <tr class="button_row">
 	          <td class="button_cell">
-	          <span class="button">
-	          <a href="<c:url
-	            value="/secure/project/${project.name}/appender/${appender.id}/edit.html" />">Edit</a>
-	          </span>
+		          <a class="button" href="<c:url
+		            value="/secure/project/${project.name}/appender/${appender.id}/edit.html" />">Edit</a>
 	          </td>
+	          <td>${appender.name}</td>
+	          <td>${appender.appenderClassName}</td>
 	          <td class="button_cell">
-	          <span class="button">
-            <a href="<c:url
-              value="/secure/project/${project.name}/appender/${appender.id}/delete.html" />">Delete</a>
-            </span>
+	            <a class="button" href="<c:url
+	              value="/secure/project/${project.name}/appender/${appender.id}/delete.html" />">Delete</a>
             </td>
 	        </tr>
 	      </c:forEach>
@@ -160,36 +153,31 @@
 	</c:choose>
   </fieldset>
 
+  <h2><a name="client">Clients</a></h2>
   <fieldset>
   <legend>Allowed Clients</legend>
   <div class="button_group">
-    <span class="button">
-    <a href="<c:url
+    <a class="button" href="<c:url
       value="/secure/project/${project.name}/client/add.html" />">Add Client</a>
-    </span>
   </div>
   <c:choose>
     <c:when test="${not empty project.clients}">
 	    <table summary="Project allowed client listing">
 	      <tr>
-	        <th>Name/Address</th>
 	        <th>Edit</th>
+	        <th>Name/Address</th>
 	        <th>Delete</th>
 	      </tr>
 	      <c:forEach items="${project.clients}" var="client">
-	        <tr>
-	          <td class="button_row">${client.name}</td>
+	        <tr class="button_row">
             <td class="button_cell">
-	          <span class="button">
-            <a href="<c:url
-              value="/secure/project/${project.name}/client/${client.id}/edit.html" />">Edit</a>
-            </span>
+	            <a class="button" href="<c:url
+	              value="/secure/project/${project.name}/client/${client.id}/edit.html" />">Edit</a>
             </td>
+	          <td>${client.name}</td>
             <td class="button_cell">
-	          <span class="button">
-            <a href="<c:url
-              value="/secure/project/${project.name}/client/${client.id}/delete.html" />">Delete</a>
-            </span>
+	            <a class="button" href="<c:url
+	              value="/secure/project/${project.name}/client/${client.id}/delete.html" />">Delete</a>
             </td>
 	        </tr>
 	      </c:forEach>
@@ -201,38 +189,33 @@
 	</c:choose>
   </fieldset>
 
+  <h2><a name="perm">Security Permissions</a></h2>
   <fieldset>
-  <legend>Security Permissions</legend>
+  <legend>Edit Permissions</legend>
   <div class="button_group">
-    <span class="button">
-    <a href="<c:url
+    <a class="button" href="<c:url
       value="/secure/project/${project.name}/perm/add.html" />">Add Permissons</a>
-    </span>
   </div>
   <c:choose>
     <c:when test="${not empty project.permissions}">
       <table summary="Security permissions table">
         <tr>
+	        <th>Edit</th>
           <th>Security ID</th>
           <th>Permission</th>
-	        <th>Edit</th>
 	        <th>Delete</th>
         </tr>
         <c:forEach items="${project.permissions}" var="perm">
-          <tr>
-            <td class="button_row">${perm.name}</td>
-            <td class="button_row">${perm.permissions}</td>
+          <tr class="button_row">
             <td class="button_cell">
-            <span class="button">
-            <a href="<c:url
-              value="/secure/project/${project.name}/perm/${perm.id}/edit.html" />">Edit</a>
-            </span>
+	            <a class="button" href="<c:url
+	              value="/secure/project/${project.name}/perm/${perm.id}/edit.html" />">Edit</a>
             </td>
+            <td>${perm.name}</td>
+            <td>${perm.permissions}</td>
             <td class="button_cell">
-            <span class="button">
-            <a href="<c:url
-              value="/secure/project/${project.name}/perm/${perm.id}/delete.html" />">Delete</a>
-            </span>
+	            <a class="button" href="<c:url
+	              value="/secure/project/${project.name}/perm/${perm.id}/delete.html" />">Delete</a>
             </td>
           </tr>
         </c:forEach>
