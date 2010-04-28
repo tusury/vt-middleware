@@ -108,6 +108,8 @@ public class DeleteFormController extends AbstractFormController
       final int id)
   {
     if ("appender".equals(typeName)) {
+      // Lazy load categories that are needed for appender deletion
+      project.getCategories();
       return project.getAppender(id);
     } else if ("category".equals(typeName)) {
       return project.getCategory(id);
