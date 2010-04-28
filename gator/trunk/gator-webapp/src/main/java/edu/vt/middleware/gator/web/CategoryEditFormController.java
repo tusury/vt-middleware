@@ -151,6 +151,6 @@ public class CategoryEditFormController extends AbstractFormController
     }
     configManager.save(project);
     return String.format(
-        "redirect:/secure/project/%s/edit.html", project.getName());
+        "redirect:/secure/project/%s/edit.html#category", project.getName());
   }
 }

@@ -118,6 +118,6 @@ public class ClientEditFormController extends AbstractFormController
     }
     configManager.save(project);
     return String.format(
-        "redirect:/secure/project/%s/edit.html", project.getName());
+        "redirect:/secure/project/%s/edit.html#client", project.getName());
   }
 }

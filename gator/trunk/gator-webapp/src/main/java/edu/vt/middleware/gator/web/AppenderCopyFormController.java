@@ -97,6 +97,6 @@ public class AppenderCopyFormController extends AbstractFormController
     project.addAppender(newAppender);
     configManager.save(project);
     return String.format(
-        "redirect:/secure/project/%s/edit.html", project.getName());
+        "redirect:/secure/project/%s/edit.html#appender", project.getName());
   }
 }

@@ -78,6 +78,7 @@ public class DeleteFormController extends AbstractFormController
       method = RequestMethod.POST)
   @Transactional(propagation = Propagation.REQUIRED)
   public String deleteConfig(
+      @PathVariable("configType") final String configType,
       @Valid @ModelAttribute("spec") final DeleteSpec spec,
       final BindingResult result)
   {
@@ -95,7 +96,9 @@ public class DeleteFormController extends AbstractFormController
     logger.debug("Saving " + project);
     configManager.save(project);
     return String.format(
-        "redirect:/secure/project/%s/edit.html", project.getName());
+        "redirect:/secure/project/%s/edit.html#%s",
+        project.getName(),
+        configType);
   }
 
 

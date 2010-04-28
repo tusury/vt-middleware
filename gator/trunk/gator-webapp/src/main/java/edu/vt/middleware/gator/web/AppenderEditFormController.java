@@ -121,7 +121,7 @@ public class AppenderEditFormController extends AbstractFormController
     logger.debug("Saving " + appender);
     configManager.save(appender.getProject());
     return String.format(
-        "redirect:/secure/project/%s/edit.html",
+        "redirect:/secure/project/%s/edit.html#appender",
         appender.getProject().getName());
   }
 }

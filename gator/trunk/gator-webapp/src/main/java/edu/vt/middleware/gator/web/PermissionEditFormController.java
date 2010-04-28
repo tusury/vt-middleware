@@ -124,7 +124,7 @@ public class PermissionEditFormController extends AbstractFormController
       perm.getName(),
       perm.getPermissionBits());
     return String.format(
-        "redirect:/secure/project/%s/edit.html", project.getName());
+        "redirect:/secure/project/%s/edit.html#perm", project.getName());
   }
 
 }
