@@ -20,6 +20,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  * Abstract configuration class from which all concrete configuration classes
@@ -64,10 +65,11 @@ public abstract class Config implements Serializable
    * @return the name
    */
   @NotNull(message = "{config.name.notNull}")
+  @Size(max = 255, message = "{config.name.size}")
   @Pattern(
       regexp = "[A-Za-z0-9]+[A-Za-z0-9._ -]*",
       message = "{config.name.pattern}")
-  @Column(name = "name", nullable = false)
+  @Column(name = "name", nullable = false, length = 255)
   public String getName() {
     return name;
   }

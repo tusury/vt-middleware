@@ -30,6 +30,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.log4j.Level;
 
@@ -99,7 +100,8 @@ public class CategoryConfig extends Config
    * @return the level
    */
   @NotNull(message = "{category.level.notNull}")
-  @Column(name = "level", nullable = false)
+  @Size(max = 10, message = "{category.level.max}")
+  @Column(name = "level", nullable = false, length = 10)
   public String getLevel() {
     return level;
   }

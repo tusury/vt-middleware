@@ -33,6 +33,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cascade;
 
@@ -109,7 +110,8 @@ public class AppenderConfig extends Config
    * @return the appenderClassName
    */
   @NotNull(message = "{appender.appenderClassName.notNull}")
-  @Column(name = "appender_class", nullable = false)
+  @Size(max = 255, message = "{appender.appenderClassName.size}")
+  @Column(name = "appender_class", nullable = false, length = 255)
   public String getAppenderClassName()
   {
     return appenderClassName;
@@ -126,7 +128,8 @@ public class AppenderConfig extends Config
   /**
    * @return the errorHandlerClassName
    */
-  @Column(name = "error_handler_class")
+  @Size(max = 255, message = "{appender.errorHandlerClassName.size}")
+  @Column(name = "error_handler_class", length = 255)
   public String getErrorHandlerClassName()
   {
     return errorHandlerClassName;
@@ -143,7 +146,8 @@ public class AppenderConfig extends Config
   /**
    * @return the layoutClassName
    */
-  @Column(name = "layout_class")
+  @Size(max = 255, message = "{appender.layoutClassName.size}")
+  @Column(name = "layout_class", length = 255)
   public String getLayoutClassName()
   {
     return layoutClassName;

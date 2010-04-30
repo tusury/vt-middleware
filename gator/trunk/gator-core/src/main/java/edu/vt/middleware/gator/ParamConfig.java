@@ -17,6 +17,7 @@ import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.Size;
 
 /**
  * Describes appender-related configuration parameters.
@@ -60,7 +61,8 @@ public abstract class ParamConfig extends Config
   /**
    * @return the value
    */
-  @Column(name = "value", nullable = false)
+  @Size(max = 255, message = "{param.value.max}")
+  @Column(name = "value", nullable = false, length = 255)
   public String getValue()
   {
     return value;
