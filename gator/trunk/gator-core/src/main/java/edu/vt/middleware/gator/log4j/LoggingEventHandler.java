@@ -45,8 +45,14 @@ import org.apache.log4j.spi.LoggingEvent;
  */
 public class LoggingEventHandler implements Runnable
 {
+  /** Special category name signifying a log event received by this instance */
+  public static final String LOG_EVENT_CATEGORY = "LOG_EVENT";
+
   /** Logger instance */
   protected final Log logger = LogFactory.getLog(getClass());
+
+  /** Special logger to capture LoggingEvents received by this instance */
+  protected final Log eventLogger = LogFactory.getLog(LOG_EVENT_CATEGORY);
 
   /** Subscribers that get notified when logging events are received */
   protected final Set<LoggingEventListener> loggingEventListeners =
@@ -156,8 +162,8 @@ public class LoggingEventHandler implements Runnable
           new BufferedInputStream(socket.getInputStream()));
       while(isRunning) {
         final LoggingEvent event = (LoggingEvent) ois.readObject();
-        if (logger.isTraceEnabled()) {
-          logger.info("Read logging event from socket: " +
+        if (eventLogger.isTraceEnabled()) {
+          eventLogger.info("Read logging event from socket: " +
               eventTraceLayout.format(event));
         }
         final Logger serverLogger =
