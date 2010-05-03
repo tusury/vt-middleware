@@ -69,7 +69,7 @@ div#crumbs ul {
 
 div#crumbs li {
   float:left;
-  padding-right:25px;
+  padding-right:30px;
 }
 
 div#crumbs li.first {
@@ -208,8 +208,8 @@ tr.button_row:hover td {
 }
 
 td.button_cell {
-  padding-left:9px;
-  padding-right:9px;
+  padding-left:6px;
+  padding-right:6px;
 }
 
 .note {
@@ -257,7 +257,6 @@ div.infobox p {
 
 a.navlink {
   color:blue;
-  padding:1px 4px;
 }
 
 a.navlink:hover {
@@ -268,4 +267,8 @@ a.navlink:hover {
 
 a.navlink:active {
   color:orange;
+}
+
+.navlink_group a.navlink {
+  padding:1px 5px;
 }

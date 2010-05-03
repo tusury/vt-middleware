@@ -53,9 +53,11 @@
 
   <div class="infobox">
     <p>Jump to configuration section:
-      <a class="navlink" href="#appender">Appenders</a>
-      <a class="navlink" href="#client">Clients</a>
-      <a class="navlink" href="#perm">Permissions</a>
+      <span class="navlink_group">
+	      <a class="navlink" href="#appender">Appenders</a>
+	      <a class="navlink" href="#client">Clients</a>
+	      <a class="navlink" href="#perm">Permissions</a>
+	    </span>
     </p>
   </div>
 
@@ -72,7 +74,6 @@
 	    <c:when test="${not empty project.categories}">
 	      <table summary="Project category listing">
 	        <tr>
-	          <th>Edit</th>
 	          <th>Name</th>
 	          <th>Level</th>
 	          <th>Additivity</th>
@@ -81,19 +82,17 @@
 	        </tr>
 	        <c:forEach items="${project.categories}" var="category">
 	          <tr class="button_row">
-	            <td class="button_cell">
-		            <a class="button" href="<c:url
-		              value="/secure/project/${project.name}/category/${category.id}/edit.html" />">Edit</a>
-	            </td>
-	            <td>${category.name}</td>
-	            <td>${category.level}</td>
+	            <td>
+		            <a class="navlink" href="<c:url
+                  value="/secure/project/${project.name}/category/${category.id}/edit.html" />">${category.name}</a>
+              </td>
+              <td>${category.level}</td>
 	            <td>${category.additivity}</td>
 	            <td>
 	            	<c:forEach items="${category.appenders}"
-	            	 var="appender"
-		             varStatus="stat">
-		              <c:if test="${stat.count > 1}">, </c:if>${appender.name}
-		            </c:forEach>
+	            	  var="appender"
+		              varStatus="stat"><c:if test="${stat.count > 1}">, </c:if><a class="navlink" href="<c:url
+	                  value="/secure/project/${project.name}/appender/${appender.id}/edit.html" />">${appender.name}</a></c:forEach>
 	            </td>
 	            <td class="button_cell">
 		            <a class="button" href="<c:url
@@ -126,18 +125,16 @@
     <c:when test="${not empty project.appenders}">
 	    <table summary="Project appender listing">
 	      <tr>
-	        <th>Edit</th>
 	        <th>Name</th>
 	        <th>Class</th>
 	        <th>Delete</th>
 	      </tr>
 	      <c:forEach items="${project.appenders}" var="appender">
 	        <tr class="button_row">
-	          <td class="button_cell">
-		          <a class="button" href="<c:url
-		            value="/secure/project/${project.name}/appender/${appender.id}/edit.html" />">Edit</a>
+	          <td>
+              <a class="navlink" href="<c:url
+	              value="/secure/project/${project.name}/appender/${appender.id}/edit.html" />">${appender.name}</a>
 	          </td>
-	          <td>${appender.name}</td>
 	          <td>${appender.appenderClassName}</td>
 	          <td class="button_cell">
 	            <a class="button" href="<c:url
@@ -164,17 +161,15 @@
     <c:when test="${not empty project.clients}">
 	    <table summary="Project allowed client listing">
 	      <tr>
-	        <th>Edit</th>
 	        <th>Name/Address</th>
 	        <th>Delete</th>
 	      </tr>
 	      <c:forEach items="${project.clients}" var="client">
 	        <tr class="button_row">
-            <td class="button_cell">
-	            <a class="button" href="<c:url
-	              value="/secure/project/${project.name}/client/${client.id}/edit.html" />">Edit</a>
+	          <td>
+	             <a class="navlink" href="<c:url
+                value="/secure/project/${project.name}/client/${client.id}/edit.html" />">${client.name}</a>
             </td>
-	          <td>${client.name}</td>
             <td class="button_cell">
 	            <a class="button" href="<c:url
 	              value="/secure/project/${project.name}/client/${client.id}/delete.html" />">Delete</a>
@@ -200,18 +195,16 @@
     <c:when test="${not empty project.permissions}">
       <table summary="Security permissions table">
         <tr>
-	        <th>Edit</th>
-          <th>Security ID</th>
+          <th>User/Role Name</th>
           <th>Permission</th>
 	        <th>Delete</th>
         </tr>
         <c:forEach items="${project.permissions}" var="perm">
           <tr class="button_row">
-            <td class="button_cell">
-	            <a class="button" href="<c:url
-	              value="/secure/project/${project.name}/perm/${perm.id}/edit.html" />">Edit</a>
+	          <td>
+	             <a class="navlink" href="<c:url
+                value="/secure/project/${project.name}/perm/${perm.id}/edit.html" />">${perm.name}</a>
             </td>
-            <td>${perm.name}</td>
             <td>${perm.permissions}</td>
             <td class="button_cell">
 	            <a class="button" href="<c:url

@@ -32,7 +32,7 @@
     <div><label for="name">Category Name</label></div>
     <div class="note">Special name "root" indicates root category.</div>
     <form:errors cssClass="field-error" path="name" element="div" />
-    <div><form:input id="name" path="name" size="50" /></div>
+    <div><form:input id="name" path="name" size="75" /></div>
   </div>
   <div class="field">
     <div><label for="level">Log Level</label></div>
