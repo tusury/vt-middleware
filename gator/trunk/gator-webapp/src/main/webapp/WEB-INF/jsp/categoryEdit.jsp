@@ -48,12 +48,18 @@
   <div class="field">
     <div><label for="appenderIds">Category Appenders</label></div>
 		<div class="note">Send logging events to these appenders.</div>
-    <div style="margin:5px">
-      <span><a href="javascript:select('appenders', true)">Select All</a><span>
+    <div class="navlink_group" style="margin:9px">
+      <a class="navlink"
+        href="javascript:selectMultiple(['appenders','allowSocketAppender'], true)">Select All</a>
       <span>|</span>
-      <span><a href="javascript:select('appenders', false)">Select None</a><span>
+      <a class="navlink"
+        href="javascript:selectMultiple(['appenders','allowSocketAppender'], false)">Select None</a>
     </div>
     <form:errors cssClass="field-error" path="appenders" element="div" />
+    <div class="checkboxes">
+      <form:checkbox id="allowSocketAppender" path="allowSocketAppender"
+        label="SOCKET (gator will receive a logging event for each message)" />
+    </div>
     <div class="checkboxes">
 	    <form:checkboxes id="appenderIds" path="appenders"
 	     items="${projectAppenders}" itemValue="id" itemLabel="name"

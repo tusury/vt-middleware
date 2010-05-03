@@ -13,6 +13,7 @@
 */
 package edu.vt.middleware.gator.web;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import edu.vt.middleware.gator.ProjectConfig;
@@ -43,6 +44,14 @@ public class ProjectEditFormController extends AbstractFormController
   public static final String VIEW_NAME = "projectEdit";
 
 
+  @RequestMapping(value = "/project/add.html", method = RequestMethod.GET)
+  public String getNewProject(final Model model)
+  {
+    model.addAttribute("project", new ProjectConfig());
+    return VIEW_NAME;
+  }
+
+
   @RequestMapping(
       value = "/project/{projectName}/edit.html",
       method = RequestMethod.GET)
@@ -56,15 +65,25 @@ public class ProjectEditFormController extends AbstractFormController
 
 
   @RequestMapping(
-      value = "/project/{projectName}/edit.html",
+      value = {
+          "/project/add.html",
+          "/project/{projectName}/edit.html"
+      },
       method = RequestMethod.POST)
   @Transactional(propagation = Propagation.REQUIRED)
   public String saveProject(
       @Valid @ModelAttribute("project") final ProjectConfig project,
-      final BindingResult result)
+      final BindingResult result,
+      final HttpServletRequest request)
   {
     if (result.hasErrors()) {
       return VIEW_NAME;
+    }
+    if (project.isNew()) {
+      // Add all permissions to new project for current user principal
+      project.addPermission(
+        ControllerHelper.createAllPermissions(
+          request.getUserPrincipal().getName()));
     }
     logger.debug("Saving " + project);
     configManager.save(project);

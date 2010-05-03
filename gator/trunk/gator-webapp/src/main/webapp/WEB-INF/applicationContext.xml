@@ -98,10 +98,6 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   <bean id="aclService"
     class="edu.vt.middleware.gator.security.ProjectAclService"
   />
-  
-  <bean id="appenderPolicy"
-    class="edu.vt.middleware.gator.DefaultAppenderPolicy"
-  />
 
   <bean id="pooledExecutor"
     class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"

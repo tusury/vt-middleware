@@ -89,9 +89,11 @@
               <td>${category.level}</td>
 	            <td>${category.additivity}</td>
 	            <td>
+	              <c:if test="${category.allowSocketAppender}">SOCKET<c:if test="${not empty category.appenders}">,</c:if></c:if>
 	            	<c:forEach items="${category.appenders}"
 	            	  var="appender"
-		              varStatus="stat"><c:if test="${stat.count > 1}">, </c:if><a class="navlink" href="<c:url
+		              varStatus="stat"><c:if test="${stat.count > 1}">,</c:if>
+		              <a class="navlink" href="<c:url
 	                  value="/secure/project/${project.name}/appender/${appender.id}/edit.html" />">${appender.name}</a></c:forEach>
 	            </td>
 	            <td class="button_cell">

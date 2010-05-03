@@ -13,7 +13,11 @@
 */
 package edu.vt.middleware.gator.validation;
 
+import java.util.HashSet;
 import java.util.Set;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.CategoryConfig;
@@ -26,8 +30,21 @@ import edu.vt.middleware.gator.CategoryConfig;
  *
  */
 public class AppenderConstraintValidator
-  extends AbstractAppenderConstraintValidator<AppenderConstraint>
+  implements ConstraintValidator<AppenderConstraint, CategoryConfig>
 {
+  private String message;
+  
+  
+  public void setMessage(final String prefix)
+  {
+    if (prefix.endsWith(" ")) {
+      message = prefix;
+    } else if (prefix.endsWith(":")) {
+      message = prefix + " ";
+    } else {
+      message = prefix + ": ";
+    }
+  }
 
   /** {@inheritDoc} */
   public void initialize(AppenderConstraint annotation)
@@ -35,8 +52,27 @@ public class AppenderConstraintValidator
     setMessage(annotation.message());
   }
 
+  /** {@inheritDoc} */
+  public boolean isValid(
+      final CategoryConfig value,
+      final ConstraintValidatorContext context)
+  {
+    final Set<AppenderConfig> invalid = new HashSet<AppenderConfig>();
+    validateInternal(value, invalid);
+    if (invalid.size() > 0) {
+      if (context != null) {
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(
+            message + invalid.toString()).addNode(
+            "appenders").addConstraintViolation();
+      }
+      return false;
+    } else {
+      return true;
+    }
+  }
 
-  protected void validateInternal(
+  private void validateInternal(
       final CategoryConfig category,
       final Set<AppenderConfig> invalid)
   {

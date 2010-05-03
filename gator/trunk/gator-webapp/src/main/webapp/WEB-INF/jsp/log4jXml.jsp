@@ -44,7 +44,7 @@
 		<c:forEach items="${category.appenders}" var="appender">
 	  <appender-ref ref="${appender.name}" />
 		</c:forEach>
-		<c:if test="${category.allowSocketAppenderReference}">
+		<c:if test="${category.allowSocketAppender}">
 		<appender-ref ref="SOCKET" />
 		</c:if>
   <c:choose>

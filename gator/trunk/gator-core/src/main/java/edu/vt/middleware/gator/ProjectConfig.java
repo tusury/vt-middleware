@@ -76,9 +76,6 @@ public class ProjectConfig extends Config
  
   /** Permissions defined on this project */
   private Set<PermissionConfig> permissions;
- 
-  /** Appender policy */
-  private AppenderPolicy appenderPolicy = new DefaultAppenderPolicy();
   
 
   /** {@inheritDoc} */
@@ -546,23 +543,6 @@ public class ProjectConfig extends Config
   {
     perm.setProject(null);
     getPermissionsInternal().remove(perm);
-  }
-  
-  /**
-   * @return Appender policy.
-   */
-  @Transient
-  public AppenderPolicy getAppenderPolicy()
-  {
-    return appenderPolicy;
-  }
-
-  /**
-   * @param policy Appender policy.
-   */
-  public void setAppenderPolicy(final AppenderPolicy policy)
-  {
-    this.appenderPolicy = policy;
   }
 
   /** {@inheritDoc} */

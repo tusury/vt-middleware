@@ -35,7 +35,6 @@ import javax.validation.constraints.Size;
 import org.apache.log4j.Level;
 
 import edu.vt.middleware.gator.validation.AppenderConstraint;
-import edu.vt.middleware.gator.validation.AppenderPolicyConstraint;
 import edu.vt.middleware.gator.validation.UniqueName;
 
 /**
@@ -52,7 +51,6 @@ import edu.vt.middleware.gator.validation.UniqueName;
   allocationSize = 1)
 @UniqueName(message = "{category.uniqueName}")
 @AppenderConstraint(message = "{category.appenderConstraint}")
-@AppenderPolicyConstraint(message = "{category.appenderPolicyConstraint}")
 public class CategoryConfig extends Config
 {
   /** CategoryConfig.java */
@@ -78,6 +76,8 @@ public class CategoryConfig extends Config
   private String level;
   
   private boolean additivity = true;
+  
+  private boolean allowSocketAppender = true;
   
   private ProjectConfig project;
 
@@ -208,25 +208,23 @@ public class CategoryConfig extends Config
   }
  
   /**
-   * Determine whether the socket appender reference is allowed on this
-   * category based on the appender policy of the parent project.
-   * @return True if socket appender reference is allowed, false otherwise.
+   * @return True if socket appender reference is allowed on this category,
+   * false otherwise.
    */
-  @Transient
-  public boolean allowSocketAppenderReference()
+  @Column(name = "allow_socket_appender", nullable = false)
+  public boolean isAllowSocketAppender()
   {
-    return project.getAppenderPolicy().allowSocketAppender(this);
+    return allowSocketAppender;
   }
- 
+
   /**
-   * Javabean-compliant alias for {@link #allowSocketAppenderReference()}.
-   * @return True if socket appender reference is allowed, false otherwise.
-   * @see #allowSocketAppenderReference()
+   * Sets whether socket appender reference is allowed for this category.
+   * @param allow True if socket appender reference is allowed on this category,
+   * false otherwise.
    */
-  @Transient
-  public boolean isAllowSocketAppenderReference()
+  public void setAllowSocketAppender(final boolean allow)
   {
-    return allowSocketAppenderReference();
+    allowSocketAppender = allow;
   }
 
   /** {@inheritDoc} */
