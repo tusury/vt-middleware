@@ -347,6 +347,7 @@ public class SocketServer
             addr.getHostAddress().equals(client.getName()))
         {
           try {
+            logger.info("Reconfiguring logger repository for " + addr);
             configurator.configure(
                 project,
                 eventHandlerMap.get(addr).getRepository());
