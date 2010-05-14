@@ -3,6 +3,10 @@
 
 <wiki:toc max_depth="2" />
 
+----
+*Updating for 3.3 release*
+----
+
 = Introduction =
 VT Ldap is a Java library for interfacing with version 3 LDAPs.
 This library meets the following design goals:
@@ -22,7 +26,7 @@ If you would like to use this project in your maven build, include the following
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-ldap</artifactId>
-      <version>3.2</version>
+      <version>3.3</version>
   </dependency>
 <dependencies>
 }}}
@@ -59,7 +63,7 @@ _Note that in order to perform a real LDAP compare operation, your filter must b
 Perform a search for 'sn=Fisher' and output all attributes in LDIF format to System.out.
 {{{
 Ldap ldap = new Ldap(
-  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+  new LdapConfig("ldap://directory.vt.edu/dc=vt,dc=edu"));
 (new Ldif()).outputLdif(
   ldap.search(new SearchFilter("sn=Fisher")),
   new BufferedWriter(new OutputStreamWriter(System.out)));
@@ -70,7 +74,7 @@ ldap.close();
 Perform a search for all entries containing an attribute matching 'mail=dfisher@vt.edu', and output the attributes 'sn' and 'givenName' in DSMLv1 format to System.out.
 {{{
 Ldap ldap = new Ldap(
-  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+  new LdapConfig("ldap://directory.vt.edu", "ou=People,dc=vt,dc=edu"));
 (new Dsmlv1()).outputDsml(
   ldap.searchAttributes(
     AttributesFactory.createAttributes("mail", "dfisher@vt.edu"),
@@ -100,7 +104,7 @@ Same example as above, but also authorize the user on 'eduPersonAffiliation'.
 AuthenticatorConfig config = new AuthenticatorConfig(
   "ldap://authn.directory.vt.edu", "ou=People,dc=vt,dc=edu");
 config.setTls(true);
-config.setUserField(new String[]{"uid", "mail"}); // attribute to search for user with
+config.setUserFilter("(|(uid={0})(mail={0}))"); // attribute to search for user with
 Authenticator auth = new Authenticator(config);
 if (auth.authenticate(user, credential, new SearchFilter("eduPersonAffiliation=staff"))) {
   System.out.println("Authentication/Authorization succeeded");
@@ -113,7 +117,7 @@ if (auth.authenticate(user, credential, new SearchFilter("eduPersonAffiliation=s
 Create a new soft limit pool, accepting all the default configuration properties. Check a ldap object out from the pool, perform a search, and return the object to the pool.
 {{{
 DefaultLdapFactory factory = new DefaultLdapFactory(
-  new LdapConfig("ldap://directory.vt.edu:389", "ou=People,dc=vt,dc=edu"));
+  new LdapConfig("ldap://directory.vt.edu/ou=People,dc=vt,dc=edu"));
 SoftLimitLdapPool pool = new SoftLimitLdapPool(factory);
 pool.initialize();
 Ldap ldap = null;
@@ -179,15 +183,20 @@ Properties injected directly into the JNDI context.
 === Search Properties ===
 Properties used for connecting, binding, and searching.
 || *Property Name* || *Default Value* || *Description* ||
-|| edu.vt.middleware.ldap.base || _none_ || default base dn used for operations ||
-|| edu.vt.middleware.ldap.serviceUser || _none_ || dn to bind as before performing operations ||
-|| edu.vt.middleware.ldap.serviceCredential || _none_ || credential for the service user ||
+|| edu.vt.middleware.ldap.baseDn || _none_ || default base dn used for operations ||
+|| edu.vt.middleware.ldap.bindDn || _none_ || dn to bind as before performing operations ||
+|| edu.vt.middleware.ldap.bindCredential || _none_ || credential for the bind dn ||
 || edu.vt.middleware.ldap.authtype || simple || LDAP authentication mechanism; must be one of 'none', 'simple', 'strong', 'DIGEST-MD5', 'CRAM-MD5', 'GSSAPI', or 'EXTERNAL' ||
 || edu.vt.middleware.ldap.ignoreCase || true || whether to ignore case in attribute names ||
-|| edu.vt.middleware.ldap.operationRetry || 1 || specifies the number of times an operation will be retried if a CommunicationException occurs when an operation is attempted ||
+|| edu.vt.middleware.ldap.operationRetry || 1 || specifies the number of times an LDAP operation will be retried if a retry exception occurs ||
+|| edu.vt.middleware.ldap.operationRetryWait || 0 || the amount of time in milliseconds that LDAP operations should wait before retrying ||
+|| edu.vt.middleware.ldap.operationRetryBackoff || 0 || factor by which to multiply the operation retry wait time; this allows clients to progressively delay each retry ||
+|| edu.vt.middleware.ldap.operationRetryExceptions || {!CommunicationException, !ServiceUnavailableException} || exception classes to retry operations on; supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.logCredentials || false || whether bind credentials should be logged; logging occurs at debug level ||
+|| edu.vt.middleware.ldap.connectionHandler || !DefaultConnectionHandler || creates and closes LDAP connections. See [vtldapHandlers] ||
 || edu.vt.middleware.ldap.searchResultHandlers || {!FqdnSearchResultHandler} || performs post processing of results; supports a comma delimited list for multiple values. See [vtldapHandlers] ||
 || edu.vt.middleware.ldap.handlerIgnoreExceptions || {!LimitExceededException} || exception classes that should be ignored when processing result sets; supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.pagedResultsSize || 0 || value used when the !PagedResultsControl in invoked ||
 
 === !SearchControl Properties ===
 Properties that map to: [http://java.sun.com/j2se/1.5.0/docs/api/javax/naming/directory/SearchControls.html javax.naming.directory.SearchControls]
@@ -205,12 +214,14 @@ All the previous properties are inherited by the Authenticator and can be overri
 || edu.vt.middleware.ldap.auth.userField || {uid} || LDAP attribute(s) which contain the user identifier to search on; supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.auth.userFilter || _none_ || LDAP filter to search for users. Mutually exclusive with the userField propery. ||
 || edu.vt.middleware.ldap.auth.userFilterArgs || _none_ || LDAP filter arguments for the userFilter property. The {0} argument is automatically populated with the supplied user value. Any arguments provided here will start at {1}. Supports a comma delimited list for multiple values ||
-|| edu.vt.middleware.ldap.auth.constructDn || false || whether the authentication dn should be constructed or looked up in the LDAP; a constructed dn takes the form: userField=user,baseDn  ||
+|| edu.vt.middleware.ldap.auth.constructDn || false || whether the authentication dn should be constructed or looked up in the LDAP; a constructed dn takes the form: userField=user,baseDn. Equivalent to setting dnResolver to !ConstructDnResolver.  ||
 || edu.vt.middleware.ldap.auth.allowMultipleDns || false || whether an exception should be thrown if multiple DNs are found when the user is searched for; default behavior is to throw a !NamingException  ||
+|| edu.vt.middleware.ldap.auth.dnResolver || !SearchDnResolver || implementation used to resolve a user's DN ||
 || edu.vt.middleware.ldap.auth.subtreeSearch || false  || whether the authentication dn should be searched for over the entire base; default value is onelevel  ||
+|| edu.vt.middleware.ldap.auth.authenticationHandler || !BindAuthenticationHandler || performs LDAP authentication, see [vtldapHandlers]. ||
+|| edu.vt.middleware.ldap.auth.authenticationResultHandlers || _none_ || performs post processing of authentication results, see [vtldapHandlers]. Supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.auth.authorizationFilter || _none_ || ldap filter to use for performing authorization after successful authentication  ||
 || edu.vt.middleware.ldap.auth.authorizationFilterArgs || _none_ || LDAP filter arguments for the authorizationFilter property. Supports a comma delimited list for multiple values ||
-|| edu.vt.middleware.ldap.auth.authenticationResultHandlers || _none_ || performs post processing of authentication results, see [vtldapHandlers]. Supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.auth.authorizationHandlers || _none_ || performs post processing of authorization once authentication has succeeded, see [vtldapHandlers]. Supports a comma delimited list for multiple values ||
 
 ----
