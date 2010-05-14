@@ -118,6 +118,9 @@ public class AppenderEditFormController extends AbstractFormController
     if (result.hasErrors()) {
       return VIEW_NAME;
     }
+    if (!configManager.exists(appender)) {
+      appender.getProject().addAppender(appender);
+    }
     logger.debug("Saving " + appender);
     configManager.save(appender.getProject());
     return String.format(
