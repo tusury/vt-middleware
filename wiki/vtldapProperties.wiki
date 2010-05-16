@@ -2,10 +2,10 @@
 
 <wiki:toc max_depth="2" />
 
-= Configuration Properties =
+= Introduction =
 The configuration of LDAP related objects in this library is done via reflection on their associated !PropertyConfig objects. This allows the JAAS and properties file implementations continuity as the API changes. All the properties listed here map directly to the fields found on the concrete implementations of !PropertyConfig.
 
-== Properties Files ==
+= Properties Files =
 The Ldap and Authenticator objects can be configured from a properties file. This is useful for maintaining a ldap configuration outside of your source code. Simply create a file called _ldap.properties_ and place it in your root classpath..
 {{{
 Ldap ldap = new Ldap();
@@ -22,7 +22,7 @@ Ldap ldap = new Ldap();
 ldap.loadFromProperties(new FileInputStream("/path/to/your/propertiesFile"));
 }}}
 
-== Properties ==
+= Properties =
 Any property provided that does not match the following property names is placed directly into the JNDI context. This allows the user to provide ad-hoc environment properties.
 
 === Context Properties ===
