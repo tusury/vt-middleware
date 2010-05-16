@@ -1,0 +1,31 @@
+#sidebar vtldapSidebar
+
+<wiki:toc max_depth="2" />
+
+= Introduction =
+This library provides two basic methods for searching an LDAP.
+  # Filter based searches <br/> These methods take the form of Ldap.search(...) and always contain a !SearchFilter as an argument. Returned results are entries that match the supplied filter.
+  # Attributes based search <br/> These methods take the form of Ldap.searchAttributes(...) and always contain an Attributes as an argument. Returned results are entries that contain matches to the supplied attributes.
+
+= Filter Based Searching =
+
+Search for everyone with a first name of *daniel* and a last name of *fisher*, then return their _mail_ and _displayName_ attributes.
+{{{
+Ldap ldap = new Ldap(
+  new LdapConfig("ldap://directory.vt.edu", "dc=vt,dc=edu"));
+ldap.search(
+  new SearchFilter("(&(givenName=daniel)(sn=fisher))"), new String[]{"mail", "displayName"});
+Ldif ldif = new Ldif();
+ldif.outputLdif(results, new BufferedWriter(new OutputStreamWriter(System.out)));
+ldap.close();
+}}}
+<blockquote><pre>
+dn: uid=818037,ou=People,dc=vt,dc=edu
+mail: dfisher@vt.edu
+displayName: Daniel W Fisher
+</pre></blockquote>
+
+
+= Attribute Based Searching =
+
+= Search Result Handlers =
