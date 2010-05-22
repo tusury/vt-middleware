@@ -66,6 +66,14 @@ Ldap ldap = new Ldap(config);
 Iterator<SearchResult> results = ldap.search(new SearchFilter("sn=Fisher"));
 }}}
 
+== Supplied Search Result Handlers ==
+This library provides the following search result handlers:
+  * !BinarySearchResultHandler - converts byte[] values to Base64 encoded strings
+  * !EntryDnSearchResultHandler - adds the entry DN as an attribute of the result set
+  * !FqdnSearchResultHandler - ensures the entry DN is fully qualified
+  * !MergeSearchResultHandler - merges the attributes from all entries into the first entry
+  * !RecursiveSearchResultHandler - recursively adds the attributes from other entries into the current entry; useful for resolving nested relationships like group membership
+
 == Custom Search Result Handlers ==
 There are two interfaces available for implementing a custom search result handler. !SearchResultHandler is available for the simple case of processing search results. !ExtendedSearchResultHandler provides access to the _Ldap_ object that performed the search, which is useful for performing additional searches based on the results. Note that the !NamingEnumeration is only processed by the first handler, subsequent handlers will be processing List.
 
