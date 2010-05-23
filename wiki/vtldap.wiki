@@ -83,6 +83,8 @@ Ldap ldap = new Ldap(
 ldap.close();
 }}}
 
+See [vtldapSearching Searching]
+
 == Authentication ==
 Authenticate a user whose entry resides in the 'ou=People' branch of the ldap.
 TLS is required for all connections and the username must equal the attribute value of the attributes 'uid' or 'mail'.
@@ -113,6 +115,8 @@ if (auth.authenticate(user, credential, new SearchFilter("eduPersonAffiliation=s
 }
 }}}
 
+See [vtldapAuthentication Authentication]
+
 == Pooling ==
 Create a new soft limit pool, accepting all the default configuration properties. Check a ldap object out from the pool, perform a search, and return the object to the pool.
 {{{
@@ -135,6 +139,8 @@ try {
 ...
 pool.close();
 }}}
+
+See [vtldapPooling Pooling]
 
 ----
 = Scripts =
