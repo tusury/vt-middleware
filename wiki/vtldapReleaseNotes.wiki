@@ -2,7 +2,7 @@
 
 <wiki:toc max_depth="2" />
 
-= Version 3.3-SNAPSHOT =
+= Version 3.3 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=67 vtldap-67] - Added new interface !ExtendedSearchResultHandler to support handlers that require a reference to the ldap object which performed the search.
     * Also provided support for nested property initialization via property string.
   * [http://code.google.com/p/vt-middleware/issues/detail?id=66 vtldap-66] - Added JAAS options to support the creation of groups that contain principals and roles
