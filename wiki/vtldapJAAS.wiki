@@ -1,3 +1,4 @@
+#labels java,jndi,ldap,jaas
 #sidebar vtldapSidebar
 
 <wiki:toc max_depth="2" />
@@ -14,15 +15,33 @@ This configuration will authenticate a user using the 'uid' attribute and popula
 vt-ldap {
    edu.vt.middleware.ldap.jaas.LdapLoginModule required
      ldapUrl="ldap://authn.directory.vt.edu:389"
-     base="ou=people,dc=vt,dc=edu"
+     baseDn="ou=people,dc=vt,dc=edu"
      tls="true"
-     userField="uid"
+     userFilter="(uid={0})"
      userRoleAttribute="eduPersonAffiliation";
 };
 }}}
 
+This configuration performs the same function as the previous, but it will use the _bindDn_ and _bindCredential_ to lookup to the user's DN. In addition, the configured certificate will be used to trust the LDAP server.
+{{{
+vt-ldap {
+   edu.vt.middleware.ldap.jaas.LdapLoginModule required
+     ldapUrl="ldap://authn.directory.vt.edu:389"
+     baseDn="ou=people,dc=vt,dc=edu"
+     bindDn="cn=priviledged_user,ou=services,dc=vt,dc=edu"
+     bindCredential="notarealpassword"
+     tls="true"
+     sslSocketFactory="{{trustCertificates=file:/path/to/certs.pem}}"
+     userFilter="(uid={0})"
+     userRoleAttribute="eduPersonAffiliation";
+};
+}}}
+
+See [vtldapAuthentication Authentication] for more information on how to configure the aspects of authentication.<br/>
+See [vtldapTLS SSL / TLS] for more information on configuring secure transport.
+
 === Options ===
-Each option corresponds to a [vtldap#Properties Ldap Property] without the domain prefix.<br/>
+Each option corresponds to a [vtldapProperties Ldap Property] without the domain prefix.<br/>
 There are several options which do not correspond to Ldap properties and those are explained below: 
 || *Property Name* || *Description* ||
 || userRoleAttribute || An attribute(s) that exists on the user entry. The value(s) of these attributes will be added as roles for this user. Comma delimited for multiple attributes. By default no attributes are returned as roles. If all attributes should be assigned as role data, set this property to '`*`'.||
@@ -30,8 +49,11 @@ There are several options which do not correspond to Ldap properties and those a
 || tryFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in the callback handler begin invoked for a new login name and password.||
 || storePass || Whether the login name, login dn, and login password should be stored in shared state after a successful login. Existing values are overwritten.||
 || setLdapPrincipal || Whether the login name should be stored in the !LdapPrincipal class. Default value is true.||
-|| setLdapDnPrincipal || Whether the LDAP entry DN should be stored in the !LdapDnPrincipal class. Default value is true.||
+|| setLdapDnPrincipal || Whether the LDAP entry DN should be stored in the !LdapDnPrincipal class. Default value is false.||
 || setLdapCredential || Whether the login password should be stored in the !LdapCredential class. Default value is true.||
+|| defaultRole || Role(s) to set if login succeeds on this module. Comma delimited for multiple values. Default value is empty. ||
+|| principalGroupName || Name of the Group to place the principal(s) in if login succeeds on this module. Default value is empty. ||
+|| roleGroupName || Name of the Group to place the roles in if login succeeds on this module. Default value is empty. ||
 
 Any options supplied that do not map to a defined property will be passed directly to the JNDI context.
 
@@ -44,9 +66,9 @@ This configuration is the same as the previous except it will also populate the 
 vt-ldap {
    edu.vt.middleware.ldap.jaas.LdapLoginModule required
      ldapUrl="ldap://authn.directory.vt.edu:389"
-     base="ou=people,dc=vt,dc=edu"
+     baseDn="ou=people,dc=vt,dc=edu"
      tls="true"
-     userField="uid"
+     userFilter="(uid={0})"
      userRoleAttribute="eduPersonAffiliation";
    edu.vt.middleware.ldap.jaas.LdapRoleAuthorizationModule required
      useFirstPass="true"
@@ -57,17 +79,21 @@ vt-ldap {
 }}}
 
 === Options ===
-Each option corresponds to a [vtldap#Properties Ldap Property] without the domain prefix.<br/>
+Each option corresponds to a [vtldapProperties Ldap Property] without the domain prefix.<br/>
 There are several options which do not correspond to Ldap properties and those are explained below: 
 || *Property Name* || *Description* ||
 || roleFilter || An LDAP search filter where {0} is replaced with the user dn and {1} is replaced with the user. This is used to find roles for the user. ||
 || roleAttribute || An attribute(s) that exists on any role entries found with the roleFilter. The value(s) of these attributes will be added as roles for this user. Comma delimited for multiple attributes. By default no attributes are returned as roles. If all attributes should be assigned as role data, set this property to '`*`'. ||
+|| noResultsIsError || Whether an exception should be thrown if no roles are found. Default value is false. ||
 || useFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in a !LoginException.||
 || tryFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in the callback handler begin invoked for a new login name and password.||
 || storePass || Whether the login name, login dn, and login password should be stored in shared state after a successful login. Existing values are overwritten.||
 || setLdapPrincipal || Whether the login name should be stored in the !LdapPrincipal class. Default value is false.||
 || setLdapDnPrincipal || Whether the LDAP entry DN should be stored in the !LdapDnPrincipal class. Default value is false.||
 || setLdapCredential || Whether the login password should be stored in the !LdapCredential class. Default value is false.||
+|| defaultRole || Role(s) to set if login succeeds on this module. Comma delimited for multiple values. Default value is empty. ||
+|| principalGroupName || Name of the Group to place the principal(s) in if login succeeds on this module. Default value is empty. ||
+|| roleGroupName || Name of the Group to place the roles in if login succeeds on this module. Default value is empty. ||
 
 Any options supplied that do not map to a defined property will be passed directly to the JNDI context.
 
@@ -85,9 +111,9 @@ vt-ldap {
      useFirstPass="true"
      storePass="true"
      ldapUrl="ldap://authn.directory.vt.edu:389"
-     base="ou=people,dc=vt,dc=edu"
+     baseDn="ou=people,dc=vt,dc=edu"
      tls="true"
-     userField="uid";
+     userFilter="(uid={0})";
    edu.vt.middleware.ldap.jaas.LdapRoleAuthorizationModule required
      useFirstPass="true"
      ldapUrl="ldap://directory.vt.edu:389/ou=groups,dc=vt,dc=edu"
@@ -97,15 +123,19 @@ vt-ldap {
 }}}
 
 === Options ===
-Each option corresponds to a [vtldap#Properties Ldap Property] without the domain prefix.<br/>
+Each option corresponds to a [vtldapProperties Ldap Property] without the domain prefix.<br/>
 There are several options which do not correspond to Ldap properties and those are explained below: 
 || *Property Name* || *Description* ||
+|| noResultsIsError || Whether an exception should be thrown if no DN is found. Default value is false. ||
 || useFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in a !LoginException.||
 || tryFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in the callback handler begin invoked for a new login name and password.||
 || storePass || Whether the login name, login dn, and login password should be stored in shared state after a successful login. Existing values are overwritten.||
 || setLdapPrincipal || Whether the login name should be stored in the !LdapPrincipal class. Default value is false.||
 || setLdapDnPrincipal || Whether the LDAP entry DN should be stored in the !LdapDnPrincipal class. Default value is false.||
 || setLdapCredential || Whether the login password should be stored in the !LdapCredential class. Default value is false.||
+|| defaultRole || Role(s) to set if login succeeds on this module. Comma delimited for multiple values. Default value is empty. ||
+|| principalGroupName || Name of the Group to place the principal(s) in if login succeeds on this module. Default value is empty. ||
+|| roleGroupName || Name of the Group to place the roles in if login succeeds on this module. Default value is empty. ||
 
 Any options supplied that do not map to a defined property will be passed directly to the JNDI context.
 
@@ -123,7 +153,7 @@ lc.login()
 
 ----
 = JBoss =
-The JAAS module can be used in JBoss.<br/>
+The JAAS module can be used in JBoss. Note that if authenticated users need to invoke EJBs then you must set the _principalGroupName_ and _roleGroupName_ as shown. JBoss requires groups with those exact names to contain the associated principals. Otherwise those options can be omitted.<br/>
 
 == Instructions ==
   # Put the vt-ldap jar in the JBoss server classpath
@@ -145,6 +175,8 @@ The JAAS module can be used in JBoss.<br/>
               <module-option name="userFilter">
                 ${ldap.userFilter}
               </module-option>
+              <module-option name="principalGroupName">CallerPrincipal</module-option>
+              <module-option name="roleGroupName">Roles</module-option>
             </login-module>
           </authentication>
         </application-policy>
