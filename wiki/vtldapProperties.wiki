@@ -59,7 +59,7 @@ Properties used for connecting, binding, and searching.
 || edu.vt.middleware.ldap.operationRetryBackoff || 0 || factor by which to multiply the operation retry wait time; this allows clients to progressively delay each retry ||
 || edu.vt.middleware.ldap.operationRetryExceptions || {!CommunicationException, !ServiceUnavailableException} || exception classes to retry operations on; supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.logCredentials || false || whether bind credentials should be logged; logging occurs at debug level ||
-|| edu.vt.middleware.ldap.connectionHandler || !DefaultConnectionHandler || creates and closes LDAP connections. See [vtldapHandlers] ||
+|| edu.vt.middleware.ldap.connectionHandler || !DefaultConnectionHandler || creates and closes LDAP connections. ||
 || edu.vt.middleware.ldap.searchResultHandlers || {!FqdnSearchResultHandler} || performs post processing of results; supports a comma delimited list for multiple values. See [vtldapSearching#Search_Result_Handlers Search Result Handlers] ||
 || edu.vt.middleware.ldap.handlerIgnoreExceptions || {!LimitExceededException} || exception classes that should be ignored when processing result sets; supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.pagedResultsSize || 0 || value used when the !PagedResultsControl in invoked ||
@@ -84,8 +84,8 @@ All the previous properties are inherited by the Authenticator and can be overri
 || edu.vt.middleware.ldap.auth.allowMultipleDns || false || whether an exception should be thrown if multiple DNs are found when the user is searched for; default behavior is to throw a !NamingException  ||
 || edu.vt.middleware.ldap.auth.dnResolver || !SearchDnResolver || implementation used to resolve a user's DN ||
 || edu.vt.middleware.ldap.auth.subtreeSearch || false  || whether the authentication dn should be searched for over the entire base; default value is onelevel  ||
-|| edu.vt.middleware.ldap.auth.authenticationHandler || !BindAuthenticationHandler || performs LDAP authentication, see [vtldapHandlers]. ||
-|| edu.vt.middleware.ldap.auth.authenticationResultHandlers || _none_ || performs post processing of authentication results, see [vtldapHandlers]. Supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.auth.authenticationHandler || !BindAuthenticationHandler || performs LDAP authentication, see [vtldapAuthentication#Authentication_Handlers Authentication Handlers]. ||
+|| edu.vt.middleware.ldap.auth.authenticationResultHandlers || _none_ || performs post processing of authentication results, see [vtldapAuthentication#Authentication_Result_Handlers Authentication Result Handlers]. Supports a comma delimited list for multiple values ||
 || edu.vt.middleware.ldap.auth.authorizationFilter || _none_ || ldap filter to use for performing authorization after successful authentication  ||
 || edu.vt.middleware.ldap.auth.authorizationFilterArgs || _none_ || LDAP filter arguments for the authorizationFilter property. Supports a comma delimited list for multiple values ||
-|| edu.vt.middleware.ldap.auth.authorizationHandlers || _none_ || performs post processing of authorization once authentication has succeeded, see [vtldapHandlers]. Supports a comma delimited list for multiple values ||
+|| edu.vt.middleware.ldap.auth.authorizationHandlers || _none_ || performs post processing of authorization once authentication has succeeded, see [vtldapAuthentication#Authorization_Handlers Authorization Handlers]. Supports a comma delimited list for multiple values ||
