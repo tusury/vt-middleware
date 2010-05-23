@@ -3,10 +3,6 @@
 
 <wiki:toc max_depth="2" />
 
-----
-*Updating for 3.3 release*
-----
-
 = Introduction =
 VT Ldap is a Java library for interfacing with version 3 LDAPs.
 This library meets the following design goals:
