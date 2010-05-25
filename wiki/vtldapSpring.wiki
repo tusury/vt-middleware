@@ -23,21 +23,31 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
   
   <bean id="ldapConfig"
     class="edu.vt.middleware.ldap.LdapConfig"
-    p:ldapUrl="ldap://ed-dev.middleware.iad.vt.edu:10389"
+    p:ldapUrl="ldap://ed-dev.middleware.vt.edu:10389"
     p:tls="true"
     p:authtype="EXTERNAL"
     p:searchScope="SUBTREE">
     <property name="sslSocketFactory">
-      <bean class="edu.vt.middleware.ldap.LdapTLSSocketFactory"
-        init-method="initialize"
-        p:keyStoreName="/edid.keystore"
-        p:keyStorePathType="CLASSPATH"
-        p:keyStoreType="BKS"
-        p:trustStoreName="/vt-truststore.bks"
-        p:trustStorePathType="CLASSPATH"
-        p:trustStoreType="BKS"/>
+      <bean class="edu.vt.middleware.ldap.ssl.TLSSocketFactory"
+        init-method="initialize">
+        <property name="SSLContextInitializer">
+          <bean
+            factory-bean="sslContextInitializerFactory"
+	    factory-method="createSSLContextInitializer" />
+        </property>
+      </bean>
     </property>
   </bean>
+  
+  <bean id="sslContextInitializerFactory"
+    class="edu.vt.middleware.ldap.ssl.KeyStoreCredentialConfig"
+    p:keyStore="classpath:/edid.keystore"
+    p:keyStoreType="BKS"
+    p:keyStorePassword="changeit"
+    p:trustStore="classpath:/vt-truststore.bks"
+    p:trustStoreType="BKS"
+    p:trustStorePassword="changeit"
+  />
   
 </beans>
 }}}
@@ -76,22 +86,30 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   
   <bean id="ldapConfig"
     class="edu.vt.middleware.ldap.LdapConfig"
-    p:ldapUrl="ldap://ed-dev.middleware.iad.vt.edu:10389"
+    p:ldapUrl="ldap://ed-dev.middleware.vt.edu:10389"
     p:tls="true"
-    p:authtype="EXTERNAL">
+    p:authtype="EXTERNAL"
+    p:searchScope="SUBTREE">
     <property name="sslSocketFactory">
-      <bean class="edu.vt.middleware.ldap.LdapTLSSocketFactory"
-        init-method="initialize"
-        p:keyStoreName="/edid.keystore"
-        p:keyStorePathType="CLASSPATH"
-        p:keyStoreType="BKS"
-        p:trustStoreName="/vt-truststore.bks"
-        p:trustStorePathType="CLASSPATH"
-        p:trustStoreType="BKS"/>
-    </property>
-    <property name="searchScope">
-      <util:constant static-field="javax.naming.directory.SearchControls.SUBTREE_SCOPE"/>
+      <bean class="edu.vt.middleware.ldap.ssl.TLSSocketFactory"
+        init-method="initialize">
+        <property name="SSLContextInitializer">
+          <bean
+            factory-bean="sslContextInitializerFactory"
+	    factory-method="createSSLContextInitializer" />
+        </property>
+      </bean>
     </property>
   </bean>
+
+  <bean id="sslContextInitializerFactory"
+    class="edu.vt.middleware.ldap.ssl.KeyStoreCredentialConfig"
+    p:keyStore="classpath:/edid.keystore"
+    p:keyStoreType="BKS"
+    p:keyStorePassword="changeit"
+    p:trustStore="classpath:/vt-truststore.bks"
+    p:trustStoreType="BKS"
+    p:trustStorePassword="changeit"
+  />
 </beans>
 }}}
