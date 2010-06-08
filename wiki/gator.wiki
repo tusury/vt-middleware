@@ -7,6 +7,7 @@ Gator provides the following features/services:
   * Aggregated logging from all applications/nodes on the host running Gator
   * Web-based configuration manager
   * Real-time Web-based log viewer
+  * Project-specific ACLs (New in version 1.2)
 
 = Background =
 A bit of background may help put the features above in context.  Gator evolved from an amalgam of JBoss and the log4j [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/net/SocketServer.html SocketServer] to address our need for consolidated logging across multiple nodes and tiers of an enterprise Java application.  We chose this solution for a few reasons:
@@ -15,28 +16,29 @@ A bit of background may help put the features above in context.  Gator evolved f
   # We did not have control of syslog configuration on our hosts
 Although the application used commons logging internally, we used the log4j engine underneath.  This made us secure in choosing a log4j-specific solution.  Although the end result suited our needs, it was a pain to configure.  Our solution required a JBoss container instance for each instance (development, pre-production, production) of our application, where each JBoss instance had a slightly different configuration.  And there were also 2 log4j configuration files for each server, one for the container and one for the nodes.  This is where it got dicey.  There were some very non-intuitive requirements on appender configuration and log levels of categories that only 1 person in the group understood well enough to troubleshoot.  But it worked once it was up and running, and it performed well.
 
-And then we would need to modify the logger configuration for a node or aspect of the application.  The process was both tedious and error prone, and again, we had to lean on a single person in the group to help troubleshoot configuration errors.  After running into this problem a few times, and getting more insight into the architecture of our solution, I had a hunch we could do better.  And then the outline of Gator emerged from a week or so of hacking on a JDBC-backed log4j configuration engine and a new SocketServer implementation that understood the notion of a project containing both a log4j logger hierarchy and allowed clients.
+And then we would need to modify the logger configuration for a node or aspect of the application.  The process was both tedious and error prone, and again, we had to lean on a single person in the group to help troubleshoot configuration errors.  After running into this problem a few times, and getting more insight into the architecture of our solution, I had a hunch we could do better.  And then the outline of Gator emerged from a week or so of hacking on a JDBC-backed log4j configuration engine and a new [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-core/src/main/java/edu/vt/middleware/gator/log4j/SocketServer.java SocketServer] implementation that understands the notion of a project containing both a log4j logger hierarchy and allowed clients.
 
 = Installation =
-Gator uses a source-based installation process that requires the following tools:
-  * Subversion
-  * Apache [http://maven.apache.org/download.html Maven 2]
+Gator is packaged as a Java Web Application Archive (WAR) and is deployable in a servlet container such as [http://tomcat.apache.org/ Tomcat] out of the box using sensible defaults:
+  * In-memory HSQL database
+  * Gator logs written to gator-logs directory in current working directory of container process
+  * Static XML-based user/role configuration for authentication (*admin*/*admin* by default)
 
-== Pre-Installation Considerations ==
-Gator stores configuration data in a relational database.  You must decide on a DB platform prior to installation.  All RDBMS platforms [http://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html supported by Hibernate] are available options.  HSQL likely provides the path of least resistance, but deployers should exercise caution when using it for production.
+The basic configuration of Gator can be controlled via servlet context configuration parameters.  A [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator.xml.sample sample context configuration file] is provided for Tomcat that contains extensive comments describing the purpose for each configuration value.  The following configuration aspects can be controlled via context parameters:
+  * Database platform and pooling configuration
+  * Socket server listening address, port, and capacity configuration
+  * Configuration of key filesystem paths needed by Gator
+  * Pluggable application policy settings
 
-Authentication and authorization should also be considered prior to installation.  The sample web.xml provides optional [http://www.jasig.org/cas CAS] integration for authentication, but authorization would require additional configuration.  For example, a security framework like [http://static.springframework.org/spring-security/site/ Spring Security] could be used to provide both authentication and authorization services with relatively little configuration work limited to web.xml and gator-servlet.xml.
+For production deployments where greater configuration control is needed, we strongly encourage the use of the [http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html Maven War Overlay] method for managing customizations.  Gator uses the [http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/ Spring Framework], which provides convenient configuration and extension points through XML configuration files.  The following listing describes the XML configuration files (located in the WEB-INF directory) that control various aspects of the application:
 
-== Step-by-Step Install ==
-  # Subversion checkout: svn checkout http://vt-middleware.googlecode.com/svn/gator/tags/gator-1.0
-  # Create the following files in the project root directory using the .sample files as templates:
-    # log4j.properties
-    # runtime.properties
-    # web.xml
-  # Build the WAR deployable: mvn clean package
-  # Copy the JDBC driver for your RDBMS platform to a directory in your servlet container that is on the container classpath (e.g. $TOMCAT_HOME/lib in TC6.x or $TOMCAT_HOME/common/lib in TC5.x)
-  # Copy the Gator deployable in target/gator.war to the deploy location in your container (e.g. $TOMCAT_HOME/webapps)
+  * [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/applicationContext.xml applicationContext.xml] - Main Spring application context configuration that defines core Gator components
+  * [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/applicationContext-authz.xml applicationContext-authz.xml] - Spring Security configuration for business object method invocation security
+  * [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/gator-servlet.xml gator-servlet.xml] - Spring Web MVC servlet configuration
+  * [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/securityContext.xml securityContext.xml] - Spring Security configuration of users, roles, and other authentication/authorization concerns
+  * [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/servletContextParams.xml servletContextParams.xml] - Provides sensible defaults for out-of-box deployment
+  * [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/web.xml web.xml] - Java servlet configuration
 
-You may find it helpful to use the [http://maven.apache.org/plugins/maven-war-plugin/examples/war-overlay.html Maven WAR overlay] process to help manage customizations needed for your environment.
+For all but the most advanced deployments, it should be sufficient to customize securityContext.xml and web.xml in order to customize the security configuration.  For example it is expected that enterprise deployments would integrate with some centralized authentication/authorization such as LDAP for security configuration.  Since LDAP is expected to be a common case, a [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/securityContext-ldap.xml.sample sample LDAP security configuration file] is provided.
 
 = User Guide =
