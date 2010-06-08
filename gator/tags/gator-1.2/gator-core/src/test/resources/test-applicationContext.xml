@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+  <tx:annotation-driven transaction-manager="txManager"/>
+  
+  <bean id="validator"
+    class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+  <bean id="dataSource"
+    class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
+    p:driverClass="org.hsqldb.jdbcDriver"
+    p:url="jdbc:hsqldb:mem:gator"
+    p:username="sa"
+    p:password=""
+  />
+
+  <bean id="entityManagerFactory"
+    class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="jpaVendorAdapter">
+      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="generateDdl" value="true"/>
+        <property name="showSql" value="true" />
+      </bean>
+    </property>
+    <property name="jpaProperties">
+      <props>
+        <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+        <prop key="hibernate.jdbc.batch_size">0</prop>
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="txManager"
+    class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
+  
+  <bean id="configManager"
+    class="edu.vt.middleware.gator.JpaConfigManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory" />
+  </bean>
+  
+  <bean id="configurator"
+    class="edu.vt.middleware.gator.log4j.JdbcConfigurator">
+    <property name="configManager" ref="configManager" />
+    <property name="clientRootLogDirectory" value="target/logs" />
+  </bean>
+
+  <bean id="aclService"
+    class="edu.vt.middleware.gator.security.ProjectAclService"
+  />
+  
+  <bean id="clientRemovalPolicy"
+    class="edu.vt.middleware.gator.log4j.NoopClientRemovalPolicy" />
+  
+  <bean id="socketServer"
+    class="edu.vt.middleware.gator.log4j.SocketServer"
+    p:configurator-ref="configurator"
+    p:clientRemovalPolicy-ref="clientRemovalPolicy"
+    p:eventExecutor-ref="pooledExecutor"
+    p:startOnInit="true"
+    p:bindAddress="127.0.0.1"
+    p:port="8111"
+    p:maxClients="10"
+    init-method="init"
+    destroy-method="stop"
+  />
+  
+  <bean id="pooledExecutor"
+    class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"
+    p:corePoolSize="30"
+    p:maxPoolSize="100"
+    p:keepAliveSeconds="120"
+  />
+</beans>
