@@ -4,7 +4,7 @@
 http://vt-middleware.googlecode.com/svn/wiki/images/gator.png
 
 = Download =
-[http://code.google.com/p/vt-middleware/source/browse/maven2/edu/vt/middleware/gator/gator-webapp/1.2/gator-webapp-1.2.war Gator 1.2]
+[http://vt-middleware.googlecode.com/svn/maven2/edu/vt/middleware/gator/gator-webapp/1.2/gator-webapp-1.2.war Gator 1.2]
 
 = Features =
 Gator provides the following features/services:
