@@ -62,15 +62,11 @@ The log4j configuration consists of the usual appender and category configuratio
 A project must define the host names or IP addresses of clients allowed to connect to the Gator socket server in order to send logging events.  Gator currently supports at most one Gator-enabled project per logical host.  If an unauthorized client attempts to connect to the socket server, the client socket is immediately closed.
 
 == Client Configuration ==
-Clients MUST support XML-based hierarchy configuration from an HTTP resource.  (The log4j [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/DOMConfigurator.html DOMConfigurator] supports this out of the box.)  Clients SHOULD support periodic polling of XML configuration files in order to detect configuration changes made by the Gator Web interface.  (The JBoss org.jboss.logging.Log4jService MBean has support for this feature, for example.)
+Clients MUST support XML-based hierarchy configuration from an HTTP resource.  (The log4j [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/DOMConfigurator.html DOMConfigurator] supports this out of the box.)  Clients SHOULD support periodic polling of XML configuration files in order to detect configuration changes made by the Gator Web interface.  (The JBoss org.jboss.logging.!Log4jService MBean has support for this feature, for example.)
 
 The URL for a Gator project log4j XML configuration file is specified by the following pattern:
 
 http://GATOR_HOST_NAME:PORT/project/PROJECT_NAME/log4j.xml
-
-If the servlet container is listening on standard ports the above simplifies to the following:
-
-http://GATOR_HOST_NAME/project/PROJECT_NAME/log4j.xml
 
 An example for a Gator client that is deployed to a JBoss 5 AS JEE container:
 {{{
