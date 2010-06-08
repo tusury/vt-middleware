@@ -1,6 +1,8 @@
 ﻿#summary Features, installation, and use of Gator log aggregating server application.
 #labels Gator,log4j
 
+http://vt-middleware.googlecode.com/svn/wiki/images/gator.png
+
 = Features =
 Gator provides the following features/services:
   * Single point of configuration for log4j logging across multiple applications on multiple hosts
