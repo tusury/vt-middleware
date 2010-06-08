@@ -47,3 +47,52 @@ For production deployments where greater configuration control is needed, we str
 For all but the most advanced deployments, it should be sufficient to customize [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/securityContext.xml securityContext.xml] and [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/gator-webapp/src/main/webapp/WEB-INF/web.xml web.xml] in order to customize security configuration.  For example it is expected that enterprise deployments would integrate with a centralized authentication/authorization provider such as LDAP for security configuration.  Since LDAP is expected to be a common case, a [http://code.google.com/p/vt-middleware/source/browse/gator/tags/gator-1.2/securityContext-ldap.xml.sample sample LDAP security configuration file] is provided.  Any security provider supported by [http://static.springsource.org/spring-security/site/docs/3.0.x/reference/springsecurity.html Spring Security] is supported in Gator.  For example at Virginia Tech we leverage [http://static.springsource.org/spring-security/site/docs/3.0.x/reference/cas.html Spring Security's CAS integration] to provide authentication and authorization services from our instance of [http://www.jasig.org/cas/ CAS].
 
 = User Guide =
+There are two considerations to using gator for collecting log data:
+  # Create a Gator project that describes logging and security configuration.
+  # Configure client applications to obtain logging configuration from Gator project.
+
+== Gator Projects ==
+A gator project is simply a named container for the following data:
+  * Log4j logger hierarchy configuration
+  * List of clients allowed to connect to server to send logging events
+  * Security configuration (view/modify/delete project configuration)
+
+The log4j configuration consists of the usual appender and category configuration elements common to existing log4j configuration techniques (e.g. properties file, XML).  Gator allows a non-standard configuration option named "Client Log Directory" which is an absolute path appended to file appender paths in the configuration given to clients.  The rational for this feature is that it is assumed that paths to client log files is different than those on the Gator server.
+
+A project must define the host names or IP addresses of clients allowed to connect to the Gator socket server in order to send logging events.  Gator currently supports at most one Gator-enabled project per logical host.  If an unauthorized client attempts to connect to the socket server, the client socket is immediately closed.
+
+== Client Configuration ==
+Clients MUST support XML-based hierarchy configuration from an HTTP resource.  (The log4j [http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/DOMConfigurator.html DOMConfigurator] supports this out of the box.)  Clients SHOULD support periodic polling of XML configuration files in order to detect configuration changes made by the Gator Web interface.  (The JBoss org.jboss.logging.Log4jService MBean has support for this feature, for example.)
+
+The URL for a Gator project log4j XML configuration file is specified by the following pattern:
+
+http://GATOR_HOST_NAME:PORT/project/PROJECT_NAME/log4j.xml
+
+If the servlet container is listening on standard ports the above simplifies to the following:
+
+http://GATOR_HOST_NAME/project/PROJECT_NAME/log4j.xml
+
+An example for a Gator client that is deployed to a JBoss 5 AS JEE container:
+{{{
+<mbean code="org.jboss.logging.Log4jService"
+    name="jboss.system:type=Log4jService,service=Logging"
+    xmbean-dd="resource:xmdesc/Log4jService-xmbean.xml">
+
+  <attribute name="ConfigurationURL">http://log.middleware.vt.edu/gator/project/j2ee-dev/log4j.xml</attribute>
+  <!-- Set the org.apache.log4j.helpers.LogLog.setQuiteMode. As of log4j1.2.8
+  this needs to be set to avoid a possible deadlock on exception at the
+  appender level. See bug#696819.
+  -->
+  <attribute name="Log4jQuietMode">true</attribute>
+  <!-- How frequently in seconds the ConfigurationURL is checked for changes -->
+  <attribute name="RefreshPeriod">60</attribute>
+
+  <!-- The value to assign to system property jboss.server.log.threshold
+       if it is not already set. This system property in turn controls
+       the logging threshold for the server.log file.
+       If the system property is already set when this service is created,
+       this value is ignored. -->
+  <attribute name="DefaultJBossServerLogThreshold">INFO</attribute>
+</mbean>
+
+}}}
