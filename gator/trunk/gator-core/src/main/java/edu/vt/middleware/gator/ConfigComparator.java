@@ -13,6 +13,7 @@
 */
 package edu.vt.middleware.gator;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -23,8 +24,12 @@ import java.util.Comparator;
  * @version $Revision$
  *
  */
-public class ConfigComparator implements Comparator<Config>
+public class ConfigComparator
+  implements Comparator<Config>, Serializable
 {
+  /** ConfigComparator.java */
+  private static final long serialVersionUID = 8591283570241252559L;
+
   /** {@inheritDoc} */
   public int compare(final Config a, final Config b)
   {

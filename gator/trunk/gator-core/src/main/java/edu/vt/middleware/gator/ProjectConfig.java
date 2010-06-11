@@ -381,7 +381,7 @@ public class ProjectConfig extends Config
   public Collection<CategoryConfig> getCategories()
   {
     final SortedSet<CategoryConfig> categorySet =
-      new TreeSet<CategoryConfig>(new ConfigComparator());
+      new TreeSet<CategoryConfig>(new CategoryComparator());
     categorySet.addAll(getCategoriesInternal());
     return Collections.unmodifiableCollection(categorySet);
   }
