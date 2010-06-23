@@ -1,0 +1,16 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-crypt-plugin</artifactId>
+        <configuration>
+          <!-- project-relative path to key file to create -->
+          <keyFile>target/test.key</keyFile>
+          <algorithm>AES</algorithm>
+          <keySize>2048</keySize>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+

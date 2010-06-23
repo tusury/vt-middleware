@@ -1,0 +1,26 @@
+<project>
+  <properties>
+      <test.password.1>Hpvc/gZ/1DGqG0dzIeNlvw==</test.password.1>
+      <test.password.2>5J/RKd3EGBgqmxqWlNucjA==</test.password.2>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-crypt-plugin</artifactId>
+        <configuration>
+          <!-- project-relative path to decryption key -->
+          <keyFile>src/test/resources/test.key</keyFile>
+          <algorithm>AES</algorithm>
+          <iv>63366164343061393663356661353062</iv>
+          <mode>CBC</mode>
+          <padding>PKCS5Padding</padding>
+          <properties>
+            <property>test.password.1</property>
+            <property>test.password.2</property>
+          </properties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+

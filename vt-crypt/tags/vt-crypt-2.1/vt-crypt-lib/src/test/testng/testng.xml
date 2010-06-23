@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="vt-crypt" verbose="1" parallel="tests" thread-count="1">
+  <test name="functest" parallel="methods" thread-count="12">
+    <groups>
+      <run>
+        <include name="functest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.crypt.*" />
+   </packages>
+  </test>
+  <test name="cli">
+    <groups>
+      <run>
+        <include name="cli" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.crypt.*" />
+   </packages>
+  </test>
+</suite>
