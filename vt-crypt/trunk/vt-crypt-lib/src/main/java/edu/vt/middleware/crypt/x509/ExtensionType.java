@@ -1,77 +1,76 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509;
 
 /**
  * Enumeration of X.509v3 extension fields defined in section 4.2 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: $
- *
+ * @author  Middleware Services
+ * @version  $Revision: $
  */
-public enum ExtensionType
-{
-  /** AuthorityInfoAccess extension field */
+public enum ExtensionType {
+
+  /** AuthorityInfoAccess extension field. */
   AuthorityInformationAccess("1.3.6.1.5.5.7.1.1", false),
 
-  /** AuthorityKeyIdentifier extension field */
+  /** AuthorityKeyIdentifier extension field. */
   AuthorityKeyIdentifier("2.5.29.35", false),
 
-  /** BasicConstraints extension field */
+  /** BasicConstraints extension field. */
   BasicConstraints("2.5.29.19", true),
 
-  /** CertificatePolicies extension field */
+  /** CertificatePolicies extension field. */
   CertificatePolicies("2.5.29.32", false),
 
-  /** CRLDistributionPoints extension field */
+  /** CRLDistributionPoints extension field. */
   CRLDistributionPoints("2.5.29.31", false),
 
-  /** ExtendedKeyUsage extension field */
+  /** ExtendedKeyUsage extension field. */
   ExtendedKeyUsage("2.5.29.37", false),
 
-  /** IssuerAlternativeName extension field */
+  /** IssuerAlternativeName extension field. */
   IssuerAlternativeName("2.5.29.18", false),
 
-  /** KeyUsage extension field */
+  /** KeyUsage extension field. */
   KeyUsage("2.5.29.15", true),
 
-  /** NameConstraints extension field */
+  /** NameConstraints extension field. */
   NameConstraints("2.5.29.30", true),
 
-  /** PolicyConstraints extension field */
+  /** PolicyConstraints extension field. */
   PolicyConstraints("2.5.29.36", false),
 
-  /** PolicyMappings extension field */
+  /** PolicyMappings extension field. */
   PolicyMappings("2.5.29.33", false),
 
-  /** PrivateKeyUsage extension field */
+  /** PrivateKeyUsage extension field. */
   PrivateKeyUsagePeriod("2.5.29.16", false),
 
-  /** SubjectAlternativeName extension field */
+  /** SubjectAlternativeName extension field. */
   SubjectAlternativeName("2.5.29.17", false),
 
-  /** SubjectKeyIdentifier extension field */
+  /** SubjectKeyIdentifier extension field. */
   SubjectKeyIdentifier("2.5.29.14", false),
 
-  /** SubjectDirectoryAttributes extension field */
+  /** SubjectDirectoryAttributes extension field. */
   SubjectDirectoryAttributes("2.5.29.9", false);
 
 
-  /** Oid value */
+  /** Oid value. */
   private String oid;
 
-  /** Whether this extension is critical according to RFC 2459 */
+  /** Whether this extension is critical according to RFC 2459. */
   private boolean critical;
 
 
@@ -112,8 +111,8 @@ public enum ExtensionType
   /**
    * Gets the extension by name.
    *
-   * @param  name  Case-sensitive X.509v3 extension name.  The acceptable case
-   * of extension names is governed by conventions in RFC 2459.
+   * @param  name  Case-sensitive X.509v3 extension name. The acceptable case of
+   * extension names is governed by conventions in RFC 2459.
    *
    * @return  Extension with given name.
    *
@@ -125,14 +124,14 @@ public enum ExtensionType
       return ExtensionType.valueOf(ExtensionType.class, name);
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException(
-          "Invalid X.509v3 extension name " + name);
+        "Invalid X.509v3 extension name " + name);
     }
   }
 
 
   /**
-   * @return  True if extension MUST or SHOULD be marked critical
-   * under general circumstances according to RFC 2459, false otherwise.
+   * @return  True if extension MUST or SHOULD be marked critical under general
+   * circumstances according to RFC 2459, false otherwise.
    */
   public boolean isCritical()
   {
@@ -140,9 +139,7 @@ public enum ExtensionType
   }
 
 
-  /**
-   * @return  OID value of extension field.
-   */
+  /** @return  OID value of extension field. */
   public String getOid()
   {
     return oid;

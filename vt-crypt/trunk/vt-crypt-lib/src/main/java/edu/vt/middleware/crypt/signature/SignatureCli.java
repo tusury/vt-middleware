@@ -1,15 +1,15 @@
 /*
-  $Id: SignatureCli.java 12 2008-11-17 19:13:16Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 12 $
-  Updated: $Date: 2008-11-17 14:13:16 -0500 (Mon, 17 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.signature;
 
@@ -117,7 +117,7 @@ public class SignatureCli extends AbstractCli
       OPT_VERIFY,
       true,
       "verify signature in given file; " +
-        "signature encoding determined by -encoding option");
+      "signature encoding determined by -encoding option");
     encoding.setArgName("sigfilepath");
     encoding.setOptionalArg(false);
 
@@ -132,7 +132,8 @@ public class SignatureCli extends AbstractCli
 
 
   /** {@inheritDoc} */
-  protected void dispatch(final CommandLine line) throws Exception
+  protected void dispatch(final CommandLine line)
+    throws Exception
   {
     if (line.hasOption(OPT_SIGN)) {
       sign(line);
@@ -228,6 +229,7 @@ public class SignatureCli extends AbstractCli
     final SignatureAlgorithm sig = newInstance(line);
     sig.setVerifyKey(readPublicKey(line));
     sig.initVerify();
+
     boolean isVerified = false;
     try {
       isVerified = sig.verify(in, readSignature(line));
@@ -289,9 +291,7 @@ public class SignatureCli extends AbstractCli
     if (keyFile.getName().endsWith(PEM_SUFFIX)) {
       return CryptReader.readPemPrivateKey(keyFile, null);
     } else {
-      return CryptReader.readPrivateKey(
-        keyFile,
-        line.getOptionValue(OPT_ALG));
+      return CryptReader.readPrivateKey(keyFile, line.getOptionValue(OPT_ALG));
     }
   }
 
@@ -302,11 +302,12 @@ public class SignatureCli extends AbstractCli
    *
    * @param  line  Parsed command line arguments container.
    *
-   * @return Signature bytes.
+   * @return  Signature bytes.
    *
-   * @throws IOException On read errors.
+   * @throws  IOException  On read errors.
    */
-  protected byte[] readSignature(final CommandLine line) throws IOException
+  protected byte[] readSignature(final CommandLine line)
+    throws IOException
   {
     InputStream in = getInputStream(line, OPT_VERIFY);
     if (line.hasOption(OPT_ENCODING)) {
@@ -319,6 +320,7 @@ public class SignatureCli extends AbstractCli
         throw new IllegalArgumentException("Unknown encoding.");
       }
     }
+
     final ByteArrayOutputStream os = new ByteArrayOutputStream();
     final int bufSize = 1024;
     final byte[] buffer = new byte[bufSize];

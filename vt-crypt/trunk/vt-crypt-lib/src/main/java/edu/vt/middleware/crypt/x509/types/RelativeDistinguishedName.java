@@ -1,21 +1,20 @@
 /*
-  $Id: RelativeDistinguishedName.java 578 2009-09-08 19:10:23Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 578 $
-  Updated: $Date: 2009-09-08 15:10:23 -0400 (Tue, 08 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEREncodable;
@@ -25,14 +24,14 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
  * Representation of RelativeDistinguishedName type described in section 2 of
  * RFC 2253.
  *
- * @author Middleware
- * @version $Revision: 578 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 578 $
  */
 public class RelativeDistinguishedName
   extends AbstractList<AttributeTypeAndValue>
 {
-  /** Separator character between AttributeTypeAndValue items making up RDN */
+
+  /** Separator character between AttributeTypeAndValue items making up RDN. */
   public static final char SEPARATOR_CHAR = '+';
 
 
@@ -42,17 +41,17 @@ public class RelativeDistinguishedName
    * @param  listOfValues  List of values for the RDN.
    */
   public RelativeDistinguishedName(
-      final List<AttributeTypeAndValue> listOfValues)
+    final List<AttributeTypeAndValue> listOfValues)
   {
     if (listOfValues == null) {
       throw new IllegalArgumentException("List of values cannot be null.");
     }
     if (listOfValues.size() == 0) {
       throw new IllegalArgumentException(
-          "List must contain at least one value.");
+        "List must contain at least one value.");
     }
     items = listOfValues.toArray(
-        new AttributeTypeAndValue[listOfValues.size()]);
+      new AttributeTypeAndValue[listOfValues.size()]);
   }
 
 
@@ -68,7 +67,7 @@ public class RelativeDistinguishedName
     }
     if (arrayOfValues.length == 0) {
       throw new IllegalArgumentException(
-          "Array must contain at least one value.");
+        "Array must contain at least one value.");
     }
     items = arrayOfValues;
   }
@@ -86,8 +85,8 @@ public class RelativeDistinguishedName
 
 
   /**
-   * Follows the guidelines of RFC 2253 section 2.2 for producing the
-   * string representation of the RelativeDistinguishedName type.
+   * Follows the guidelines of RFC 2253 section 2.2 for producing the string
+   * representation of the RelativeDistinguishedName type.
    *
    * @return  String representation of RDN.
    */
@@ -107,8 +106,8 @@ public class RelativeDistinguishedName
 
 
   /**
-   * Creates a new instance from an ASN.1 SET of SEQUENCE representing
-   * the AttributeTypeAndValue type of section 2 of RFC 2253.
+   * Creates a new instance from an ASN.1 SET of SEQUENCE representing the
+   * AttributeTypeAndValue type of section 2 of RFC 2253.
    *
    * @param  set  Set from which to create new RDN instance.
    *
@@ -123,6 +122,7 @@ public class RelativeDistinguishedName
       if (!(value instanceof ASN1Sequence)) {
         throw new IllegalArgumentException("Value must be ASN.1 sequence.");
       }
+
       final ASN1Sequence seq = (ASN1Sequence) value;
       if (seq.size() != 2) {
         throw new IllegalArgumentException(
@@ -132,9 +132,9 @@ public class RelativeDistinguishedName
         throw new IllegalArgumentException("First sequence item must be OID.");
       }
       values.add(
-          new AttributeTypeAndValue(
-              seq.getObjectAt(0).toString(),
-              seq.getObjectAt(1).toString()));
+        new AttributeTypeAndValue(
+          seq.getObjectAt(0).toString(),
+          seq.getObjectAt(1).toString()));
     }
     return new RelativeDistinguishedName(values);
   }

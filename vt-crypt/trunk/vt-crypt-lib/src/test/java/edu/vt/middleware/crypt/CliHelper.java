@@ -1,15 +1,15 @@
 /*
-  $Id: CliHelper.java 318 2009-07-06 17:30:01Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 318 $
-  Updated: $Date: 2009-07-06 13:30:01 -0400 (Mon, 06 Jul 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt;
 
@@ -50,14 +50,14 @@ public class CliHelper
 
   /**
    * Combines one or more {@link OptionData} objects into a String array that
-   * would be created from parsing a command line containing those options.
-   * Any options that are null are ignored.
+   * would be created from parsing a command line containing those options. Any
+   * options that are null are ignored.
    *
    * @param  options  One or more command line options.
    *
    * @return  Array of arguments.
    */
-  public static String[] toArgs(final OptionData ... options)
+  public static String[] toArgs(final OptionData... options)
   {
     final List<String> argList = new ArrayList<String>();
     for (OptionData option : options) {
@@ -68,6 +68,7 @@ public class CliHelper
         }
       }
     }
+
     final String[] args = new String[argList.size()];
     argList.toArray(args);
     return args;
@@ -76,14 +77,14 @@ public class CliHelper
 
   /**
    * Combines one or more {@link OptionData} objects into a command line that,
-   * when parsed, would produce the the given options.
-   * Any options that are null are ignored.
+   * when parsed, would produce the the given options. Any options that are null
+   * are ignored.
    *
    * @param  options  One or more command line options.
    *
    * @return  Composite command line built from given options.
    */
-  public static String toCommandLine(final OptionData ... options)
+  public static String toCommandLine(final OptionData... options)
   {
     final StringBuilder sb = new StringBuilder();
     int i = 0;

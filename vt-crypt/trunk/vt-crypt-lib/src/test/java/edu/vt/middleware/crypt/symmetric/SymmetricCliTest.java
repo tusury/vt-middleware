@@ -1,15 +1,15 @@
 /*
-  $Id: SymmetricCliTest.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.symmetric;
 
@@ -120,7 +120,10 @@ public class SymmetricCliTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"cli", "symmetric"}, dataProvider = "testdata")
+  @Test(
+    groups = {"cli", "symmetric"},
+    dataProvider = "testdata"
+  )
   public void testSymmetricCli(final String cliFragment, final String nameId)
     throws Exception
   {
@@ -168,7 +171,10 @@ public class SymmetricCliTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"cli", "symmetric"}, dataProvider = "testdatapbe")
+  @Test(
+    groups = {"cli", "symmetric"},
+    dataProvider = "testdatapbe"
+  )
   public void testSymmetricCliPbe(final String cliFragment, final String nameId)
     throws Exception
   {

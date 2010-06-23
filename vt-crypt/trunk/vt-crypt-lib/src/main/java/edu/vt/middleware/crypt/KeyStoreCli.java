@@ -1,15 +1,15 @@
 /*
-  $Id: KeyStoreCli.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt;
 
@@ -161,7 +161,8 @@ public class KeyStoreCli extends AbstractCli
 
 
   /** {@inheritDoc} */
-  protected void dispatch(final CommandLine line) throws Exception
+  protected void dispatch(final CommandLine line)
+    throws Exception
   {
     if (line.hasOption(OPT_LIST)) {
       list(line);
@@ -247,7 +248,7 @@ public class KeyStoreCli extends AbstractCli
 
       final Certificate[] chain = CryptReader.readCertificateChain(certFile);
       System.err.println(
-          "Read certificate chain of length " + chain.length + ":");
+        "Read certificate chain of length " + chain.length + ":");
       for (int i = 0; i < chain.length; i++) {
         System.out.println("===== Certificate [" + i + "] =====");
         printCertificate(chain[i]);

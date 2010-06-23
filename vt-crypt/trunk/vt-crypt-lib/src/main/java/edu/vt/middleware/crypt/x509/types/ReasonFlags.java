@@ -1,15 +1,15 @@
 /*
-  $Id: ReasonFlags.java 427 2009-08-12 16:41:24Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 427 $
-  Updated: $Date: 2009-08-12 12:41:24 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -17,15 +17,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Representation of the <code>ReasonFlags</code> type defined in
- * section 4.2.1.14 of RFC 2459.
+ * Representation of the <code>ReasonFlags</code> type defined in section
+ * 4.2.1.14 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 427 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 427 $
  */
 public class ReasonFlags extends BitString
 {
+
   /**
    * Creates a new instance with the given <code>ReasonFlags</code> bit string.
    *
@@ -47,9 +47,8 @@ public class ReasonFlags extends BitString
   /**
    * Creates a new instance from OR-ing {@link ReasonFlagsBits} bitmask values.
    *
-   * @param  flags  Bit mask created by OR-ing the bitmask of
-   * {@link ReasonFlagsBits} enum values together, e.g.
-   * <code>
+   * @param  flags  Bit mask created by OR-ing the bitmask of {@link
+   * ReasonFlagsBits} enum values together, e.g. <code>
    * Reasons.KeyCompromise.getMask()|ReasonsBits.CessationOfOperation.getMask()
    * </code>
    */
@@ -63,8 +62,8 @@ public class ReasonFlags extends BitString
    * Creates a new instance that has all the given {@link ReasonFlagsBits} bits
    * set.
    *
-   * @param  reasons  Array of {@link Reasons} describing all key usage bits
-   * to be set.
+   * @param  reasons  Array of {@link Reasons} describing all key usage bits to
+   * be set.
    */
   public ReasonFlags(final Reasons[] reasons)
   {
@@ -79,13 +78,13 @@ public class ReasonFlags extends BitString
   /**
    * Gets a collection of the bits set for this instance.
    *
-   * @return  Collection of {@link Reasons} items representing the bits
-   * that are set for this instance.
+   * @return  Collection of {@link Reasons} items representing the bits that are
+   * set for this instance.
    */
   public Collection<Reasons> getReasons()
   {
     final java.util.List<Reasons> bits = new ArrayList<Reasons>(
-        Reasons.values().length);
+      Reasons.values().length);
     final int intValue = intValue();
     for (Reasons bit : Reasons.values()) {
       if ((bit.getMask() & intValue) != 0) {
@@ -97,8 +96,8 @@ public class ReasonFlags extends BitString
 
 
   /**
-   * @return  List of all reason bits set in this object, e.g.
-   * [KeyCompromise, CessationOfOperation].
+   * @return  List of all reason bits set in this object, e.g. [KeyCompromise,
+   * CessationOfOperation].
    */
   @Override
   public String toString()

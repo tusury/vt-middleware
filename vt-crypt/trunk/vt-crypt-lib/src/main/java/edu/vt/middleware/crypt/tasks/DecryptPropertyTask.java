@@ -1,21 +1,20 @@
 /*
-  $Id: DecryptPropertyTask.java 21 2009-01-08 19:17:39Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 21 $
-  Updated: $Date: 2009-01-08 14:17:39 -0500 (Thu, 08 Jan 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.tasks;
 
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.Base64Converter;
-
 import org.apache.tools.ant.BuildException;
 
 /**
@@ -29,9 +28,7 @@ public final class DecryptPropertyTask extends AbstractCryptTask
 {
 
 
-  /**
-   * <p>See @link{org.apache.tools.ant.Task}.</p>
-   */
+  /** <p>See @link{org.apache.tools.ant.Task}.</p> */
   public void execute()
   {
     try {

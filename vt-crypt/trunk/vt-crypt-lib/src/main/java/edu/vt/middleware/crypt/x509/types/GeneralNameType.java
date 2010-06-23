@@ -1,54 +1,53 @@
 /*
-  $Id: GeneralNameType.java 422 2009-08-07 19:46:07Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 422 $
-  Updated: $Date: 2009-08-07 15:46:07 -0400 (Fri, 07 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 /**
  * Representation of the options in the CHOICE element describing various
- * categories of the <code>GeneralName</code> type defined in
- * section 4.2.1.7 of RFC 2459.
+ * categories of the <code>GeneralName</code> type defined in section 4.2.1.7 of
+ * RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 422 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 422 $
  */
-public enum GeneralNameType
-{
-  /** otherName choice element */
+public enum GeneralNameType {
+
+  /** otherName choice element. */
   OtherName,
 
-  /** rfc822Name choice element */
+  /** rfc822Name choice element. */
   RFC822Name,
 
-  /** dNSName choice element */
+  /** dNSName choice element. */
   DNSName,
 
-  /** x400Address choice element */
+  /** x400Address choice element. */
   X400Address,
 
-  /** directoryName choice element */
+  /** directoryName choice element. */
   DirectoryName,
 
-  /** ediPartyName choice element */
+  /** ediPartyName choice element. */
   EdiPartyName,
 
-  /** uniformResourceIdentifier choice element */
+  /** uniformResourceIdentifier choice element. */
   UniformResourceIdentifier,
 
-  /** iPAddress choice element */
+  /** iPAddress choice element. */
   IPAddress,
 
-  /** registeredID choice element */
+  /** registeredID choice element. */
   RegisteredID;
 
 

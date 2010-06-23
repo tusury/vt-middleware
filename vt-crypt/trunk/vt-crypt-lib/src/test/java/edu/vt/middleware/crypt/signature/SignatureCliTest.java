@@ -1,15 +1,15 @@
 /*
-  $Id: SignatureCliTest.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.signature;
 
@@ -18,9 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-
 import edu.vt.middleware.crypt.CliHelper;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.Assert;
@@ -101,7 +99,10 @@ public class SignatureCliTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"cli", "signature"}, dataProvider = "testdata")
+  @Test(
+    groups = {"cli", "signature"},
+    dataProvider = "testdata"
+  )
   public void testSignatureCli(
     final String partialLine,
     final String pubKey,
@@ -122,6 +123,7 @@ public class SignatureCliTest
         "Testing signature CLI sign operation with command line:\n\t" +
         fullLine);
       SignatureCli.main(CliHelper.splitArgs(fullLine));
+
       final String sig = outStream.toString();
       Assert.assertTrue(sig.length() > 0);
 

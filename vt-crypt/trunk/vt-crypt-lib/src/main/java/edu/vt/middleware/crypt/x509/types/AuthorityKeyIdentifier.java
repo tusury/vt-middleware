@@ -1,15 +1,15 @@
 /*
-  $Id: AuthorityKeyIdentifier.java 427 2009-08-12 16:41:24Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 427 $
-  Updated: $Date: 2009-08-12 12:41:24 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -17,29 +17,29 @@ package edu.vt.middleware.crypt.x509.types;
  * Representation of the <code>AuthorityKeyIdentifier</code> type defined in
  * section 4.2.1.1 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 427 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 427 $
  */
 public class AuthorityKeyIdentifier
 {
-  /** Hash code scale factor */
+
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /** Identifies the key used by issuer to sign this cert */
+  /** Identifies the key used by issuer to sign this cert. */
   private KeyIdentifier keyIdentifier;
 
-  /** Isser names */
+  /** Isser names. */
   private GeneralNameList authorityCertIssuer;
 
-  /** Certificate serial number of issuer cert */
+  /** Certificate serial number of issuer cert. */
   private Integer authorityCertSerialNumber;
 
 
   /**
-   * Creates an empty authority key identifier.  Although this is technically
-   * supported by RFC 2459, an empty authority key identifier is meaningless.
-   * We support it here to be strictly conformant with the RFC.
+   * Creates an empty authority key identifier. Although this is technically
+   * supported by RFC 2459, an empty authority key identifier is meaningless. We
+   * support it here to be strictly conformant with the RFC.
    */
   public AuthorityKeyIdentifier() {}
 
@@ -74,8 +74,8 @@ public class AuthorityKeyIdentifier
 
 
   /**
-   * @return  Key identifier of issuer public key matching private key used
-   * to sign the certificate.
+   * @return  Key identifier of issuer public key matching private key used to
+   * sign the certificate.
    */
   public KeyIdentifier getKeyIdentifier()
   {
@@ -83,18 +83,14 @@ public class AuthorityKeyIdentifier
   }
 
 
-  /**
-   * @return  General names by which issuer is known.
-   */
+  /** @return  General names by which issuer is known. */
   public GeneralNameList getAuthorityCertIssuer()
   {
     return authorityCertIssuer;
   }
 
 
-  /**
-   * @return  Issuer certificate serial number.
-   */
+  /** @return  Issuer certificate serial number. */
   public Integer getAuthorityCertSerialNumber()
   {
     return authorityCertSerialNumber;
@@ -142,17 +138,16 @@ public class AuthorityKeyIdentifier
       result = false;
     } else {
       final AuthorityKeyIdentifier other = (AuthorityKeyIdentifier) obj;
-      result =
-        (keyIdentifier != null
-          ? keyIdentifier.equals(other.getKeyIdentifier())
-          : other.getKeyIdentifier() == null) &&
-        (authorityCertIssuer != null
-          ? authorityCertIssuer.equals(other.getAuthorityCertIssuer())
-          : other.getAuthorityCertIssuer() == null) &&
-        (authorityCertSerialNumber != null
-          ? authorityCertSerialNumber.equals(
+      result = (keyIdentifier != null
+        ? keyIdentifier.equals(other.getKeyIdentifier())
+        : other.getKeyIdentifier() == null) &&
+          (authorityCertIssuer != null
+            ? authorityCertIssuer.equals(other.getAuthorityCertIssuer())
+            : other.getAuthorityCertIssuer() == null) &&
+          (authorityCertSerialNumber != null
+            ? authorityCertSerialNumber.equals(
               other.getAuthorityCertSerialNumber())
-          : other.getAuthorityCertSerialNumber() == null);
+            : other.getAuthorityCertSerialNumber() == null);
     }
     return result;
   }

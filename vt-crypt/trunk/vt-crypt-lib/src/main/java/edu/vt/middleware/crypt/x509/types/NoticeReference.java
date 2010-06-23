@@ -1,37 +1,39 @@
 /*
-  $Id: NoticeReference.java 427 2009-08-12 16:41:24Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 427 $
-  Updated: $Date: 2009-08-12 12:41:24 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 import java.util.Arrays;
 
 /**
- * Representation of the <code>NoticeReference</code> type defined
- * in section 4.2.1.5 of RFC 2459.
+ * Representation of the <code>NoticeReference</code> type defined in section
+ * 4.2.1.5 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 427 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 427 $
  */
 public class NoticeReference
 {
-  /** Hash code scale factor */
+
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /** Organization name */
+  /** Organization name. */
   private String organization;
 
-  /** Notice numbers that typically identify blocks of text within a document */
+  /**
+   * Notice numbers that typically identify blocks of text within a document.
+   */
   private int[] noticeNumbers;
 
 
@@ -58,9 +60,7 @@ public class NoticeReference
   }
 
 
-  /**
-   * @return  Organization name associated with the reference.
-   */
+  /** @return  Organization name associated with the reference. */
   public String getOrganization()
   {
     return organization;
@@ -69,7 +69,7 @@ public class NoticeReference
 
   /**
    * @return  Array of integers that typically identify locations in a document
-   * belonging to the organization.  A common use case is for application
+   * belonging to the organization. A common use case is for application
    * software to display the blocks of text from a referenced document at
    * locations specified by this field.
    */
@@ -79,14 +79,12 @@ public class NoticeReference
   }
 
 
-  /**
-   * @return  Tuple of the organization name and notice numbers.
-   */
+  /** @return  Tuple of the organization name and notice numbers. */
   @Override
   public String toString()
   {
-    return String.format("(%s, %s)",
-        organization, Arrays.toString(noticeNumbers));
+    return
+      String.format("(%s, %s)", organization, Arrays.toString(noticeNumbers));
   }
 
 
@@ -102,7 +100,7 @@ public class NoticeReference
     } else {
       final NoticeReference other = (NoticeReference) obj;
       result = other.getOrganization().equals(organization) &&
-        Arrays.equals(other.getNoticeNumbers(), noticeNumbers);
+          Arrays.equals(other.getNoticeNumbers(), noticeNumbers);
     }
     return result;
   }

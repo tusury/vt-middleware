@@ -1,41 +1,41 @@
 /*
-  $Id: UserNotice.java 427 2009-08-12 16:41:24Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 427 $
-  Updated: $Date: 2009-08-12 12:41:24 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Representation of the <code>UserNotice</code> type defined in
- * section 4.2.1.5 of RFC 2459.
+ * Representation of the <code>UserNotice</code> type defined in section 4.2.1.5
+ * of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 427 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 427 $
  */
 public class UserNotice
 {
-  /** Hash code scale factor */
+
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /** Optional notice reference */
+  /** Optional notice reference. */
   private NoticeReference noticeRef;
 
-  /** Optional text */
+  /** Optional text. */
   private String explicitText;
 
 
   /**
-   * Creates an empty user notice.  Although this is technically supported by
-   * RFC 2459, an empty user notice is meaningless.  We support it here to be
+   * Creates an empty user notice. Although this is technically supported by RFC
+   * 2459, an empty user notice is meaningless. We support it here to be
    * strictly conformant with the RFC.
    */
   public UserNotice() {}
@@ -64,8 +64,8 @@ public class UserNotice
 
 
   /**
-   * Creates a new instance with the given notice reference and explicit
-   * display text.
+   * Creates a new instance with the given notice reference and explicit display
+   * text.
    *
    * @param  ref  Notice reference.
    * @param  text  Explicit display text.
@@ -77,18 +77,14 @@ public class UserNotice
   }
 
 
-  /**
-   * @return  The notice reference if defined otherwise null.
-   */
+  /** @return  The notice reference if defined otherwise null. */
   public NoticeReference getNoticeRef()
   {
     return noticeRef;
   }
 
 
-  /**
-   * @return  Explicit text for display if defined otherwise null.
-   */
+  /** @return  Explicit text for display if defined otherwise null. */
   public String getExplicitText()
   {
     return explicitText;
@@ -130,13 +126,10 @@ public class UserNotice
       result = false;
     } else {
       final UserNotice other = (UserNotice) obj;
-      result =
-        (noticeRef != null
-          ? noticeRef.equals(other.getNoticeRef())
-          : other.getNoticeRef() == null) &&
-        (explicitText != null
-          ? noticeRef.equals(other.getNoticeRef())
-          : other.getNoticeRef() == null);
+      result = (noticeRef != null ? noticeRef.equals(other.getNoticeRef())
+                                  : other.getNoticeRef() == null) &&
+          (explicitText != null ? noticeRef.equals(other.getNoticeRef())
+                                : other.getNoticeRef() == null);
     }
     return result;
   }

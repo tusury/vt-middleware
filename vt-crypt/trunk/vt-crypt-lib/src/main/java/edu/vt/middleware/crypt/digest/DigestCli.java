@@ -1,15 +1,15 @@
 /*
-  $Id: DigestCli.java 16 2008-11-18 15:59:02Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 16 $
-  Updated: $Date: 2008-11-18 10:59:02 -0500 (Tue, 18 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.digest;
 
@@ -95,7 +95,8 @@ public class DigestCli extends AbstractCli
 
 
   /** {@inheritDoc} */
-  protected void dispatch(final CommandLine line) throws Exception
+  protected void dispatch(final CommandLine line)
+    throws Exception
   {
     if (line.hasOption(OPT_ALG)) {
       digest(line);

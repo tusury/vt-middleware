@@ -1,99 +1,97 @@
 /*
-  $Id: AttributeType.java 578 2009-09-08 19:10:23Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 578 $
-  Updated: $Date: 2009-09-08 15:10:23 -0400 (Tue, 08 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Describes the registered values of AttributeType that may appear in
- * a RelativeDistinguishedName as defined in section 2 of RFC 2253.
- * The values here were obtained from
- * http://www.iana.org/assignments/ldap-parameters and only contain the
- * attribute types most likely to appear in an RDN.
+ * Describes the registered values of AttributeType that may appear in a
+ * RelativeDistinguishedName as defined in section 2 of RFC 2253. The values
+ * here were obtained from http://www.iana.org/assignments/ldap-parameters and
+ * only contain the attribute types most likely to appear in an RDN.
  *
- * @author Middleware
- * @version $Revision: 578 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 578 $
  */
-public enum AttributeType
-{
-  /** CN attribute type */
+public enum AttributeType {
+
+  /** CN attribute type. */
   CommonName("2.5.4.3", "CN"),
 
-  /** C attribute type */
+  /** C attribute type. */
   CountryName("2.5.4.6", "C"),
 
-  /** DNQUALIFIER attribute type */
+  /** DNQUALIFIER attribute type. */
   DnQualifier("2.5.4.46", "DNQUALIFIER"),
 
-  /** DC attribute type */
+  /** DC attribute type. */
   DomainComponent("0.9.2342.19200300.100.1.25", "DC"),
 
-  /** GIVENNAME attribute type */
+  /** GIVENNAME attribute type. */
   GivenName("2.5.4.42", "GIVENNAME"),
 
-  /** INITIALS attribute type */
+  /** INITIALS attribute type. */
   Initials("2.5.4.43", "INITIALS"),
 
-  /** L attribute type */
+  /** L attribute type. */
   LocalityName("2.5.4.7", "L"),
 
-  /** MAIL attribute type */
+  /** MAIL attribute type. */
   Mail("0.9.2342.19200300.100.1.3", "MAIL"),
 
-  /** NAME attribute type */
+  /** NAME attribute type. */
   Name("2.5.4.41", "NAME"),
 
-  /** O attribute type */
+  /** O attribute type. */
   OrganizationName("2.5.4.10", "O"),
 
-  /** OU attribute type */
+  /** OU attribute type. */
   OrganizationalUnitName("2.5.4.11", "OU"),
 
-  /** POSTALADDRESS attribute type */
+  /** POSTALADDRESS attribute type. */
   PostalAddress("2.5.4.16", "POSTALADDRESS"),
 
-  /** POSTALCODE attribute type */
+  /** POSTALCODE attribute type. */
   PostalCode("2.5.4.17", "POSTALCODE"),
 
-  /** POSTOFFICEBOX attribute type */
+  /** POSTOFFICEBOX attribute type. */
   PostOfficeBox("2.5.4.18", "POSTOFFICEBOX"),
 
-  /** SERIALNUMBER attribute type */
+  /** SERIALNUMBER attribute type. */
   SerialNumber("2.5.4.5", "SERIALNUMBER"),
 
-  /** ST attribute type */
+  /** ST attribute type. */
   StateOrProvinceName("2.5.4.8", "ST"),
 
-  /** STREET attribute type */
+  /** STREET attribute type. */
   StreetAddress("2.5.4.9", "STREET"),
 
-  /** SN attribute type */
+  /** SN attribute type. */
   Surname("2.5.4.4", "STREET"),
 
-  /** TITLE attribute type */
+  /** TITLE attribute type. */
   Title("2.5.4.12", "TITLE"),
 
-  /** UNIQUEIDENTIFIER attribute type */
+  /** UNIQUEIDENTIFIER attribute type. */
   UniqueIdentifier("0.9.2342.19200300.100.1.44", "UNIQUEIDENTIFIER"),
 
-  /** UID attribute type */
+  /** UID attribute type. */
   UserId("0.9.2342.19200300.100.1.1", "UID");
 
 
-  /** OID of RDN attribute type */
+  /** OID of RDN attribute type. */
   private String oid;
 
-  /** Display string of the type in an RDN */
+  /** Display string of the type in an RDN. */
   private String name;
 
 
@@ -110,18 +108,14 @@ public enum AttributeType
   }
 
 
-  /**
-   * @return  OID of attribute type.
-   */
+  /** @return  OID of attribute type. */
   public String getOid()
   {
     return oid;
   }
 
 
-  /**
-   * @return  Registered short name of attribute type.
-   */
+  /** @return  Registered short name of attribute type. */
   public String getName()
   {
     return name;

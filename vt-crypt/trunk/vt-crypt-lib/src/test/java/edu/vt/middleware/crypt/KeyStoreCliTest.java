@@ -1,15 +1,15 @@
 /*
-  $Id: KeyStoreCliTest.java 590 2009-09-09 20:11:19Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 590 $
-  Updated: $Date: 2009-09-09 16:11:19 -0400 (Wed, 09 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt;
 
@@ -149,15 +149,18 @@ public class KeyStoreCliTest
 
   /**
    * @param  keyStore  Keystore file.
-   * @param  storeType  Keystore type.  Uses default type if null.
+   * @param  storeType  Keystore type. Uses default type if null.
    * @param  cert  Certificate file.
    * @param  privKey  Private key file.
-   * @param  keyAlg  Key algorithm name.  Uses default key type if null.
+   * @param  keyAlg  Key algorithm name. Uses default key type if null.
    * @param  alias  Alias of keypair inside keystore.
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"cli", "keystore"}, dataProvider = "keypairdata")
+  @Test(
+    groups = {"cli", "keystore"},
+    dataProvider = "keypairdata"
+  )
   public void testImportExportKeyPair(
     final String keyStore,
     final String storeType,
@@ -176,12 +179,10 @@ public class KeyStoreCliTest
 
     final OptionData keyStoreOption = new OptionData("keystore", keyStorePath);
     final OptionData storeTypeOption = storeType == null
-      ? null
-      : new OptionData("storetype", storeType);
+      ? null : new OptionData("storetype", storeType);
     final OptionData storePassOption = new OptionData("storepass", "changeit");
     final OptionData keyAlgOption = keyAlg == null
-      ? null
-      : new OptionData("keyalg", keyAlg);
+      ? null : new OptionData("keyalg", keyAlg);
     final OptionData aliasOption = new OptionData("alias", alias);
 
     final OptionData[] listOptions = new OptionData[] {
@@ -216,7 +217,7 @@ public class KeyStoreCliTest
 
       logger.info(
         "Importing keypair into keystore with command line " +
-          CliHelper.toCommandLine(importOptions));
+        CliHelper.toCommandLine(importOptions));
       KeyStoreCli.main(CliHelper.toArgs(importOptions));
       AssertJUnit.assertTrue(new File(keyStorePath).exists());
 
@@ -232,7 +233,7 @@ public class KeyStoreCliTest
 
       logger.info(
         "Exporting keypair from keystore with command line " +
-          CliHelper.toCommandLine(exportOptions));
+        CliHelper.toCommandLine(exportOptions));
       KeyStoreCli.main(CliHelper.toArgs(exportOptions));
       AssertJUnit.assertTrue(new File(exportCertPath).exists());
       AssertJUnit.assertTrue(new File(exportKeyPath).exists());
@@ -245,12 +246,15 @@ public class KeyStoreCliTest
 
   /**
    * @param  keyStore  Path to JKS keystore file.
-   * @param  storeType  Keystore type.  Uses default type if null.
+   * @param  storeType  Keystore type. Uses default type if null.
    * @param  cert  Certificate/certificate chain file.
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"cli", "keystore"}, dataProvider = "trustedcertdata")
+  @Test(
+    groups = {"cli", "keystore"},
+    dataProvider = "trustedcertdata"
+  )
   public void testImportTrustedCert(
     final String keyStore,
     final String storeType,
@@ -265,8 +269,7 @@ public class KeyStoreCliTest
     final String testAlias = "testng";
     final OptionData keyStoreOption = new OptionData("keystore", keyStorePath);
     final OptionData storeTypeOption = storeType == null
-      ? null
-      : new OptionData("storetype", storeType);
+      ? null : new OptionData("storetype", storeType);
     final OptionData storePassOption = new OptionData("storepass", "changeit");
     final OptionData aliasOption = new OptionData("alias", testAlias);
     final OptionData[] listOptions = new OptionData[] {
@@ -289,7 +292,7 @@ public class KeyStoreCliTest
 
       logger.info(
         "Importing trusted cert into keystore with command line " +
-          CliHelper.toCommandLine(importOptions));
+        CliHelper.toCommandLine(importOptions));
       KeyStoreCli.main(CliHelper.toArgs(importOptions));
       AssertJUnit.assertTrue(new File(keyStorePath).exists());
 

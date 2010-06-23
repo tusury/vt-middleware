@@ -1,15 +1,15 @@
 /*
-  $Id: RelativeDistinguishedNameTest.java 578 2009-09-08 19:10:23Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 578 $
-  Updated: $Date: 2009-09-08 15:10:23 -0400 (Tue, 08 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -20,12 +20,12 @@ import org.testng.annotations.Test;
 /**
  * Unit test for {@link RelativeDistinguishedName} class.
  *
- * @author Middleware
- * @version $Revision: 578 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 578 $
  */
 public class RelativeDistinguishedNameTest
 {
+
   /**
    * @return  RDN test data.
    *
@@ -35,23 +35,24 @@ public class RelativeDistinguishedNameTest
   public Object[][] createRDNTestData()
     throws Exception
   {
-    return new Object[][] {
-      {
-        new RelativeDistinguishedName(
+    return
+      new Object[][] {
+        {
+          new RelativeDistinguishedName(
             new AttributeTypeAndValue(AttributeType.DomainComponent, "vt")),
-        "DC=vt",
-      },
-      {
-        new RelativeDistinguishedName(
-          new AttributeTypeAndValue[] {
-            new AttributeTypeAndValue(
-                AttributeType.OrganizationalUnitName, "Sales"),
-            new AttributeTypeAndValue(
-                AttributeType.CommonName, "J. Smith"),
-          }),
-        "OU=Sales+CN=J. Smith",
-      },
-    };
+          "DC=vt",
+        },
+        {
+          new RelativeDistinguishedName(
+            new AttributeTypeAndValue[] {
+              new AttributeTypeAndValue(
+                AttributeType.OrganizationalUnitName,
+                "Sales"),
+              new AttributeTypeAndValue(AttributeType.CommonName, "J. Smith"),
+            }),
+          "OU=Sales+CN=J. Smith",
+        },
+      };
   }
 
 
@@ -59,7 +60,10 @@ public class RelativeDistinguishedNameTest
    * @param  rdn  Test value to perform toString() on.
    * @param  expected  Expected string value.
    */
-  @Test(groups = {"functest", "x509"}, dataProvider = "rdndata")
+  @Test(
+    groups = {"functest", "x509"},
+    dataProvider = "rdndata"
+  )
   public void testToString(
     final RelativeDistinguishedName rdn,
     final String expected)

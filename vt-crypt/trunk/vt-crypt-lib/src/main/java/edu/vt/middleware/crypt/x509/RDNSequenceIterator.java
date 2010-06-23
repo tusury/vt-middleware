@@ -1,46 +1,45 @@
 /*
-  $Id: RDNSequenceIterator.java 578 2009-09-08 19:10:23Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 578 $
-  Updated: $Date: 2009-09-08 15:10:23 -0400 (Tue, 08 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.RelativeDistinguishedName;
-
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERObject;
 
 /**
- * Iterates over an ASN.1 encoded RelativeDistinguishedName sequence
- * in reverse order as specified in section 2.1 of RFC 2253 for converting
- * an ASN.1 representation of an RDN sequence to a string.
+ * Iterates over an ASN.1 encoded RelativeDistinguishedName sequence in reverse
+ * order as specified in section 2.1 of RFC 2253 for converting an ASN.1
+ * representation of an RDN sequence to a string.
  *
- * @author Middleware
- * @version $Revision: 578 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 578 $
  */
-public class RDNSequenceIterator implements Iterator<RelativeDistinguishedName>,
-  Iterable<RelativeDistinguishedName>
+public class RDNSequenceIterator
+  implements Iterator<RelativeDistinguishedName>,
+    Iterable<RelativeDistinguishedName>
 {
-  /** RDN sequence */
+
+  /** RDN sequence. */
   private final ASN1Sequence sequence;
 
-  /** Current iterator position */
+  /** Current iterator position. */
   private int position;
 
 
@@ -82,6 +81,7 @@ public class RDNSequenceIterator implements Iterator<RelativeDistinguishedName>,
     if (!hasNext()) {
       throw new NoSuchElementException("Reached end of iterator.");
     }
+
     final DEREncodable enc = sequence.getObjectAt(position--);
     if (!(enc instanceof ASN1Set)) {
       throw new IllegalStateException("Next item is not an ASN.1 set.");
@@ -115,8 +115,8 @@ public class RDNSequenceIterator implements Iterator<RelativeDistinguishedName>,
    *
    * @return  ASN.1 sequence object.
    *
-   * @throws  IllegalArgumentException  If data is not encoded bytes of an
-   * ASN.1 sequence.
+   * @throws  IllegalArgumentException  If data is not encoded bytes of an ASN.1
+   * sequence.
    */
   private static ASN1Sequence toASN1Sequence(final byte[] data)
   {
@@ -125,13 +125,14 @@ public class RDNSequenceIterator implements Iterator<RelativeDistinguishedName>,
       obj = CryptReader.readEncodedBytes(data, false);
     } catch (IOException e) {
       throw new IllegalArgumentException(
-          "Error creating ASN.1 sequence from encoded bytes.", e);
+        "Error creating ASN.1 sequence from encoded bytes.",
+        e);
     }
     if (obj instanceof ASN1Sequence) {
       return (ASN1Sequence) obj;
     } else {
       throw new IllegalArgumentException(
-          "Encoded data is not an ASN.1 sequence.");
+        "Encoded data is not an ASN.1 sequence.");
     }
   }
 }

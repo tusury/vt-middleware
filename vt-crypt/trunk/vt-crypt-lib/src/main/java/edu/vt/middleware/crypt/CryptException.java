@@ -1,15 +1,15 @@
 /*
-  $Id: CryptException.java 3 2008-11-11 20:58:48Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 3 $
-  Updated: $Date: 2008-11-11 15:58:48 -0500 (Tue, 11 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt;
 
@@ -28,9 +28,7 @@ public final class CryptException extends Exception
   private static final long serialVersionUID = -1041478966786912109L;
 
 
-  /**
-   * <p>This creates a new <code>CryptException</code>.</p>
-   */
+  /** <p>This creates a new <code>CryptException</code>.</p> */
   public CryptException() {}
 
 

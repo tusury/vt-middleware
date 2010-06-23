@@ -1,53 +1,54 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2009 Virginia Tech
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
 package edu.vt.middleware.crypt.maven;
 
 import java.io.File;
-
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.CryptWriter;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * Maven goal which creates a symmetric encryption/decription key file
- * using a configurable symmetric encryption algorithm.
- * @author Marvin S. Addison
- * @version $Revison: $
+ * Maven goal which creates a symmetric encryption/decription key file using a
+ * configurable symmetric encryption algorithm.
  *
- * @goal genkey
+ * @author  Middleware Services
+ * @version  $Revison: $
+ * @goal  genkey
  */
 public class GenkeyMojo extends AbstractMojo
 {
+
   /**
    * Project-relative location of encryption/decryption key file.
-   * @parameter expression="${keyFile}"
+   *
+   * @parameter  expression="${keyFile}"
    * @required
    */
   protected File keyFile;
 
   /**
    * Symmetric encryption algorithm, e.g. DES, AES, Blowfish.
-   * @parameter expression="${algorithm}"
-   * default-value="AES"
+   *
+   * @parameter  expression="${algorithm}" default-value="AES"
    */
   protected String algorithm;
 
   /**
    * Size of key to be generated in bits.
-   * @parameter expression="${keySize}"
+   *
+   * @parameter  expression="${keySize}"
    * @required
    */
   protected int keySize;
@@ -55,13 +56,16 @@ public class GenkeyMojo extends AbstractMojo
 
   /**
    * Performs the key generation process.
-   * @throws MojoExecutionException on any error.
+   *
+   * @throws  MojoExecutionException  on any error.
    */
-  public void execute() throws MojoExecutionException
+  public void execute()
+    throws MojoExecutionException
   {
     if (algorithm == null) {
       throw new IllegalStateException("Must specify cipher algorithm.");
     }
+
     final SymmetricAlgorithm cipher = SymmetricAlgorithm.newInstance(algorithm);
     getLog().info("Generating key with bit length " + keySize);
     try {

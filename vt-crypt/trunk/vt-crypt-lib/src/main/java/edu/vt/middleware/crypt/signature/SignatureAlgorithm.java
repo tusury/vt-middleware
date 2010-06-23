@@ -1,15 +1,15 @@
 /*
-  $Id: SignatureAlgorithm.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.signature;
 
@@ -36,7 +36,7 @@ import edu.vt.middleware.crypt.util.Converter;
 public class SignatureAlgorithm extends AbstractAlgorithm
 {
 
-  /** Map of signature algorithm names to classes */
+  /** Map of signature algorithm names to classes. */
   private static final Map<String, Class<? extends SignatureAlgorithm>>
   NAME_CLASS_MAP = new HashMap<String, Class<? extends SignatureAlgorithm>>();
 
@@ -80,8 +80,8 @@ public class SignatureAlgorithm extends AbstractAlgorithm
    */
   public static SignatureAlgorithm newInstance(final String algorithm)
   {
-    final Class<? extends SignatureAlgorithm> clazz =
-      NAME_CLASS_MAP.get(algorithm.toUpperCase());
+    final Class<? extends SignatureAlgorithm> clazz = NAME_CLASS_MAP.get(
+      algorithm.toUpperCase());
     if (clazz == null) {
       throw new IllegalArgumentException(
         "Signature " + algorithm + " is not available.");
@@ -107,8 +107,8 @@ public class SignatureAlgorithm extends AbstractAlgorithm
     final String algorithm,
     final String digestAlgorithm)
   {
-    final Class<? extends SignatureAlgorithm> clazz =
-      NAME_CLASS_MAP.get(algorithm.toUpperCase());
+    final Class<? extends SignatureAlgorithm> clazz = NAME_CLASS_MAP.get(
+      algorithm.toUpperCase());
     if (clazz == null) {
       throw new IllegalArgumentException(
         "Signature " + algorithm + " is not available.");
@@ -116,8 +116,9 @@ public class SignatureAlgorithm extends AbstractAlgorithm
     try {
       final Constructor<? extends SignatureAlgorithm> cons =
         clazz.getConstructor(new Class[] {DigestAlgorithm.class});
-      return cons.newInstance(
-        new Object[] {DigestAlgorithm.newInstance(digestAlgorithm)});
+      return
+        cons.newInstance(
+          new Object[] {DigestAlgorithm.newInstance(digestAlgorithm)});
     } catch (Exception ex) {
       throw new IllegalArgumentException(ex.getMessage());
     }

@@ -1,15 +1,15 @@
 /*
-  $Id: PolicyQualifierInfo.java 427 2009-08-12 16:41:24Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 427 $
-  Updated: $Date: 2009-08-12 12:41:24 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -17,25 +17,25 @@ package edu.vt.middleware.crypt.x509.types;
  * Representation of the <code>PolicyQualifierInfo</code> type defined in
  * section 4.2.1.5 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 427 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 427 $
  */
 public class PolicyQualifierInfo
 {
-  /** OID for policy qualifier containing CPS URI */
+
+  /** OID for policy qualifier containing CPS URI. */
   public static final String POLICY_QUALIFIER_ID_CPS = "1.3.6.1.5.5.7.2.1";
 
-  /** OID for policy qualifier containing user notice */
+  /** OID for policy qualifier containing user notice. */
   public static final String POLICY_QUALIFIER_ID_UNOTICE = "1.3.6.1.5.5.7.2.2";
 
-  /** Hash code scale factor */
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /** Policy qualifier OID */
+  /** Policy qualifier OID. */
   private String policyQualifierId;
 
-  /** Qualifier data -- either UserNotice or String containing CPS URI */
+  /** Qualifier data -- either UserNotice or String containing CPS URI. */
   private Object qualifier;
 
 
@@ -70,9 +70,7 @@ public class PolicyQualifierInfo
   }
 
 
-  /**
-   * @return  Policy qualifier OID.
-   */
+  /** @return  Policy qualifier OID. */
   public String getPolicyQualifierId()
   {
     return policyQualifierId;
@@ -116,7 +114,7 @@ public class PolicyQualifierInfo
     } else {
       final PolicyQualifierInfo other = (PolicyQualifierInfo) obj;
       result = policyQualifierId.equals(other.getPolicyQualifierId()) &&
-        qualifier.equals(other.getQualifier());
+          qualifier.equals(other.getQualifier());
     }
     return result;
   }

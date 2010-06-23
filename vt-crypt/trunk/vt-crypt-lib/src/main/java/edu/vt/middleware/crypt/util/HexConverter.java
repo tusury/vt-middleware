@@ -1,15 +1,15 @@
 /*
-  $Id: HexConverter.java 3 2008-11-11 20:58:48Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 3 $
-  Updated: $Date: 2008-11-11 15:58:48 -0500 (Tue, 11 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.util;
 
@@ -62,11 +62,11 @@ public class HexConverter extends AbstractEncodingConverter
    * Call {@link #setByteDelimiter(String)} to use a delimiter other than {@link
    * #DEFAULT_BYTE_DELIMITER}.
    *
-   * <p>Note: Setting delimited output has the side effect of producing
-   * uppercase hex characters. This is because several cryptographic utilities
-   * produce delimited fingerprints with uppercase hex characters, so delimited
-   * output keeps with that convention since it is anticipated to be the common
-   * use case for this feature.</p>
+   * <p>Note: Setting delimited output has the side effect of
+   * producing uppercase hex characters. This is because several cryptographic
+   * utilities produce delimited fingerprints with uppercase hex characters, so
+   * delimited output keeps with that convention since it is anticipated to be
+   * the common use case for this feature.</p>
    */
   public HexConverter(final boolean delimitBytes)
   {

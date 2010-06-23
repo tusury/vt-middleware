@@ -1,15 +1,15 @@
 /*
-  $Id: DigestAlgorithmTest.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.digest;
 
@@ -63,9 +63,7 @@ public class DigestAlgorithmTest
   private final Log logger = LogFactory.getLog(this.getClass());
 
 
-  /**
-   * @return  Test data.
-   */
+  /** @return  Test data. */
   @DataProvider(name = "testdata")
   public Object[][] createTestData()
   {
@@ -109,58 +107,56 @@ public class DigestAlgorithmTest
     final Whirlpool whirlpool = new Whirlpool();
     whirlpool.setRandomProvider(secrnd);
 
-    return new Object[][] {
-      {md2, null},
-      {md2, md2.getRandomSalt()},
-      {md4, null},
-      {md4, md4.getRandomSalt()},
-      {md5, null},
-      {md5, md5.getRandomSalt()},
-      {ripeMD128, null},
-      {ripeMD128, ripeMD128.getRandomSalt()},
-      {ripeMD160, null},
-      {ripeMD160, ripeMD160.getRandomSalt()},
-      {ripeMD256, null},
-      {ripeMD256, ripeMD256.getRandomSalt()},
-      {ripeMD320, null},
-      {ripeMD320, ripeMD320.getRandomSalt()},
-      {sha1, null},
-      {sha1, sha1.getRandomSalt()},
-      {sha256, null},
-      {sha256, sha256.getRandomSalt()},
-      {sha384, null},
-      {sha384, sha384.getRandomSalt()},
-      {sha512, null},
-      {sha512, sha512.getRandomSalt()},
-      {tiger, null},
-      {tiger, tiger.getRandomSalt()},
-      {whirlpool, null},
-      {whirlpool, whirlpool.getRandomSalt()},
-    };
+    return
+      new Object[][] {
+        {md2, null},
+        {md2, md2.getRandomSalt()},
+        {md4, null},
+        {md4, md4.getRandomSalt()},
+        {md5, null},
+        {md5, md5.getRandomSalt()},
+        {ripeMD128, null},
+        {ripeMD128, ripeMD128.getRandomSalt()},
+        {ripeMD160, null},
+        {ripeMD160, ripeMD160.getRandomSalt()},
+        {ripeMD256, null},
+        {ripeMD256, ripeMD256.getRandomSalt()},
+        {ripeMD320, null},
+        {ripeMD320, ripeMD320.getRandomSalt()},
+        {sha1, null},
+        {sha1, sha1.getRandomSalt()},
+        {sha256, null},
+        {sha256, sha256.getRandomSalt()},
+        {sha384, null},
+        {sha384, sha384.getRandomSalt()},
+        {sha512, null},
+        {sha512, sha512.getRandomSalt()},
+        {tiger, null},
+        {tiger, tiger.getRandomSalt()},
+        {whirlpool, null},
+        {whirlpool, whirlpool.getRandomSalt()},
+      };
   }
 
 
-  /**
-   * @return  Test data.
-   */
+  /** @return  Test data. */
   @DataProvider(name = "testdataconv")
   public Object[][] createTestDataForConvert()
   {
     final MD5 md5 = new MD5();
     final SHA1 sha1 = new SHA1();
 
-    return new Object[][] {
-      {md5, new HexConverter()},
-      {md5, new Base64Converter()},
-      {sha1, new HexConverter()},
-      {sha1, new Base64Converter()},
-    };
+    return
+      new Object[][] {
+        {md5, new HexConverter()},
+        {md5, new Base64Converter()},
+        {sha1, new HexConverter()},
+        {sha1, new Base64Converter()},
+      };
   }
 
 
-  /**
-   * @return  Test data.
-   */
+  /** @return  Test data. */
   @DataProvider(name = "testdataref")
   public Object[][] createTestDataForRefTest()
   {
@@ -177,7 +173,10 @@ public class DigestAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "digest"}, dataProvider = "testdata")
+  @Test(
+    groups = {"functest", "digest"},
+    dataProvider = "testdata"
+  )
   public void testDigest(final DigestAlgorithm digest, final byte[] salt)
     throws Exception
   {
@@ -200,7 +199,10 @@ public class DigestAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "digest"}, dataProvider = "testdataconv")
+  @Test(
+    groups = {"functest", "digest"},
+    dataProvider = "testdataconv"
+  )
   public void testDigestConvert(
     final DigestAlgorithm digest,
     final Converter converter)
@@ -222,7 +224,10 @@ public class DigestAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "digest"}, dataProvider = "testdataconv")
+  @Test(
+    groups = {"functest", "digest"},
+    dataProvider = "testdataconv"
+  )
   public void testDigestStream(
     final DigestAlgorithm digest,
     final Converter converter)
@@ -256,7 +261,10 @@ public class DigestAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "digest"}, dataProvider = "testdataref")
+  @Test(
+    groups = {"functest", "digest"},
+    dataProvider = "testdataref"
+  )
   public void testHashCalculationAgainstReference(final DigestAlgorithm digest)
     throws Exception
   {

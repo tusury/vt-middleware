@@ -1,15 +1,15 @@
 /*
-  $Id: SymmetricAlgorithmTest.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.symmetric;
 
@@ -77,35 +77,36 @@ public class SymmetricAlgorithmTest
     final Serpent serpent = new Serpent();
     final Skipjack skipjack = new Skipjack();
     final Twofish twofish = new Twofish();
-    return new Object[][] {
-      {aes, aes.generateKey()},
-      {aes, aes.generateKey(aes.getMinKeyLength())},
-      {aes, aes.generateKey(aes.getMinKeyLength())},
-      {blowfish, blowfish.generateKey()},
-      {blowfish, blowfish.generateKey(blowfish.getMinKeyLength())},
-      {cast5, cast5.generateKey()},
-      {cast5, cast5.generateKey(cast5.getMinKeyLength())},
-      {cast6, cast6.generateKey(cast6.getMinKeyLength())},
-      {des, des.generateKey()},
-      {desede, desede.generateKey()},
-      {rc2, rc2.generateKey()},
-      {rc2, rc2.generateKey(rc2.getMinKeyLength())},
-      {rc4, rc4.generateKey(rc4.getMaxKeyLength())},
-      {rc4, rc4.generateKey()},
-      {rc4, rc4.generateKey(rc4.getMinKeyLength())},
-      {rc5, rc5.generateKey(rc5.getMaxKeyLength())},
-      {rc5, rc5.generateKey()},
-      {rc5, rc5.generateKey(rc5.getMinKeyLength())},
-      {rc6, rc6.generateKey()},
-      {rc6, rc6.generateKey(rc6.getMinKeyLength())},
-      {rijndael, rijndael.generateKey()},
-      {rijndael, rijndael.generateKey(rijndael.getMinKeyLength())},
-      {serpent, serpent.generateKey()},
-      {serpent, serpent.generateKey(serpent.getMinKeyLength())},
-      {skipjack, skipjack.generateKey()},
-      {twofish, twofish.generateKey()},
-      {twofish, twofish.generateKey(twofish.getMinKeyLength())},
-    };
+    return
+      new Object[][] {
+        {aes, aes.generateKey()},
+        {aes, aes.generateKey(aes.getMinKeyLength())},
+        {aes, aes.generateKey(aes.getMinKeyLength())},
+        {blowfish, blowfish.generateKey()},
+        {blowfish, blowfish.generateKey(blowfish.getMinKeyLength())},
+        {cast5, cast5.generateKey()},
+        {cast5, cast5.generateKey(cast5.getMinKeyLength())},
+        {cast6, cast6.generateKey(cast6.getMinKeyLength())},
+        {des, des.generateKey()},
+        {desede, desede.generateKey()},
+        {rc2, rc2.generateKey()},
+        {rc2, rc2.generateKey(rc2.getMinKeyLength())},
+        {rc4, rc4.generateKey(rc4.getMaxKeyLength())},
+        {rc4, rc4.generateKey()},
+        {rc4, rc4.generateKey(rc4.getMinKeyLength())},
+        {rc5, rc5.generateKey(rc5.getMaxKeyLength())},
+        {rc5, rc5.generateKey()},
+        {rc5, rc5.generateKey(rc5.getMinKeyLength())},
+        {rc6, rc6.generateKey()},
+        {rc6, rc6.generateKey(rc6.getMinKeyLength())},
+        {rijndael, rijndael.generateKey()},
+        {rijndael, rijndael.generateKey(rijndael.getMinKeyLength())},
+        {serpent, serpent.generateKey()},
+        {serpent, serpent.generateKey(serpent.getMinKeyLength())},
+        {skipjack, skipjack.generateKey()},
+        {twofish, twofish.generateKey()},
+        {twofish, twofish.generateKey(twofish.getMinKeyLength())},
+      };
   }
 
   /**
@@ -259,10 +260,11 @@ public class SymmetricAlgorithmTest
     throws Exception
   {
     final AES aes = new AES();
-    return new Object[][] {
-      {aes, new HexConverter()},
-      {aes, new Base64Converter()},
-    };
+    return
+      new Object[][] {
+        {aes, new HexConverter()},
+        {aes, new Base64Converter()},
+      };
   }
 
 
@@ -311,7 +313,10 @@ public class SymmetricAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdata")
+  @Test(
+    groups = {"functest", "symmetric"},
+    dataProvider = "testdata"
+  )
   public void testEncryptDecryptText(
     final SymmetricAlgorithm symmetric,
     final Key key)
@@ -340,7 +345,10 @@ public class SymmetricAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdataconv")
+  @Test(
+    groups = {"functest", "symmetric"},
+    dataProvider = "testdataconv"
+  )
   public void testEncryptDecryptTextConverter(
     final SymmetricAlgorithm symmetric,
     final Converter converter)
@@ -369,7 +377,10 @@ public class SymmetricAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatastreams")
+  @Test(
+    groups = {"functest", "symmetric"},
+    dataProvider = "testdatastreams"
+  )
   public void testEncryptDecryptStream(final SymmetricAlgorithm symmetric)
     throws Exception
   {
@@ -408,7 +419,10 @@ public class SymmetricAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatastreams")
+  @Test(
+    groups = {"functest", "symmetric"},
+    dataProvider = "testdatastreams"
+  )
   public void testEncryptDecryptStreamHex(final SymmetricAlgorithm symmetric)
     throws Exception
   {
@@ -447,7 +461,10 @@ public class SymmetricAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatastreams")
+  @Test(
+    groups = {"functest", "symmetric"},
+    dataProvider = "testdatastreams"
+  )
   public void testEncryptDecryptStreamBase64(final SymmetricAlgorithm symmetric)
     throws Exception
   {
@@ -488,7 +505,10 @@ public class SymmetricAlgorithmTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "symmetric"}, dataProvider = "testdatapbe")
+  @Test(
+    groups = {"functest", "symmetric"},
+    dataProvider = "testdatapbe"
+  )
   public void testPbeEncryptDecrypt(
     final SymmetricAlgorithm symmetric,
     final SecretKey encryptionKey,

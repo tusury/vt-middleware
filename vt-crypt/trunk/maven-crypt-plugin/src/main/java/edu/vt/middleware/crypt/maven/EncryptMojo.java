@@ -1,53 +1,53 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2009 Virginia Tech
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
 package edu.vt.middleware.crypt.maven;
 
 import java.io.IOException;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.CryptReader;
-
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Maven goal which encrypts a plaintext string into a a base-64-encoded string
  * of cipher test via a configurable symmetric encryption algorithm.
- * @author Marvin S. Addison
- * @version $Revison: $
  *
- * @goal encrypt
+ * @author  Middleware Services
+ * @version  $Revison: $
+ * @goal  encrypt
  */
 public class EncryptMojo extends AbstractCryptMojo
 {
+
   /**
    * The plain text string to encrypt.
-   * @parameter expression="${plainText}"
+   *
+   * @parameter  expression="${plainText}"
    * @required
    */
   protected String plainText;
 
-  /**
-   * Stores the results of the most recent encryption;
-   */
+  /** Stores the results of the most recent encryption; */
   private String cipherText;
 
   /**
    * Performs the encryption process.
-   * @throws MojoExecutionException on any error.
+   *
+   * @throws  MojoExecutionException  on any error.
    */
-  public void execute() throws MojoExecutionException
+  public void execute()
+    throws MojoExecutionException
   {
     final SymmetricAlgorithm cipher = createCipher();
     try {
@@ -71,8 +71,8 @@ public class EncryptMojo extends AbstractCryptMojo
 
   /**
    * Gets the ciphertext that resulted from the most recent encryption.
-   * @return Ciphertext result of last encryption.
    *
+   * @return  Ciphertext result of last encryption.
    */
   public String getCipherText()
   {

@@ -1,15 +1,15 @@
 /*
-  $Id: AttributeTypeAndValue.java 587 2009-09-09 16:19:46Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 587 $
-  Updated: $Date: 2009-09-09 12:19:46 -0400 (Wed, 09 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -17,39 +17,33 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Representation of AttributeTypeAndValue type described in section 2 of
- * RFC 2253.  This type is used to represent the RelativeDistinguishedName
- * types that comprise the RDN sequence describing an LDAPv3
- * distinguished name (DN).
+ * Representation of AttributeTypeAndValue type described in section 2 of RFC
+ * 2253. This type is used to represent the RelativeDistinguishedName types that
+ * comprise the RDN sequence describing an LDAPv3 distinguished name (DN).
  *
- * @author Middleware
- * @version $Revision: 587 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 587 $
  */
 public class AttributeTypeAndValue
 {
+
   /**
    * Set of characters in the value that MUST be escaped in the string
    * representation.
    */
   public static final Set<Character> ESCAPE_CHARSET;
 
-  /** Escape character */
+  /** Escape character. */
   public static final char ESCAPE_CHAR = '\\';
 
-  /** Hash code scale factor */
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /** Attribute type OID */
-  private String type;
 
-  /** Attribute value as a string */
-  private String value;
-
-
-  /** Class initializer */
-  static
-  {
+  /**
+   * Class initializer.
+   */
+  static {
     // ",", "+", """, "\", "<", ">" or ";"
     ESCAPE_CHARSET = new HashSet<Character>();
     ESCAPE_CHARSET.add(',');
@@ -61,6 +55,12 @@ public class AttributeTypeAndValue
     ESCAPE_CHARSET.add(';');
   }
 
+  /** Attribute type OID. */
+  private String type;
+
+  /** Attribute value as a string. */
+  private String value;
+
 
   /**
    * Creates a new instance with the given type OID and value.
@@ -69,8 +69,8 @@ public class AttributeTypeAndValue
    * @param  attributeValue  Attribute value.
    */
   public AttributeTypeAndValue(
-      final String typeOid,
-      final String attributeValue)
+    final String typeOid,
+    final String attributeValue)
   {
     type = typeOid;
     value = attributeValue;
@@ -80,20 +80,18 @@ public class AttributeTypeAndValue
   /**
    * Creates a new instance with the given well-known attribute type and value.
    *
-   * @param  attributeType Attribute type.
+   * @param  attributeType  Attribute type.
    * @param  attributeValue  Attribute value.
    */
   public AttributeTypeAndValue(
-      final AttributeType attributeType,
-      final String attributeValue)
+    final AttributeType attributeType,
+    final String attributeValue)
   {
     this(attributeType.getOid(), attributeValue);
   }
 
 
-  /**
-   * @return  Attribute type OID.
-   */
+  /** @return  Attribute type OID. */
   public String getType()
   {
     return type;
@@ -101,8 +99,8 @@ public class AttributeTypeAndValue
 
 
   /**
-   * @return  Attribute type short name or null if no short name exists for
-   * the type.
+   * @return  Attribute type short name or null if no short name exists for the
+   * type.
    */
   public String getTypeName()
   {
@@ -111,9 +109,7 @@ public class AttributeTypeAndValue
   }
 
 
-  /**
-   * @return  Attribute value.
-   */
+  /** @return  Attribute value. */
   public String getValue()
   {
     return value;
@@ -121,8 +117,8 @@ public class AttributeTypeAndValue
 
 
   /**
-   * Follows the guidelines of RFC 2253 section 2.3 for producing the
-   * string representation of the AttributeTypeAndValue type.
+   * Follows the guidelines of RFC 2253 section 2.3 for producing the string
+   * representation of the AttributeTypeAndValue type.
    *
    * @return  String representation of RDN.
    */
@@ -140,13 +136,14 @@ public class AttributeTypeAndValue
     // Start and end of the value have additional considerations
     // - Must escape # or space at start
     // - Must escape space at end
-    if ('#' == value.charAt(0) ||
+    if (
+      '#' == value.charAt(0) ||
         ' ' == value.charAt(0) ||
-        ESCAPE_CHARSET.contains(value.charAt(0)))
-    {
+        ESCAPE_CHARSET.contains(value.charAt(0))) {
       sb.append(ESCAPE_CHAR);
     }
     sb.append(value.charAt(0));
+
     int i = 1;
     for (; i < value.length() - 1; i++) {
       if (ESCAPE_CHARSET.contains(value.charAt(i))) {
@@ -154,9 +151,7 @@ public class AttributeTypeAndValue
       }
       sb.append(value.charAt(i));
     }
-    if (' ' == value.charAt(i) ||
-        ESCAPE_CHARSET.contains(value.charAt(i)))
-    {
+    if (' ' == value.charAt(i) || ESCAPE_CHARSET.contains(value.charAt(i))) {
       sb.append(ESCAPE_CHAR);
     }
     sb.append(value.charAt(i));

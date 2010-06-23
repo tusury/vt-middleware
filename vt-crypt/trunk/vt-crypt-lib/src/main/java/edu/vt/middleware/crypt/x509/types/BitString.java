@@ -1,15 +1,15 @@
 /*
-  $Id: BitString.java 426 2009-08-11 20:40:13Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 426 $
-  Updated: $Date: 2009-08-11 16:40:13 -0400 (Tue, 11 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -18,25 +18,25 @@ import org.bouncycastle.util.Arrays;
 /**
  * Represents a string of bits encoded into octets in network byte order.
  *
- * @author Middleware
- * @version $Revision: 426 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 426 $
  */
 public class BitString
 {
-  /** Number of bytes in a Java int */
+
+  /** Number of bytes in a Java int. */
   protected static final int INT_BYTE_SIZE = 4;
 
-  /** Number of bits in a byte */
+  /** Number of bits in a byte. */
   protected static final int BITS_IN_BYTE = 8;
 
-  /** Unsigned byte bitmask */
+  /** Unsigned byte bitmask. */
   protected static final int UNSIGNED_BYTE_MASK = 0xFF;
 
-  /** Hash code scale factor */
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /** Octets used to encode bit string */
+  /** Octets used to encode bit string. */
   protected byte[] octets;
 
 
@@ -50,35 +50,29 @@ public class BitString
   public static byte[] getBytes(final int bitString)
   {
     int bytes = INT_BYTE_SIZE;
-    for (int i = INT_BYTE_SIZE - 1; i >= 1; i--)
-    {
-      if ((bitString & (UNSIGNED_BYTE_MASK << (i * BITS_IN_BYTE))) != 0)
-      {
+    for (int i = INT_BYTE_SIZE - 1; i >= 1; i--) {
+      if ((bitString & (UNSIGNED_BYTE_MASK << (i * BITS_IN_BYTE))) != 0) {
         break;
       }
       bytes--;
     }
+
     final byte[] data = new byte[bytes];
-    for (int i = 0; i < bytes; i++)
-    {
+    for (int i = 0; i < bytes; i++) {
       data[i] = (byte) ((bitString >> (i * BITS_IN_BYTE)) & UNSIGNED_BYTE_MASK);
     }
     return data;
   }
 
 
-  /**
-   * @return  Bit string encoded as octet bytes.
-   */
+  /** @return  Bit string encoded as octet bytes. */
   public byte[] getOctets()
   {
     return octets;
   }
 
 
-  /**
-   * @return The value of the bit string as a Java int.
-   */
+  /** @return  The value of the bit string as a Java int. */
   public int intValue()
   {
     int value = 0;

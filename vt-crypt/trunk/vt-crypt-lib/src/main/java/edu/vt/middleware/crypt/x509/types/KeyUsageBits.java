@@ -1,57 +1,56 @@
 /*
-  $Id: KeyUsageBits.java 424 2009-08-11 17:26:49Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 424 $
-  Updated: $Date: 2009-08-11 13:26:49 -0400 (Tue, 11 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Representation of the bit meanings in the <code>KeyUsage</code>
- * BIT STRING type defined in section 4.2.1.3 of RFC 2459.
+ * Representation of the bit meanings in the <code>KeyUsage</code> BIT STRING
+ * type defined in section 4.2.1.3 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 424 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 424 $
  */
-public enum KeyUsageBits
-{
-  /** digitalSignature bit */
+public enum KeyUsageBits {
+
+  /** digitalSignature bit. */
   DigitalSignature(7),
 
-  /** nonRepudiation bit */
+  /** nonRepudiation bit. */
   NonRepudiation(6),
 
-  /** keyEncipherment bit */
+  /** keyEncipherment bit. */
   KeyEncipherment(5),
 
-  /** dataEncipherment bit */
+  /** dataEncipherment bit. */
   DataEncipherment(4),
 
-  /** keyAgreement bit */
+  /** keyAgreement bit. */
   KeyAgreement(3),
 
-  /** keyCertSign bit */
+  /** keyCertSign bit. */
   KeyCertSign(2),
 
-  /** cRLSign bit */
+  /** cRLSign bit. */
   CRLSign(1),
 
-  /** encipherOnly bit */
+  /** encipherOnly bit. */
   EncipherOnly(0),
 
-  /** decipherOnly bit */
+  /** decipherOnly bit. */
   DecipherOnly(15);
 
 
-  /** Bit mask value */
+  /** Bit mask value. */
   private int mask;
 
 
@@ -66,9 +65,7 @@ public enum KeyUsageBits
   }
 
 
-  /**
-   * @return  Bit mask value.
-   */
+  /** @return  Bit mask value. */
   public int getMask()
   {
     return mask;

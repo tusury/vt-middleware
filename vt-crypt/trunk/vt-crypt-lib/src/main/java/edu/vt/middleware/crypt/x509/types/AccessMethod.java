@@ -1,37 +1,35 @@
 /*
-  $Id: AccessMethod.java 428 2009-08-12 18:12:49Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 428 $
-  Updated: $Date: 2009-08-12 14:12:49 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Enumeration of supported OIDs for the <code>accessMethod</code> field of
- * the <code>AccessDescription</code> type described in section 4.2.2.1
- * of RFC 2459.
+ * Enumeration of supported OIDs for the <code>accessMethod</code> field of the
+ * <code>AccessDescription</code> type described in section 4.2.2.1 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 428 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 428 $
  */
-public enum AccessMethod
-{
-  /** CA Issuers access method */
+public enum AccessMethod {
+
+  /** CA Issuers access method. */
   CAIssuers("1.3.6.1.5.5.7.48.2"),
 
-  /** Online Certificate Status Protocol */
+  /** Online Certificate Status Protocol. */
   OCSP("1.3.6.1.5.5.7.48.1");
 
 
-  /** Key purpose object identifier */
+  /** Key purpose object identifier. */
   private String oid;
 
 
@@ -46,9 +44,7 @@ public enum AccessMethod
   }
 
 
-  /**
-   * @return  Key purpose object identifier.
-   */
+  /** @return  Key purpose object identifier. */
   public String getOid()
   {
     return oid;
@@ -62,8 +58,8 @@ public enum AccessMethod
    *
    * @return  Access method whose OID matches given value.
    *
-   * @throws  IllegalArgumentException  If there is no access method with
-   * the given OID.
+   * @throws  IllegalArgumentException  If there is no access method with the
+   * given OID.
    */
   public static AccessMethod getByOid(final String oid)
   {

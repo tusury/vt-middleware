@@ -1,15 +1,15 @@
 /*
-  $Id: AbstractCli.java 12 2008-11-17 19:13:16Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 12 $
-  Updated: $Date: 2008-11-17 14:13:16 -0500 (Mon, 17 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt;
 
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
@@ -42,7 +41,7 @@ public abstract class AbstractCli
   /** Input file option. */
   protected static final String OPT_INFILE = "in";
 
-  /** Example option */
+  /** Example option. */
   protected static final String OPT_EXAMPLE = "examples";
 
   /** Name of encoding option value for Base-64 encoding. */
@@ -59,8 +58,8 @@ public abstract class AbstractCli
 
 
   /**
-   * Parses command line options and invokes the proper handler to perform
-   * the requested action, or the default action if no action is specified.
+   * Parses command line options and invokes the proper handler to perform the
+   * requested action, or the default action if no action is specified.
    *
    * @param  args  Command line arguments.
    */
@@ -112,14 +111,15 @@ public abstract class AbstractCli
 
 
   /**
-   * Dispatch command line data to the handler that can perform the
-   * operation requested on the command line.
+   * Dispatch command line data to the handler that can perform the operation
+   * requested on the command line.
    *
    * @param  line  Parsed command line arguments container.
    *
-   * @throws Exception On errors thrown by handler.
+   * @throws  Exception  On errors thrown by handler.
    */
-  protected abstract void dispatch(final CommandLine line) throws Exception;
+  protected abstract void dispatch(final CommandLine line)
+    throws Exception;
 
 
   /** Prints CLI help text. */
@@ -141,6 +141,7 @@ public abstract class AbstractCli
         new InputStreamReader(in));
       try {
         System.out.println();
+
         String line = null;
         while ((line = reader.readLine()) != null) {
           System.out.println(line);

@@ -1,15 +1,15 @@
 /*
-  $Id: AsymmetricAlgorithm.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.asymmetric;
 
@@ -77,8 +77,8 @@ public class AsymmetricAlgorithm extends AbstractEncryptionAlgorithm
    */
   public static AsymmetricAlgorithm newInstance(final String algorithm)
   {
-    final Class<? extends AsymmetricAlgorithm> clazz =
-      NAME_CLASS_MAP.get(algorithm.toUpperCase());
+    final Class<? extends AsymmetricAlgorithm> clazz = NAME_CLASS_MAP.get(
+      algorithm.toUpperCase());
     if (clazz != null) {
       try {
         return clazz.newInstance();

@@ -1,15 +1,15 @@
 /*
-  $Id: Base64Converter.java 170 2009-05-05 02:42:59Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 170 $
-  Updated: $Date: 2009-05-04 22:42:59 -0400 (Mon, 04 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.util;
 

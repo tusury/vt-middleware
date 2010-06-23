@@ -1,26 +1,24 @@
 /*
-  $Id: AbstractCryptTask.java 21 2009-01-08 19:17:39Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 21 $
-  Updated: $Date: 2009-01-08 14:17:39 -0500 (Thu, 08 Jan 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.tasks;
 
 import java.io.File;
 import java.io.IOException;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.util.HexConverter;
-
 import org.apache.tools.ant.Task;
 
 /**
@@ -118,9 +116,7 @@ public abstract class AbstractCryptTask extends Task
   }
 
 
-  /**
-   * <p>See @link{org.apache.tools.ant.Task}.</p>
-   */
+  /** <p>See @link{org.apache.tools.ant.Task}.</p> */
   public abstract void execute();
 
 
@@ -128,10 +124,10 @@ public abstract class AbstractCryptTask extends Task
    * Creates a new symmetric algorithm cipher and initializes it using task
    * properties.
    *
-   * @return New instance ready for use.
+   * @return  New instance ready for use.
    *
-   * @throws CryptException On cryptographic errors.
-   * @throws IOException On IO errors reading symmetric key.
+   * @throws  CryptException  On cryptographic errors.
+   * @throws  IOException  On IO errors reading symmetric key.
    */
   protected SymmetricAlgorithm createAlgorithm()
     throws CryptException, IOException

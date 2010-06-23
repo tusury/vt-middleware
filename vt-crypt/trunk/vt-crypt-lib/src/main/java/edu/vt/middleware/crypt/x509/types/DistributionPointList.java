@@ -1,15 +1,15 @@
 /*
-  $Id: DistributionPointList.java 428 2009-08-12 18:12:49Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 428 $
-  Updated: $Date: 2009-08-12 14:12:49 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -20,16 +20,16 @@ import java.util.List;
  * are the value of the <code>CRLDistributionPoints</code> extension field
  * described in section 4.2.1.14 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 428 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 428 $
  */
 public class DistributionPointList extends AbstractList<DistributionPoint>
 {
+
   /**
    * Constructs a new instance from the given list of distribution points.
    *
-   * @param  listOfDistPoints List of distribution points.
+   * @param  listOfDistPoints  List of distribution points.
    */
   public DistributionPointList(final List<DistributionPoint> listOfDistPoints)
   {

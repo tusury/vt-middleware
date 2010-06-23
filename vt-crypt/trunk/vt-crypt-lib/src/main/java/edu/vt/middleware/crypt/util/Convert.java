@@ -1,15 +1,15 @@
 /*
-  $Id: Convert.java 3 2008-11-11 20:58:48Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 3 $
-  Updated: $Date: 2008-11-11 15:58:48 -0500 (Tue, 11 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.util;
 
@@ -38,9 +38,7 @@ public final class Convert
   protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 
-  /**
-   * <p>Default constructor.</p>
-   */
+  /** <p>Default constructor.</p> */
   private Convert() {}
 
 

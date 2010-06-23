@@ -1,15 +1,15 @@
 /*
-  $Id: RDNSequenceIteratorTest.java 578 2009-09-08 19:10:23Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 578 $
-  Updated: $Date: 2009-09-08 15:10:23 -0400 (Tue, 08 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509;
 
@@ -18,15 +18,12 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.AttributeType;
 import edu.vt.middleware.crypt.x509.types.AttributeTypeAndValue;
 import edu.vt.middleware.crypt.x509.types.RelativeDistinguishedName;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -35,12 +32,12 @@ import org.testng.annotations.Test;
 /**
  * Unit test for {@link RDNSequenceIterator} class.
  *
- * @author Middleware
- * @version $Revision: 578 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 578 $
  */
 public class RDNSequenceIteratorTest
 {
+
   /** Path to directory containing test resources. */
   private static final String RESOURCE_DIR =
     "src/test/resources/edu/vt/middleware/crypt/x509";
@@ -63,21 +60,21 @@ public class RDNSequenceIteratorTest
     final RelativeDistinguishedName[] expected1 =
       new RelativeDistinguishedName[] {
         new RelativeDistinguishedName(
-            new AttributeTypeAndValue(AttributeType.CountryName, "US")),
+          new AttributeTypeAndValue(AttributeType.CountryName, "US")),
         new RelativeDistinguishedName(
-            new AttributeTypeAndValue(AttributeType.DomainComponent, "vt")),
+          new AttributeTypeAndValue(AttributeType.DomainComponent, "vt")),
         new RelativeDistinguishedName(
-            new AttributeTypeAndValue(AttributeType.DomainComponent, "edu")),
+          new AttributeTypeAndValue(AttributeType.DomainComponent, "edu")),
         new RelativeDistinguishedName(
-            new AttributeTypeAndValue(
-                AttributeType.OrganizationName,
-                "Virginia Polytechnic Institute and State University")),
+          new AttributeTypeAndValue(
+            AttributeType.OrganizationName,
+            "Virginia Polytechnic Institute and State University")),
         new RelativeDistinguishedName(
-            new AttributeTypeAndValue(
-                AttributeType.CommonName,
-                "Marvin S Addison")),
+          new AttributeTypeAndValue(
+            AttributeType.CommonName,
+            "Marvin S Addison")),
         new RelativeDistinguishedName(
-            new AttributeTypeAndValue(AttributeType.UserId, "1145718")),
+          new AttributeTypeAndValue(AttributeType.UserId, "1145718")),
       };
 
     return new Object[][] {
@@ -93,7 +90,10 @@ public class RDNSequenceIteratorTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "x509"}, dataProvider = "rdndata")
+  @Test(
+    groups = {"functest", "x509"},
+    dataProvider = "rdndata"
+  )
   public void testIterator(
     final File certFile,
     final RelativeDistinguishedName[] expectedSubjectRDNs)
@@ -102,7 +102,7 @@ public class RDNSequenceIteratorTest
     logger.info("Iterating over subject DN of " + certFile);
 
     final RDNSequenceIterator iterator = new RDNSequenceIterator(
-        ((X509Certificate) CryptReader.readCertificate(certFile))
+      ((X509Certificate) CryptReader.readCertificate(certFile))
           .getSubjectX500Principal().getEncoded());
     final List<RelativeDistinguishedName> actual =
       new ArrayList<RelativeDistinguishedName>();

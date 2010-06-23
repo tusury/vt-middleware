@@ -1,15 +1,15 @@
 /*
-  $Id: AbstractEncryptionAlgorithm.java 3 2008-11-11 20:58:48Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 3 $
-  Updated: $Date: 2008-11-11 15:58:48 -0500 (Tue, 11 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt;
 
@@ -225,9 +225,9 @@ public abstract class AbstractEncryptionAlgorithm extends AbstractAlgorithm
    *
    * @param  encryptOrDecrypt  Either <a
    * href="http://java.sun.com/j2se/1.5.0/docs/api/
-   *javax/crypto/Cipher.html#ENCRYPT_MODE">Cipher.ENCRYPT_MODE</a> or <a
+   * javax/crypto/Cipher.html#ENCRYPT_MODE">Cipher.ENCRYPT_MODE</a> or <a
    * href="http://java.sun.com/j2se/1.5.0/docs/api/
-   *javax/crypto/Cipher.html#DECRYPT_MODE">Cipher.DECRYPT_MODE</a>.
+   * javax/crypto/Cipher.html#DECRYPT_MODE">Cipher.DECRYPT_MODE</a>.
    *
    * @throws  CryptException  On cryptographic configuration errors.
    */

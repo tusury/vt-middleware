@@ -1,15 +1,15 @@
 /*
-  $Id: AccessDescription.java 428 2009-08-12 18:12:49Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 428 $
-  Updated: $Date: 2009-08-12 14:12:49 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -17,19 +17,19 @@ package edu.vt.middleware.crypt.x509.types;
  * Representation of the <code>AccessDescription</code> type described in
  * section 4.2.2.1 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 428 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 428 $
  */
 public class AccessDescription
 {
-  /** Hash code scale factor */
+
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /** Access method */
+  /** Access method. */
   private AccessMethod accessMethod;
 
-  /** Location */
+  /** Location. */
   private GeneralName accessLocation;
 
 
@@ -54,18 +54,14 @@ public class AccessDescription
   }
 
 
-  /**
-   * @return  Access method.
-   */
+  /** @return  Access method. */
   public AccessMethod getAccessMethod()
   {
     return accessMethod;
   }
 
 
-  /**
-   * @return  Access location.
-   */
+  /** @return  Access location. */
   public GeneralName getAccessLocation()
   {
     return accessLocation;
@@ -95,7 +91,7 @@ public class AccessDescription
     } else {
       final AccessDescription other = (AccessDescription) obj;
       result = accessMethod.equals(other.getAccessMethod()) &&
-        accessLocation.equals(other.getAccessLocation());
+          accessLocation.equals(other.getAccessLocation());
     }
     return result;
   }

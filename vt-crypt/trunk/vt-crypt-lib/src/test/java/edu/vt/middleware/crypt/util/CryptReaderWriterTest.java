@@ -1,15 +1,15 @@
 /*
-  $Id: CryptReaderWriterTest.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.util;
 
@@ -81,12 +81,13 @@ public class CryptReaderWriterTest
     final KeyPair dsaKeys = dsaKeyGen.generateKeyPair();
 
     final char[] password = "S33Kr1t!".toCharArray();
-    return new Object[][] {
-      {rsaKeys.getPrivate(), password},
-      {dsaKeys.getPrivate(), password},
-      {rsaKeys.getPrivate(), null},
-      {dsaKeys.getPrivate(), null},
-    };
+    return
+      new Object[][] {
+        {rsaKeys.getPrivate(), password},
+        {dsaKeys.getPrivate(), password},
+        {rsaKeys.getPrivate(), null},
+        {dsaKeys.getPrivate(), null},
+      };
   }
 
 
@@ -99,11 +100,12 @@ public class CryptReaderWriterTest
   public Object[][] createReadDerPrivKeyTestData()
     throws Exception
   {
-    return new Object[][] {
-      {"rsa.pri.der", "RSA"},
-      {"rsa.pri-pkcs8.der", "RSA"},
-      {"dsa.pri-pkcs8.der", "DSA"},
-    };
+    return
+      new Object[][] {
+        {"rsa.pri.der", "RSA"},
+        {"rsa.pri-pkcs8.der", "RSA"},
+        {"dsa.pri-pkcs8.der", "DSA"},
+      };
   }
 
 
@@ -160,7 +162,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "readderprivkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "readderprivkeydata"
+  )
   public void testReadDerPrivateKey(final String file, final String alg)
     throws Exception
   {
@@ -176,7 +181,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "readderpubkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "readderpubkeydata"
+  )
   public void testReadDerPublicKey(final String file, final String alg)
     throws Exception
   {
@@ -186,9 +194,7 @@ public class CryptReaderWriterTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"functest", "util"})
   public void testReadDerCertificate()
     throws Exception
@@ -206,7 +212,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "readpemprivkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "readpemprivkeydata"
+  )
   public void testReadPemPrivateKey(final String file, final char[] password)
     throws Exception
   {
@@ -221,7 +230,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "readpempubkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "readpempubkeydata"
+  )
   public void testReadPemPublicKey(final String file)
     throws Exception
   {
@@ -231,9 +243,7 @@ public class CryptReaderWriterTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"functest", "util"})
   public void testReadPemCertificate()
     throws Exception
@@ -250,7 +260,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "privkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "privkeydata"
+  )
   public void testReadWriteEncodedPrivateKey(
     final PrivateKey key,
     final char[] password)
@@ -272,7 +285,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "pubkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "pubkeydata"
+  )
   public void testReadWriteEncodedPublicKey(final PublicKey key)
     throws Exception
   {
@@ -293,7 +309,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "privkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "privkeydata"
+  )
   public void testReadWritePemPrivateKey(
     final PrivateKey key,
     final char[] password)
@@ -317,7 +336,10 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "util"}, dataProvider = "pubkeydata")
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "pubkeydata"
+  )
   public void testReadWritePemPublicKey(final PublicKey key)
     throws Exception
   {

@@ -1,15 +1,15 @@
 /*
-  $Id: ExtensionReaderTest.java 428 2009-08-12 18:12:49Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 428 $
-  Updated: $Date: 2009-08-12 14:12:49 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509;
 
@@ -18,7 +18,6 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.AccessDescription;
 import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
@@ -38,10 +37,8 @@ import edu.vt.middleware.crypt.x509.types.KeyUsageBits;
 import edu.vt.middleware.crypt.x509.types.PolicyInformation;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -49,12 +46,12 @@ import org.testng.annotations.Test;
 /**
  * Unit test for {@link ExtensionReader} class.
  *
- * @author Middleware
- * @version $Revision: 428 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 428 $
  */
 public class ExtensionReaderTest
 {
+
   /** Path to directory containing test resources. */
   private static final String RESOURCE_DIR =
     "src/test/resources/edu/vt/middleware/crypt/x509";
@@ -78,18 +75,19 @@ public class ExtensionReaderTest
       new HashMap<ExtensionType, Object>();
     extMap1.put(
       ExtensionType.SubjectAlternativeName,
-      new GeneralNameList(new GeneralName[] {
-        new GeneralName("eprov@vt.edu", GeneralNameType.RFC822Name),
-      }));
+      new GeneralNameList(
+        new GeneralName[] {
+          new GeneralName("eprov@vt.edu", GeneralNameType.RFC822Name),
+        }));
     extMap1.put(ExtensionType.BasicConstraints, new BasicConstraints(false));
+
     final PolicyInformation[] policies1 = new PolicyInformation[] {
       new PolicyInformation("1.3.6.1.4.1.6760.5.2.2.2.1"),
       new PolicyInformation("1.3.6.1.4.1.6760.5.2.2.1.1"),
       new PolicyInformation(
         "1.3.6.1.4.1.6760.5.2.2.4.1",
         new PolicyQualifierInfo[] {
-          new PolicyQualifierInfo(
-            "http://www.pki.vt.edu/vtuca/cps/index.html"),
+          new PolicyQualifierInfo("http://www.pki.vt.edu/vtuca/cps/index.html"),
         }),
       new PolicyInformation("1.3.6.1.4.1.6760.5.2.2.3.1"),
     };
@@ -102,8 +100,9 @@ public class ExtensionReaderTest
         "25:48:2F:28:EC:5D:19:BB:1D:25:AE:94:93:B1:7B:B5:35:96:24:66"));
     extMap1.put(
       ExtensionType.AuthorityKeyIdentifier,
-      new AuthorityKeyIdentifier(new KeyIdentifier(
-        "38:E0:6F:AE:48:ED:5E:23:F6:22:9B:1E:E7:9C:19:16:47:B8:7E:92")));
+      new AuthorityKeyIdentifier(
+        new KeyIdentifier(
+          "38:E0:6F:AE:48:ED:5E:23:F6:22:9B:1E:E7:9C:19:16:47:B8:7E:92")));
     extMap1.put(
       ExtensionType.KeyUsage,
       new KeyUsage(
@@ -113,24 +112,25 @@ public class ExtensionReaderTest
         }));
     extMap1.put(
       ExtensionType.ExtendedKeyUsage,
-      new KeyPurposeIdList(new KeyPurposeId[] {
-        KeyPurposeId.EmailProtection,
-        KeyPurposeId.ClientAuth,
-        KeyPurposeId.SmartCardLogin,
-      }));
+      new KeyPurposeIdList(
+        new KeyPurposeId[] {
+          KeyPurposeId.EmailProtection,
+          KeyPurposeId.ClientAuth,
+          KeyPurposeId.SmartCardLogin,
+        }));
 
 
     // Thawte Premium Server CA cert
-    final File testCert2 = new File(RESOURCE_DIR,
-        "thawte-premium-server-ca-cert.pem");
+    final File testCert2 = new File(
+      RESOURCE_DIR,
+      "thawte-premium-server-ca-cert.pem");
     final Map<ExtensionType, Object> extMap2 =
       new HashMap<ExtensionType, Object>();
     extMap2.put(ExtensionType.BasicConstraints, new BasicConstraints(true));
 
 
     // Microsoft Web server cert for login.live.com
-    final File testCert3 = new File(RESOURCE_DIR,
-        "login.live.com-cert.pem");
+    final File testCert3 = new File(RESOURCE_DIR, "login.live.com-cert.pem");
     final Map<ExtensionType, Object> extMap3 =
       new HashMap<ExtensionType, Object>();
     extMap3.put(ExtensionType.BasicConstraints, new BasicConstraints(false));
@@ -156,24 +156,28 @@ public class ExtensionReaderTest
             }))));
     extMap3.put(
       ExtensionType.ExtendedKeyUsage,
-      new KeyPurposeIdList(new KeyPurposeId[] {
-        KeyPurposeId.ClientAuth,
-        KeyPurposeId.ServerAuth,
-      }));
+      new KeyPurposeIdList(
+        new KeyPurposeId[] {
+          KeyPurposeId.ClientAuth,
+          KeyPurposeId.ServerAuth,
+        }));
     extMap3.put(
       ExtensionType.AuthorityKeyIdentifier,
-      new AuthorityKeyIdentifier(new KeyIdentifier(
-        "FC:8A:50:BA:9E:B9:25:5A:7B:55:85:4F:95:00:63:8F:E9:58:6B:43")));
+      new AuthorityKeyIdentifier(
+        new KeyIdentifier(
+          "FC:8A:50:BA:9E:B9:25:5A:7B:55:85:4F:95:00:63:8F:E9:58:6B:43")));
     extMap3.put(
       ExtensionType.CRLDistributionPoints,
-      new DistributionPointList(Collections.singletonList(
-        new DistributionPoint(
-          new GeneralNameList(Collections.singletonList(
-            new GeneralName(
-              "http://EVSecure-crl.verisign.com/EVSecure2006.crl",
-              GeneralNameType.UniformResourceIdentifier))),
-          null,
-          null))));
+      new DistributionPointList(
+        Collections.singletonList(
+          new DistributionPoint(
+            new GeneralNameList(
+              Collections.singletonList(
+                new GeneralName(
+                  "http://EVSecure-crl.verisign.com/EVSecure2006.crl",
+                  GeneralNameType.UniformResourceIdentifier))),
+            null,
+            null))));
     extMap3.put(
       ExtensionType.AuthorityInformationAccess,
       new AccessDescriptionList(
@@ -190,30 +194,35 @@ public class ExtensionReaderTest
               GeneralNameType.UniformResourceIdentifier)),
         }));
 
-    return new Object[][] {
-      {testCert1, extMap1},
-      {testCert2, extMap2},
-      {testCert3, extMap3},
-    };
+    return
+      new Object[][] {
+        {testCert1, extMap1},
+        {testCert2, extMap2},
+        {testCert3, extMap3},
+      };
   }
 
   /**
    * @param  certFile  File containing X.509 certificate data.
    * @param  expectedExtensionMap  Expected map of extension types to extension
-   * data that should be produced from reading the extended attributes of
-   * the given certificate.
+   * data that should be produced from reading the extended attributes of the
+   * given certificate.
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "x509"}, dataProvider = "certdata")
+  @Test(
+    groups = {"functest", "x509"},
+    dataProvider = "certdata"
+  )
   public void testReadAll(
     final File certFile,
     final Map<ExtensionType, Object> expectedExtensionMap)
     throws Exception
   {
     logger.info("Testing read all extended attributes from " + certFile);
+
     final ExtensionReader reader = new ExtensionReader(
-        (X509Certificate) CryptReader.readCertificate(certFile));
+      (X509Certificate) CryptReader.readCertificate(certFile));
     final Map<ExtensionType, Object> actualExtensionMap = reader.readAll();
 
     logger.info("Attributes found:");

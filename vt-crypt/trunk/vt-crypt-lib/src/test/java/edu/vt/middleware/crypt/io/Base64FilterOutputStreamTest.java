@@ -1,15 +1,15 @@
 /*
-  $Id: Base64FilterOutputStreamTest.java 84 2009-03-26 14:23:35Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 84 $
-  Updated: $Date: 2009-03-26 10:23:35 -0400 (Thu, 26 Mar 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.io;
 
@@ -65,7 +65,10 @@ public class Base64FilterOutputStreamTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"functest", "io", "encodeBase64"}, dataProvider = "testdata")
+  @Test(
+    groups = {"functest", "io", "encodeBase64"},
+    dataProvider = "testdata"
+  )
   public void testEncodeBase64(final Integer charsPerLine)
     throws Exception
   {

@@ -1,30 +1,29 @@
 /*
-  $Id: List.java 421 2009-08-06 19:20:53Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 421 $
-  Updated: $Date: 2009-08-06 15:20:53 -0400 (Thu, 06 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 /**
  * Interface describing a type that is simply a collection of other types.
  *
- * @author Middleware
- * @version $Revision: 421 $
- * @param <T> Type of object contained in collection.
+ * @param  <T>  Type of object contained in collection.
  *
+ * @author  Middleware Services
+ * @version  $Revision: 421 $
  */
 public interface List<T>
 {
-  /**
-   * @return  Array of items in the collection.
-   */
+
+  /** @return  Array of items in the collection. */
   T[] getItems();
 }

@@ -1,15 +1,15 @@
 /*
-  $Id: SymmetricCli.java 12 2008-11-17 19:13:16Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 12 $
-  Updated: $Date: 2008-11-17 14:13:16 -0500 (Mon, 17 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.symmetric;
 
@@ -162,7 +162,8 @@ public class SymmetricCli extends AbstractEncryptionCli
 
 
   /** {@inheritDoc} */
-  protected void dispatch(final CommandLine line) throws Exception
+  protected void dispatch(final CommandLine line)
+    throws Exception
   {
     if (line.hasOption(OPT_ENCRYPT)) {
       encrypt(line);

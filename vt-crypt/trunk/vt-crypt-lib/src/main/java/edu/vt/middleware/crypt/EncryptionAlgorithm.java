@@ -1,15 +1,15 @@
 /*
-  $Id: EncryptionAlgorithm.java 3 2008-11-11 20:58:48Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 3 $
-  Updated: $Date: 2008-11-11 15:58:48 -0500 (Tue, 11 Nov 2008) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt;
 
@@ -59,9 +59,9 @@ public interface EncryptionAlgorithm extends Algorithm
    * initialized for encryption or decryption.
    *
    * @return  <a href="http://java.sun.com/j2se/1.5.0/docs/api/
-   *javax/crypto/Cipher.html#ENCRYPT_MODE">Cipher.ENCRYPT_MODE</a>, <a
+   * javax/crypto/Cipher.html#ENCRYPT_MODE">Cipher.ENCRYPT_MODE</a>, <a
    * href="http://java.sun.com/j2se/1.5.0/docs/api/
-   *javax/crypto/Cipher.html#DECRYPT_MODE">Cipher.DECRYPT_MODE</a>, or 0 if the
+   * javax/crypto/Cipher.html#DECRYPT_MODE">Cipher.DECRYPT_MODE</a>, or 0 if the
    * cipher mode has not been initialized by calling either {@link
    * #initEncrypt()} or {@link #initDecrypt()}.
    */

@@ -1,15 +1,15 @@
 /*
-  $Id: CryptReader.java 578 2009-09-08 19:10:23Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 578 $
-  Updated: $Date: 2009-09-08 15:10:23 -0400 (Tue, 08 Sep 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.util;
 
@@ -33,13 +33,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DERObject;
 
@@ -497,23 +494,24 @@ public class CryptReader
 
 
   /**
-   * Attempts to create a Bouncy Castle <code>DERObject</code> from a byte
-   * array representing ASN.1 encoded data.
+   * Attempts to create a Bouncy Castle <code>DERObject</code> from a byte array
+   * representing ASN.1 encoded data.
    *
    * @param  data  ASN.1 encoded data as byte array.
    * @param  discardWrapper  In some cases the value of the encoded data may
-   * itself be encoded data, where the latter encoded data is desired.
-   * Recall ASN.1 data is of the form {TAG, SIZE, DATA}.  Set this flag to true
-   * to skip the first two bytes, e.g. TAG and SIZE, and treat the remaining
-   * bytes as the encoded data.
+   * itself be encoded data, where the latter encoded data is desired. Recall
+   * ASN.1 data is of the form {TAG, SIZE, DATA}. Set this flag to true to skip
+   * the first two bytes, e.g. TAG and SIZE, and treat the remaining bytes as
+   * the encoded data.
    *
    * @return  DER object.
    *
    * @throws  IOException  On I/O errors.
    */
   public static DERObject readEncodedBytes(
-      final byte[] data,
-      final boolean discardWrapper) throws IOException
+    final byte[] data,
+    final boolean discardWrapper)
+    throws IOException
   {
     final ByteArrayInputStream inBytes = new ByteArrayInputStream(data);
     int size = data.length;
@@ -521,6 +519,7 @@ public class CryptReader
       inBytes.skip(2);
       size = data.length - 2;
     }
+
     final ASN1InputStream in = new ASN1InputStream(inBytes, size);
     try {
       return in.readObject();

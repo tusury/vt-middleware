@@ -1,15 +1,15 @@
 /*
-  $Id: KeyUsage.java 424 2009-08-11 17:26:49Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 424 $
-  Updated: $Date: 2009-08-11 13:26:49 -0400 (Tue, 11 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
@@ -17,15 +17,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Representation of the <code>KeyUsage</code> type defined in
- * section 4.2.1.3 of RFC 2459.
+ * Representation of the <code>KeyUsage</code> type defined in section 4.2.1.3
+ * of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 424 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 424 $
  */
 public class KeyUsage extends BitString
 {
+
   /**
    * Creates a new instance with the given <code>KeyUsage</code> bit string.
    *
@@ -47,9 +47,8 @@ public class KeyUsage extends BitString
   /**
    * Creates a new instance from OR-ing {@link KeyUsageBits} bitmask values.
    *
-   * @param  flags  Bit mask created by OR-ing the bitmask of
-   * {@link KeyUsageBits} enum values together, e.g.
-   * <code>
+   * @param  flags  Bit mask created by OR-ing the bitmask of {@link
+   * KeyUsageBits} enum values together, e.g. <code>
    * KeyUsageBits.DigitalSignature.getMask()|KeyUsageBits.KeyCertSign.getMask()
    * </code>
    */
@@ -85,7 +84,7 @@ public class KeyUsage extends BitString
   public Collection<KeyUsageBits> getUses()
   {
     final java.util.List<KeyUsageBits> bits = new ArrayList<KeyUsageBits>(
-        KeyUsageBits.values().length);
+      KeyUsageBits.values().length);
     final int intValue = intValue();
     for (KeyUsageBits bit : KeyUsageBits.values()) {
       if ((bit.getMask() & intValue) != 0) {

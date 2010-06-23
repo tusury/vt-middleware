@@ -1,44 +1,44 @@
 /*
-  $Id: DistributionPoint.java 427 2009-08-12 16:41:24Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 427 $
-  Updated: $Date: 2009-08-12 12:41:24 -0400 (Wed, 12 Aug 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Representation of the <code>DistributionPoint</code> type defined in
- * section 4.2.1.14 of RFC 2459.
+ * Representation of the <code>DistributionPoint</code> type defined in section
+ * 4.2.1.14 of RFC 2459.
  *
- * @author Middleware
- * @version $Revision: 427 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 427 $
  */
 public class DistributionPoint
 {
-  /** Hash code scale factor */
+
+  /** Hash code scale factor. */
   private static final int HASH_FACTOR = 31;
 
-  /**Name of distribution point */
+  /** Name of distribution point. */
   private Object distributionPoint;
 
-  /** Reason flags supported by the distribution point */
+  /** Reason flags supported by the distribution point. */
   private ReasonFlags reasons;
 
-  /** Name of CRL issuer */
+  /** Name of CRL issuer. */
   private GeneralNameList cRLIssuer;
 
 
   /**
-   * Creates a new instance with no data.
-   * While RFC 2459 technically allows this, it is meaningless to do so.
+   * Creates a new instance with no data. While RFC 2459 technically allows
+   * this, it is meaningless to do so.
    */
   public DistributionPoint() {}
 
@@ -49,10 +49,10 @@ public class DistributionPoint
    *
    * @param  relativeName  Name relative to CRL issuer.
    * @param  flags  Revocation reasons supported by CRL distribution point.
-   * @param  issuer  CRL issuer name(s); cannot be null in this case since
-   * this is required to give a basis for the relative name.
+   * @param  issuer  CRL issuer name(s); cannot be null in this case since this
+   * is required to give a basis for the relative name.
    *
-   * @throws  IllegalArgumentException   When issuer is null.
+   * @throws  IllegalArgumentException  When issuer is null.
    */
   public DistributionPoint(
     final String relativeName,
@@ -89,9 +89,9 @@ public class DistributionPoint
 
   /**
    * @return  Name of the distribution point or null if no name is defined.
-   * Returns a string in case the distribution point is simply a URI,
-   * otherwise a {@link GeneralNameList} describing the name(s) by which
-   * the distribution point is known.
+   * Returns a string in case the distribution point is simply a URI, otherwise
+   * a {@link GeneralNameList} describing the name(s) by which the distribution
+   * point is known.
    */
   public Object getDistributionPoint()
   {
@@ -100,8 +100,8 @@ public class DistributionPoint
 
 
   /**
-   * @return  Revocation reasons supported by the distribution point or null
-   * if no reasons are defined.
+   * @return  Revocation reasons supported by the distribution point or null if
+   * no reasons are defined.
    */
   public ReasonFlags getReasons()
   {
@@ -109,18 +109,14 @@ public class DistributionPoint
   }
 
 
-  /**
-   * @return  CRL issuer name(s) or null if none are defined.
-   */
+  /** @return  CRL issuer name(s) or null if none are defined. */
   public GeneralNameList getCRLIssuer()
   {
     return cRLIssuer;
   }
 
 
-  /**
-   * @return  String representation of name of distribution point.
-   */
+  /** @return  String representation of name of distribution point. */
   @Override
   public String toString()
   {
@@ -143,16 +139,13 @@ public class DistributionPoint
       result = false;
     } else {
       final DistributionPoint other = (DistributionPoint) obj;
-      result =
-        (distributionPoint != null
-          ? distributionPoint.equals(other.getDistributionPoint())
-          : other.getDistributionPoint() == null) &&
-        (reasons != null
-          ? reasons.equals(other.getReasons())
-          : other.getReasons() == null) &&
-        (cRLIssuer != null
-          ? cRLIssuer.equals(other.getCRLIssuer())
-          : other.getCRLIssuer() == null);
+      result = (distributionPoint != null
+        ? distributionPoint.equals(other.getDistributionPoint())
+        : other.getDistributionPoint() == null) &&
+          (reasons != null ? reasons.equals(other.getReasons())
+                           : other.getReasons() == null) &&
+          (cRLIssuer != null ? cRLIssuer.equals(other.getCRLIssuer())
+                             : other.getCRLIssuer() == null);
     }
     return result;
   }
