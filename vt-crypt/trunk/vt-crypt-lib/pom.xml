@@ -16,7 +16,7 @@
   <properties>
     <checkstyle.dir>../src/main/checkstyle</checkstyle.dir>
     <testng.dir>src/test/testng</testng.dir>
-    <assembly.dir>src/main/assembly</assembly.dir>
+    <assembly.dir>../src/main/assembly</assembly.dir>
   </properties>
 
   <dependencies>

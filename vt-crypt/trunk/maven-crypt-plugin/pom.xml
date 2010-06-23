@@ -13,6 +13,7 @@
   
   <properties>
     <checkstyle.dir>../src/main/checkstyle</checkstyle.dir>
+    <assembly.dir>../src/main/assembly</assembly.dir>
   </properties>
 
   <dependencies>
