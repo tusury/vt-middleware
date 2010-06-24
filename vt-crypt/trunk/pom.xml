@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.vt.middleware</groupId>
-  <artifactId>vt-crypt</artifactId>
+  <artifactId>vt-crypt-root</artifactId>
   <packaging>pom</packaging>
   <version>2.1</version>
   <name>Root Module</name>
@@ -48,13 +48,13 @@
   </scm>
 
   <modules>
-    <module>vt-crypt-lib</module>
-    <module>maven-crypt-plugin</module>
+    <module>core</module>
+    <module>plugin</module>
+    <module>assembly</module>
   </modules>
 
   <properties>
     <project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
-    <assembly.dir>src/main/assembly</assembly.dir>
   </properties>
 
   <build>
@@ -111,24 +111,6 @@
                 </resource>
               </resources>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <appendAssemblyId>true</appendAssemblyId>
-          <descriptors>
-            <descriptor>${assembly.dir}/vt-middleware.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
