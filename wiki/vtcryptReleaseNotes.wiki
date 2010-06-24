@@ -2,7 +2,7 @@
 
 <wiki:toc max_depth="2" />
 
-= Version 2.1-SNAPSHOT =
+= Version 2.1 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=1 vt-crypt-1] - Create API for Reading X.509v3 Certificate Extended Properties.
   * [http://code.google.com/p/vt-middleware/issues/detail?id=4 vt-crypt-4] - Keystore Incompatibility with keytool.
   * [http://code.google.com/p/vt-middleware/issues/detail?id=18 vt-crypt-18] - X.509 Certificate DN Formatter.
