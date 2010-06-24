@@ -13,11 +13,29 @@
       <includes>
         <include>*:jar</include>
       </includes>
+      <excludes>
+        <exclude>edu.vt.middleware:vt-crypt</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
   <fileSets>
     <fileSet>
-      <directory>target/package-info</directory>
+      <directory>${project.parent.basedir}</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <excludes>
+        <exclude>*.*</exclude>
+        <exclude>**/target/</exclude>
+        <exclude>bin/</exclude>
+        <exclude>lib/</exclude>
+        <exclude>jars/</exclude>
+      </excludes>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.parent.basedir}/target/package-info</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>**</include>
@@ -25,23 +43,7 @@
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
     <fileSet>
-      <directory>src</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
-      <directory>properties</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
-      <directory>licenses</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
-      <directory>dict</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
-      <directory>target/bin</directory>
+      <directory>${project.parent.basedir}/target/bin</directory>
       <outputDirectory>bin</outputDirectory>
       <fileMode>0755</fileMode>
       <useDefaultExcludes>true</useDefaultExcludes>
@@ -50,7 +52,7 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>target/bin</directory>
+      <directory>${project.parent.basedir}/target/bin</directory>
       <outputDirectory>bin</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
       <includes>
@@ -58,16 +60,11 @@
       </includes>
     </fileSet>
     <fileSet>
-      <directory>target</directory>
+      <directory>${project.parent.basedir}/core/target</directory>
       <outputDirectory>jars</outputDirectory>
       <includes>
-        <include>${project.build.finalName}*.jar</include>
+        <include>vt-crypt-${project.version}*.jar</include>
       </includes>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
-      <directory>target/site/apidocs</directory>
-      <outputDirectory>docs/apidocs</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
   </fileSets>

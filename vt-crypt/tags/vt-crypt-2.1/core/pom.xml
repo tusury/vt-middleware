@@ -3,20 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.vt.middleware.vt-crypt</groupId>
-  <artifactId>vt-crypt-lib</artifactId>
+  <groupId>edu.vt.middleware</groupId>
+  <artifactId>vt-crypt</artifactId>
   <packaging>jar</packaging>
   <name>VT Crypt Library</name>
   <parent>
     <groupId>edu.vt.middleware</groupId>
-    <artifactId>vt-crypt</artifactId>
+    <artifactId>vt-crypt-root</artifactId>
     <version>2.1</version>
   </parent>
 
   <properties>
     <checkstyle.dir>../src/main/checkstyle</checkstyle.dir>
     <testng.dir>src/test/testng</testng.dir>
-    <assembly.dir>../src/main/assembly</assembly.dir>
   </properties>
 
   <dependencies>

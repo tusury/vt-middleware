@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.vt.middleware</groupId>
+  <artifactId>vt-crypt-assembly</artifactId>
+  <packaging>pom</packaging>
+  <name>Assembly Module</name>
+  <parent>
+    <groupId>edu.vt.middleware</groupId>
+    <artifactId>vt-crypt-root</artifactId>
+    <version>2.1</version>
+  </parent>
+
+  <properties>
+    <project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
+    <assembly.dir>src/main/assembly</assembly.dir>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>edu.vt.middleware</groupId>
+      <artifactId>vt-crypt</artifactId>
+      <version>2.1</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <finalName>vt-crypt-${project.version}</finalName>
+          <appendAssemblyId>true</appendAssemblyId>
+          <descriptors>
+            <descriptor>${assembly.dir}/vt-middleware.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
