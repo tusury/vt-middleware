@@ -1,16 +1,16 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
- */
+*/
 package edu.vt.middleware.gator.web;
 
 import edu.vt.middleware.gator.AppenderConfig;
@@ -18,7 +18,6 @@ import edu.vt.middleware.gator.ParamConfig;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.log4j.SocketServer;
 import edu.vt.middleware.gator.util.FileHelper;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,22 +28,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Handles delivering an XML view of the project configuration that could be
  * parsed by the log4j {@link DOMConfigurator}.
  *
- * @author Marvin S. Addison
- *
+ * @author  Middleware Services
  */
 @Controller
 public class XmlConfigViewController extends AbstractController
 {
-  /** IP address socket server is bound to */
+
+  /** IP address socket server is bound to. */
   protected String bindAddress = SocketServer.DEFAULT_BIND_ADDRESS;
 
-  /** Port socket server will listen on */
+  /** Port socket server will listen on. */
   protected int port = SocketServer.DEFAULT_PORT;
- 
-  
+
+
   /**
    * Sets the bind address on which incoming connections will be accepted.
-   * @param ipAddress Dotted IP address of bind address.
+   *
+   * @param  ipAddress  Dotted IP address of bind address.
    */
   public void setBindAddress(final String ipAddress)
   {
@@ -54,7 +54,8 @@ public class XmlConfigViewController extends AbstractController
 
   /**
    * Sets the port on which to listen for client connections.
-   * @param n Listening port number.
+   *
+   * @param  n  Listening port number.
    */
   public void setPort(final int n)
   {
@@ -63,11 +64,12 @@ public class XmlConfigViewController extends AbstractController
 
 
   @RequestMapping(
-      value = "/project/{projectName}/log4j.xml",
-      method = RequestMethod.GET) 
+    value = "/project/{projectName}/log4j.xml",
+    method = RequestMethod.GET
+  )
   public String getLog4jXml(
-      @PathVariable("projectName") final String projectName,
-      final Model model)
+    @PathVariable("projectName") final String projectName,
+    final Model model)
   {
     ProjectConfig project = getProject(projectName);
     // Update file appender paths to be suitable for clients

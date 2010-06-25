@@ -1,36 +1,35 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
 package edu.vt.middleware.gator.web.support;
 
+import edu.vt.middleware.gator.web.support.RequestParamExtractor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import edu.vt.middleware.gator.web.support.RequestParamExtractor;
-
 /**
  * Unit test for {@link RequestParamExtractor} class.
  *
- * @author Marvin S. Addison
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class RequestParamExtractorTest
 {
+
   /**
-   * Test method for
-   * {@link RequestParamExtractor#getProjectName(HttpServletRequest)}.
+   * Test method for {@link
+   * RequestParamExtractor#getProjectName(HttpServletRequest)}.
    */
   @Test
   public void testGetProjectName()
@@ -38,15 +37,13 @@ public class RequestParamExtractorTest
     final MockHttpServletRequest request = new MockHttpServletRequest(
       "GET",
       "/logather/project/foo/edit.html");
-    Assert.assertEquals(
-        "foo",
-        RequestParamExtractor.getProjectName(request));
+    Assert.assertEquals("foo", RequestParamExtractor.getProjectName(request));
   }
 
 
   /**
-   * Test method for
-   * {@link RequestParamExtractor#getAppenderId(HttpServletRequest)}.
+   * Test method for {@link
+   * RequestParamExtractor#getAppenderId(HttpServletRequest)}.
    */
   @Test
   public void testGetAppenderId()
@@ -59,8 +56,8 @@ public class RequestParamExtractorTest
 
 
   /**
-   * Test method for
-   * {@link RequestParamExtractor#getAppenderId(HttpServletRequest)}.
+   * Test method for {@link
+   * RequestParamExtractor#getAppenderId(HttpServletRequest)}.
    */
   @Test
   public void testGetCategoryId()
@@ -73,8 +70,8 @@ public class RequestParamExtractorTest
 
 
   /**
-   * Test method for
-   * {@link RequestParamExtractor#getClientId(HttpServletRequest)}.
+   * Test method for {@link
+   * RequestParamExtractor#getClientId(HttpServletRequest)}.
    */
   @Test
   public void testGetClientId()

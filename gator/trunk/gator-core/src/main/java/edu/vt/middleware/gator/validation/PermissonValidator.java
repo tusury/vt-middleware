@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,61 +14,60 @@
 package edu.vt.middleware.gator.validation;
 
 import javax.validation.constraints.NotNull;
-
+import edu.vt.middleware.gator.ConfigManager;
+import edu.vt.middleware.gator.PermissionConfig;
+import edu.vt.middleware.gator.ProjectConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.validation.Errors;
 
-import edu.vt.middleware.gator.ConfigManager;
-import edu.vt.middleware.gator.PermissionConfig;
-import edu.vt.middleware.gator.ProjectConfig;
-
 /**
  * Validates project permission configuration data.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PermissonValidator extends AbstractAnnotationValidator
 {
-  @Autowired
-  @NotNull
+  @Autowired @NotNull
   private ConfigManager configManager;
 
-  
-  /** {@inheritDoc} */
+
+  /** {@inheritDoc}. */
   public boolean supports(final Class<?> clazz)
   {
     return PermissionConfig.class.equals(clazz);
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @Override
   public void validate(final Object target, final Errors errors)
   {
     super.validate(target, errors);
+
     final PermissionConfig permFromDb = configManager.find(
-        PermissionConfig.class,
-        ((PermissionConfig) target).getId());
+      PermissionConfig.class,
+      ((PermissionConfig) target).getId());
     if (permFromDb != null) {
       if (isLastFullPermissions(permFromDb.getProject(), permFromDb.getId())) {
         errors.rejectValue(
-            "permissions",
-            "error.permission.modifyLastAllPermissions",
-        "Cannot modify last permission entry with full permissions.");
+          "permissions",
+          "error.permission.modifyLastAllPermissions",
+          "Cannot modify last permission entry with full permissions.");
       }
     }
   }
 
 
   /**
-   * Determines whether the given permission is the last full permission in
-   * the given project.
-   * @param project Project to test.
-   * @param permissionId ID of permission to check.
-   * @return True if given permission is last full permission in the given
+   * Determines whether the given permission is the last full permission in the
+   * given project.
+   *
+   * @param  project  Project to test.
+   * @param  permissionId  ID of permission to check.
+   *
+   * @return  True if given permission is last full permission in the given
    * project.
    */
   public static boolean isLastFullPermissions(
@@ -78,10 +77,10 @@ public class PermissonValidator extends AbstractAnnotationValidator
     int count = 0;
     int fullPermissionId = 0;
     for (PermissionConfig perm : project.getPermissions()) {
-      if (perm.hasPermission(BasePermission.READ) &&
+      if (
+        perm.hasPermission(BasePermission.READ) &&
           perm.hasPermission(BasePermission.WRITE) &&
-          perm.hasPermission(BasePermission.DELETE))
-      {
+          perm.hasPermission(BasePermission.DELETE)) {
         count++;
         fullPermissionId = perm.getId();
       }

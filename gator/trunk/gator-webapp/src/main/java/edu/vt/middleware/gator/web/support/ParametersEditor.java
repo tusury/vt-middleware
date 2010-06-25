@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -19,51 +19,51 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import edu.vt.middleware.gator.ParamConfig;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Converts between an collection of {@link ParamConfig} items and a text
  * representation of the following form:
+ *
  * <pre>
- * name=value
- * name=value
- * name=value
+   name=value
+   name=value
+   name=value
  * </pre>
- * where each name/value pair is separated by a line terminator, either
- * CR or CRLF.
  *
- * @author Middleware
- * @version $Revision$
+ * <p>where each name/value pair is separated by a line terminator, either CR or
+ * CRLF.</p>
  *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class ParametersEditor<T extends ParamConfig>
   extends PropertyEditorSupport
 {
-  /** Logger instance */
+
+  /** Pattern used to match param lines in string representation. */
+  private static final Pattern LINE_MATCH_PATTERN = Pattern.compile(
+    "(\\w+=.+)\n?");
+
+  /** Pattern to split param line into name/value pairs. */
+  private static final Pattern NAME_VALUE_SPLIT_PATTERN = Pattern.compile("=");
+
+  /** Logger instance. */
   private final Log logger = LogFactory.getLog(getClass());
 
-  /** Pattern used to match param lines in string representation */
-  private static final Pattern LINE_MATCH_PATTERN =
-    Pattern.compile("(\\w+=.+)\n?");
-  
-  /** Pattern to split param line into name/value pairs */
-  private static final Pattern NAME_VALUE_SPLIT_PATTERN = Pattern.compile("=");
-  
-  /** Holds value of editor */
+  /** Holds value of editor. */
   private Set<T> paramSet = new LinkedHashSet<T>();
- 
-  /** Class of parameter config handled by this instance */
+
+  /** Class of parameter config handled by this instance. */
   private Class<T> handlesClass;
 
 
   /**
    * Creates a new instance to handle instances of the given class.
-   * 
-   * @param clazz Class of {@link ParamConfig} this editor handles.
+   *
+   * @param  clazz  Class of {@link ParamConfig} this editor handles.
    */
   public ParametersEditor(final Class<T> clazz)
   {
@@ -71,9 +71,7 @@ public class ParametersEditor<T extends ParamConfig>
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String getAsText()
   {
@@ -85,15 +83,16 @@ public class ParametersEditor<T extends ParamConfig>
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public void setAsText(final String text)
   {
-    logger.debug(String.format(
-        "Attempting to set value using text [[%s]].", text));
+    if (logger.isDebugEnabled()) {
+      logger.debug(
+        String.format("Attempting to set value using text [[%s]].", text));
+    }
     paramSet.clear();
+
     final Matcher matcher = LINE_MATCH_PATTERN.matcher(text);
     while (matcher.find()) {
       final String line = matcher.group(1);
@@ -101,6 +100,7 @@ public class ParametersEditor<T extends ParamConfig>
       if (pair.length != 2) {
         throw new IllegalArgumentException("Param string must be name=value.");
       }
+
       final T param = newParam();
       param.setName(pair[0]);
       param.setValue(pair[1]);
@@ -109,22 +109,20 @@ public class ParametersEditor<T extends ParamConfig>
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
-  public Object getValue() {
+  public Object getValue()
+  {
     final Set<T> copy = new LinkedHashSet<T>();
     copy.addAll(paramSet);
     return copy;
   }
 
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
-  public void setValue(final Object value) {
+  public void setValue(final Object value)
+  {
     if (!(value instanceof Collection<?>)) {
       throw new IllegalArgumentException(value + " is not a collection.");
     }
@@ -133,15 +131,13 @@ public class ParametersEditor<T extends ParamConfig>
         paramSet.add(handlesClass.cast(o));
       } catch (ClassCastException e) {
         throw new IllegalArgumentException(
-            o + " is not a " + handlesClass.getName());
+          o + " is not a " + handlesClass.getName());
       }
     }
   }
 
 
-  /**
-   * @return New {@link ParamConfig} instance.
-   */
+  /** @return  New {@link ParamConfig} instance. */
   private T newParam()
   {
     try {

@@ -1,13 +1,13 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
@@ -22,14 +22,14 @@ import javax.validation.constraints.Size;
 /**
  * Describes appender-related configuration parameters.
  *
- * @author Marvin S. Addison
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 @MappedSuperclass
 public abstract class ParamConfig extends Config
 {
-  /** ParamConfig.java */
+
+  /** ParamConfig.java. */
   private static final long serialVersionUID = -4157155815415246168L;
 
   private AppenderConfig appender;
@@ -37,40 +37,40 @@ public abstract class ParamConfig extends Config
   private String value;
 
 
-  /**
-   * @return Appender to which this appender belongs.
-   */
+  /** @return  Appender to which this appender belongs. */
   @ManyToOne
   @JoinColumn(
     name = "appender_id",
     nullable = false,
-    updatable = false)
+    updatable = false
+  )
   public AppenderConfig getAppender()
   {
     return appender;
   }
 
-  /**
-   * @param a Appender to which this param belongs.
-   */
+  /** @param  a  Appender to which this param belongs. */
   public void setAppender(final AppenderConfig a)
   {
     this.appender = a;
   }
 
-  /**
-   * @return the value
-   */
-  @Size(max = 255, message = "{param.value.max}")
-  @Column(name = "value", nullable = false, length = 255)
+  /** @return  the value */
+  @Size(
+    max = 255,
+    message = "{param.value.max}"
+  )
+  @Column(
+    name = "value",
+    nullable = false,
+    length = 255
+  )
   public String getValue()
   {
     return value;
   }
 
-  /**
-   * @param val the value to set
-   */
+  /** @param  val  the value to set */
   public void setValue(final String val)
   {
     this.value = val;

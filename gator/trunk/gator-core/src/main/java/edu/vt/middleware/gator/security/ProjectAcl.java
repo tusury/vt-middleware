@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -15,7 +15,12 @@ package edu.vt.middleware.gator.security;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import edu.vt.middleware.gator.PermissionConfig;
+import edu.vt.middleware.gator.ProjectConfig;
+import org.springframework.security.acls.domain.AccessControlEntryImpl;
+import org.springframework.security.acls.domain.GrantedAuthoritySid;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
+import org.springframework.security.acls.domain.PrincipalSid;
 import org.springframework.security.acls.model.AccessControlEntry;
 import org.springframework.security.acls.model.Acl;
 import org.springframework.security.acls.model.NotFoundException;
@@ -23,36 +28,30 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.security.acls.model.UnloadedSidException;
-import org.springframework.security.acls.domain.AccessControlEntryImpl;
-import org.springframework.security.acls.domain.ObjectIdentityImpl;
-import org.springframework.security.acls.domain.GrantedAuthoritySid;
-import org.springframework.security.acls.domain.PrincipalSid;
-
-import edu.vt.middleware.gator.PermissionConfig;
-import edu.vt.middleware.gator.ProjectConfig;
 
 /**
- * Simple ACL implementation that does not support ACL inheritance,
- * auditing, or logging.
+ * Simple ACL implementation that does not support ACL inheritance, auditing, or
+ * logging.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class ProjectAcl implements Acl
 {
-  /** ProjectAcl.java */
+
+  /** ProjectAcl.java. */
   private static final long serialVersionUID = 7764134389962328091L;
 
 
   private final List<AccessControlEntry> entries;
-  
+
   private final ObjectIdentity objectIdentity;
 
   /**
-   * Creates a simple ACL containing the given access control entries that
-   * apply to the given project configuration object.
-   * @param object Project configuration object.
+   * Creates a simple ACL containing the given access control entries that apply
+   * to the given project configuration object.
+   *
+   * @param  object  Project configuration object.
    */
   public ProjectAcl(final ProjectConfig object)
   {
@@ -63,13 +62,13 @@ public class ProjectAcl implements Acl
     }
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public List<AccessControlEntry> getEntries()
   {
     return entries;
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public ObjectIdentity getObjectIdentity()
   {
     return objectIdentity;
@@ -77,7 +76,8 @@ public class ProjectAcl implements Acl
 
   /**
    * Ownership is not supported.
-   * @return null to indicate ownership not supported.
+   *
+   * @return  null to indicate ownership not supported.
    */
   public Sid getOwner()
   {
@@ -85,8 +85,9 @@ public class ProjectAcl implements Acl
   }
 
   /**
-   * ACL inheritance is not supported
-   * @return null
+   * ACL inheritance is not supported.
+   *
+   * @return  null
    */
   public Acl getParentAcl()
   {
@@ -94,15 +95,16 @@ public class ProjectAcl implements Acl
   }
 
   /**
-   * ACL inheritance is not supported
-   * @return False in all cases.
+   * ACL inheritance is not supported.
+   *
+   * @return  False in all cases.
    */
   public boolean isEntriesInheriting()
   {
     return false;
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public boolean isGranted(
     final List<Permission> permission,
     final List<Sid> sids,
@@ -127,18 +129,21 @@ public class ProjectAcl implements Acl
 
   /**
    * All SIDs are loaded by default, so this method always returns true.
-   * @return true
+   *
+   * @return  true
    */
   public boolean isSidLoaded(final List<Sid> sids)
   {
     return true;
   }
- 
+
   /**
-   * Gets the access control entries for the given permission
-   * configuration object.
-   * @param perm Permission configuration object.
-   * @return List of access control entries.
+   * Gets the access control entries for the given permission configuration
+   * object.
+   *
+   * @param  perm  Permission configuration object.
+   *
+   * @return  List of access control entries.
    */
   private List<AccessControlEntry> getAces(final PermissionConfig perm)
   {

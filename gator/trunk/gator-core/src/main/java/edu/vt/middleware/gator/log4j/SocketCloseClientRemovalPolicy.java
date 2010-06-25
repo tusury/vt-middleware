@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -20,20 +20,20 @@ import org.apache.commons.logging.LogFactory;
  * Closes the network socket used to send remote logging events to the server
  * when a client is removed from a project.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
-public class SocketCloseClientRemovalPolicy implements ClientRemovalPolicy 
+public class SocketCloseClientRemovalPolicy implements ClientRemovalPolicy
 {
-  /** Logger instance */
+
+  /** Logger instance. */
   protected final Log logger = LogFactory.getLog(getClass());
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public void clientRemoved(
-      final String clientName,
-      final LoggingEventHandler handler)
+    final String clientName,
+    final LoggingEventHandler handler)
   {
     logger.info("Shutting down logging event handler to close client socket.");
     handler.shutdown();

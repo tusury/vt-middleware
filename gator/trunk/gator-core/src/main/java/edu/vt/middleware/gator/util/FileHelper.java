@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Middleware.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -18,23 +18,25 @@ import java.io.File;
 /**
  * Utility class with public static methods for file operations.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public final class FileHelper
 {
-  /** Protected default constructor of utility class */
-  protected FileHelper() {};
+
+  /** Protected default constructor of utility class. */
+  protected FileHelper() {}
 
 
   /**
    * Concatenates a series of path elements into a single path representation
    * where each part is separated by a single path separator character.
-   * @param pathParts Path elements.
-   * @return Filesystem path.
+   *
+   * @param  pathParts  Path elements.
+   *
+   * @return  Filesystem path.
    */
-  public static String pathCat(final String ... pathParts)
+  public static String pathCat(final String... pathParts)
   {
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < pathParts.length; i++) {

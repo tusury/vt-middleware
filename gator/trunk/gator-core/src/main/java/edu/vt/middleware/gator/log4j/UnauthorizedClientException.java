@@ -1,13 +1,13 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
@@ -19,16 +19,16 @@ import java.net.InetAddress;
  * Exception thrown when an unauthorized client attempts to connect to the
  * {@link SocketServer}.
  *
- * @author Marvin S. Addison
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class UnauthorizedClientException extends Exception
 {
-  /** UnauthorizedClientException.java */
+
+  /** UnauthorizedClientException.java. */
   private static final long serialVersionUID = 671881103602771371L;
 
-  /** IP information of unauthorized client */
+  /** IP information of unauthorized client. */
   private InetAddress client;
 
 
@@ -46,8 +46,8 @@ public class UnauthorizedClientException extends Exception
   }
 
   /**
-   * @return  IP information of unauthorized client that attempted to connect
-   * to {@link SocketServer} but was rejected.
+   * @return  IP information of unauthorized client that attempted to connect to
+   * {@link SocketServer} but was rejected.
    */
   public InetAddress getClient()
   {

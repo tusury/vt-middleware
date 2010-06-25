@@ -1,13 +1,13 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
@@ -15,9 +15,7 @@ package edu.vt.middleware.gator.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import edu.vt.middleware.gator.ProjectConfig;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +30,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 /**
  * Controller that handles editing projects.
  *
- * @author Marvin S. Addison
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 @Controller
 @RequestMapping("/secure")
@@ -44,7 +41,10 @@ public class ProjectEditFormController extends AbstractFormController
   public static final String VIEW_NAME = "projectEdit";
 
 
-  @RequestMapping(value = "/project/add.html", method = RequestMethod.GET)
+  @RequestMapping(
+    value = "/project/add.html",
+    method = RequestMethod.GET
+  )
   public String getNewProject(final Model model)
   {
     model.addAttribute("project", new ProjectConfig());
@@ -53,11 +53,12 @@ public class ProjectEditFormController extends AbstractFormController
 
 
   @RequestMapping(
-      value = "/project/{projectName}/edit.html",
-      method = RequestMethod.GET)
+    value = "/project/{projectName}/edit.html",
+    method = RequestMethod.GET
+  )
   public String getProject(
-      @PathVariable("projectName") final String projectName,
-      final Model model)
+    @PathVariable("projectName") final String projectName,
+    final Model model)
   {
     model.addAttribute("project", getProject(projectName));
     return VIEW_NAME;
@@ -65,16 +66,19 @@ public class ProjectEditFormController extends AbstractFormController
 
 
   @RequestMapping(
-      value = {
-          "/project/add.html",
-          "/project/{projectName}/edit.html"
-      },
-      method = RequestMethod.POST)
+    value = {
+      "/project/add.html",
+      "/project/{projectName}/edit.html"
+    },
+    method = RequestMethod.POST
+  )
   @Transactional(propagation = Propagation.REQUIRED)
   public String saveProject(
-      @Valid @ModelAttribute("project") final ProjectConfig project,
-      final BindingResult result,
-      final HttpServletRequest request)
+    @Valid
+    @ModelAttribute("project")
+    final ProjectConfig project,
+    final BindingResult result,
+    final HttpServletRequest request)
   {
     if (result.hasErrors()) {
       return VIEW_NAME;
@@ -85,9 +89,11 @@ public class ProjectEditFormController extends AbstractFormController
         ControllerHelper.createAllPermissions(
           request.getUserPrincipal().getName()));
     }
-    logger.debug("Saving " + project);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Saving " + project);
+    }
     configManager.save(project);
-    return String.format(
-        "redirect:/secure/project/%s/edit.html", project.getName());
+    return
+      String.format("redirect:/secure/project/%s/edit.html", project.getName());
   }
 }

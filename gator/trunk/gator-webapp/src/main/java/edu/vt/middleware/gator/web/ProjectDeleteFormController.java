@@ -1,22 +1,20 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
 package edu.vt.middleware.gator.web;
 
 import javax.validation.Valid;
-
 import edu.vt.middleware.gator.ProjectConfig;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +29,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 /**
  * Handles project deletion.
  *
- * @author Marvin S. Addison
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 @Controller
 @RequestMapping("/secure")
@@ -43,17 +40,19 @@ public class ProjectDeleteFormController extends AbstractFormController
   public static final String VIEW_NAME = "deleteForm";
 
   @RequestMapping(
-      value = "/project/{projectName}/delete.html",
-      method = RequestMethod.GET)
+    value = "/project/{projectName}/delete.html",
+    method = RequestMethod.GET
+  )
   public String getDeleteSpec(
-      @PathVariable("projectName") final String projectName,
-      final Model model)
+    @PathVariable("projectName") final String projectName,
+    final Model model)
   {
     final ProjectConfig project = configManager.findProject(projectName);
     if (project == null) {
       throw new IllegalArgumentException(
-          "Illegal attempt to delete non-existent project.");
+        "Illegal attempt to delete non-existent project.");
     }
+
     final DeleteSpec spec = new DeleteSpec();
     spec.setTypeName("Project");
     spec.setProject(project);
@@ -64,18 +63,24 @@ public class ProjectDeleteFormController extends AbstractFormController
 
 
   @RequestMapping(
-      value = "/project/{projectName}/delete.html",
-      method = RequestMethod.POST)
+    value = "/project/{projectName}/delete.html",
+    method = RequestMethod.POST
+  )
   @Transactional(propagation = Propagation.REQUIRED)
   public String deleteProject(
-      @Valid @ModelAttribute("spec") final DeleteSpec spec,
-      final BindingResult result)
+    @Valid
+    @ModelAttribute("spec")
+    final DeleteSpec spec,
+    final BindingResult result)
   {
     if (result.hasErrors()) {
       return VIEW_NAME;
     }
+
     final ProjectConfig project = (ProjectConfig) spec.getConfigToBeDeleted();
-    logger.debug("Deleting " + project);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Deleting " + project);
+    }
     configManager.delete(project);
     return "redirect:/secure/project/list.html";
   }

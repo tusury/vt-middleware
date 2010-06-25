@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -20,18 +20,18 @@ import java.util.Comparator;
  * Compares two categories such that categories are sorted in name order
  * (ignoring case) with the special root category appearing at the end.
  *
- * @author Middleware
- * @version $Revision$
- * @since 1.2.1
- *
+ * @author  Middleware Services
+ * @version  $Revision$
+ * @since  1.2.1
  */
 public class CategoryComparator
   implements Comparator<CategoryConfig>, Serializable
 {
-  /** CategoryComparator.java */
+
+  /** CategoryComparator.java. */
   private static final long serialVersionUID = -1962041529726092904L;
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public int compare(final CategoryConfig a, final CategoryConfig b)
   {
     int result = 0;
@@ -49,12 +49,13 @@ public class CategoryComparator
   /**
    * Determines whether the given category represents the root category.
    *
-   * @param category Category to consider.
-   * @return True if category is root category, false otherwise.
+   * @param  category  Category to consider.
+   *
+   * @return  True if category is root category, false otherwise.
    */
   private boolean isRoot(final CategoryConfig category)
   {
-    return CategoryConfig.ROOT_CATEGORY_NAME.equalsIgnoreCase(
-        category.getName());
+    return
+      CategoryConfig.ROOT_CATEGORY_NAME.equalsIgnoreCase(category.getName());
   }
 }

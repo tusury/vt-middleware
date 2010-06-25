@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -15,9 +15,12 @@ package edu.vt.middleware.gator.web;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import javax.validation.Valid;
-
+import edu.vt.middleware.gator.AppenderConfig;
+import edu.vt.middleware.gator.AppenderParamConfig;
+import edu.vt.middleware.gator.LayoutParamConfig;
+import edu.vt.middleware.gator.ProjectConfig;
+import edu.vt.middleware.gator.web.support.ParametersEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,18 +32,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import edu.vt.middleware.gator.AppenderConfig;
-import edu.vt.middleware.gator.AppenderParamConfig;
-import edu.vt.middleware.gator.LayoutParamConfig;
-import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.web.support.ParametersEditor;
-
 /**
  * Handles changes to multiple appenders in a single operation.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 @Controller
 @RequestMapping("/secure")
@@ -68,47 +64,54 @@ public class AppenderBulkEditFormController extends AbstractFormController
 
 
   @RequestMapping(
-      value = "/project/{projectName}/appender/bulk_edit.html",
-      method = RequestMethod.GET)
+    value = "/project/{projectName}/appender/bulk_edit.html",
+    method = RequestMethod.GET
+  )
   public String getBulkData(
-      @PathVariable("projectName") final String projectName,
-      final Model model)
+    @PathVariable("projectName") final String projectName,
+    final Model model)
   {
     final ProjectConfig project = getProject(projectName);
-    model.addAttribute("bulkData", new BulkAppenderEditFormData(project.getName()));
+    model.addAttribute(
+      "bulkData",
+      new BulkAppenderEditFormData(project.getName()));
     model.addAttribute("projectAppenders", project.getAppenders());
     return VIEW_NAME;
   }
 
 
   @RequestMapping(
-      value = "/project/{projectName}/appender/bulk_edit.html",
-      method = RequestMethod.POST)
+    value = "/project/{projectName}/appender/bulk_edit.html",
+    method = RequestMethod.POST
+  )
   public String saveChanges(
-      @Valid @ModelAttribute("bulkData") final BulkAppenderEditFormData bulkData,
-      final BindingResult result)
+    @Valid
+    @ModelAttribute("bulkData")
+    final BulkAppenderEditFormData bulkData,
+    final BindingResult result)
   {
     if (result.hasErrors()) {
       return VIEW_NAME;
     }
+
     final ProjectConfig project = getProject(bulkData.getProjectName());
     for (int id : bulkData.getAppenderIds()) {
       final AppenderConfig appender = project.getAppender(id);
 
       if (bulkData.getAppenderClassName() != null) {
-	      appender.setAppenderClassName(bulkData.getAppenderClassName());
+        appender.setAppenderClassName(bulkData.getAppenderClassName());
       }
 
-      if (bulkData.getErrorHandlerClassName() != null ||
-          bulkData.isApplyBlankErrorHandlerClass())
-      {
-	      appender.setErrorHandlerClassName(bulkData.getErrorHandlerClassName());
+      if (
+        bulkData.getErrorHandlerClassName() != null ||
+          bulkData.isApplyBlankErrorHandlerClass()) {
+        appender.setErrorHandlerClassName(bulkData.getErrorHandlerClassName());
       }
-      
-      if (bulkData.getLayoutClassName() != null ||
-          bulkData.isApplyBlankLayoutClass())
-      {
-	      appender.setLayoutClassName(bulkData.getLayoutClassName());
+
+      if (
+        bulkData.getLayoutClassName() != null ||
+          bulkData.isApplyBlankLayoutClass()) {
+        appender.setLayoutClassName(bulkData.getLayoutClassName());
       }
 
       if (bulkData.isClearAppenderParams()) {
@@ -126,38 +129,39 @@ public class AppenderBulkEditFormController extends AbstractFormController
       }
     }
     configManager.save(project);
-    return String.format(
-        "redirect:/secure/project/%s/edit.html#appender", project.getName());
+    return
+      String.format(
+        "redirect:/secure/project/%s/edit.html#appender",
+        project.getName());
   }
 
 
   /**
    * Form binding object for this controller.
    *
-   * @author Marvin S. Addison
-   *
+   * @author  Middleware Services
    */
   public static class BulkAppenderEditFormData
   {
     private String projectName;
-    
+
     private int[] appenderIds;
-    
+
     private String appenderClassName;
-    
+
     private String errorHandlerClassName;
-    
+
     private boolean applyBlankErrorHandlerClass;
-    
+
     private String layoutClassName;
-    
+
     private boolean applyBlankLayoutClass;
-    
+
     private boolean clearAppenderParams;
 
     private Set<AppenderParamConfig> appenderParams =
       new LinkedHashSet<AppenderParamConfig>();
-    
+
     private boolean clearLayoutParams;
 
     private Set<LayoutParamConfig> layoutParams =
@@ -166,176 +170,139 @@ public class AppenderBulkEditFormController extends AbstractFormController
 
     /**
      * Creates a new instance for the given project.
-     * @param name Name of project whose appenders are to be changed.
+     *
+     * @param  name  Name of project whose appenders are to be changed.
      */
     public BulkAppenderEditFormData(final String name)
     {
       this.projectName = name;
     }
 
-    /**
-     * @return the appenderIds
-     */
+    /** @return  the appenderIds */
     public int[] getAppenderIds()
     {
       return appenderIds;
     }
 
-    /**
-     * @param appenderIds the appenderIds to set
-     */
+    /** @param  appenderIds  the appenderIds to set */
     public void setAppenderIds(final int[] appenderIds)
     {
       this.appenderIds = appenderIds;
     }
 
-    /**
-     * @return the appenderClassName
-     */
+    /** @return  the appenderClassName */
     public String getAppenderClassName()
     {
       return appenderClassName;
     }
 
-    /**
-     * @param appenderClassName the appenderClassName to set
-     */
+    /** @param  appenderClassName  the appenderClassName to set */
     public void setAppenderClassName(final String appenderClassName)
     {
       this.appenderClassName = appenderClassName;
     }
 
-    /**
-     * @return the errorHandlerClassName
-     */
+    /** @return  the errorHandlerClassName */
     public String getErrorHandlerClassName()
     {
       return errorHandlerClassName;
     }
 
-    /**
-     * @param errorHandlerClassName the errorHandlerClassName to set
-     */
+    /** @param  errorHandlerClassName  the errorHandlerClassName to set */
     public void setErrorHandlerClassName(final String errorHandlerClassName)
     {
       this.errorHandlerClassName = errorHandlerClassName;
     }
 
-    /**
-     * @return the applyBlankErrorHandlerClass
-     */
+    /** @return  the applyBlankErrorHandlerClass */
     public boolean isApplyBlankErrorHandlerClass()
     {
       return applyBlankErrorHandlerClass;
     }
 
     /**
-     * @param applyBlankErrorHandlerClass the applyBlankErrorHandlerClass to set
+     * @param  applyBlankErrorHandlerClass  the applyBlankErrorHandlerClass to
+     * set
      */
-    public void setApplyBlankErrorHandlerClass(boolean applyBlankErrorHandlerClass)
+    public void setApplyBlankErrorHandlerClass(
+      boolean applyBlankErrorHandlerClass)
     {
       this.applyBlankErrorHandlerClass = applyBlankErrorHandlerClass;
     }
 
-    /**
-     * @return the layoutClassName
-     */
+    /** @return  the layoutClassName */
     public String getLayoutClassName()
     {
       return layoutClassName;
     }
 
-    /**
-     * @param layoutClassName the layoutClassName to set
-     */
+    /** @param  layoutClassName  the layoutClassName to set */
     public void setLayoutClassName(final String layoutClassName)
     {
       this.layoutClassName = layoutClassName;
     }
 
-    /**
-     * @return the applyBlankLayoutClass
-     */
+    /** @return  the applyBlankLayoutClass */
     public boolean isApplyBlankLayoutClass()
     {
       return applyBlankLayoutClass;
     }
 
-    /**
-     * @param applyBlankLayoutClass the applyBlankLayoutClass to set
-     */
+    /** @param  applyBlankLayoutClass  the applyBlankLayoutClass to set */
     public void setApplyBlankLayoutClass(boolean applyBlankLayoutClass)
     {
       this.applyBlankLayoutClass = applyBlankLayoutClass;
     }
 
-    /**
-     * @return the clearAppenderParams
-     */
+    /** @return  the clearAppenderParams */
     public boolean isClearAppenderParams()
     {
       return clearAppenderParams;
     }
 
-    /**
-     * @param clearAppenderParams the clearAppenderParams to set
-     */
+    /** @param  clearAppenderParams  the clearAppenderParams to set */
     public void setClearAppenderParams(boolean clearAppenderParams)
     {
       this.clearAppenderParams = clearAppenderParams;
     }
 
-    /**
-     * @return the appenderParams
-     */
+    /** @return  the appenderParams */
     public Set<AppenderParamConfig> getAppenderParams()
     {
       return appenderParams;
     }
 
-    /**
-     * @param appenderParams the appenderParams to set
-     */
+    /** @param  appenderParams  the appenderParams to set */
     public void setAppenderParams(final Set<AppenderParamConfig> appenderParams)
     {
       this.appenderParams = appenderParams;
     }
 
-    /**
-     * @return the clearLayoutParams
-     */
+    /** @return  the clearLayoutParams */
     public boolean isClearLayoutParams()
     {
       return clearLayoutParams;
     }
 
-    /**
-     * @param clearLayoutParams the clearLayoutParams to set
-     */
+    /** @param  clearLayoutParams  the clearLayoutParams to set */
     public void setClearLayoutParams(boolean clearLayoutParams)
     {
       this.clearLayoutParams = clearLayoutParams;
     }
 
-    /**
-     * @return the layoutParams
-     */
+    /** @return  the layoutParams */
     public Set<LayoutParamConfig> getLayoutParams()
     {
       return layoutParams;
     }
 
-    /**
-     * @param layoutParams the layoutParams to set
-     */
+    /** @param  layoutParams  the layoutParams to set */
     public void setLayoutParams(final Set<LayoutParamConfig> layoutParams)
     {
       this.layoutParams = layoutParams;
     }
 
-    /**
-     * @return the project name
-     */
+    /** @return  the project name */
     public String getProjectName()
     {
       return projectName;

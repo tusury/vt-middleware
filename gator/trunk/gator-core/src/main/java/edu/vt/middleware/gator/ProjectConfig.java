@@ -1,27 +1,26 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
- */
+*/
 package edu.vt.middleware.gator;
 
 import java.net.InetAddress;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,57 +32,60 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import edu.vt.middleware.gator.validation.UniqueName;
-
 import org.hibernate.annotations.Cascade;
 
 /**
  * Project is the top-level class in the configuration hierarchy.
  *
- * @author Marvin S. Addison
- *
+ * @author  Middleware Services
  */
 @Entity
 @Table(name = "log_projects")
 @SequenceGenerator(
   name = "project_sequence",
   sequenceName = "log_seq_projects",
-  allocationSize = 1)
+  allocationSize = 1
+)
 @UniqueName(message = "{project.uniqueName}")
 public class ProjectConfig extends Config
 {
-  /** ProjectConfig.java */
+
+  /** ProjectConfig.java. */
   private static final long serialVersionUID = -2968760653575992537L;
 
-  /** Hash code seed */
+  /** Hash code seed. */
   private static final int HASH_CODE_SEED = 1024;
- 
-  /** Log directory prepended to file appender paths used by client */
+
+  /** Log directory prepended to file appender paths used by client. */
   private String clientLogDir;
- 
-  /** Date/time of most recent modification to this project configuration */
+
+  /** Date/time of most recent modification to this project configuration. */
   private Calendar modifiedDate;
- 
-  /** Clients allowed to use this project configuration */
+
+  /** Clients allowed to use this project configuration. */
   private Set<ClientConfig> clients;
 
-  /** Logger categories defined in this project */
+  /** Logger categories defined in this project. */
   private Set<CategoryConfig> categories;
- 
-  /** Appenders defined in this project */
-  private Set<AppenderConfig> appenders;
- 
-  /** Permissions defined on this project */
-  private Set<PermissionConfig> permissions;
-  
 
-  /** {@inheritDoc} */
+  /** Appenders defined in this project. */
+  private Set<AppenderConfig> appenders;
+
+  /** Permissions defined on this project. */
+  private Set<PermissionConfig> permissions;
+
+
+  /** {@inheritDoc}. */
   @Id
-  @Column(name = "project_id", nullable = false)
+  @Column(
+    name = "project_id",
+    nullable = false
+  )
   @GeneratedValue(
     strategy = GenerationType.SEQUENCE,
-    generator = "project_sequence")
+    generator = "project_sequence"
+  )
   public int getId()
   {
     return id;
@@ -92,9 +94,13 @@ public class ProjectConfig extends Config
 
   /**
    * Gets the date/time the project configuration was last modified.
-   * @return Modification date.
+   *
+   * @return  Modification date.
    */
-  @Column(name = "modified_date", nullable = false)
+  @Column(
+    name = "modified_date",
+    nullable = false
+  )
   public Calendar getModifiedDate()
   {
     return modifiedDate;
@@ -102,7 +108,8 @@ public class ProjectConfig extends Config
 
   /**
    * Sets the date/time of the last project modification.
-   * @param date Modification date.
+   *
+   * @param  date  Modification date.
    */
   public void setModifiedDate(final Calendar date)
   {
@@ -111,7 +118,8 @@ public class ProjectConfig extends Config
 
   /**
    * Gets the log directory prepended to client appender paths.
-   * @return Absolute path to root of client logs.
+   *
+   * @return  Absolute path to root of client logs.
    */
   @Column(name = "client_log_dir")
   public String getClientLogDir()
@@ -121,22 +129,25 @@ public class ProjectConfig extends Config
 
   /**
    * Sets the log directory prepended to client appender paths.
-   * @param dir Absolute path to root of client logs.
+   *
+   * @param  dir  Absolute path to root of client logs.
    */
   public void setClientLogDir(final String dir)
   {
     this.clientLogDir = dir;
   }
-  
+
   /**
    * Gets the collection of clients belonging to this project.
-   * @return Clients of this project.
+   *
+   * @return  Clients of this project.
    */
   @OneToMany(
     mappedBy = "project",
     cascade = CascadeType.ALL,
-    fetch = FetchType.EAGER)
-  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    fetch = FetchType.EAGER
+  )
+  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<ClientConfig> getClientsInternal()
   {
     if (clients == null) {
@@ -144,10 +155,11 @@ public class ProjectConfig extends Config
     }
     return clients;
   }
-  
+
   /**
    * Sets the collection of clients belonging to this project.
-   * @param s Clients of this project.
+   *
+   * @param  s  Clients of this project.
    */
   protected void setClientsInternal(final Set<ClientConfig> s)
   {
@@ -155,23 +167,26 @@ public class ProjectConfig extends Config
   }
 
   /**
-   * Gets an immutable collection of clients belonging to this project.
-   * Clients are sorted by name in the returned collection.
-   * @return Clients of this project.
+   * Gets an immutable collection of clients belonging to this project. Clients
+   * are sorted by name in the returned collection.
+   *
+   * @return  Clients of this project.
    */
   @Transient
   public Collection<ClientConfig> getClients()
   {
-    final SortedSet<ClientConfig> clientSet =
-      new TreeSet<ClientConfig>(new ConfigComparator());
+    final SortedSet<ClientConfig> clientSet = new TreeSet<ClientConfig>(
+      new ConfigComparator());
     clientSet.addAll(getClientsInternal());
     return Collections.unmodifiableCollection(clientSet);
   }
- 
+
   /**
    * Gets the client with the given ID belonging to this project.
-   * @param clientId Client ID.
-   * @return Client in this project with matching ID or null if no matching
+   *
+   * @param  clientId  Client ID.
+   *
+   * @return  Client in this project with matching ID or null if no matching
    * client is found.
    */
   @Transient
@@ -184,12 +199,14 @@ public class ProjectConfig extends Config
     }
     return null;
   }
-  
+
   /**
-   * Gets a client by name belonging to this project.  Name comparison is case
+   * Gets a client by name belonging to this project. Name comparison is case
    * sensitive.
-   * @param name Client name.
-   * @return Client in this project with matching name or null if no matching
+   *
+   * @param  name  Client name.
+   *
+   * @return  Client in this project with matching name or null if no matching
    * client is found.
    */
   @Transient
@@ -202,12 +219,14 @@ public class ProjectConfig extends Config
     }
     return null;
   }
-  
+
   /**
-   * Gets a client by IP address belonging to this project.  The set of clients
+   * Gets a client by IP address belonging to this project. The set of clients
    * is searched first by hostname (case sensitive) then IP.
-   * @param address IP address of client to get.
-   * @return First client in this project with matching hostname or IP address
+   *
+   * @param  address  IP address of client to get.
+   *
+   * @return  First client in this project with matching hostname or IP address
    * or null if no matching client is found.
    */
   @Transient
@@ -221,9 +240,10 @@ public class ProjectConfig extends Config
   }
 
   /**
-   * Adds a client to this project.
-   * Client names must be unique within a project.
-   * @param Client to add.
+   * Adds a client to this project. Client names must be unique within a
+   * project.
+   *
+   * @param  Client  to add.
    */
   public void addClient(final ClientConfig client)
   {
@@ -234,10 +254,11 @@ public class ProjectConfig extends Config
     client.setProject(this);
     getClientsInternal().add(client);
   }
-  
+
   /**
    * Removes a client from this project.
-   * @param client To be removed.
+   *
+   * @param  client  To be removed.
    */
   public void removeClient(final ClientConfig client)
   {
@@ -245,15 +266,17 @@ public class ProjectConfig extends Config
     getClientsInternal().remove(client);
   }
 
-  
+
   /**
    * Gets the collection of appenders belonging to this project.
-   * @return appenders of this project.
+   *
+   * @return  appenders of this project.
    */
   @OneToMany(
     mappedBy = "project",
-    cascade = CascadeType.ALL)
-  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    cascade = CascadeType.ALL
+  )
+  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<AppenderConfig> getAppendersInternal()
   {
     if (appenders == null) {
@@ -261,10 +284,11 @@ public class ProjectConfig extends Config
     }
     return appenders;
   }
-  
+
   /**
    * Sets the collection of appenders belonging to this project.
-   * @param s appenders of this project.
+   *
+   * @param  s  appenders of this project.
    */
   protected void setAppendersInternal(final Set<AppenderConfig> s)
   {
@@ -274,20 +298,24 @@ public class ProjectConfig extends Config
   /**
    * Gets an immutable collection of appenders belonging to this project.
    * Appenders are sorted by name in the returned collection.
-   * @return Appenders of this project.
+   *
+   * @return  Appenders of this project.
    */
   @Transient
-  public Collection<AppenderConfig> getAppenders() {
-    final SortedSet<AppenderConfig> appenderSet =
-      new TreeSet<AppenderConfig>(new ConfigComparator());
+  public Collection<AppenderConfig> getAppenders()
+  {
+    final SortedSet<AppenderConfig> appenderSet = new TreeSet<AppenderConfig>(
+      new ConfigComparator());
     appenderSet.addAll(getAppendersInternal());
     return Collections.unmodifiableCollection(appenderSet);
   }
- 
+
   /**
    * Gets the appender with the given ID belonging to this project.
-   * @param appenderId Appender ID.
-   * @return Appender in this project with matching ID or null if no matching
+   *
+   * @param  appenderId  Appender ID.
+   *
+   * @return  Appender in this project with matching ID or null if no matching
    * appender is found.
    */
   @Transient
@@ -300,11 +328,13 @@ public class ProjectConfig extends Config
     }
     return null;
   }
-  
+
   /**
    * Gets the appender with the given name belonging to this project.
-   * @param name Appender name.
-   * @return Appender in this project with matching name or null if no matching
+   *
+   * @param  name  Appender name.
+   *
+   * @return  Appender in this project with matching name or null if no matching
    * appender is found.
    */
   @Transient
@@ -319,9 +349,10 @@ public class ProjectConfig extends Config
   }
 
   /**
-   * Adds an appender to this project.
-   * Appender names must be unique within a project.
-   * @param Appender to add.
+   * Adds an appender to this project. Appender names must be unique within a
+   * project.
+   *
+   * @param  Appender  to add.
    */
   public void addAppender(final AppenderConfig appender)
   {
@@ -332,10 +363,11 @@ public class ProjectConfig extends Config
     appender.setProject(this);
     getAppendersInternal().add(appender);
   }
-  
+
   /**
    * Removes an appender from this project.
-   * @param appender To be removed.
+   *
+   * @param  appender  To be removed.
    */
   public void removeAppender(final AppenderConfig appender)
   {
@@ -346,15 +378,17 @@ public class ProjectConfig extends Config
     getAppendersInternal().remove(appender);
   }
 
-  
+
   /**
    * Gets the collection of categories belonging to this project.
-   * @return Categories of this project.
+   *
+   * @return  Categories of this project.
    */
   @OneToMany(
     mappedBy = "project",
-    cascade = CascadeType.ALL)
-  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    cascade = CascadeType.ALL
+  )
+  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<CategoryConfig> getCategoriesInternal()
   {
     if (categories == null) {
@@ -362,10 +396,11 @@ public class ProjectConfig extends Config
     }
     return categories;
   }
-  
+
   /**
    * Sets the collection of categories belonging to this project.
-   * @param s Categories of this project.
+   *
+   * @param  s  Categories of this project.
    */
   protected void setCategoriesInternal(final Set<CategoryConfig> s)
   {
@@ -375,21 +410,24 @@ public class ProjectConfig extends Config
   /**
    * Gets an immutable collection of categories belonging to this project.
    * Categories are sorted by name in the returned collection.
-   * @return Categories of this project.
+   *
+   * @return  Categories of this project.
    */
   @Transient
   public Collection<CategoryConfig> getCategories()
   {
-    final SortedSet<CategoryConfig> categorySet =
-      new TreeSet<CategoryConfig>(new CategoryComparator());
+    final SortedSet<CategoryConfig> categorySet = new TreeSet<CategoryConfig>(
+      new CategoryComparator());
     categorySet.addAll(getCategoriesInternal());
     return Collections.unmodifiableCollection(categorySet);
   }
-  
+
   /**
    * Gets the category with the given ID belonging to this project.
-   * @param categoryId Category ID.
-   * @return Category in this project with matching ID or null if no matching
+   *
+   * @param  categoryId  Category ID.
+   *
+   * @return  Category in this project with matching ID or null if no matching
    * category is found.
    */
   @Transient
@@ -402,11 +440,13 @@ public class ProjectConfig extends Config
     }
     return null;
   }
-  
+
   /**
    * Gets the category with the given name belonging to this project.
-   * @param name Category name.
-   * @return Category in this project with matching name or null if no matching
+   *
+   * @param  name  Category name.
+   *
+   * @return  Category in this project with matching name or null if no matching
    * category is found.
    */
   @Transient
@@ -421,9 +461,10 @@ public class ProjectConfig extends Config
   }
 
   /**
-   * Adds an category to this project.
-   * Category names must be unique within a project.
-   * @param category Category to add.
+   * Adds an category to this project. Category names must be unique within a
+   * project.
+   *
+   * @param  category  Category to add.
    */
   public void addCategory(final CategoryConfig category)
   {
@@ -434,10 +475,11 @@ public class ProjectConfig extends Config
     category.setProject(this);
     getCategoriesInternal().add(category);
   }
-  
+
   /**
    * Removes an category from this project.
-   * @param category To be removed.
+   *
+   * @param  category  To be removed.
    */
   public void removeCategory(final CategoryConfig category)
   {
@@ -447,13 +489,15 @@ public class ProjectConfig extends Config
 
   /**
    * Gets project security permissions.
-   * @return Set of security permissions for this project.
+   *
+   * @return  Set of security permissions for this project.
    */
   @OneToMany(
     mappedBy = "project",
     cascade = CascadeType.ALL,
-    fetch = FetchType.EAGER)
-  @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    fetch = FetchType.EAGER
+  )
+  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   private Set<PermissionConfig> getPermissionsInternal()
   {
     if (permissions == null) {
@@ -464,7 +508,8 @@ public class ProjectConfig extends Config
 
   /**
    * Sets project security permissions.
-   * @param Set of project permissions.
+   *
+   * @param  Set  of project permissions.
    */
   protected void setPermissionsInternal(final Set<PermissionConfig> permissions)
   {
@@ -472,9 +517,9 @@ public class ProjectConfig extends Config
   }
 
   /**
-   * Gets an immutable set of all security permissions defined on this
-   * project.
-   * @return Immutable set of project permissions.
+   * Gets an immutable set of all security permissions defined on this project.
+   *
+   * @return  Immutable set of project permissions.
    */
   @Transient
   public Set<PermissionConfig> getPermissions()
@@ -484,9 +529,11 @@ public class ProjectConfig extends Config
 
   /**
    * Gets a permission bound to this project by its database ID.
-   * @param permId Permission ID of permission to fetch.
-   * @return Permission object whose ID matches the given value or null if
-   * none exists.
+   *
+   * @param  permId  Permission ID of permission to fetch.
+   *
+   * @return  Permission object whose ID matches the given value or null if none
+   * exists.
    */
   @Transient
   public PermissionConfig getPermission(final int permId)
@@ -502,8 +549,10 @@ public class ProjectConfig extends Config
   /**
    * Gets a permission bound to this project by the security ID of the principal
    * to which the permission applies.
-   * @param sid Security identifier of principal to which permission applies.
-   * @return Permission object whose sid matches the given value or null if
+   *
+   * @param  sid  Security identifier of principal to which permission applies.
+   *
+   * @return  Permission object whose sid matches the given value or null if
    * none exists.
    */
   @Transient
@@ -518,26 +567,28 @@ public class ProjectConfig extends Config
   }
 
   /**
-   * Adds a security permission to this project.
-   * Permission names (principal or role) must be unique within a project.
-   * @param perm Permission to add.
+   * Adds a security permission to this project. Permission names (principal or
+   * role) must be unique within a project.
+   *
+   * @param  perm  Permission to add.
    */
   public void addPermission(final PermissionConfig perm)
   {
     for (PermissionConfig p : getPermissionsInternal()) {
       if (p.getName().equalsIgnoreCase(perm.getName())) {
-	      throw new IllegalArgumentException(
-	        "Permission names (principal/role) must be unique within a project.");
-        
+        throw new IllegalArgumentException(
+          "Permission names (principal/role) must be unique within a project.");
+
       }
     }
     perm.setProject(this);
     getPermissionsInternal().add(perm);
   }
-  
+
   /**
    * Removes a security permission from this project.
-   * @param perm To be removed.
+   *
+   * @param  perm  To be removed.
    */
   public void removePermission(final PermissionConfig perm)
   {
@@ -545,7 +596,7 @@ public class ProjectConfig extends Config
     getPermissionsInternal().remove(perm);
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @Transient
   protected int getHashCodeSeed()
   {

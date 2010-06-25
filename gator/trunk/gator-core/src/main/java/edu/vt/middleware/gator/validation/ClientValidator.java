@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,49 +14,43 @@
 package edu.vt.middleware.gator.validation;
 
 import java.util.List;
-
 import javax.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.Errors;
-
 import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.ConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.Errors;
 
 /**
  * Validates client configuration elements.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class ClientValidator extends AbstractAnnotationValidator
 {
-  @Autowired
-  @NotNull
+  @Autowired @NotNull
   private ConfigManager configManager;
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public boolean supports(Class<?> clazz)
   {
     return ClientConfig.class.equals(clazz);
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @Override
   public void validate(final Object target, final Errors errors)
   {
     super.validate(target, errors);
-   
+
     final ClientConfig client = (ClientConfig) target;
     // Ensure client names are globally unique
     final List<ProjectConfig> otherProjects =
       configManager.findProjectsByClientName(client.getName());
-    for (ProjectConfig p : otherProjects)
-    {
+    for (ProjectConfig p : otherProjects) {
       if (!p.equals(client.getProject())) {
         errors.rejectValue(
           "name",

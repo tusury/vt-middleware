@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -19,27 +19,28 @@ import org.apache.log4j.Hierarchy;
 import org.apache.log4j.spi.LoggerRepository;
 
 /**
- * Deletes the log4j {@link LoggerRepository} associated with the client
- * when it is removed from a project so that no more logging events are
- * processed on the server.
+ * Deletes the log4j {@link LoggerRepository} associated with the client when it
+ * is removed from a project so that no more logging events are processed on the
+ * server.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class DeleteLoggerRepositoryClientRemovalPolicy
   implements ClientRemovalPolicy
 {
-  /** Logger instance */
+
+  /** Logger instance. */
   protected final Log logger = LogFactory.getLog(getClass());
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public void clientRemoved(
     final String clientName,
     final LoggingEventHandler handler)
   {
     logger.info("Deleting logger repository for client " + clientName);
+
     final LoggerRepository repository = handler.getRepository();
     repository.shutdown();
     if (repository instanceof Hierarchy) {

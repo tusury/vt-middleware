@@ -1,13 +1,13 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
@@ -16,18 +16,19 @@ package edu.vt.middleware.gator.log4j;
 /**
  * Describes Log4j configuration errors.
  *
- * @author Marvin S. Addison
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class ConfigurationException extends Exception
 {
-  /** ConfigurationException.java */
+
+  /** ConfigurationException.java. */
   private static final long serialVersionUID = -4833363886386073180L;
 
   /**
    * Creates a new instance with the given error text message.
-   * @param msg Error text.
+   *
+   * @param  msg  Error text.
    */
   public ConfigurationException(final String msg)
   {
@@ -36,7 +37,8 @@ public class ConfigurationException extends Exception
 
   /**
    * Creates a new instance with the given causing exception.
-   * @param cause Cause of this exception.
+   *
+   * @param  cause  Cause of this exception.
    */
   public ConfigurationException(final Throwable cause)
   {
@@ -45,8 +47,9 @@ public class ConfigurationException extends Exception
 
   /**
    * Creates a new instance with the given error text message and cause.
-   * @param msg Error text.
-   * @param cause Cause of this exception.
+   *
+   * @param  msg  Error text.
+   * @param  cause  Cause of this exception.
    */
   public ConfigurationException(final String msg, final Throwable cause)
   {

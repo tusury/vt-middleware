@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Middleware.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,7 +14,6 @@
 package edu.vt.middleware.gator.servlet;
 
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -23,23 +22,20 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.util.Assert;
-
 import edu.vt.middleware.gator.ConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.web.support.RequestParamExtractor;
+import org.springframework.util.Assert;
 
 /**
  * Servlet filter operates on responses that presumably contain a log4j XML
- * configuration.  This filter generates certain response headers that are
- * expected by the log4j {@link DOMConfigurator} when acting on URI that
- * is an HTTP URL.  These headers may not be correctly set under normal
- * circumstances by a response generated from a JSP view.
+ * configuration. This filter generates certain response headers that are
+ * expected by the log4j {@link DOMConfigurator} when acting on URI that is an
+ * HTTP URL. These headers may not be correctly set under normal circumstances
+ * by a response generated from a JSP view.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class Log4jXmlFilter implements Filter
 {
@@ -48,7 +44,8 @@ public class Log4jXmlFilter implements Filter
 
   /**
    * Sets the configuration manager.
-   * @param manager Configuration manager;
+   *
+   * @param  manager  Configuration manager;
    */
   public void setConfigManager(final ConfigManager manager)
   {
@@ -56,14 +53,15 @@ public class Log4jXmlFilter implements Filter
   }
 
 
-  /** {@inheritDoc} */
-  public void init(final FilterConfig config) throws ServletException
+  /** {@inheritDoc}. */
+  public void init(final FilterConfig config)
+    throws ServletException
   {
     Assert.notNull(configManager, "ConfigManager is required.");
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public void doFilter(
     final ServletRequest request,
     final ServletResponse response,
@@ -76,7 +74,7 @@ public class Log4jXmlFilter implements Filter
     chain.doFilter(request, wrappedResponse);
 
     final byte[] outBytes = wrappedResponse.toByteArray();
-    
+
     // Try to determine an accurate last modified date for the configuration
     final long timestamp = System.currentTimeMillis();
     long lastModTime = timestamp;
@@ -89,7 +87,7 @@ public class Log4jXmlFilter implements Filter
 
     // Flush old headers now that we have the response bytes
     httpResponse.reset();
-    
+
     // Set the headers like a static resource
     httpResponse.setContentType("text/xml");
     httpResponse.setContentLength(outBytes.length);
@@ -99,6 +97,6 @@ public class Log4jXmlFilter implements Filter
   }
 
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public void destroy() {}
 }

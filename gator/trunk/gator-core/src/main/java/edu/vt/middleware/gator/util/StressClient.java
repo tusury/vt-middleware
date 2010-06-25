@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,31 +14,29 @@
 package edu.vt.middleware.gator.util;
 
 import java.util.Random;
-
+import edu.vt.middleware.gator.log4j.SocketServer;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.net.SocketAppender;
 import org.apache.log4j.spi.LoggingEvent;
 
-import edu.vt.middleware.gator.log4j.SocketServer;
-
 /**
  * Simple test program that connects to a log4j socket server and sends a large
- * number of logging events over the socket.  May be used for stress testing.
+ * number of logging events over the socket. May be used for stress testing.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class StressClient
 {
-  /** Default milliseconds between successive logging events */
+
+  /** Default milliseconds between successive logging events. */
   public static final int DEFAULT_IDLE_TIME = 100;
- 
-  /** Default category of logging events sent by this client */
+
+  /** Default category of logging events sent by this client. */
   public static final String DEFAULT_CATEGORY = "edu.vt.middleware.gator";
- 
-  /** Logger levels */
+
+  /** Logger levels. */
   private static final Level[] LEVELS = new Level[] {
     Level.FATAL,
     Level.ERROR,
@@ -52,13 +50,14 @@ public class StressClient
   /**
    * Stress client entry point.
    *
-   * @param args Expects the following arguments:
+   * @param  args  Expects the following arguments:
+   *
    * <ol>
-   * <li>0 - host name</li>
-   * <li>1 - port number</li>
-   * <li>2 (optional) - idle time between in ms between successive logging
-   * events</li>
-   * <li>3 (optional) - logger category of test events</li>
+   *   <li>0 - host name</li>
+   *   <li>1 - port number</li>
+   *   <li>2 (optional) - idle time between in ms between successive
+   *     logging events</li>
+   *   <li>3 (optional) - logger category of test events</li>
    * </ol>
    */
   public static void main(String[] args)
@@ -80,6 +79,7 @@ public class StressClient
       System.out.println("USAGE: StressClient host port [idle_ms] [category]");
       return;
     }
+
     final SocketAppender appender = new SocketAppender(host, port);
     final Random rnd = new Random(System.currentTimeMillis());
     try {
@@ -92,6 +92,7 @@ public class StressClient
       System.out.println("Log level varies randomly.");
       System.out.println("Terminate process to stop.");
       System.out.println("Running");
+
       long n = 1;
       while (true) {
         System.out.print('.');

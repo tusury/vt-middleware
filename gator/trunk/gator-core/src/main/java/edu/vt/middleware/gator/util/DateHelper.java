@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Middleware.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -19,20 +19,22 @@ import java.util.Calendar;
 /**
  * Helper class with static methods for date/time conversions.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class DateHelper
 {
-  /** Protected default constructor of utility class */
-  protected DateHelper() {};
-  
- 
+
+  /** Protected default constructor of utility class. */
+  protected DateHelper() {}
+
+
   /**
    * Converts a SQL timestamp into a {@link Calendar}.
-   * @param ts Timestamp to convert.
-   * @return Equivalent calendar.
+   *
+   * @param  ts  Timestamp to convert.
+   *
+   * @return  Equivalent calendar.
    */
   public static Calendar toCalendar(final Timestamp ts)
   {
@@ -40,12 +42,14 @@ public class DateHelper
     cal.setTimeInMillis(ts.getTime());
     return cal;
   }
-  
-  
+
+
   /**
    * Converts a {@link Calendar} into a SQL timestamp.
-   * @param cal Calendar to convert.
-   * @return Equivalent timestamp.
+   *
+   * @param  cal  Calendar to convert.
+   *
+   * @return  Equivalent timestamp.
    */
   public static Timestamp toTimestamp(final Calendar cal)
   {

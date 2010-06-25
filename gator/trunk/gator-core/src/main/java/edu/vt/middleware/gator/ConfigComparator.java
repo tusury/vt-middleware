@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Middleware.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -17,20 +17,19 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 /**
- * Comparator for {@link Config} objects that sorts by name, falling back to
- * ID in the case where names are equal.
+ * Comparator for {@link Config} objects that sorts by name, falling back to ID
+ * in the case where names are equal.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
-public class ConfigComparator
-  implements Comparator<Config>, Serializable
+public class ConfigComparator implements Comparator<Config>, Serializable
 {
-  /** ConfigComparator.java */
+
+  /** ConfigComparator.java. */
   private static final long serialVersionUID = 8591283570241252559L;
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   public int compare(final Config a, final Config b)
   {
     int result = 0;
@@ -52,10 +51,10 @@ public class ConfigComparator
           if (b.getName() == null) {
             result = 1;
           } else {
-				    result = a.getName().compareToIgnoreCase(b.getName());
-				    if (result == 0) {
-				      result = a.getId() - b.getId();
-				    }
+            result = a.getName().compareToIgnoreCase(b.getName());
+            if (result == 0) {
+              result = a.getId() - b.getId();
+            }
           }
         }
       }

@@ -1,13 +1,13 @@
 /*
   $Id$
 
-  Copyright (C) 2008 Virginia Tech, Marvin S. Addison.
+  Copyright (C) 2009-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Marvin S. Addison
-  Email:   serac@vt.edu
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
 */
@@ -23,10 +23,8 @@ import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -36,54 +34,55 @@ import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.spi.LoggingEvent;
 
 /**
- * Copied and extended from {@link SocketNode} class.  This class has the
- * added feature of publishing events about closing client sockets.
+ * Copied and extended from {@link SocketNode} class. This class has the added
+ * feature of publishing events about closing client sockets.
  *
- * @author Marvin S. Addison
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class LoggingEventHandler implements Runnable
 {
-  /** Special category name signifying a log event received by this instance */
+
+  /** Special category name signifying a log event received by this instance. */
   public static final String LOG_EVENT_CATEGORY = "LOG_EVENT";
 
-  /** Logger instance */
+  /** Logger instance. */
   protected final Log logger = LogFactory.getLog(getClass());
 
-  /** Special logger to capture LoggingEvents received by this instance */
+  /** Special logger to capture LoggingEvents received by this instance. */
   protected final Log eventLogger = LogFactory.getLog(LOG_EVENT_CATEGORY);
 
-  /** Subscribers that get notified when logging events are received */
+  /** Subscribers that get notified when logging events are received. */
   protected final Set<LoggingEventListener> loggingEventListeners =
     new HashSet<LoggingEventListener>();
 
-  /** Subscribers that get notified when underlying socket closes */
+  /** Subscribers that get notified when underlying socket closes. */
   protected final Set<SocketCloseListener> socketCloseListeners =
     new HashSet<SocketCloseListener>();
 
   protected boolean isRunning;
 
   protected Socket socket;
-  
+
   protected LoggerRepository repository;
- 
+
   protected Executor executor;
 
 
   /**
-   * Creates new instance that accepts logging events as serialized
-   * {@link LoggingEvent} objects from the given socket, and writes events
-   * to the given logger repository.
-   * @param socket Socket to read from.
-   * @param repo Source of loggers to write to.
-   * @param eventExecutor Responsible for sending events to registered
+   * Creates new instance that accepts logging events as serialized {@link
+   * LoggingEvent} objects from the given socket, and writes events to the given
+   * logger repository.
+   *
+   * @param  socket  Socket to read from.
+   * @param  repo  Source of loggers to write to.
+   * @param  eventExecutor  Responsible for sending events to registered
    * listeners.
    */
   public LoggingEventHandler(
-      final Socket socket,
-      final LoggerRepository repo,
-      final Executor eventExecutor)
+    final Socket socket,
+    final LoggerRepository repo,
+    final Executor eventExecutor)
   {
     if (socket == null) {
       throw new IllegalArgumentException("Socket cannot be null.");
@@ -99,77 +98,74 @@ public class LoggingEventHandler implements Runnable
     this.executor = eventExecutor;
   }
 
-  /**
-   * @return the loggingEventListeners
-   */
+  /** @return  the loggingEventListeners */
   public Set<LoggingEventListener> getLoggingEventListeners()
   {
     return loggingEventListeners;
   }
 
-  /**
-   * @return the socketCloseListeners
-   */
+  /** @return  the socketCloseListeners */
   public Set<SocketCloseListener> getSocketCloseListeners()
   {
     return socketCloseListeners;
   }
- 
-  /**
-   * @return the repository
-   */
+
+  /** @return  the repository */
   public LoggerRepository getRepository()
   {
     return repository;
   }
-  
+
   /**
    * Gets the socket used to read logging events from remote clients.
-   * @return Socket used to read logging events.
+   *
+   * @return  Socket used to read logging events.
    */
   public Socket getSocket()
   {
     return socket;
   }
- 
+
   /**
-   * Gets the IP address of the remote host for which this handler services
-   * log events.
-   * @return IP address.
+   * Gets the IP address of the remote host for which this handler services log
+   * events.
+   *
+   * @return  IP address.
    */
   public InetAddress getRemoteAddress()
   {
     return socket.getInetAddress();
   }
 
-  /**
-   * Shuts down the loop that handles logging event messages.
-   */
+  /** Shuts down the loop that handles logging event messages. */
   public void shutdown()
   {
     isRunning = false;
     closeSocketIfNecessary();
   }
 
-  /** {@inheritDoc} */
-  public void run() {
+  /** {@inheritDoc}. */
+  public void run()
+  {
     isRunning = true;
     logger.info("Ready to handle remote logging events from socket.");
+
     final Layout eventTraceLayout = new TTCCLayout();
     ObjectInputStream ois = null;
     try {
       ois = new ObjectInputStream(
-          new BufferedInputStream(socket.getInputStream()));
-      while(isRunning) {
+        new BufferedInputStream(socket.getInputStream()));
+      while (isRunning) {
         final LoggingEvent event = (LoggingEvent) ois.readObject();
         if (eventLogger.isTraceEnabled()) {
-          eventLogger.info("Read logging event from socket: " +
-              eventTraceLayout.format(event));
+          eventLogger.info(
+            "Read logging event from socket: " +
+            eventTraceLayout.format(event));
         }
-        final Logger serverLogger =
-          repository.getLogger(event.getLoggerName());
+
+        final Logger serverLogger = repository.getLogger(event.getLoggerName());
         final Level level = serverLogger.getEffectiveLevel();
-        if(event.getLevel().isGreaterOrEqual(level)) {
+        if (event.getLevel().isGreaterOrEqual(level)) {
           serverLogger.callAppenders(event);
         }
         // Attempt to call registered listeners
@@ -177,11 +173,11 @@ public class LoggingEventHandler implements Runnable
           executor.execute(new LoggingEventReceivedEvent(listener, event));
         }
       }
-    } catch(EOFException e) {
+    } catch (EOFException e) {
       logger.info("End of stream detected. Quitting.");
-    } catch(SocketException e) {
+    } catch (SocketException e) {
       logger.info("Underlying socket is closed. Quitting.");
-    } catch(Exception e) {
+    } catch (Exception e) {
       logger.error("Unexpected exception. Quitting.", e);
     } finally {
       closeStreamIfNecessary(ois);
@@ -199,38 +195,38 @@ public class LoggingEventHandler implements Runnable
   public void setupMDC()
   {
     MDC.put("host", getRemoteAddress().getHostName());
-    MDC.put("ip", getRemoteAddress().getHostAddress()); 
+    MDC.put("ip", getRemoteAddress().getHostAddress());
   }
 
-  /** {@inheritDoc} */
+  /** {@inheritDoc}. */
   @Override
   public String toString()
   {
     return "LoggingEventHandler for " + getRemoteAddress();
   }
-  
+
   private void closeStreamIfNecessary(final InputStream in)
   {
     if (in != null) {
       try {
         in.close();
-      } catch(Exception e) {
+      } catch (Exception e) {
         logger.error("Error closing input stream.", e);
       }
     }
   }
-  
+
   private void closeSocketIfNecessary()
   {
     if (socket != null) {
       if (!socket.isClosed()) {
-	      try {
-	        logger.info("Closing client socket.");
-	        socket.shutdownInput();
-	        socket.close();
-	      } catch(Exception e) {
-	        logger.error("Error closing client socket.", e);
-	      }
+        try {
+          logger.info("Closing client socket.");
+          socket.shutdownInput();
+          socket.close();
+        } catch (Exception e) {
+          logger.error("Error closing client socket.", e);
+        }
       }
       // We expect the socket to be unusable in any case at this point
       // which we can safely consider "closed" in this context
@@ -240,21 +236,22 @@ public class LoggingEventHandler implements Runnable
       socket = null;
     }
   }
-  
+
   private class LoggingEventReceivedEvent implements Runnable
   {
     private LoggingEventListener listener;
-    
+
     private LoggingEvent event;
-    
+
     public LoggingEventReceivedEvent(
-        final LoggingEventListener listener, final LoggingEvent event)
+      final LoggingEventListener listener,
+      final LoggingEvent event)
     {
       this.listener = listener;
       this.event = event;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}. */
     public void run()
     {
       try {
@@ -264,21 +261,22 @@ public class LoggingEventHandler implements Runnable
       }
     }
   }
-  
+
   private class SocketCloseEvent implements Runnable
   {
     private SocketCloseListener listener;
-    
+
     private Socket socket;
-    
+
     public SocketCloseEvent(
-        final SocketCloseListener listener, final Socket socket)
+      final SocketCloseListener listener,
+      final Socket socket)
     {
       this.listener = listener;
       this.socket = socket;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}. */
     public void run()
     {
       try {
