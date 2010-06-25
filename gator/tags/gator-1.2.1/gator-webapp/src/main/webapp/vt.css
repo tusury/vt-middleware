@@ -1,0 +1,274 @@
+/*******************************************
+ * Layout
+ *******************************************/
+body {
+  margin:0 8% 10px 8%;
+  padding:0;
+  background-color:#557082;
+  font-family:Helvetica, Arial, Sans-Serif;
+  font-size:.9em;
+}
+
+#page-wrapper {
+  background-color:white;
+  border:2px solid #3c5b6f;
+}
+
+#page-header {
+  border-bottom:3px solid #ff6600;
+  padding:10px;
+  background-color:#660000;
+  background-image:url("background.png");
+  background-repeat:repeat-y;
+  color:white;
+}
+
+#page-header a {
+  text-decoration:none;
+  color:white
+}
+
+#page-footer {
+  border-top:1px solid #3c5b6f;
+  margin-top:8%;
+  background-color:#f5f5eb;
+  font-size:90%;
+  padding:10px;
+}
+
+#page-footer p {
+  margin:0px;
+  padding:0px;
+  text-align:center;
+}
+
+#content {
+  margin:3px 18px 5px 18px;
+}
+
+#title {
+  font-size:1.8em;
+  text-align:center;
+  letter-spacing:2px;
+}
+
+div#crumbs {
+  font-size:1em;
+}
+
+div#crumbs ul, div#crumbs li {
+  list-style-image:url("right-arrow.png");
+  list-style-type:square;
+  margin:0;
+  padding:0;
+}
+
+div#crumbs ul {
+  display:inline;
+}
+
+div#crumbs li {
+  float:left;
+  padding-right:30px;
+}
+
+div#crumbs li.first {
+  list-style-type:none;
+  list-style-image:none;
+}
+
+div#logout {
+  float:right;
+}
+
+/*******************************************
+ * Form Elements
+ *******************************************/
+form { 
+  margin:0;
+  padding:0;
+}
+
+fieldset {
+  margin-bottom:15px;
+  background-color:#f5f5eb;
+}
+
+legend {
+  font-weight:bold;
+  padding-bottom:8px;
+}
+
+label, .label {
+  margin-left:5px;
+  font-weight:bold;
+}
+
+label.checkbox,
+div.checkboxes label,
+div.checkboxes div label {
+  font-weight:normal;
+  position:relative;
+  top:-2px;
+}
+
+div.field {
+  margin-top:10px;
+  margin-bottom:5px;
+}
+
+.button {
+  border:outset 1px #c1ccd2;
+  background-color:#c1ccd2;
+  margin:5px;
+  padding:2px 6px;
+  color:black;
+  font-size:0.94em;
+  font-weight:normal;
+}
+
+.button:active {
+  border:inset 1px #c1ccd2;
+  padding-left:7px;
+  padding-right:5px;
+}
+
+a.button {
+  color:black;
+  text-decoration:none;
+}
+
+div.button_group {
+  margin-top:0px;
+  margin-bottom:12px;
+}
+
+#error, .error {
+  font-size:1.2em;
+  font-weight:bold;
+  color:#CC0000;
+}
+
+#validation-summary {
+  font-size:1.1em;
+  font-weight:bold;
+  color:#CC0000;
+}
+
+.field-error {
+  margin-left:5px;
+  color:#CC0000;
+}
+
+/*******************************************
+ * General Styles
+ *******************************************/
+h1, h2, h3 {
+  letter-spacing:1px;
+  font-weight:bold;
+  font-style:normal;
+  margin:1em 0 0.3em -8px;
+}
+
+h1 {
+  font-size:1.6em;
+}
+
+h2 {
+  font-size:1.4em;
+}
+
+h3 {
+  font-size:1.2em;
+}
+
+tr {
+  margin:2px;
+}
+
+th {
+  padding:1px 8px;
+  background-color:#dbd8bc;
+  color:black;
+}
+
+td {
+  padding:1px 8px;
+  background-color:#edeada;
+  color:black;
+}
+
+tr.button_row td {
+  padding-top:6px;
+  padding-bottom:6px;
+}
+
+tr.button_row:hover td {
+  background-color:#fdfdc0;
+}
+
+td.button_cell {
+  padding-left:6px;
+  padding-right:6px;
+}
+
+.note {
+  margin:3px;
+  font-size:90%;
+  font-weight:bold;
+  color:#666;
+}
+
+#info, .info {
+  font-size:110%;
+  font-weight:bold;
+  color:#0000CC;
+}
+
+div.infobox {
+  margin:20px auto;
+  padding:6px 10px;
+  background-color:#fdfdc0;
+  border:dotted 2px #dbd8bc;
+  width:60%;
+}
+
+div.infobox p {
+  margin:8px 0;
+}
+
+.smaller {
+  font-size:0.9em;
+}
+
+.bigger {
+  font-size:1.1em;
+}
+
+.centered {
+  text-align:center;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.clear {
+  clear:both;
+}
+
+a.navlink {
+  color:blue;
+}
+
+a.navlink:hover {
+  text-decoration:none;
+  color:white;
+  background-color:blue;
+}
+
+a.navlink:active {
+  color:orange;
+}
+
+.navlink_group a.navlink {
+  padding:1px 5px;
+}

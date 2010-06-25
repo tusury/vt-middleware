@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--
+Sample Tomcat context.xml file for Gator servlet to customize servlet
+context parameters for a deployer environment.
+
+The context parameters that contain file paths assume gator lives on the
+filesystem in the directory /home/gator.
+-->
+<Context path="/gator" docBase="gator.war">
+  <!--
+  Each instance of gator in an instance of the servlet container
+  must have a unique value of this parameter.
+  -->
+  <Parameter
+    name="webAppRootKey"
+    value="edu.vt.middleware.gator"
+    override="false" />
+
+  <!-- Path to log4j properties file -->
+  <Parameter
+    name="log4jConfigLocation"
+    value="/home/gator/log4j.properties"
+    override="false" />
+
+  <!--
+  Spring application context configuration files.
+  Only changing the security provider is supported.
+  See the securityContext sample files for examples of how to customize
+  security configuration for your environment.
+  -->
+  <Parameter
+    name="contextConfigLocation"
+    value="
+      /WEB-INF/applicationContext.xml
+      /WEB-INF/applicationContext-authz.xml
+      file:/home/gator/securityContext.xml
+      /WEB-INF/gator-servlet.xml"
+    override="false" />
+    
+  <!--
+  Database dialect class name.
+  One of values defined in the org.hibernate.dialect package,
+  http://www.hibernate.org/hib_docs/v3/api/org/hibernate/dialect/package-summary.html.
+  -->
+  <Parameter
+    name="db.dialect"
+    value="org.hibernate.dialect.PostgreSQLDialect"
+    override="false" />
+
+  <!--
+  Batch size for multiple JDBC operations submitted as a batch.
+  Set to 0 to disable query batching.
+  MUST set to 0 for HSQL platform.
+  -->
+  <Parameter
+    name="db.batchSize"
+    value="10"
+    override="false" />
+
+  <!-- JDBC driver class -->
+  <Parameter
+    name="jdbc.driverClass"
+    value="org.postgresql.Driver"
+    override="false" />
+
+  <!-- JDBC connection URL -->
+  <Parameter
+    name="jdbc.url"
+    value="jdbc:postgresql://localhost:5432/user"
+    override="false" />
+
+  <!-- JDBC user -->
+  <Parameter
+    name="jdbc.user"
+    value="gator_user"
+    override="false" />
+
+  <!-- JDBC password -->
+  <Parameter
+    name="jdbc.pass"
+    value="PASSWORD"
+    override="false" />
+
+  <!-- JDBC connection pool initial size -->
+  <Parameter
+    name="jdbc.pool.initSize"
+    value="1"
+    override="false" />
+
+  <!-- JDBC connection pool maximum number idle connections -->
+  <Parameter
+    name="jdbc.pool.maxIdle"
+    value="1"
+    override="false" />
+
+  <!-- JDBC connection pool maximum number active connections -->
+  <Parameter
+    name="jdbc.pool.maxActive"
+    value="5"
+    override="false" />
+
+  <!-- Log4j socket server bind address -->
+  <Parameter
+    name="log4j.server.bindAddress"
+    value="127.0.0.1"
+    override="false" />
+
+  <!-- Log4j socket server bind address -->
+  <Parameter
+    name="log4j.server.port"
+    value="8000"
+    override="false" />
+
+  <!--
+  Maximum number of clients that can connect to server.
+  A "client" in this sense is a connected socket.
+  -->
+  <Parameter
+    name="log4j.server.maxClients"
+    value="30"
+    override="false" />
+
+  <!--
+  Root directory where client logs will be written.
+  A subdirectory for each project will be created under the root directory.
+  -->
+  <Parameter
+    name="log4j.client.rootDir"
+    value="/home/gator/logs"
+    override="false" />
+
+  <!--
+  Name of a class that implements a client removal policy, which defines
+  what happens when a client is removed from a project.
+  The following are provided out of the box, in order of increasing
+  aggressiveness for dealing with deleted clients:
+  edu.vt.middleware.gator.log4j.NoopClientRemovalPolicy
+  edu.vt.middleware.gator.log4j.DeleteLoggerRepositoryClientRemovalPolicy
+  edu.vt.middleware.gator.log4j.SocketCloseClientRemovalPolicy
+  -->
+  <Parameter
+    name="log4j.client.removalPolicy"
+    value="edu.vt.middleware.gator.log4j.DeleteLoggerRepositoryClientRemovalPolicy"
+    override="false" />
+</Context>
