@@ -165,7 +165,15 @@ public class LoggingEventHandler implements Runnable
 
         final Logger serverLogger = repository.getLogger(event.getLoggerName());
         final Level level = serverLogger.getEffectiveLevel();
+        if (eventLogger.isTraceEnabled()) {
+	        eventLogger.info(
+	            String.format("Event matches category %s with level %s.",
+	                 serverLogger.getName(), level));
+        }
         if (event.getLevel().isGreaterOrEqual(level)) {
+          if (eventLogger.isTraceEnabled()) {
+            eventLogger.info("Calling appenders for event.");
+          }
           serverLogger.callAppenders(event);
         }
         // Attempt to call registered listeners
