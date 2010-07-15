@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2009-2010 Virginia Tech.
+  Copyright (C) 2008-2009 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware Services
+  Author:  Middleware
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -15,47 +15,47 @@ package edu.vt.middleware.gator.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import edu.vt.middleware.gator.ProjectConfig;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import edu.vt.middleware.gator.ProjectConfig;
+
 /**
- * Controller that handles editing projects.
+ * Controller that handles project creation.
  *
- * @author  Middleware Services
- * @version  $Revision$
+ * @author Middleware
+ * @version $Revision$
+ *
  */
 @Controller
 @RequestMapping("/secure")
 @SessionAttributes("project")
-public class ProjectEditFormController extends AbstractFormController
+public class ProjejctCreateFormController extends AbstractFormController
 {
-  public static final String VIEW_NAME = "projectEdit";
+  public static final String VIEW_NAME = "projectCreate";
 
 
   @RequestMapping(
-    value = "/project/{projectName}/edit.html",
+    value = "/project/add.html",
     method = RequestMethod.GET
   )
-  public String getProject(
-    @PathVariable("projectName") final String projectName,
-    final Model model)
+  public String getNewProject(final Model model)
   {
-    model.addAttribute("project", getProject(projectName));
+    model.addAttribute("project", new ProjectConfig());
     return VIEW_NAME;
   }
 
 
   @RequestMapping(
-    value = "/project/{projectName}/edit.html",
+    value = "/project/add.html",
     method = RequestMethod.POST
   )
   @Transactional(propagation = Propagation.REQUIRED)
@@ -69,6 +69,10 @@ public class ProjectEditFormController extends AbstractFormController
     if (result.hasErrors()) {
       return VIEW_NAME;
     }
+    // Add all permissions to new project for current user principal
+    project.addPermission(
+      ControllerHelper.createAllPermissions(
+        request.getUserPrincipal().getName()));
     if (logger.isDebugEnabled()) {
       logger.debug("Saving " + project);
     }
