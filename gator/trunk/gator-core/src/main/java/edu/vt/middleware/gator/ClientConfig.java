@@ -39,6 +39,7 @@ import edu.vt.middleware.gator.validation.UniqueName;
 @SequenceGenerator(
   name = "client_sequence",
   sequenceName = "log_seq_clients",
+  initialValue = 1,
   allocationSize = 1
 )
 @UniqueName(message = "{client.uniqueName}")

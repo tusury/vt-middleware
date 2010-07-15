@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/includes/top.jsp" %>
+<div class="clear"></div>
 
 <p>Redirecting to
 <a href="<c:url value="/secure/project/list.html" />">application start page</a>...</p>

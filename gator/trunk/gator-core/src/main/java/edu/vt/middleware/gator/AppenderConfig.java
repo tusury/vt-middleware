@@ -46,6 +46,7 @@ import org.hibernate.annotations.Cascade;
 @SequenceGenerator(
   name = "appender_sequence",
   sequenceName = "log_seq_appenders",
+  initialValue = 1,
   allocationSize = 1
 )
 @UniqueName(message = "{appender.uniqueName}")

@@ -45,6 +45,7 @@ import org.hibernate.annotations.Cascade;
 @SequenceGenerator(
   name = "project_sequence",
   sequenceName = "log_seq_projects",
+  initialValue = 1,
   allocationSize = 1
 )
 @UniqueName(message = "{project.uniqueName}")

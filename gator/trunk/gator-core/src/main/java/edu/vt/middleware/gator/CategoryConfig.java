@@ -44,6 +44,7 @@ import org.apache.log4j.Level;
 @SequenceGenerator(
   name = "category_sequence",
   sequenceName = "log_seq_clients",
+  initialValue = 1,
   allocationSize = 1
 )
 @UniqueName(message = "{category.uniqueName}")

@@ -1,5 +1,6 @@
 #!/bin/sh
 
+VERSION=1.2.2-SNAPSHOT
 JAVA=`/usr/bin/which java`
 if [ "x$JAVA" = "x" ]; then
   if [ "x$JAVA_HOME" = "x" ]; then
@@ -12,6 +13,6 @@ if [ "x$JAVA" = "x" ]; then
     JAVA="$JAVA_HOME/jre/bin/java"
   fi
 fi
-JAR_PATH="gator-core/target/gator-jar-with-dependencies.jar"
+JAR_PATH="gator-core/target/gator-core-$VERSION-jar-with-dependencies.jar"
 
 $JAVA -jar $JAR_PATH $@

@@ -1,4 +1,5 @@
 <%@ include file="includes/top.jsp" %>
+<%@ include file="includes/user.jsp" %>
 
 <c:choose>
   <c:when test="${category.new}">

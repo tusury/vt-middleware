@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/includes/top.jsp" %>
+<div class="clear"></div>
 
 <h1>Logged Out</h1>
 

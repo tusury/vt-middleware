@@ -13,6 +13,8 @@
 */
 package edu.vt.middleware.gator.web;
 
+import java.util.Date;
+
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.AppenderParamConfig;
 import edu.vt.middleware.gator.CategoryConfig;
@@ -177,5 +179,37 @@ public class ControllerHelper
     }
     perm.setPermissionBits(permBits);
     return perm;
+  }
+  
+
+  /**
+   * Calculates an uptime string from the given date.
+   * 
+   * @param  start  Uptime start date.
+   * 
+   * @return Uptime duration string of the form
+   * [D days] [H hours] [M minutes] S seconds.
+   */
+  public static String calculateUpTime(final Date start)
+  {
+    final StringBuilder sb = new StringBuilder();
+    int uptime = (int)(System.currentTimeMillis() - start.getTime()) / 1000;
+    final int days = uptime / 24 / 3600;
+    if (days > 0) {
+      sb.append(days).append(" days ");
+    }
+    uptime = uptime % (24 * 3600);
+    final int hours = uptime / 3600;
+    if (hours > 0) {
+      sb.append(hours).append(" hours ");
+    }
+    uptime = uptime % 3600;
+    final int minutes = uptime / 60;
+    if (minutes > 0) {
+      sb.append(minutes).append(" minutes ");
+    }
+    final int seconds = uptime % 60;
+    sb.append(seconds).append(" seconds");
+    return sb.toString();
   }
 }

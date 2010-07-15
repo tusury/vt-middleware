@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -67,6 +68,10 @@ public class LoggingEventHandler implements Runnable
   protected LoggerRepository repository;
 
   protected Executor executor;
+  
+  private final Date startTime = new Date();
+  
+  private long loggingEventCount;
 
 
   /**
@@ -137,6 +142,23 @@ public class LoggingEventHandler implements Runnable
     return socket.getInetAddress();
   }
 
+  /**
+   * @return  Date/time this logging event handler started.
+   */
+  public Date getStartTime()
+  {
+    return startTime;
+  }
+
+  /**
+   * @return  Total number of logging events received by this handler since
+   * startup.
+   */
+  public long getLoggingEventCount()
+  {
+    return loggingEventCount;
+  }
+
   /** Shuts down the loop that handles logging event messages. */
   public void shutdown()
   {
@@ -157,6 +179,7 @@ public class LoggingEventHandler implements Runnable
         new BufferedInputStream(socket.getInputStream()));
       while (isRunning) {
         final LoggingEvent event = (LoggingEvent) ois.readObject();
+        loggingEventCount++;
         if (eventLogger.isTraceEnabled()) {
           eventLogger.info(
             "Read logging event from socket: " +

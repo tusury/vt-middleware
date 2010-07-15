@@ -21,6 +21,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -97,6 +98,9 @@ public class SocketServer
 
   /** Executor used to publish log events to registered listeners. */
   protected Executor eventExecutor;
+  
+  /** This is initialized on application startup */
+  private final Date startTime = new Date();
 
 
   /**
@@ -150,6 +154,16 @@ public class SocketServer
   }
 
   /**
+   * Gets the maximum number of logging clients allowed by this server.
+   *
+   * @return Maximum number of allowed clients.
+   */
+  public int getMaxClients()
+  {
+    return this.maxClients;
+  }
+
+  /**
    * Sets the maximum number of logging clients allowed by this server.
    *
    * @param  max  Maximum number of clients.
@@ -190,6 +204,25 @@ public class SocketServer
   }
 
   /**
+   * Gets the logging event handler for the given client.
+   * 
+   * @param  hostNameOrIp  Host name or IP address of client.
+   *
+   * @return  Logging event handler for given client or null if no handler is
+   * found for given client.
+   */
+  public LoggingEventHandler getLoggingEventHandler(final String hostNameOrIp)
+  {
+    for (InetAddress address : eventHandlerMap.keySet()) {
+      if (address.getHostName().equals(hostNameOrIp) ||
+	      address.getHostAddress().equals(hostNameOrIp)) {
+        return eventHandlerMap.get(address);
+      }
+    }
+    return null;
+  }
+
+  /**
    * Set a flag indicating whether or not to start the server after
    * initialization via {@link #init()} is complete.
    *
@@ -206,6 +239,14 @@ public class SocketServer
   public void setEventExecutor(final Executor executor)
   {
     this.eventExecutor = executor;
+  }
+
+  /**
+   * @return  Date/time of server startup.
+   */
+  public Date getStartTime()
+  {
+    return this.startTime;
   }
 
   /**
@@ -381,15 +422,11 @@ public class SocketServer
     final ProjectConfig project)
   {
     logger.info(String.format("Got notice that %s was removed.", project));
-    for (InetAddress addr : eventHandlerMap.keySet()) {
-      for (ClientConfig client : project.getClients()) {
-        if (
-          addr.getHostName().equals(client.getName()) ||
-            addr.getHostAddress().equals(client.getName())) {
-          clientRemovalPolicy.clientRemoved(
-            client.getName(),
-            eventHandlerMap.get(addr));
-        }
+    for (ClientConfig client : project.getClients()) {
+	    final LoggingEventHandler handler =
+	      getLoggingEventHandler(client.getName());
+      if (handler != null) {
+        clientRemovalPolicy.clientRemoved(client.getName(), handler);
       }
     }
   }
@@ -405,14 +442,9 @@ public class SocketServer
         "Got notice that client %s was removed from %s.",
         clientName,
         project));
-    for (InetAddress addr : eventHandlerMap.keySet()) {
-      if (
-        addr.getHostName().equals(clientName) ||
-          addr.getHostAddress().equals(clientName)) {
-        clientRemovalPolicy.clientRemoved(
-          clientName,
-          eventHandlerMap.get(addr));
-      }
+    final LoggingEventHandler handler = getLoggingEventHandler(clientName);
+    if (handler != null) {
+      clientRemovalPolicy.clientRemoved(clientName, handler);
     }
   }
 

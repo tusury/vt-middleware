@@ -1,4 +1,6 @@
 <%@ include file="/WEB-INF/jsp/includes/top.jsp" %>
+<%@ include file="includes/user.jsp" %>
+<div class="clear"></div>
 
 <h1>Error</h1>
 

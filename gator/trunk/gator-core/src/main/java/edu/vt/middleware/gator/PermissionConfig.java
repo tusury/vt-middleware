@@ -39,6 +39,7 @@ import org.springframework.security.acls.model.Permission;
 @SequenceGenerator(
   name = "permission_sequence",
   sequenceName = "log_seq_permissions",
+  initialValue = 1,
   allocationSize = 1
 )
 @UniqueName(message = "{permission.uniqueName}")

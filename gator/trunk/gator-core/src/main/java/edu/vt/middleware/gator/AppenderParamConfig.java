@@ -33,6 +33,7 @@ import javax.persistence.Transient;
 @SequenceGenerator(
   name = "param_sequence",
   sequenceName = "log_seq_params",
+  initialValue = 1,
   allocationSize = 1
 )
 public class AppenderParamConfig extends ParamConfig
