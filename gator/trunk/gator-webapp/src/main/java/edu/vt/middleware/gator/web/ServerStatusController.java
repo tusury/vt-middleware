@@ -15,11 +15,17 @@ package edu.vt.middleware.gator.web;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.Category;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,6 +99,15 @@ public class ServerStatusController extends AbstractController
       return null;
     }
     model.addAttribute("client", createClientInfo(handler));
+    model.addAttribute("threshold", handler.getRepository().getThreshold());
+    final SortedSet<LoggerInfo> loggers = new TreeSet<LoggerInfo>();
+    loggers.add(createLoggerInfo(handler.getRepository().getRootLogger()));
+    final Enumeration<?> loggerEnum =
+      handler.getRepository().getCurrentLoggers();
+    while (loggerEnum.hasMoreElements()) {
+      loggers.add(createLoggerInfo((Logger) loggerEnum.nextElement()));
+    }
+    model.addAttribute("loggers", loggers);
     return "clientStatus";
   }
 
@@ -138,7 +153,38 @@ public class ServerStatusController extends AbstractController
         client.setProject(p);
       }
     }
-    client.setRepository(handler.getRepository());
     return client;
+  }
+
+
+  /**
+   * Creates a {@link LoggerInfo} instance from a log4j {@link Logger} instance.
+   * 
+   * @param  logger  Log4j logger.
+   *
+   * @return  Logger information for Web display.
+   */
+  @SuppressWarnings("unchecked")
+  private LoggerInfo createLoggerInfo(final Logger logger)
+  {
+    final LoggerInfo info = new LoggerInfo();
+    info.setCategory(logger.getName());
+    if (logger.getLevel() != null) {
+      info.setLevel(logger.getLevel().toString());
+    }
+    info.setEffectiveLevel(logger.getEffectiveLevel().toString());
+    info.setAdditivity(logger.getAdditivity());
+    Category current = logger;
+    boolean isAdditive = false;
+    do {
+      final Enumeration e = current.getAllAppenders();
+      while (e.hasMoreElements()) {
+        info.getAppenders().add(((Appender) e.nextElement()).getName());
+      }
+      isAdditive = current.getAdditivity();
+	    current = current.getParent();
+    } while (current != null && isAdditive);
+    
+    return info;
   }
 }

@@ -17,8 +17,6 @@ import java.util.Date;
 
 import edu.vt.middleware.gator.ProjectConfig;
 
-import org.apache.log4j.spi.LoggerRepository;
-
 /**
  * Describes useful information about a connected client.
  *
@@ -35,8 +33,6 @@ public class ClientInfo
   private Date connectedAt;
   
   private long loggingEventCount;
-
-  private LoggerRepository repository;
 
   /**
    * @return the address
@@ -100,21 +96,5 @@ public class ClientInfo
   public void setLoggingEventCount(final long loggingEventCount)
   {
     this.loggingEventCount = loggingEventCount;
-  }
-
-  /**
-   * @return the repository
-   */
-  public LoggerRepository getRepository()
-  {
-    return repository;
-  }
-
-  /**
-   * @param repository the repository to set
-   */
-  public void setRepository(final LoggerRepository repository)
-  {
-    this.repository = repository;
   }
 }

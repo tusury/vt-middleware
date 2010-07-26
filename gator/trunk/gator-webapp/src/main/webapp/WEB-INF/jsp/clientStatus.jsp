@@ -19,34 +19,41 @@
       value="/secure/client/${client.name}/disconnect.html"/>">Disconnect</a></td>
   </security:accesscontrollist>
 </div>
+<div>
+  <strong>Project:</strong>
+  <security:accesscontrollist hasPermission="2" domainObject="${client.project}">
+    <a href="<c:url value="/secure/project/${client.project.name}/edit.html"/>">
+  </security:accesscontrollist>
+  ${client.project.name}
+  <security:accesscontrollist hasPermission="2" domainObject="${client.project}">
+    </a>
+  </security:accesscontrollist>
+</div>
 <div><strong>Connected At:</strong> ${client.connectedAt}</div>
 <div><strong>Event Count:</strong> ${client.loggingEventCount}</div>
 
 <h1>Logger Repository Details</h1>
-<div><strong>Root Category:</strong> ${client.repository.rootLogger.name}</div>
-<div><strong>Threshold:</strong> ${client.repository.threshold}</div>
+<div><strong>Threshold:</strong> ${threshold}</div>
 <h2>Loggers</h2>
 <table summary="Logger repository logger detail">
   <tr>
-    <th>&nbsp;</th>
-    <th>Category</th>
-    <th>Level</th>
-    <th>Effective</th>
-    <th>Additivity</th>
-    <th>Appenders</th>
+    <th><small>Category</small></th>
+    <th><small>Level</small></th>
+    <th><small>Effective</small></th>
+    <th><small>Additivity</small></th>
+    <th><small>Appenders</small></th>
   </tr>
-  <c:forEach items="${client.repository.currentLoggers}" var="logger" varStatus="stat">
-    <tr class="button_row">
-      <td>${stat.count}.</td>
-      <td>${logger.name}</td>
-      <td>${logger.level}</td>
-      <td>${logger.effectiveLevel}</td>
-      <td>${logger.additivity}</td>
-      <td>
-        <c:forEach items="${logger.allAppenders}"
+  <c:forEach items="${loggers}" var="logger" varStatus="stat">
+    <tr>
+      <td><small>${logger.category}</small></td>
+      <td><small>${logger.level}</small></td>
+      <td><small>${logger.effectiveLevel}</small></td>
+      <td><small>${logger.additivity}</small></td>
+      <td><small>
+        <c:forEach items="${logger.appenders}"
           var="appender"
-          varStatus="stat"><c:if test="${stat.count > 1}">,</c:if>
-          ${appender.name}</c:forEach>
+          varStatus="st"><c:if test="${st.count > 1}">,</c:if>
+          ${appender}</c:forEach></small>
       </td>
     </tr>
   </c:forEach>
