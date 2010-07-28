@@ -15,11 +15,10 @@ package edu.vt.middleware.gator.log4j;
 
 import java.util.Enumeration;
 import edu.vt.middleware.gator.CategoryConfig;
-import edu.vt.middleware.gator.JpaConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
 import edu.vt.middleware.gator.UnitTestHelper;
 import edu.vt.middleware.gator.log4j.Configurator;
-import edu.vt.middleware.gator.log4j.JdbcConfigurator;
+import edu.vt.middleware.gator.log4j.ProjectConfigurator;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Hierarchy;
 import org.apache.log4j.Level;
@@ -31,12 +30,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit test for {@link JdbcConfigurator} test.
+ * Unit test for {@link ProjectConfigurator} test.
  *
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class JdbcConfiguratorTest
+public class ProjectConfiguratorTest
 {
 
   /** Subject of test. */
@@ -52,14 +51,13 @@ public class JdbcConfiguratorTest
   public void setUp()
     throws Exception
   {
-    configurator = new JdbcConfigurator();
+    configurator = new ProjectConfigurator();
     configurator.setClientRootLogDirectory("target/logs");
-    configurator.setConfigManager(new JpaConfigManager());
   }
 
 
   /**
-   * Test method for {@link JdbcConfigurator#configure(ProjectConfig,
+   * Test method for {@link ProjectConfigurator#configure(ProjectConfig,
    * LoggerRepository)}.
    *
    * @throws  Exception  On errors.

@@ -143,7 +143,9 @@ public class JpaConfigManager implements ConfigManager
     logger.trace("Executing query " + queryString);
     logger.trace("Query params: name=" + name);
     try {
-      return (ProjectConfig) query.getSingleResult();
+      final ProjectConfig project = (ProjectConfig) query.getSingleResult();
+      loadFullProject(project);
+      return project;
     } catch (NoResultException e) {
       return null;
     }
@@ -166,7 +168,11 @@ public class JpaConfigManager implements ConfigManager
     query.setParameter("name", name);
     logger.trace("Executing query " + queryString);
     logger.trace("Query params: name=" + name);
-    return query.getResultList();
+    final List<ProjectConfig> projects = query.getResultList();
+    for (ProjectConfig project : projects) {
+      loadFullProject(project);
+    }
+    return projects;
   }
 
 
@@ -313,6 +319,24 @@ public class JpaConfigManager implements ConfigManager
     return
       SharedEntityManagerCreator.createSharedEntityManager(
         entityManagerFactory);
+  }
+  
+
+  /**
+   * Loads the full configuration for the given project.
+   *
+   * @param  project  Project whose entire contents should be loaded.
+   */
+  private void loadFullProject(final ProjectConfig project)
+  {
+    // Touch all dependent entities to trigger lazy load
+    for (AppenderConfig appender : project.getAppenders()) {
+      appender.getAppenderParams();
+      appender.getLayoutParams();
+    }
+    project.getCategories();
+    project.getClients();
+    project.getPermissions();
   }
 
 

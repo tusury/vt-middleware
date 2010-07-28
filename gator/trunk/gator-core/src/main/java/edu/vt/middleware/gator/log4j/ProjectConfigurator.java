@@ -13,14 +13,10 @@
 */
 package edu.vt.middleware.gator.log4j;
 
-import java.net.InetAddress;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import edu.vt.middleware.gator.AppenderConfig;
 import edu.vt.middleware.gator.CategoryConfig;
-import edu.vt.middleware.gator.ConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,12 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 /**
- * Log4j configuration handler that configures a logger hierarchy via JDBC.
+ * Log4j configuration handler that configures a logger hierarchy from a
+ * Gator project configuration.
  *
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class JdbcConfigurator implements Configurator, InitializingBean
+public class ProjectConfigurator implements Configurator, InitializingBean
 {
 
   /** Logger instance. */
@@ -47,15 +44,6 @@ public class JdbcConfigurator implements Configurator, InitializingBean
   /** Client logs will be written below here. */
   protected String clientRootLogDirectory;
 
-  /** Project configuration manager. */
-  protected ConfigManager configManager;
-
-
-  /** {@inheritDoc}. */
-  public void setConfigManager(final ConfigManager manager)
-  {
-    this.configManager = manager;
-  }
 
 
   /** {@inheritDoc}. */
@@ -69,24 +57,9 @@ public class JdbcConfigurator implements Configurator, InitializingBean
   public void afterPropertiesSet()
     throws Exception
   {
-    Assert.notNull(configManager, "ConfigManager is required.");
     Assert.notNull(
       clientRootLogDirectory,
       "ClientRootLogDirectory is required.");
-  }
-
-
-  /** {@inheritDoc}. */
-  @Transactional(
-    readOnly = true,
-    propagation = Propagation.REQUIRED
-  )
-  public void configure(
-    final InetAddress addr,
-    final LoggerRepository repository)
-    throws UnauthorizedClientException, ConfigurationException
-  {
-    configure(getProject(addr), repository);
   }
 
 
@@ -137,34 +110,4 @@ public class JdbcConfigurator implements Configurator, InitializingBean
     }
   }
 
-
-  /**
-   * Gets first project to which the host possessing the given IP address is a
-   * member.
-   *
-   * @param  addr  IP address.
-   *
-   * @return  First project to which the client at the given IP address is a
-   * member.
-   *
-   * @throws  UnauthorizedClientException  If given client is not a member of
-   * any projects.
-   */
-  private ProjectConfig getProject(final InetAddress addr)
-    throws UnauthorizedClientException
-  {
-    final Set<ProjectConfig> projects = new HashSet<ProjectConfig>();
-
-    // Add projects that contain the given client by host or IP address
-    projects.addAll(
-      configManager.findProjectsByClientName(addr.getHostAddress()));
-    projects.addAll(configManager.findProjectsByClientName(addr.getHostName()));
-    if (projects.size() > 0) {
-      return projects.iterator().next();
-    } else {
-      throw new UnauthorizedClientException(
-        addr,
-        String.format("%s not registered with any projects.", addr));
-    }
-  }
 }

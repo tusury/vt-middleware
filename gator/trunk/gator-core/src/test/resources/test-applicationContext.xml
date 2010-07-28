@@ -49,8 +49,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   </bean>
   
   <bean id="configurator"
-    class="edu.vt.middleware.gator.log4j.JdbcConfigurator">
-    <property name="configManager" ref="configManager" />
+    class="edu.vt.middleware.gator.log4j.ProjectConfigurator">
     <property name="clientRootLogDirectory" value="target/logs" />
   </bean>
 
@@ -63,6 +62,7 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   
   <bean id="socketServer"
     class="edu.vt.middleware.gator.log4j.SocketServer"
+    p:configManager-ref="configManager"
     p:configurator-ref="configurator"
     p:clientRemovalPolicy-ref="clientRemovalPolicy"
     p:eventExecutor-ref="pooledExecutor"

@@ -144,7 +144,7 @@ public class SocketServerTest
       // before sending a test logging event
       Thread.sleep(2000);
 
-      Assert.assertEquals(1, server.eventHandlerMap.keySet().size());
+      Assert.assertEquals(1, server.getLoggingEventHandlers().size());
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Sending test logging event.");
       }
@@ -169,7 +169,7 @@ public class SocketServerTest
     Thread.sleep(2000);
 
     // Client socket close should trigger cleanup of server handler mapping
-    Assert.assertEquals(0, server.eventHandlerMap.keySet().size());
+    Assert.assertEquals(0, server.getLoggingEventHandlers().size());
 
     for (AppenderConfig appender : testProject.getAppenders()) {
       final String logFilePath = FileHelper.pathCat(

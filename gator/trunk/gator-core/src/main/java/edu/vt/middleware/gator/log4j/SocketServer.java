@@ -23,10 +23,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import edu.vt.middleware.gator.ClientConfig;
 import edu.vt.middleware.gator.ConfigChangeListener;
+import edu.vt.middleware.gator.ConfigManager;
 import edu.vt.middleware.gator.ProjectConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,10 +64,6 @@ public class SocketServer
   /** Logger instance. */
   protected final Log logger = LogFactory.getLog(getClass());
 
-  /** Maps clients to the logging event handler that services its log events. */
-  protected final Map<InetAddress, LoggingEventHandler> eventHandlerMap =
-    new HashMap<InetAddress, LoggingEventHandler>();
-
   /** IP address/host name server will bind to. */
   protected String bindAddress = DEFAULT_BIND_ADDRESS;
 
@@ -98,10 +96,27 @@ public class SocketServer
 
   /** Executor used to publish log events to registered listeners. */
   protected Executor eventExecutor;
+
+  /** Project configuration manager. */
+  protected ConfigManager configManager;
+
+  /** Maps clients to the logging event handler that services its log events. */
+  private final Map<InetAddress, LoggingEventHandler> eventHandlerMap =
+    new HashMap<InetAddress, LoggingEventHandler>();
+
+  /** Maps project to logger repository to allow 1:1 relationship */
+  private final Map<ProjectConfig, LoggerRepository> repositoryMap =
+    new HashMap<ProjectConfig, LoggerRepository>();
   
   /** This is initialized on application startup */
   private final Date startTime = new Date();
 
+
+  /** {@inheritDoc}. */
+  public void setConfigManager(final ConfigManager manager)
+  {
+    this.configManager = manager;
+  }
 
   /**
    * Sets the JDBC configurator used for log4j configuration.
@@ -223,6 +238,31 @@ public class SocketServer
   }
 
   /**
+   * Gets first project to which the host possessing the given IP address is a
+   * member.
+   *
+   * @param  addr  IP address.
+   *
+   * @return  First project to which the client at the given IP address is a
+   * member or null if client does not belong to project.
+   */
+  public ProjectConfig getProject(final InetAddress addr)
+  {
+    ProjectConfig project = null;
+    List<ProjectConfig> projects =
+      configManager.findProjectsByClientName(addr.getHostName());
+    if (projects.size() > 0) {
+      project = projects.get(0);
+    } else {
+	    projects = configManager.findProjectsByClientName(addr.getHostAddress());
+	    if (projects.size() > 0) {
+	      project = projects.get(0);
+	    }
+    }
+    return project;
+  }
+
+  /**
    * Set a flag indicating whether or not to start the server after
    * initialization via {@link #init()} is complete.
    *
@@ -260,6 +300,7 @@ public class SocketServer
   public void init()
     throws Exception
   {
+    Assert.notNull(configManager, "ConfigManager cannot be null.");
     Assert.notNull(configurator, "Configurator cannot be null.");
     Assert.notNull(clientRemovalPolicy, "ClientRemovalPolicy cannot be null.");
     Assert.notNull(eventExecutor, "EventExecutor cannot be null.");
@@ -339,21 +380,27 @@ public class SocketServer
       try {
         socket = serverSocket.accept();
         inetAddress = socket.getInetAddress();
+        
+        // Validate newly-connected client
         if (eventHandlerMap.keySet().size() >= maxClients) {
           throw new UnauthorizedClientException(
-            inetAddress,
-            "Maximum number of clients exceeded.");
+            inetAddress, "Maximum number of clients exceeded.");
         }
+        final ProjectConfig project = getProject(inetAddress);
+        if (project == null) {
+	        throw new UnauthorizedClientException(
+            inetAddress, "Client not registered with any projects.");
+        }
+
         // Explicitly enable TCP keep alives to try to help reclaim resources
         // from dead clients
         socket.setKeepAlive(true);
+
         logger.info("Accepted connection from client " + inetAddress);
         logger.info("Configuring logger repository for " + inetAddress);
-
-        final LoggerRepository repo = new Hierarchy(new RootLogger(Level.ALL));
-        configurator.configure(inetAddress, repo);
+        final LoggerRepository repo = getLoggerRepository(project);
+        configurator.configure(project, repo);
         logger.info("Logger repository configured successfully.");
-
         final LoggingEventHandler handler = new LoggingEventHandler(
           socket,
           repo,
@@ -362,7 +409,6 @@ public class SocketServer
         eventHandlerMap.put(inetAddress, handler);
         handlerExecutor.execute(handler);
       } catch (UnauthorizedClientException e) {
-        eventHandlerMap.remove(e.getClient());
         logger.warn(
           String.format(
             "Unauthorized client %s rejected for reason: " + e.getMessage(),
@@ -396,23 +442,11 @@ public class SocketServer
     final ProjectConfig project)
   {
     logger.info(String.format("Got notice that %s has changed.", project));
-    for (InetAddress addr : eventHandlerMap.keySet()) {
-      for (ClientConfig client : project.getClients()) {
-        if (
-          addr.getHostName().equals(client.getName()) ||
-            addr.getHostAddress().equals(client.getName())) {
-          try {
-            logger.info("Reconfiguring logger repository for " + addr);
-            configurator.configure(
-              project,
-              eventHandlerMap.get(addr).getRepository());
-          } catch (ConfigurationException e) {
-            logger.error(
-              String.format("Error updating configuration for %s.", project),
-              e);
-          }
-        }
-      }
+    try {
+      logger.info("Reconfiguring logger repository for " + project);
+      configurator.configure(project, getLoggerRepository(project));
+    } catch (ConfigurationException e) {
+      logger.error("Error updating configuration for " + project, e);
     }
   }
 
@@ -464,5 +498,23 @@ public class SocketServer
       eventHandlerMap.get(addr).shutdown();
       eventHandlerMap.remove(addr);
     }
+  }
+
+  /**
+   * Gets the logger repository for the given project.
+   * 
+   * @param  project  Project configuration.
+   * 
+   * @return  The logger repository associated with the given project or a new
+   * logger repository if none exists.
+   */
+  protected LoggerRepository getLoggerRepository(final ProjectConfig project)
+  {
+    LoggerRepository repo = repositoryMap.get(project);
+    if (repo == null) {
+      repo = new Hierarchy(new RootLogger(Level.ALL));
+      repositoryMap.put(project, repo);
+    }
+    return repo;
   }
 }
