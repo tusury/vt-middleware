@@ -136,11 +136,10 @@ filesystem in the directory /home/gator.
   The following are provided out of the box, in order of increasing
   aggressiveness for dealing with deleted clients:
   edu.vt.middleware.gator.log4j.NoopClientRemovalPolicy
-  edu.vt.middleware.gator.log4j.DeleteLoggerRepositoryClientRemovalPolicy
   edu.vt.middleware.gator.log4j.SocketCloseClientRemovalPolicy
   -->
   <Parameter
     name="log4j.client.removalPolicy"
-    value="edu.vt.middleware.gator.log4j.DeleteLoggerRepositoryClientRemovalPolicy"
+    value="edu.vt.middleware.gator.log4j.SocketCloseClientRemovalPolicy"
     override="false" />
 </Context>
