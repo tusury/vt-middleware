@@ -43,7 +43,7 @@ public class StressClient
     Level.WARN,
     Level.INFO,
     Level.DEBUG,
-    Level.ERROR,
+    Level.TRACE,
   };
 
 
