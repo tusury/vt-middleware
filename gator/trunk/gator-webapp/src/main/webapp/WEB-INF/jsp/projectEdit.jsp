@@ -69,7 +69,7 @@
 	  </div>
 	  <c:choose>
 	    <c:when test="${not empty project.categories}">
-	      <table summary="Project category listing">
+	      <table summary="Project category listing" class="smaller">
 	        <tr>
 	          <th>Name</th>
 	          <th>Level</th>
@@ -122,7 +122,7 @@
 	  </div>
 	  <c:choose>
 	    <c:when test="${not empty project.appenders}">
-		    <table summary="Project appender listing">
+		    <table summary="Project appender listing" class="smaller">
 		      <tr>
 		        <th>Name</th>
 		        <th>Class</th>
