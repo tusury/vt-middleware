@@ -11,5 +11,5 @@ fi
 CLASSPATH="${PREFIX}/jars/vt-dictionary-${project.version}.jar"
 
 ${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \
-  edu.vt.middleware.dictionary.Dictionary $@
+  edu.vt.middleware.dictionary.TernaryTreeDictionary $@
 

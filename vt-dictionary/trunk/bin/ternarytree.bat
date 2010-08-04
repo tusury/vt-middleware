@@ -10,7 +10,7 @@ set DICT_JAR=%VTDICT_HOME%\jars\vt-dictionary-${project.version}.jar
 
 set CLASSPATH=%DICT_JAR%
 
-call "%JAVA%" -cp "%CLASSPATH%" edu.vt.middleware.dictionary.Dictionary %*
+call "%JAVA%" -cp "%CLASSPATH%" edu.vt.middleware.dictionary.TernaryTreeDictionary %*
 goto end
 
 :no_vtdict_home
