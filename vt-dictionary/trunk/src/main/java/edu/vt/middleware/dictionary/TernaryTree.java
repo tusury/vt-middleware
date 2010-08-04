@@ -13,8 +13,10 @@
 */
 package edu.vt.middleware.dictionary;
 
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -116,7 +118,7 @@ public class TernaryTree
    * represents any valid character. Possible results from this query include:
    * Helene, delete, or severe Note that no substring matching occurs, results
    * only include strings of the same length. If the supplied word does not
-   * contain the '.' character, then a regular search is preformed.
+   * contain the '.' character, then a regular search is performed.
    *
    * @param  word  <code>String</code> to search for
    *
@@ -134,7 +136,7 @@ public class TernaryTree
     if (matches == null) {
       results = new String[] {};
     } else {
-      results = matches.toArray(new String[0]);
+      results = matches.toArray(new String[matches.size()]);
     }
     return results;
   }
@@ -144,7 +146,7 @@ public class TernaryTree
    * This will return an array of strings which are near to the supplied word by
    * the supplied distance. For the query nearSearch("fisher", 2): Possible
    * results include: cipher, either, fishery, kosher, sister. If the supplied
-   * distance is not > 0, then a regular search is preformed.
+   * distance is not > 0, then a regular search is performed.
    *
    * @param  word  <code>String</code> to search for
    * @param  distance  <code>int</code> for valid match
@@ -164,26 +166,26 @@ public class TernaryTree
     if (matches == null) {
       results = new String[] {};
     } else {
-      results = matches.toArray(new String[0]);
+      results = matches.toArray(new String[matches.size()]);
     }
     return results;
   }
 
 
   /**
-   * This will return an array of all the words in this <code>
+   * This will return a list of all the words in this <code>
    * TernaryTree</code>. This is a very expensive operation, every node in the
-   * tree is traversed.
+   * tree is traversed. The returned list cannot be modified.
    *
    * @return  <code>String[]</code> - of words
    */
-  public String[] getWords()
+  public List<String> getWords()
   {
     final List<String> words = this.traverseNode(
       this.root,
       "",
       new ArrayList<String>());
-    return words.toArray(new String[0]);
+    return Collections.unmodifiableList(words);
   }
 
 
@@ -194,10 +196,12 @@ public class TernaryTree
    * but it should give an indication of whether or not your tree is balanced.
    *
    * @param  out  <code>PrintWriter</code> to print to
+   * @throws  IOException  if an error occurs
    */
-  public void print(final PrintWriter out)
+  public void print(final Writer out)
+    throws IOException
   {
-    out.println(printNode(this.root, "", 0));
+    out.write(printNode(this.root, "", 0));
   }
 
 
@@ -448,7 +452,9 @@ public class TernaryTree
       final String c = String.valueOf(node.getSplitChar());
       if (node.getEqkid() != null) {
         words = this.traverseNode(node.getEqkid(), s + c, words);
-      } else {
+      }
+
+      if (node.isEndOfWord()) {
         words.add(s + c);
       }
 
