@@ -6,7 +6,7 @@
   <groupId>edu.vt.middleware</groupId>
   <artifactId>vt-dictionary</artifactId>
   <packaging>jar</packaging>
-  <version>2.0.2-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <name>VT Dictionary Libraries</name>
   <url>http://code.google.com/p/vt-middleware/wiki/vtdictionary</url>
   <issueManagement>
@@ -54,9 +54,8 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8</version>
+      <version>5.13.1</version>
       <scope>test</scope>
-      <classifier>jdk15</classifier>
     </dependency>
   </dependencies>
 
@@ -156,11 +155,17 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>pertest</forkMode>
-          <argLine>-Xms256m -Xmx512m</argLine>
+          <argLine>-Xms768m -Xmx768m</argLine>
           <suiteXmlFiles>
             <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
+          <properties>
+            <property>
+              <!-- turn off report generation, it causes OOM -->
+              <name>usedefaultlisteners</name>
+              <value>false</value>
+            </property>
+          </properties>
         </configuration>
       </plugin>
       <plugin>
