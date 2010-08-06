@@ -16,6 +16,7 @@ package edu.vt.middleware.dictionary;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Random;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.DataProvider;
 
 /**
@@ -26,6 +27,9 @@ import org.testng.annotations.DataProvider;
  */
 public abstract class AbstractDictionaryPerfTest
 {
+
+  /** Initialization lock. */
+  private static final Object LOCK = new Object();
 
   /** location of webster's dictionary. */
   protected static String webFile;
@@ -55,14 +59,13 @@ public abstract class AbstractDictionaryPerfTest
   public void initialize(final String dict1, final String dict2)
     throws Exception
   {
-    synchronized (this) {
+    synchronized (LOCK) {
       if (webFile == null) {
         webFile = dict1;
       }
       if (fbsdFile == null) {
         fbsdFile = dict2;
       }
-
       if (randomWebWordsLarge == null) {
         randomWebWordsLarge = this.createRandomWords(webFile, 10000);
       }
@@ -76,6 +79,20 @@ public abstract class AbstractDictionaryPerfTest
         randomFbsdWordsSmall = this.createRandomWords(fbsdFile, 10);
       }
     }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @AfterSuite(groups = {"ttperftest", "slperftest", "wlperftest"})
+  public void tearDown()
+    throws Exception
+  {
+    randomFbsdWordsLarge = null;
+    randomFbsdWordsSmall = null;
+    randomWebWordsLarge = null;
+    randomWebWordsSmall = null;
   }
 
 

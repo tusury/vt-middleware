@@ -27,7 +27,7 @@
   <parameter name="nearSearchResultsCS" value="Jicaque|Jicaquean|Xicaque|macaque"/>
   <parameter name="nearSearchResultsCI" value="jicaque|jicaquean|jocoque|macaque|xicaque"/>
 
-  <test name="coretests" parallel="methods" thread-count="10">
+  <test name="coretests" parallel="methods" thread-count="12">
     <groups>
       <run>
         <include name="wltest" />
@@ -35,6 +35,16 @@
         <include name="sldicttest" />
         <include name="wldicttest" />
         <include name="sorttest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.dictionary.*" />
+    </packages>
+  </test>
+<!-- should run separate from other tests
+  <test name="perftests" parallel="methods" thread-count="12">
+    <groups>
+      <run>
         <include name="ttperftest" />
         <include name="slperftest" />
         <include name="wlperftest" />
@@ -44,4 +54,5 @@
       <package name="edu.vt.middleware.dictionary.*" />
     </packages>
   </test>
+-->
 </suite>

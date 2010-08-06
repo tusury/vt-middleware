@@ -18,6 +18,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
@@ -53,6 +54,15 @@ public abstract class AbstractDictionaryTest
   /** Partial animal search results. */
   public static final String[] ANIMAL_PARTIAL_SEARCH_RESULTS_CI =
     new String[] {"walrus", "xantus"};
+
+  /** Initialization lock. */
+  private static final Object LOCK = new Object();
+
+  /** store words from {@link #webFile}. */
+  private static Object[][] webWords;
+
+  /** store words from {@link #fbsdFile}. */
+  private static Object[][] fbsdWords;
 
   /** Location of the dictionary file. */
   protected String webFile;
@@ -156,6 +166,48 @@ public abstract class AbstractDictionaryTest
     this.fbsdFileSorted = dict6;
     this.fbsdFileLowerCase = dict7;
     this.fbsdFileLowerCaseSorted = dict8;
+
+    synchronized (LOCK) {
+      if (webWords== null) {
+        webWords = this.createWords(webFile);
+      }
+      if (fbsdWords == null) {
+        fbsdWords = this.createWords(fbsdFile);
+      }
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @AfterSuite(groups = {"ttdicttest", "sldicttest", "wldicttest"})
+  public void tearDown()
+    throws Exception
+  {
+    webWords = null;
+    fbsdWords = null;
+  }
+
+
+  /**
+   * Returns an array of words from the supplied file.
+   *
+   * @param  dictFile  <code>String</code> to read
+   * @return  <code>Object[][]</code> containing words
+   * @throws  IOException  if an error occurs reading the supplied file
+   */
+  private Object[][] createWords(final String dictFile)
+    throws IOException
+  {
+    final FilePointerWordList fwl = new FilePointerWordList(
+      new RandomAccessFile[] {new RandomAccessFile(dictFile, "r")});
+    final Object[][] allWords = new Object[fwl.size()][1];
+    for (int i = 0; i < fwl.size(); i++) {
+      allWords[i] = new Object[] {fwl.get(i), };
+    }
+    fwl.close();
+    return allWords;
   }
 
 
@@ -169,14 +221,7 @@ public abstract class AbstractDictionaryTest
   public Object[][] createAllWebWords()
     throws IOException
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(this.webFile, "r")});
-    final Object[][] allWords = new Object[fwl.size()][1];
-    for (int i = 0; i < fwl.size(); i++) {
-      allWords[i] = new Object[] {fwl.get(i), };
-    }
-    fwl.close();
-    return allWords;
+    return webWords;
   }
 
 
@@ -190,13 +235,6 @@ public abstract class AbstractDictionaryTest
   public Object[][] createAllFbsdWords()
     throws IOException
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(this.fbsdFile, "r")});
-    final Object[][] allWords = new Object[fwl.size()][1];
-    for (int i = 0; i < fwl.size(); i++) {
-      allWords[i] = new Object[] {fwl.get(i), };
-    }
-    fwl.close();
-    return allWords;
+    return fbsdWords;
   }
 }
