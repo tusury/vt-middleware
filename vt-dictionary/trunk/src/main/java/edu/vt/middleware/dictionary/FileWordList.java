@@ -292,6 +292,7 @@ public class FileWordList extends AbstractWordList implements RandomAccess
     synchronized (this.file) {
       this.file.close();
     }
+    this.cache = null;
   }
 
 
