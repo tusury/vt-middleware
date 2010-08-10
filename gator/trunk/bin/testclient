@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=1.2.2-SNAPSHOT
+VERSION=1.2.2
 JAVA=`/usr/bin/which java`
 if [ "x$JAVA" = "x" ]; then
   if [ "x$JAVA_HOME" = "x" ]; then
