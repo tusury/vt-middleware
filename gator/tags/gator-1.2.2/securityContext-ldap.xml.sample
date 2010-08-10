@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+
+  <!--
+  TODO: Change ROLE_USER below to a role in your organization.
+  Other changes should only be made by those wishing to modify/extend core
+  functionality.  A solid understanding of Spring Security is required.
+  -->
+  <global-method-security
+    secured-annotations="enabled"
+    access-decision-manager-ref="projectAccessDecisionManager">
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.findAll(..))"
+      access="AFTER_ACL_COLLECTION_READ,ROLE_USER"/>
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.save(..))"
+      access="ACL_PROJECT_EDIT"/>
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.*Permissions(..))"
+      access="ACL_PROJECT_EDIT"/>
+    <protect-pointcut
+      expression="execution(* edu.vt.middleware.gator.ConfigManager.delete(..))"
+      access="ACL_PROJECT_DELETE"/>
+
+    <after-invocation-provider ref="afterAclCollectionRead" />
+  </global-method-security>
+
+
+  <!--
+  TODO: Change ROLE_USER and ROLE_ADMIN below to roles in your organization.
+  ROLE_ADMIN - Can create new projects
+  ROLE_USER - Required for all people who can view or modify project config data
+  -->
+  <http access-denied-page="/unauthorized.jsp">
+    <intercept-url
+      pattern="/secure/project/add.html"
+      access="ROLE_ADMIN"
+      requires-channel="https" />
+    <intercept-url
+      pattern="/secure/project/copy.html"
+      access="ROLE_ADMIN"
+      requires-channel="https" />
+    <intercept-url
+      pattern="/secure/login*"
+      access="IS_AUTHENTICATED_ANONYMOUSLY"
+      requires-channel="https" />
+    <intercept-url
+      pattern="/secure/**"
+      access="ROLE_USER"
+      requires-channel="https"/>
+
+    <form-login
+      login-page="/secure/login.jsp"
+      login-processing-url="/secure/login_validate"
+      authentication-failure-url="/secure/login.jsp?error=403"/>
+
+    <logout
+      logout-url="/secure/logout"
+      logout-success-url="/logged_out.jsp" />
+      
+    <anonymous />
+    
+    <session-management>
+      <concurrency-control
+        max-sessions="1"
+        error-if-maximum-exceeded="true" />
+    </session-management>
+  </http>
+
+  <!--
+  TODO: Configure LDAP host for your environment.
+  -->
+  <ldap-server url="ldaps://directory.example.com" />
+  
+  <!--
+  TODO: Configure LDAP authentication provider for your environment.
+  
+  user-search-filter   - Filter used to lookup a DN given a user principal name.
+  user-search-base     - Search base for user queries.
+  group-search-filter  - Filter to search for groups containing a given user DN.
+  group-search-base    - Search base for group queries.
+  group-role-attribute - Group attribute name to be used to create spring
+                         security granted authority role names
+                         (e.g. ROLE_IT-STAFF for the LDAP group it-staff)
+  -->
+  <authentication-manager>
+	  <ldap-authentication-provider
+	    user-search-filter="uid={0}"
+	    user-search-base="ou=people,dc=example,dc=com"
+	    group-search-filter="groupMember={0}"
+	    group-search-base="ou=groups,dc=example,dc=com"
+	    group-role-attribute="groupName"
+	  />
+  </authentication-manager>
+  
+</beans:beans>
