@@ -4,7 +4,7 @@
 http://vt-middleware.googlecode.com/svn/wiki/images/gator.png
 
 = Download =
-[http://vt-middleware.googlecode.com/svn/maven2/edu/vt/middleware/gator/gator-webapp/1.2.1/gator-webapp-1.2.1.war Gator 1.2.1]
+Gator is offered as a source archive since many of the configuration files may be of interest for customization via the recommended Maven War Overlay deployment process.  All versions are available in the [http://code.google.com/p/vt-middleware/downloads/list downloads] area.  We recommend reading over the [gatorReleaseNotes release notes] prior to download.
 
 = Features =
 Gator provides the following features/services:
