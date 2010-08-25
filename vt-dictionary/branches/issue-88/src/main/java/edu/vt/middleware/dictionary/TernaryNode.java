@@ -27,8 +27,8 @@ public class TernaryNode
   /** character of this node. */
   private char splitchar;
 
-  /** whether this character is the end of a word. */
-  private boolean endOfWord;
+  /** word contained in node. */
+  private String word;
 
   /** low child of this node. */
   private TernaryNode lokid;
@@ -75,24 +75,20 @@ public class TernaryNode
 
 
   /**
-   * This returns the endOfWord for this <code>TernaryNode</code>.
-   *
-   * @return  <code>boolean</code>
+   * @return the word
    */
-  public boolean isEndOfWord()
+  public String getWord()
   {
-    return this.endOfWord;
+    return word;
   }
 
 
   /**
-   * This sets the endOfWord for this <code>TernaryNode</code>.
-   *
-   * @param  b  <code>boolean</code>
+   * @param w the word to set
    */
-  public void setEndOfWord(final boolean b)
+  public void setWord(final String w)
   {
-    this.endOfWord = b;
+    this.word = w;
   }
 
 

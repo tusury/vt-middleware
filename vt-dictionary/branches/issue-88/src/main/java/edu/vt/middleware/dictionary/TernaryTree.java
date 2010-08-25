@@ -135,7 +135,6 @@ public class TernaryTree
     final List<String> matches = this.partialSearchNode(
       this.root,
       new ArrayList<String>(),
-      "",
       word,
       0);
     if (matches == null) {
@@ -165,7 +164,6 @@ public class TernaryTree
       this.root,
       distance,
       new ArrayList<String>(),
-      "",
       word,
       0);
     if (matches == null) {
@@ -188,7 +186,6 @@ public class TernaryTree
   {
     final List<String> words = this.traverseNode(
       this.root,
-      "",
       new ArrayList<String>());
     return Collections.unmodifiableList(words);
   }
@@ -237,7 +234,7 @@ public class TernaryTree
         node.setLokid(insertNode(node.getLokid(), word, index));
       } else if (cmp == 0) {
         if (index == word.length() - 1) {
-          node.setEndOfWord(true);
+          node.setWord(word);
         }
         node.setEqkid(insertNode(node.getEqkid(), word, index + 1));
       } else {
@@ -274,7 +271,7 @@ public class TernaryTree
         return searchNode(node.getHikid(), word, index);
       } else {
         if (index == word.length() - 1) {
-          if (node.isEndOfWord()) {
+          if (node.getWord() != null) {
             success = true;
           }
         } else {
@@ -301,7 +298,6 @@ public class TernaryTree
   private List<String> partialSearchNode(
     final TernaryNode node,
     List<String> matches,
-    final String match,
     final String word,
     final int index)
   {
@@ -313,20 +309,18 @@ public class TernaryTree
         matches = partialSearchNode(
           node.getLokid(),
           matches,
-          match,
           word,
           index);
       }
       if (c == '.' || cmp == 0) {
         if (index == word.length() - 1) {
-          if (node.isEndOfWord()) {
-            matches.add(match + split);
+          if (node.getWord() != null) {
+            matches.add(node.getWord());
           }
         } else {
           matches = partialSearchNode(
             node.getEqkid(),
             matches,
-            match + split,
             word,
             index + 1);
         }
@@ -335,7 +329,6 @@ public class TernaryTree
         matches = partialSearchNode(
           node.getHikid(),
           matches,
-          match,
           word,
           index);
       }
@@ -361,7 +354,6 @@ public class TernaryTree
     final TernaryNode node,
     final int distance,
     List<String> matches,
-    final String match,
     final String word,
     final int index)
   {
@@ -381,42 +373,38 @@ public class TernaryTree
           node.getLokid(),
           distance,
           matches,
-          match,
           word,
           index);
       }
 
-      final String newMatch = match + split;
       if (cmp == 0) {
 
         if (
-          node.isEndOfWord() &&
+          node.getWord() != null &&
             distance >= 0 &&
-            newMatch.length() + distance >= word.length()) {
-          matches.add(newMatch);
+            node.getWord().length() + distance >= word.length()) {
+          matches.add(node.getWord());
         }
 
         matches = nearSearchNode(
           node.getEqkid(),
           distance,
           matches,
-          newMatch,
           word,
           index + 1);
       } else {
 
         if (
-          node.isEndOfWord() &&
+            node.getWord() != null &&
             distance - 1 >= 0 &&
-            newMatch.length() + distance - 1 >= word.length()) {
-          matches.add(newMatch);
+            node.getWord().length() + distance - 1 >= word.length()) {
+          matches.add(node.getWord());
         }
 
         matches = nearSearchNode(
           node.getEqkid(),
           distance - 1,
           matches,
-          newMatch,
           word,
           index + 1);
       }
@@ -426,7 +414,6 @@ public class TernaryTree
           node.getHikid(),
           distance,
           matches,
-          match,
           word,
           index);
       }
@@ -442,7 +429,6 @@ public class TernaryTree
    * character.
    *
    * @param  node  <code>TernaryNode</code> to begin traversing
-   * @param  s  <code>String</code> of words found at the supplied node
    * @param  words  <code>ArrayList</code> which will be returned (recursive
    * function)
    *
@@ -450,23 +436,22 @@ public class TernaryTree
    */
   private List<String> traverseNode(
     final TernaryNode node,
-    final String s,
     List<String> words)
   {
     if (node != null) {
 
-      words = this.traverseNode(node.getLokid(), s, words);
+      words = this.traverseNode(node.getLokid(), words);
 
       final String c = String.valueOf(node.getSplitChar());
       if (node.getEqkid() != null) {
-        words = this.traverseNode(node.getEqkid(), s + c, words);
+        words = this.traverseNode(node.getEqkid(), words);
       }
 
-      if (node.isEndOfWord()) {
-        words.add(s + c);
+      if (node.getWord() != null) {
+        words.add(node.getWord());
       }
 
-      words = this.traverseNode(node.getHikid(), s, words);
+      words = this.traverseNode(node.getHikid(), words);
     }
     return words;
   }

@@ -135,7 +135,7 @@ public class TernaryTreeDictionaryTest
         caseInsensitiveDict,
         "Jicaque",
         2,
-        new String[] {"Jicaque", "Jicaquean", "jocoque", "Xicaque", "macaque"},
+        new String[] {"Jicaque", "Jicaquean", "jocoque", "macaque", "Xicaque"},
       },
     };
   }
@@ -172,7 +172,8 @@ public class TernaryTreeDictionaryTest
     throws Exception
   {
     final String[] actual = dictionary.partialSearch(searchTerm);
-    System.out.println("Search results: " + Arrays.asList(actual));
+    System.out.println("Partial search results: " + Arrays.toString(actual));
+    System.out.println("Partial search expected: " + Arrays.toString(expected));
     Assert.assertEquals(actual, expected);
   }
 
@@ -194,7 +195,8 @@ public class TernaryTreeDictionaryTest
     throws Exception
   {
     final String[] actual = dictionary.nearSearch(word, distance);
-    System.out.println("Search results: " + Arrays.asList(actual));
+    System.out.println("Near search results: " + Arrays.toString(actual));
+    System.out.println("Near search expected: " + Arrays.toString(expected));
     Assert.assertEquals(actual, expected);
   }
 }
