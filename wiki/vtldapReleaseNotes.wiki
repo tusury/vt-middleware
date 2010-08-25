@@ -3,6 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.3.1-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=89 vtldap-89] - Change behavior of stopTLS when closing connections
   * [http://code.google.com/p/vt-middleware/issues/detail?id=75 vtldap-75] - Added support for setting cipher suites and protocols in TLSSocketFactory
   * [http://code.google.com/p/vt-middleware/issues/detail?id=74 vtldap-74] - Added fail-over support to the connection handlers
   * [http://code.google.com/p/vt-middleware/issues/detail?id=71 vtldap-71] - !LdapRolesAuthorization module should have option to fail if no results are found
