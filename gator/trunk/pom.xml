@@ -7,7 +7,7 @@
   <groupId>edu.vt.middleware</groupId>
   <artifactId>gator</artifactId>
   <packaging>pom</packaging>
-  <version>1.2.2</version>
+  <version>1.2.3-SNAPSHOT</version>
   <name>Gator Log Aggregating Server</name>
   <url>http://code.google.com/p/vt-middleware/wiki/gator</url>
   <issueManagement>
@@ -25,7 +25,8 @@
     <mailingList>
       <name>vt-middleware-dev</name>
       <subscribe>vt-middleware-dev+subscribe@googlegroups.com</subscribe>
-      <unsubscribe>vt-middleware-dev+unsubscribe@googlegroups.com</unsubscribe>      <post>vt-middleware-dev@googlegroups.com</post>
+      <unsubscribe>vt-middleware-dev+unsubscribe@googlegroups.com</unsubscribe>
+      <post>vt-middleware-dev@googlegroups.com</post>
       <archive>http://groups.google.com/group/vt-middleware-dev</archive>
     </mailingList>
   </mailingLists>
@@ -39,6 +40,28 @@
     <connection>scm:svn:https://vt-middleware.googlecode.com/svn/gator/trunk</connection>
     <url>http://vt-middleware.googlecode.com/svn/gator/trunk</url>
   </scm>
+  <developers>
+    <developer>
+      <id>dfisher</id>
+      <name>Daniel Fisher</name>
+      <email>dfisher@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>marvin.addison</id>
+      <name>Marvin Addison</name>
+      <email>serac@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
 
   <modules>
     <module>gator-core</module>

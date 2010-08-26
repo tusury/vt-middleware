@@ -8,6 +8,7 @@
   <packaging>jar</packaging>
   <version>1.0</version>
   <name>VT Catalina Libraries</name>
+  <description>Custom Tomcat authenticator for populating container based role data using the REMOTE_USER header.</description>
   <url>http://code.google.com/p/vt-middleware/wiki/vtcatalina</url>
   <issueManagement>
     <system>Google Code</system>
@@ -38,6 +39,28 @@
     <connection>scm:svn:https://vt-middleware.googlecode.com/svn/vt-catalina/trunk</connection>
     <url>http://vt-middleware.googlecode.com/svn/vt-catalina/trunk</url>
   </scm>
+  <developers>
+    <developer>
+      <id>dfisher</id>
+      <name>Daniel Fisher</name>
+      <email>dfisher@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>marvin.addison</id>
+      <name>Marvin Addison</name>
+      <email>serac@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
 
   <dependencies>
     <dependency>
