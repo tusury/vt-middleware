@@ -14,9 +14,10 @@
 package edu.vt.middleware.dictionary;
 
 import java.io.FileReader;
+import java.io.RandomAccessFile;
+
 import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Parameters;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -25,59 +26,56 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision: 166 $
  */
-public class WordListDictionaryTest extends AbstractDictionaryTest
+public class WordListDictionaryTest
 {
-
-  /** Test dictionary. */
-  private WordListDictionary caseSensitive;
-
-  /** Test dictionary. */
-  private WordListDictionary caseInsensitive;
-
-
   /**
-   * @throws  Exception  On test failure.
+   * Creates dictionary search test data.
+   *
+   * @return  Search test data.
+   *
+   * @throws  Exception  On data creation.
    */
-  @BeforeClass(groups = {"wldicttest"})
-  public void createDictionary()
-    throws Exception
+  @DataProvider(name = "searchData")
+  public Object[][] createSearchData() throws Exception
   {
-    this.caseSensitive = new WordListDictionary(
+    final Dictionary csDict1 = new WordListDictionary(
         WordListUtils.createFromFile(
-            new FileReader(this.fbsdFile), true, true));
-    this.caseInsensitive = new WordListDictionary(
+            new FileReader("src/test/resources/web2.sort"), true, true));
+    final Dictionary ciDict2 = new WordListDictionary(
         WordListUtils.createFromFile(
-            new FileReader(this.fbsdFile), false, true));
+            new FileReader("src/test/resources/web2"), false, true));
+    final Dictionary csDict3 = new WordListDictionary(
+        new FileWordList(
+            new RandomAccessFile("src/test/resources/web2.sort", "r"), true));
+    final Dictionary ciDict4 = new WordListDictionary(
+        new FileWordList(
+            new RandomAccessFile("src/test/resources/web2", "r"), false));
+
+    return new Object[][] {
+      {csDict1, "ornithopter", true },
+      {csDict1, "Pawpaw", false },
+      {ciDict2, "brujo", true},
+      {ciDict2, "Jocular", true },
+      {csDict3, "Xaverian", true },
+      {csDict3, "wycliffian", false },
+      {ciDict4, "Pantopelagian", true},
+      {ciDict4, "trigeminal", true },
+    };
   }
 
 
   /**
-   * @param  word  to search for.
+   * @param  dictionary  Dictionary searched for target word.
+   * @param  word  Target word.
+   * @param  expected  Expected search result.
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "fbsdSearchWord" })
-  @Test(groups = {"wldicttest"})
-  public void search(final String word)
+  @Test(groups = {"wldicttest"}, dataProvider = "searchData")
+  public void search(
+    final Dictionary dictionary, final String word, final boolean expected)
     throws Exception
   {
-    AssertJUnit.assertTrue(this.caseSensitive.search(word));
-    AssertJUnit.assertFalse(this.caseSensitive.search(FALSE_SEARCH));
-    AssertJUnit.assertTrue(this.caseInsensitive.search(word));
-    AssertJUnit.assertFalse(this.caseInsensitive.search(FALSE_SEARCH));
-  }
-
-
-  /**
-   * @param  word  to search for.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = {"wldicttest"}, dataProvider = "all-fbsd-words")
-  public void searchAll(final String word)
-    throws Exception
-  {
-    AssertJUnit.assertTrue(this.caseSensitive.search(word));
-    AssertJUnit.assertTrue(this.caseInsensitive.search(word));
+    AssertJUnit.assertEquals(expected, dictionary.search(word));
   }
 }
