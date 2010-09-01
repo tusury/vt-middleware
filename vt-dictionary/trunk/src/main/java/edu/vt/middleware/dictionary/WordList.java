@@ -13,39 +13,59 @@
 */
 package edu.vt.middleware.dictionary;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
- * Provides an interface for word lists.
+ * Represents a random-access list of words.
  *
  * @author  Middleware Services
  * @version  $Revision: 1252 $ $Date: 2010-04-16 17:24:23 -0400 (Fri, 16 Apr 2010) $
  */
-public interface WordList extends List<String>
+public interface WordList
 {
 
 
   /**
-   * Returns whether to lower case when reading words.
+   * Gets the comparator that should be used to compare a search term with
+   * candidate words in the list.  The comparator naturally respects ordering
+   * and case sensitivity of the word list.
    *
-   * @return  <code>boolean</code> ignore case
+   * @return  Comparator for words in the list.
    */
-  boolean isLowerCase();
+  Comparator<String> getComparator();
 
 
   /**
-   * Sets whether to lower case when reading words.
+   * Gets the word at the given 0-based index.
    *
-   * @param  b  <code>boolean</code>
+   * @param  index  0-based index.
+   *
+   * @return  Word at given index.
    */
-  void setLowerCase(final boolean b);
+  String get(int index);
 
 
   /**
-   * Releases any resources associated with this word list.
+   * Gets an iterator to traverse this word list from the 0th index.
    *
-   * @throws  IOException  if an error occurs closing this word list
+   * @return  Iterator for this word list
    */
-  void close() throws IOException;
+  Iterator<String> iterator();
+
+
+  /**
+   * Gets an iterator to traverse this word list from the median.
+   *
+   * @return  Iterator for this word list
+   */
+  Iterator<String> medianIterator();
+
+
+  /**
+   * Gets the number of words in the list.
+   *
+   * @return  Total number of words in list.
+   */
+  int size();
 }

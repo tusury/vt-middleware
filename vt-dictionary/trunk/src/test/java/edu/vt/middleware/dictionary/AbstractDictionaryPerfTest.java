@@ -28,14 +28,14 @@ import org.testng.annotations.DataProvider;
 public abstract class AbstractDictionaryPerfTest
 {
 
-  /** Initialization lock. */
-  private static final Object LOCK = new Object();
-
   /** location of webster's dictionary. */
   protected static String webFile;
 
   /** location of freebsd dictionary. */
   protected static String fbsdFile;
+
+  /** Initialization lock. */
+  private static final Object LOCK = new Object();
 
   /** store a large array of random words from {@link #webFile}. */
   private static Object[][] randomWebWordsLarge;
@@ -85,7 +85,7 @@ public abstract class AbstractDictionaryPerfTest
   /**
    * @throws  Exception  On test failure.
    */
-  @AfterSuite(groups = {"ttperftest", "slperftest", "wlperftest"})
+  @AfterSuite(groups = {"ttperftest", "wlperftest"})
   public void tearDown()
     throws Exception
   {
@@ -108,8 +108,8 @@ public abstract class AbstractDictionaryPerfTest
   private Object[][] createRandomWords(final String dictFile, final int size)
     throws IOException
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dictFile, "r")});
+    final FileWordList fwl = new FileWordList(
+      new RandomAccessFile(dictFile, "r"));
     final Object[][] allWords = new Object[size][1];
     final Random r = new Random();
     for (int i = 0; i < size; i++) {

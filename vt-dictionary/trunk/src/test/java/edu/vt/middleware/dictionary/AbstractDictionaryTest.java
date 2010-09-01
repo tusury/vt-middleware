@@ -146,7 +146,7 @@ public abstract class AbstractDictionaryTest
     "fbsdFileSorted",
     "fbsdFileLowerCase",
     "fbsdFileLowerCaseSorted" })
-  @BeforeClass(groups = {"ttdicttest", "sldicttest", "wldicttest"})
+  @BeforeClass(groups = {"ttdicttest", "wldicttest"})
   public void createDictionaries(
     final String dict1,
     final String dict2,
@@ -168,11 +168,11 @@ public abstract class AbstractDictionaryTest
     this.fbsdFileLowerCaseSorted = dict8;
 
     synchronized (LOCK) {
-      if (webWords== null) {
-        webWords = this.createWords(webFile);
+      if (webWords == null) {
+        webWords = this.createWords(webFileSorted);
       }
       if (fbsdWords == null) {
-        fbsdWords = this.createWords(fbsdFile);
+        fbsdWords = this.createWords(fbsdFileSorted);
       }
     }
   }
@@ -181,7 +181,7 @@ public abstract class AbstractDictionaryTest
   /**
    * @throws  Exception  On test failure.
    */
-  @AfterSuite(groups = {"ttdicttest", "sldicttest", "wldicttest"})
+  @AfterSuite(groups = {"ttdicttest", "wldicttest"})
   public void tearDown()
     throws Exception
   {
@@ -200,8 +200,8 @@ public abstract class AbstractDictionaryTest
   private Object[][] createWords(final String dictFile)
     throws IOException
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dictFile, "r")});
+    final FileWordList fwl = new FileWordList(
+      new RandomAccessFile(dictFile, "r"));
     final Object[][] allWords = new Object[fwl.size()][1];
     for (int i = 0; i < fwl.size(); i++) {
       allWords[i] = new Object[] {fwl.get(i), };

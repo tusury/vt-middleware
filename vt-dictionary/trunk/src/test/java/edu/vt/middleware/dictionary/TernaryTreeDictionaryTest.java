@@ -13,16 +13,14 @@
 */
 package edu.vt.middleware.dictionary;
 
-import java.io.RandomAccessFile;
-import java.util.ArrayList;
+import java.io.FileReader;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import edu.vt.middleware.dictionary.sort.ArraySorter;
+import edu.vt.middleware.dictionary.sort.ArraysSort;
 import edu.vt.middleware.dictionary.sort.BubbleSort;
 import edu.vt.middleware.dictionary.sort.InsertionSort;
 import edu.vt.middleware.dictionary.sort.QuickSort;
 import edu.vt.middleware.dictionary.sort.SelectionSort;
-import edu.vt.middleware.dictionary.sort.Sorter;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -52,19 +50,17 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
   public void createDictionary()
     throws Exception
   {
-    final FilePointerWordList fwl1 = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(this.webFile, "r")});
-    this.caseSensitive = new TernaryTreeDictionary();
-    this.caseSensitive.setUseMedian(true);
-    this.caseSensitive.setWordList(fwl1);
-    this.caseSensitive.initialize();
+    final ArrayWordList awl1 = WordLists.createFromReader(
+      new FileReader[] {new FileReader(this.webFile)},
+      true,
+      new ArraysSort());
+    this.caseSensitive = new TernaryTreeDictionary(awl1);
 
-    final FilePointerWordList fwl2 = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(this.webFile, "r")}, true);
-    this.caseInsensitive = new TernaryTreeDictionary();
-    this.caseInsensitive.setUseMedian(true);
-    this.caseInsensitive.setWordList(fwl2);
-    this.caseInsensitive.initialize();
+    final ArrayWordList awl2 = WordLists.createFromReader(
+      new FileReader[] {new FileReader(this.webFile)},
+      false,
+      new ArraysSort());
+    this.caseInsensitive = new TernaryTreeDictionary(awl2);
   }
 
 
@@ -75,35 +71,8 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
   public void closeDictionary()
     throws Exception
   {
-    this.caseSensitive.close();
-    this.caseInsensitive.close();
-  }
-
-
-  /**
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = {"ttdicttest"})
-  public void getWords()
-    throws Exception
-  {
-    FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(this.webFileSorted, "r")});
-    List<String> l = new ArrayList<String>(
-      this.caseSensitive.getTernaryTree().getWords());
-    Collections.sort(l);
-    AssertJUnit.assertEquals(fwl, l);
-    l.clear();
-    fwl.close();
-
-    fwl = new FilePointerWordList(
-      new RandomAccessFile[] {
-        new RandomAccessFile(this.webFileLowerCaseSorted, "r"), });
-    l = new ArrayList<String>(this.caseInsensitive.getTernaryTree().getWords());
-    Collections.sort(l);
-    AssertJUnit.assertEquals(fwl, l);
-    l.clear();
-    fwl.close();
+    this.caseSensitive = null;
+    this.caseInsensitive = null;
   }
 
 
@@ -135,89 +104,79 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
   {
     AssertJUnit.assertTrue(this.caseSensitive.search(word));
     AssertJUnit.assertTrue(this.caseInsensitive.search(word));
+    AssertJUnit.assertTrue(this.caseInsensitive.search(word.toLowerCase()));
+    AssertJUnit.assertTrue(this.caseInsensitive.search(word.toUpperCase()));
   }
 
 
   /**
    * @param  word  to search for.
-   * @param  resultsCS  case sensitive results
-   * @param  resultsCI  case insensitive results
+   * @param  results  case sensitive results
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "partialSearchWord", "partialSearchResultsCS", "partialSearchResultsCI"
-    }
+  @Parameters({ "partialSearchWord", "partialSearchResults" }
   )
   @Test(groups = {"ttdicttest"})
-  public void partialSearch(
-    final String word,
-    final String resultsCS,
-    final String resultsCI)
+  public void partialSearch(final String word, final String results)
     throws Exception
   {
     AssertJUnit.assertTrue(
       Arrays.equals(
-        resultsCS.split("\\|"),
+        results.split("\\|"),
         this.caseSensitive.partialSearch(word)));
     AssertJUnit.assertFalse(
       Arrays.equals(
-        resultsCS.split("\\|"),
+        results.split("\\|"),
         this.caseSensitive.partialSearch(FALSE_SEARCH)));
 
-    AssertJUnit.assertTrue(
-      Arrays.equals(
-        resultsCI.split("\\|"),
-        this.caseInsensitive.partialSearch(word)));
-    AssertJUnit.assertFalse(
-      Arrays.equals(
-        resultsCI.split("\\|"),
-        this.caseInsensitive.partialSearch(FALSE_SEARCH)));
+    try {
+      this.caseInsensitive.partialSearch(word);
+      AssertJUnit.fail("Should have thrown UnsupportedOperationException");
+    } catch (UnsupportedOperationException e) {
+      AssertJUnit.assertEquals(
+        e.getClass(), UnsupportedOperationException.class);
+    } catch (Exception e) {
+      AssertJUnit.fail(
+        "Should have thrown UnsupportedOperationException, threw " +
+        e.getMessage());
+    }
   }
 
 
   /**
    * @param  word  to search for.
    * @param  distance  for near search
-   * @param  resultsCS  case sensitive results
-   * @param  resultsCI  case insensitive results
+   * @param  results  case sensitive results
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "nearSearchWord",
-      "nearSearchDistance",
-      "nearSearchResultsCS",
-      "nearSearchResultsCI"
-    }
-  )
+  @Parameters({ "nearSearchWord", "nearSearchDistance", "nearSearchResults" })
   @Test(groups = {"ttdicttest"})
   public void nearSearch(
-    final String word,
-    final int distance,
-    final String resultsCS,
-    final String resultsCI)
+    final String word, final int distance, final String results)
     throws Exception
   {
     AssertJUnit.assertTrue(
       Arrays.equals(
-        resultsCS.split("\\|"),
+        results.split("\\|"),
         this.caseSensitive.nearSearch(word, distance)));
     AssertJUnit.assertFalse(
       Arrays.equals(
-        resultsCS.split("\\|"),
+        results.split("\\|"),
         this.caseSensitive.nearSearch(FALSE_SEARCH, distance)));
 
-    AssertJUnit.assertTrue(
-      Arrays.equals(
-        resultsCI.split("\\|"),
-        this.caseInsensitive.nearSearch(word, distance)));
-    AssertJUnit.assertFalse(
-      Arrays.equals(
-        resultsCI.split("\\|"),
-        this.caseInsensitive.nearSearch(FALSE_SEARCH, distance)));
+    try {
+      this.caseInsensitive.nearSearch(word, distance);
+      AssertJUnit.fail("Should have thrown UnsupportedOperationException");
+    } catch (UnsupportedOperationException e) {
+      AssertJUnit.assertEquals(
+        e.getClass(), UnsupportedOperationException.class);
+    } catch (Exception e) {
+      AssertJUnit.fail(
+        "Should have thrown UnsupportedOperationException, threw " +
+        e.getMessage());
+    }
   }
 
 
@@ -261,15 +220,11 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
    * @param  sorter  <code>Sorter</code> to sort with
    * @throws  Exception  On test failure.
    */
-  public void testSort(final Sorter<List<String>> sorter)
+  public void testSort(final ArraySorter sorter)
     throws Exception
   {
-    ArrayWordList awl = new ArrayWordList(Arrays.asList(ANIMALS));
-    sorter.sort(awl);
-    final TernaryTreeDictionary sortCS = new TernaryTreeDictionary();
-    sortCS.setUseMedian(true);
-    sortCS.setWordList(awl);
-    sortCS.initialize();
+    ArrayWordList awl = new ArrayWordList(ANIMALS, true, sorter);
+    final TernaryTreeDictionary sortCS = new TernaryTreeDictionary(awl);
     AssertJUnit.assertTrue(sortCS.search(ANIMAL_SEARCH_CS));
     AssertJUnit.assertFalse(sortCS.search(ANIMAL_SEARCH_CI));
     AssertJUnit.assertTrue(
@@ -281,21 +236,9 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
         ANIMAL_PARTIAL_SEARCH_RESULTS_CI,
         sortCS.partialSearch(ANIMAL_PARTIAL_SEARCH)));
 
-    awl = new ArrayWordList(Arrays.asList(ANIMALS), true);
-    sorter.sort(awl);
-    final TernaryTreeDictionary sortCI = new TernaryTreeDictionary();
-    sortCI.setUseMedian(true);
-    sortCI.setWordList(awl);
-    sortCI.initialize();
+    awl = new ArrayWordList(ANIMALS, false, sorter);
+    final TernaryTreeDictionary sortCI = new TernaryTreeDictionary(awl);
     AssertJUnit.assertTrue(sortCI.search(ANIMAL_SEARCH_CS));
     AssertJUnit.assertTrue(sortCI.search(ANIMAL_SEARCH_CI));
-    AssertJUnit.assertTrue(
-      Arrays.equals(
-        ANIMAL_PARTIAL_SEARCH_RESULTS_CI,
-        sortCI.partialSearch(ANIMAL_PARTIAL_SEARCH)));
-    AssertJUnit.assertFalse(
-      Arrays.equals(
-        ANIMAL_PARTIAL_SEARCH_RESULTS_CS,
-        sortCI.partialSearch(ANIMAL_PARTIAL_SEARCH)));
   }
 }

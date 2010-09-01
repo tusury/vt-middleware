@@ -13,9 +13,8 @@
 */
 package edu.vt.middleware.dictionary.sort;
 
-import java.io.RandomAccessFile;
-import java.util.List;
-import edu.vt.middleware.dictionary.FilePointerWordList;
+import java.util.Arrays;
+import edu.vt.middleware.dictionary.TestUtil;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -23,7 +22,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link Sorter} implementations.
+ * Unit test for {@link ArraySorter} implementations.
  *
  * @author  Middleware Services
  * @version  $Revision: 166 $
@@ -32,7 +31,7 @@ public class SorterTest
 {
 
   /** word list to use for comparison. */
-  private FilePointerWordList sortedList;
+  private String[] sortedArray;
 
 
   /**
@@ -45,8 +44,7 @@ public class SorterTest
   public void create(final String dict)
     throws Exception
   {
-    this.sortedList = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dict, "r")});
+    this.sortedArray = TestUtil.fileToArray(dict);
   }
 
 
@@ -57,7 +55,7 @@ public class SorterTest
   public void destroy()
     throws Exception
   {
-    this.sortedList.close();
+    this.sortedArray = null;
   }
 
 
@@ -71,12 +69,10 @@ public class SorterTest
   public void bubbleSort(final String dict)
     throws Exception
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dict, "r")});
-    AssertJUnit.assertNotSame(this.sortedList, fwl);
-    this.doSort(new BubbleSort(), fwl);
-    AssertJUnit.assertEquals(this.sortedList, fwl);
-    fwl.close();
+    final String[] array = TestUtil.fileToArray(dict);
+    AssertJUnit.assertFalse(Arrays.equals(this.sortedArray, array));
+    this.doSort(new BubbleSort(), array);
+    AssertJUnit.assertTrue(Arrays.equals(this.sortedArray, array));
   }
 
 
@@ -90,12 +86,10 @@ public class SorterTest
   public void collectionsSort(final String dict)
     throws Exception
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dict, "r")});
-    AssertJUnit.assertNotSame(this.sortedList, fwl);
-    this.doSort(new CollectionsSort(), fwl);
-    AssertJUnit.assertEquals(this.sortedList, fwl);
-    fwl.close();
+    final String[] array = TestUtil.fileToArray(dict);
+    AssertJUnit.assertFalse(Arrays.equals(this.sortedArray, array));
+    this.doSort(new ArraysSort(), array);
+    AssertJUnit.assertTrue(Arrays.equals(this.sortedArray, array));
   }
 
 
@@ -109,12 +103,10 @@ public class SorterTest
   public void insertionSort(final String dict)
     throws Exception
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dict, "r")});
-    AssertJUnit.assertNotSame(this.sortedList, fwl);
-    this.doSort(new InsertionSort(), fwl);
-    AssertJUnit.assertEquals(this.sortedList, fwl);
-    fwl.close();
+    final String[] array = TestUtil.fileToArray(dict);
+    AssertJUnit.assertFalse(Arrays.equals(this.sortedArray, array));
+    this.doSort(new InsertionSort(), array);
+    AssertJUnit.assertTrue(Arrays.equals(this.sortedArray, array));
   }
 
 
@@ -128,12 +120,10 @@ public class SorterTest
   public void quickSort(final String dict)
     throws Exception
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dict, "r")});
-    AssertJUnit.assertNotSame(this.sortedList, fwl);
-    this.doSort(new QuickSort(), fwl);
-    AssertJUnit.assertEquals(this.sortedList, fwl);
-    fwl.close();
+    final String[] array = TestUtil.fileToArray(dict);
+    AssertJUnit.assertFalse(Arrays.equals(this.sortedArray, array));
+    this.doSort(new QuickSort(), array);
+    AssertJUnit.assertTrue(Arrays.equals(this.sortedArray, array));
   }
 
 
@@ -147,12 +137,10 @@ public class SorterTest
   public void selectionSort(final String dict)
     throws Exception
   {
-    final FilePointerWordList fwl = new FilePointerWordList(
-      new RandomAccessFile[] {new RandomAccessFile(dict, "r")});
-    AssertJUnit.assertNotSame(this.sortedList, fwl);
-    this.doSort(new SelectionSort(), fwl);
-    AssertJUnit.assertEquals(this.sortedList, fwl);
-    fwl.close();
+    final String[] array = TestUtil.fileToArray(dict);
+    AssertJUnit.assertFalse(Arrays.equals(this.sortedArray, array));
+    this.doSort(new SelectionSort(), array);
+    AssertJUnit.assertTrue(Arrays.equals(this.sortedArray, array));
   }
 
 
@@ -160,15 +148,15 @@ public class SorterTest
    * Sorts the supplied list with the supplied sorter.
    *
    * @param  s  <code>Sorter</code> to sort with
-   * @param  l  <code>List</code> to sort
+   * @param  array  <code>String[]</code> to sort
    */
-  public void doSort(final Sorter<List<String>> s, final List<String> l)
+  public void doSort(final ArraySorter s, final String[] array)
   {
-    long t = System.currentTimeMillis();
-    s.sort(l);
-    t = System.currentTimeMillis() - t;
+    long t = System.nanoTime();
+    s.sort(array);
+    t = System.nanoTime() - t;
     System.out.println(
-      s.getClass().getSimpleName() + " sort time (" + l.size() + "): " +
-      t + "ms");
+      s.getClass().getSimpleName() + " sort time (" + array.length + "): " +
+      t + "ns");
   }
 }

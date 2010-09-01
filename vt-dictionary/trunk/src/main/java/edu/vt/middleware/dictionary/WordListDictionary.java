@@ -13,21 +13,16 @@
 */
 package edu.vt.middleware.dictionary;
 
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import edu.vt.middleware.dictionary.sort.ArraysSort;
 
 /**
  * <code>WordListDictionary</code> provides fast searching for dictionary
- * words using a <code>WordList</code>.
- * {@link java.util.Collections#binarySearch(List, Object) is used to search the
- * supplied word list. It's critical that the word list provided to this
- * dictionary be sorted according to the natural ordering of
- * {@link java.lang.String}. This class inherits the lower case property of the
- * supplied word list.
+ * words using a <code>WordList</code>.  It's critical that the word list
+ * provided to this dictionary be sorted according to the natural ordering of
+ * {@link java.lang.String}.
  *
  * @author  Middleware Services
  * @version  $Revision: 1252 $ $Date: 2010-04-16 17:24:23 -0400 (Fri, 16 Apr 2010) $
@@ -38,16 +33,18 @@ public class WordListDictionary implements Dictionary
   /** list used for searching. */
   protected WordList wordList;
 
-  /** whether search terms should be lowercased. Default value is {@value}. */
-  protected boolean lowerCase;
-
 
   /**
-   * Sets the word list to used for searching.
+   * Creates a new dictionary instance from the given {@link WordList}.
    *
-   * @param  wl  <code>WordList</code> to read from
+   * @param  wl  List of words sorted according to
+   * {@link WordList#getComparator()}.
+   * <p>
+   * <strong>NOTE</strong>
+   * Failure to provide a sorted word list will produce incorrect results.
+   * </p>
    */
-  public void setWordList(final WordList wl)
+  public WordListDictionary(final WordList wl)
   {
     this.wordList = wl;
   }
@@ -65,49 +62,9 @@ public class WordListDictionary implements Dictionary
 
 
   /** {@inheritDoc} */
-  public void initialize()
-    throws IOException
-  {
-    this.lowerCase = this.wordList.isLowerCase();
-  }
-
-
-  /** {@inheritDoc} */
   public boolean search(final String word)
   {
-    if (this.lowerCase) {
-      return Collections.binarySearch(this.wordList, word.toLowerCase()) >= 0;
-    } else {
-      return Collections.binarySearch(this.wordList, word) >= 0;
-    }
-  }
-
-
-  /**
-   * Returns whether the supplied word exists in the dictionary. See
-   * {@link java.util.Collections#binarySearch(List, Object, Comparator)}.
-   *
-   * @param  word  <code>String</code> to search for
-   * @param  c  <code>Comparator</code> to use against the word list
-   *
-   * @return  <code>boolean</code> - whether word was found
-   */
-  public boolean search(final String word, final Comparator<String> c)
-  {
-    if (this.lowerCase) {
-      return Collections.binarySearch(
-        this.wordList, word.toLowerCase(), c) >= 0;
-    } else {
-      return Collections.binarySearch(this.wordList, word, c) >= 0;
-    }
-  }
-
-
-  /** {@inheritDoc} */
-  public void close()
-    throws IOException
-  {
-    this.wordList.close();
+    return WordLists.binarySearch(wordList, word) >= 0;
   }
 
 
@@ -121,14 +78,14 @@ public class WordListDictionary implements Dictionary
   public static void main(final String[] args)
     throws Exception
   {
-    final List<RandomAccessFile> files = new ArrayList<RandomAccessFile>();
+    final List<FileReader> files = new ArrayList<FileReader>();
     try {
       if (args.length == 0) {
         throw new ArrayIndexOutOfBoundsException();
       }
 
       // dictionary operations
-      boolean ignoreCase = false;
+      boolean caseSensitive = true;
       boolean search = false;
       boolean print = false;
 
@@ -137,7 +94,7 @@ public class WordListDictionary implements Dictionary
 
       for (int i = 0; i < args.length; i++) {
         if ("-ci".equals(args[i])) {
-          ignoreCase = true;
+          caseSensitive = false;
         } else if ("-s".equals(args[i])) {
           search = true;
           word = args[++i];
@@ -146,16 +103,16 @@ public class WordListDictionary implements Dictionary
         } else if ("-h".equals(args[i])) {
           throw new ArrayIndexOutOfBoundsException();
         } else {
-          files.add(new RandomAccessFile(args[i], "r"));
+          files.add(new FileReader(args[i]));
         }
       }
 
       // insert data
-      final WordListDictionary dict = new WordListDictionary();
-      dict.setWordList(
-        new FilePointerWordList(
-          files.toArray(new RandomAccessFile[files.size()]), ignoreCase));
-      dict.initialize();
+      final ArrayWordList awl = WordLists.createFromReader(
+        files.toArray(new FileReader[files.size()]),
+        caseSensitive,
+        new ArraysSort());
+      final WordListDictionary dict = new WordListDictionary(awl);
 
       // perform operation
       if (search) {

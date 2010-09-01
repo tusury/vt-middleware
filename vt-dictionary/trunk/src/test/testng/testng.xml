@@ -19,21 +19,21 @@
   <parameter name="fbsdSearchWord" value="TrustedBSD"/>
 
   <parameter name="partialSearchWord" value=".e.e.e.e"/>
-  <parameter name="partialSearchResultsCS" value="Genevese|reserene|teleseme|terebene"/>
-  <parameter name="partialSearchResultsCI" value="genevese|reserene|teleseme|terebene"/>
+  <parameter name="partialSearchResults" value="Genevese|reserene|teleseme|terebene"/>
 
   <parameter name="nearSearchWord" value="Jicaque"/>
   <parameter name="nearSearchDistance" value="2"/>
-  <parameter name="nearSearchResultsCS" value="Jicaque|Jicaquean|Xicaque|macaque"/>
-  <parameter name="nearSearchResultsCI" value="jicaque|jicaquean|jocoque|macaque|xicaque"/>
+  <parameter name="nearSearchResults" value="Jicaque|Jicaquean|Xicaque|macaque"/>
 
   <test name="coretests" parallel="methods" thread-count="12">
     <groups>
       <run>
         <include name="wltest" />
-        <include name="ttdicttest" />
-        <include name="sldicttest" />
+        <include name="tttest" />
         <include name="wldicttest" />
+        <include name="ttdicttest" />
+        <include name="ttperftest" />
+        <include name="wlperftest" />
         <include name="sorttest" />
       </run>
     </groups>
@@ -41,18 +41,4 @@
       <package name="edu.vt.middleware.dictionary.*" />
     </packages>
   </test>
-<!-- should run separate from other tests
-  <test name="perftests" parallel="methods" thread-count="12">
-    <groups>
-      <run>
-        <include name="ttperftest" />
-        <include name="slperftest" />
-        <include name="wlperftest" />
-      </run>
-    </groups>
-    <packages>
-      <package name="edu.vt.middleware.dictionary.*" />
-    </packages>
-  </test>
--->
 </suite>

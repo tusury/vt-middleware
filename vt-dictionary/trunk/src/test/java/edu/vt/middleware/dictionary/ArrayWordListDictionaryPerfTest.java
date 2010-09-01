@@ -25,14 +25,15 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision: 166 $
  */
-public class StringListDictionaryPerfTest extends AbstractDictionaryPerfTest
+public class ArrayWordListDictionaryPerfTest
+  extends AbstractDictionaryPerfTest
 {
 
   /** dictionary to test. */
-  private StringListDictionary sld;
+  private WordListDictionary wld;
 
   /** total time for all searches. */
-  private long sldSearchTime;
+  private long wldSearchTime;
 
 
   /**
@@ -42,36 +43,37 @@ public class StringListDictionaryPerfTest extends AbstractDictionaryPerfTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "webFileSorted", "fbsdFileSorted" })
-  @BeforeClass(groups = {"slperftest"})
+  @BeforeClass(groups = {"wlperftest"})
   public void createDictionary(final String dict1, final String dict2)
     throws Exception
   {
     super.initialize(dict1, dict2);
     long t = System.currentTimeMillis();
-    this.sld = new StringListDictionary();
-    this.sld.setWordList(
-      new ArrayWordList(new FileReader[] {new FileReader(webFile)}));
-    this.sld.initialize();
+    this.wld = new WordListDictionary(
+      WordLists.createFromReader(new FileReader[] {new FileReader(webFile)}));
     t = System.currentTimeMillis() - t;
     System.out.println(
-      this.sld.getClass().getSimpleName() + " time to construct: " + t + "ms");
+      this.wld.getClass().getSimpleName() + " (" +
+      ArrayWordList.class.getSimpleName() + ") time to construct: " + t + "ms");
   }
 
 
   /**
    * @throws  Exception  On test failure.
    */
-  @AfterClass(groups = {"slperftest"})
+  @AfterClass(groups = {"wlperftest"})
   public void closeDictionary()
     throws Exception
   {
-    this.sld.close();
     System.out.println(
-      this.sld.getClass().getSimpleName() + " search time: " +
-      (this.sldSearchTime / 1000 / 1000) + "ms");
+      this.wld.getClass().getSimpleName() + " (" +
+      ArrayWordList.class.getSimpleName() + ") search time: " +
+      (this.wldSearchTime / 1000 / 1000) + "ms");
     System.out.println(
-      this.sld.getClass().getSimpleName() + " avg time per search: " +
-      (this.sldSearchTime / 10000) + "ns");
+      this.wld.getClass().getSimpleName() + " (" +
+      ArrayWordList.class.getSimpleName() + ") avg time per search: " +
+      (this.wldSearchTime / 10000) + "ns");
+    this.wld = null;
   }
 
 
@@ -80,10 +82,10 @@ public class StringListDictionaryPerfTest extends AbstractDictionaryPerfTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"slperftest"}, dataProvider = "search-words-web-large")
-  public void stringListSearch(final String word)
+  @Test(groups = {"wlperftest"}, dataProvider = "search-words-web-large")
+  public void wordListSearch(final String word)
     throws Exception
   {
-    this.sldSearchTime += this.doSearch(this.sld, word);
+    this.wldSearchTime += this.doSearch(this.wld, word);
   }
 }

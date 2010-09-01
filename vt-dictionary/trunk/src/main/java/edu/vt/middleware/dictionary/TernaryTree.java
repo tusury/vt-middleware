@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -34,38 +35,70 @@ import java.util.StringTokenizer;
 public class TernaryTree
 {
 
+  /** Case sensitive comparator */
+  protected static final Comparator<Character> CASE_SENSITIVE_COMPARATOR =
+    new Comparator<Character>() {
+      public int compare(final Character a, final Character b)
+      {
+        int result = 0;
+        final char c1 = a.charValue();
+        final char c2 = b.charValue();
+        if (c1 < c2) {
+          result = -1;
+        } else if (c1 > c2) {
+          result = 1;
+        }
+        return result;
+      }
+    };
+
+  /** Case insensitive comparator */
+  protected static final Comparator<Character> CASE_INSENSITIVE_COMPARATOR =
+    new Comparator<Character>() {
+      public int compare(final Character a, final Character b)
+      {
+        int result = 0;
+        final char c1 = Character.toLowerCase(a.charValue());
+        final char c2 = Character.toLowerCase(b.charValue());
+        if (c1 < c2) {
+          result = -1;
+        } else if (c1 > c2) {
+          result = 1;
+        }
+        return result;
+      }
+    };
+
   /** File system line separator. */
   private static final String LINE_SEPARATOR = System.getProperty(
     "line.separator");
+
+  /** Character comparator. */
+  protected Comparator<Character> comparator;
 
   /** root node of the ternary tree. */
   private TernaryNode root;
 
 
-  /** Default Constructor. */
-  public TernaryTree() {}
-
-
-  /**
-   * This will create a new <code>TernaryTree</code> with the supplied word.
-   *
-   * @param  word  <code>String</code>
-   */
-  public TernaryTree(final String word)
+  /** Creates an empty case sensitive ternary tree. */
+  public TernaryTree()
   {
-    this.insert(word);
+    this(true);
   }
 
 
   /**
-   * This will create a new <code>TernaryTree</code> with the supplied array of
-   * words.
+   * Creates an empty ternary tree with the given case sensitivity.
    *
-   * @param  words  <code>String[]</code>
+   * @param  caseSensitive  True to create case-sensitive tree, false otherwise.
    */
-  public TernaryTree(final String[] words)
+  public TernaryTree(final boolean caseSensitive)
   {
-    this.insert(words);
+    if (caseSensitive) {
+      this.comparator = CASE_SENSITIVE_COMPARATOR;
+    } else {
+      this.comparator = CASE_INSENSITIVE_COMPARATOR;
+    }
   }
 
 
@@ -120,12 +153,26 @@ public class TernaryTree
    * only include strings of the same length. If the supplied word does not
    * contain the '.' character, then a regular search is performed.
    *
+   * <p>
+   * <strong>NOTE</strong>
+   * This method is not supported for case insensitive ternary trees. Since the
+   * tree is built without regard to case any words returned from the tree
+   * may or may not match the case of the supplied word.
+   * </p>
+   *
    * @param  word  <code>String</code> to search for
    *
    * @return  <code>String[]</code> - of matching words
+   *
+   * @throws  UnsupportedOperationException  if this is a case insensitive
+   * ternary tree
    */
   public String[] partialSearch(final String word)
   {
+    if (this.comparator == CASE_INSENSITIVE_COMPARATOR) {
+      throw new UnsupportedOperationException(
+        "Partial search is not supported for case insensitive ternary trees");
+    }
     String[] results = null;
     final List<String> matches = this.partialSearchNode(
       this.root,
@@ -148,13 +195,27 @@ public class TernaryTree
    * results include: cipher, either, fishery, kosher, sister. If the supplied
    * distance is not > 0, then a regular search is performed.
    *
+   * <p>
+   * <strong>NOTE</strong>
+   * This method is not supported for case insensitive ternary trees. Since the
+   * tree is built without regard to case any words returned from the tree
+   * may or may not match the case of the supplied word.
+   * </p>
+   *
    * @param  word  <code>String</code> to search for
    * @param  distance  <code>int</code> for valid match
    *
    * @return  <code>String[]</code> - of matching words
+   *
+   * @throws  UnsupportedOperationException  if this is a case insensitive
+   * ternary tree
    */
   public String[] nearSearch(final String word, final int distance)
   {
+    if (this.comparator == CASE_INSENSITIVE_COMPARATOR) {
+      throw new UnsupportedOperationException(
+        "Near search is not supported for case insensitive ternary trees");
+    }
     String[] results = null;
     final List<String> matches = this.nearSearchNode(
       this.root,
@@ -227,9 +288,10 @@ public class TernaryTree
       }
 
       final char split = node.getSplitChar();
-      if (c < split) {
+      final int cmp = this.comparator.compare(c, split);
+      if (cmp < 0) {
         node.setLokid(insertNode(node.getLokid(), word, index));
-      } else if (c == split) {
+      } else if (cmp == 0) {
         if (index == word.length() - 1) {
           node.setEndOfWord(true);
         }
@@ -261,9 +323,10 @@ public class TernaryTree
     if (node != null && index < word.length()) {
       final char c = word.charAt(index);
       final char split = node.getSplitChar();
-      if (c < split) {
+      final int cmp = this.comparator.compare(c, split);
+      if (cmp < 0) {
         return searchNode(node.getLokid(), word, index);
-      } else if (c > split) {
+      } else if (cmp > 0) {
         return searchNode(node.getHikid(), word, index);
       } else {
         if (index == word.length() - 1) {
@@ -301,7 +364,8 @@ public class TernaryTree
     if (node != null && index < word.length()) {
       final char c = word.charAt(index);
       final char split = node.getSplitChar();
-      if (c == '.' || c < split) {
+      final int cmp = this.comparator.compare(c, split);
+      if (c == '.' || cmp < 0) {
         matches = partialSearchNode(
           node.getLokid(),
           matches,
@@ -309,7 +373,7 @@ public class TernaryTree
           word,
           index);
       }
-      if (c == '.' || c == split) {
+      if (c == '.' || cmp == 0) {
         if (index == word.length() - 1) {
           if (node.isEndOfWord()) {
             matches.add(match + split);
@@ -323,7 +387,7 @@ public class TernaryTree
             index + 1);
         }
       }
-      if (c == '.' || c > split) {
+      if (c == '.' || cmp > 0) {
         matches = partialSearchNode(
           node.getHikid(),
           matches,
@@ -367,8 +431,9 @@ public class TernaryTree
       }
 
       final char split = node.getSplitChar();
+      final int cmp = this.comparator.compare(c, split);
 
-      if (distance > 0 || c < split) {
+      if (distance > 0 || cmp < 0) {
         matches = nearSearchNode(
           node.getLokid(),
           distance,
@@ -379,7 +444,7 @@ public class TernaryTree
       }
 
       final String newMatch = match + split;
-      if (c == split) {
+      if (cmp == 0) {
 
         if (
           node.isEndOfWord() &&
@@ -413,7 +478,7 @@ public class TernaryTree
           index + 1);
       }
 
-      if (distance > 0 || c > split) {
+      if (distance > 0 || cmp > 0) {
         matches = nearSearchNode(
           node.getHikid(),
           distance,

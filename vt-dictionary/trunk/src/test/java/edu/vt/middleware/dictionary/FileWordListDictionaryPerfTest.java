@@ -13,7 +13,7 @@
 */
 package edu.vt.middleware.dictionary;
 
-import java.io.FileReader;
+import java.io.RandomAccessFile;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision: 166 $
  */
-public class WordListArrayBackedDictionaryPerfTest
+public class FileWordListDictionaryPerfTest
   extends AbstractDictionaryPerfTest
 {
 
@@ -49,14 +49,13 @@ public class WordListArrayBackedDictionaryPerfTest
   {
     super.initialize(dict1, dict2);
     long t = System.currentTimeMillis();
-    this.wld = new WordListDictionary();
-    this.wld.setWordList(
-      new ArrayWordList(new FileReader[] {new FileReader(webFile)}));
-    this.wld.initialize();
+    this.wld = new WordListDictionary(
+      new FileWordList(new RandomAccessFile(webFile, "r")));
     t = System.currentTimeMillis() - t;
     System.out.println(
       this.wld.getClass().getSimpleName() + " (" +
-      ArrayWordList.class.getSimpleName() + ") time to construct: " + t + "ms");
+      FileWordList.class.getSimpleName() + ") time to construct: " +
+      t + "ms");
   }
 
 
@@ -67,15 +66,15 @@ public class WordListArrayBackedDictionaryPerfTest
   public void closeDictionary()
     throws Exception
   {
-    this.wld.close();
     System.out.println(
       this.wld.getClass().getSimpleName() + " (" +
-      ArrayWordList.class.getSimpleName() + ") search time: " +
+      FileWordList.class.getSimpleName() + ") search time: " +
       (this.wldSearchTime / 1000 / 1000) + "ms");
     System.out.println(
       this.wld.getClass().getSimpleName() + " (" +
-      ArrayWordList.class.getSimpleName() + ") avg time per search: " +
-      (this.wldSearchTime / 10000) + "ns");
+      FileWordList.class.getSimpleName() + ") avg time per search: " +
+      (this.wldSearchTime / 1000 / 1000 / 10) + "ms");
+    this.wld = null;
   }
 
 
@@ -84,7 +83,7 @@ public class WordListArrayBackedDictionaryPerfTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"wlperftest"}, dataProvider = "search-words-web-large")
+  @Test(groups = {"wlperftest"}, dataProvider = "search-words-web-small")
   public void wordListSearch(final String word)
     throws Exception
   {

@@ -13,12 +13,13 @@
 */
 package edu.vt.middleware.dictionary;
 
-import java.io.IOException;
+import java.io.FileReader;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import edu.vt.middleware.dictionary.sort.ArraysSort;
 
 /**
  * <code>TernaryTreeDictionary</code> provides fast searching for dictionary
@@ -35,78 +36,86 @@ import java.util.List;
 public class TernaryTreeDictionary implements Dictionary
 {
 
-  /** ternary tree used for searching. */
-  protected TernaryTree tree = new TernaryTree();
-
-  /** to build the ternary tree from. */
-  protected MutableWordList wordList;
-
-  /** whether search terms should be lower cased. Default value is {@value}. */
-  protected boolean lowerCase;
-
-  /** whether to read from the median of the word list.
-      Default value is {@value}. */
-  protected boolean useMedian = true;
+  /** Ternary tree used for searching. */
+  protected TernaryTree tree;
 
 
   /**
-   * Sets the word list to build the ternary tree. The supplied word list
-   * will be emptied by a call to {@link #initialize()}.
+   * Creates a new balanced tree dictionary from the given {@link WordList}.
+   * This constructor creates a balanced tree by inserting from the median
+   * of the word list, which may require additional work depending on the
+   * {@link WordList} implementation.
+   * <p>
+   * <strong>NOTE</strong>
+   * While using an unsorted word list produces correct results, it may
+   * dramatically reduce search efficiency.  Using a sorted word list is
+   * recommended.
+   * </p>
    *
-   * @param  wl  <code>MutableWordList</code> to read from
+   * @param  wordList  List of words used to back the dictionary.  This list is
+   * used exclusively to initialize the internal {@link TernaryTree} used by
+   * the dictionary, and may be safely discarded after dictionary creation.
    */
-  public void setWordList(final MutableWordList wl)
+  public TernaryTreeDictionary(final WordList wordList)
   {
-    this.wordList = wl;
+    this(wordList, true);
   }
 
 
   /**
-   * Whether the word list should be read from it's median rather than it's
-   * beginning.
+   * Creates a new dictionary instance from the given {@link WordList}.
    *
-   * @return  <code>boolean</code>
-   */
-  public boolean isUseMedian()
-  {
-    return this.useMedian;
-  }
-
-
-  /**
-   * Sets whether the word list should be read from it's median rather than it's
-   * beginning.
+   * @param  wordList  List of words used to back the dictionary.  This list is
+   * used exclusively to initialize the internal {@link TernaryTree} used by
+   * the dictionary, and may be safely discarded after dictionary creation.
+   * <p>
+   * <strong>NOTE</strong>
+   * While using an unsorted word list produces correct results, it may
+   * dramatically reduce search efficiency.  Using a sorted word list is
+   * recommended.
+   * </p>
    *
-   * @param  b  <code>boolean</code>
+   * @param  useMedian  Set to true to force creation of a balanced tree by
+   * inserting into the tree from the median of the {@link WordList} outward.
+   * Depending on the word list implementation, this may require additional work
+   * to access the median element on each insert.
    */
-  public void setUseMedian(final boolean b)
+  public TernaryTreeDictionary(final WordList wordList, final boolean useMedian)
   {
-    this.useMedian = b;
-  }
-
-
-  /** {@inheritDoc} */
-  public void initialize()
-    throws IOException
-  {
-    while (this.wordList.size() > 0) {
-      final int i =
-        this.useMedian ? (int) Math.floor(this.wordList.size() / 2) : 0;
-      this.tree.insert(this.wordList.remove(i));
+    // Respect case sensitivity of word list in ternary tree
+    if (wordList.getComparator().compare("A", "a") == 0) {
+      this.tree = new TernaryTree(false);
+    } else {
+      this.tree = new TernaryTree(true);
     }
-    this.lowerCase = this.wordList.isLowerCase();
-    this.wordList.close();
+    final Iterator<String> iterator;
+    if (useMedian) {
+      iterator = wordList.medianIterator();
+    } else {
+      iterator = wordList.iterator();
+    }
+    while (iterator.hasNext()) {
+      this.tree.insert(iterator.next());
+    }
+  }
+
+
+  /**
+   * Creates a dictionary that uses the given ternary tree for dictionary
+   * searches.
+   *
+   * @param  tt  Ternary tree used to back dictionary.
+   */
+  public TernaryTreeDictionary(final TernaryTree tt)
+  {
+    this.tree = tt;
   }
 
 
   /** {@inheritDoc} */
   public boolean search(final String word)
   {
-    if (this.lowerCase) {
-      return this.tree.search(word.toLowerCase());
-    } else {
-      return this.tree.search(word);
-    }
+    return this.tree.search(word);
   }
 
 
@@ -121,11 +130,7 @@ public class TernaryTreeDictionary implements Dictionary
    */
   public String[] partialSearch(final String word)
   {
-    if (this.lowerCase) {
-      return this.tree.partialSearch(word.toLowerCase());
-    } else {
-      return this.tree.partialSearch(word);
-    }
+    return this.tree.partialSearch(word);
   }
 
 
@@ -141,11 +146,7 @@ public class TernaryTreeDictionary implements Dictionary
    */
   public String[] nearSearch(final String word, final int distance)
   {
-    if (this.lowerCase) {
-      return this.tree.nearSearch(word.toLowerCase(), distance);
-    } else {
-      return this.tree.nearSearch(word, distance);
-    }
+    return this.tree.nearSearch(word, distance);
   }
 
 
@@ -160,15 +161,6 @@ public class TernaryTreeDictionary implements Dictionary
   }
 
 
-  /** {@inheritDoc} */
-  public void close()
-    throws IOException
-  {
-    this.wordList.close();
-    this.tree = null;
-  }
-
-
   /**
    * This provides command line access to a <code>TernaryTreeDictionary</code>.
    *
@@ -179,7 +171,7 @@ public class TernaryTreeDictionary implements Dictionary
   public static void main(final String[] args)
     throws Exception
   {
-    final List<RandomAccessFile> files = new ArrayList<RandomAccessFile>();
+    final List<FileReader> files = new ArrayList<FileReader>();
     try {
       if (args.length == 0) {
         throw new ArrayIndexOutOfBoundsException();
@@ -187,7 +179,7 @@ public class TernaryTreeDictionary implements Dictionary
 
       // dictionary operations
       boolean useMedian = false;
-      boolean ignoreCase = false;
+      boolean caseSensitive = true;
       boolean search = false;
       boolean partialSearch = false;
       boolean nearSearch = false;
@@ -201,7 +193,7 @@ public class TernaryTreeDictionary implements Dictionary
         if ("-m".equals(args[i])) {
           useMedian = true;
         } else if ("-ci".equals(args[i])) {
-          ignoreCase = true;
+          caseSensitive = false;
         } else if ("-s".equals(args[i])) {
           search = true;
           word = args[++i];
@@ -217,17 +209,17 @@ public class TernaryTreeDictionary implements Dictionary
         } else if ("-h".equals(args[i])) {
           throw new ArrayIndexOutOfBoundsException();
         } else {
-          files.add(new RandomAccessFile(args[i], "r"));
+          files.add(new FileReader(args[i]));
         }
       }
 
       // insert data
-      final TernaryTreeDictionary dict = new TernaryTreeDictionary();
-      dict.setUseMedian(useMedian);
-      dict.setWordList(
-        new FilePointerWordList(
-          files.toArray(new RandomAccessFile[files.size()]), ignoreCase));
-      dict.initialize();
+      final ArrayWordList awl = WordLists.createFromReader(
+        files.toArray(new FileReader[files.size()]),
+        caseSensitive,
+        new ArraysSort());
+      final TernaryTreeDictionary dict = new TernaryTreeDictionary(
+        awl, useMedian);
 
       // perform operation
       if (search) {
