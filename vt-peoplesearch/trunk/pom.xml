@@ -65,9 +65,9 @@
 
   <properties>
     <project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
-    <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <testng.dir>src/test/testng</testng.dir>
-    <assembly.dir>src/main/assembly</assembly.dir>
+    <checkstyle.dir>${basedir}/src/main/checkstyle</checkstyle.dir>
+    <testng.dir>${basedir}/src/test/testng</testng.dir>
+    <assembly.dir>${basedir}/src/main/assembly</assembly.dir>
   </properties>
 
   <dependencies>
@@ -84,17 +84,17 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
-      <version>2.5.6</version>
+      <version>3.0.4.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
-      <version>2.5.6</version>
+      <version>3.0.4.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>2.5.6</version>
+      <version>3.0.4.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>edu.vt.middleware</groupId>
@@ -111,14 +111,13 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>5.8</version>
+      <version>5.14</version>
       <scope>test</scope>
-      <classifier>jdk15</classifier>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.15</version>
+      <version>1.2.16</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -220,7 +219,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
         <configuration>
           <configLocation>${checkstyle.dir}/checkstyle_checks.xml</configLocation>
           <headerLocation>${checkstyle.dir}/checkstyle_header</headerLocation>

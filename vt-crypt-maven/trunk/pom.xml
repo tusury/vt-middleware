@@ -68,7 +68,7 @@
   </developers>
 
   <properties>
-    <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
+    <checkstyle.dir>${basedir}/src/main/checkstyle</checkstyle.dir>
   </properties>
 
   <dependencies>
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.7</version>
+      <version>4.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -124,7 +124,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
         <configuration>
           <configLocation>${checkstyle.dir}/checkstyle_checks.xml</configLocation>
           <headerLocation>${checkstyle.dir}/checkstyle_header</headerLocation>
