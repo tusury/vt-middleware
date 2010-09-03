@@ -14,7 +14,7 @@
 package edu.vt.middleware.crypt.x509.types;
 
 /**
- * Definitions of the meanings of the bits in the <code>ReasonFlags</code> BIT
+ * Definitions of the meanings of the bits in the {@link ReasonFlags} BIT
  * STRING defined in section 4.2.1.14 of RFC 2459.
  *
  * @author  Middleware Services

@@ -27,9 +27,10 @@ public class ReasonFlags extends BitString
 {
 
   /**
-   * Creates a new instance with the given <code>ReasonFlags</code> bit string.
+   * Creates a new instance with the given bit string, where each bit is one
+   * of the constants defined in the {@link Reasons} enumeration.
    *
-   * @param  bitString  Octets making up key usage bit string.
+   * @param  bitString  Octets making up reason flags bit string.
    */
   public ReasonFlags(final byte[] bitString)
   {
@@ -45,11 +46,12 @@ public class ReasonFlags extends BitString
 
 
   /**
-   * Creates a new instance from OR-ing {@link ReasonFlagsBits} bitmask values.
+   * Creates a new instance from OR-ing {@link Reasons} bitmask values.
    *
    * @param  flags  Bit mask created by OR-ing the bitmask of {@link
-   * ReasonFlagsBits} enum values together, e.g. <code>
-   * Reasons.KeyCompromise.getMask()|ReasonsBits.CessationOfOperation.getMask()
+   * Reasons} enum values together, e.g.
+   * <code>
+   * Reasons.KeyCompromise.getMask()|Reasons.CessationOfOperation.getMask()
    * </code>
    */
   public ReasonFlags(final int flags)
@@ -59,8 +61,7 @@ public class ReasonFlags extends BitString
 
 
   /**
-   * Creates a new instance that has all the given {@link ReasonFlagsBits} bits
-   * set.
+   * Creates a new instance that has all the given {@link Reasons} bits set.
    *
    * @param  reasons  Array of {@link Reasons} describing all key usage bits to
    * be set.
@@ -78,7 +79,7 @@ public class ReasonFlags extends BitString
   /**
    * Gets a collection of the bits set for this instance.
    *
-   * @return  Collection of {@link Reasons} items representing the bits that are
+   * @return  Collection of {@link Reasons} representing the bits that are
    * set for this instance.
    */
   public Collection<Reasons> getReasons()
