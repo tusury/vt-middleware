@@ -22,12 +22,28 @@
   }}}
   # Build the package from the tagged source
   {{{
-  mvn package
+  mvn -Dsign=true repository:bundle-create
   }}}
+    * When prompted for which files to exclude, make selections so that your bundle only includes classes jar, sources jar, javadoc jar, and their associated signatures.
   # Upload the dist files to the google code site
   {{{
   http://code.google.com/p/vt-middleware/downloads/list
   }}}
+  # Commit the javadocs
+    {{{
+    svn mkdir $GSVN/project-name/javadoc/project-name-VERSION
+    unzip target/project-name-VERSION-javadoc.jar .
+    rm -rf META-INF project-name-VERSION-javadoc.jar
+    svn commit javadoc/project-name-VERSION
+    }}}
+    * mime types may need to be set if your svn config is not set to do so
+      {{{
+      find ./ -type f -name "*.html" -exec svn propset svn:mime-type text/html '{}' \;
+      find ./ -type f -name "*.css" -exec svn propset svn:mime-type text/css '{}' \;
+      find ./ -type f -name "*.gif" -exec svn propset svn:mime-type image/gif '{}' \;
+      }}}
+  # Update the release notes on the wiki and any other documentation that requires changes.
+== Google Code Maven Deployment ==
   # Deploy the release jar to the maven repo (requires maven >= 2.1.0)
   {{{
   mvn deploy:deploy-file \
@@ -48,17 +64,14 @@
     -Durl=svn:https://vt-middleware.googlecode.com/svn/maven2 \
     -DrepositoryId=vt-middleware.googlecode.com.repo
   }}}
-  # Commit the javadocs
-    {{{
-    svn mkdir $GSVN/project-name/javadoc/project-name-VERSION
-    unzip target/project-name-VERSION-javadoc.jar .
-    rm -rf META-INF project-name-VERSION-javadoc.jar
-    svn commit javadoc/project-name-VERSION
-    }}}
-    * mime types may need to be set if your svn config is not set to do so
-      {{{
-      find ./ -type f -name "*.html" -exec svn propset svn:mime-type text/html '{}' \;
-      find ./ -type f -name "*.css" -exec svn propset svn:mime-type text/css '{}' \;
-      find ./ -type f -name "*.gif" -exec svn propset svn:mime-type image/gif '{}' \;
-      }}}
-  # Update the release notes on the wiki and any other documentation that requires changes.
+== Sonatype Maven Deployment ==
+_For complete Sonatype instructions see:_ [https://docs.sonatype.org/display/repository/sonatype+oss+maven+repository+usage+guide Sonatype OSS Maven Repository Usage Guide]
+
+  # Login to the [https://oss.sonatype.org Nexus OSS instance]
+  # Select 'Staging Upload', on the left panel
+  # Select 'Upload Mode' -> 'Artifact Bundle', in the center panel
+  # Click 'Select Bundle to Upload...', select the bundle jar created in step #8, and click 'Upload Bundle'
+    * You will immediately receive feedback on whether the bundle meets Sonatype artifact standards
+  # Select 'Staging Repositories' on the left panel
+  # Select the newly created repository and click 'Release'
+    * You will be notified when your project has been synced to Maven Central
