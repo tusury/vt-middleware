@@ -27,8 +27,8 @@ public class KeyUsage extends BitString
 {
 
   /**
-   * Creates a new instance with the given bit string, where each bit is one
-   * of the constants defined in the {@link KeyUsageBits} enumeration.
+   * Creates a new instance with the given bit string, where each bit is one of
+   * the constants defined in the {@link KeyUsageBits} enumeration.
    *
    * @param  bitString  Octets making up key usage bit string.
    */

@@ -27,8 +27,8 @@ public class ReasonFlags extends BitString
 {
 
   /**
-   * Creates a new instance with the given bit string, where each bit is one
-   * of the constants defined in the {@link Reasons} enumeration.
+   * Creates a new instance with the given bit string, where each bit is one of
+   * the constants defined in the {@link Reasons} enumeration.
    *
    * @param  bitString  Octets making up reason flags bit string.
    */
@@ -48,9 +48,8 @@ public class ReasonFlags extends BitString
   /**
    * Creates a new instance from OR-ing {@link Reasons} bitmask values.
    *
-   * @param  flags  Bit mask created by OR-ing the bitmask of {@link
-   * Reasons} enum values together, e.g.
-   * <code>
+   * @param  flags  Bit mask created by OR-ing the bitmask of {@link Reasons}
+   * enum values together, e.g. <code>
    * Reasons.KeyCompromise.getMask()|Reasons.CessationOfOperation.getMask()
    * </code>
    */
@@ -79,8 +78,8 @@ public class ReasonFlags extends BitString
   /**
    * Gets a collection of the bits set for this instance.
    *
-   * @return  Collection of {@link Reasons} representing the bits that are
-   * set for this instance.
+   * @return  Collection of {@link Reasons} representing the bits that are set
+   * for this instance.
    */
   public Collection<Reasons> getReasons()
   {
