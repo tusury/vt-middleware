@@ -17,33 +17,15 @@ It is important to note that no cryptographic algorithms are implemented; [http:
 = Installation =
 The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
 
-If you would like to use this project in your maven build, include the following in your pom.xml:
+This project is available from Maven Central. If you would like to use this project in your maven build, include the following in your pom.xml:
 {{{
 <dependencies>
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-crypt</artifactId>
-      <version>2.1</version>
+      <version>2.1.1</version>
   </dependency>
 <dependencies>
-}}}
-{{{
-<repositories>
-  <repository>
-    <id>vt-middleware.repo</id>
-    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
-  </repository>
-</repositories>
-}}}
-
-If you would like to use this project's maven plugin, include the following in your pom.xml:
-{{{
-<pluginRepositories>
-  <pluginRepository>
-    <id>vt-middleware.repo</id>
-    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
-  </pluginRepository>
-</pluginRepositories>
 }}}
 
 = Code Samples =
