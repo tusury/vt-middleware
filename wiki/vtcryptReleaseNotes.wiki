@@ -2,6 +2,9 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 2.1.1 =
+  * First version available in [http://repo1.maven.org/maven2/edu/vt/middleware/vt-crypt/ Maven Central]
+  * Moved maven plugin into separate project
 = Version 2.1 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=1 vt-crypt-1] - Create API for Reading X.509v3 Certificate Extended Properties.
   * [http://code.google.com/p/vt-middleware/issues/detail?id=4 vt-crypt-4] - Keystore Incompatibility with keytool.
