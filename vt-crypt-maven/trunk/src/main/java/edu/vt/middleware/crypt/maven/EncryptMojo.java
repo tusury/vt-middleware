@@ -38,7 +38,7 @@ public class EncryptMojo extends AbstractCryptMojo
    */
   protected String plainText;
 
-  /** Stores the results of the most recent encryption; */
+  /** Stores the results of the most recent encryption. */
   private String cipherText;
 
   /**
