@@ -324,9 +324,9 @@ The new maven-crypt-plugin module supports property decryption using symmetric k
   <build>
     <plugins>
       <plugin>
-        <groupId>edu.vt.middleware</groupId>
+        <groupId>edu.vt.middleware.maven.plugins</groupId>
         <artifactId>maven-crypt-plugin</artifactId>
-        <version>2.1</version>
+        <version>2.1.1</version>
         <configuration>
           <keyFile>path/to/decryption/key.file</keyFile>
           <algorithm>AES</algorithm>
