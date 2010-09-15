@@ -1,0 +1,19 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-crypt-plugin</artifactId>
+        <configuration>
+          <!-- project-relative path to encryption key -->
+          <keyFile>src/test/resources/test.key</keyFile>
+          <algorithm>AES</algorithm>
+          <iv>63366164343061393663356661353062</iv>
+          <mode>CBC</mode>
+          <padding>PKCS5Padding</padding>
+          <plainText>sekrit</plainText>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+
