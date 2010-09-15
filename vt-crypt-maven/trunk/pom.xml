@@ -3,10 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.vt.middleware</groupId>
+  <groupId>edu.vt.middleware.maven.plugins</groupId>
   <artifactId>maven-crypt-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>2.1.1-SNAPSHOT</version>
+  <version>2.1.1</version>
   <name>VT Crypt Maven Plugin</name>
   <description>Maven plugin for the encryption and decryption of configuration properties</description>
   <url>http://code.google.com/p/vt-middleware/wiki/vtcrypt</url>
@@ -68,6 +68,7 @@
   </developers>
 
   <properties>
+    <project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
     <checkstyle.dir>${basedir}/src/main/checkstyle</checkstyle.dir>
   </properties>
 
@@ -75,12 +76,12 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <version>2.0</version>
+      <version>2.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0</version>
+      <version>2.2.1</version>
     </dependency>
     <dependency>
       <groupId>edu.vt.middleware</groupId>
@@ -171,6 +172,19 @@
             <phase>package</phase>
             <goals>
               <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
             </goals>
           </execution>
         </executions>
