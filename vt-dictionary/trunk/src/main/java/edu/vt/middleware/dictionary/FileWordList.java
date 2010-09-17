@@ -15,7 +15,6 @@ package edu.vt.middleware.dictionary;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
