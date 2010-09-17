@@ -15,6 +15,7 @@ package edu.vt.middleware.dictionary;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
@@ -216,7 +217,11 @@ public class FileWordList extends AbstractWordList
       synchronized (this.file) {
         int i = 0;
         if (!this.cache.isEmpty() && this.cache.firstKey() <= index) {
-          i = this.cache.floorKey(index);
+          if (this.cache.containsKey(index)) {
+            i = index;
+          } else {
+            i = this.cache.headMap(index).lastKey();
+          }
         }
         final long pos = i > 0 ? this.cache.get(i) : 0L;
         this.file.seek(pos);

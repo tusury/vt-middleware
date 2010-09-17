@@ -179,7 +179,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>-Xms768m -Xmx768m</argLine>
+          <argLine>-Xms1g -Xmx1g</argLine>
           <suiteXmlFiles>
             <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
@@ -196,7 +196,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <bottom><![CDATA[<i>Copyright &#169; 2003-2009 Virginia Tech. All Rights Reserved.</i>]]></bottom>
+          <bottom><![CDATA[<i>Copyright &#169; 2003-2010 Virginia Tech. All Rights Reserved.</i>]]></bottom>
         </configuration>
         <executions>
           <execution>

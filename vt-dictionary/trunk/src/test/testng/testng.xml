@@ -32,8 +32,6 @@
         <include name="tttest" />
         <include name="wldicttest" />
         <include name="ttdicttest" />
-        <include name="ttperftest" />
-        <include name="wlperftest" />
         <include name="sorttest" />
       </run>
     </groups>
@@ -41,4 +39,17 @@
       <package name="edu.vt.middleware.dictionary.*" />
     </packages>
   </test>
+<!-- run performance tests separate
+  <test name="perftests" parallel="methods" thread-count="12">
+    <groups>
+      <run>
+        <include name="ttperftest" />
+        <include name="wlperftest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.dictionary.*" />
+    </packages>
+  </test>
+-->
 </suite>
