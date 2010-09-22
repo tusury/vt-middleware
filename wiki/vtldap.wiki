@@ -16,23 +16,15 @@ This library meets the following design goals:
 = Installation =
 The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
 
-If you would like to use this project in your maven build, include the following in your pom.xml:
+This project is available from Maven Central. If you would like to use this project in your maven build, include the following in your pom.xml:
 {{{
 <dependencies>
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-ldap</artifactId>
-      <version>3.3</version>
+      <version>3.3.1</version>
   </dependency>
 <dependencies>
-}}}
-{{{
-<repositories>
-  <repository>
-    <id>vt-middleware.repo</id>
-    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
-  </repository>
-</repositories>
 }}}
 
 ----
