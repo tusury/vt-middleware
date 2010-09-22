@@ -2,7 +2,7 @@
 
 <wiki:toc max_depth="2" />
 
-= Version 3.3.1-SNAPSHOT =
+= Version 3.3.1 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=90 vtldap-90] - Added search result handler and attribute handler for modifying the case of search results
   * [http://code.google.com/p/vt-middleware/issues/detail?id=89 vtldap-89] - Change behavior of stopTLS when closing connections
   * [http://code.google.com/p/vt-middleware/issues/detail?id=75 vtldap-75] - Added support for setting cipher suites and protocols in TLSSocketFactory
