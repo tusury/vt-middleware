@@ -50,7 +50,7 @@ public class FileWordList extends AbstractWordList
    * <p>
    * <strong>NOTE</strong>
    * Attempts to close the source file will cause {@link IOException} when
-   * {@link get(index)} is called subsequently.
+   * {@link #get(int)} is called subsequently.
    * </p>
    *
    * @param  raf  File containing words, one per line.
@@ -70,7 +70,7 @@ public class FileWordList extends AbstractWordList
    * <p>
    * <strong>NOTE</strong>
    * Attempts to close the source file will cause {@link IOException} when
-   * {@link get(index)} is called subsequently.
+   * {@link #get(int)} is called subsequently.
    * </p>
    *
    * @param  raf  File containing words, one per line.
@@ -92,7 +92,7 @@ public class FileWordList extends AbstractWordList
    * <p>
    * <strong>NOTE</strong>
    * Attempts to close the source file will cause {@link IOException} when
-   * {@link get(index)} is called subsequently.
+   * {@link #get(int)} is called subsequently.
    * </p>
    *
    * @param  raf  File containing words, one per line.
@@ -189,7 +189,12 @@ public class FileWordList extends AbstractWordList
   }
 
 
-  /** {@inheritDoc} */
+  /**
+   * Closes the underlying file and make the cache available for garbage
+   * collection.
+   *
+   * @throws  IOException  if an error occurs closing the file
+   */
   public void close()
     throws IOException
   {
