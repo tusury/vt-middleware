@@ -3,6 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 3.0-SNAPSHOT =
+  * Requires Java 6
   * Provide !WordList interface with File and Array implementations in order to allow both in-memory and on disk word lists
   * Change Dictionary to an interface, provide !TernaryTree and !WordList implementations of Dictionary
 
