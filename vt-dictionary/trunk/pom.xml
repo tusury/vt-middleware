@@ -149,8 +149,8 @@
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
           <compilerArgument>-Xlint:unchecked</compilerArgument>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
       <plugin>
@@ -179,17 +179,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>-Xms1g -Xmx1g</argLine>
+          <argLine>-Xms1536m -Xmx1536m</argLine>
           <suiteXmlFiles>
             <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <properties>
-            <property>
-              <!-- turn off report generation, it causes OOM -->
-              <name>usedefaultlisteners</name>
-              <value>false</value>
-            </property>
-          </properties>
         </configuration>
       </plugin>
       <plugin>

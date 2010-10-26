@@ -221,11 +221,7 @@ public class FileWordList extends AbstractWordList
       synchronized (this.file) {
         int i = 0;
         if (!this.cache.isEmpty() && this.cache.firstKey() <= index) {
-          if (this.cache.containsKey(index)) {
-            i = index;
-          } else {
-            i = this.cache.headMap(index).lastKey();
-          }
+          i = this.cache.floorKey(index);
         }
         final long pos = i > 0 ? this.cache.get(i) : 0L;
         this.file.seek(pos);
