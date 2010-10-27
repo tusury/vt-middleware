@@ -1,0 +1,148 @@
+#labels java,search,sort,dictionary
+#sidebar vtdictionarySidebar
+
+<wiki:toc max_depth="2" />
+
+= Introduction =
+VT Dictionary is a Java library for searching and sorting a dictionary or words.<br/>
+The dictionary is implemented using a [http://en.wikipedia.org/wiki/Ternary_search_tries ternary tree], and supports the following types of searches:
+  * exact match
+  * partial search
+  * near search.
+The sorting functions are not necessary, however sorting your data and inserting from the median produces a more balanced tree and reduces search time.
+
+----
+= Installation =
+The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
+
+If you would like to use this project in your maven build, include the following in your pom.xml:
+{{{
+<dependencies>
+  <dependency>
+      <groupId>edu.vt.middleware</groupId>
+      <artifactId>vt-dictionary</artifactId>
+      <version>2.0.1</version>
+  </dependency>
+<dependencies>
+}}}
+{{{
+<repositories>
+  <repository>
+    <id>vt-middleware.repo</id>
+    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+  </repository>
+</repositories>
+}}}
+
+----
+= Code Samples =
+Unless otherwise noted, classes appearing in the following samples are included in the JSE libraries or VT Dictionary.
+
+== Search ==
+Search for an exact match on a search term.<br/>
+For instance, using the supplied Webster's Second International Dictionary with a search term of `chalice` returns true.
+
+{{{
+String searchTerm = "chalice";
+Dictionary d = new Dictionary();
+d.useMedian();
+d.ignoreCase();
+d.insert(new File("my.dictionary"));
+d.build();
+if (dict.search(searchTerm)) {
+  System.out.println(searchTerm + " was found in this dictionary");
+} else {
+  System.out.println(searchTerm + " was not found in this dictionary");
+}
+}}}
+
+== Partial Search ==
+Search for word(s) that partially match a search term.<br/>
+The dot character (.) is used to represent any valid character.<br/>
+For instance, using the supplied Webster's Second International Dictionary with a search term of `.l.st.n` yields the following results:
+  * elastin
+  * glisten
+  * plastin
+
+{{{
+String searchTerm = ".l.st.n";
+Dictionary d = new Dictionary();
+d.useMedian();
+d.insert(new File("my.dictionary"));
+d.build();
+String[] results = dict.partialSearch(searchTerm);
+if (results.length > 0) {
+  System.out.println(searchTerm + " was found in this dictionary:");
+  System.out.println(Arrays.asList(results));
+} else {
+  System.out.println(searchTerm + " was not found in this dictionary");
+}
+}}}
+
+== Near Search ==
+Search for word(s) that are _near_ a search term by a certain distance.<br/>
+For instance, using the supplied Webster's Second International Dictionary with a search term of `display` at a distance of `2` yields the following results:
+  * disally
+  * displace
+  * displant
+  * display
+  * displayed
+  * displayer
+  * misplay
+
+{{{
+String searchTerm = "display";
+int distance = 2;
+Dictionary d = new Dictionary();
+d.useMedian();
+d.insert(new File("my.dictionary"));
+d.build();
+String[] results = dict.nearSearch(searchTerm, distance);
+if (results.length > 0) {
+  System.out.println(searchTerm + " was found in this dictionary:");
+  System.out.println(Arrays.asList(results));
+} else {
+  System.out.println(searchTerm + " was not found in this dictionary");
+}
+}}}
+
+----
+= Scripts =
+Script execution requirements vary by platform.  For the following platform-specific instructions, let VTDICT_HOME be the location where the VT Dictionary distribution was unpacked.
+
+*Unix*
+ # Ensure the java executable is on your path.
+ # Ensure $VTDICT_HOME/bin is on your path.
+ # If you encounter classpath problems executing the scripts, export VTDICT_HOME as a separate shell variable.  This is not necessary in most cases (e.g. Linux, OSX, FreeBSD).
+
+== dict - Search Operations ==
+Perform a search for the term `chalice`
+{{{
+bin/dict dict/web2 -m -s chalice
+}}}
+
+Perform a partial search for the term `.l.st.n`
+{{{
+bin/dict dict/web2 -m -ps .l.st.n
+}}}
+
+Perform a near search for the term `display` at a distance of `2`
+{{{
+bin/dict dict/web2 -m -ns display 2
+}}}
+
+Count the number of words in a dictionay
+{{{
+bin/dict dict/web2 -c
+}}}
+
+Print command-line usage statement
+{{{
+bin/dict -h
+}}}
+
+----
+= Available Dictionaries =
+  * ftp://ftp.ox.ac.uk/pub/wordlists/
+  * http://icon.shef.ac.uk/Moby/
+  * http://packetstormsecurity.nl/Crackers/wordlists/dictionaries/
