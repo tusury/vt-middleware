@@ -93,7 +93,7 @@ public class WordListsTest
       {threeWords, "d", WordLists.NOT_FOUND },
       {this.caseSensitiveWordList, "ISBN", 76},
       {this.caseSensitiveWordList, "guacamole", WordLists.NOT_FOUND},
-      {this.caseInsensitiveWordList, "irresolute", 98299},
+      {this.caseInsensitiveWordList, "irresolute", 98323},
       {this.caseInsensitiveWordList, "brujo", WordLists.NOT_FOUND},
     };
   }
