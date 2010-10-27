@@ -1,5 +1,5 @@
 #labels java,search,sort,dictionary
-#sidebar vtdictionarySidebar
+#sidebar http://code.google.com/p/vt-middleware/wiki/vtdictionary-v2/vtdictionarySidebar
 
 <wiki:toc max_depth="2" />
 
