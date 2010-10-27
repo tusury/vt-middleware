@@ -1,15 +1,15 @@
 /*
-  $Id: Dictionary.java 1252 2010-04-16 21:24:23Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 1252 $
-  Updated: $Date: 2010-04-16 17:24:23 -0400 (Fri, 16 Apr 2010) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -19,10 +19,10 @@ import java.util.List;
 import edu.vt.middleware.dictionary.sort.ArraysSort;
 
 /**
- * <code>WordListDictionary</code> provides fast searching for dictionary
- * words using a <code>WordList</code>.  It's critical that the word list
- * provided to this dictionary be sorted according to the natural ordering of
- * {@link java.lang.String}.
+ * <code>WordListDictionary</code> provides fast searching for dictionary words
+ * using a <code>WordList</code>. It's critical that the word list provided to
+ * this dictionary be sorted according to the natural ordering of {@link
+ * java.lang.String}.
  *
  * @author  Middleware Services
  * @version  $Revision: 1252 $ $Date: 2010-04-16 17:24:23 -0400 (Fri, 16 Apr 2010) $
@@ -37,12 +37,11 @@ public class WordListDictionary implements Dictionary
   /**
    * Creates a new dictionary instance from the given {@link WordList}.
    *
-   * @param  wl  List of words sorted according to
-   * {@link WordList#getComparator()}.
-   * <p>
-   * <strong>NOTE</strong>
-   * Failure to provide a sorted word list will produce incorrect results.
-   * </p>
+   * @param  wl  List of words sorted according to {@link
+   * WordList#getComparator()}.
+   *
+   * <p><strong>NOTE</strong> Failure to provide a sorted word list will produce
+   * incorrect results.</p>
    */
   public WordListDictionary(final WordList wl)
   {
@@ -130,8 +129,8 @@ public class WordListDictionary implements Dictionary
       }
 
     } catch (ArrayIndexOutOfBoundsException e) {
-      System.out.println("Usage: java " +
-        WordListDictionary.class.getName() + " \\");
+      System.out.println(
+        "Usage: java " + WordListDictionary.class.getName() + " \\");
       System.out.println(
         "       <dictionary1> <dictionary2> ... " +
         "<options> <operation> \\");

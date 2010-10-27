@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -52,8 +52,7 @@ public abstract class AbstractWordListTest
       this.wordList.get(-1);
       AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
     } catch (IndexOutOfBoundsException e) {
-      AssertJUnit.assertEquals(
-        e.getClass(), IndexOutOfBoundsException.class);
+      AssertJUnit.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
     } catch (Exception e) {
       AssertJUnit.fail(
         "Should have thrown IndexOutOfBoundsException, threw " +
@@ -64,8 +63,7 @@ public abstract class AbstractWordListTest
       this.wordList.get(282);
       AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
     } catch (IndexOutOfBoundsException e) {
-      AssertJUnit.assertEquals(
-        e.getClass(), IndexOutOfBoundsException.class);
+      AssertJUnit.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
     } catch (Exception e) {
       AssertJUnit.fail(
         "Should have thrown IndexOutOfBoundsException, threw " +

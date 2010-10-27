@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -47,6 +47,7 @@ public class TernaryTreeDictionaryPerfTest extends AbstractDictionaryPerfTest
     throws Exception
   {
     super.initialize(dict1, dict2);
+
     long t = System.currentTimeMillis();
     this.ttd = new TernaryTreeDictionary(
       new FileWordList(new RandomAccessFile(webFile, "r")));
@@ -56,9 +57,7 @@ public class TernaryTreeDictionaryPerfTest extends AbstractDictionaryPerfTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"ttperftest"})
   public void closeDictionary()
     throws Exception
@@ -78,7 +77,10 @@ public class TernaryTreeDictionaryPerfTest extends AbstractDictionaryPerfTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ttperftest"}, dataProvider = "search-words-web-large")
+  @Test(
+    groups = {"ttperftest"},
+    dataProvider = "search-words-web-large"
+  )
   public void ternaryTreeSearch(final String word)
     throws Exception
   {

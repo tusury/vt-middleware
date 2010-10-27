@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -35,7 +35,7 @@ import java.util.StringTokenizer;
 public class TernaryTree
 {
 
-  /** Case sensitive comparator */
+  /** Case sensitive comparator. */
   protected static final Comparator<Character> CASE_SENSITIVE_COMPARATOR =
     new Comparator<Character>() {
       public int compare(final Character a, final Character b)
@@ -52,7 +52,7 @@ public class TernaryTree
       }
     };
 
-  /** Case insensitive comparator */
+  /** Case insensitive comparator. */
   protected static final Comparator<Character> CASE_INSENSITIVE_COMPARATOR =
     new Comparator<Character>() {
       public int compare(final Character a, final Character b)
@@ -153,11 +153,9 @@ public class TernaryTree
    * only include strings of the same length. If the supplied word does not
    * contain the '.' character, then a regular search is performed.
    *
-   * <p>
-   * <strong>NOTE</strong>
-   * This method is not supported for case insensitive ternary trees. Since the
-   * tree is built without regard to case any words returned from the tree
-   * may or may not match the case of the supplied word.
+   * <p><strong>NOTE</strong> This method is not supported for case insensitive
+   * ternary trees. Since the tree is built without regard to case any words
+   * returned from the tree may or may not match the case of the supplied word.
    * </p>
    *
    * @param  word  <code>String</code> to search for
@@ -173,6 +171,7 @@ public class TernaryTree
       throw new UnsupportedOperationException(
         "Partial search is not supported for case insensitive ternary trees");
     }
+
     String[] results = null;
     final List<String> matches = this.partialSearchNode(
       this.root,
@@ -195,11 +194,9 @@ public class TernaryTree
    * results include: cipher, either, fishery, kosher, sister. If the supplied
    * distance is not > 0, then a regular search is performed.
    *
-   * <p>
-   * <strong>NOTE</strong>
-   * This method is not supported for case insensitive ternary trees. Since the
-   * tree is built without regard to case any words returned from the tree
-   * may or may not match the case of the supplied word.
+   * <p><strong>NOTE</strong> This method is not supported for case insensitive
+   * ternary trees. Since the tree is built without regard to case any words
+   * returned from the tree may or may not match the case of the supplied word.
    * </p>
    *
    * @param  word  <code>String</code> to search for
@@ -216,6 +213,7 @@ public class TernaryTree
       throw new UnsupportedOperationException(
         "Near search is not supported for case insensitive ternary trees");
     }
+
     String[] results = null;
     final List<String> matches = this.nearSearchNode(
       this.root,
@@ -234,9 +232,9 @@ public class TernaryTree
 
 
   /**
-   * This will return a list of all the words in this <code>
-   * TernaryTree</code>. This is a very expensive operation, every node in the
-   * tree is traversed. The returned list cannot be modified.
+   * This will return a list of all the words in this <code>TernaryTree</code>.
+   * This is a very expensive operation, every node in the tree is traversed.
+   * The returned list cannot be modified.
    *
    * @return  <code>String[]</code> - of words
    */
@@ -257,6 +255,7 @@ public class TernaryTree
    * but it should give an indication of whether or not your tree is balanced.
    *
    * @param  out  <code>PrintWriter</code> to print to
+   *
    * @throws  IOException  if an error occurs
    */
   public void print(final Writer out)

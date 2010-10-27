@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -43,9 +43,7 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
   private TernaryTreeDictionary caseInsensitive;
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @BeforeClass(groups = {"ttdicttest"})
   public void createDictionary()
     throws Exception
@@ -64,9 +62,7 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"ttdicttest"})
   public void closeDictionary()
     throws Exception
@@ -98,7 +94,10 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ttdicttest"}, dataProvider = "all-web-words")
+  @Test(
+    groups = {"ttdicttest"},
+    dataProvider = "all-web-words"
+  )
   public void searchAll(final String word)
     throws Exception
   {
@@ -115,8 +114,7 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "partialSearchWord", "partialSearchResults" }
-  )
+  @Parameters({ "partialSearchWord", "partialSearchResults" })
   @Test(groups = {"ttdicttest"})
   public void partialSearch(final String word, final String results)
     throws Exception
@@ -135,7 +133,8 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
       AssertJUnit.fail("Should have thrown UnsupportedOperationException");
     } catch (UnsupportedOperationException e) {
       AssertJUnit.assertEquals(
-        e.getClass(), UnsupportedOperationException.class);
+        e.getClass(),
+        UnsupportedOperationException.class);
     } catch (Exception e) {
       AssertJUnit.fail(
         "Should have thrown UnsupportedOperationException, threw " +
@@ -154,7 +153,9 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
   @Parameters({ "nearSearchWord", "nearSearchDistance", "nearSearchResults" })
   @Test(groups = {"ttdicttest"})
   public void nearSearch(
-    final String word, final int distance, final String results)
+    final String word,
+    final int distance,
+    final String results)
     throws Exception
   {
     AssertJUnit.assertTrue(
@@ -171,7 +172,8 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
       AssertJUnit.fail("Should have thrown UnsupportedOperationException");
     } catch (UnsupportedOperationException e) {
       AssertJUnit.assertEquals(
-        e.getClass(), UnsupportedOperationException.class);
+        e.getClass(),
+        UnsupportedOperationException.class);
     } catch (Exception e) {
       AssertJUnit.fail(
         "Should have thrown UnsupportedOperationException, threw " +
@@ -218,6 +220,7 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
 
   /**
    * @param  sorter  <code>Sorter</code> to sort with
+   *
    * @throws  Exception  On test failure.
    */
   public void testSort(final ArraySorter sorter)
@@ -237,6 +240,7 @@ public class TernaryTreeDictionaryTest extends AbstractDictionaryTest
         sortCS.partialSearch(ANIMAL_PARTIAL_SEARCH)));
 
     awl = new ArrayWordList(ANIMALS, false, sorter);
+
     final TernaryTreeDictionary sortCI = new TernaryTreeDictionary(awl);
     AssertJUnit.assertTrue(sortCI.search(ANIMAL_SEARCH_CS));
     AssertJUnit.assertTrue(sortCI.search(ANIMAL_SEARCH_CI));

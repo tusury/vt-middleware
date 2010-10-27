@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -42,19 +42,17 @@ public class TernaryTreeDictionary implements Dictionary
 
   /**
    * Creates a new balanced tree dictionary from the given {@link WordList}.
-   * This constructor creates a balanced tree by inserting from the median
-   * of the word list, which may require additional work depending on the
-   * {@link WordList} implementation.
-   * <p>
-   * <strong>NOTE</strong>
-   * While using an unsorted word list produces correct results, it may
-   * dramatically reduce search efficiency.  Using a sorted word list is
-   * recommended.
-   * </p>
+   * This constructor creates a balanced tree by inserting from the median of
+   * the word list, which may require additional work depending on the {@link
+   * WordList} implementation.
    *
-   * @param  wordList  List of words used to back the dictionary.  This list is
-   * used exclusively to initialize the internal {@link TernaryTree} used by
-   * the dictionary, and may be safely discarded after dictionary creation.
+   * <p><strong>NOTE</strong> While using an unsorted word list produces correct
+   * results, it may dramatically reduce search efficiency. Using a sorted word
+   * list is recommended.</p>
+   *
+   * @param  wordList  List of words used to back the dictionary. This list is
+   * used exclusively to initialize the internal {@link TernaryTree} used by the
+   * dictionary, and may be safely discarded after dictionary creation.
    */
   public TernaryTreeDictionary(final WordList wordList)
   {
@@ -65,16 +63,13 @@ public class TernaryTreeDictionary implements Dictionary
   /**
    * Creates a new dictionary instance from the given {@link WordList}.
    *
-   * @param  wordList  List of words used to back the dictionary.  This list is
-   * used exclusively to initialize the internal {@link TernaryTree} used by
-   * the dictionary, and may be safely discarded after dictionary creation.
-   * <p>
-   * <strong>NOTE</strong>
-   * While using an unsorted word list produces correct results, it may
-   * dramatically reduce search efficiency.  Using a sorted word list is
-   * recommended.
-   * </p>
+   * @param  wordList  List of words used to back the dictionary. This list is
+   * used exclusively to initialize the internal {@link TernaryTree} used by the
+   * dictionary, and may be safely discarded after dictionary creation.
    *
+   * <p><strong>NOTE</strong> While using an unsorted word list produces correct
+   * results, it may dramatically reduce search efficiency. Using a sorted word
+   * list is recommended.</p>
    * @param  useMedian  Set to true to force creation of a balanced tree by
    * inserting into the tree from the median of the {@link WordList} outward.
    * Depending on the word list implementation, this may require additional work
@@ -88,6 +83,7 @@ public class TernaryTreeDictionary implements Dictionary
     } else {
       this.tree = new TernaryTree(true);
     }
+
     final Iterator<String> iterator;
     if (useMedian) {
       iterator = wordList.medianIterator();
@@ -121,8 +117,8 @@ public class TernaryTreeDictionary implements Dictionary
 
   /**
    * This will return an array of strings which partially match the supplied
-   * word. This search is case sensitive by default.
-   * See {@link TernaryTree#partialSearch}.
+   * word. This search is case sensitive by default. See {@link
+   * TernaryTree#partialSearch}.
    *
    * @param  word  <code>String</code> to search for
    *
@@ -136,8 +132,8 @@ public class TernaryTreeDictionary implements Dictionary
 
   /**
    * This will return an array of strings which are near to the supplied word by
-   * the supplied distance. This search is case sensitive by default.
-   * See {@link TernaryTree#nearSearch}.
+   * the supplied distance. This search is case sensitive by default. See {@link
+   * TernaryTree#nearSearch}.
    *
    * @param  word  <code>String</code> to search for
    * @param  distance  <code>int</code> for valid match
@@ -219,7 +215,8 @@ public class TernaryTreeDictionary implements Dictionary
         caseSensitive,
         new ArraysSort());
       final TernaryTreeDictionary dict = new TernaryTreeDictionary(
-        awl, useMedian);
+        awl,
+        useMedian);
 
       // perform operation
       if (search) {
@@ -235,21 +232,27 @@ public class TernaryTreeDictionary implements Dictionary
         System.out.println(
           String.format(
             "Found %s matches for %s in this dictionary : %s",
-            matches.length, word, Arrays.asList(matches)));
+            matches.length,
+            word,
+            Arrays.asList(matches)));
       } else if (nearSearch) {
         final String[] matches = dict.nearSearch(word, distance);
         System.out.println(
           String.format(
             "Found %s matches for %s in this dictionary at a distance of %s " +
-            ": %s", matches.length, word, distance, Arrays.asList(matches)));
+            ": %s",
+            matches.length,
+            word,
+            distance,
+            Arrays.asList(matches)));
       } else if (print) {
         dict.getTernaryTree().print(new PrintWriter(System.out, true));
       } else {
         throw new ArrayIndexOutOfBoundsException();
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      System.out.println("Usage: java " +
-        TernaryTreeDictionary.class.getName() + " \\");
+      System.out.println(
+        "Usage: java " + TernaryTreeDictionary.class.getName() + " \\");
       System.out.println(
         "       <dictionary1> <dictionary2> ... " +
         "<options> <operation> \\");

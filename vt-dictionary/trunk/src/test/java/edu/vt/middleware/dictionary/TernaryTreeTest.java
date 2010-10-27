@@ -1,15 +1,15 @@
 /*
-  $Id: TernaryTreeDictionaryTest.java 1519 2010-08-25 17:37:08Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 1519 $
-  Updated: $Date: 2010-08-25 13:37:08 -0400 (Wed, 25 Aug 2010) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -46,7 +46,7 @@ public class TernaryTreeTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "webFile", "webFileSorted" })
-  @BeforeClass(groups = { "tttest" })
+  @BeforeClass(groups = {"tttest"})
   public void createTernaryTrees(final String dict1, final String dict2)
     throws Exception
   {
@@ -55,9 +55,7 @@ public class TernaryTreeTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"tttest"})
   public void closeDictionary()
     throws Exception
@@ -75,14 +73,16 @@ public class TernaryTreeTest
    * @throws  Exception  On data creation.
    */
   @DataProvider(name = "searchData")
-  public Object[][] createSearchData() throws Exception
+  public Object[][] createSearchData()
+    throws Exception
   {
-    return new Object[][] {
-      {this.caseSensitive, "ornithopter", true },
-      {this.caseSensitive, "Pawpaw", false },
-      {this.caseInsensitive, "Jocular", true },
-      {this.caseSensitive, "brujo", false },
-    };
+    return
+      new Object[][] {
+        {this.caseSensitive, "ornithopter", true},
+        {this.caseSensitive, "Pawpaw", false},
+        {this.caseInsensitive, "Jocular", true},
+        {this.caseSensitive, "brujo", false},
+      };
   }
 
 
@@ -94,20 +94,22 @@ public class TernaryTreeTest
    * @throws  Exception  On data creation.
    */
   @DataProvider(name = "partialSearchData")
-  public Object[][] createPartialSearchData() throws Exception
+  public Object[][] createPartialSearchData()
+    throws Exception
   {
-    return new Object[][] {
-      {
-        this.caseSensitive,
-        ".e.e.e.e",
-        new String[] {"Genevese", "reserene", "teleseme", "terebene"},
-      },
-      {
-        this.caseSensitive,
-        ".ix",
-        new String[] {"Aix", "fix", "mix", "nix", "pix", "rix", "six"},
-      },
-    };
+    return
+      new Object[][] {
+        {
+          this.caseSensitive,
+          ".e.e.e.e",
+          new String[] {"Genevese", "reserene", "teleseme", "terebene"},
+        },
+        {
+          this.caseSensitive,
+          ".ix",
+          new String[] {"Aix", "fix", "mix", "nix", "pix", "rix", "six"},
+        },
+      };
   }
 
 
@@ -119,16 +121,18 @@ public class TernaryTreeTest
    * @throws  Exception  On data creation.
    */
   @DataProvider(name = "nearSearchData")
-  public Object[][] createNearSearchData() throws Exception
+  public Object[][] createNearSearchData()
+    throws Exception
   {
-    return new Object[][] {
-      {
-        this.caseSensitive,
-        "Jicaque",
-        2,
-        new String[] {"Jicaque", "Jicaquean", "Xicaque", "macaque"},
-      },
-    };
+    return
+      new Object[][] {
+        {
+          this.caseSensitive,
+          "Jicaque",
+          2,
+          new String[] {"Jicaque", "Jicaquean", "Xicaque", "macaque"},
+        },
+      };
   }
 
 
@@ -139,9 +143,14 @@ public class TernaryTreeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"tttest"}, dataProvider = "searchData")
+  @Test(
+    groups = {"tttest"},
+    dataProvider = "searchData"
+  )
   public void search(
-    final TernaryTree tt, final String word, final boolean expected)
+    final TernaryTree tt,
+    final String word,
+    final boolean expected)
     throws Exception
   {
     AssertJUnit.assertEquals(expected, tt.search(word));
@@ -155,7 +164,10 @@ public class TernaryTreeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"tttest"}, dataProvider = "partialSearchData")
+  @Test(
+    groups = {"tttest"},
+    dataProvider = "partialSearchData"
+  )
   public void partialSearch(
     final TernaryTree tt,
     final String searchTerm,
@@ -177,7 +189,10 @@ public class TernaryTreeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"tttest"}, dataProvider = "nearSearchData")
+  @Test(
+    groups = {"tttest"},
+    dataProvider = "nearSearchData"
+  )
   public void nearSearch(
     final TernaryTree tt,
     final String word,

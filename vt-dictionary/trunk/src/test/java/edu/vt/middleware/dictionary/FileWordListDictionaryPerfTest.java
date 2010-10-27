@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -25,8 +25,7 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision: 166 $
  */
-public class FileWordListDictionaryPerfTest
-  extends AbstractDictionaryPerfTest
+public class FileWordListDictionaryPerfTest extends AbstractDictionaryPerfTest
 {
 
   /** dictionary to test. */
@@ -48,20 +47,18 @@ public class FileWordListDictionaryPerfTest
     throws Exception
   {
     super.initialize(dict1, dict2);
+
     long t = System.currentTimeMillis();
     this.wld = new WordListDictionary(
       new FileWordList(new RandomAccessFile(webFile, "r")));
     t = System.currentTimeMillis() - t;
     System.out.println(
       this.wld.getClass().getSimpleName() + " (" +
-      FileWordList.class.getSimpleName() + ") time to construct: " +
-      t + "ms");
+      FileWordList.class.getSimpleName() + ") time to construct: " + t + "ms");
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"wlperftest"})
   public void closeDictionary()
     throws Exception
@@ -83,7 +80,10 @@ public class FileWordListDictionaryPerfTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"wlperftest"}, dataProvider = "search-words-web-small")
+  @Test(
+    groups = {"wlperftest"},
+    dataProvider = "search-words-web-small"
+  )
   public void wordListSearch(final String word)
     throws Exception
   {

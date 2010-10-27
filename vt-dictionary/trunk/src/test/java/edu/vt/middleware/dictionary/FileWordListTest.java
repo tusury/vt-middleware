@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -93,7 +93,9 @@ public class FileWordListTest extends AbstractWordListTest
     }
 
     FileWordList fwl = new FileWordList(
-      new RandomAccessFile(file1, "r"), true, 0);
+      new RandomAccessFile(file1, "r"),
+      true,
+      0);
     fwl.close();
 
     fwl = new FileWordList(new RandomAccessFile(file2, "r"), false, 0);

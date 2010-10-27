@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary.sort;
 
@@ -48,9 +48,7 @@ public class SorterTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"sorttest"})
   public void destroy()
     throws Exception
@@ -64,7 +62,7 @@ public class SorterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({"fbsdFile" })
+  @Parameters({ "fbsdFile" })
   @Test(groups = {"sorttest"})
   public void bubbleSort(final String dict)
     throws Exception
@@ -81,7 +79,7 @@ public class SorterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({"fbsdFile" })
+  @Parameters({ "fbsdFile" })
   @Test(groups = {"sorttest"})
   public void collectionsSort(final String dict)
     throws Exception
@@ -98,7 +96,7 @@ public class SorterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({"fbsdFile" })
+  @Parameters({ "fbsdFile" })
   @Test(groups = {"sorttest"})
   public void insertionSort(final String dict)
     throws Exception
@@ -115,7 +113,7 @@ public class SorterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({"fbsdFile" })
+  @Parameters({ "fbsdFile" })
   @Test(groups = {"sorttest"})
   public void quickSort(final String dict)
     throws Exception
@@ -132,7 +130,7 @@ public class SorterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({"fbsdFile" })
+  @Parameters({ "fbsdFile" })
   @Test(groups = {"sorttest"})
   public void selectionSort(final String dict)
     throws Exception
@@ -156,7 +154,7 @@ public class SorterTest
     s.sort(array);
     t = System.nanoTime() - t;
     System.out.println(
-      s.getClass().getSimpleName() + " sort time (" + array.length + "): " +
-      t + "ns");
+      s.getClass().getSimpleName() + " sort time (" + array.length + "): " + t +
+      "ns");
   }
 }

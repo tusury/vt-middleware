@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -37,18 +37,15 @@ public class ArrayWordListDictionaryTest extends AbstractDictionaryTest
   private WordListDictionary caseInsensitive;
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @BeforeClass(groups = {"wldicttest"})
   public void createDictionary()
     throws Exception
   {
-    final ArrayWordList awl1 =
-      WordLists.createFromReader(
-        new FileReader[] {new FileReader(this.fbsdFile)},
-        true,
-        new ArraysSort());
+    final ArrayWordList awl1 = WordLists.createFromReader(
+      new FileReader[] {new FileReader(this.fbsdFile)},
+      true,
+      new ArraysSort());
     this.caseSensitive = new WordListDictionary(awl1);
 
     final ArrayWordList awl2 = WordLists.createFromReader(
@@ -59,9 +56,7 @@ public class ArrayWordListDictionaryTest extends AbstractDictionaryTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"wldicttest"})
   public void closeDictionary()
     throws Exception
@@ -93,7 +88,10 @@ public class ArrayWordListDictionaryTest extends AbstractDictionaryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"wldicttest"}, dataProvider = "all-fbsd-words")
+  @Test(
+    groups = {"wldicttest"},
+    dataProvider = "all-fbsd-words"
+  )
   public void searchAll(final String word)
     throws Exception
   {

@@ -1,15 +1,15 @@
 /*
-  $Id: WordListUtilsTest.java 1509 2010-08-24 18:22:50Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 1509 $
-  Updated: $Date: 2010-08-24 14:22:50 -0400 (Tue, 24 Aug 2010) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -25,16 +25,16 @@ import org.testng.annotations.Test;
 /**
  * Unit test for {@link WordLists}.
  *
- * @author Middleware
- * @version $Revision: 1509 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 1509 $
  */
 public class WordListsTest
 {
-  /** Case sensitive word list */
+
+  /** Case sensitive word list. */
   private ArrayWordList caseSensitiveWordList;
 
-  /** Case insensitive word list */
+  /** Case insensitive word list. */
   private ArrayWordList caseInsensitiveWordList;
 
 
@@ -42,7 +42,7 @@ public class WordListsTest
    * @param  file1  dictionary to load.
    * @param  file2  dictionary to load.
    *
-   * @throws Exception  On word list creation.
+   * @throws  Exception  On word list creation.
    */
   @Parameters({ "fbsdFile", "webFile" })
   @BeforeClass(groups = {"wltest"})
@@ -50,16 +50,18 @@ public class WordListsTest
     throws Exception
   {
     this.caseSensitiveWordList = WordLists.createFromReader(
-      new FileReader[] {new FileReader(file1)}, true, new ArraysSort());
+      new FileReader[] {new FileReader(file1)},
+      true,
+      new ArraysSort());
 
     this.caseInsensitiveWordList = WordLists.createFromReader(
-      new FileReader[] {new FileReader(file2)}, false, new ArraysSort());
+      new FileReader[] {new FileReader(file2)},
+      false,
+      new ArraysSort());
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"wltest"})
   public void closeWordLists()
     throws Exception
@@ -75,27 +77,29 @@ public class WordListsTest
    * @throws  Exception  On test data generation failure.
    */
   @DataProvider(name = "searchData")
-  public Object[][] createTestData() throws Exception
+  public Object[][] createTestData()
+    throws Exception
   {
     final ArrayWordList oneWord = new ArrayWordList(new String[] {"a"});
     final ArrayWordList twoWords = new ArrayWordList(new String[] {"a", "b"});
     final ArrayWordList threeWords = new ArrayWordList(
       new String[] {"a", "b", "c"});
-    return new Object[][] {
-      {oneWord, "a", 0 },
-      {oneWord, "b", WordLists.NOT_FOUND },
-      {twoWords, "a", 0 },
-      {twoWords, "b", 1 },
-      {twoWords, "c", WordLists.NOT_FOUND },
-      {threeWords, "a", 0 },
-      {threeWords, "b", 1 },
-      {threeWords, "c", 2 },
-      {threeWords, "d", WordLists.NOT_FOUND },
-      {this.caseSensitiveWordList, "ISBN", 76},
-      {this.caseSensitiveWordList, "guacamole", WordLists.NOT_FOUND},
-      {this.caseInsensitiveWordList, "irresolute", 98323},
-      {this.caseInsensitiveWordList, "brujo", WordLists.NOT_FOUND},
-    };
+    return
+      new Object[][] {
+        {oneWord, "a", 0},
+        {oneWord, "b", WordLists.NOT_FOUND},
+        {twoWords, "a", 0},
+        {twoWords, "b", 1},
+        {twoWords, "c", WordLists.NOT_FOUND},
+        {threeWords, "a", 0},
+        {threeWords, "b", 1},
+        {threeWords, "c", 2},
+        {threeWords, "d", WordLists.NOT_FOUND},
+        {this.caseSensitiveWordList, "ISBN", 76},
+        {this.caseSensitiveWordList, "guacamole", WordLists.NOT_FOUND},
+        {this.caseInsensitiveWordList, "irresolute", 98323},
+        {this.caseInsensitiveWordList, "brujo", WordLists.NOT_FOUND},
+      };
   }
 
 
@@ -106,9 +110,14 @@ public class WordListsTest
    * @param  word  Word to search for.
    * @param  expectedResult  Expected result of test.
    */
-  @Test(groups = {"wltest"}, dataProvider = "searchData")
+  @Test(
+    groups = {"wltest"},
+    dataProvider = "searchData"
+  )
   public void binarySearchTest(
-    final WordList wl, final String word, final int expectedResult)
+    final WordList wl,
+    final String word,
+    final int expectedResult)
   {
     AssertJUnit.assertEquals(expectedResult, WordLists.binarySearch(wl, word));
   }

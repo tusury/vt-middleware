@@ -1,5 +1,5 @@
 /*
-  $Id: TestUtil.java 1330 2010-05-23 22:10:53Z dfisher $
+  $Id$
 
   Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 1330 $
-  Updated: $Date: 2010-05-23 18:10:53 -0400 (Sun, 23 May 2010) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -37,7 +37,9 @@ public final class TestUtil
    * Returns an array of every line in the supplied file.
    *
    * @param  file  To read
+   *
    * @return  Array of lines
+   *
    * @throws  IOException  if an error occurs reading the file
    */
   public static String[] fileToArray(final String file)

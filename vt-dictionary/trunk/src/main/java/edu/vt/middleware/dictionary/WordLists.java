@@ -1,15 +1,15 @@
 /*
-  $Id: WordListUtils.java 1509 2010-08-24 18:22:50Z marvin.addison $
+  $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 1509 $
-  Updated: $Date: 2010-08-24 14:22:50 -0400 (Tue, 24 Aug 2010) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -19,20 +19,18 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import edu.vt.middleware.dictionary.sort.ArraySorter;
 
 /**
  * Utility class for common operations on word lists.
  *
- * @author Middleware
- * @version $Revision: 1509 $
- *
+ * @author  Middleware Services
+ * @version  $Revision: 1509 $
  */
 public final class WordLists
 {
 
-  /** Case sensitive comparator */
+  /** Case sensitive comparator. */
   public static final Comparator<String> CASE_SENSITIVE_COMPARATOR =
     new Comparator<String>() {
       public int compare(final String a, final String b)
@@ -41,7 +39,7 @@ public final class WordLists
       }
     };
 
-  /** Case insensitive comparator */
+  /** Case insensitive comparator. */
   public static final Comparator<String> CASE_INSENSITIVE_COMPARATOR =
     new Comparator<String>() {
       public int compare(final String a, final String b)
@@ -50,7 +48,7 @@ public final class WordLists
       }
     };
 
-  /** Index returned when word not found by binary search */
+  /** Index returned when word not found by binary search. */
   public static final int NOT_FOUND = -1;
 
 
@@ -74,6 +72,7 @@ public final class WordLists
     int mid;
     while (low <= high) {
       mid = (low + high) / 2;
+
       final int cmp = comparator.compare(wordList.get(mid), word);
       if (cmp < 0) {
         low = mid + 1;
@@ -117,7 +116,8 @@ public final class WordLists
    * @throws  IOException  if an error occurs reading from a reader
    */
   public static ArrayWordList createFromReader(
-    final Reader[] readers, final boolean caseSensitive)
+    final Reader[] readers,
+    final boolean caseSensitive)
     throws IOException
   {
     return createFromReader(readers, caseSensitive, null);
@@ -158,7 +158,10 @@ public final class WordLists
         br.close();
       }
     }
-    return new ArrayWordList(
-      words.toArray(new String[words.size()]), caseSensitive, sorter);
+    return
+      new ArrayWordList(
+        words.toArray(new String[words.size()]),
+        caseSensitive,
+        sorter);
   }
 }

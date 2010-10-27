@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -82,9 +82,7 @@ public abstract class AbstractDictionaryPerfTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterSuite(groups = {"ttperftest", "wlperftest"})
   public void tearDown()
     throws Exception
@@ -102,7 +100,9 @@ public abstract class AbstractDictionaryPerfTest
    *
    * @param  dictFile  <code>String</code> to read
    * @param  size  <code>int</code> of array to return
+   *
    * @return  <code>Object[][]</code> containing words
+   *
    * @throws  IOException  if an error occurs reading the supplied file
    */
   private Object[][] createRandomWords(final String dictFile, final int size)
@@ -173,8 +173,10 @@ public abstract class AbstractDictionaryPerfTest
    *
    * @param  d  <code>Dictionary</code> to search
    * @param  s  <code>String</code> to search for
+   *
    * @return  <code>long</code> time in nanoseconds to perform the search
-   * @throws  IllegalStateException if the supplied word is not found
+   *
+   * @throws  IllegalStateException  if the supplied word is not found
    */
   public long doSearch(final Dictionary d, final String s)
   {

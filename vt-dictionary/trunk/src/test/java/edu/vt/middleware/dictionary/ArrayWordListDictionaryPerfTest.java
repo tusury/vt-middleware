@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -25,8 +25,7 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision: 166 $
  */
-public class ArrayWordListDictionaryPerfTest
-  extends AbstractDictionaryPerfTest
+public class ArrayWordListDictionaryPerfTest extends AbstractDictionaryPerfTest
 {
 
   /** dictionary to test. */
@@ -48,6 +47,7 @@ public class ArrayWordListDictionaryPerfTest
     throws Exception
   {
     super.initialize(dict1, dict2);
+
     long t = System.currentTimeMillis();
     this.wld = new WordListDictionary(
       WordLists.createFromReader(new FileReader[] {new FileReader(webFile)}));
@@ -58,9 +58,7 @@ public class ArrayWordListDictionaryPerfTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"wlperftest"})
   public void closeDictionary()
     throws Exception
@@ -82,7 +80,10 @@ public class ArrayWordListDictionaryPerfTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"wlperftest"}, dataProvider = "search-words-web-large")
+  @Test(
+    groups = {"wlperftest"},
+    dataProvider = "search-words-web-large"
+  )
   public void wordListSearch(final String word)
     throws Exception
   {

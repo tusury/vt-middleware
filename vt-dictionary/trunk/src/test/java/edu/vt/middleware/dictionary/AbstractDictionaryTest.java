@@ -1,15 +1,15 @@
 /*
-  $Id: DictionaryTest.java 166 2009-05-03 03:52:31Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 166 $
-  Updated: $Date: 2009-05-02 23:52:31 -0400 (Sat, 02 May 2009) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -64,30 +64,6 @@ public abstract class AbstractDictionaryTest
   /** store words from {@link #fbsdFile}. */
   private static Object[][] fbsdWords;
 
-  /** Location of the dictionary file. */
-  protected String webFile;
-
-  /** Location of the dictionary file. */
-  protected String webFileSorted;
-
-  /** Location of the dictionary file. */
-  protected String webFileLowerCase;
-
-  /** Location of the dictionary file. */
-  protected String webFileLowerCaseSorted;
-
-  /** Location of the dictionary file. */
-  protected String fbsdFile;
-
-  /** Location of the dictionary file. */
-  protected String fbsdFileSorted;
-
-  /** Location of the dictionary file. */
-  protected String fbsdFileLowerCase;
-
-  /** Location of the dictionary file. */
-  protected String fbsdFileLowerCaseSorted;
-
 
   /**
    * Load animal names.
@@ -124,6 +100,30 @@ public abstract class AbstractDictionaryTest
     ANIMALS = animals.toArray(new String[animals.size()]);
   }
 
+  /** Location of the dictionary file. */
+  protected String webFile;
+
+  /** Location of the dictionary file. */
+  protected String webFileSorted;
+
+  /** Location of the dictionary file. */
+  protected String webFileLowerCase;
+
+  /** Location of the dictionary file. */
+  protected String webFileLowerCaseSorted;
+
+  /** Location of the dictionary file. */
+  protected String fbsdFile;
+
+  /** Location of the dictionary file. */
+  protected String fbsdFileSorted;
+
+  /** Location of the dictionary file. */
+  protected String fbsdFileLowerCase;
+
+  /** Location of the dictionary file. */
+  protected String fbsdFileLowerCaseSorted;
+
 
   /**
    * @param  dict1  to load.
@@ -137,15 +137,18 @@ public abstract class AbstractDictionaryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "webFile",
-    "webFileSorted",
-    "webFileLowerCase",
-    "webFileLowerCaseSorted",
-    "fbsdFile",
-    "fbsdFileSorted",
-    "fbsdFileLowerCase",
-    "fbsdFileLowerCaseSorted" })
+  @Parameters(
+    {
+      "webFile",
+      "webFileSorted",
+      "webFileLowerCase",
+      "webFileLowerCaseSorted",
+      "fbsdFile",
+      "fbsdFileSorted",
+      "fbsdFileLowerCase",
+      "fbsdFileLowerCaseSorted"
+    }
+  )
   @BeforeClass(groups = {"ttdicttest", "wldicttest"})
   public void createDictionaries(
     final String dict1,
@@ -178,9 +181,7 @@ public abstract class AbstractDictionaryTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterSuite(groups = {"ttdicttest", "wldicttest"})
   public void tearDown()
     throws Exception
@@ -194,7 +195,9 @@ public abstract class AbstractDictionaryTest
    * Returns an array of words from the supplied file.
    *
    * @param  dictFile  <code>String</code> to read
+   *
    * @return  <code>Object[][]</code> containing words
+   *
    * @throws  IOException  if an error occurs reading the supplied file
    */
   private Object[][] createWords(final String dictFile)
@@ -215,6 +218,7 @@ public abstract class AbstractDictionaryTest
    * Sample word data.
    *
    * @return  word data
+   *
    * @throws  IOException  if an error occurs reading {@link #webFile}
    */
   @DataProvider(name = "all-web-words")
@@ -229,6 +233,7 @@ public abstract class AbstractDictionaryTest
    * Sample word data.
    *
    * @return  word data
+   *
    * @throws  IOException  if an error occurs reading {@link #fbsdFile}
    */
   @DataProvider(name = "all-fbsd-words")

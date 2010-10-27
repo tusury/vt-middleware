@@ -1,15 +1,15 @@
 /*
-  $Id: Dictionary.java 1252 2010-04-16 21:24:23Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 1252 $
-  Updated: $Date: 2010-04-16 17:24:23 -0400 (Fri, 16 Apr 2010) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -18,9 +18,9 @@ import java.io.RandomAccessFile;
 import java.util.TreeMap;
 
 /**
- * Provides an implementation of a {@link WordList} that is backed by a
- * file. Each word is read from the file for every get, though the
- * implementation supports a simple memory cache to improve read performance.
+ * Provides an implementation of a {@link WordList} that is backed by a file.
+ * Each word is read from the file for every get, though the implementation
+ * supports a simple memory cache to improve read performance.
  *
  * @author  Middleware Services
  * @version  $Revision: 1252 $ $Date: 2010-04-16 17:24:23 -0400 (Fri, 16 Apr 2010) $
@@ -31,7 +31,7 @@ public class FileWordList extends AbstractWordList
   /** default cache size. */
   public static final int DEFAULT_CACHE_SIZE = 5;
 
-  /** 100 percent */
+  /** 100 percent. */
   private static final int HUNDRED_PERCENT = 100;
 
   /** file containing words. */
@@ -45,13 +45,11 @@ public class FileWordList extends AbstractWordList
 
 
   /**
-   * Creates a new case-sensitive word list from the supplied file.  The input
+   * Creates a new case-sensitive word list from the supplied file. The input
    * file is read on initialization and is maintained by this class.
-   * <p>
-   * <strong>NOTE</strong>
-   * Attempts to close the source file will cause {@link IOException} when
-   * {@link #get(int)} is called subsequently.
-   * </p>
+   *
+   * <p><strong>NOTE</strong> Attempts to close the source file will cause
+   * {@link IOException} when {@link #get(int)} is called subsequently.</p>
    *
    * @param  raf  File containing words, one per line.
    *
@@ -65,13 +63,11 @@ public class FileWordList extends AbstractWordList
 
 
   /**
-   * Creates a new word list from the supplied file.  The input
-   * file is read on initialization and is maintained by this class.
-   * <p>
-   * <strong>NOTE</strong>
-   * Attempts to close the source file will cause {@link IOException} when
-   * {@link #get(int)} is called subsequently.
-   * </p>
+   * Creates a new word list from the supplied file. The input file is read on
+   * initialization and is maintained by this class.
+   *
+   * <p><strong>NOTE</strong> Attempts to close the source file will cause
+   * {@link IOException} when {@link #get(int)} is called subsequently.</p>
    *
    * @param  raf  File containing words, one per line.
    * @param  caseSensitive  Set to true to create case-sensitive word list,
@@ -87,13 +83,11 @@ public class FileWordList extends AbstractWordList
 
 
   /**
-   * Creates a new word list from the supplied file.  The input
-   * file is read on initialization and is maintained by this class.
-   * <p>
-   * <strong>NOTE</strong>
-   * Attempts to close the source file will cause {@link IOException} when
-   * {@link #get(int)} is called subsequently.
-   * </p>
+   * Creates a new word list from the supplied file. The input file is read on
+   * initialization and is maintained by this class.
+   *
+   * <p><strong>NOTE</strong> Attempts to close the source file will cause
+   * {@link IOException} when {@link #get(int)} is called subsequently.</p>
    *
    * @param  raf  File containing words, one per line.
    * @param  caseSensitive  Set to true to create case-sensitive word list,
@@ -122,6 +116,7 @@ public class FileWordList extends AbstractWordList
     }
     synchronized (this.file) {
       this.file.seek(0L);
+
       String a = null;
       String b = null;
       while ((a = this.file.readLine()) != null) {
@@ -211,7 +206,9 @@ public class FileWordList extends AbstractWordList
    * to seek to the closest position of the supplied index.
    *
    * @param  index  <code>int</code> to read word at
+   *
    * @return  <code>String</code> word at the supplied index
+   *
    * @throws  IllegalStateException  if an error occurs reading the supplied
    * file
    */
@@ -223,8 +220,10 @@ public class FileWordList extends AbstractWordList
         if (!this.cache.isEmpty() && this.cache.firstKey() <= index) {
           i = this.cache.floorKey(index);
         }
+
         final long pos = i > 0 ? this.cache.get(i) : 0L;
         this.file.seek(pos);
+
         String s;
         while ((s = this.file.readLine()) != null) {
           if (i == index) {

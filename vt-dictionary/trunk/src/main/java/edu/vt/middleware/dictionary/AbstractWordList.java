@@ -1,15 +1,15 @@
 /*
-  $Id: Dictionary.java 1252 2010-04-16 21:24:23Z dfisher $
+  $Id$
 
-  Copyright (C) 2003-2008 Virginia Tech.
+  Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 1252 $
-  Updated: $Date: 2010-04-16 17:24:23 -0400 (Fri, 16 Apr 2010) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.dictionary;
 
@@ -25,7 +25,7 @@ import java.util.Iterator;
 public abstract class AbstractWordList implements WordList
 {
 
-  /** Word comparator */
+  /** Word comparator. */
   protected Comparator<String> comparator;
 
 
@@ -82,9 +82,8 @@ public abstract class AbstractWordList implements WordList
   /**
    * Abstract base class for all internal word list iterators.
    *
-   * @author Middleware
-   * @version $Revision: 1465 $
-   *
+   * @author  Middleware Services
+   * @version  $Revision: 1465 $
    */
   private abstract class AbstractWordListIterator implements Iterator<String>
   {
@@ -105,9 +104,8 @@ public abstract class AbstractWordList implements WordList
    * Iterator implementation that iterates over a {@link WordList} by
    * incrementing an index from 0 to {@link WordList#size()} - 1.
    *
-   * @author Middleware
-   * @version $Revision: 1465 $
-   *
+   * @author  Middleware Services
+   * @version  $Revision: 1465 $
    */
   private class SequentialIterator extends AbstractWordListIterator
   {
@@ -130,20 +128,20 @@ public abstract class AbstractWordList implements WordList
 
   /**
    * Iterator that iterates over a word list from the median outward to either
-   * end.  In particular, for a word list of N elements whose median index is
-   * M, and for each i such that M-i >= 0 and M+i < N, the M-i element is
-   * visited  before the M+i element.
+   * end. In particular, for a word list of N elements whose median index is M,
+   * and for each i such that M-i >= 0 and M+i < N, the M-i element is visited
+   * before the M+i element.
    *
-   * @author Middleware
-   * @version $Revision: 1465 $
-   *
+   * @author  Middleware Services
+   * @version  $Revision: 1465 $
    */
   private class MedianIterator extends AbstractWordListIterator
   {
-    /** Index of median element in given list */
+
+    /** Index of median element in given list. */
     private final int median = size() / 2;
 
-    /** Indicates direction of next item */
+    /** Indicates direction of next item. */
     private int sign;
 
 
