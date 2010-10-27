@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="vt-dictionary" verbose="1" parallel="tests" thread-count="1">
+
+  <!-- test parameters -->
+  <parameter name="webFile" value="src/test/resources/web2"/>
+  <parameter name="webFileSorted" value="src/test/resources/web2.sort"/>
+  <parameter name="webFileLowerCase" value="src/test/resources/web2.lc"/>
+  <parameter name="webFileLowerCaseSorted" value="src/test/resources/web2.lc.sort"/>
+  <parameter name="fbsdFile" value="src/test/resources/freebsd"/>
+  <parameter name="fbsdFileSorted" value="src/test/resources/freebsd.sort"/>
+  <parameter name="fbsdFileLowerCase" value="src/test/resources/freebsd.lc"/>
+  <parameter name="fbsdFileLowerCaseSorted" value="src/test/resources/freebsd.lc.sort"/>
+
+  <parameter name="eignFile" value="src/test/resources/eign"/>
+
+  <parameter name="webSearchWord" value="manipular"/>
+  <parameter name="fbsdSearchWord" value="TrustedBSD"/>
+
+  <parameter name="partialSearchWord" value=".e.e.e.e"/>
+  <parameter name="partialSearchResults" value="Genevese|reserene|teleseme|terebene"/>
+
+  <parameter name="nearSearchWord" value="Jicaque"/>
+  <parameter name="nearSearchDistance" value="2"/>
+  <parameter name="nearSearchResults" value="Jicaque|Jicaquean|Xicaque|macaque"/>
+
+  <test name="coretests" parallel="methods" thread-count="12">
+    <groups>
+      <run>
+        <include name="wltest" />
+        <include name="tttest" />
+        <include name="wldicttest" />
+        <include name="ttdicttest" />
+        <include name="sorttest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.dictionary.*" />
+    </packages>
+  </test>
+<!-- run performance tests separate
+  <test name="perftests" parallel="methods" thread-count="12">
+    <groups>
+      <run>
+        <include name="ttperftest" />
+        <include name="wlperftest" />
+      </run>
+    </groups>
+    <packages>
+      <package name="edu.vt.middleware.dictionary.*" />
+    </packages>
+  </test>
+-->
+</suite>
