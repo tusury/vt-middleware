@@ -1,4 +1,4 @@
-  * [vtdictionary Overview]
+  * [http://code.google.com/p/vt-middleware/wiki/vtdictionary-v2/vtdictionary Overview]
   * [http://vt-middleware.googlecode.com/svn/vt-dictionary/javadoc/vt-dictionary-2.0.1/index.html JavaDoc]
-  * [vtdictionaryReleaseNotes Release Notes]
-  * [http://code.google.com/p/vt-middleware/downloads/list Download]
+  * [http://code.google.com/p/vt-middleware/wiki/vtdictionary-v2/vtdictionaryReleaseNotes Release Notes]
+  * [http://code.google.com/p/vt-middleware/downloads/list?can=4&q=vt-dictionary Download]
