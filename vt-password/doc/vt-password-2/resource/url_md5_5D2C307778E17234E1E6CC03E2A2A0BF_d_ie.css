@@ -1,0 +1,21 @@
+pre { font-size: 100%; letter-spacing: -1px; }
+.tip { font-size: 80%; }
+table.results th a, table.results th a:visited { padding-right: 12px; margin-right: 2px;}
+#wikicontent tt { font-size: 100%; }
+
+.prettyprint td.source {
+  white-space: pre;
+  word-wrap: break-word;
+  width: 75em !important;
+}
+
+
+.issuedescription pre, .issuecomment pre {
+  white-space: pre;
+  word-wrap: break-word;
+  width: 70em;
+}
+
+#ac-list {
+  max-height: none;
+}
