@@ -4,59 +4,89 @@
 <wiki:toc max_depth="2" />
 
 = Introduction =
-VT Dictionary is a Java library for searching and sorting a dictionary or words.<br/>
-The dictionary is implemented using a [http://en.wikipedia.org/wiki/Ternary_search_tries ternary tree], and supports the following types of searches:
-  * exact match
-  * partial search
-  * near search.
-The sorting functions are not necessary, however sorting your data and inserting from the median produces a more balanced tree and reduces search time.
+VT Dictionary is a Java library for searching and sorting a list of words.<br/>
+Two implementations of a dictionary are supplied, !WordListDictionary and !TernaryTreeDictionary.
 
 ----
 = Installation =
 The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
 
-If you would like to use this project in your maven build, include the following in your pom.xml:
+This project is available from Maven Central. If you would like to use this project in your maven build, include the following in your pom.xml:
 {{{
 <dependencies>
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-dictionary</artifactId>
-      <version>2.0.1</version>
+      <version>3.0</version>
   </dependency>
 <dependencies>
-}}}
-{{{
-<repositories>
-  <repository>
-    <id>vt-middleware.repo</id>
-    <url>http://vt-middleware.googlecode.com/svn/maven2</url>
-  </repository>
-</repositories>
 }}}
 
 ----
 = Code Samples =
 Unless otherwise noted, classes appearing in the following samples are included in the JSE libraries or VT Dictionary.
 
-== Search ==
+== !WordListDictionary ==
+This dictionary is implemented using a !WordList, which allows the user to decide how the word list should be backed. The only type of search that is supported is exact match. The following implementations of !WordList are provided:
+  * !ArrayWordList - words are read and stored in an array
+  * !FileWordList - words are read from a file, caching is supported and recommended for performance
+
+=== !ArrayWordList example ===
+{{{
+// create a new word list from the supplied file
+// file is expected to be sorted
+// by default the word list is case sensitive
+ArrayWordList awl = WordLists.createFromReader(
+  new FileReader[] {new FileReader("/path/to/my/words")});
+WordListDictionary dict = new WordListDictionary(awl);
+if (dict.search("chalice")) {
+  System.out.println("chalice was found in this dictionary");
+} else {
+  System.out.println("chalice was not found in this dictionary");
+}
+}}}
+
+=== !FileWordList example ===
+{{{
+// create a new word list from the supplied file
+// file is expected to be sorted
+// by default the word list is case sensitive
+// by default 5% of the file is cached
+FileWordList fwl = new FileWordList(new RandomAccessFile("/path/to/my/file", "r"))
+WordListDictionary dict = new WordListDictionary(fwl);
+if (dict.search("chalice")) {
+  System.out.println("chalice was found in this dictionary");
+} else {
+  System.out.println("chalice was not found in this dictionary");
+}
+}}}
+
+== !TernaryTreeDictionary ==
+This dictionary is implemented using a [http://en.wikipedia.org/wiki/Ternary_search_tries ternary tree], and supports the following types of searches:
+  * exact match
+  * partial search
+  * near search.
+The sorting functions are not necessary, however sorting your data and inserting from the median produces a more balanced tree and reduces search time.<br/>
+Note that this implementation requires an in-memory ternary tree, which can require large amounts of heap space.
+
+=== Exact Search ===
 Search for an exact match on a search term.<br/>
 For instance, using the supplied Webster's Second International Dictionary with a search term of `chalice` returns true.
 
 {{{
-String searchTerm = "chalice";
-Dictionary d = new Dictionary();
-d.useMedian();
-d.ignoreCase();
-d.insert(new File("my.dictionary"));
-d.build();
-if (dict.search(searchTerm)) {
-  System.out.println(searchTerm + " was found in this dictionary");
+ArrayWordList awl = WordLists.createFromReader(
+  new FileReader[] {new FileReader("/path/to/my/words")});
+// creates a new ternary tree by reading the words in the word list
+// by default the ternary tree is created using the median of the word list
+TernaryTreeDictionary dict = new TernaryTreeDictionary(awl);
+if (dict.search("chalice")) {
+  System.out.println("chalice was found in this dictionary");
 } else {
-  System.out.println(searchTerm + " was not found in this dictionary");
+  System.out.println("chalice was not found in this dictionary");
 }
 }}}
 
-== Partial Search ==
+=== Partial Search ===
 Search for word(s) that partially match a search term.<br/>
 The dot character (.) is used to represent any valid character.<br/>
 For instance, using the supplied Webster's Second International Dictionary with a search term of `.l.st.n` yields the following results:
@@ -65,21 +95,23 @@ For instance, using the supplied Webster's Second International Dictionary with 
   * plastin
 
 {{{
-String searchTerm = ".l.st.n";
-Dictionary d = new Dictionary();
-d.useMedian();
-d.insert(new File("my.dictionary"));
-d.build();
-String[] results = dict.partialSearch(searchTerm);
+ArrayWordList awl = WordLists.createFromReader(
+  new FileReader[] {new FileReader("/path/to/my/words")});
+// creates a new ternary tree by reading the words in the word list
+// by default the ternary tree is created using the median of the word list
+TernaryTreeDictionary dict = new TernaryTreeDictionary(awl);
+String[] results = dict.partialSearch(".l.st.n");
 if (results.length > 0) {
-  System.out.println(searchTerm + " was found in this dictionary:");
+  System.out.println(".l.st.n was found in this dictionary:");
   System.out.println(Arrays.asList(results));
 } else {
-  System.out.println(searchTerm + " was not found in this dictionary");
+  System.out.println(".l.st.n was not found in this dictionary");
 }
 }}}
 
-== Near Search ==
+Note that case-insensitive searching is *not* supported for partial searches. To achieve this behavior you must lower-case all your words and then lower-case your search input.
+
+=== Near Search ===
 Search for word(s) that are _near_ a search term by a certain distance.<br/>
 For instance, using the supplied Webster's Second International Dictionary with a search term of `display` at a distance of `2` yields the following results:
   * disally
@@ -91,20 +123,21 @@ For instance, using the supplied Webster's Second International Dictionary with 
   * misplay
 
 {{{
-String searchTerm = "display";
-int distance = 2;
-Dictionary d = new Dictionary();
-d.useMedian();
-d.insert(new File("my.dictionary"));
-d.build();
-String[] results = dict.nearSearch(searchTerm, distance);
+ArrayWordList awl = WordLists.createFromReader(
+  new FileReader[] {new FileReader("/path/to/my/words")});
+// creates a new ternary tree by reading the words in the word list
+// by default the ternary tree is created using the median of the word list
+TernaryTreeDictionary dict = new TernaryTreeDictionary(awl);
+String[] results = dict.nearSearch("display", 2);
 if (results.length > 0) {
-  System.out.println(searchTerm + " was found in this dictionary:");
+  System.out.println("display was found in this dictionary:");
   System.out.println(Arrays.asList(results));
 } else {
-  System.out.println(searchTerm + " was not found in this dictionary");
+  System.out.println("display was not found in this dictionary");
 }
 }}}
+
+Note that case-insensitive searching is *not* supported for near searches. To achieve this behavior you must lower-case all your words and then lower-case your search input.
 
 ----
 = Scripts =
@@ -118,27 +151,22 @@ Script execution requirements vary by platform.  For the following platform-spec
 == dict - Search Operations ==
 Perform a search for the term `chalice`
 {{{
-bin/dict dict/web2 -m -s chalice
+bin/ternarytree dict/web2 -m -s chalice
 }}}
 
 Perform a partial search for the term `.l.st.n`
 {{{
-bin/dict dict/web2 -m -ps .l.st.n
+bin/ternarytree dict/web2 -m -ps .l.st.n
 }}}
 
 Perform a near search for the term `display` at a distance of `2`
 {{{
-bin/dict dict/web2 -m -ns display 2
-}}}
-
-Count the number of words in a dictionay
-{{{
-bin/dict dict/web2 -c
+bin/ternarytree dict/web2 -m -ns display 2
 }}}
 
 Print command-line usage statement
 {{{
-bin/dict -h
+bin/ternarytree -h
 }}}
 
 ----
