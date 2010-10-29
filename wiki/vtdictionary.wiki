@@ -5,7 +5,7 @@
 
 = Introduction =
 VT Dictionary is a Java library for searching and sorting a list of words.<br/>
-Two implementations of a dictionary are supplied, !WordListDictionary and !TernaryTreeDictionary.
+Two implementations of a dictionary are supplied, [http://vt-middleware.googlecode.com/svn/vt-dictionary/javadoc/vt-dictionary-3.0/edu/vt/middleware/dictionary/WordListDictionary.html WordListDictionary] and [http://vt-middleware.googlecode.com/svn/vt-dictionary/javadoc/vt-dictionary-3.0/edu/vt/middleware/dictionary/TernaryTreeDictionary.html TernaryTreeDictionary].
 
 ----
 = Installation =
@@ -28,8 +28,8 @@ Unless otherwise noted, classes appearing in the following samples are included 
 
 == !WordListDictionary ==
 This dictionary is implemented using a !WordList, which allows the user to decide how the word list should be backed. The only type of search that is supported is exact match. The following implementations of !WordList are provided:
-  * !ArrayWordList - words are read and stored in an array
-  * !FileWordList - words are read from a file, caching is supported and recommended for performance
+  * [http://vt-middleware.googlecode.com/svn/vt-dictionary/javadoc/vt-dictionary-3.0/edu/vt/middleware/dictionary/ArrayWordList.html ArrayWordList] - words are read and stored in an array
+  * [http://vt-middleware.googlecode.com/svn/vt-dictionary/javadoc/vt-dictionary-3.0/edu/vt/middleware/dictionary/FileWordList.html FileWordList] - words are read from a file, caching is supported and recommended for performance
 
 === !ArrayWordList example ===
 {{{
@@ -168,6 +168,11 @@ Print command-line usage statement
 {{{
 bin/ternarytree -h
 }}}
+
+----
+= Performance Considerations =
+The !TernaryTreeDictionary tends to perform marginally faster on exact searches, however it incurs the largest memory footprint. It should also be noted that performance is relative to how well your ternary tree is balanced. The !WordListDictionary leverages a binary search algorithm and performs almost as well as !TernaryTreeDictionary, but uses slightly less memory when backed by an !ArrayWordList. A !WordListDictionary backed by a !FileWordList will perform in proportion to the amount of caching that is configured, allowing the user to balance memory consumption against speed.<br/><br/>
+In general if you are just performing exact searches, a !WordListDictionary backed by an !ArrayWordList is recommended. If you need partial and near search functionality, !TernaryTreeDictionary is your only option.
 
 ----
 = Available Dictionaries =
