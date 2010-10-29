@@ -148,7 +148,7 @@ Script execution requirements vary by platform.  For the following platform-spec
  # Ensure $VTDICT_HOME/bin is on your path.
  # If you encounter classpath problems executing the scripts, export VTDICT_HOME as a separate shell variable.  This is not necessary in most cases (e.g. Linux, OSX, FreeBSD).
 
-== dict - Search Operations ==
+== ternarytree - Search Operations ==
 Perform a search for the term `chalice`
 {{{
 bin/ternarytree dict/web2 -m -s chalice
