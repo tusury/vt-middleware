@@ -31,7 +31,7 @@ This dictionary is implemented using a !WordList, which allows the user to decid
   * [http://vt-middleware.googlecode.com/svn/vt-dictionary/javadoc/vt-dictionary-3.0/edu/vt/middleware/dictionary/ArrayWordList.html ArrayWordList] - words are read and stored in an array
   * [http://vt-middleware.googlecode.com/svn/vt-dictionary/javadoc/vt-dictionary-3.0/edu/vt/middleware/dictionary/FileWordList.html FileWordList] - words are read from a file, caching is supported and recommended for performance
 
-WordLists can be configured to support searching in both case sensitive and insensitive modes, but once a word list has been constructed its case behavior is immutable.  The case behavior is inherited by the !WordListDictionary that uses it.
+!WordLists can be configured to support searching in both case sensitive and insensitive modes, but once a word list has been constructed its case behavior is immutable.  The case behavior is inherited by the !WordListDictionary that uses it.
 
 === !ArrayWordList example ===
 {{{
