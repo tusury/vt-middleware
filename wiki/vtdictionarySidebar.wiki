@@ -3,4 +3,5 @@
   * [vtdictionaryReleaseNotes Release Notes]
   * [http://code.google.com/p/vt-middleware/downloads/list Download]
 ----
+==== Deprecated ====
   * [http://vt-middleware.googlecode.com/svn/vt-dictionary/doc/vt-dictionary-2/vtdictionary.html Version 2 documentation]
