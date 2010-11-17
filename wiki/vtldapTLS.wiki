@@ -70,7 +70,7 @@ config.setSslSocketFactory(sf);
 
 Use X509 certificates for both authentication and trust that are located on the file system.
   * Supported certificate formats include: PEM, DER, and PKCS7
-  * Supported private key formats include: PKCS7
+  * Supported private key formats include: PKCS8
 
 {{{
 LdapConfig config = new LdapConfig("ldap://directory.vt.edu/dc=vt,dc=edu");
@@ -80,7 +80,7 @@ config.setAuthtype("EXTERNAL");
 X509CredentialConfig cc = new X509CredentialConfig();
 cc.setTrustCertificates("file:/tmp/certs.pem");
 cc.setAuthenticationCertificate("file:/tmp/mycert.pem");
-cc.setAuthenticationKey("file:/tmp/mykey.pkcs7");
+cc.setAuthenticationKey("file:/tmp/mykey.pkcs8");
 
 TLSSocketFactory sf = new TLSSocketFactory();
 sf.setSSLContextIntializer(cc.createSSLContextInitializer());
