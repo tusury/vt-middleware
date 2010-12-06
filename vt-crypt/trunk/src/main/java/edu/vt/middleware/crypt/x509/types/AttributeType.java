@@ -15,76 +15,89 @@ package edu.vt.middleware.crypt.x509.types;
 
 /**
  * Describes the registered values of AttributeType that may appear in a
- * RelativeDistinguishedName as defined in section 2 of RFC 2253. The values
- * here were obtained from http://www.iana.org/assignments/ldap-parameters and
- * only contain the attribute types most likely to appear in an RDN.
+ * RelativeDistinguishedName (RDN) as defined in section 2 of RFC 2253.
+ * <p>
+ * Enumeration values include attributes likely to appear in an X.509 RDN,
+ * which were obtained from the following sources:
+ * <ul>
+ * <li>RFC 4519 Lightweight Directory Access Protocol (LDAP):
+ * Schema for User Applications</li>
+ * <li>RFC 4524 COSINE LDAP/X.500 Schema</li>
+ * <li>PKCS #9 v2.0: Selected Object Classes and Attribute Types</li>
+ * </ul>
  *
  * @author  Middleware Services
  * @version  $Revision: 578 $
  */
 public enum AttributeType {
 
-  /** CN attribute type. */
+  /** CN - RFC 4519 section 2.3. */
   CommonName("2.5.4.3", "CN"),
 
-  /** C attribute type. */
+  /** C - RFC 4519 section 2.2. */
   CountryName("2.5.4.6", "C"),
 
-  /** DNQUALIFIER attribute type. */
+  /** DNQUALIFIER - RFC 4519 section 2.8. */
   DnQualifier("2.5.4.46", "DNQUALIFIER"),
 
-  /** DC attribute type. */
+  /** DC - RFC 4519 section 2.4. */
   DomainComponent("0.9.2342.19200300.100.1.25", "DC"),
 
-  /** GIVENNAME attribute type. */
+  /** Email address - PKCS#9 v2.0 section B.3.5. */
+  EmailAddress("1.2.840.113549.1.9.1", "EMAILADDRESS"),
+
+  /** GenerationQualifier - RFC 4519 section 2.11. */
+  GenerationQualifier("2.5.4.44", "GENERATIONQUALIFIER"),
+
+  /** GIVENNAME - RFC 4519 section 2.12. */
   GivenName("2.5.4.42", "GIVENNAME"),
 
-  /** INITIALS attribute type. */
+  /** INITIALS - RFC 4519 section 2.14. */
   Initials("2.5.4.43", "INITIALS"),
 
-  /** L attribute type. */
+  /** L - RFC 4519 section 2.16. */
   LocalityName("2.5.4.7", "L"),
 
-  /** MAIL attribute type. */
+  /** MAIL - RFC 4524 section 2.16. */
   Mail("0.9.2342.19200300.100.1.3", "MAIL"),
 
-  /** NAME attribute type. */
+  /** NAME - RFC 4519 section 2.18. */
   Name("2.5.4.41", "NAME"),
 
-  /** O attribute type. */
+  /** O - RFC 4519 section 2.19. */
   OrganizationName("2.5.4.10", "O"),
 
-  /** OU attribute type. */
+  /** OU - RFC 4519 section 2.20. */
   OrganizationalUnitName("2.5.4.11", "OU"),
 
-  /** POSTALADDRESS attribute type. */
+  /** POSTALADDRESS - RFC 4519 section 2.23. */
   PostalAddress("2.5.4.16", "POSTALADDRESS"),
 
-  /** POSTALCODE attribute type. */
+  /** POSTALCODE - RFC 4519 section 2.24. */
   PostalCode("2.5.4.17", "POSTALCODE"),
 
-  /** POSTOFFICEBOX attribute type. */
+  /** POSTOFFICEBOX - RFC 4519 section 2.25. */
   PostOfficeBox("2.5.4.18", "POSTOFFICEBOX"),
 
-  /** SERIALNUMBER attribute type. */
+  /** SERIALNUMBER - RFC 4519 section 2.31. */
   SerialNumber("2.5.4.5", "SERIALNUMBER"),
 
-  /** ST attribute type. */
+  /** ST - RFC 4519 section 2.33. */
   StateOrProvinceName("2.5.4.8", "ST"),
 
-  /** STREET attribute type. */
+  /** STREET - RFC 4519 section 2.34. */
   StreetAddress("2.5.4.9", "STREET"),
 
-  /** SN attribute type. */
+  /** SN - RFC 4519 section 2.32. */
   Surname("2.5.4.4", "STREET"),
 
-  /** TITLE attribute type. */
+  /** TITLE - RFC 4519 section 2.38. */
   Title("2.5.4.12", "TITLE"),
 
-  /** UNIQUEIDENTIFIER attribute type. */
+  /** UNIQUEIDENTIFIER - RFC 4524 section 2.24. */
   UniqueIdentifier("0.9.2342.19200300.100.1.44", "UNIQUEIDENTIFIER"),
 
-  /** UID attribute type. */
+  /** UID - RFC 4519 section 2.39. */
   UserId("0.9.2342.19200300.100.1.1", "UID");
 
 

@@ -54,17 +54,17 @@ public class DNUtilsTest
       new Object[][] {
         {
           new File(RESOURCE_DIR, "serac-dev-test-cert.pem"),
-          AttributeType.DomainComponent.getOid(),
+          AttributeType.DomainComponent,
           new String[] {"vt", "edu"},
         },
         {
           new File(RESOURCE_DIR, "glider.cc.vt.edu.crt"),
-          AttributeType.SerialNumber.getOid(),
+          AttributeType.SerialNumber,
           new String[] {"1248110657961"},
         },
         {
           new File(RESOURCE_DIR, "glider.cc.vt.edu.crt"),
-          AttributeType.OrganizationalUnitName.getOid(),
+          AttributeType.OrganizationalUnitName,
           new String[] {"Middleware-Client", "SETI"},
         },
       };
@@ -84,13 +84,18 @@ public class DNUtilsTest
       new Object[][] {
         {
           new File(RESOURCE_DIR, "serac-dev-test-cert.pem"),
-          AttributeType.DomainComponent.getOid(),
+          AttributeType.DomainComponent,
           "vt",
         },
         {
           new File(RESOURCE_DIR, "glider.cc.vt.edu.crt"),
-          AttributeType.CommonName.getOid(),
+          AttributeType.CommonName,
           "glider.cc.vt.edu",
+        },
+        {
+          new File(RESOURCE_DIR, "thawte-premium-server-ca-cert.pem"),
+          AttributeType.EmailAddress,
+          "premium-server@thawte.com",
         },
       };
   }
@@ -98,7 +103,7 @@ public class DNUtilsTest
 
   /**
    * @param  certFile  File containing X.509 certificate data.
-   * @param  attributeOid  OID of attribute values to fetch.
+   * @param  attribute   Attribute to fetch.
    * @param  expectedValues  Expected attribute values.
    *
    * @throws  Exception  On test failure.
@@ -109,7 +114,7 @@ public class DNUtilsTest
   )
   public void testGetAttributeValues(
     final File certFile,
-    final String attributeOid,
+    final AttributeType attribute,
     final String[] expectedValues)
     throws Exception
   {
@@ -120,7 +125,7 @@ public class DNUtilsTest
       certFile);
     final String[] actualValues = DNUtils.getAttributeValues(
       cert.getSubjectX500Principal(),
-      attributeOid);
+      attribute);
     AssertJUnit.assertEquals(
       Arrays.asList(expectedValues),
       Arrays.asList(actualValues));
@@ -129,7 +134,7 @@ public class DNUtilsTest
 
   /**
    * @param  certFile  File containing X.509 certificate data.
-   * @param  attributeOid  OID of attribute values to fetch.
+   * @param  attribute   Attribute to fetch.
    * @param  expectedValue  Expected attribute value.
    *
    * @throws  Exception  On test failure.
@@ -140,7 +145,7 @@ public class DNUtilsTest
   )
   public void testGetAttributeValue(
     final File certFile,
-    final String attributeOid,
+    final AttributeType attribute,
     final String expectedValue)
     throws Exception
   {
@@ -150,7 +155,7 @@ public class DNUtilsTest
       certFile);
     final String actualValue = DNUtils.getAttributeValue(
       cert.getSubjectX500Principal(),
-      attributeOid);
+      attribute);
     AssertJUnit.assertEquals(expectedValue, actualValue);
   }
 }
