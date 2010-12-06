@@ -98,17 +98,6 @@ public class AttributeTypeAndValue
   }
 
 
-  /**
-   * @return  Attribute type short name or null if no short name exists for the
-   * type.
-   */
-  public String getTypeName()
-  {
-    final AttributeType attrType = AttributeType.fromOid(type);
-    return attrType != null ? attrType.getName() : null;
-  }
-
-
   /** @return  Attribute value. */
   public String getValue()
   {
@@ -126,10 +115,10 @@ public class AttributeTypeAndValue
   public String toString()
   {
     final StringBuilder sb = new StringBuilder(70);
-    final String typeName = getTypeName();
-    if (typeName != null) {
-      sb.append(typeName);
-    } else {
+    // Try to use the human-readable name for well-known OIDs
+    try {
+      sb.append(AttributeType.fromOid(type).getName());
+    } catch (IllegalArgumentException e) {
       sb.append(type);
     }
     sb.append('=');

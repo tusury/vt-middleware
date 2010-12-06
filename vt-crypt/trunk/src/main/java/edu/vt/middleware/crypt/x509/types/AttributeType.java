@@ -140,8 +140,9 @@ public enum AttributeType {
    *
    * @param  oid  OID of attribute type to get.
    *
-   * @return  Attribute type whose OID matches given value or null if there is
-   * no registered attribute type with the given OID.
+   * @return  Attribute type whose OID matches given value.
+   *
+   * @throws  IllegalArgumentException  On unknown OID.
    */
   public static AttributeType fromOid(final String oid)
   {
@@ -150,6 +151,30 @@ public enum AttributeType {
         return t;
       }
     }
-    return null;
+    throw new IllegalArgumentException("Unknown AttributeType for OID " + oid);
+  }
+
+
+  /**
+   * Gets the attribute type whose name is the given string.
+   *
+   * @param  name  Name of attribute to get, where the name is the all-caps
+   * RFC/standard name that would be returned by {@link #getName()} for the
+   * desired attribute.
+   *
+   * @return  Attribute type whose {@link #getName()} property matches the
+   * given value.
+   *
+   * @throws  IllegalArgumentException  On unknown name.
+   */
+  public static AttributeType fromName(final String name)
+  {
+    for (AttributeType t : AttributeType.values()) {
+      if (t.getName().equals(name)) {
+        return t;
+      }
+    }
+    throw new IllegalArgumentException(
+        "Unknown AttributeType for name " + name);
   }
 }
