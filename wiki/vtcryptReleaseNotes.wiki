@@ -2,6 +2,10 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 2.1.2 =
+  * Add EmailAddress to AttributeType enumeration since this attribute commonly appears in X.509 certificate DNs
+  * Other misc improvements to support X.509 DN parsing
+
 = Version 2.1.1 =
   * First version available in [http://repo1.maven.org/maven2/edu/vt/middleware/vt-crypt/ Maven Central]
   * Moved maven plugin into separate project
