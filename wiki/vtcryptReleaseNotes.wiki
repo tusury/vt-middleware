@@ -3,7 +3,7 @@
 <wiki:toc max_depth="2" />
 
 = Version 2.1.2 =
-  * Add EmailAddress to AttributeType enumeration since this attribute commonly appears in X.509 certificate DNs
+  * Add !EmailAddress to [http://vt-middleware.googlecode.com/svn/vt-crypt/javadoc/vt-crypt-2.1.2/edu/vt/middleware/crypt/x509/types/AttributeType.html AttributeType] enumeration since this attribute commonly appears in X.509 certificate DNs
   * Other misc improvements to support X.509 DN parsing
 
 = Version 2.1.1 =
