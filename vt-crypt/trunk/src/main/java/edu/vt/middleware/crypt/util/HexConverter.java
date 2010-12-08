@@ -62,11 +62,11 @@ public class HexConverter extends AbstractEncodingConverter
    * Call {@link #setByteDelimiter(String)} to use a delimiter other than {@link
    * #DEFAULT_BYTE_DELIMITER}.
    *
-   * <p>Note: Setting delimited output has the side effect of producing
-   * uppercase hex characters. This is because several cryptographic utilities
-   * produce delimited fingerprints with uppercase hex characters, so delimited
-   * output keeps with that convention since it is anticipated to be the common
-   * use case for this feature.</p>
+   * <p>Note: Setting delimited output has the side effect of
+   * producing uppercase hex characters. This is because several cryptographic
+   * utilities produce delimited fingerprints with uppercase hex characters, so
+   * delimited output keeps with that convention since it is anticipated to be
+   * the common use case for this feature.</p>
    */
   public HexConverter(final boolean delimitBytes)
   {

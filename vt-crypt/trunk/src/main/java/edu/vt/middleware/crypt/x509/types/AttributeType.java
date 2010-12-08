@@ -16,14 +16,15 @@ package edu.vt.middleware.crypt.x509.types;
 /**
  * Describes the registered values of AttributeType that may appear in a
  * RelativeDistinguishedName (RDN) as defined in section 2 of RFC 2253.
- * <p>
- * Enumeration values include attributes likely to appear in an X.509 RDN,
- * which were obtained from the following sources:
+ *
+ * <p>Enumeration values include attributes likely to appear in an X.509 RDN,
+ * which were obtained from the following sources:</p>
+ *
  * <ul>
- * <li>RFC 4519 Lightweight Directory Access Protocol (LDAP):
- * Schema for User Applications</li>
- * <li>RFC 4524 COSINE LDAP/X.500 Schema</li>
- * <li>PKCS #9 v2.0: Selected Object Classes and Attribute Types</li>
+ *   <li>RFC 4519 Lightweight Directory Access Protocol (LDAP): Schema for User
+ *     Applications</li>
+ *   <li>RFC 4524 COSINE LDAP/X.500 Schema</li>
+ *   <li>PKCS #9 v2.0: Selected Object Classes and Attribute Types</li>
  * </ul>
  *
  * @author  Middleware Services
@@ -162,8 +163,8 @@ public enum AttributeType {
    * RFC/standard name that would be returned by {@link #getName()} for the
    * desired attribute.
    *
-   * @return  Attribute type whose {@link #getName()} property matches the
-   * given value.
+   * @return  Attribute type whose {@link #getName()} property matches the given
+   * value.
    *
    * @throws  IllegalArgumentException  On unknown name.
    */
@@ -175,6 +176,6 @@ public enum AttributeType {
       }
     }
     throw new IllegalArgumentException(
-        "Unknown AttributeType for name " + name);
+      "Unknown AttributeType for name " + name);
   }
 }
