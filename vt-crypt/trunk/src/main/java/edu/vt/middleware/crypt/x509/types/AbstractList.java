@@ -41,7 +41,6 @@ public abstract class AbstractList<T> implements List<T>
 
 
   /** {@inheritDoc} */
-  @SuppressWarnings("unchecked")
   @Override
   public boolean equals(final Object obj)
   {
@@ -51,7 +50,7 @@ public abstract class AbstractList<T> implements List<T>
     } else if (obj == null || obj.getClass() != getClass()) {
       result = false;
     } else {
-      result = Arrays.equals(items, ((List) obj).getItems());
+      result = Arrays.equals(items, ((List<?>) obj).getItems());
     }
     return result;
   }
