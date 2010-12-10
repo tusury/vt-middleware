@@ -291,7 +291,7 @@ public class SignatureCli extends AbstractCli
     if (keyFile.getName().endsWith(PEM_SUFFIX)) {
       return CryptReader.readPemPrivateKey(keyFile, null);
     } else {
-      return CryptReader.readPrivateKey(keyFile, line.getOptionValue(OPT_ALG));
+      return CryptReader.readPrivateKey(keyFile);
     }
   }
 

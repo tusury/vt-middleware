@@ -237,13 +237,7 @@ public class KeyStoreCli extends AbstractCli
       if (keyFile.getName().endsWith(PEM_SUFFIX)) {
         key = CryptReader.readPemPrivateKey(keyFile, null);
       } else {
-        String keyAlg = null;
-        if (line.hasOption(OPT_KEYALG)) {
-          keyAlg = line.getOptionValue(OPT_KEYALG);
-        } else {
-          keyAlg = DEFAULT_KEY_ALGORITHM;
-        }
-        key = CryptReader.readPrivateKey(keyFile, keyAlg);
+        key = CryptReader.readPrivateKey(keyFile);
       }
 
       final Certificate[] chain = CryptReader.readCertificateChain(certFile);

@@ -247,7 +247,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
       return CryptReader.readPemPrivateKey(keyFile, null);
     } else {
       return
-        CryptReader.readPrivateKey(keyFile, line.getOptionValue(OPT_CIPHER));
+        CryptReader.readPrivateKey(keyFile);
     }
   }
 

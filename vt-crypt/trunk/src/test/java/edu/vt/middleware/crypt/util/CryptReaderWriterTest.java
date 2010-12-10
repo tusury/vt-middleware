@@ -102,9 +102,9 @@ public class CryptReaderWriterTest
   {
     return
       new Object[][] {
-        {"rsa.pri.der", "RSA"},
-        {"rsa.pri-pkcs8.der", "RSA"},
-        {"dsa.pri-pkcs8.der", "DSA"},
+        {"rsa.pri.der"},
+        {"rsa.pri-pkcs8.der"},
+        {"dsa.pri-pkcs8.der"},
       };
   }
 
@@ -158,7 +158,6 @@ public class CryptReaderWriterTest
 
   /**
    * @param  file  Key file to read.
-   * @param  alg  Cipher algorithm of key.
    *
    * @throws  Exception  On test failure.
    */
@@ -166,12 +165,12 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "readderprivkeydata"
   )
-  public void testReadDerPrivateKey(final String file, final String alg)
+  public void testReadDerPrivateKey(final String file)
     throws Exception
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
     logger.info("Testing read of DER-encoded private key " + keyFile);
-    AssertJUnit.assertNotNull(CryptReader.readPrivateKey(keyFile, alg));
+    AssertJUnit.assertNotNull(CryptReader.readPrivateKey(keyFile));
   }
 
 
@@ -276,7 +275,7 @@ public class CryptReaderWriterTest
     CryptWriter.writeEncodedKey(key, keyFile);
     AssertJUnit.assertEquals(
       key,
-      CryptReader.readPrivateKey(keyFile, key.getAlgorithm()));
+      CryptReader.readPrivateKey(keyFile));
   }
 
 
