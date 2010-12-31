@@ -75,6 +75,9 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
   /** Initialization vector used for encryption. */
   protected byte[] iv;
 
+  /** Cipher-specific initialization parameters provided to factory methods. */
+  protected AlgorithmParameterSpec paramSpec;
+
 
   /**
    * Creates a new instance that uses a cipher of the given algorithm.
@@ -108,20 +111,18 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
 
 
   /**
-   * Creates a new instance that uses a cipher of the given algorithm and mode,
-   * with default padding.
+   * Creates a new instance from an algorithm specification.
    *
-   * @param  cipherAlgorithm  Cipher algorithm name.
-   * @param  cipherModeName  Cipher mode.
+   * @param  spec  Algorithm specification.
    *
-   * @return  Symmetric algorithm instance that implements the given cipher
-   * algorithm.
+   * @return  Symmetric algorithm instance based on the given specification.
    */
-  public static SymmetricAlgorithm newInstance(
-    final String cipherAlgorithm,
-    final String cipherModeName)
+  public static SymmetricAlgorithm newInstance(final AlgorithmSpec spec)
   {
-    return newInstance(cipherAlgorithm, cipherModeName, DEFAULT_PADDING);
+    return newInstance(
+        spec.getName(),
+        spec.getMode() != null ? spec.getMode() : DEFAULT_MODE,
+        spec.getPadding() == null ? spec.getPadding() : DEFAULT_PADDING);
   }
 
 
@@ -152,13 +153,36 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
             cipherPadding,
           });
       } catch (Exception ex) {
-        throw new IllegalArgumentException(ex.getMessage());
+        throw new IllegalArgumentException(
+            String.format("Invalid cipher %s/%s/%s",
+                cipherAlgorithm, cipherModeName, cipherPadding),
+            ex);
       }
     } else {
       // Search provider
       return
         new SymmetricAlgorithm(cipherAlgorithm, cipherModeName, cipherPadding);
     }
+  }
+
+
+  /**
+   * Creates a new instance from an algorithm specification and cipher
+   * initialization parameters.
+   *
+   * @param  spec  Algorithm specification.
+   * @param  cipherSpec  Cipher-specific initialization parameters.
+   *
+   * @return  Symmetric algorithm instance that implements the given cipher
+   * algorithm.
+   */
+  public static SymmetricAlgorithm newInstance(
+    final AlgorithmSpec spec,
+    final AlgorithmParameterSpec cipherSpec)
+  {
+    final SymmetricAlgorithm cipher = newInstance(spec);
+    cipher.paramSpec = cipherSpec;
+    return cipher;
   }
 
 
@@ -248,9 +272,13 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
    */
   public void setIV(final byte[] ivBytes)
   {
-    if (RC4.ALGORITHM.equals(algorithm)) {
-      throw new IllegalArgumentException(
-        "Stream cipher RC4 does not permit an IV.");
+    if (ivBytes == null) {
+      throw new IllegalArgumentException("IV cannot be null.");
+    }
+    if (ivBytes.length != getBlockSize()) {
+      throw new IllegalArgumentException(String.format(
+          "IV length (%s) is not equal to block size (%s).",
+          ivBytes.length, getBlockSize()));
     }
     this.iv = ivBytes;
   }
@@ -347,14 +375,20 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
   /** {@inheritDoc} */
   protected AlgorithmParameterSpec getAlgorithmParameterSpec()
   {
-    if (iv != null) {
-      return new IvParameterSpec(this.iv);
+    final AlgorithmParameterSpec spec;
+    if (paramSpec != null) {
+      spec = paramSpec;
     } else {
-      if ("CBC".equals(mode)) {
-        throw new IllegalStateException("CBC mode requires an IV.");
+      if (iv != null) {
+        spec = new IvParameterSpec(this.iv);
+      } else {
+        if ("CBC".equals(mode)) {
+          throw new IllegalStateException("CBC mode requires an IV.");
+        }
+        return null;
       }
-      return null;
     }
+    return spec;
   }
 
 
