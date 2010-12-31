@@ -13,6 +13,10 @@
 */
 package edu.vt.middleware.crypt.symmetric;
 
+import java.security.spec.AlgorithmParameterSpec;
+
+import javax.crypto.spec.RC2ParameterSpec;
+
 /**
  * Provider of symmetric encryption/decryption operations using RC2 cipher.
  *
@@ -22,32 +26,14 @@ package edu.vt.middleware.crypt.symmetric;
 
 public class RC2 extends SymmetricAlgorithm
 {
-
   /** Algorithm name. */
   public static final String ALGORITHM = "RC2";
 
-  /** Default key size for this algorithm in bits. */
-  public static final int DEFAULT_KEY_LENGTH = 128;
+  /** Default effective key bits. */
+  public static final int DEFAULT_EFFECTIVE_BITS = 1024;
 
-  /** Available key lengths in bits. */
-  public static final int[] KEY_LENGTHS = new int[] {
-    128,
-    120,
-    112,
-    104,
-    96,
-    88,
-    80,
-    72,
-    64,
-    56,
-    48,
-    40,
-    32,
-    24,
-    16,
-    8,
-  };
+  /** Sets the effective key size in bits. */
+  private int effectiveKeyBits = DEFAULT_EFFECTIVE_BITS;
 
 
   /**
@@ -74,19 +60,47 @@ public class RC2 extends SymmetricAlgorithm
 
 
   /**
-   * Gets the default key length for this algorithm.
+   * Gets the effective key size in bits.  This is a parameter specific to the
+   * RC2 cipher algorithm.
    *
-   * @return  Default key length in bits.
+   * @return  Effective key size in bits.
    */
-  public int getDefaultKeyLength()
+  public int getEffectiveKeyBits()
   {
-    return DEFAULT_KEY_LENGTH;
+    return effectiveKeyBits;
+  }
+
+
+  /**
+   * Sets the effective key size in bits.  This is a parameter specific to the
+   * RC2 cipher algorithm.
+   *
+   * @param  numBits  Effective key size in bits; MUST be positive integer.
+   */
+  public void setEffectiveKeyBits(final int numBits)
+  {
+    if (numBits < 1) {
+      throw new IllegalArgumentException(
+          "EffectiveKeyBits must be positive integer.");
+    }
+    this.effectiveKeyBits = numBits;
   }
 
 
   /** {@inheritDoc} */
-  public int[] getAllowedKeyLengths()
+  @Override
+  protected AlgorithmParameterSpec getAlgorithmParameterSpec()
   {
-    return KEY_LENGTHS;
+    final AlgorithmParameterSpec spec;
+    if (paramSpec != null) {
+      spec = paramSpec;
+    } else {
+      if (iv != null) {
+        spec = new RC2ParameterSpec(effectiveKeyBits, iv);
+      } else {
+        spec = new RC2ParameterSpec(effectiveKeyBits);
+      }
+    }
+    return spec;
   }
 }

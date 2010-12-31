@@ -243,12 +243,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
     throws CryptException, IOException
   {
     final File keyFile = new File(line.getOptionValue(OPT_DECRYPT));
-    if (keyFile.getName().endsWith(PEM_SUFFIX)) {
-      return CryptReader.readPemPrivateKey(keyFile, null);
-    } else {
-      return
-        CryptReader.readPrivateKey(keyFile);
-    }
+    return CryptReader.readPrivateKey(keyFile);
   }
 
 

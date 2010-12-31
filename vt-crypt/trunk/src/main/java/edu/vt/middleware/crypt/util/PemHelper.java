@@ -13,14 +13,18 @@
 */
 package edu.vt.middleware.crypt.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
+
 import org.bouncycastle.openssl.PEMReader;
 import org.bouncycastle.openssl.PEMWriter;
 import org.bouncycastle.openssl.PasswordFinder;
@@ -34,12 +38,71 @@ import org.bouncycastle.openssl.PasswordFinder;
  */
 public class PemHelper
 {
-
   /** Encryption algorithm used for password-protected private keys. */
   public static final String KEY_ENCRYPTION_ALGORITHM = "AES-256-CBC";
 
+  /** PEM encoding header start string. */
+  public static final String HEADER_BEGIN = "-----BEGIN";
+
+  /** PEM encoding footer start string. */
+  public static final String FOOTER_END = "-----END";
+
+  /** Procedure type tag for PEM-encoded private key in OpenSSL format. */
+  public static final String PROC_TYPE = "Proc-Type:";
+
+  /** Decryption infor tag for PEM-encoded private key in OpenSSL format. */
+  public static final String DEK_INFO = "DEK-Info:";
+
+
   /** Hidden constructor of utility class. */
   protected PemHelper() {}
+
+
+  /**
+   * Decodes a PEM-encoded cryptographic object into the raw bytes of its ASN.1
+   * encoding.
+   *
+   * @param  pem  Bytes of PEM-encoded data to decode.
+   *
+   * @return  ASN.1 encoded bytes.
+   *
+   * @throws  IOException  On decoding error.
+   */
+  public static byte[] decode(final byte[] pem) throws IOException
+  {
+    return decode(new String(pem, "ASCII"));
+  }
+
+
+  /**
+   * Decodes a PEM-encoded cryptographic object into the raw bytes of its ASN.1
+   * encoding.
+   *
+   * @param  pem  PEM-encoded data to decode.
+   *
+   * @return  ASN.1 encoded bytes.
+   *
+   * @throws  IOException  On decoding error.
+   */
+  public static byte[] decode(final String pem) throws IOException
+  {
+    final BufferedReader reader = new BufferedReader(new StringReader(pem));
+    final ByteBuffer buffer = ByteBuffer.allocateDirect(pem.length() * 3 / 4);
+    String line;
+    while ((line = reader.readLine()) != null) {
+      if (line.startsWith(HEADER_BEGIN) ||
+          line.startsWith(FOOTER_END) ||
+          line.startsWith(PROC_TYPE) ||
+          line.startsWith(DEK_INFO)) {
+        continue;
+      }
+      buffer.put(Convert.fromBase64(line));
+    }
+    buffer.flip();
+    final byte[] result = new byte[buffer.limit()];
+    buffer.get(result);
+    return result;
+  }
 
 
   /**
@@ -78,7 +141,6 @@ public class PemHelper
       throw new IOException("Error decoding public key.");
     }
   }
-
 
   /**
    * Encodes the given private key to PEM format.
@@ -188,6 +250,62 @@ public class PemHelper
     } else {
       throw new IOException("Error decoding certificate.");
     }
+  }
+
+
+  /**
+   * Determines whether the data in the given byte array is base64-encoded
+   * data of PEM encoding.  The determination is made using as little data
+   * from the given array as necessary to make a reasonable determination
+   * about encoding.
+   *
+   * @param  data  Data to test for PEM encoding
+   *
+   * @return  True if data appears to be PEM encoded, false otherwise.
+   */
+  public static boolean isPem(final byte[] data)
+  {
+    boolean result = true;
+    try {
+      final String start = new String(data, 0, 10, "ASCII");
+      if (start.startsWith(HEADER_BEGIN) || start.startsWith(PROC_TYPE)) {
+        return true;
+      } else {
+        // Check all bytes in first line to make sure they are in the range
+        // of base64 character set encoding
+        final int lineLength = 64;
+        for (int i = 0; i < lineLength && result; i++) {
+          result = isBase64Char(data[i]);
+          if (i > lineLength - 3) {
+            // Last two bytes may be padding character '=' (61)
+            result |= data[i] == 61;
+          }
+        }
+      }
+    } catch (UnsupportedEncodingException e) {
+      throw new IllegalStateException("YIKES! ASCII encoding not supported.");
+    }
+    return result;
+  }
+
+
+  /**
+   * Determines whether the given byte represents an ASCII character in the
+   * character set for base64 encoding.
+   *
+   * @param  b  Byte to test.
+   *
+   * @return  True if the byte represents an ASCII character in the set of
+   * valid characters for base64 encoding, false otherwise.  The padding
+   * character '=' is not considered valid since it may only appear at the end
+   * of a base64 encoded value.
+   */
+  public static boolean isBase64Char(final byte b)
+  {
+    return !(b < 47 || b > 122 ||
+        (b > 57 && b < 65) ||
+        (b > 90 && b < 97) ||
+        b != 43);
   }
 
 

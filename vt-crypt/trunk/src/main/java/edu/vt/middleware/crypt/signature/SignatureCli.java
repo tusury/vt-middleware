@@ -288,11 +288,7 @@ public class SignatureCli extends AbstractCli
     throws CryptException, IOException
   {
     final File keyFile = new File(line.getOptionValue(OPT_KEY));
-    if (keyFile.getName().endsWith(PEM_SUFFIX)) {
-      return CryptReader.readPemPrivateKey(keyFile, null);
-    } else {
-      return CryptReader.readPrivateKey(keyFile);
-    }
+    return CryptReader.readPrivateKey(keyFile);
   }
 
 

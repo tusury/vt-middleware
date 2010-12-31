@@ -64,6 +64,24 @@ public class RC4 extends SymmetricAlgorithm
 
 
   /**
+   * Sets the encryption initialization vector. A unique IV should be specified
+   * for each encryption operation using the same key for good security. Use the
+   * {@link #getRandomIV()} method to obtain random initialization data of the
+   * appropriate size for the chosen cipher.
+   *
+   * <p>IV data is used upon calling either {@link #initEncrypt()} or {@link
+   * #initDecrypt()}.</p>
+   *
+   * @param  ivBytes  Initialization bytes; in many cases the size of data
+   * should be equal to the cipher block size.
+   */
+  public void setIV(final byte[] ivBytes)
+  {
+    throw new IllegalArgumentException("RC4 does not permit an IV.");
+  }
+
+
+  /**
    * Gets the default key length for this algorithm.
    *
    * @return  Default key length in bits.

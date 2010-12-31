@@ -35,7 +35,13 @@ public final class Convert
   public static final Charset ASCII_CHARSET = Charset.forName("ASCII");
 
   /** Default character set. */
-  protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+  public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
+  /** For hex-byte conversions */
+  private static final HexConverter HEX_CONVERTER = new HexConverter();
+
+  /** For base64-byte conversions */
+  private static final Base64Converter B64_CONVERTER = new Base64Converter();
 
 
   /** <p>Default constructor.</p> */
@@ -151,6 +157,19 @@ public final class Convert
 
 
   /**
+   * Converts hexadecimal string of bytes into the original byte array.
+   *
+   * @param  hex  Hexadecimal string of bytes.
+   *
+   * @return  Original byte array.
+   */
+  public static byte[] fromHex(final String hex)
+  {
+    return HEX_CONVERTER.toBytes(hex);
+  }
+
+
+  /**
    * Converts a byte array into a hexadecimal string representation of the
    * bytes.
    *
@@ -161,7 +180,20 @@ public final class Convert
    */
   public static String toHex(final byte[] input)
   {
-    return new HexConverter().fromBytes(input);
+    return HEX_CONVERTER.fromBytes(input);
+  }
+
+
+  /**
+   * Converts base64-encoded string of bytes into the original byte array.
+   *
+   * @param  base64  Base64-encoded string of bytes.
+   *
+   * @return  Original byte array.
+   */
+  public static byte[] fromBase64(final String base64)
+  {
+    return B64_CONVERTER.toBytes(base64);
   }
 
 
@@ -175,6 +207,6 @@ public final class Convert
    */
   public static String toBase64(final byte[] input)
   {
-    return new Base64Converter().fromBytes(input);
+    return B64_CONVERTER.fromBytes(input);
   }
 }

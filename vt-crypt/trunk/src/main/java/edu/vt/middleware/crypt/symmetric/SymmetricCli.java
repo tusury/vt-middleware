@@ -16,10 +16,13 @@ package edu.vt.middleware.crypt.symmetric;
 import java.io.File;
 import java.io.IOException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import edu.vt.middleware.crypt.AbstractEncryptionCli;
-import edu.vt.middleware.crypt.KeyWithIV;
-import edu.vt.middleware.crypt.PbeKeyGenerator;
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
+import edu.vt.middleware.crypt.pbe.EncryptionScheme;
+import edu.vt.middleware.crypt.pbe.PBKDF1KeyGenerator;
+import edu.vt.middleware.crypt.pbe.PBKDF2KeyGenerator;
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.util.CryptWriter;
 import edu.vt.middleware.crypt.util.HexConverter;
@@ -54,7 +57,7 @@ public class SymmetricCli extends AbstractEncryptionCli
   protected static final String OPT_PBE = "pbe";
 
   /** PBE key generation strategy, e.g. PKCS5S1 */
-  protected static final String OPT_PBEMODE = "pbemode";
+  protected static final String OPT_SCHEME = "scheme";
 
   /** Digest algorithm used with PBE modes that allow it. */
   protected static final String OPT_DIGEST = "digest";
@@ -62,14 +65,14 @@ public class SymmetricCli extends AbstractEncryptionCli
   /** Salt for PBE key generation. */
   protected static final String OPT_SALT = "salt";
 
+  /** Iteration count for PBE key generation. */
+  protected static final String OPT_ITERATIONS = "iter";
+
   /** Generate key option. */
   protected static final String OPT_GENKEY = "genkey";
 
   /** Name of operation provided by this class. */
   private static final String COMMAND_NAME = "enc";
-
-  /** 8 bits in one byte. */
-  private static final int BITS_IN_BYTE = 8;
 
 
   /** Converts hex to bytes and vice versa. */
@@ -100,7 +103,7 @@ public class SymmetricCli extends AbstractEncryptionCli
       OPT_PADDING,
       true,
       "cipher padding strategy, e.g. PKCS5Padding");
-    padding.setArgName("name");
+    padding.setArgName("padding");
     padding.setOptionalArg(false);
 
     final Option key = new Option(OPT_KEY, true, "encryption/decryption key");
@@ -121,22 +124,22 @@ public class SymmetricCli extends AbstractEncryptionCli
     final Option pbe = new Option(
       OPT_PBE,
       true,
-      "generate PBE key from passphrase; uses pkcs5s2 by default");
-    pbe.setArgName("passphrase");
+      "generate PBE key from password/phrase; uses pkcs5s2 by default");
+    pbe.setArgName("password");
     pbe.setOptionalArg(false);
 
-    final Option pbeMode = new Option(
-      OPT_PBEMODE,
+    final Option pbeScheme = new Option(
+      OPT_SCHEME,
       true,
       "PBE key generation mode; one of pkcs5s1, pkcs5s2, openssl, pkcs12");
-    pbeMode.setArgName("name");
-    pbeMode.setOptionalArg(false);
+    pbeScheme.setArgName("name");
+    pbeScheme.setOptionalArg(false);
 
     final Option pbeDigest = new Option(
       OPT_DIGEST,
       true,
       "digest algorithm to use with PBE mode pkcs5s1 or pkcs12");
-    pbeDigest.setArgName("algname");
+    pbeDigest.setArgName("name");
     pbeDigest.setOptionalArg(false);
 
     final Option salt = new Option(
@@ -146,15 +149,23 @@ public class SymmetricCli extends AbstractEncryptionCli
     salt.setArgName("hex_salt");
     salt.setOptionalArg(false);
 
+    final Option iterations = new Option(
+      OPT_ITERATIONS,
+      true,
+      "iteration count for PBE key generation");
+    salt.setArgName("count");
+    salt.setOptionalArg(false);
+
     options.addOption(mode);
     options.addOption(padding);
     options.addOption(key);
     options.addOption(keySize);
     options.addOption(iv);
     options.addOption(pbe);
-    options.addOption(pbeMode);
+    options.addOption(pbeScheme);
     options.addOption(pbeDigest);
     options.addOption(salt);
+    options.addOption(iterations);
     options.addOption(new Option(OPT_GENKEY, "generate new encryption key"));
     options.addOption(new Option(OPT_ENCRYPT, "perform encryption"));
     options.addOption(new Option(OPT_DECRYPT, "perform decryption"));
@@ -212,40 +223,6 @@ public class SymmetricCli extends AbstractEncryptionCli
   }
 
 
-  /**
-   * Initialize the given symmetric algorithm in preparation for an encryption
-   * or decryption operation.
-   *
-   * @param  alg  Algorith to initialize.
-   * @param  line  Parsed command line arguments container.
-   *
-   * @throws  Exception  On errors.
-   */
-  protected void initAlgorithm(
-    final SymmetricAlgorithm alg,
-    final CommandLine line)
-    throws Exception
-  {
-    if (line.hasOption(OPT_KEY)) {
-      alg.setKey(readKey(line));
-      if (line.hasOption(OPT_IV)) {
-        alg.setIV(hexConv.toBytes(line.getOptionValue(OPT_IV)));
-      }
-    } else if (line.hasOption(OPT_PBE)) {
-      final KeyWithIV keyWithIV = genPbeKeyWithIV(alg, line);
-      alg.setKey(keyWithIV.getKey());
-      if (line.hasOption(OPT_IV)) {
-        alg.setIV(hexConv.toBytes(line.getOptionValue(OPT_IV)));
-      } else if (keyWithIV.getIV().length > 0) {
-        alg.setIV(keyWithIV.getIV());
-      }
-    } else {
-      throw new IllegalArgumentException(
-        "Either -key or -pbe is required for encryption or decryption.");
-    }
-  }
-
-
   /** {@inheritDoc} */
   protected String getCommandName()
   {
@@ -266,8 +243,21 @@ public class SymmetricCli extends AbstractEncryptionCli
     validateOptions(line);
 
     final SymmetricAlgorithm alg = newAlgorithm(line);
-    initAlgorithm(alg, line);
-    encrypt(alg, getInputStream(line), getOutputStream(line));
+    if (line.hasOption(OPT_KEY)) {
+      alg.setKey(readKey(line));
+      if (line.hasOption(OPT_IV)) {
+        alg.setIV(hexConv.toBytes(line.getOptionValue(OPT_IV)));
+      }
+      encrypt(alg, getInputStream(line), getOutputStream(line));
+    } else if (line.hasOption(OPT_PBE)) {
+      getPBEScheme(alg, line).encrypt(
+          line.getOptionValue(OPT_PBE).toCharArray(),
+          getInputStream(line),
+          getOutputStream(line));
+    } else {
+      throw new IllegalArgumentException(
+        "Either -key or -pbe is required for encryption or decryption.");
+    }
   }
 
 
@@ -284,8 +274,21 @@ public class SymmetricCli extends AbstractEncryptionCli
     validateOptions(line);
 
     final SymmetricAlgorithm alg = newAlgorithm(line);
-    initAlgorithm(alg, line);
-    decrypt(alg, getInputStream(line), getOutputStream(line));
+    if (line.hasOption(OPT_KEY)) {
+      alg.setKey(readKey(line));
+      if (line.hasOption(OPT_IV)) {
+        alg.setIV(hexConv.toBytes(line.getOptionValue(OPT_IV)));
+      }
+      decrypt(alg, getInputStream(line), getOutputStream(line));
+    } else if (line.hasOption(OPT_PBE)) {
+      getPBEScheme(alg, line).decrypt(
+          line.getOptionValue(OPT_PBE).toCharArray(),
+          getInputStream(line),
+          getOutputStream(line));
+    } else {
+      throw new IllegalArgumentException(
+        "Either -key or -pbe is required for encryption or decryption.");
+    }
   }
 
 
@@ -304,7 +307,7 @@ public class SymmetricCli extends AbstractEncryptionCli
     final SymmetricAlgorithm alg = newAlgorithm(line);
     SecretKey key = null;
     if (line.hasOption(OPT_PBE)) {
-      key = genPbeKeyWithIV(alg, line).getKey();
+      key = generatePBEKey(alg, line);
     } else {
       if (line.hasOption(OPT_KEYSIZE)) {
         final int size = Integer.parseInt(line.getOptionValue(OPT_KEYSIZE));
@@ -323,7 +326,7 @@ public class SymmetricCli extends AbstractEncryptionCli
 
 
   /**
-   * Generates a PBE key/IV pair from command line options.
+   * Generates a PBE key from command line options including a password.
    *
    * @param  alg  Symmetric algorithm for which a compatible key should be
    * generated.
@@ -333,7 +336,7 @@ public class SymmetricCli extends AbstractEncryptionCli
    *
    * @throws  Exception  On key generation errors.
    */
-  protected KeyWithIV genPbeKeyWithIV(
+  protected SecretKey generatePBEKey(
     final SymmetricAlgorithm alg,
     final CommandLine line)
     throws Exception
@@ -342,60 +345,68 @@ public class SymmetricCli extends AbstractEncryptionCli
       throw new IllegalArgumentException(
         "Salt is required for PBE key generation.");
     }
-    if (!line.hasOption(OPT_KEYSIZE)) {
+    if (!line.hasOption(OPT_ITERATIONS)) {
       throw new IllegalArgumentException(
-        "Key size is required for PBE key generation.");
+        "Iteration count is required for PBE key generation.");
     }
 
-    KeyWithIV keyWithIV = null;
     DigestAlgorithm digest = null;
     if (line.hasOption(OPT_DIGEST)) {
       digest = DigestAlgorithm.newInstance(line.getOptionValue(OPT_DIGEST));
     }
 
-    String pbeMode = null;
-    if (line.hasOption(OPT_PBEMODE)) {
-      pbeMode = line.getOptionValue(OPT_PBEMODE).toLowerCase();
+    String pbeScheme = null;
+    if (line.hasOption(OPT_SCHEME)) {
+      pbeScheme = line.getOptionValue(OPT_SCHEME).toLowerCase();
     }
 
-    final int keySize = Integer.parseInt(line.getOptionValue(OPT_KEYSIZE));
-    int ivSize = 0;
-    if (!line.hasOption(OPT_IV)) {
-      // Generate an IV from the password if none specified
-      ivSize = alg.getBlockSize() * BITS_IN_BYTE;
-    }
-
-    final PbeKeyGenerator keyGen = new PbeKeyGenerator(alg);
     final char[] pass = line.getOptionValue(OPT_PBE).toCharArray();
     final byte[] salt = hexConv.toBytes(line.getOptionValue(OPT_SALT));
-    if ("pkcs12".equals(pbeMode)) {
+    final int iterations = Integer.parseInt(
+        line.getOptionValue(OPT_ITERATIONS));
+    final byte[] derivedKey;
+    if ("pkcs12".equals(pbeScheme)) {
       if (digest == null) {
         throw new IllegalArgumentException(
           "pkcs12 requires a digest algorithm");
       }
       System.err.println("Generating PKCS#12 PBE key.");
-      keyWithIV = keyGen.generatePkcs12(pass, keySize, ivSize, digest, salt);
-    } else if ("pkcs5s1".equals(pbeMode)) {
+      derivedKey = null;
+    } else if ("pkcs5s1".equals(pbeScheme)) {
       if (digest == null) {
         throw new IllegalArgumentException(
           "pkcs5s1 requires a digest algorithm");
       }
+      if (line.hasOption(OPT_IV)) {
+        System.err.println("Ignoring iv for pkcs5s1 PBE scheme.");
+      }
       System.err.println("Generating PKCS#5 v1 PBE key.");
-      keyWithIV = keyGen.generatePkcs5v1(pass, keySize, ivSize, digest, salt);
-    } else if ("openssl".equals(pbeMode)) {
+      derivedKey = new PBKDF1KeyGenerator(
+          digest, salt, iterations).generate(pass);
+    } else if ("openssl".equals(pbeScheme)) {
       System.err.println("Generating OpenSSL PBE key.");
-      keyWithIV = keyGen.generateOpenssl(pass, keySize, ivSize, salt);
+      derivedKey = null;
     } else {
       // Default is pkcs5s2
+      if (digest != null) {
+        System.err.println("Ignoring digest for pkcs5s2 PBE scheme.");
+      }
+      if (!line.hasOption(OPT_KEYSIZE)) {
+        throw new IllegalArgumentException(
+          "Key size is required for pkcs5s2 PBE key generation.");
+      }
+      if (!line.hasOption(OPT_IV)) {
+        throw new IllegalArgumentException(
+          "IV is required for pkcs5s2 PBE key generation.");
+      }
       System.err.println("Generating PKCS#5 v2 PBE key.");
-      keyWithIV = keyGen.generatePkcs5v2(pass, keySize, ivSize, salt);
+      derivedKey = new PBKDF2KeyGenerator(
+          Integer.parseInt(line.getOptionValue(OPT_IV)),
+          salt,
+          iterations).generate(pass);
     }
-    System.err.println(
-      "Key: " + hexConv.fromBytes(keyWithIV.getKey().getEncoded()));
-    if (keyWithIV.getIV().length > 0) {
-      System.err.println("IV: " + hexConv.fromBytes(keyWithIV.getIV()));
-    }
-    return keyWithIV;
+    System.err.println("Key: " + hexConv.fromBytes(derivedKey));
+    return new SecretKeySpec(derivedKey, alg.getAlgorithm());
   }
 
 
@@ -428,5 +439,21 @@ public class SymmetricCli extends AbstractEncryptionCli
     if (!line.hasOption(OPT_CIPHER)) {
       throw new IllegalArgumentException("cipher option is required.");
     }
+  }
+
+
+  /**
+   * Gets a password-based encryption scheme based on command line arguments.
+   *
+   * @param  alg  Symmetric cipher algorithm.
+   * @param  line  parsed command line arguments container.
+   *
+   * @return  Initialized encryption scheme.
+   */
+  protected EncryptionScheme getPBEScheme(
+    final SymmetricAlgorithm alg,
+    final CommandLine line)
+  {
+    return null;
   }
 }

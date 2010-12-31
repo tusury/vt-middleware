@@ -229,17 +229,11 @@ public class KeyStoreCli extends AbstractCli
 
     final KeyStore store = readKeyStore(line);
     final String alias = line.getOptionValue(OPT_ALIAS);
-    PrivateKey key = null;
     final File certFile = new File(line.getOptionValue(OPT_CERT));
     if (line.hasOption(OPT_KEY)) {
       final File keyFile = new File(line.getOptionValue(OPT_KEY));
       final char[] passChars = line.getOptionValue(OPT_PASS).toCharArray();
-      if (keyFile.getName().endsWith(PEM_SUFFIX)) {
-        key = CryptReader.readPemPrivateKey(keyFile, null);
-      } else {
-        key = CryptReader.readPrivateKey(keyFile);
-      }
-
+      final PrivateKey key = CryptReader.readPrivateKey(keyFile);
       final Certificate[] chain = CryptReader.readCertificateChain(certFile);
       System.err.println(
         "Read certificate chain of length " + chain.length + ":");

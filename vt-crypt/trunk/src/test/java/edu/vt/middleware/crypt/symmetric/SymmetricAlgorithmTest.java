@@ -16,11 +16,7 @@ package edu.vt.middleware.crypt.symmetric;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
-import javax.crypto.SecretKey;
 import edu.vt.middleware.crypt.FileHelper;
-import edu.vt.middleware.crypt.PbeKeyGenerator;
-import edu.vt.middleware.crypt.digest.RipeMD256;
-import edu.vt.middleware.crypt.digest.SHA512;
 import edu.vt.middleware.crypt.io.Base64FilterInputStream;
 import edu.vt.middleware.crypt.io.Base64FilterOutputStream;
 import edu.vt.middleware.crypt.io.HexFilterInputStream;
@@ -109,146 +105,6 @@ public class SymmetricAlgorithmTest
       };
   }
 
-  /**
-   * @return  Test data.
-   *
-   * @throws  Exception  On test data generation failure.
-   */
-  @DataProvider(name = "testdatapbe")
-  public Object[][] createTestDataForPbe()
-    throws Exception
-  {
-    final int nKeyTypes = 4;
-    final Object[][] data = new Object[][] {
-      {new AES(), null, null},
-      {new AES(), null, null},
-      {new AES(), null, null},
-      {new AES(), null, null},
-      {new Blowfish(), null, null},
-      {new Blowfish(), null, null},
-      {new Blowfish(), null, null},
-      {new Blowfish(), null, null},
-      {new CAST5(), null, null},
-      {new CAST5(), null, null},
-      {new CAST5(), null, null},
-      {new CAST5(), null, null},
-      {new CAST6(), null, null},
-      {new CAST6(), null, null},
-      {new CAST6(), null, null},
-      {new CAST6(), null, null},
-      {new DES(), null, null},
-      {new DES(), null, null},
-      {new DES(), null, null},
-      {new DES(), null, null},
-      {new DESede(), null, null},
-      {new DESede(), null, null},
-      {new DESede(), null, null},
-      {new DESede(), null, null},
-      {new RC2(), null, null},
-      {new RC2(), null, null},
-      {new RC2(), null, null},
-      {new RC2(), null, null},
-      {new RC4(), null, null},
-      {new RC4(), null, null},
-      {new RC4(), null, null},
-      {new RC4(), null, null},
-      {new RC5(), null, null},
-      {new RC5(), null, null},
-      {new RC5(), null, null},
-      {new RC5(), null, null},
-      {new RC6(), null, null},
-      {new RC6(), null, null},
-      {new RC6(), null, null},
-      {new RC6(), null, null},
-      {new Rijndael(), null, null},
-      {new Rijndael(), null, null},
-      {new Rijndael(), null, null},
-      {new Rijndael(), null, null},
-      {new Serpent(), null, null},
-      {new Serpent(), null, null},
-      {new Serpent(), null, null},
-      {new Serpent(), null, null},
-      {new Skipjack(), null, null},
-      {new Skipjack(), null, null},
-      {new Skipjack(), null, null},
-      {new Skipjack(), null, null},
-      {new Twofish(), null, null},
-      {new Twofish(), null, null},
-      {new Twofish(), null, null},
-      {new Twofish(), null, null},
-    };
-    final char[] password = new char[] {
-      's',
-      'e',
-      'e',
-      'k',
-      'r',
-      '1',
-      't',
-    };
-    for (int i = 0; i < data.length; i++) {
-      final SymmetricAlgorithm alg = (SymmetricAlgorithm) data[i][0];
-      logger.info("Generating keys for " + alg);
-
-      final byte[] salt = alg.getRandomIV();
-      if (!RC4.ALGORITHM.equals(alg.getAlgorithm())) {
-        alg.setIV(alg.getRandomIV());
-      }
-
-      final PbeKeyGenerator keyGen = new PbeKeyGenerator(alg);
-      switch (i % nKeyTypes) {
-
-      case 0:
-        data[i][1] = keyGen.generatePkcs12(
-          password,
-          alg.getDefaultKeyLength(),
-          new SHA512(),
-          salt);
-        data[i][2] = keyGen.generatePkcs12(
-          password,
-          alg.getDefaultKeyLength(),
-          new SHA512(),
-          salt);
-        break;
-
-      case 1:
-        data[i][1] = keyGen.generatePkcs5v1(
-          password,
-          alg.getDefaultKeyLength(),
-          new RipeMD256(),
-          salt);
-        data[i][2] = keyGen.generatePkcs5v1(
-          password,
-          alg.getDefaultKeyLength(),
-          new RipeMD256(),
-          salt);
-        break;
-
-      case 2:
-        data[i][1] = keyGen.generatePkcs5v2(
-          password,
-          alg.getDefaultKeyLength(),
-          salt);
-        data[i][2] = keyGen.generatePkcs5v2(
-          password,
-          alg.getDefaultKeyLength(),
-          salt);
-        break;
-
-      default:
-        data[i][1] = keyGen.generateOpenssl(
-          password,
-          alg.getDefaultKeyLength(),
-          salt);
-        data[i][2] = keyGen.generateOpenssl(
-          password,
-          alg.getDefaultKeyLength(),
-          salt);
-        break;
-      }
-    }
-    return data;
-  }
 
   /**
    * @return  Test data.
@@ -497,37 +353,6 @@ public class SymmetricAlgorithmTest
     }
   }
 
-
-  /**
-   * @param  symmetric  A symmetric crypt algorithm to test.
-   * @param  encryptionKey  Cipher encryption key.
-   * @param  decryptionKey  Cipher decryption key.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(
-    groups = {"functest", "symmetric"},
-    dataProvider = "testdatapbe"
-  )
-  public void testPbeEncryptDecrypt(
-    final SymmetricAlgorithm symmetric,
-    final SecretKey encryptionKey,
-    final SecretKey decryptionKey)
-    throws Exception
-  {
-    logger.info("Testing PBE encryption on algorithm " + symmetric);
-
-    symmetric.setKey(encryptionKey);
-    symmetric.initEncrypt();
-
-    final byte[] ciphertext = symmetric.encrypt(CLEARTEXT.getBytes());
-
-    symmetric.setKey(decryptionKey);
-    symmetric.initDecrypt();
-    AssertJUnit.assertEquals(
-      CLEARTEXT.getBytes(),
-      symmetric.decrypt(ciphertext));
-  }
 
   /**
    * Encrypts an input stream of plaintext into an output stream of ciphertext

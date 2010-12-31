@@ -40,7 +40,7 @@ public class CryptReaderWriterTest
 
   /** Path to directory containing public/private keys. */
   private static final String KEY_DIR_PATH =
-    "src/test/resources/edu/vt/middleware/crypt/";
+    "src/test/resources/edu/vt/middleware/crypt/keys/";
 
   /** Logger instance. */
   private final Log logger = LogFactory.getLog(this.getClass());
@@ -79,12 +79,10 @@ public class CryptReaderWriterTest
     final KeyPair rsaKeys = rsaKeyGen.generateKeyPair();
     final KeyPairGenerator dsaKeyGen = KeyPairGenerator.getInstance("DSA");
     final KeyPair dsaKeys = dsaKeyGen.generateKeyPair();
-
-    final char[] password = "S33Kr1t!".toCharArray();
     return
       new Object[][] {
-        {rsaKeys.getPrivate(), password},
-        {dsaKeys.getPrivate(), password},
+        {rsaKeys.getPrivate(), "S33Kr1t!"},
+        {dsaKeys.getPrivate(), "S33Kr1t!"},
         {rsaKeys.getPrivate(), null},
         {dsaKeys.getPrivate(), null},
       };
@@ -96,15 +94,28 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test data generation failure.
    */
-  @DataProvider(name = "readderprivkeydata")
-  public Object[][] createReadDerPrivKeyTestData()
+  @DataProvider(name = "readprivkeydata")
+  public Object[][] createReadPrivKeyTestData()
     throws Exception
   {
     return
       new Object[][] {
-        {"rsa.pri.der"},
-        {"rsa.pri-pkcs8.der"},
-        {"dsa.pri-pkcs8.der"},
+        {"dsa-openssl-priv-nopass.der", null},
+        {"dsa-openssl-priv-nopass.pem", null},
+        {"dsa-openssl-priv-des3.pem", "vtcrypt"},
+        {"dsa-pkcs8-priv-nopass.pem", null},
+        {"dsa-pkcs8-priv-nopass.der", null},
+        {"dsa-pkcs8-priv-v2-des3.der", "vtcrypt"},
+        {"dsa-pkcs8-priv-v2-des3.pem", "vtcrypt"},
+        {"rsa-openssl-priv-nopass.der", null},
+        {"rsa-openssl-priv-nopass.pem", null},
+        {"rsa-openssl-priv-des.pem", "vtcrypt"},
+        {"rsa-pkcs8-priv-nopass.der", null},
+        {"rsa-pkcs8-priv-nopass.pem", null},
+        {"rsa-pkcs8-priv.der", "vtcrypt"},
+        {"rsa-pkcs8-priv.pem", "vtcrypt"},
+        {"rsa-pkcs8-priv-v2-aes256.der", "vtcrypt"},
+        {"rsa-pkcs8-priv-v2-aes256.pem", "vtcrypt"},
       };
   }
 
@@ -119,24 +130,8 @@ public class CryptReaderWriterTest
     throws Exception
   {
     return new Object[][] {
-      {"rsa.pub.der", "RSA"},
-      {"dsa.pub.der", "DSA"},
-    };
-  }
-
-
-  /**
-   * @return  Private key test data.
-   *
-   * @throws  Exception  On test data generation failure.
-   */
-  @DataProvider(name = "readpemprivkeydata")
-  public Object[][] createReadPemPrivKeyTestData()
-    throws Exception
-  {
-    return new Object[][] {
-      {"rsa.pri.pem", null},
-      {"dsa.pri.pem", null},
+      {"rsa-pub.der", "RSA"},
+      {"dsa-pub.der", "DSA"},
     };
   }
 
@@ -151,26 +146,9 @@ public class CryptReaderWriterTest
     throws Exception
   {
     return new Object[][] {
-      {"rsa.pub.pem"},
-      {"dsa.pub.pem"},
+      {"rsa-pub.pem"},
+      {"dsa-pub.pem"},
     };
-  }
-
-  /**
-   * @param  file  Key file to read.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(
-    groups = {"functest", "util"},
-    dataProvider = "readderprivkeydata"
-  )
-  public void testReadDerPrivateKey(final String file)
-    throws Exception
-  {
-    final File keyFile = new File(KEY_DIR_PATH + file);
-    logger.info("Testing read of DER-encoded private key " + keyFile);
-    AssertJUnit.assertNotNull(CryptReader.readPrivateKey(keyFile));
   }
 
 
@@ -198,7 +176,7 @@ public class CryptReaderWriterTest
   public void testReadDerCertificate()
     throws Exception
   {
-    final File certFile = new File(KEY_DIR_PATH + "rsa.cert.der");
+    final File certFile = new File(KEY_DIR_PATH + "rsa-pub-cert.der");
     logger.info("Testing read of DER-encoded X.509 certificate " + certFile);
     AssertJUnit.assertNotNull(CryptReader.readCertificate(certFile));
   }
@@ -213,14 +191,20 @@ public class CryptReaderWriterTest
    */
   @Test(
     groups = {"functest", "util"},
-    dataProvider = "readpemprivkeydata"
+    dataProvider = "readprivkeydata"
   )
-  public void testReadPemPrivateKey(final String file, final char[] password)
+  public void testReadPrivateKey(final String file, final String password)
     throws Exception
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
-    logger.info("Testing read of PEM-encoded private key " + keyFile);
-    AssertJUnit.assertNotNull(CryptReader.readPemPrivateKey(keyFile, password));
+    logger.info("Testing read of private key " + keyFile);
+    final PrivateKey key;
+    if (password != null) {
+      key = CryptReader.readPrivateKey(keyFile, password.toCharArray());
+    } else {
+      key = CryptReader.readPrivateKey(keyFile);
+    }
+    AssertJUnit.assertNotNull(key);
   }
 
 
@@ -247,7 +231,7 @@ public class CryptReaderWriterTest
   public void testReadPemCertificate()
     throws Exception
   {
-    final File certFile = new File(KEY_DIR_PATH + "rsa.cert.pem");
+    final File certFile = new File(KEY_DIR_PATH + "rsa-pub-cert.pem");
     logger.info("Testing read of PEM-encoded X.509 certificate " + certFile);
     AssertJUnit.assertNotNull(CryptReader.readCertificate(certFile));
   }
@@ -265,7 +249,7 @@ public class CryptReaderWriterTest
   )
   public void testReadWriteEncodedPrivateKey(
     final PrivateKey key,
-    final char[] password)
+    final String password)
     throws Exception
   {
     logger.info("Testing " + key.getAlgorithm() + " private key.");
@@ -314,18 +298,27 @@ public class CryptReaderWriterTest
   )
   public void testReadWritePemPrivateKey(
     final PrivateKey key,
-    final char[] password)
+    final String password)
     throws Exception
   {
     logger.info("Testing " + key.getAlgorithm() + " private key.");
 
-    final File keyFile = new File(getKeyPath(key, "PEM", password));
+    final char[] pwchars;
+    if (password != null) {
+      pwchars = password.toCharArray();
+    } else {
+      pwchars = null;
+    }
+    final File keyFile = new File(getKeyPath(key, "PEM", pwchars));
     keyFile.getParentFile().mkdir();
-    CryptWriter.writePemKey(key, password, new SecureRandom(), keyFile);
+    CryptWriter.writePemKey(key, pwchars, new SecureRandom(), keyFile);
 
-    final PrivateKey keyFromFile = CryptReader.readPemPrivateKey(
-      keyFile,
-      password);
+    final PrivateKey keyFromFile;
+    if (pwchars != null) {
+      keyFromFile = CryptReader.readPrivateKey(keyFile , pwchars);
+    } else {
+      keyFromFile = CryptReader.readPrivateKey(keyFile);
+    }
     AssertJUnit.assertEquals(key, keyFromFile);
   }
 
