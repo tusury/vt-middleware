@@ -212,18 +212,14 @@ public class AsymmetricCli extends AbstractEncryptionCli
     throws Exception
   {
     PublicKey key = null;
-    final String alg = line.getOptionValue(OPT_CIPHER);
     final File keyFile = new File(line.getOptionValue(OPT_ENCRYPT));
     System.err.println("Reading public key from " + keyFile);
     try {
-      if (keyFile.getName().endsWith(PEM_SUFFIX)) {
-        key = CryptReader.readPemPublicKey(keyFile);
-      } else {
-        key = CryptReader.readPublicKey(keyFile, alg);
-      }
-    } catch (CryptException e) {
-      // Maybe the file is an X.509 certificate containing the public key
+      // The commonest case is an X.509 cert containing the public key
       key = CryptReader.readCertificate(keyFile).getPublicKey();
+    } catch (CryptException e) {
+      // Try treating file as a standalone key in X.509 format
+      key = CryptReader.readPublicKey(keyFile);
     }
     return key;
   }

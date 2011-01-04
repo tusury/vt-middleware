@@ -20,9 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.security.KeyFactory;
-import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -42,7 +39,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
-import edu.vt.middleware.crypt.asymmetric.RSA;
 import edu.vt.middleware.crypt.pbe.EncryptionScheme;
 import edu.vt.middleware.crypt.pbe.OpenSSLEncryptionScheme;
 import edu.vt.middleware.crypt.pbe.PBES1EncryptionScheme;
@@ -51,7 +47,6 @@ import edu.vt.middleware.crypt.pkcs.PBEParameter;
 import edu.vt.middleware.crypt.pkcs.PBES1Algorithm;
 import edu.vt.middleware.crypt.pkcs.PBES2CipherGenerator;
 import edu.vt.middleware.crypt.pkcs.PBKDF2Parameters;
-import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,13 +56,12 @@ import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.openssl.PEMReader;
-import org.bouncycastle.openssl.PasswordFinder;
 
 /**
  * Helper class for performing I/O read operations on cryptographic data.
@@ -82,10 +76,12 @@ public class CryptReader
   public static final String DEFAULT_CERTIFICATE_TYPE = "X.509";
 
   /** DSA algorithm OID */
-  public static final String DSA_ALGORITHM_ID = "1.2.840.10040.4.1";
+  private static final DERObjectIdentifier DSA_ID =
+    new DERObjectIdentifier("1.2.840.10040.4.1");
 
   /** RSA algorithm OID */
-  public static final String RSA_ALGORITHM_ID = "1.2.840.113549.1.1.1";
+  private static final DERObjectIdentifier RSA_ID =
+    new DERObjectIdentifier("1.2.840.113549.1.1.1");
 
   /** Buffer size for read operations. */
   private static final int BUFFER_SIZE = 4096;
@@ -251,22 +247,17 @@ public class CryptReader
    * PublicKey} object.
    *
    * @param  keyFile  File containing DER-encoded X.509 public key.
-   * @param  algorithm  Name of encryption algorithm used by key.
    *
    * @return  Public key containing data read from file.
    *
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PublicKey readPublicKey(
-    final File keyFile,
-    final String algorithm)
+  public static PublicKey readPublicKey(final File keyFile)
     throws CryptException, IOException
   {
-    return
-      readPublicKey(
-        new BufferedInputStream(new FileInputStream(keyFile)),
-        algorithm);
+    return readPublicKey(
+          new BufferedInputStream(new FileInputStream(keyFile)));
   }
 
 
@@ -275,62 +266,36 @@ public class CryptReader
    * PublicKey} object.
    *
    * @param  keyStream  Input stream containing DER-encoded X.509 public key.
-   * @param  algorithm  Name of encryption algorithm used by key.
    *
    * @return  Public key containing data read from stream.
    *
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PublicKey readPublicKey(
-    final InputStream keyStream,
-    final String algorithm)
+  public static PublicKey readPublicKey(final InputStream keyStream)
     throws CryptException, IOException
   {
-    final KeyFactory kf = CryptProvider.getKeyFactory(algorithm);
-    try {
-      final X509EncodedKeySpec keySpec = new X509EncodedKeySpec(
-        readData(keyStream));
-      return kf.generatePublic(keySpec);
-    } catch (InvalidKeySpecException e) {
-      throw new CryptException("Invalid public key format.", e);
+    byte[] bytes = readData(keyStream);
+    if (PemHelper.isPem(bytes)) {
+      bytes = PemHelper.decode(bytes);
     }
-  }
-
-
-  /**
-   * Reads a PEM-encoded public key from a file into a {@link PublicKey} object.
-   *
-   * @param  keyFile  File containing public key data in PEM format.
-   *
-   * @return  Public key containing data read from file.
-   *
-   * @throws  CryptException  On key format errors.
-   * @throws  IOException  On key read errors.
-   */
-  public static PublicKey readPemPublicKey(final File keyFile)
-    throws CryptException, IOException
-  {
-    return
-      readPemPublicKey(new BufferedInputStream(new FileInputStream(keyFile)));
-  }
-
-
-  /**
-   * Reads a PEM-encoded public key from an input stream into a {@link
-   * PublicKey} object.
-   *
-   * @param  keyStream  Input stream containing public key data in PEM format.
-   *
-   * @return  Public key containing data read from stream.
-   *
-   * @throws  CryptException  On key format errors.
-   * @throws  IOException  On key read errors.
-   */
-  public static PublicKey readPemPublicKey(final InputStream keyStream)
-    throws CryptException, IOException
-  {
-    return PemHelper.decodeKey(readPem(keyStream));
+    try {
+      ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(bytes);
+      seq = (ASN1Sequence) seq.getObjectAt(0);
+      final String algorithm;
+      if (RSA_ID.equals(seq.getObjectAt(0))) {
+        algorithm = "RSA";
+      } else if (DSA_ID.equals(seq.getObjectAt(0))) {
+        algorithm = "DSA";
+      } else {
+        throw new CryptException(
+            "Unsupported public key algorithm ID " + seq.getObjectAt(0));
+      }
+      return CryptProvider.getKeyFactory(algorithm).generatePublic(
+          new X509EncodedKeySpec(bytes));
+    } catch (Exception e) {
+      throw new CryptException("Invalid public key.", e);
+    }
   }
 
 
@@ -571,22 +536,6 @@ public class CryptReader
 
 
   /**
-   * Reads a PEM object from an input stream into a string.
-   *
-   * @param  in  Input stream containing PEM-encoded data.
-   *
-   * @return  Entire contents of stream as a string.
-   *
-   * @throws  IOException  On I/O read errors.
-   */
-  private static String readPem(final InputStream in)
-    throws IOException
-  {
-    return new String(readData(in), "ASCII");
-  }
-
-
-  /**
    * Reads all the data in the given stream and returns the contents as a byte
    * array.
    *
@@ -645,9 +594,9 @@ public class CryptReader
     }
     if (pi != null) {
       final String algOid = pi.getAlgorithmId().getObjectId().getId();
-      if (RSA_ALGORITHM_ID.equals(algOid)) {
-        algorithm = RSA.ALGORITHM;
-      } else if (DSA_ALGORITHM_ID.equals(algOid)) {
+      if (RSA_ID.equals(pi.getAlgorithmId().getObjectId())) {
+        algorithm = "RSA";
+      } else if (DSA_ID.equals(pi.getAlgorithmId().getObjectId())) {
         algorithm = "DSA";
       } else {
         throw new CryptException("Unsupported PKCS#8 algorithm ID " + algOid);
