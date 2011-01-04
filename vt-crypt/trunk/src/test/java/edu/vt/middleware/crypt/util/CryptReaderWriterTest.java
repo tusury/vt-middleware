@@ -23,7 +23,6 @@ import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.MD2;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
@@ -131,14 +130,28 @@ public class CryptReaderWriterTest
    *
    * @throws  Exception  On test data generation failure.
    */
-  @DataProvider(name = "readpubkeydata")
+  @DataProvider(name = "readderpubkeydata")
   public Object[][] createReadDerPubKeyTestData()
     throws Exception
   {
     return new Object[][] {
-      {"rsa-pub.der"},
+      {"rsa-pub.der", "RSA"},
+      {"dsa-pub.der", "DSA"},
+    };
+  }
+
+
+  /**
+   * @return  Public key test data.
+   *
+   * @throws  Exception  On test data generation failure.
+   */
+  @DataProvider(name = "readpempubkeydata")
+  public Object[][] createReadPemPubKeyTestData()
+    throws Exception
+  {
+    return new Object[][] {
       {"rsa-pub.pem"},
-      {"dsa-pub.der"},
       {"dsa-pub.pem"},
     };
   }
@@ -146,19 +159,20 @@ public class CryptReaderWriterTest
 
   /**
    * @param  file  Key file to read.
+   * @param  alg  Cipher algorithm of key.
    *
    * @throws  Exception  On test failure.
    */
   @Test(
     groups = {"functest", "util"},
-    dataProvider = "readpubkeydata"
+    dataProvider = "readderpubkeydata"
   )
-  public void testReadPublicKey(final String file)
+  public void testReadDerPublicKey(final String file, final String alg)
     throws Exception
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
     logger.info("Testing read of DER-encoded public key " + keyFile);
-    AssertJUnit.assertNotNull(CryptReader.readPublicKey(keyFile));
+    AssertJUnit.assertNotNull(CryptReader.readPublicKey(keyFile, alg));
   }
 
 
@@ -199,6 +213,24 @@ public class CryptReaderWriterTest
   }
 
 
+  /**
+   * @param  file  Public key file to read.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+    groups = {"functest", "util"},
+    dataProvider = "readpempubkeydata"
+  )
+  public void testReadPemPublicKey(final String file)
+    throws Exception
+  {
+    final File keyFile = new File(KEY_DIR_PATH + file);
+    logger.info("Testing read of PEM-encoded public key " + keyFile);
+    AssertJUnit.assertNotNull(CryptReader.readPemPublicKey(keyFile));
+  }
+
+
   /** @throws  Exception  On test failure. */
   @Test(groups = {"functest", "util"})
   public void testReadPemCertificate()
@@ -220,7 +252,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "privkeydata"
   )
-  public void testReadWriteDerPrivateKey(
+  public void testReadWriteEncodedPrivateKey(
     final PrivateKey key,
     final String password)
     throws Exception
@@ -245,7 +277,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "pubkeydata"
   )
-  public void testReadWriteDerPublicKey(final PublicKey key)
+  public void testReadWriteEncodedPublicKey(final PublicKey key)
     throws Exception
   {
     logger.info("Testing " + key.getAlgorithm() + " public key.");
@@ -255,7 +287,7 @@ public class CryptReaderWriterTest
     CryptWriter.writeEncodedKey(key, keyFile);
     AssertJUnit.assertEquals(
       key,
-      CryptReader.readPublicKey(keyFile));
+      CryptReader.readPublicKey(keyFile, key.getAlgorithm()));
   }
 
 
@@ -313,7 +345,7 @@ public class CryptReaderWriterTest
     final File keyFile = new File(getKeyPath(key, "PEM", null));
     keyFile.getParentFile().mkdir();
     CryptWriter.writePemKey(key, keyFile);
-    AssertJUnit.assertEquals(key, CryptReader.readPublicKey(keyFile));
+    AssertJUnit.assertEquals(key, CryptReader.readPemPublicKey(keyFile));
   }
 
 
