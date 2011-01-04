@@ -60,7 +60,8 @@ public class PemHelper
 
   /**
    * Decodes a PEM-encoded cryptographic object into the raw bytes of its ASN.1
-   * encoding.
+   * encoding.  Header/footer data and metadata info, e.g. Proc-Type, are
+   * ignored.
    *
    * @param  pem  Bytes of PEM-encoded data to decode.
    *
@@ -76,7 +77,8 @@ public class PemHelper
 
   /**
    * Decodes a PEM-encoded cryptographic object into the raw bytes of its ASN.1
-   * encoding.
+   * encoding.  Header/footer data and metadata info, e.g. Proc-Type, are
+   * ignored.
    *
    * @param  pem  PEM-encoded data to decode.
    *
@@ -93,7 +95,8 @@ public class PemHelper
       if (line.startsWith(HEADER_BEGIN) ||
           line.startsWith(FOOTER_END) ||
           line.startsWith(PROC_TYPE) ||
-          line.startsWith(DEK_INFO)) {
+          line.startsWith(DEK_INFO) ||
+          line.trim().length() == 0) {
         continue;
       }
       buffer.put(Convert.fromBase64(line));
@@ -302,10 +305,13 @@ public class PemHelper
    */
   public static boolean isBase64Char(final byte b)
   {
-    return !(b < 47 || b > 122 ||
-        (b > 57 && b < 65) ||
-        (b > 90 && b < 97) ||
-        b != 43);
+    return !(
+        b < 47 ||
+        b > 122 ||
+        b > 57 && b < 65 ||
+        b > 90 && b < 97
+        ) ||
+        b == 43;
   }
 
 
