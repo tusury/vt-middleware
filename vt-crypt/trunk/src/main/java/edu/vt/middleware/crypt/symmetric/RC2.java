@@ -29,11 +29,8 @@ public class RC2 extends SymmetricAlgorithm
   /** Algorithm name. */
   public static final String ALGORITHM = "RC2";
 
-  /** Default effective key bits. */
-  public static final int DEFAULT_EFFECTIVE_BITS = 1024;
-
   /** Sets the effective key size in bits. */
-  private int effectiveKeyBits = DEFAULT_EFFECTIVE_BITS;
+  private int effectiveKeyBits = -1;
 
 
   /**
@@ -95,10 +92,15 @@ public class RC2 extends SymmetricAlgorithm
     if (paramSpec != null) {
       spec = paramSpec;
     } else {
+      // Use the number of bits in the key as effective bits
+      // if it has not been explicitly set
+      final int effective = effectiveKeyBits < 0 ?
+          this.key.getEncoded().length * 8 :
+          effectiveKeyBits;
       if (iv != null) {
-        spec = new RC2ParameterSpec(effectiveKeyBits, iv);
+        spec = new RC2ParameterSpec(effective, iv);
       } else {
-        spec = new RC2ParameterSpec(effectiveKeyBits);
+        spec = new RC2ParameterSpec(effective);
       }
     }
     return spec;

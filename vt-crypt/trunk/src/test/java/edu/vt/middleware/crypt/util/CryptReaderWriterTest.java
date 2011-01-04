@@ -110,12 +110,17 @@ public class CryptReaderWriterTest
         {"rsa-openssl-priv-nopass.der", null},
         {"rsa-openssl-priv-nopass.pem", null},
         {"rsa-openssl-priv-des.pem", "vtcrypt"},
+        {"rsa-openssl-priv-des-noheader.pem", "vtcrypt"},
+        {"rsa-openssl-priv-des3.pem", "vtcrypt"},
         {"rsa-pkcs8-priv-nopass.der", null},
         {"rsa-pkcs8-priv-nopass.pem", null},
-        {"rsa-pkcs8-priv.der", "vtcrypt"},
-        {"rsa-pkcs8-priv.pem", "vtcrypt"},
+        {"rsa-pkcs8-priv-nopass-noheader.pem", null},
+        {"rsa-pkcs8-priv-v1-md5-des.der", "vtcrypt"},
+        {"rsa-pkcs8-priv-v1-md5-des.pem", "vtcrypt"},
+        {"rsa-pkcs8-priv-v1-md5-rc2-64.der", "vtcrypt"},
         {"rsa-pkcs8-priv-v2-aes256.der", "vtcrypt"},
         {"rsa-pkcs8-priv-v2-aes256.pem", "vtcrypt"},
+        {"rsa-pkcs8-priv-v2-aes256-noheader.pem", "vtcrypt"},
       };
   }
 

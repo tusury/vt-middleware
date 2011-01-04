@@ -13,7 +13,9 @@
 */
 package edu.vt.middleware.crypt.pbe;
 
-import edu.vt.middleware.crypt.digest.MD5;
+import org.bouncycastle.crypto.PBEParametersGenerator;
+import org.bouncycastle.crypto.generators.OpenSSLPBEParametersGenerator;
+import org.bouncycastle.crypto.params.KeyParameter;
 
 /**
  * Implements a password generation function compatible with the enc operation
@@ -25,27 +27,49 @@ import edu.vt.middleware.crypt.digest.MD5;
  * @version $Revision$
  *
  */
-public class OpenSSLKeyGenerator extends PBKDF1KeyGenerator
+public class OpenSSLKeyGenerator implements KeyGenerator
 {
+  /** Size of derived key in bits. */
+  private int derivedKeyLength;
+
+  /** Key generation salt data. */
+  private byte[] salt;
+
 
   /**
    * Performs key generation without a salt value.  This method is intended
    * for compatibility with old OpenSSL versions or modern OpenSSL versions
    * of the enc command with the -nosalt option.
+   *
+   * @param  keyBitLength  Size of derived keys in bits.
    */
-  public OpenSSLKeyGenerator()
+  public OpenSSLKeyGenerator(final int keyBitLength)
   {
-    this(new byte[0]);
+    this(keyBitLength, new byte[0]);
   }
 
 
   /**
    * Creates a new key generator with the given salt bytes.
    *
-   * @param  salt  Key generation function salt data.
+   * @param  keyBitLength  Size of derived keys in bits.
+   * @param  saltBytes  Key generation function salt data.
    */
-  public OpenSSLKeyGenerator(final byte[] salt)
+  public OpenSSLKeyGenerator(final int keyBitLength, final byte[] saltBytes)
   {
-    super(new MD5(), salt, 1);
+    this.derivedKeyLength = keyBitLength;
+    this.salt = saltBytes;
+  }
+
+
+  /** {@inheritDoc} */
+  public byte[] generate(final char[] password)
+  {
+    final OpenSSLPBEParametersGenerator generator =
+      new OpenSSLPBEParametersGenerator();
+    generator.init(PBEParametersGenerator.PKCS5PasswordToBytes(password), salt);
+    final KeyParameter p =
+      (KeyParameter) generator.generateDerivedParameters(derivedKeyLength);
+    return p.getKey();
   }
 }

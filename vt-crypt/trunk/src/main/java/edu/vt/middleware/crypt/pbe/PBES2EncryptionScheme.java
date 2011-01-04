@@ -25,7 +25,7 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
  * @version $Revision$
  *
  */
-public class PBES2EncryptionScheme extends AbstractPKCSEncryptionScheme
+public class PBES2EncryptionScheme extends AbstractEncryptionScheme
 {
   /**
    * Creates a new instance with the given parameters.

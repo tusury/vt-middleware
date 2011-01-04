@@ -44,6 +44,7 @@ import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 import edu.vt.middleware.crypt.asymmetric.RSA;
 import edu.vt.middleware.crypt.pbe.EncryptionScheme;
+import edu.vt.middleware.crypt.pbe.OpenSSLEncryptionScheme;
 import edu.vt.middleware.crypt.pbe.PBES1EncryptionScheme;
 import edu.vt.middleware.crypt.pbe.PBES2EncryptionScheme;
 import edu.vt.middleware.crypt.pkcs.PBEParameter;
@@ -226,30 +227,21 @@ public class CryptReader
     byte[] bytes = readData(keyStream);
     if (PemHelper.isPem(bytes)) {
       LOGGER.debug("Reading PEM encoded private key.");
-      // Try using BC PemReader to handle OpenSSL traditional format private key
       final String pem = new String(bytes, "ASCII");
-      try {
-        final PEMReader reader = new PEMReader(
-            new StringReader(pem),
-            new PasswordFinder() {
-              public char[] getPassword()
-              {
-                return password;
-              }
-            });
-        final KeyPair keyPair = (KeyPair) reader.readObject();
-        if (keyPair != null) {
-          return keyPair.getPrivate();
-        } else {
-          throw new CryptException("Private key not found in key pair.");
-        }
-      } catch (Exception e) {
-        LOGGER.debug("Failed reading key in OpenSSL format.", e);
-        LOGGER.debug("Trying PKCS#8 format.");
-        bytes = PemHelper.decode(bytes);
+      bytes = PemHelper.decode(pem);
+      if (pem.contains(PemHelper.PROC_TYPE)) {
+        final int start = pem.indexOf(PemHelper.DEK_INFO);
+        final int eol = pem.indexOf('\n', start);
+        final String[] dekInfo = pem.substring(start + 10, eol).split(",");
+        final String alg = dekInfo[0];
+        final byte[] iv = Convert.fromHex(dekInfo[1]);
+        bytes = new OpenSSLEncryptionScheme(alg, iv).decrypt(password, bytes);
+      } else {
+        bytes = decryptKey(bytes, password);
       }
+    } else {
+      bytes = decryptKey(bytes, password);
     }
-    bytes = decryptKey(bytes, password);
     return generatePrivateKey((ASN1Sequence) ASN1Object.fromByteArray(bytes));
   }
 
@@ -740,14 +732,10 @@ public class CryptReader
         scheme = new PBES2EncryptionScheme(kdfParms, cipherGen.generate());
       } else {
         // Use PBES1 encryption scheme to decrypt key
-        final PBES1Algorithm a =
-            PBES1Algorithm.fromOid(alg.getObjectId().getId());
-        final PBEParameter pbeParms = PBEParameter.decode(
-            (DERSequence) alg.getParameters());
         scheme = new PBES1EncryptionScheme(
-            a.getDigest(),
-            pbeParms,
-            SymmetricAlgorithm.newInstance(a.getSpec()));
+            PBES1Algorithm.fromOid(alg.getObjectId().getId()),
+            PBEParameter.decode(
+                (DERSequence) alg.getParameters()));
       }
       return scheme.decrypt(password, ki.getEncryptedData());
     } catch (Exception e) {

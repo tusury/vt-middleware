@@ -21,9 +21,8 @@ import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 
 /**
- * Abstract base class for password-based encryption schemes defined in PKCS
- * standards that use salt and iterated hashing as the basis of the key
- * derivation function.
+ * Abstract base class for password-based encryption schemes based on salt data
+ * and iterated hashing as the basis of the key derivation function.
  * <p>
  * NOTE:  Classes derived from this class are not thread safe.  In particular,
  * care should be take to prevent multiple threads from performing encryption
@@ -33,7 +32,7 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
  * @version $Revision$
  *
  */
-public abstract class AbstractPKCSEncryptionScheme implements EncryptionScheme
+public abstract class AbstractEncryptionScheme implements EncryptionScheme
 {
   /** Key generation strategy. */
   protected KeyGenerator generator;
@@ -80,6 +79,7 @@ public abstract class AbstractPKCSEncryptionScheme implements EncryptionScheme
   {
     initCipher(generator.generate(password));
     cipher.initDecrypt();
+    cipher.decrypt(in, out);
   }
 
 
