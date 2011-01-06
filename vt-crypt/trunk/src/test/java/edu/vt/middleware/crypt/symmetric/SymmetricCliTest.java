@@ -92,22 +92,21 @@ public class SymmetricCliTest
     return
       new Object[][] {
         {
-          "-cipher DESede -keysize 168",
-          "des-pkcs5s2",
+          "-cipher DESede -keysize 192 -iter 1024 ",
+          "des3-pkcs5s2",
         },
         {
-          "-cipher blowfish -keysize 128 -pbemode pkcs5s1 " +
-            "-digest SHA-256",
-          "blowfish-pkcs5s1",
+          "-cipher RC2 -keysize 64 -scheme pkcs5s1 -digest SHA1 -iter 2048",
+          "rc2-pkcs5s1",
         },
         {
-          "-cipher aes -pbemode openssl -keysize 128",
-          "aes-openssl",
+          "-cipher AES -scheme openssl -keysize 128 -iter 1000",
+          "aes-128-openssl",
         },
         {
-          "-cipher Twofish -pbemode pkcs12 -digest whirlpool " +
-            "-keysize 128 " + "-iv " + TEST_IV,
-          "twofish-pkcs12",
+          "-cipher AES -scheme pkcs12 -digest SHA1 -keysize 256 -iter 512 " +
+            "-iv " + TEST_IV,
+          "aes-256-pkcs12",
         },
       };
   }

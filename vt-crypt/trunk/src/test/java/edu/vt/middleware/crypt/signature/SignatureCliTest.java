@@ -35,13 +35,16 @@ import org.testng.annotations.Test;
 public class SignatureCliTest
 {
 
+  /** Path to test output directory. */
+  private static final String TEST_OUTPUT_DIR = "target/test-output/";
+
   /** Classpath location of file to be signed. */
   private static final String TEST_PLAINTEXT =
     "src/test/resources/edu/vt/middleware/crypt/plaintext-127.txt";
 
   /** Path to directory containing public/private keys. */
   private static final String KEY_DIR_PATH =
-    "src/test/resources/edu/vt/middleware/crypt/";
+    "src/test/resources/edu/vt/middleware/crypt/keys/";
 
   /** Logger instance. */
   private final Log logger = LogFactory.getLog(this.getClass());
@@ -60,33 +63,33 @@ public class SignatureCliTest
       new Object[][] {
         {
           "-alg dsa -encoding hex",
-          "dsa.pub.der",
-          "dsa.pri-pkcs8.der",
+          "dsa-pub.der",
+          "dsa-openssl-priv-nopass.der",
         },
         {
           "-alg DSA -digest MD5 -encoding hex",
-          "dsa.pub.der",
-          "dsa.pri-pkcs8.der",
+          "dsa-pub.pem",
+          "dsa-openssl-priv-nopass.pem",
         },
         {
           "-alg DSA -digest whirlpool -encoding base64",
-          "dsa.pub.der",
-          "dsa.pri-pkcs8.der",
+          "dsa-pub.der",
+          "dsa-pkcs8-priv-nopass.der",
         },
         {
           "-alg rsa -encoding hex",
-          "rsa.cert.der",
-          "rsa.pri.der",
+          "rsa-pub-cert.der",
+          "rsa-openssl-priv-nopass.der",
         },
         {
           "-alg RSA -digest SHA384 -encoding hex",
-          "rsa.pub.der",
-          "rsa.pri.der",
+          "rsa-pub-cert.pem",
+          "rsa-openssl-priv-nopass.pem",
         },
         {
           "-alg RSA -digest ripemd160 -encoding base64",
-          "rsa.pub.der",
-          "rsa.pri.der",
+          "rsa-pub.der",
+          "rsa-pkcs8-priv-nopass.der",
         },
       };
   }
@@ -128,7 +131,8 @@ public class SignatureCliTest
       Assert.assertTrue(sig.length() > 0);
 
       // Write signature out to file for use in verify step
-      final File sigFile = new File("target/test-output/sig.out");
+      new File(TEST_OUTPUT_DIR).mkdir();
+      final File sigFile = new File(TEST_OUTPUT_DIR + "sig.out");
       final BufferedOutputStream sigOs = new BufferedOutputStream(
         new FileOutputStream(sigFile));
       try {
@@ -148,6 +152,8 @@ public class SignatureCliTest
 
       final String result = outStream.toString();
       AssertJUnit.assertTrue(result.indexOf("SUCCESS") != -1);
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);

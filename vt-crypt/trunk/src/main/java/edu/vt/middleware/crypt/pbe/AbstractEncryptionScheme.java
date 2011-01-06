@@ -34,9 +34,6 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
  */
 public abstract class AbstractEncryptionScheme implements EncryptionScheme
 {
-  /** Key generation strategy. */
-  protected KeyGenerator generator;
-
   /** Cipher used for encryption and decryption. */
   protected SymmetricAlgorithm cipher;
 
@@ -45,7 +42,7 @@ public abstract class AbstractEncryptionScheme implements EncryptionScheme
   public byte[] encrypt(final char[] password, final byte[] plaintext)
     throws CryptException
   {
-    initCipher(generator.generate(password));
+    initCipher(password);
     cipher.initEncrypt();
     return cipher.encrypt(plaintext);
   }
@@ -56,7 +53,7 @@ public abstract class AbstractEncryptionScheme implements EncryptionScheme
     final char[] password, final InputStream in, final OutputStream out)
     throws CryptException, IOException
   {
-    initCipher(generator.generate(password));
+    initCipher(password);
     cipher.initEncrypt();
     cipher.encrypt(in, out);
   }
@@ -66,7 +63,7 @@ public abstract class AbstractEncryptionScheme implements EncryptionScheme
   public byte[] decrypt(final char[] password, final byte[] ciphertext)
     throws CryptException
   {
-    initCipher(generator.generate(password));
+    initCipher(password);
     cipher.initDecrypt();
     return cipher.decrypt(ciphertext);
   }
@@ -77,16 +74,30 @@ public abstract class AbstractEncryptionScheme implements EncryptionScheme
     final char[] password, final InputStream in, final OutputStream out)
     throws CryptException, IOException
   {
-    initCipher(generator.generate(password));
+    initCipher(password);
     cipher.initDecrypt();
     cipher.decrypt(in, out);
   }
 
 
   /**
+   * Sets the symmetric algorithm cipher.
+   *
+   * @param  alg  Symmetric algorithm instance.
+   */
+  protected void setCipher(final SymmetricAlgorithm alg)
+  {
+    if (alg == null) {
+      throw new IllegalArgumentException("Cipher cannot be null.");
+    }
+    this.cipher = alg;
+  }
+
+
+  /**
    * Initializes the cipher with the given PBE derived key bytes.
    *
-   * @param  derivedKey  Derived key bytes.
+   * @param  password  PBE password.
    */
-  protected abstract void initCipher(byte[] derivedKey);
+  protected abstract void initCipher(final char[] password);
 }

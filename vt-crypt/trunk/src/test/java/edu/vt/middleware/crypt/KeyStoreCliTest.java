@@ -36,7 +36,7 @@ public class KeyStoreCliTest
 
   /** Path to directory containing public/private keys. */
   private static final String KEY_DIR_PATH =
-    "src/test/resources/edu/vt/middleware/crypt/";
+    "src/test/resources/edu/vt/middleware/crypt/keys/";
 
   /** Path to directory containing certificates. */
   private static final String CERT_DIR_PATH =
@@ -60,56 +60,56 @@ public class KeyStoreCliTest
         {
           "store-1.jks",
           null,
-          "rsa.cert.der",
-          "rsa.pri-pkcs8.der",
+          "rsa-pub-cert.der",
+          "rsa-pkcs8-priv-nopass.der",
           null,
           "vtcrypt",
         },
         {
           "store-2.bks",
           "BKS",
-          "rsa.cert.pem",
-          "rsa.pri.pem",
+          "rsa-pub-cert.der",
+          "rsa-openssl-priv-nopass.der",
           "RSA",
           "VT Crypt",
         },
         {
           "store-3.p12",
           "PKCS12",
-          "rsa.cert.pem",
-          "rsa.pri.pem",
+          "rsa-pub-cert.pem",
+          "rsa-openssl-priv-nopass.pem",
           "RSA",
           "vt,crypt",
         },
         {
           "store-4.jks",
           null,
-          "rsa.cert.pem",
-          "rsa.pri.pem",
+          "rsa-pub-cert.pem",
+          "rsa-pkcs8-priv-nopass.pem",
           null,
           "vt:crypt",
         },
         {
           "store-5.jks",
           null,
-          "rsa.cert.pem",
-          "rsa.pri.pem",
+          "rsa-pub-cert.pem",
+          "rsa-pkcs8-priv-nopass.pem",
           null,
           "vt;crypt",
         },
         {
           "store-6.jks",
           null,
-          "rsa.cert.pem",
-          "rsa.pri.pem",
+          "rsa-pub-cert.pem",
+          "rsa-pkcs8-priv-nopass.pem",
           null,
           "vt'crypt",
         },
         {
           "store-7.jks",
           null,
-          "rsa.cert.pem",
-          "rsa.pri.pem",
+          "rsa-pub-cert.der",
+          "rsa-pkcs8-priv-nopass.der",
           null,
           "vt-crypt",
         },

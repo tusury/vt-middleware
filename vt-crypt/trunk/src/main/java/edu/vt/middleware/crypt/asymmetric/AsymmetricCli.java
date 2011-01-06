@@ -217,7 +217,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
     try {
       // The commonest case is an X.509 cert containing the public key
       key = CryptReader.readCertificate(keyFile).getPublicKey();
-    } catch (CryptException e) {
+    } catch (Exception e) {
       // Try treating file as a standalone key in X.509 format
       key = CryptReader.readPublicKey(keyFile);
     }

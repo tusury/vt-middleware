@@ -25,35 +25,27 @@ import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
  */
 public class PBKDF2KeyGenerator extends AbstractPKCSKeyGenerator
 {
-  /** Size of derived key in bits. */
-  private int derivedKeyLength;
-
-
   /**
    * Creates a new instance that uses SHA1 hash for pseudorandom function
-   * to generate derived keys of the given length in bytes (octets).
+   * to generate derived keys.
    *
-   * @param  keyBitLength  Size of derived key in bits.
    * @param  saltBytes  Key derivation function salt bytes.
    */
-  public PBKDF2KeyGenerator(final int keyBitLength, final byte[] saltBytes)
+  public PBKDF2KeyGenerator(final byte[] saltBytes)
   {
-    this(keyBitLength, saltBytes, DEFAULT_ITERATION_COUNT);
+    this(saltBytes, DEFAULT_ITERATION_COUNT);
   }
 
 
   /**
    * Creates a new instance that uses SHA1 hash for pseudorandom function
-   * to generate derived keys of the given length in bytes (octets).
+   * to generate derived keys.
    *
-   * @param  keyBitLength  Size of derived keys in bits.
    * @param  saltBytes  Key derivation function salt bytes.
    * @param  iterations  Key derivation function iteration count.
    */
-  public PBKDF2KeyGenerator(
-      final int keyBitLength, final byte[] saltBytes, final int iterations)
+  public PBKDF2KeyGenerator(final byte[] saltBytes, final int iterations)
   {
-    this.derivedKeyLength = keyBitLength;
     this.salt = saltBytes;
     setIterationCount(iterations);
   }
@@ -71,12 +63,4 @@ public class PBKDF2KeyGenerator extends AbstractPKCSKeyGenerator
   {
     return PBEParametersGenerator.PKCS5PasswordToBytes(password);
   }
-
-
-  /** {@inheritDoc} */
-  protected int getKeyBitLength()
-  {
-    return derivedKeyLength;
-  }
-
 }

@@ -29,9 +29,6 @@ import org.bouncycastle.crypto.params.KeyParameter;
  */
 public class OpenSSLKeyGenerator implements KeyGenerator
 {
-  /** Size of derived key in bits. */
-  private int derivedKeyLength;
-
   /** Key generation salt data. */
   private byte[] salt;
 
@@ -40,36 +37,32 @@ public class OpenSSLKeyGenerator implements KeyGenerator
    * Performs key generation without a salt value.  This method is intended
    * for compatibility with old OpenSSL versions or modern OpenSSL versions
    * of the enc command with the -nosalt option.
-   *
-   * @param  keyBitLength  Size of derived keys in bits.
    */
-  public OpenSSLKeyGenerator(final int keyBitLength)
+  public OpenSSLKeyGenerator()
   {
-    this(keyBitLength, new byte[0]);
+    this(new byte[0]);
   }
 
 
   /**
    * Creates a new key generator with the given salt bytes.
    *
-   * @param  keyBitLength  Size of derived keys in bits.
    * @param  saltBytes  Key generation function salt data.
    */
-  public OpenSSLKeyGenerator(final int keyBitLength, final byte[] saltBytes)
+  public OpenSSLKeyGenerator(final byte[] saltBytes)
   {
-    this.derivedKeyLength = keyBitLength;
     this.salt = saltBytes;
   }
 
 
   /** {@inheritDoc} */
-  public byte[] generate(final char[] password)
+  public byte[] generate(final char[] password, final int size)
   {
     final OpenSSLPBEParametersGenerator generator =
       new OpenSSLPBEParametersGenerator();
     generator.init(PBEParametersGenerator.PKCS5PasswordToBytes(password), salt);
     final KeyParameter p =
-      (KeyParameter) generator.generateDerivedParameters(derivedKeyLength);
+      (KeyParameter) generator.generateDerivedParameters(size);
     return p.getKey();
   }
 }

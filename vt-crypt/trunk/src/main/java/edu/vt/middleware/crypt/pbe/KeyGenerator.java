@@ -26,8 +26,9 @@ public interface KeyGenerator
    * encryption schemes.
    *
    * @param  password  Password used as basis for generated key.
+   * @param  size  Size of generated key in bits, unless otherwise noted.
    *
    * @return  Secret key bytes.
    */
-  byte[] generate(char[] password);
+  byte[] generate(char[] password, int size);
 }

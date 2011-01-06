@@ -13,8 +13,6 @@
 */
 package edu.vt.middleware.crypt.pbe;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.pkcs.PBEParameter;
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
@@ -26,34 +24,26 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
  * @version $Revision$
  *
  */
-public class PKCS12EncryptionScheme extends AbstractEncryptionScheme
+public class PKCS12EncryptionScheme
+  extends AbstractVariableKeySizeEncryptionScheme
 {
   /**
    * Creates a new instance with the given parameters.
    *
+   * @param  alg  Symmetric cipher algorithm used for encryption/decryption.
    * @param  digest  Digest algorithm used for PBE pseudorandom function.
    * @param  params  Key generation function salt and iteration count.
-   * @param  keyBitLength  Derived key length in bits.
-   * @param  alg  Symmetric cipher algorithm used for encryption/decryption.
+   * @param  keyBitLength  Size of derived keys in bits.
    */
   public PKCS12EncryptionScheme(
+      final SymmetricAlgorithm alg,
       final DigestAlgorithm digest,
       final PBEParameter params,
-      final int keyBitLength,
-      final SymmetricAlgorithm alg)
+      final int keyBitLength)
   {
-    if (alg == null) {
-      throw new IllegalArgumentException("Symmetric cipher cannot be null.");
-    }
-    generator = new PKCS12KeyGenerator(
-        digest, params.getSalt(), params.getIterationCount(), keyBitLength);
-    cipher = alg;
-  }
-
-
-  /** {@inheritDoc} */
-  protected void initCipher(final byte[] derivedKey)
-  {
-    cipher.setKey(new SecretKeySpec(derivedKey, cipher.getAlgorithm()));
+    setCipher(alg);
+    setGenerator(new PKCS12KeyGenerator(
+        digest, params.getSalt(), params.getIterationCount()));
+    setKeyLength(keyBitLength);
   }
 }

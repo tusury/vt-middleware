@@ -46,12 +46,15 @@ public abstract class AbstractPKCSKeyGenerator implements KeyGenerator
 
 
   /** {@inheritDoc} */
-  public byte[] generate(final char[] password)
+  public byte[] generate(final char[] password, final int size)
   {
+    if (size < 1) {
+      throw new IllegalArgumentException("Size must be positive integer.");
+    }
     final PBEParametersGenerator generator = newParamGenerator();
     generator.init(toBytes(password), salt, iterationCount);
     final KeyParameter p =
-      (KeyParameter) generator.generateDerivedParameters(getKeyBitLength());
+      (KeyParameter) generator.generateDerivedParameters(size);
     return p.getKey();
   }
 
@@ -86,12 +89,4 @@ public abstract class AbstractPKCSKeyGenerator implements KeyGenerator
    * @return  Password bytes.
    */
   protected abstract byte[] toBytes(char[] password);
-
-
-  /**
-   * Gets the size of the derived key.
-   *
-   * @return  Derived key length in bits.
-   */
-  protected abstract int getKeyBitLength();
 }

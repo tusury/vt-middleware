@@ -285,6 +285,17 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
 
 
   /**
+   * Determines whether the cipher has been provided with iv data.
+   *
+   * @return  True if an IV has been provided to the cipher, false otherwise.
+   */
+  public boolean hasIV()
+  {
+    return iv != null && iv.length > 0;
+  }
+
+
+  /**
    * Gets a random initialization vector whose size is equal to the underlying
    * cipher's block size.
    *

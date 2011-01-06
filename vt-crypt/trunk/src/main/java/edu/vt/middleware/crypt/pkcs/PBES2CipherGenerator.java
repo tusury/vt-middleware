@@ -19,6 +19,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.RC2ParameterSpec;
 import javax.crypto.spec.RC5ParameterSpec;
 
+import edu.vt.middleware.crypt.symmetric.RC2;
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 import edu.vt.middleware.crypt.util.DERHelper;
 
@@ -63,25 +64,11 @@ public class PBES2CipherGenerator
     case RC2:
       pSeq = (DERSequence) parms;
       int effectiveBits = 32;
-      int encoded;
       int idx = 0;
       if (pSeq.size() > 1) {
         idx = 1;
-        encoded = DERHelper.asInt(pSeq.getObjectAt(0));
-        switch (encoded)
-        {
-        case 160:
-          effectiveBits = 40;
-          break;
-        case 120:
-          effectiveBits = 64;
-          break;
-        case 58:
-          effectiveBits = 128;
-          break;
-        default:
-          effectiveBits = encoded;
-        }
+        effectiveBits = RC2.getEffectiveBits(
+            DERHelper.asInt(pSeq.getObjectAt(0)));
         algParamSpec = new RC2ParameterSpec(
             effectiveBits, DERHelper.asOctets(pSeq.getObjectAt(idx)));
       }

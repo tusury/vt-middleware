@@ -13,8 +13,6 @@
 */
 package edu.vt.middleware.crypt.pbe;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 
 /**
@@ -24,7 +22,8 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
  * @version $Revision$
  *
  */
-public class OpenSSLEncryptionScheme extends AbstractEncryptionScheme
+public class OpenSSLEncryptionScheme
+  extends AbstractVariableKeySizeEncryptionScheme
 {
   /**
    * Creates a new instance using the given parameters.
@@ -38,8 +37,9 @@ public class OpenSSLEncryptionScheme extends AbstractEncryptionScheme
   public OpenSSLEncryptionScheme(
       final SymmetricAlgorithm alg, final byte[] salt, final int keyBitLength)
   {
-    this.generator = new OpenSSLKeyGenerator(keyBitLength, salt);
-    this.cipher = alg;
+    setCipher(alg);
+    setGenerator(new OpenSSLKeyGenerator(salt));
+    setKeyLength(keyBitLength);
   }
 
 
@@ -57,7 +57,6 @@ public class OpenSSLEncryptionScheme extends AbstractEncryptionScheme
     final String alg;
     String mode = "CBC";
     String padding = "PKCS5Padding";
-    final int keyBitLength;
     if (algId.endsWith("-CFB")) {
       mode = "CFB";
       padding = "NoPadding";
@@ -69,27 +68,27 @@ public class OpenSSLEncryptionScheme extends AbstractEncryptionScheme
     }
     if (algId.startsWith("DES-EDE3")) {
       alg = "DESede";
-      keyBitLength = 192;
+      setKeyLength(192);
     } else if (algId.startsWith("DES")) {
       alg = "DES";
-      keyBitLength = 64;
+      setKeyLength(64);
     } else if (algId.startsWith("RC2")) {
       alg = "RC2";
       if (algId.startsWith("RC2-40")) {
-        keyBitLength = 40;
+        setKeyLength(40);
       } else if (algId.startsWith("RC2-64")) {
-        keyBitLength = 64;
+        setKeyLength(64);
       } else {
-        keyBitLength = 128;
+        setKeyLength(128);
       }
     } else if (algId.startsWith("AES")) {
       alg = "AES";
       if (algId.startsWith("AES-128")) {
-        keyBitLength = 128;
+        setKeyLength(128);
       } else if (algId.startsWith("AES-192")) {
-        keyBitLength = 192;
+        setKeyLength(192);
       } else if (algId.startsWith("AES-256")) {
-        keyBitLength = 256;
+        setKeyLength(256);
       } else {
         throw new IllegalArgumentException("Unknown AES cipher " + algId);
       }
@@ -101,16 +100,8 @@ public class OpenSSLEncryptionScheme extends AbstractEncryptionScheme
       salt = new byte[8];
       System.arraycopy(iv, 0, salt, 0, 8);
     }
-    this.cipher = SymmetricAlgorithm.newInstance(alg, mode, padding);
+    setCipher(SymmetricAlgorithm.newInstance(alg, mode, padding));
+    setGenerator(new OpenSSLKeyGenerator(salt));
     this.cipher.setIV(iv);
-    this.generator = new OpenSSLKeyGenerator(keyBitLength, salt);
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initCipher(final byte[] derivedKey)
-  {
-    cipher.setKey(new SecretKeySpec(derivedKey, cipher.getAlgorithm()));
   }
 }

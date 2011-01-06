@@ -31,9 +31,6 @@ public class PKCS12KeyGenerator extends AbstractPKCSKeyGenerator
   /** Digest algorithm. */
   private DigestAlgorithm digest;
 
-  /** Size of derived key in bits. */
-  private int derivedKeyLength;
-
 
   /**
    * Creates a new instance that uses the given digest for the pseudorandom
@@ -42,13 +39,11 @@ public class PKCS12KeyGenerator extends AbstractPKCSKeyGenerator
    * @param  prf  Pseudorandom function digest.
    * @param  saltBytes  Key derivation function salt bytes.
    * @param  iterations  Key derivation function iteration count.
-   * @param  keyBitLength  Size of derived key in bits.
    */
   public PKCS12KeyGenerator(
     final DigestAlgorithm prf,
     final byte[] saltBytes,
-    final int iterations,
-    final int keyBitLength)
+    final int iterations)
   {
     if (prf == null) {
       throw new IllegalArgumentException("Digest cannot be null.");
@@ -70,12 +65,5 @@ public class PKCS12KeyGenerator extends AbstractPKCSKeyGenerator
   protected byte[] toBytes(final char[] password)
   {
     return PBEParametersGenerator.PKCS12PasswordToBytes(password);
-  }
-
-
-  /** {@inheritDoc} */
-  protected int getKeyBitLength()
-  {
-    return derivedKeyLength;
   }
 }

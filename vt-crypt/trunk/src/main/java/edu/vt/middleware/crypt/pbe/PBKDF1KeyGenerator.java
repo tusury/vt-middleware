@@ -27,9 +27,6 @@ import org.bouncycastle.crypto.generators.PKCS5S1ParametersGenerator;
  */
 public class PBKDF1KeyGenerator extends AbstractPKCSKeyGenerator
 {
-  /** Derived key length in bits. */
-  public static final int DERIVED_KEY_BIT_LENGTH = 128;
-
   /** Digest algorithm. */
   private DigestAlgorithm digest;
 
@@ -79,12 +76,4 @@ public class PBKDF1KeyGenerator extends AbstractPKCSKeyGenerator
   {
     return PBEParametersGenerator.PKCS5PasswordToBytes(password);
   }
-
-
-  /** {@inheritDoc} */
-  protected int getKeyBitLength()
-  {
-    return DERIVED_KEY_BIT_LENGTH;
-  }
-
 }

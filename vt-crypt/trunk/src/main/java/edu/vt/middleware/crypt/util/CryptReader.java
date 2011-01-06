@@ -675,10 +675,10 @@ public class CryptReader
             (DERSequence) pbeSeq.getObjectAt(0));
         final PBES2CipherGenerator cipherGen = new PBES2CipherGenerator(
             (DERSequence) pbeSeq.getObjectAt(1));
-        if (kdfParms.getLength() <= 0) {
+        if (kdfParms.getLength() == 0) {
           kdfParms.setLength(cipherGen.getKeySize() / 8);
         }
-        scheme = new PBES2EncryptionScheme(kdfParms, cipherGen.generate());
+        scheme = new PBES2EncryptionScheme(cipherGen.generate(), kdfParms);
       } else {
         // Use PBES1 encryption scheme to decrypt key
         scheme = new PBES1EncryptionScheme(

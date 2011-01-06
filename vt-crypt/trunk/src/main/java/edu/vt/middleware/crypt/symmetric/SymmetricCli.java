@@ -15,14 +15,26 @@ package edu.vt.middleware.crypt.symmetric;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import edu.vt.middleware.crypt.AbstractEncryptionCli;
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.pbe.EncryptionScheme;
+import edu.vt.middleware.crypt.pbe.KeyGenerator;
+import edu.vt.middleware.crypt.pbe.OpenSSLEncryptionScheme;
+import edu.vt.middleware.crypt.pbe.OpenSSLKeyGenerator;
+import edu.vt.middleware.crypt.pbe.PBES1EncryptionScheme;
+import edu.vt.middleware.crypt.pbe.PBES2EncryptionScheme;
 import edu.vt.middleware.crypt.pbe.PBKDF1KeyGenerator;
 import edu.vt.middleware.crypt.pbe.PBKDF2KeyGenerator;
+import edu.vt.middleware.crypt.pbe.PKCS12EncryptionScheme;
+import edu.vt.middleware.crypt.pbe.PKCS12KeyGenerator;
+import edu.vt.middleware.crypt.pkcs.PBEParameter;
+import edu.vt.middleware.crypt.pkcs.PBKDF2Parameters;
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.util.CryptWriter;
 import edu.vt.middleware.crypt.util.HexConverter;
@@ -250,10 +262,15 @@ public class SymmetricCli extends AbstractEncryptionCli
       }
       encrypt(alg, getInputStream(line), getOutputStream(line));
     } else if (line.hasOption(OPT_PBE)) {
-      getPBEScheme(alg, line).encrypt(
-          line.getOptionValue(OPT_PBE).toCharArray(),
-          getInputStream(line),
-          getOutputStream(line));
+      final InputStream in = getInputStream(line);
+      final OutputStream out = getOutputStream(line);
+      try {
+        getPBEScheme(alg, line).encrypt(
+            line.getOptionValue(OPT_PBE).toCharArray(), in, out);
+      } finally {
+        closeStream(in);
+        closeStream(out);
+      }
     } else {
       throw new IllegalArgumentException(
         "Either -key or -pbe is required for encryption or decryption.");
@@ -281,10 +298,15 @@ public class SymmetricCli extends AbstractEncryptionCli
       }
       decrypt(alg, getInputStream(line), getOutputStream(line));
     } else if (line.hasOption(OPT_PBE)) {
-      getPBEScheme(alg, line).decrypt(
-          line.getOptionValue(OPT_PBE).toCharArray(),
-          getInputStream(line),
-          getOutputStream(line));
+      final InputStream in = getInputStream(line);
+      final OutputStream out = getOutputStream(line);
+      try {
+        getPBEScheme(alg, line).decrypt(
+            line.getOptionValue(OPT_PBE).toCharArray(), in, out);
+      } finally {
+        closeStream(in);
+        closeStream(out);
+      }
     } else {
       throw new IllegalArgumentException(
         "Either -key or -pbe is required for encryption or decryption.");
@@ -364,48 +386,60 @@ public class SymmetricCli extends AbstractEncryptionCli
     final byte[] salt = hexConv.toBytes(line.getOptionValue(OPT_SALT));
     final int iterations = Integer.parseInt(
         line.getOptionValue(OPT_ITERATIONS));
+    final int keySize = line.hasOption(OPT_KEYSIZE) ?
+        Integer.parseInt(line.getOptionValue(OPT_KEYSIZE)) :
+        -1;
+    final KeyGenerator generator;
     final byte[] derivedKey;
+    final byte[] derivedIV;
     if ("pkcs12".equals(pbeScheme)) {
       if (digest == null) {
+        throw new IllegalArgumentException("pkcs12 requires a digest.");
+      }
+      if (keySize < 0) {
         throw new IllegalArgumentException(
-          "pkcs12 requires a digest algorithm");
+          "Key size is required for pkcs5s2 PBE key generation.");
       }
       System.err.println("Generating PKCS#12 PBE key.");
-      derivedKey = null;
+      generator = new PKCS12KeyGenerator(digest, salt, iterations);
+      derivedKey = generator.generate(pass, keySize);
+      derivedIV = generator.generate(pass, alg.getBlockSize() * 8);
     } else if ("pkcs5s1".equals(pbeScheme)) {
       if (digest == null) {
-        throw new IllegalArgumentException(
-          "pkcs5s1 requires a digest algorithm");
+        throw new IllegalArgumentException("pkcs5s1 requires a digest.");
       }
-      if (line.hasOption(OPT_IV)) {
-        System.err.println("Ignoring iv for pkcs5s1 PBE scheme.");
-      }
-      System.err.println("Generating PKCS#5 v1 PBE key.");
-      derivedKey = new PBKDF1KeyGenerator(
-          digest, salt, iterations).generate(pass);
+      System.err.println("Generating PKCS#5 PBE key using PBKDF1 scheme.");
+      generator = new PBKDF1KeyGenerator(digest, salt, iterations);
+      final byte[] keyWithIV = generator.generate(pass, 128);
+      derivedKey = new byte[8];
+      derivedIV = new byte[8];
+      System.arraycopy(keyWithIV, 0, derivedKey, 0, 8);
+      System.arraycopy(keyWithIV, 8, derivedIV, 0, 16);
     } else if ("openssl".equals(pbeScheme)) {
+      if (keySize < 0) {
+        throw new IllegalArgumentException(
+          "Key size is required for pkcs5s2 PBE key generation.");
+      }
       System.err.println("Generating OpenSSL PBE key.");
-      derivedKey = null;
+      generator = new OpenSSLKeyGenerator(salt);
+      derivedKey = generator.generate(pass, keySize);
+      derivedIV = generator.generate(pass, alg.getBlockSize() * 8);
     } else {
       // Default is pkcs5s2
       if (digest != null) {
         System.err.println("Ignoring digest for pkcs5s2 PBE scheme.");
       }
-      if (!line.hasOption(OPT_KEYSIZE)) {
+      if (keySize < 0) {
         throw new IllegalArgumentException(
           "Key size is required for pkcs5s2 PBE key generation.");
       }
-      if (!line.hasOption(OPT_IV)) {
-        throw new IllegalArgumentException(
-          "IV is required for pkcs5s2 PBE key generation.");
-      }
-      System.err.println("Generating PKCS#5 v2 PBE key.");
-      derivedKey = new PBKDF2KeyGenerator(
-          Integer.parseInt(line.getOptionValue(OPT_IV)),
-          salt,
-          iterations).generate(pass);
+      System.err.println("Generating PKCS#5 PBE key using PBKDF2 scheme.");
+      generator = new PBKDF2KeyGenerator(salt, iterations);
+      derivedKey = generator.generate(pass, keySize);
+      derivedIV = generator.generate(pass, alg.getBlockSize() * 8);
     }
-    System.err.println("Key: " + hexConv.fromBytes(derivedKey));
+    System.err.println("Derived key: " + hexConv.fromBytes(derivedKey));
+    System.err.println("Derived iv: " + hexConv.fromBytes(derivedIV));
     return new SecretKeySpec(derivedKey, alg.getAlgorithm());
   }
 
@@ -454,6 +488,74 @@ public class SymmetricCli extends AbstractEncryptionCli
     final SymmetricAlgorithm alg,
     final CommandLine line)
   {
-    return null;
+    if (!line.hasOption(OPT_SALT)) {
+      throw new IllegalArgumentException(
+        "Salt is required for PBE encryption/decryption.");
+    }
+    if (!line.hasOption(OPT_ITERATIONS)) {
+      throw new IllegalArgumentException(
+        "Iteration count is required for PBE encryption/decryption.");
+    }
+
+    DigestAlgorithm digest = null;
+    if (line.hasOption(OPT_DIGEST)) {
+      digest = DigestAlgorithm.newInstance(line.getOptionValue(OPT_DIGEST));
+    }
+
+    String scheme = null;
+    if (line.hasOption(OPT_SCHEME)) {
+      scheme = line.getOptionValue(OPT_SCHEME).toLowerCase();
+    }
+
+    final byte[] salt = hexConv.toBytes(line.getOptionValue(OPT_SALT));
+    final int iterations = Integer.parseInt(
+        line.getOptionValue(OPT_ITERATIONS));
+    final int keySize = line.hasOption(OPT_KEYSIZE) ?
+        Integer.parseInt(line.getOptionValue(OPT_KEYSIZE)) :
+        0;
+    final EncryptionScheme pbeScheme;
+    if ("pkcs12".equals(scheme)) {
+      if (digest == null) {
+        throw new IllegalArgumentException("pkcs12 requires a digest.");
+      }
+      if (keySize < 0) {
+        throw new IllegalArgumentException(
+          "Key size is required for pkcs5s2 PBE key generation.");
+      }
+      System.err.println("Using PKCS#12 PBE encryption scheme.");
+      pbeScheme = new PKCS12EncryptionScheme(
+          alg, digest, new PBEParameter(salt, iterations), keySize);
+    } else if ("pkcs5s1".equals(scheme)) {
+      if (digest == null) {
+        throw new IllegalArgumentException("pkcs12 requires a digest.");
+      }
+      System.err.println("Using PKCS#5 PBES1 encryption scheme.");
+      pbeScheme = new PBES1EncryptionScheme(
+          alg, digest, new PBEParameter(salt, iterations));
+    } else if ("openssl".equals(scheme)) {
+      if (keySize < 0) {
+        throw new IllegalArgumentException(
+          "Key size is required for pkcs5s2 PBE key generation.");
+      }
+      System.err.println("Using OpenSSL encryption scheme.");
+      pbeScheme = new OpenSSLEncryptionScheme(alg, salt, keySize);
+    } else {
+      // Default is pkcs5s2
+      if (digest != null) {
+        System.err.println("Ignoring digest for pkcs5s2 PBE scheme.");
+      }
+      if (keySize < 0) {
+        throw new IllegalArgumentException(
+          "Key size is required for pkcs5s2 PBE key generation.");
+      }
+      System.err.println("Using PKCS#5 PBES2 encryption scheme.");
+      pbeScheme = new PBES2EncryptionScheme(
+          alg, new PBKDF2Parameters(salt, iterations, keySize / 8));
+    }
+    if (line.hasOption(OPT_IV)) {
+      System.err.println("Using provided IV instead of generated value.");
+      alg.setIV(hexConv.toBytes(line.getOptionValue(OPT_IV)));
+    }
+    return pbeScheme;
   }
 }
