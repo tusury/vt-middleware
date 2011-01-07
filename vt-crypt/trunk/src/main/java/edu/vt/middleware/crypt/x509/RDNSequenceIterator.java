@@ -16,7 +16,7 @@ package edu.vt.middleware.crypt.x509;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.util.DERHelper;
 import edu.vt.middleware.crypt.x509.types.RelativeDistinguishedName;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
@@ -122,7 +122,7 @@ public class RDNSequenceIterator
   {
     DERObject obj;
     try {
-      obj = CryptReader.readEncodedBytes(data, false);
+      obj = DERHelper.toDERObject(data, false);
     } catch (IOException e) {
       throw new IllegalArgumentException(
         "Error creating ASN.1 sequence from encoded bytes.",

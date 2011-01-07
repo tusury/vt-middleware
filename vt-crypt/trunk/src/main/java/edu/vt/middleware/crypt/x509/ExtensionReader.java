@@ -18,7 +18,7 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import edu.vt.middleware.crypt.CryptException;
-import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.util.DERHelper;
 import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
 import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.BasicConstraints;
@@ -350,7 +350,7 @@ public final class ExtensionReader
       return null;
     }
     try {
-      return CryptReader.readEncodedBytes(data, true);
+      return DERHelper.toDERObject(data, true);
     } catch (IOException e) {
       throw new CryptException(
         "Error reading certificate extension " + type,

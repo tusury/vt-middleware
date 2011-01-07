@@ -13,8 +13,13 @@
 */
 package edu.vt.middleware.crypt.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERInteger;
+import org.bouncycastle.asn1.DERObject;
 import org.bouncycastle.asn1.DEROctetString;
 
 /**
@@ -60,5 +65,41 @@ public final class DERHelper
       throw new IllegalArgumentException("Argument must be DEROctetString.");
     }
     return ((DEROctetString) e).getOctets();
+  }
+
+
+  /**
+   * Attempts to create a Bouncy Castle <code>DERObject</code> from a byte array
+   * representing ASN.1 encoded data.
+   *
+   * @param  data  ASN.1 encoded data as byte array.
+   * @param  discardWrapper  In some cases the value of the encoded data may
+   * itself be encoded data, where the latter encoded data is desired. Recall
+   * ASN.1 data is of the form {TAG, SIZE, DATA}. Set this flag to true to skip
+   * the first two bytes, e.g. TAG and SIZE, and treat the remaining bytes as
+   * the encoded data.
+   *
+   * @return  DER object.
+   *
+   * @throws  IOException  On I/O errors.
+   */
+  public static DERObject toDERObject(
+    final byte[] data,
+    final boolean discardWrapper)
+    throws IOException
+  {
+    final ByteArrayInputStream inBytes = new ByteArrayInputStream(data);
+    int size = data.length;
+    if (discardWrapper) {
+      inBytes.skip(2);
+      size = data.length - 2;
+    }
+
+    final ASN1InputStream in = new ASN1InputStream(inBytes, size);
+    try {
+      return in.readObject();
+    } finally {
+      in.close();
+    }
   }
 }

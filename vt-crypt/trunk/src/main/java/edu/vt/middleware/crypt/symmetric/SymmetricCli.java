@@ -22,6 +22,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import edu.vt.middleware.crypt.AbstractEncryptionCli;
+import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.pbe.EncryptionScheme;
 import edu.vt.middleware.crypt.pbe.KeyGenerator;
@@ -451,10 +452,11 @@ public class SymmetricCli extends AbstractEncryptionCli
    *
    * @return  Symmetric encryption/decryption key.
    *
+   * @throws  CryptException  On cryptographic errors.
    * @throws  IOException  On IO errors.
    */
   protected SecretKey readKey(final CommandLine line)
-    throws IOException
+    throws CryptException, IOException
   {
     return
       CryptReader.readSecretKey(
