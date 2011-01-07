@@ -13,9 +13,5 @@
   <suppress checks="MagicNumber"
             files=".*Test\.java" />
   <suppress checks="MagicNumber"
-            files="OpenSSLEncryptionScheme\.java" />
-  <suppress checks="MagicNumber"
-            files="PBES2CipherGenerator\.java" />
-  <suppress checks="MagicNumber"
             files="PemHelper\.java" />
 </suppressions>
