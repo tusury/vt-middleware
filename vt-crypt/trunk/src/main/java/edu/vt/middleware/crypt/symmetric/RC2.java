@@ -29,7 +29,10 @@ public class RC2 extends SymmetricAlgorithm
   /** Algorithm name. */
   public static final String ALGORITHM = "RC2";
 
-  /** EKB table mentioned in RFC2268 section 6. */
+  /**
+   * EKB table mentioned in RFC2268 section 6.
+   * Maps effective bits to RC2Version code.
+   * */
   private static final int[] EFFECTIVE_BITS_TO_VERSION = new int[] {
     0xbd, 0x56, 0xea, 0xf2, 0xa2, 0xf1, 0xac, 0x2a,
     0xb0, 0x93, 0xd1, 0x9c, 0x1b, 0x33, 0xfd, 0xd0,
@@ -65,7 +68,7 @@ public class RC2 extends SymmetricAlgorithm
     0x29, 0x39, 0xb9, 0xe9, 0x4c, 0xff, 0x43, 0xab,
   };
 
-  /** Inverse mapping of RC2Version to effective bits. */
+  /** Inverse mapping of RC2Version code to effective bits. */
   private static final int[] VERSION_TO_EFFECTIVE_BITS = new int[256];
 
   /** Sets the effective key size in bits. */
@@ -105,9 +108,9 @@ public class RC2 extends SymmetricAlgorithm
 
 
   /**
-   * Gets the number of effective bits for a given RC2Version value.
+   * Gets the number of effective bits for a given RC2Version code.
    *
-   * @param  version  RC2Version value.
+   * @param  version  RC2Version code.
    *
    * @return  Number of effective bits for given version.
    */
@@ -122,12 +125,12 @@ public class RC2 extends SymmetricAlgorithm
 
 
   /**
-   * Gets the RC2Version identifier for a given effective bits value.
+   * Gets the RC2Version code for a given effective bits value.
    *
    * @param  effectiveBits  Effective bits corresponding to a particular
    * RC2Version encoded value.
    *
-   * @return  RC2Version for given effective bits.
+   * @return  RC2Version code for given effective bits.
    */
   public static int getVersion(final int effectiveBits)
   {
