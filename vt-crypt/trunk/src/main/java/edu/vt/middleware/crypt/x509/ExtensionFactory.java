@@ -15,6 +15,7 @@ package edu.vt.middleware.crypt.x509;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.vt.middleware.crypt.x509.types.AccessDescription;
 import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
 import edu.vt.middleware.crypt.x509.types.AccessMethod;
@@ -132,15 +133,15 @@ public final class ExtensionFactory
         break;
 
       default:
-        break;
+        throw new UnsupportedOperationException(type + " not yet supported.");
       }
     } catch (Exception e) {
       throw new IllegalArgumentException(
         String.format(
-          "%s is not compatible with %s.",
-          encodedExtension.getClass().getName(),
+          "Cannot create %s from %s",
           type,
-          e));
+          encodedExtension.getClass().getSimpleName()),
+          e);
     }
     return extension;
   }
