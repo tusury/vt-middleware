@@ -14,6 +14,7 @@
 package edu.vt.middleware.crypt.x509;
 
 import java.io.File;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,15 +70,15 @@ public class ExtensionReaderTest
   public Object[][] createCertificateTestData()
     throws Exception
   {
-    // VT User CA client certificate
-    final File testCert1 = new File(RESOURCE_DIR, "serac-dev-test-cert.pem");
+    // VT DEV User CA client certificate
+    final File testCert1 = new File(RESOURCE_DIR, "marvin.pem");
     final Map<ExtensionType, Object> extMap1 =
       new HashMap<ExtensionType, Object>();
     extMap1.put(
       ExtensionType.SubjectAlternativeName,
       new GeneralNameList(
         new GeneralName[] {
-          new GeneralName("eprov@vt.edu", GeneralNameType.RFC822Name),
+          new GeneralName("serac@vt.edu", GeneralNameType.RFC822Name),
         }));
     extMap1.put(ExtensionType.BasicConstraints, new BasicConstraints(false));
 
@@ -87,7 +88,7 @@ public class ExtensionReaderTest
       new PolicyInformation(
         "1.3.6.1.4.1.6760.5.2.2.4.1",
         new PolicyQualifierInfo[] {
-          new PolicyQualifierInfo("http://www.pki.vt.edu/vtuca/cps/index.html"),
+          new PolicyQualifierInfo("http://www.pki.vt.edu/vtc1sca/cps/"),
         }),
       new PolicyInformation("1.3.6.1.4.1.6760.5.2.2.3.1"),
     };
@@ -97,12 +98,12 @@ public class ExtensionReaderTest
     extMap1.put(
       ExtensionType.SubjectKeyIdentifier,
       new KeyIdentifier(
-        "25:48:2F:28:EC:5D:19:BB:1D:25:AE:94:93:B1:7B:B5:35:96:24:66"));
+        "FF:39:94:8A:03:97:04:D2:34:8E:79:0A:F9:5A:36:A2:EF:9B:FC:07"));
     extMap1.put(
       ExtensionType.AuthorityKeyIdentifier,
       new AuthorityKeyIdentifier(
         new KeyIdentifier(
-          "38:E0:6F:AE:48:ED:5E:23:F6:22:9B:1E:E7:9C:19:16:47:B8:7E:92")));
+          "B2:25:DC:8A:4D:E6:55:53:DC:D5:1A:65:11:D0:73:98:AF:9E:7F:07")));
     extMap1.put(
       ExtensionType.KeyUsage,
       new KeyUsage(
@@ -118,6 +119,21 @@ public class ExtensionReaderTest
           KeyPurposeId.ClientAuth,
           KeyPurposeId.SmartCardLogin,
         }));
+    extMap1.put(
+        ExtensionType.CRLDistributionPoints,
+        new DistributionPointList(
+          Collections.singletonList(
+            new DistributionPoint(
+              new GeneralNameList(
+                Collections.singletonList(
+                  new GeneralName(
+                    "http://balamood2.cc.vt.edu:8080/ejbca/publicweb/webdist/" +
+                      "certdist?cmd=crl&issuer=CN=DEV Virginia Tech User CA" +
+                      ",O=Virginia Polytechnic Institute and State University" +
+                      ",DC=vt,DC=edu,C=US",
+                    GeneralNameType.UniformResourceIdentifier))),
+              null,
+              null))));
 
 
     // Thawte Premium Server CA cert
@@ -221,8 +237,15 @@ public class ExtensionReaderTest
   {
     logger.info("Testing read all extended attributes from " + certFile);
 
-    final ExtensionReader reader = new ExtensionReader(
-      (X509Certificate) CryptReader.readCertificate(certFile));
+    final Certificate cert = CryptReader.readCertificate(certFile);
+
+    /*
+    logger.info("DER dump of " + certFile + ":\n\n" +
+      ASN1Dump.dumpAsString(
+        new ASN1InputStream(cert.getEncoded()).readObject()));
+    */
+
+    final ExtensionReader reader = new ExtensionReader((X509Certificate) cert);
     final Map<ExtensionType, Object> actualExtensionMap = reader.readAll();
 
     logger.info("Attributes found:");

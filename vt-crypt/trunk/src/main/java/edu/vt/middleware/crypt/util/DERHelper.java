@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DEREncodable;
 import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERObject;
@@ -73,11 +74,9 @@ public final class DERHelper
    * representing ASN.1 encoded data.
    *
    * @param  data  ASN.1 encoded data as byte array.
-   * @param  discardWrapper  In some cases the value of the encoded data may
-   * itself be encoded data, where the latter encoded data is desired. Recall
-   * ASN.1 data is of the form {TAG, SIZE, DATA}. Set this flag to true to skip
-   * the first two bytes, e.g. TAG and SIZE, and treat the remaining bytes as
-   * the encoded data.
+   * @param  discardWrapper Set to true to decode the octets of a DER octet
+   * string as DER encoded data, thereby discarding the wrapping DER octet
+   * string, false otherwise.  Has no effect on other types of DER-encoded data.
    *
    * @return  DER object.
    *
@@ -88,16 +87,13 @@ public final class DERHelper
     final boolean discardWrapper)
     throws IOException
   {
-    final ByteArrayInputStream inBytes = new ByteArrayInputStream(data);
-    int size = data.length;
-    if (discardWrapper) {
-      inBytes.skip(2);
-      size = data.length - 2;
-    }
-
-    final ASN1InputStream in = new ASN1InputStream(inBytes, size);
+    final ByteArrayInputStream in = new ByteArrayInputStream(data);
     try {
-      return in.readObject();
+      DERObject o = new ASN1InputStream(in).readObject();
+      if (discardWrapper && o instanceof ASN1OctetString) {
+        o = new ASN1InputStream(((ASN1OctetString) o).getOctets()).readObject();
+      }
+      return o;
     } finally {
       in.close();
     }
