@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -22,12 +22,12 @@ import edu.vt.middleware.crypt.symmetric.AlgorithmSpec;
 /**
  * Password-based encryption algorithms defined in PKCS#5 for PBES1 scheme.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public enum PBES1Algorithm
 {
+
   /** PBES1 encryption method with MD2 hash and DES CBC cipher. */
   PbeWithMD2AndDES_CBC(
     "1.2.840.113549.1.5.1",
@@ -42,9 +42,9 @@ public enum PBES1Algorithm
 
   /** PBES1 encryption method with MD5 hash and DES CBC cipher. */
   PbeWithMD5AndDES_CBC(
-      "1.2.840.113549.1.5.3",
-      new AlgorithmSpec("DES", "CBC", "PKCS5Padding"),
-      new MD5()),
+    "1.2.840.113549.1.5.3",
+    new AlgorithmSpec("DES", "CBC", "PKCS5Padding"),
+    new MD5()),
 
   /** PBES1 encryption method with MD5 hash and RC2 CBC cipher. */
   PbeWithMD5AndRC2_CBC(
@@ -65,13 +65,13 @@ public enum PBES1Algorithm
     new SHA1());
 
 
-  /** Algorithm identifier OID */
+  /** Algorithm identifier OID. */
   private String oid;
 
   /** Cipher algorithm specification. */
   private AlgorithmSpec spec;
 
-  /** Digest algorithm used for pseudo-random function */
+  /** Digest algorithm used for pseudo-random function. */
   private DigestAlgorithm digest;
 
 
@@ -83,9 +83,9 @@ public enum PBES1Algorithm
    * @param  prf  Digest used for pseudorandom function.
    */
   PBES1Algorithm(
-      final String id,
-      final AlgorithmSpec cipherSpec,
-      final DigestAlgorithm prf)
+    final String id,
+    final AlgorithmSpec cipherSpec,
+    final DigestAlgorithm prf)
   {
     this.oid = id;
     this.spec = cipherSpec;
@@ -113,27 +113,21 @@ public enum PBES1Algorithm
   }
 
 
-  /**
-   * @return  the oid
-   */
+  /** @return  the oid */
   public String getOid()
   {
     return oid;
   }
 
 
-  /**
-   * @return  Cipher algorithm specification.
-   */
+  /** @return  Cipher algorithm specification. */
   public AlgorithmSpec getSpec()
   {
     return spec;
   }
 
 
-  /**
-   * @return  Digest algorithm.
-   */
+  /** @return  Digest algorithm. */
   public DigestAlgorithm getDigest()
   {
     return digest;

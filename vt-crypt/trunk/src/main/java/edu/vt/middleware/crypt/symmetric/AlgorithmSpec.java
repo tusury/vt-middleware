@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -17,12 +17,12 @@ package edu.vt.middleware.crypt.symmetric;
  * Describes a symmetric cipher algorithm in terms of a (name, mode, padding)
  * tuple.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class AlgorithmSpec
 {
+
   /** Cipher algorithm name. */
   private String name;
 
@@ -52,9 +52,9 @@ public class AlgorithmSpec
    * @param  cipherPadding  Cipher padding scheme name.
    */
   public AlgorithmSpec(
-      final String algorithm,
-      final String cipherMode,
-      final String cipherPadding)
+    final String algorithm,
+    final String cipherMode,
+    final String cipherPadding)
   {
     this.name = algorithm;
     this.mode = cipherMode;

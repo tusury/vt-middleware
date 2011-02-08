@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,7 +14,6 @@
 package edu.vt.middleware.crypt.pbe;
 
 import javax.crypto.spec.SecretKeySpec;
-
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.pkcs.PBEParameter;
 import edu.vt.middleware.crypt.pkcs.PBES1Algorithm;
@@ -23,12 +22,12 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 /**
  * Implements the PBES1 encryption scheme defined in PKCS#5v2.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PBES1EncryptionScheme extends AbstractEncryptionScheme
 {
+
   /** Number of bytes (octets) in derived key. */
   public static final int KEY_LENGTH = 8;
 
@@ -49,12 +48,14 @@ public class PBES1EncryptionScheme extends AbstractEncryptionScheme
    * @param  params  Key generation function salt and iteration count.
    */
   public PBES1EncryptionScheme(
-      final PBES1Algorithm alg,
-      final PBEParameter params)
+    final PBES1Algorithm alg,
+    final PBEParameter params)
   {
     setCipher(SymmetricAlgorithm.newInstance(alg.getSpec()));
     generator = new PBKDF1KeyGenerator(
-        alg.getDigest(), params.getSalt(), params.getIterationCount());
+      alg.getDigest(),
+      params.getSalt(),
+      params.getIterationCount());
   }
 
 
@@ -66,13 +67,14 @@ public class PBES1EncryptionScheme extends AbstractEncryptionScheme
    * @param  params  Key generation function salt and iteration count.
    */
   public PBES1EncryptionScheme(
-      final SymmetricAlgorithm alg,
-      final DigestAlgorithm digest,
-      final PBEParameter params)
+    final SymmetricAlgorithm alg,
+    final DigestAlgorithm digest,
+    final PBEParameter params)
   {
     boolean valid = false;
     for (PBES1Algorithm a : PBES1Algorithm.values()) {
-      if (a.getDigest().getAlgorithm().equals(digest.getAlgorithm()) &&
+      if (
+        a.getDigest().getAlgorithm().equals(digest.getAlgorithm()) &&
           a.getSpec().getName().equals(alg.getAlgorithm()) &&
           a.getSpec().getMode().equals(alg.getMode()) &&
           a.getSpec().getPadding().equals(alg.getPadding())) {
@@ -85,7 +87,9 @@ public class PBES1EncryptionScheme extends AbstractEncryptionScheme
     }
     setCipher(alg);
     generator = new PBKDF1KeyGenerator(
-        digest, params.getSalt(), params.getIterationCount());
+      digest,
+      params.getSalt(),
+      params.getIterationCount());
   }
 
 

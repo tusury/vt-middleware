@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -16,7 +16,6 @@ package edu.vt.middleware.crypt.io;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import edu.vt.middleware.crypt.CryptException;
 
 /**
@@ -24,12 +23,12 @@ import edu.vt.middleware.crypt.CryptException;
  *
  * @param  <T>  Type of credential to read.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public interface CredentialReader<T>
 {
+
   /**
    * Reads a credential, commonly in encoded format, from the given file.
    *
@@ -41,12 +40,13 @@ public interface CredentialReader<T>
    * @throws  CryptException  On cryptography errors such as invalid formats,
    * unsupported ciphers, illegal settings.
    */
-  T read(File file) throws IOException, CryptException;
+  T read(File file)
+    throws IOException, CryptException;
 
 
   /**
-   * Reads a credential, commonly in encoded format, from the given
-   * input stream.
+   * Reads a credential, commonly in encoded format, from the given input
+   * stream.
    *
    * @param  in  Input stream from which to read credential.
    *
@@ -56,5 +56,6 @@ public interface CredentialReader<T>
    * @throws  CryptException  On cryptography errors such as invalid formats,
    * unsupported ciphers, illegal settings.
    */
-  T read(InputStream in) throws IOException, CryptException;
+  T read(InputStream in)
+    throws IOException, CryptException;
 }

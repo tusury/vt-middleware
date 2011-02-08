@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -16,21 +16,20 @@ package edu.vt.middleware.crypt.pbe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import edu.vt.middleware.crypt.CryptException;
 
 /**
  * Describes a password-based encryption scheme.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public interface EncryptionScheme
 {
+
   /**
-   * Encrypts the given plaintext bytes into a byte array of ciphertext using
-   * an encryption key derived from the password.
+   * Encrypts the given plaintext bytes into a byte array of ciphertext using an
+   * encryption key derived from the password.
    *
    * @param  password  Basis for encryption.
    * @param  plaintext  Input plaintext bytes.
@@ -62,8 +61,8 @@ public interface EncryptionScheme
 
 
   /**
-   * Decrypts the given ciphertext bytes into a byte array of plaintext using
-   * a decryption key based on the given password.
+   * Decrypts the given ciphertext bytes into a byte array of plaintext using a
+   * decryption key based on the given password.
    *
    * @param  password  Basis for encryption.
    * @param  ciphertext  Input ciphertext bytes.

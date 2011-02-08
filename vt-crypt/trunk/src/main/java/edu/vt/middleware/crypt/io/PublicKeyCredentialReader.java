@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -15,27 +15,26 @@ package edu.vt.middleware.crypt.io;
 
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
-
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEREncodable;
 
 /**
- * Reads encoded public keys in X.509 public key format.  Both PEM and DER
+ * Reads encoded public keys in X.509 public key format. Both PEM and DER
  * encodings are supported.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PublicKeyCredentialReader
   extends AbstractEncodedCredentialReader<PublicKey>
 {
+
   /** {@inheritDoc} */
-  protected PublicKey decode(final byte[] encoded) throws CryptException
+  protected PublicKey decode(final byte[] encoded)
+    throws CryptException
   {
     try {
       final ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(encoded);
@@ -48,9 +47,10 @@ public class PublicKeyCredentialReader
         algorithm = "DSA";
       } else {
         throw new CryptException(
-            "Unsupported public key algorithm ID " + algId);
+          "Unsupported public key algorithm ID " + algId);
       }
-      return CryptProvider.getKeyFactory(algorithm).generatePublic(
+      return
+        CryptProvider.getKeyFactory(algorithm).generatePublic(
           new X509EncodedKeySpec(encoded));
     } catch (Exception e) {
       throw new CryptException("Invalid public key.", e);

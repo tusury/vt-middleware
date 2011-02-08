@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -132,6 +132,7 @@ public class SignatureCliTest
 
       // Write signature out to file for use in verify step
       new File(TEST_OUTPUT_DIR).mkdir();
+
       final File sigFile = new File(TEST_OUTPUT_DIR + "sig.out");
       final BufferedOutputStream sigOs = new BufferedOutputStream(
         new FileOutputStream(sigFile));

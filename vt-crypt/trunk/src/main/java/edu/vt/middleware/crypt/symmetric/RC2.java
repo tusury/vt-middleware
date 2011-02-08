@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -14,7 +14,6 @@
 package edu.vt.middleware.crypt.symmetric;
 
 import java.security.spec.AlgorithmParameterSpec;
-
 import javax.crypto.spec.RC2ParameterSpec;
 
 /**
@@ -26,13 +25,14 @@ import javax.crypto.spec.RC2ParameterSpec;
 
 public class RC2 extends SymmetricAlgorithm
 {
+
   /** Algorithm name. */
   public static final String ALGORITHM = "RC2";
 
   /**
-   * EKB table mentioned in RFC2268 section 6.
-   * Maps effective bits to RC2Version code.
-   * */
+   * EKB table mentioned in RFC2268 section 6. Maps effective bits to RC2Version
+   * code.
+   */
   private static final int[] EFFECTIVE_BITS_TO_VERSION = new int[] {
     0xbd, 0x56, 0xea, 0xf2, 0xa2, 0xf1, 0xac, 0x2a,
     0xb0, 0x93, 0xd1, 0x9c, 0x1b, 0x33, 0xfd, 0xd0,
@@ -71,17 +71,18 @@ public class RC2 extends SymmetricAlgorithm
   /** Inverse mapping of RC2Version code to effective bits. */
   private static final int[] VERSION_TO_EFFECTIVE_BITS = new int[256];
 
-  /** Sets the effective key size in bits. */
-  private int effectiveKeyBits = -1;
 
-
-  /** Class initializer. */
-  static
-  {
+  /**
+   * Class initializer.
+   */
+  static {
     for (int i = 0; i < EFFECTIVE_BITS_TO_VERSION.length; i++) {
       VERSION_TO_EFFECTIVE_BITS[EFFECTIVE_BITS_TO_VERSION[i]] = i;
     }
   }
+
+  /** Sets the effective key size in bits. */
+  private int effectiveKeyBits = -1;
 
 
   /**
@@ -143,7 +144,7 @@ public class RC2 extends SymmetricAlgorithm
 
 
   /**
-   * Gets the effective key size in bits.  This is a parameter specific to the
+   * Gets the effective key size in bits. This is a parameter specific to the
    * RC2 cipher algorithm.
    *
    * @return  Effective key size in bits.
@@ -155,7 +156,7 @@ public class RC2 extends SymmetricAlgorithm
 
 
   /**
-   * Sets the effective key size in bits.  This is a parameter specific to the
+   * Sets the effective key size in bits. This is a parameter specific to the
    * RC2 cipher algorithm.
    *
    * @param  numBits  Effective key size in bits; MUST be positive integer.
@@ -164,7 +165,7 @@ public class RC2 extends SymmetricAlgorithm
   {
     if (numBits < 1) {
       throw new IllegalArgumentException(
-          "EffectiveKeyBits must be positive integer.");
+        "EffectiveKeyBits must be positive integer.");
     }
     this.effectiveKeyBits = numBits;
   }
@@ -180,9 +181,8 @@ public class RC2 extends SymmetricAlgorithm
     } else {
       // Use the number of bits in the key as effective bits
       // if it has not been explicitly set
-      final int effective = effectiveKeyBits < 0 ?
-          this.key.getEncoded().length * 8 :
-          effectiveKeyBits;
+      final int effective = effectiveKeyBits < 0
+        ? this.key.getEncoded().length * 8 : effectiveKeyBits;
       if (iv != null) {
         spec = new RC2ParameterSpec(effective, iv);
       } else {

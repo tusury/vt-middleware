@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -23,7 +23,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 import edu.vt.middleware.crypt.pbe.EncryptionScheme;
@@ -36,7 +35,6 @@ import edu.vt.middleware.crypt.pkcs.PBES2CipherGenerator;
 import edu.vt.middleware.crypt.pkcs.PBKDF2Parameters;
 import edu.vt.middleware.crypt.util.Convert;
 import edu.vt.middleware.crypt.util.PemHelper;
-
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.DERInteger;
 import org.bouncycastle.asn1.DERSequence;
@@ -46,20 +44,20 @@ import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
- * Reads encoded private keys in PKCS#8 or OpenSSL "traditional" format.  Both
+ * Reads encoded private keys in PKCS#8 or OpenSSL "traditional" format. Both
  * PEM and DER encodings are supported.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PrivateKeyCredentialReader
   extends AbstractEncodedCredentialReader<PrivateKey>
 {
+
   /**
    * Reads an encrypted private key in PKCS#8 or OpenSSL "traditional" format
-   * from a file into a {@link PrivateKey} object.  Both DER and PEM encoded
-   * keys are supported.
+   * from a file into a {@link PrivateKey} object. Both DER and PEM encoded keys
+   * are supported.
    *
    * @param  file  Private key file.
    * @param  password  Password to decrypt private key.
@@ -80,8 +78,8 @@ public class PrivateKeyCredentialReader
 
   /**
    * Reads an encrypted private key in PKCS#8 or OpenSSL "traditional" format
-   * from a file into a {@link PrivateKey} object.  Both DER and PEM encoded
-   * keys are supported.
+   * from a file into a {@link PrivateKey} object. Both DER and PEM encoded keys
+   * are supported.
    *
    * @param  in  Input stream containing private key data.
    * @param  password  Password to decrypt private key; MUST NOT be null.
@@ -102,7 +100,8 @@ public class PrivateKeyCredentialReader
 
 
   /** {@inheritDoc} */
-  protected PrivateKey decode(final byte[] encoded) throws CryptException
+  protected PrivateKey decode(final byte[] encoded)
+    throws CryptException
   {
     final KeySpec spec;
     final String algorithm;
@@ -143,36 +142,40 @@ public class PrivateKeyCredentialReader
       // DSA -> {version, p, q, g, pubExp, privExp}
       final DERSequence sequence = (DERSequence) o;
       if (sequence.size() == 9) {
-        logger.debug("Reading OpenSSL format RSA private key.");
+        if (logger.isDebugEnabled()) {
+          logger.debug("Reading OpenSSL format RSA private key.");
+        }
         algorithm = "RSA";
         try {
           spec = new RSAPrivateCrtKeySpec(
-              DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(3)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(4)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(6)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(7)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(8)).getValue());
+            DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(3)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(4)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(6)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(7)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(8)).getValue());
         } catch (Exception e) {
           throw new CryptException("Invalid RSA key.", e);
         }
       } else if (sequence.size() == 6) {
-        logger.debug("Reading OpenSSL format DSA private key.");
+        if (logger.isDebugEnabled()) {
+          logger.debug("Reading OpenSSL format DSA private key.");
+        }
         algorithm = "DSA";
         try {
           spec = new DSAPrivateKeySpec(
-              DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(3)).getValue());
+            DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(3)).getValue());
         } catch (Exception e) {
           throw new CryptException("Invalid DSA key.", e);
         }
       } else {
         throw new CryptException(
-            "Invalid OpenSSL traditional private key format.");
+          "Invalid OpenSSL traditional private key format.");
       }
     }
     try {
@@ -200,11 +203,15 @@ public class PrivateKeyCredentialReader
   {
     if (password == null || password.length == 0) {
       throw new IllegalArgumentException(
-          "Password is required for decrypting an encrypted private key.");
+        "Password is required for decrypting an encrypted private key.");
     }
+
     byte[] bytes = encrypted;
     if (PemHelper.isPem(encrypted)) {
-      logger.debug("Reading PEM encoded private key.");
+      if (logger.isDebugEnabled()) {
+        logger.debug("Reading PEM encoded private key.");
+      }
+
       final String pem = new String(encrypted, "ASCII");
       if (pem.contains(PemHelper.PROC_TYPE)) {
         bytes = decryptOpenSSLKey(pem, password);
@@ -229,7 +236,8 @@ public class PrivateKeyCredentialReader
    * @throws  CryptException  On key decryption errors.
    */
   private byte[] decryptOpenSSLKey(
-    final String encrypted, final char[] password)
+    final String encrypted,
+    final char[] password)
     throws CryptException
   {
     try {
@@ -256,26 +264,25 @@ public class PrivateKeyCredentialReader
    *
    * @throws  CryptException  On key decryption errors.
    */
-  private byte[] decryptPKCS8Key(
-    final byte[] encrypted, final char[] password)
+  private byte[] decryptPKCS8Key(final byte[] encrypted, final char[] password)
     throws CryptException
   {
     final EncryptionScheme scheme;
     try {
       final EncryptedPrivateKeyInfo ki = EncryptedPrivateKeyInfo.getInstance(
-          ASN1Object.fromByteArray(encrypted));
+        ASN1Object.fromByteArray(encrypted));
       final AlgorithmIdentifier alg = ki.getEncryptionAlgorithm();
       if (PKCSObjectIdentifiers.id_PBES2.equals(alg.getObjectId())) {
         // PBES2 has following parameters:
         // {
-        //    {id-PBKDF2, {salt, iterationCount, keyLength (optional)}}
-        //    {encryptionAlgorithmOid, iv}
+        // {id-PBKDF2, {salt, iterationCount, keyLength (optional)}}
+        // {encryptionAlgorithmOid, iv}
         // }
         final DERSequence pbeSeq = (DERSequence) alg.getParameters();
         final PBKDF2Parameters kdfParms = PBKDF2Parameters.decode(
-            (DERSequence) pbeSeq.getObjectAt(0));
+          (DERSequence) pbeSeq.getObjectAt(0));
         final PBES2CipherGenerator cipherGen = new PBES2CipherGenerator(
-            (DERSequence) pbeSeq.getObjectAt(1));
+          (DERSequence) pbeSeq.getObjectAt(1));
         if (kdfParms.getLength() == 0) {
           kdfParms.setLength(cipherGen.getKeySize() / 8);
         }
@@ -283,9 +290,8 @@ public class PrivateKeyCredentialReader
       } else {
         // Use PBES1 encryption scheme to decrypt key
         scheme = new PBES1EncryptionScheme(
-            PBES1Algorithm.fromOid(alg.getObjectId().getId()),
-            PBEParameter.decode(
-                (DERSequence) alg.getParameters()));
+          PBES1Algorithm.fromOid(alg.getObjectId().getId()),
+          PBEParameter.decode((DERSequence) alg.getParameters()));
       }
       return scheme.decrypt(password, ki.getEncryptedData());
     } catch (Exception e) {

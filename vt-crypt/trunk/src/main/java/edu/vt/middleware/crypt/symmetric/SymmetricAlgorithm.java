@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -119,7 +119,8 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
    */
   public static SymmetricAlgorithm newInstance(final AlgorithmSpec spec)
   {
-    return newInstance(
+    return
+      newInstance(
         spec.getName(),
         spec.getMode() != null ? spec.getMode() : DEFAULT_MODE,
         spec.getPadding() == null ? spec.getPadding() : DEFAULT_PADDING);
@@ -154,9 +155,12 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
           });
       } catch (Exception ex) {
         throw new IllegalArgumentException(
-            String.format("Invalid cipher %s/%s/%s",
-                cipherAlgorithm, cipherModeName, cipherPadding),
-            ex);
+          String.format(
+            "Invalid cipher %s/%s/%s",
+            cipherAlgorithm,
+            cipherModeName,
+            cipherPadding),
+          ex);
       }
     } else {
       // Search provider
@@ -276,9 +280,11 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
       throw new IllegalArgumentException("IV cannot be null.");
     }
     if (ivBytes.length != getBlockSize()) {
-      throw new IllegalArgumentException(String.format(
+      throw new IllegalArgumentException(
+        String.format(
           "IV length (%s) is not equal to block size (%s).",
-          ivBytes.length, getBlockSize()));
+          ivBytes.length,
+          getBlockSize()));
     }
     this.iv = ivBytes;
   }

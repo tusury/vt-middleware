@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,19 +14,18 @@
 package edu.vt.middleware.crypt.pkcs;
 
 import edu.vt.middleware.crypt.util.DERHelper;
-
 import org.bouncycastle.asn1.DERSequence;
 
 /**
  * Describes the PBKDF2-params type defined in PKCS#5v2.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PBKDF2Parameters extends PBEParameter
 {
-  /** Length of derived key in number of octets (bytes) */
+
+  /** Length of derived key in number of octets (bytes). */
   private int length;
 
 
@@ -50,7 +49,9 @@ public class PBKDF2Parameters extends PBEParameter
    * @param  keyByteLength  Size of derived key in bytes (octets).
    */
   public PBKDF2Parameters(
-      final byte[] saltBytes, final int iterations, final int keyByteLength)
+    final byte[] saltBytes,
+    final int iterations,
+    final int keyByteLength)
   {
     super(saltBytes, iterations);
     setLength(keyByteLength);
@@ -62,14 +63,14 @@ public class PBKDF2Parameters extends PBEParameter
    *
    * @param  params  PBKDF2 parameters as a DER sequence.
    *
-   * @return Equivalent instance of {@link PBKDF2Parameters}.
+   * @return  Equivalent instance of {@link PBKDF2Parameters}.
    */
   public static PBKDF2Parameters decode(final DERSequence params)
   {
     final DERSequence kdfSeq = (DERSequence) params.getObjectAt(1);
     final PBKDF2Parameters instance = new PBKDF2Parameters(
-        DERHelper.asOctets(kdfSeq.getObjectAt(0)),
-        DERHelper.asInt(kdfSeq.getObjectAt(1)));
+      DERHelper.asOctets(kdfSeq.getObjectAt(0)),
+      DERHelper.asInt(kdfSeq.getObjectAt(1)));
     if (kdfSeq.size() > 2) {
       instance.setLength(DERHelper.asInt(kdfSeq.getObjectAt(2)) * 8);
     }
@@ -97,7 +98,7 @@ public class PBKDF2Parameters extends PBEParameter
   {
     if (byteLength < 1) {
       throw new IllegalArgumentException(
-          "Key length must be positive integer.");
+        "Key length must be positive integer.");
     }
     this.length = byteLength;
   }
