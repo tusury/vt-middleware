@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -21,22 +21,20 @@ import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 
 /**
- * Reads collections of encoded X.509 certificates from a resource.
- * Both PEM and DER encodings are supported, as well as certificate chains in
- * PKCS#7 format.
+ * Reads collections of encoded X.509 certificates from a resource. Both PEM and
+ * DER encodings are supported, as well as certificate chains in PKCS#7 format.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class X509CertificatesCredentialReader
   implements CredentialReader<X509Certificate[]>
 {
+
   /** Certificate type. */
   private static final String CERTIFICATE_TYPE = "X.509";
 
@@ -54,8 +52,8 @@ public class X509CertificatesCredentialReader
     throws IOException, CryptException
   {
     try {
-      final CertificateFactory cf =
-        CryptProvider.getCertificateFactory(CERTIFICATE_TYPE);
+      final CertificateFactory cf = CryptProvider.getCertificateFactory(
+        CERTIFICATE_TYPE);
       return cf.generateCertificates(in).toArray(new X509Certificate[0]);
     } catch (CertificateException e) {
       throw new CryptException("Failed reading X.509 certificate.", e);

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -103,7 +103,7 @@ public class DNUtilsTest
 
   /**
    * @param  certFile  File containing X.509 certificate data.
-   * @param  attribute   Attribute to fetch.
+   * @param  attribute  Attribute to fetch.
    * @param  expectedValues  Expected attribute values.
    *
    * @throws  Exception  On test failure.
@@ -134,7 +134,7 @@ public class DNUtilsTest
 
   /**
    * @param  certFile  File containing X.509 certificate data.
-   * @param  attribute   Attribute to fetch.
+   * @param  attribute  Attribute to fetch.
    * @param  expectedValue  Expected attribute value.
    *
    * @throws  Exception  On test failure.

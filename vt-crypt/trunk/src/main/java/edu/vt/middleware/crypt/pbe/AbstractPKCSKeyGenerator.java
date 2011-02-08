@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -19,29 +19,26 @@ import org.bouncycastle.crypto.params.KeyParameter;
 /**
  * Base class for all PKCS key generators that use a key derivation function
  * that performs iterative hashing operations on a salted password.
- * <p>
- * For a key derivation function <em>f</em>, the following formula applies:
+ *
+ * <p>For a key derivation function <em>f</em>, the following formula applies:
  * <br>
- * <code>
- * derivedKey = f(password, salt, iterations)
- * </code>
+ * <code>derivedKey = f(password, salt, iterations)</code></p>
  *
- * <p>
- * Classes derived from this class are <em>NOT</em> thread safe.
+ * <p>Classes derived from this class are <em>NOT</em> thread safe.</p>
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public abstract class AbstractPKCSKeyGenerator implements KeyGenerator
 {
-  /** Default number of iterations taken from examples in PKCS#5v2 */
+
+  /** Default number of iterations taken from examples in PKCS#5v2. */
   public static final int DEFAULT_ITERATION_COUNT = 1000;
 
-  /** Key derifcation function salt */
+  /** Key derifcation function salt. */
   protected byte[] salt;
 
-  /** Key derifcation function iteration count */
+  /** Key derifcation function iteration count. */
   protected int iterationCount = DEFAULT_ITERATION_COUNT;
 
 
@@ -51,10 +48,12 @@ public abstract class AbstractPKCSKeyGenerator implements KeyGenerator
     if (size < 1) {
       throw new IllegalArgumentException("Size must be positive integer.");
     }
+
     final PBEParametersGenerator generator = newParamGenerator();
     generator.init(toBytes(password), salt, iterationCount);
-    final KeyParameter p =
-      (KeyParameter) generator.generateDerivedParameters(size);
+
+    final KeyParameter p = (KeyParameter) generator.generateDerivedParameters(
+      size);
     return p.getKey();
   }
 
@@ -62,7 +61,7 @@ public abstract class AbstractPKCSKeyGenerator implements KeyGenerator
   /**
    * Gets the key derivation function iteration count.
    *
-   * @param  count  Iteration count.  MUST be positive integer.
+   * @param  count  Iteration count. MUST be positive integer.
    */
   protected void setIterationCount(final int count)
   {

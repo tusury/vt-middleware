@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -19,27 +19,28 @@ import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
 /**
  * Implements the PBES2 encryption scheme defined in PKCS#5v2.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PBES2EncryptionScheme
   extends AbstractVariableKeySizeEncryptionScheme
 {
+
   /**
    * Creates a new instance with the given parameters.
    *
-   * @param  alg  Symmetric cipher algorithm used for encryption/decryption.
-   * The cipher is expected to be initialized with whatever initialization data
-   * is required for encryption/decryption, e.g. initialization vector.
+   * @param  alg  Symmetric cipher algorithm used for encryption/decryption. The
+   * cipher is expected to be initialized with whatever initialization data is
+   * required for encryption/decryption, e.g. initialization vector.
    * @param  params  Container for required salt, iterations, and key length.
    */
   public PBES2EncryptionScheme(
-      final SymmetricAlgorithm alg, final PBKDF2Parameters params)
+    final SymmetricAlgorithm alg,
+    final PBKDF2Parameters params)
   {
     setCipher(alg);
-    setGenerator(new PBKDF2KeyGenerator(
-        params.getSalt(), params.getIterationCount()));
+    setGenerator(
+      new PBKDF2KeyGenerator(params.getSalt(), params.getIterationCount()));
     setKeyLength(params.getLength() * 8);
   }
 }

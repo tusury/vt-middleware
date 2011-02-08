@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -22,12 +22,12 @@ import java.nio.channels.FileChannel;
 /**
  * Utility class with methods for common IO operations.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public final class IOHelper
 {
+
   /** Buffer size for stream reads. */
   private static final int BUFFER_SIZE = 1024;
 
@@ -45,11 +45,13 @@ public final class IOHelper
    *
    * @throws  IOException  On read errors.
    */
-  public static byte[] read(final InputStream in) throws IOException
+  public static byte[] read(final InputStream in)
+    throws IOException
   {
     final ByteArrayOutputStream out;
     try {
       out = new ByteArrayOutputStream();
+
       final byte[] buffer = new byte[BUFFER_SIZE];
       int count;
       while ((count = in.read(buffer)) > -1) {
@@ -63,7 +65,7 @@ public final class IOHelper
 
 
   /**
-   * Reads all data from the given file channel.  The channel is closed upon
+   * Reads all data from the given file channel. The channel is closed upon
    * completion.
    *
    * @param  channel  File channel to read.
@@ -72,7 +74,8 @@ public final class IOHelper
    *
    * @throws  IOException  On read errors.
    */
-  public static byte[] read(final FileChannel channel) throws IOException
+  public static byte[] read(final FileChannel channel)
+    throws IOException
   {
     final ByteBuffer buffer;
     try {
@@ -81,6 +84,7 @@ public final class IOHelper
     } finally {
       channel.close();
     }
+
     final byte[] result = new byte[buffer.flip().limit()];
     buffer.get(result);
     return result;

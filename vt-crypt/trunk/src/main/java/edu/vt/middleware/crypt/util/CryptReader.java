@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -21,9 +21,7 @@ import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
-
 import javax.crypto.SecretKey;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.io.PrivateKeyCredentialReader;
 import edu.vt.middleware.crypt.io.PublicKeyCredentialReader;
@@ -39,6 +37,7 @@ import edu.vt.middleware.crypt.io.X509CertificatesCredentialReader;
  */
 public class CryptReader
 {
+
   /** X.509 certificate type. */
   public static final String DEFAULT_CERTIFICATE_TYPE = "X.509";
 
@@ -127,8 +126,8 @@ public class CryptReader
 
   /**
    * Reads an encrypted private key in PKCS#8 or OpenSSL "traditional" format
-   * from a file into a {@link PrivateKey} object.  Both DER and PEM encoded
-   * keys are supported.
+   * from a file into a {@link PrivateKey} object. Both DER and PEM encoded keys
+   * are supported.
    *
    * @param  keyFile  Private key file.
    * @param  password  Password to decrypt private key.
@@ -139,7 +138,8 @@ public class CryptReader
    * @throws  IOException  On key read errors.
    */
   public static PrivateKey readPrivateKey(
-    final File keyFile, final char[] password)
+    final File keyFile,
+    final char[] password)
     throws CryptException, IOException
   {
     return new PrivateKeyCredentialReader().read(keyFile, password);
@@ -148,8 +148,8 @@ public class CryptReader
 
   /**
    * Reads an encrypted private key in PKCS#8 or OpenSSL "traditional" format
-   * from a file into a {@link PrivateKey} object.  Both DER and PEM encoded
-   * keys are supported.
+   * from a file into a {@link PrivateKey} object. Both DER and PEM encoded keys
+   * are supported.
    *
    * @param  keyStream  Input stream containing private key data.
    * @param  password  Password to decrypt private key; MUST NOT be null.
@@ -160,7 +160,8 @@ public class CryptReader
    * @throws  IOException  On key read errors.
    */
   public static PrivateKey readPrivateKey(
-    final InputStream keyStream, final char[] password)
+    final InputStream keyStream,
+    final char[] password)
     throws CryptException, IOException
   {
     return new PrivateKeyCredentialReader().read(keyStream, password);
@@ -271,8 +272,8 @@ public class CryptReader
    * @param  type  Type of certificate to read, e.g. X.509.
    *
    * @return  Certificate created from data read from stream.
-   * @throws  IOException  On read errors.
    *
+   * @throws  IOException  On read errors.
    * @throws  CryptException  On certificate read or format errors.
    */
   public static Certificate readCertificate(

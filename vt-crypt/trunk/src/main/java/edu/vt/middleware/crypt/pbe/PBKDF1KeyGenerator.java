@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,19 +14,18 @@
 package edu.vt.middleware.crypt.pbe;
 
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
-
 import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.generators.PKCS5S1ParametersGenerator;
 
 /**
  * Implements the PBKDF1 key generation function defined in PKCS#5v2.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PBKDF1KeyGenerator extends AbstractPKCSKeyGenerator
 {
+
   /** Digest algorithm. */
   private DigestAlgorithm digest;
 
@@ -53,7 +52,9 @@ public class PBKDF1KeyGenerator extends AbstractPKCSKeyGenerator
    * @param  iterations  Key derivation function iteration count.
    */
   public PBKDF1KeyGenerator(
-      final DigestAlgorithm prf, final byte[] saltBytes, final int iterations)
+    final DigestAlgorithm prf,
+    final byte[] saltBytes,
+    final int iterations)
   {
     if (prf == null) {
       throw new IllegalArgumentException("Digest cannot be null.");

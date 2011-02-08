@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -20,13 +20,13 @@ import javax.crypto.spec.SecretKeySpec;
  * perform encryption, e.g. the PBES2 encryption scheme described in PKCS#5v2
  * and the PKCS#12 PBE scheme.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public abstract class AbstractVariableKeySizeEncryptionScheme
   extends AbstractEncryptionScheme
 {
+
   /** Key generator. */
   private KeyGenerator generator;
 
@@ -43,7 +43,7 @@ public abstract class AbstractVariableKeySizeEncryptionScheme
   {
     if (l < 1) {
       throw new IllegalArgumentException(
-          "Derived key length must be positive integer.");
+        "Derived key length must be positive integer.");
     }
     this.keyLength = l;
   }

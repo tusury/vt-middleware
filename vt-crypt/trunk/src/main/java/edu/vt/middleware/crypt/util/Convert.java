@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -37,10 +37,10 @@ public final class Convert
   /** Default character set. */
   public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-  /** For hex-byte conversions */
+  /** For hex-byte conversions. */
   private static final HexConverter HEX_CONVERTER = new HexConverter();
 
-  /** For base64-byte conversions */
+  /** For base64-byte conversions. */
   private static final Base64Converter B64_CONVERTER = new Base64Converter();
 
 

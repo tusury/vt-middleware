@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -21,6 +21,7 @@ package edu.vt.middleware.crypt.pbe;
  */
 public interface KeyGenerator
 {
+
   /**
    * Generates a symmetric key from a password for use in password-based
    * encryption schemes.

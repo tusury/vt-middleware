@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -15,7 +15,6 @@ package edu.vt.middleware.crypt.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DEREncodable;
@@ -27,12 +26,12 @@ import org.bouncycastle.asn1.DEROctetString;
  * Utility class with methods to facilitate common operations on BouncyCastle
  * DEREncodable objects.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public final class DERHelper
 {
+
   /** Hidden constructor of utility class. */
   private DERHelper() {}
 
@@ -74,9 +73,9 @@ public final class DERHelper
    * representing ASN.1 encoded data.
    *
    * @param  data  ASN.1 encoded data as byte array.
-   * @param  discardWrapper Set to true to decode the octets of a DER octet
+   * @param  discardWrapper  Set to true to decode the octets of a DER octet
    * string as DER encoded data, thereby discarding the wrapping DER octet
-   * string, false otherwise.  Has no effect on other types of DER-encoded data.
+   * string, false otherwise. Has no effect on other types of DER-encoded data.
    *
    * @return  DER object.
    *

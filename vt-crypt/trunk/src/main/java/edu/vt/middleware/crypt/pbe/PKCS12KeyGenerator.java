@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,20 +14,19 @@
 package edu.vt.middleware.crypt.pbe;
 
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
-
 import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.generators.PKCS12ParametersGenerator;
 
 /**
- * Implements the password-based key generation function defined in section B
- * of PKCS#12.
+ * Implements the password-based key generation function defined in section B of
+ * PKCS#12.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PKCS12KeyGenerator extends AbstractPKCSKeyGenerator
 {
+
   /** Digest algorithm. */
   private DigestAlgorithm digest;
 

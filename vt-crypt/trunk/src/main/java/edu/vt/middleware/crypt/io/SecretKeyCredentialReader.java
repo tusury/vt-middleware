@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -17,28 +17,26 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
 import edu.vt.middleware.crypt.CryptException;
 
 /**
  * Reads symmetric algorithm secret keys.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class SecretKeyCredentialReader implements CredentialReader<SecretKey>
 {
+
   /** Secret key algorithm. */
   private final String algorithm;
 
 
   /**
-   * Creates a new instance that can read keys for the given symmetric
-   * cipher algorithm.
+   * Creates a new instance that can read keys for the given symmetric cipher
+   * algorithm.
    *
    * @param  cipherAlgorithm  Cipher algorithm name, e.g. AES.
    */
@@ -49,7 +47,8 @@ public class SecretKeyCredentialReader implements CredentialReader<SecretKey>
 
 
   /** {@inheritDoc} */
-  public SecretKey read(final File file) throws IOException, CryptException
+  public SecretKey read(final File file)
+    throws IOException, CryptException
   {
     final byte[] data = IOHelper.read(new FileInputStream(file).getChannel());
     try {
@@ -61,7 +60,8 @@ public class SecretKeyCredentialReader implements CredentialReader<SecretKey>
 
 
   /** {@inheritDoc} */
-  public SecretKey read(final InputStream in) throws IOException, CryptException
+  public SecretKey read(final InputStream in)
+    throws IOException, CryptException
   {
     final byte[] data = IOHelper.read(in);
     try {

@@ -1,12 +1,12 @@
 /*
   $Id$
 
-  Copyright (C) 2008-2009 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
-  Author:  Middleware
+  Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
   Updated: $Date$
@@ -14,23 +14,22 @@
 package edu.vt.middleware.crypt.pkcs;
 
 import edu.vt.middleware.crypt.util.DERHelper;
-
 import org.bouncycastle.asn1.DERSequence;
 
 /**
- * Describes the PBEParameter type defined in PKCS#5.  It can also be used to
+ * Describes the PBEParameter type defined in PKCS#5. It can also be used to
  * model the pkcs-12PbeParams type defined in section B.4 of PKCS#12.
  *
- * @author Middleware
- * @version $Revision$
- *
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class PBEParameter
 {
-  /** Digest salt value */
+
+  /** Digest salt value. */
   protected byte[] salt;
 
-  /** Number of iterations of mixing function */
+  /** Number of iterations of mixing function. */
   protected int iterationCount;
 
 
@@ -59,24 +58,21 @@ public class PBEParameter
    */
   public static PBEParameter decode(final DERSequence params)
   {
-    return new PBEParameter(
+    return
+      new PBEParameter(
         DERHelper.asOctets(params.getObjectAt(0)),
         DERHelper.asInt(params.getObjectAt(1)));
   }
 
 
-  /**
-   * @return  the salt
-   */
+  /** @return  the salt */
   public byte[] getSalt()
   {
     return salt;
   }
 
 
-  /**
-   * @return  the iterationCount
-   */
+  /** @return  the iterationCount */
   public int getIterationCount()
   {
     return iterationCount;

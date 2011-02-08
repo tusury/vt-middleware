@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -15,7 +15,6 @@ package edu.vt.middleware.crypt.x509;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.vt.middleware.crypt.x509.types.AccessDescription;
 import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
 import edu.vt.middleware.crypt.x509.types.AccessMethod;
@@ -141,7 +140,7 @@ public final class ExtensionFactory
           "Cannot create %s from %s",
           type,
           encodedExtension.getClass().getSimpleName()),
-          e);
+        e);
     }
     return extension;
   }

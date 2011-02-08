@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -17,10 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
 import edu.vt.middleware.crypt.AbstractEncryptionCli;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
@@ -267,7 +265,9 @@ public class SymmetricCli extends AbstractEncryptionCli
       final OutputStream out = getOutputStream(line);
       try {
         getPBEScheme(alg, line).encrypt(
-            line.getOptionValue(OPT_PBE).toCharArray(), in, out);
+          line.getOptionValue(OPT_PBE).toCharArray(),
+          in,
+          out);
       } finally {
         closeStream(in);
         closeStream(out);
@@ -303,7 +303,9 @@ public class SymmetricCli extends AbstractEncryptionCli
       final OutputStream out = getOutputStream(line);
       try {
         getPBEScheme(alg, line).decrypt(
-            line.getOptionValue(OPT_PBE).toCharArray(), in, out);
+          line.getOptionValue(OPT_PBE).toCharArray(),
+          in,
+          out);
       } finally {
         closeStream(in);
         closeStream(out);
@@ -386,10 +388,9 @@ public class SymmetricCli extends AbstractEncryptionCli
     final char[] pass = line.getOptionValue(OPT_PBE).toCharArray();
     final byte[] salt = hexConv.toBytes(line.getOptionValue(OPT_SALT));
     final int iterations = Integer.parseInt(
-        line.getOptionValue(OPT_ITERATIONS));
-    final int keySize = line.hasOption(OPT_KEYSIZE) ?
-        Integer.parseInt(line.getOptionValue(OPT_KEYSIZE)) :
-        -1;
+      line.getOptionValue(OPT_ITERATIONS));
+    final int keySize = line.hasOption(OPT_KEYSIZE)
+      ? Integer.parseInt(line.getOptionValue(OPT_KEYSIZE)) : -1;
     final KeyGenerator generator;
     final byte[] derivedKey;
     final byte[] derivedIV;
@@ -411,6 +412,7 @@ public class SymmetricCli extends AbstractEncryptionCli
       }
       System.err.println("Generating PKCS#5 PBE key using PBKDF1 scheme.");
       generator = new PBKDF1KeyGenerator(digest, salt, iterations);
+
       final byte[] keyWithIV = generator.generate(pass, 128);
       derivedKey = new byte[8];
       derivedIV = new byte[8];
@@ -511,10 +513,9 @@ public class SymmetricCli extends AbstractEncryptionCli
 
     final byte[] salt = hexConv.toBytes(line.getOptionValue(OPT_SALT));
     final int iterations = Integer.parseInt(
-        line.getOptionValue(OPT_ITERATIONS));
-    final int keySize = line.hasOption(OPT_KEYSIZE) ?
-        Integer.parseInt(line.getOptionValue(OPT_KEYSIZE)) :
-        0;
+      line.getOptionValue(OPT_ITERATIONS));
+    final int keySize = line.hasOption(OPT_KEYSIZE)
+      ? Integer.parseInt(line.getOptionValue(OPT_KEYSIZE)) : 0;
     final EncryptionScheme pbeScheme;
     if ("pkcs12".equals(scheme)) {
       if (digest == null) {
@@ -526,14 +527,19 @@ public class SymmetricCli extends AbstractEncryptionCli
       }
       System.err.println("Using PKCS#12 PBE encryption scheme.");
       pbeScheme = new PKCS12EncryptionScheme(
-          alg, digest, new PBEParameter(salt, iterations), keySize);
+        alg,
+        digest,
+        new PBEParameter(salt, iterations),
+        keySize);
     } else if ("pkcs5s1".equals(scheme)) {
       if (digest == null) {
         throw new IllegalArgumentException("pkcs12 requires a digest.");
       }
       System.err.println("Using PKCS#5 PBES1 encryption scheme.");
       pbeScheme = new PBES1EncryptionScheme(
-          alg, digest, new PBEParameter(salt, iterations));
+        alg,
+        digest,
+        new PBEParameter(salt, iterations));
     } else if ("openssl".equals(scheme)) {
       if (keySize < 0) {
         throw new IllegalArgumentException(
@@ -552,7 +558,8 @@ public class SymmetricCli extends AbstractEncryptionCli
       }
       System.err.println("Using PKCS#5 PBES2 encryption scheme.");
       pbeScheme = new PBES2EncryptionScheme(
-          alg, new PBKDF2Parameters(salt, iterations, keySize / 8));
+        alg,
+        new PBKDF2Parameters(salt, iterations, keySize / 8));
     }
     if (line.hasOption(OPT_IV)) {
       System.err.println("Using provided IV instead of generated value.");

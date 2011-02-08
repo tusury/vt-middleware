@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2010 Virginia Tech.
+  Copyright (C) 2007-2011 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -23,7 +23,6 @@ import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.MD2;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.testng.AssertJUnit;
@@ -135,12 +134,13 @@ public class CryptReaderWriterTest
   public Object[][] createReadDerPubKeyTestData()
     throws Exception
   {
-    return new Object[][] {
-      {"rsa-pub.der"},
-      {"rsa-pub.pem"},
-      {"dsa-pub.der"},
-      {"dsa-pub.pem"},
-    };
+    return
+      new Object[][] {
+        {"rsa-pub.der"},
+        {"rsa-pub.pem"},
+        {"dsa-pub.der"},
+        {"dsa-pub.pem"},
+      };
   }
 
 
@@ -189,6 +189,7 @@ public class CryptReaderWriterTest
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
     logger.info("Testing read of private key " + keyFile);
+
     final PrivateKey key;
     if (password != null) {
       key = CryptReader.readPrivateKey(keyFile, password.toCharArray());
@@ -230,9 +231,7 @@ public class CryptReaderWriterTest
     final File keyFile = new File(getKeyPath(key, "DER", null));
     keyFile.getParentFile().mkdir();
     CryptWriter.writeEncodedKey(key, keyFile);
-    AssertJUnit.assertEquals(
-      key,
-      CryptReader.readPrivateKey(keyFile));
+    AssertJUnit.assertEquals(key, CryptReader.readPrivateKey(keyFile));
   }
 
 
@@ -253,9 +252,7 @@ public class CryptReaderWriterTest
     final File keyFile = new File(getKeyPath(key, "DER", null));
     keyFile.getParentFile().mkdir();
     CryptWriter.writeEncodedKey(key, keyFile);
-    AssertJUnit.assertEquals(
-      key,
-      CryptReader.readPublicKey(keyFile));
+    AssertJUnit.assertEquals(key, CryptReader.readPublicKey(keyFile));
   }
 
 
@@ -282,13 +279,14 @@ public class CryptReaderWriterTest
     } else {
       pwchars = null;
     }
+
     final File keyFile = new File(getKeyPath(key, "PEM", pwchars));
     keyFile.getParentFile().mkdir();
     CryptWriter.writePemKey(key, pwchars, new SecureRandom(), keyFile);
 
     final PrivateKey keyFromFile;
     if (pwchars != null) {
-      keyFromFile = CryptReader.readPrivateKey(keyFile , pwchars);
+      keyFromFile = CryptReader.readPrivateKey(keyFile, pwchars);
     } else {
       keyFromFile = CryptReader.readPrivateKey(keyFile);
     }
