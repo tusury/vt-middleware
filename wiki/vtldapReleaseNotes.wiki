@@ -2,6 +2,10 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 3.3.3 =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=110 vtldap-110] - Send correct return value for commit in !LdapLoginModule
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=109 vtldap-109] - Properly handle DNs with invalid composite name characters
+
 = Version 3.3.2 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=93 vtldap-93] - Escape attribute values when used with the userField property
 
