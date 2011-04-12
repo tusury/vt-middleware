@@ -48,6 +48,7 @@ There are several options which do not correspond to Ldap properties and those a
 || useFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in a !LoginException.||
 || tryFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in the callback handler begin invoked for a new login name and password.||
 || storePass || Whether the login name, login dn, and login password should be stored in shared state after a successful login. Existing values are overwritten.||
+|| clearPass || Whether the login name, login dn, and login password should be removed from shared state after a successful login.||
 || setLdapPrincipal || Whether the login name should be stored in the !LdapPrincipal class. Default value is true.||
 || setLdapDnPrincipal || Whether the LDAP entry DN should be stored in the !LdapDnPrincipal class. Default value is false.||
 || setLdapCredential || Whether the login password should be stored in the !LdapCredential class. Default value is true.||
@@ -88,6 +89,7 @@ There are several options which do not correspond to Ldap properties and those a
 || useFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in a !LoginException.||
 || tryFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in the callback handler begin invoked for a new login name and password.||
 || storePass || Whether the login name, login dn, and login password should be stored in shared state after a successful login. Existing values are overwritten.||
+|| clearPass || Whether the login name, login dn, and login password should be removed from shared state after a successful login.||
 || setLdapPrincipal || Whether the login name should be stored in the !LdapPrincipal class. Default value is false.||
 || setLdapDnPrincipal || Whether the LDAP entry DN should be stored in the !LdapDnPrincipal class. Default value is false.||
 || setLdapCredential || Whether the login password should be stored in the !LdapCredential class. Default value is false.||
@@ -130,6 +132,7 @@ There are several options which do not correspond to Ldap properties and those a
 || useFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in a !LoginException.||
 || tryFirstPass || Whether the login name and password should be retrieved from shared state rather than the callback handler. A login failure with this login name results in the callback handler begin invoked for a new login name and password.||
 || storePass || Whether the login name, login dn, and login password should be stored in shared state after a successful login. Existing values are overwritten.||
+|| clearPass || Whether the login name, login dn, and login password should be removed from shared state after a successful login.||
 || setLdapPrincipal || Whether the login name should be stored in the !LdapPrincipal class. Default value is false.||
 || setLdapDnPrincipal || Whether the LDAP entry DN should be stored in the !LdapDnPrincipal class. Default value is false.||
 || setLdapCredential || Whether the login password should be stored in the !LdapCredential class. Default value is false.||
