@@ -2,6 +2,9 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 3.3.4-SNAPSHOT =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=113 vtldap-113] - Regression from vt-ldap 109, URLs in DN not parsed correctly
+
 = Version 3.3.3 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=110 vtldap-110] - Send correct return value for commit in !LdapLoginModule
   * [http://code.google.com/p/vt-middleware/issues/detail?id=109 vtldap-109] - Properly handle DNs with invalid composite name characters
