@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>edu.vt.middleware</groupId>
+  <artifactId>vt-ldap</artifactId>
+  <version>3.3.4-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20110621.184949</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20110621184951</lastUpdated>
+  </versioning>
+</metadata>
