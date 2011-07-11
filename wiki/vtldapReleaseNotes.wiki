@@ -2,7 +2,7 @@
 
 <wiki:toc max_depth="2" />
 
-= Version 3.3.4-SNAPSHOT =
+= Version 3.3.4 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=113 vtldap-113] - Regression from vt-ldap 109, URLs in DN not parsed correctly
 
 = Version 3.3.3 =
