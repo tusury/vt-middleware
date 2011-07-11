@@ -1,5 +1,5 @@
   * [vtldap Overview]
-  * [http://vt-middleware.googlecode.com/svn/vt-ldap/javadoc/vt-ldap-3.3.3/index.html JavaDoc]
+  * [http://vt-middleware.googlecode.com/svn/vt-ldap/javadoc/vt-ldap-3.3.4/index.html JavaDoc]
   * [vtldapProperties Configuration Properties]
   * [vtldapSearching Searching]
   * [vtldapAuthentication Authentication]
