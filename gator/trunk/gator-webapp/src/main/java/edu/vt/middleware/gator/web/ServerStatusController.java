@@ -15,17 +15,11 @@ package edu.vt.middleware.gator.web;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.Category;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,8 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.log4j.LoggingEventHandler;
-import edu.vt.middleware.gator.log4j.SocketServer;
+import edu.vt.middleware.gator.server.LoggingEventHandler;
+import edu.vt.middleware.gator.server.SocketServer;
+import edu.vt.middleware.gator.server.status.ClientStatus;
 
 /**
  * View for rendering server status information.
@@ -73,9 +68,9 @@ public class ServerStatusController extends AbstractController
     model.addAttribute("freeMemory", freeMem / 1024 / 1024);
     model.addAttribute("usedMemory", usedMem / 1024 / 1024);
     
-    final List<ClientInfo> clients = new ArrayList<ClientInfo>();
+    final List<ClientStatus> clients = new ArrayList<ClientStatus>();
     for (LoggingEventHandler handler : socketServer.getLoggingEventHandlers()) {
-      clients.add(createClientInfo(handler));
+      clients.add(createClientStatus(handler));
     }
     model.addAttribute("clients", clients);
 
@@ -98,16 +93,7 @@ public class ServerStatusController extends AbstractController
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       return null;
     }
-    model.addAttribute("client", createClientInfo(handler));
-    model.addAttribute("threshold", handler.getRepository().getThreshold());
-    final SortedSet<LoggerInfo> loggers = new TreeSet<LoggerInfo>();
-    loggers.add(createLoggerInfo(handler.getRepository().getRootLogger()));
-    final Enumeration<?> loggerEnum =
-      handler.getRepository().getCurrentLoggers();
-    while (loggerEnum.hasMoreElements()) {
-      loggers.add(createLoggerInfo((Logger) loggerEnum.nextElement()));
-    }
-    model.addAttribute("loggers", loggers);
+    model.addAttribute("client", createClientStatus(handler));
     return "clientStatus";
   }
 
@@ -136,55 +122,21 @@ public class ServerStatusController extends AbstractController
   }
 
 
-  private ClientInfo createClientInfo(final LoggingEventHandler handler)
+  private ClientStatus createClientStatus(final LoggingEventHandler handler)
   {
     final String host = handler.getRemoteAddress().getHostName();
     final String addr = handler.getRemoteAddress().getHostAddress();
-    final ClientInfo client = new ClientInfo();
-    client.setName(host);
-    client.setConnectedAt(handler.getStartTime());
-    client.setLoggingEventCount(handler.getLoggingEventCount());
+    final ClientStatus clientStatus = new ClientStatus(handler);
     for (ProjectConfig p : configManager.findProjectsByClientName(host)) {
-      client.setProject(p);
+      clientStatus.setProject(p);
     }
-    if (client.getProject() == null) {
+    if (clientStatus.getProject() == null) {
       // Try to find project by client IP address
       for (ProjectConfig p : configManager.findProjectsByClientName(addr)) {
-        client.setProject(p);
+        clientStatus.setProject(p);
       }
     }
-    return client;
-  }
-
-
-  /**
-   * Creates a {@link LoggerInfo} instance from a log4j {@link Logger} instance.
-   * 
-   * @param  logger  Log4j logger.
-   *
-   * @return  Logger information for Web display.
-   */
-  @SuppressWarnings("unchecked")
-  private LoggerInfo createLoggerInfo(final Logger logger)
-  {
-    final LoggerInfo info = new LoggerInfo();
-    info.setCategory(logger.getName());
-    if (logger.getLevel() != null) {
-      info.setLevel(logger.getLevel().toString());
-    }
-    info.setEffectiveLevel(logger.getEffectiveLevel().toString());
-    info.setAdditivity(logger.getAdditivity());
-    Category current = logger;
-    boolean isAdditive = false;
-    do {
-      final Enumeration e = current.getAllAppenders();
-      while (e.hasMoreElements()) {
-        info.getAppenders().add(((Appender) e.nextElement()).getName());
-      }
-      isAdditive = current.getAdditivity();
-	    current = current.getParent();
-    } while (current != null && isAdditive);
-    
-    return info;
+    handler.getLoggingEngine().configure(clientStatus);
+    return clientStatus;
   }
 }

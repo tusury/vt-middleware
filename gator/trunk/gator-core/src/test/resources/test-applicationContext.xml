@@ -47,10 +47,11 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     class="edu.vt.middleware.gator.JpaConfigManager">
     <property name="entityManagerFactory" ref="entityManagerFactory" />
   </bean>
-  
-  <bean id="configurator"
-    class="edu.vt.middleware.gator.log4j.ProjectConfigurator">
-    <property name="clientRootLogDirectory" value="target/logs" />
+ 
+  <bean id="mockEngine"
+  	class="edu.vt.middleware.gator.mock.MockEngine"
+  	init-method="start">
+    <constructor-arg index="0" value="target/logs/mockengine.log" />
   </bean>
 
   <bean id="aclService"
@@ -58,21 +59,26 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
   />
   
   <bean id="clientRemovalPolicy"
-    class="edu.vt.middleware.gator.log4j.NoopClientRemovalPolicy" />
+    class="edu.vt.middleware.gator.server.NoopClientRemovalPolicy" />
   
   <bean id="socketServer"
-    class="edu.vt.middleware.gator.log4j.SocketServer"
-    p:configManager-ref="configManager"
-    p:configurator-ref="configurator"
+    class="edu.vt.middleware.gator.server.SocketServer"
     p:clientRemovalPolicy-ref="clientRemovalPolicy"
-    p:eventExecutor-ref="pooledExecutor"
     p:startOnInit="true"
     p:bindAddress="127.0.0.1"
     p:port="8111"
     p:maxClients="10"
     init-method="init"
     destroy-method="stop"
-  />
+  >
+    <constructor-arg index="0" ref="configManager" />
+    <constructor-arg index="1">
+      <list>
+      	<ref bean="mockEngine"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg index="2" ref="pooledExecutor" />
+  </bean>
   
   <bean id="pooledExecutor"
     class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"

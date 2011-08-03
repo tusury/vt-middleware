@@ -32,6 +32,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import edu.vt.middleware.gator.validation.UniqueName;
 import org.hibernate.annotations.Cascade;
 
@@ -75,6 +77,9 @@ public class ProjectConfig extends Config
 
   /** Permissions defined on this project. */
   private Set<PermissionConfig> permissions;
+
+  /** Class name of logging engine to use. */
+  private String loggingEngine;
 
 
   /** {@inheritDoc}. */
@@ -595,6 +600,31 @@ public class ProjectConfig extends Config
   {
     perm.setProject(null);
     getPermissionsInternal().remove(perm);
+  }
+
+  /**
+   * Gets the class name of the {@link LoggingEngine} to use for this project.
+   *
+   * @return Name of class that implements {@link LoggingEngine}.
+   */
+  @NotNull(message = "{project.loggingEngine.notNull}")
+  @Column(
+      name = "logging_engine",
+      nullable = false,
+      length = 255)
+  public String getLoggingEngine()
+  {
+    return loggingEngine;
+  }
+
+  /**
+   * Sets the class name of the {@link LoggingEngine} to use for this project.
+   *
+   * @param  engine  Name of class that implements {@link LoggingEngine}.
+   */
+  public void setLoggingEngine(final String engine)
+  {
+    this.loggingEngine = engine;
   }
 
   /** {@inheritDoc}. */

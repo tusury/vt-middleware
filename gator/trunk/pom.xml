@@ -65,6 +65,7 @@
 
   <modules>
     <module>gator-core</module>
+    <module>gator-integration-log4j</module>
     <module>gator-webapp</module>
   </modules>
   

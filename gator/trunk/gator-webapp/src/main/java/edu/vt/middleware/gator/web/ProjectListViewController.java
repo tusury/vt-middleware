@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 
 import edu.vt.middleware.gator.ConfigComparator;
 import edu.vt.middleware.gator.ProjectConfig;
-import edu.vt.middleware.gator.log4j.SocketServer;
+import edu.vt.middleware.gator.server.SocketServer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
