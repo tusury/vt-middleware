@@ -30,9 +30,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import edu.vt.middleware.gator.validation.AppenderConstraint;
 import edu.vt.middleware.gator.validation.UniqueName;
-import org.apache.log4j.Level;
 
 /**
  * Configuration for log4j logging categories.
@@ -135,17 +135,6 @@ public class CategoryConfig extends Config
   public void setAdditivity(final boolean flag)
   {
     this.additivity = flag;
-  }
-
-  /**
-   * Gets the corresponding Log4j log level associated with the level string.
-   *
-   * @return  Log4j logger level.
-   */
-  @Transient
-  public Level getLog4jLevel()
-  {
-    return Level.toLevel(level);
   }
 
   /** @return  Project to which this category belongs. */

@@ -77,9 +77,15 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <!-- Explicitly-defined controllers -->
   <bean id="xmlConfigViewController"
-    class="edu.vt.middleware.gator.web.XmlConfigViewController"
-    p:bindAddress="${log4j.server.bindAddress}"
-    p:port="${log4j.server.port}"
+    class="edu.vt.middleware.gator.log4j.web.XmlConfigViewController"
+    p:bindAddress="${server.bindAddress}"
+    p:port="${server.port}"
   />
 
+
+  <!-- Servlet filters needing configuration -->  
+  <bean id="configFilter"
+    class="edu.vt.middleware.gator.servlet.ConfigurationFilter"
+    p:configManager-ref="configManager"
+  />
 </beans>

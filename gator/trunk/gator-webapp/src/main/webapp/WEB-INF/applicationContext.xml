@@ -63,37 +63,38 @@ http://www.springframework.org/schema/tx http://www.springframework.org/schema/t
     p:eventExecutor-ref="pooledExecutor">
     <property name="configChangeListeners">
       <list>
-        <ref bean="log4jSocketServer" />
+        <ref bean="socketServer" />
       </list>
     </property>
   </bean>
+
+  <!-- Logging Engines -->  
+  <bean id="log4jEngine"
+    class="edu.vt.middleware.gator.log4j.Log4jEngine"
+  	init-method="start">
+    <constructor-arg index="0" value="${log4j.rootDir}" />
+  </bean>
   
-  <bean id="log4jConfigurator"
-    class="edu.vt.middleware.gator.log4j.ProjectConfigurator"
-    p:clientRootLogDirectory="${log4j.client.rootDir}"
-  />
+  <bean id="clientRemovalPolicy" class="${client.removalPolicy}" />
   
-  <bean id="clientRemovalPolicy"
-    class="${log4j.client.removalPolicy}" />
-  
-  <bean id="log4jSocketServer"
-    class="edu.vt.middleware.gator.log4j.SocketServer"
-    p:configManager-ref="configManager"
-    p:configurator-ref="log4jConfigurator"
+  <bean id="socketServer"
+    class="edu.vt.middleware.gator.server.SocketServer"
     p:clientRemovalPolicy-ref="clientRemovalPolicy"
-    p:eventExecutor-ref="pooledExecutor"
     p:startOnInit="true"
-    p:bindAddress="${log4j.server.bindAddress}"
-    p:port="${log4j.server.port}"
-    p:maxClients="${log4j.server.maxClients}"
+    p:bindAddress="${server.bindAddress}"
+    p:port="${server.port}"
+    p:maxClients="${server.maxClients}"
     init-method="init"
     destroy-method="stop"
-  />
-  
-  <bean id="log4jXmlFilter"
-    class="edu.vt.middleware.gator.servlet.Log4jXmlFilter"
-    p:configManager-ref="configManager"
-  />
+  >
+    <constructor-arg index="0" ref="configManager" />
+    <constructor-arg index="1">
+      <list>
+      	<ref bean="log4jEngine"/>
+      </list>
+    </constructor-arg>
+    <constructor-arg index="2" ref="pooledExecutor" />
+  </bean>
 
   <bean id="aclService"
     class="edu.vt.middleware.gator.security.ProjectAclService"

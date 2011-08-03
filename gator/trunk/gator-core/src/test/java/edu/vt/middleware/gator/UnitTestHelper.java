@@ -46,6 +46,7 @@ public class UnitTestHelper
     project.setName(projectName);
     project.setModifiedDate(Calendar.getInstance());
     project.setClientLogDir("target");
+    project.setLoggingEngine("edu.vt.middleware.gator.mock.MockEngine");
     project.addAppender(createAppender(appender1Name));
     project.addAppender(createAppender(appender2Name));
     project.addClient(createClient(client1Name));
