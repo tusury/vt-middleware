@@ -90,7 +90,7 @@ public enum AttributeType {
   StreetAddress("2.5.4.9", "STREET"),
 
   /** SN - RFC 4519 section 2.32. */
-  Surname("2.5.4.4", "STREET"),
+  Surname("2.5.4.4", "SN"),
 
   /** TITLE - RFC 4519 section 2.38. */
   Title("2.5.4.12", "TITLE"),
