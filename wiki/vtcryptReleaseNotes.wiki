@@ -2,6 +2,11 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 2.1.4 =
+  * Fix typo that affected X.509 certificate DN parsing capabilities. ([http://code.google.com/p/vt-middleware/issues/detail?id=119 Issue 119])
+= Version 2.1.3 =
+  * Improve capability for reading encrypted private keys. ([http://code.google.com/p/vt-middleware/issues/detail?id=91&can=1&q=vt-crypt Issue 91])
+  * Fix for parsing DER encoding of CRLDistributionPoints. ([http://code.google.com/p/vt-middleware/issues/detail?id=100&can=1&q=vt-crypt Issue 100])
 = Version 2.1.2 =
   * Add !EmailAddress to [http://vt-middleware.googlecode.com/svn/vt-crypt/javadoc/vt-crypt-2.1.2/edu/vt/middleware/crypt/x509/types/AttributeType.html AttributeType] enumeration since this attribute commonly appears in X.509 certificate DNs
   * Other misc improvements to support X.509 DN parsing
