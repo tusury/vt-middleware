@@ -37,7 +37,7 @@
     rm -rf META-INF project-name-VERSION-javadoc.jar
     svn commit javadoc/project-name-VERSION
     }}}
-    * mime types may need to be set if your svn config is not set to do so
+    * Mime types may need to be set if your svn config is not set to do so.  It is necessary to specify mime types for files used in the javadocs in order for them to render properly in a browser.
       {{{
       find ./ -type f -name "*.html" -exec svn propset svn:mime-type text/html '{}' \;
       find ./ -type f -name "*.css" -exec svn propset svn:mime-type text/css '{}' \;
