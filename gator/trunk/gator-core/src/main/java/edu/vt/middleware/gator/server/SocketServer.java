@@ -207,6 +207,16 @@ public class SocketServer
   }
 
   /**
+   * Gets an immutable set of logging engines configured for this server.
+   *
+   * @return  Immutable set of available logging engines.
+   */
+  public Set<LoggingEngine> getLoggingEngines()
+  {
+    return Collections.unmodifiableSet(loggingEngines);
+  }
+
+  /**
    * Gets a collection of all registered logging event handlers.
    *
    * @return  Immutable collection of logging event handlers.
