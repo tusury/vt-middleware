@@ -32,6 +32,13 @@
       maxlength="100" /></div>
   </div>
   <div class="field">
+    <div><label for="loggingEngine">Logging Engine</label></div>
+    <div class="note">Logging engine used to process logging events sent
+      by clients.</div>
+    <div><form:select id="loggingEngine" path="loggingEngine"
+      items="${loggingEngineMap}"/></div>
+  </div>
+  <div class="field">
 		<input class="button" type="submit" name="action" value="Create" />
   </div>
 </fieldset>
