@@ -165,8 +165,9 @@ public class Log4jEngine implements LoggingEngine
 
 
   /**
-   * Passes the given <code>LoggingEvent</code> to the underlying log4j
-   * <code>Hierarchy</code> for processing.
+   * Passes the given logging event object to the underlying log4j engine
+   * to be handled.  The logging event MUST be an instance of
+   * <code>org.apache.log4j.spi.LoggingEvent</code>.
    *
    * @param  sender  Internet address of sender.
    * @param  event  Logging event.
