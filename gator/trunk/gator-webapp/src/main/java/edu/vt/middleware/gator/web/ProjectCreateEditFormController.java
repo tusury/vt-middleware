@@ -13,6 +13,7 @@
 */
 package edu.vt.middleware.gator.web;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,7 +83,7 @@ public class ProjectCreateEditFormController extends AbstractFormController
   @RequestMapping(
     value = {
         "/project/add.html",
-        "/project/{projectName}/edit.html",
+        "/project/{projectName}/edit.html"
     },
     method = RequestMethod.POST
   )
@@ -92,6 +93,7 @@ public class ProjectCreateEditFormController extends AbstractFormController
     @ModelAttribute("project")
     final ProjectConfig project,
     final BindingResult result,
+    final Principal currentUser,
     final HttpServletRequest request)
   {
     if (result.hasErrors()) {
@@ -103,8 +105,7 @@ public class ProjectCreateEditFormController extends AbstractFormController
     if (project.isNew()) {
       // Add all permissions to new project for current user principal
       project.addPermission(
-        ControllerHelper.createAllPermissions(
-          request.getUserPrincipal().getName()));
+        ControllerHelper.createAllPermissions(currentUser.getName()));
     }
     configManager.save(project);
     return

@@ -17,7 +17,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <import resource="servletContextParams.xml" />
   
   <!-- Scan for annotated controllers -->
-  <context:component-scan base-package="edu.vt.middleware.gator.web"/>
+  <context:component-scan base-package="edu.vt.middleware.gator"/>
   
   <!-- 
   Some controllers are transactional.
@@ -73,14 +73,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <bean id="appenderCopyValidator"
     class ="edu.vt.middleware.gator.web.validation.AppenderCopyValidator" />
-
-
-  <!-- Explicitly-defined controllers -->
-  <bean id="xmlConfigViewController"
-    class="edu.vt.middleware.gator.log4j.web.XmlConfigViewController"
-    p:bindAddress="${server.bindAddress}"
-    p:port="${server.port}"
-  />
 
 
   <!-- Servlet filters needing configuration -->  
