@@ -1,0 +1,4 @@
+#summary Instructions for upgrading from consecutive releases of gator are provided below.
+#labels gator,upgrade
+
+= Upgrading 1.2.2 -> 1.3.0 =
