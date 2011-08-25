@@ -33,8 +33,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import edu.vt.middleware.gator.validation.UniqueName;
-import org.hibernate.annotations.Cascade;
 
 /**
  * Configuration for log4j appenders.
@@ -176,9 +176,9 @@ public class AppenderConfig extends Config
   @OneToMany(
     mappedBy = "appender",
     cascade = CascadeType.ALL,
+    orphanRemoval = true,
     fetch = FetchType.EAGER
   )
-  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<AppenderParamConfig> getAppenderParamsInternal()
   {
     if (appenderParams == null) {
@@ -304,9 +304,9 @@ public class AppenderConfig extends Config
   @OneToMany(
     mappedBy = "appender",
     cascade = CascadeType.ALL,
+    orphanRemoval = true,
     fetch = FetchType.EAGER
   )
-  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<LayoutParamConfig> getLayoutParamsInternal()
   {
     if (layoutParams == null) {

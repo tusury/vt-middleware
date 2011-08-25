@@ -35,7 +35,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import edu.vt.middleware.gator.validation.UniqueName;
-import org.hibernate.annotations.Cascade;
 
 /**
  * Project is the top-level class in the configuration hierarchy.
@@ -151,9 +150,9 @@ public class ProjectConfig extends Config
   @OneToMany(
     mappedBy = "project",
     cascade = CascadeType.ALL,
+    orphanRemoval = true,
     fetch = FetchType.EAGER
   )
-  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<ClientConfig> getClientsInternal()
   {
     if (clients == null) {
@@ -280,9 +279,9 @@ public class ProjectConfig extends Config
    */
   @OneToMany(
     mappedBy = "project",
-    cascade = CascadeType.ALL
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
   )
-  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<AppenderConfig> getAppendersInternal()
   {
     if (appenders == null) {
@@ -392,9 +391,9 @@ public class ProjectConfig extends Config
    */
   @OneToMany(
     mappedBy = "project",
-    cascade = CascadeType.ALL
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
   )
-  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   protected Set<CategoryConfig> getCategoriesInternal()
   {
     if (categories == null) {
@@ -501,9 +500,9 @@ public class ProjectConfig extends Config
   @OneToMany(
     mappedBy = "project",
     cascade = CascadeType.ALL,
+    orphanRemoval = true,
     fetch = FetchType.EAGER
   )
-  @Cascade({ org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
   private Set<PermissionConfig> getPermissionsInternal()
   {
     if (permissions == null) {
