@@ -2,7 +2,7 @@
 <%@ include file="includes/user.jsp" %>
 
 <c:choose>
-  <c:when test="${appender.new}">
+  <c:when test="${appender['new']}">
     <c:set var="action" value="Add Appender" />
   </c:when>
   <c:otherwise>

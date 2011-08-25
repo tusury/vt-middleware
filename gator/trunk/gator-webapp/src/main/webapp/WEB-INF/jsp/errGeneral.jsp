@@ -5,7 +5,7 @@
 <h1>Error</h1>
 
 <p>Current time: <%= new java.util.Date() %></p> 
-<p id="error">Threw ${exception.class.name}:<br/>
+<p id="error">Threw ${exception['class'].name}:<br/>
 <c:out escapeXml="true" value="${exception.localizedMessage}" />
 </p>
 
