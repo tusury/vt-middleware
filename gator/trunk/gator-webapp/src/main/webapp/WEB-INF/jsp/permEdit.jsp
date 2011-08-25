@@ -2,7 +2,7 @@
 <%@ include file="includes/user.jsp" %>
 
 <c:choose>
-  <c:when test="${perm.new}">
+  <c:when test="${perm['new']}">
     <c:set var="action" value="Add Permissions" />
   </c:when>
   <c:otherwise>
