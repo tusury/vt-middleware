@@ -7,7 +7,6 @@
   </parent>
   <groupId>edu.vt.middleware.gator</groupId>
   <artifactId>gator-integration-log4j</artifactId>
-  <version>1.2.3-SNAPSHOT</version>
   <name>Gator Log4j Integration Module</name>
   <description>Gator integration components for log4j engine.</description>
   <dependencies>
@@ -28,6 +27,11 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <!--  Test Dependencies -->
     <dependency>
@@ -41,4 +45,12 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 </project>
