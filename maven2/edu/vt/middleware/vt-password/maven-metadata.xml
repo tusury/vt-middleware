@@ -2,7 +2,6 @@
 <metadata>
   <groupId>edu.vt.middleware</groupId>
   <artifactId>vt-password</artifactId>
-  <version>2.0</version>
   <versioning>
     <versions>
       <version>2.0</version>
@@ -15,7 +14,8 @@
       <version>3.0.1</version>
       <version>3.1-SNAPSHOT</version>
       <version>3.1</version>
+      <version>3.1.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20110504184852</lastUpdated>
+    <lastUpdated>20111004143546</lastUpdated>
   </versioning>
 </metadata>
