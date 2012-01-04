@@ -248,6 +248,9 @@
           <descriptors>
             <descriptor>${assembly.dir}/ldaptive.xml</descriptor>
           </descriptors>
+          <archiverConfig>
+            <defaultDirectoryMode>0755</defaultDirectoryMode>
+          </archiverConfig>
         </configuration>
         <executions>
           <execution>
