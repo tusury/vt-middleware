@@ -130,7 +130,7 @@ public abstract class AbstractAuthenticator
    * @param  handlers  authentication response handlers
    */
   public void setAuthenticationResponseHandlers(
-    final AuthenticationResponseHandler[] handlers)
+    final AuthenticationResponseHandler... handlers)
   {
     authenticationResponseHandlers = handlers;
   }

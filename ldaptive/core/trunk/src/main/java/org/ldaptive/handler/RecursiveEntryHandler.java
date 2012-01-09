@@ -89,7 +89,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
    */
   public RecursiveEntryHandler(
     final String searchAttr,
-    final String[] mergeAttrs)
+    final String... mergeAttrs)
   {
     this(null, searchAttr, mergeAttrs);
   }
@@ -105,7 +105,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
   public RecursiveEntryHandler(
     final Connection c,
     final String searchAttr,
-    final String[] mergeAttrs)
+    final String... mergeAttrs)
   {
     connection = c;
     searchAttribute = searchAttr;
@@ -169,7 +169,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
    *
    * @param  mergeAttrs  attribute names to merge
    */
-  public void setMergeAttributes(final String[] mergeAttrs)
+  public void setMergeAttributes(final String... mergeAttrs)
   {
     mergeAttributes = mergeAttrs;
     initalizeReturnAttributes();

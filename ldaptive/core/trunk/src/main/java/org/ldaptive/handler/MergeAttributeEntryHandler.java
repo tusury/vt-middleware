@@ -77,7 +77,7 @@ public class MergeAttributeEntryHandler extends AbstractLdapEntryHandler
    *
    * @param  names  of the attributes
    */
-  public void setAttributeNames(final String[] names)
+  public void setAttributeNames(final String... names)
   {
     attributeNames = names;
   }
