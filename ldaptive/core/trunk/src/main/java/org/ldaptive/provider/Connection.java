@@ -18,8 +18,8 @@ import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.LdapException;
+import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.RenameRequest;
 import org.ldaptive.Response;
 import org.ldaptive.SearchRequest;
 
@@ -99,15 +99,15 @@ public interface Connection
 
 
   /**
-   * Rename an entry in the ldap.
+   * Modify the DN of an entry in the ldap.
    *
    * @param  request  containing the data necessary to perform the operation
    *
-   * @return  response associated with the rename operation
+   * @return  response associated with the modify dn operation
    *
    * @throws  LdapException  if an error occurs
    */
-  Response<Void> rename(RenameRequest request)
+  Response<Void> modifyDn(ModifyDnRequest request)
     throws LdapException;
 
 
