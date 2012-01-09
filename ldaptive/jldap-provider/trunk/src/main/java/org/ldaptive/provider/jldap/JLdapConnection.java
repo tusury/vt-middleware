@@ -33,8 +33,8 @@ import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.LdapException;
+import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.RenameRequest;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
@@ -427,7 +427,7 @@ public class JLdapConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<Void> rename(final RenameRequest request)
+  public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
   {
     Response<Void> response = null;
@@ -437,7 +437,7 @@ public class JLdapConnection implements Connection
         request.getDn(),
         dn[0],
         dn[1],
-        true,
+        request.getDeleteOldRDn(),
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
