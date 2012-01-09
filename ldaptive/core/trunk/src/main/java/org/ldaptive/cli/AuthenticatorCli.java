@@ -183,7 +183,7 @@ public class AuthenticatorCli extends AbstractCli
     if (
       request.getReturnAttributes() != null &&
         request.getReturnAttributes().length == 0) {
-      request.setReturnAttributes(null);
+      request.setReturnAttributes((String) null);
     }
 
     final AuthenticationResponse response = auth.authenticate(request);
