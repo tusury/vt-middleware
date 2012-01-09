@@ -20,19 +20,19 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link RenameOperation}.
+ * Unit test for {@link ModifyDnOperation}.
  *
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class RenameOperationTest extends AbstractTest
+public class ModifyDnOperationTest extends AbstractTest
 {
 
   /** Entry created for ldap tests. */
   private static LdapEntry testLdapEntry;
 
   /** Entry created for ldap tests. */
-  private static LdapEntry renameLdapEntry;
+  private static LdapEntry modifyDnLdapEntry;
 
 
   /**
@@ -41,7 +41,7 @@ public class RenameOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry5")
-  @BeforeClass(groups = {"rename"})
+  @BeforeClass(groups = {"modifyDn"})
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -52,13 +52,13 @@ public class RenameOperationTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"rename"})
+  @AfterClass(groups = {"modifyDn"})
   public void deleteLdapEntry()
     throws Exception
   {
     super.deleteLdapEntry(testLdapEntry.getDn());
-    if (renameLdapEntry != null) {
-      super.deleteLdapEntry(renameLdapEntry.getDn());
+    if (modifyDnLdapEntry != null) {
+      super.deleteLdapEntry(modifyDnLdapEntry.getDn());
     }
   }
 
@@ -69,9 +69,9 @@ public class RenameOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "renameOldDn", "renameNewDn" })
-  @Test(groups = {"rename"})
-  public void renameLdapEntry(final String oldDn, final String newDn)
+  @Parameters({ "modifyOldDn", "modifyNewDn" })
+  @Test(groups = {"modifyDn"})
+  public void modifyDnLdapEntry(final String oldDn, final String newDn)
     throws Exception
   {
     final Connection conn = TestUtil.createConnection();
@@ -82,14 +82,14 @@ public class RenameOperationTest extends AbstractTest
         search.execute(
           SearchRequest.newObjectScopeSearchRequest(
             oldDn)).getResult().size() > 0);
-      final RenameOperation rename = new RenameOperation(conn);
-      Response<Void> response = rename.execute(
-        new RenameRequest(oldDn, newDn));
+      final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
+      Response<Void> response = modifyDn.execute(
+        new ModifyDnRequest(oldDn, newDn));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      renameLdapEntry = search.execute(
+      modifyDnLdapEntry = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           newDn)).getResult().getEntry();
-      AssertJUnit.assertNotNull(renameLdapEntry);
+      AssertJUnit.assertNotNull(modifyDnLdapEntry);
       try {
         final Response<LdapResult> r = search.execute(
           SearchRequest.newObjectScopeSearchRequest(oldDn));
@@ -99,7 +99,7 @@ public class RenameOperationTest extends AbstractTest
       } catch (Exception e) {
         AssertJUnit.fail("Should have thrown LdapException, threw " + e);
       }
-      response = rename.execute(new RenameRequest(newDn, oldDn));
+      response = modifyDn.execute(new ModifyDnRequest(newDn, oldDn));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertTrue(
         search.execute(

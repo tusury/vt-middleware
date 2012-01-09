@@ -120,19 +120,19 @@ public class ConnectionTest
 
   /** @throws  Exception  On test failure. */
   @Test(groups = {"conn"})
-  public void rename()
+  public void modifyDn()
     throws Exception
   {
     final Connection conn = TestUtil.createConnection();
     try {
       conn.open();
-      final RenameOperation rename = new RenameOperation(conn);
-      Response<Void> response = rename.execute(
-        new RenameRequest(
+      final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
+      Response<Void> response = modifyDn.execute(
+        new ModifyDnRequest(
           testLdapEntry.getDn(), "uid=1500,ou=test,dc=vt,dc=edu"));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      response = rename.execute(
-        new RenameRequest(
+      response = modifyDn.execute(
+        new ModifyDnRequest(
           "uid=1500,ou=test,dc=vt,dc=edu", testLdapEntry.getDn()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
