@@ -86,7 +86,7 @@ public class SearchRequest extends AbstractRequest
    * @param  filter  search filter
    * @param  attrs  to return
    */
-  public SearchRequest(final SearchFilter filter, final String[] attrs)
+  public SearchRequest(final SearchFilter filter, final String... attrs)
   {
     setSearchFilter(filter);
     setReturnAttributes(attrs);
@@ -145,7 +145,7 @@ public class SearchRequest extends AbstractRequest
   public SearchRequest(
     final String dn,
     final SearchFilter filter,
-    final String[] attrs)
+    final String... attrs)
   {
     setBaseDn(dn);
     setSearchFilter(filter);
@@ -234,7 +234,7 @@ public class SearchRequest extends AbstractRequest
    *
    * @param  attrs  search return attributes
    */
-  public void setReturnAttributes(final String[] attrs)
+  public void setReturnAttributes(final String... attrs)
   {
     retAttrs = attrs;
   }
@@ -388,7 +388,7 @@ public class SearchRequest extends AbstractRequest
    *
    * @param  attrs  binary attribute names
    */
-  public void setBinaryAttributes(final String[] attrs)
+  public void setBinaryAttributes(final String... attrs)
   {
     binaryAttrs = attrs;
   }
@@ -432,7 +432,7 @@ public class SearchRequest extends AbstractRequest
    *
    * @param  handlers  ldap entry handlers
    */
-  public void setLdapEntryHandlers(final LdapEntryHandler[] handlers)
+  public void setLdapEntryHandlers(final LdapEntryHandler... handlers)
   {
     entryHandlers = handlers;
   }

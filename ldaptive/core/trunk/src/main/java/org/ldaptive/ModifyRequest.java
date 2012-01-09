@@ -39,22 +39,9 @@ public class ModifyRequest extends AbstractRequest
    * Creates a new modify request.
    *
    * @param  dn  to modify
-   * @param  mod  attribute modification
-   */
-  public ModifyRequest(final String dn, final AttributeModification mod)
-  {
-    setDn(dn);
-    setAttributeModifications(new AttributeModification[] {mod});
-  }
-
-
-  /**
-   * Creates a new modify request.
-   *
-   * @param  dn  to modify
    * @param  mods  attribute modifications
    */
-  public ModifyRequest(final String dn, final AttributeModification[] mods)
+  public ModifyRequest(final String dn, final AttributeModification... mods)
   {
     setDn(dn);
     setAttributeModifications(mods);
@@ -99,7 +86,7 @@ public class ModifyRequest extends AbstractRequest
    *
    * @param  mods  attribute modifications
    */
-  public void setAttributeModifications(final AttributeModification[] mods)
+  public void setAttributeModifications(final AttributeModification... mods)
   {
     attrMods = mods;
   }

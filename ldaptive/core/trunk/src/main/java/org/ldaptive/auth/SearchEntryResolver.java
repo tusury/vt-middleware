@@ -48,7 +48,7 @@ public class SearchEntryResolver implements EntryResolver
    *
    * @param  attrs  to return
    */
-  public SearchEntryResolver(final String[] attrs)
+  public SearchEntryResolver(final String... attrs)
   {
     setReturnAttributes(attrs);
   }
@@ -70,7 +70,7 @@ public class SearchEntryResolver implements EntryResolver
    *
    * @param  attrs  to return
    */
-  public void setReturnAttributes(final String[] attrs)
+  public void setReturnAttributes(final String... attrs)
   {
     returnAttributes = attrs;
   }

@@ -62,7 +62,7 @@ public class AuthenticationRequest
   public AuthenticationRequest(
     final String id,
     final Credential c,
-    final String[] attrs)
+    final String... attrs)
   {
     setUser(id);
     setCredential(c);
@@ -130,7 +130,7 @@ public class AuthenticationRequest
    *
    * @param  attrs  return attributes
    */
-  public void setReturnAttributes(final String[] attrs)
+  public void setReturnAttributes(final String... attrs)
   {
     retAttrs = attrs;
   }
