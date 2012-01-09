@@ -71,6 +71,17 @@ public class BindRequest extends AbstractRequest
 
 
   /**
+   * Creates a new bind request.
+   *
+   * @param  config  sasl configuration
+   */
+  public BindRequest(final SaslConfig config)
+  {
+    setSaslConfig(config);
+  }
+
+
+  /**
    * Returns the bind DN.
    *
    * @return  DN to bind as
