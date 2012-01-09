@@ -40,8 +40,8 @@ import org.ldaptive.CompareRequest;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.RenameRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.Connection;
@@ -497,7 +497,7 @@ public class ApacheLdapConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<Void> rename(final RenameRequest request)
+  public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
   {
     Response<Void> response = null;
@@ -512,7 +512,7 @@ public class ApacheLdapConnection implements Connection
       mdri.setName(dn);
       mdri.setNewRdn(newDn.getRdn());
       mdri.setNewSuperior(newDn.getParent());
-      mdri.setDeleteOldRdn(true);
+      mdri.setDeleteOldRdn(request.getDeleteOldRDn());
 
       final ModifyDnResponse mdr = connection.modifyDn(mdri);
       ApacheLdapUtil.throwOperationException(
