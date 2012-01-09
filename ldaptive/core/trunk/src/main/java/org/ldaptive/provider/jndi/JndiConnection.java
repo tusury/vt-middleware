@@ -27,8 +27,8 @@ import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.LdapException;
+import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.RenameRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
@@ -101,6 +101,13 @@ public class JndiConnection implements Connection
    * value of this constant is {@value}.
    */
   public static final String SASL_REALM = "java.naming.security.sasl.realm";
+
+  /**
+   * The value of this property is a string that specifies whether the RDN
+   * attribute should be deleted for a modify dn operation. The value of this
+   * constant is {@value}.
+   */
+  public static final String DELETE_RDN = "java.naming.ldap.deleteRDN";
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -569,7 +576,7 @@ public class JndiConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<Void> rename(final RenameRequest request)
+  public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
   {
     Response<Void> response = null;
@@ -578,6 +585,9 @@ public class JndiConnection implements Connection
       try {
         ctx = context.newInstance(
           controlProcessor.processRequestControls(request.getControls()));
+        ctx.addToEnvironment(
+          "java.naming.ldap.deleteRDN",
+          Boolean.valueOf(request.getDeleteOldRDn()).toString());
         ctx.rename(
           new LdapName(request.getDn()),
           new LdapName(request.getNewDn()));

@@ -14,21 +14,21 @@
 package org.ldaptive;
 
 /**
- * Executes an ldap rename operation.
+ * Executes an ldap modify dn operation.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class RenameOperation extends AbstractOperation<RenameRequest, Void>
+public class ModifyDnOperation extends AbstractOperation<ModifyDnRequest, Void>
 {
 
 
   /**
-   * Creates a new rename operation.
+   * Creates a new modify dn operation.
    *
    * @param  conn  connection
    */
-  public RenameOperation(final Connection conn)
+  public ModifyDnOperation(final Connection conn)
   {
     super(conn);
   }
@@ -36,16 +36,16 @@ public class RenameOperation extends AbstractOperation<RenameRequest, Void>
 
   /** {@inheritDoc} */
   @Override
-  protected Response<Void> invoke(final RenameRequest request)
+  protected Response<Void> invoke(final ModifyDnRequest request)
     throws LdapException
   {
-    return getConnection().getProviderConnection().rename(request);
+    return getConnection().getProviderConnection().modifyDn(request);
   }
 
 
   /** {@inheritDoc} */
   @Override
   protected void initializeRequest(
-    final RenameRequest request,
+    final ModifyDnRequest request,
     final ConnectionConfig cc) {}
 }
