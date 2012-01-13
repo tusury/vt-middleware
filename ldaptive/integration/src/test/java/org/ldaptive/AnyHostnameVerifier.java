@@ -28,7 +28,7 @@ public class AnyHostnameVerifier implements HostnameVerifier
 
   /** {@inheritDoc} */
   @Override
-  public boolean verify(final String hostname, final SSLSession seession)
+  public boolean verify(final String hostname, final SSLSession session)
   {
     return true;
   }
