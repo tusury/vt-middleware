@@ -95,7 +95,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <bean id="sslContextInitializerFactory"
     class="org.ldaptive.ssl.KeyStoreCredentialConfig"
-    p:trustStore="classpath:/ed.truststore"
+    p:trustStore="classpath:/ldaptive.truststore"
     p:trustStoreType="BKS"
     p:trustStorePassword="changeit"
   />

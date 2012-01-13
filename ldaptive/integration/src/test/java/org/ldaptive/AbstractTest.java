@@ -61,6 +61,11 @@ public abstract class AbstractTest
       while (!entryExists(conn, entry)) {
         Thread.sleep(100);
       }
+    } catch (LdapException e) {
+      // ignore entry already exists
+      if (ResultCode.ENTRY_ALREADY_EXISTS != e.getResultCode()) {
+        throw e;
+      }
     } finally {
       conn.close();
     }

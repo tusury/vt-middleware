@@ -28,8 +28,10 @@ import org.ldaptive.AttributeModificationType;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.ResultCode;
 import org.ldaptive.TestUtil;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -130,31 +132,52 @@ public class LdapLoginModuleTest extends AbstractTest
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(new ModifyRequest(
-        groupEntries.get("6")[0].getDn(),
-        new AttributeModification(
-          AttributeModificationType.ADD,
-          new LdapAttribute(
-            "member",
-            new String[]{
-              "uid=10,ou=test,dc=vt,dc=edu",
-              "uugid=group7,ou=test,dc=vt,dc=edu", }))));
-      modify.execute(new ModifyRequest(
-        groupEntries.get("7")[0].getDn(),
-        new AttributeModification(
-          AttributeModificationType.ADD,
-          new LdapAttribute(
-            "member",
-            new String[]{
-              "uugid=group8,ou=test,dc=vt,dc=edu",
-              "uugid=group9,ou=test,dc=vt,dc=edu", }))));
-      modify.execute(new ModifyRequest(
-        groupEntries.get("8")[0].getDn(),
-        new AttributeModification(
-          AttributeModificationType.ADD,
-          new LdapAttribute(
-            "member",
-            new String[]{"uugid=group7,ou=test,dc=vt,dc=edu"}))));
+      try {
+        modify.execute(new ModifyRequest(
+          groupEntries.get("6")[0].getDn(),
+            new AttributeModification(
+              AttributeModificationType.ADD,
+              new LdapAttribute(
+                "member",
+                new String[]{
+                  "uid=10,ou=test,dc=vt,dc=edu",
+                  "uugid=group7,ou=test,dc=vt,dc=edu", }))));
+      } catch (LdapException e) {
+        // ignore attribute already exists
+        if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
+          throw e;
+        }
+      }
+      try {
+        modify.execute(new ModifyRequest(
+          groupEntries.get("7")[0].getDn(),
+            new AttributeModification(
+              AttributeModificationType.ADD,
+              new LdapAttribute(
+                "member",
+                new String[]{
+                  "uugid=group8,ou=test,dc=vt,dc=edu",
+                  "uugid=group9,ou=test,dc=vt,dc=edu", }))));
+      } catch (LdapException e) {
+        // ignore attribute already exists
+        if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
+          throw e;
+        }
+      }
+      try {
+        modify.execute(new ModifyRequest(
+          groupEntries.get("8")[0].getDn(),
+            new AttributeModification(
+              AttributeModificationType.ADD,
+              new LdapAttribute(
+                "member",
+                new String[]{"uugid=group7,ou=test,dc=vt,dc=edu"}))));
+      } catch (LdapException e) {
+        // ignore attribute already exists
+        if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
+          throw e;
+        }
+      }
     } finally {
       conn.close();
     }

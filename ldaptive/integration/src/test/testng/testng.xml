@@ -299,8 +299,8 @@
   <parameter name="jaasUser" value="jtyler@vt.edu"/>
   <parameter name="jaasUserRole" value="0830"/>
   <parameter name="jaasUserRoleDefault" value="0830|test-role1|test-role2"/>
-  <parameter name="jaasRole" value="inetOrgPerson|organizationalPerson|person|top|virginiaTechPerson"/>
-  <parameter name="jaasRoleCombined" value="0830|inetOrgPerson|organizationalPerson|person|top|virginiaTechPerson"/>
+  <parameter name="jaasRole" value="inetOrgPerson|organizationalPerson|person|top"/>
+  <parameter name="jaasRoleCombined" value="0830|inetOrgPerson|organizationalPerson|person|top"/>
   <parameter name="jaasRoleCombinedRecursive" value="0830|group6|group7|group8|group9"/>
   <parameter name="jaasCredential" value="password10"/>
 
