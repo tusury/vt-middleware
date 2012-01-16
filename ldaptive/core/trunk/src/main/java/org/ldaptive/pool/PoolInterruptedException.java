@@ -23,7 +23,7 @@ public class PoolInterruptedException extends PoolException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = 3788775913431470860L;
+  private static final long serialVersionUID = -1427225156311025280L;
 
 
   /**

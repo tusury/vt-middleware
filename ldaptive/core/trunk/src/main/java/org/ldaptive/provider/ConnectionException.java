@@ -27,7 +27,7 @@ public class ConnectionException extends LdapException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = 4580519762257348563L;
+  private static final long serialVersionUID = -1902801031167384619L;
 
 
   /**

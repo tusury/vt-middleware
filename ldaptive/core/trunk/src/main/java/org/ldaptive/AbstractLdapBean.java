@@ -13,14 +13,19 @@
 */
 package org.ldaptive;
 
+import java.io.Serializable;
+
 /**
  * Provides common implementations for ldap beans.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractLdapBean
+public abstract class AbstractLdapBean implements Serializable
 {
+
+  /** serial version uid. */
+  private static final long serialVersionUID = 4715681585273172940L;
 
   /** Sort behavior. */
   private SortBehavior sortBehavior;

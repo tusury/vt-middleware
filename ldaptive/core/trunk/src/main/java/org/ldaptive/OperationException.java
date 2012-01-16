@@ -25,7 +25,7 @@ public class OperationException extends LdapException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = 2558787752713869648L;
+  private static final long serialVersionUID = 4995760197708755601L;
 
 
   /**

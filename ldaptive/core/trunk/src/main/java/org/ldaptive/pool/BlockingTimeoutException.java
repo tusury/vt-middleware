@@ -24,7 +24,7 @@ public class BlockingTimeoutException extends PoolException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = -5152940431346111294L;
+  private static final long serialVersionUID = 6013765020562222482L;
 
 
   /**

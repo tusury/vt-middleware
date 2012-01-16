@@ -25,7 +25,7 @@ public class PoolException extends LdapException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = 4077412841480524865L;
+  private static final long serialVersionUID = 6320399208563015506L;
 
 
   /**

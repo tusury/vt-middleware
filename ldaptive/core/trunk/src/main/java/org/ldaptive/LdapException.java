@@ -26,7 +26,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = 7149010199182440257L;
+  private static final long serialVersionUID = -1283840230801970620L;
 
   /** ldap result code. */
   private final ResultCode resultCode;

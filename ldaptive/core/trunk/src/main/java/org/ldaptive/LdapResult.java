@@ -32,6 +32,9 @@ public class LdapResult extends AbstractLdapBean
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 337;
 
+  /** serial version uid. */
+  private static final long serialVersionUID = 8716095444363430453L;
+
   /** Entries contained in this result. */
   private final Map<String, LdapEntry> resultEntries;
 

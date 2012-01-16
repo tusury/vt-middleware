@@ -34,10 +34,10 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
 {
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 419;
+  private static final int HASH_CODE_SEED = 421;
 
   /** serial version uid. */
-  private static final long serialVersionUID = 1427032827399935399L;
+  private static final long serialVersionUID = 1578734888816839199L;
 
   /** LDAP role name. */
   private String roleName;
@@ -75,19 +75,11 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   @Override
   public boolean equals(final Object o)
   {
-    boolean b = false;
-    if (o != null) {
-      if (this != o) {
-        if (o instanceof LdapRole) {
-          if (((LdapRole) o).getName().equals(roleName)) {
-            b = true;
-          }
-        }
-      } else {
-        b = true;
-      }
+    if (o == null) {
+      return false;
     }
-    return b;
+    return
+      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
   }
 
 

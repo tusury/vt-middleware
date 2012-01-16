@@ -29,7 +29,7 @@ public class LdapCredential implements Serializable
   private static final int HASH_CODE_SEED = 401;
 
   /** serial version uid. */
-  private static final long serialVersionUID = 6571981350905290712L;
+  private static final long serialVersionUID = 1965949592374728021L;
 
   /** LDAP credential. */
   private Object credential;

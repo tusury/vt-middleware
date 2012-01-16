@@ -21,6 +21,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ldaptive.LdapUtil;
+
 /**
  * Provides a custom implementation for grouping principals.
  *
@@ -30,8 +32,11 @@ import java.util.Set;
 public class LdapGroup implements Group, Serializable
 {
 
+  /** hash code seed. */
+  private static final int HASH_CODE_SEED = 431;
+
   /** serial version uid. */
-  private static final long serialVersionUID = -342760961669842632L;
+  private static final long serialVersionUID = 2075424472884533862L;
 
   /** LDAP role name. */
   private String roleName;
@@ -107,6 +112,36 @@ public class LdapGroup implements Group, Serializable
   public Set<Principal> getMembers()
   {
     return Collections.unmodifiableSet(members);
+  }
+
+
+  /**
+   * Returns whether the supplied object is equal to this ldap group.
+   *
+   * @param  o  to compare
+   *
+   * @return  whether the supplied object is equal
+   */
+  @Override
+  public boolean equals(final Object o)
+  {
+    if (o == null) {
+      return false;
+    }
+    return
+      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+  }
+
+
+  /**
+   * Returns the hash code for this ldap group.
+   *
+   * @return  hash code
+   */
+  @Override
+  public int hashCode()
+  {
+    return LdapUtil.computeHashCode(HASH_CODE_SEED, roleName, members);
   }
 
 

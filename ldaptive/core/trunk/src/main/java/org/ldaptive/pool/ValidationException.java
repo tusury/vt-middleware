@@ -23,7 +23,7 @@ public class ValidationException extends PoolException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = -3130116579807362686L;
+  private static final long serialVersionUID = -5043560632396467010L;
 
 
   /**

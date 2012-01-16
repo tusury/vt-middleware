@@ -55,7 +55,7 @@ public abstract class AbstractServlet extends HttpServlet
   public static final String POOL_TYPE = PROPERTIES_DOMAIN + "poolType";
 
   /** serial version uid. */
-  private static final long serialVersionUID = 1984990003439357859L;
+  private static final long serialVersionUID = -6245486456044663458L;
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());

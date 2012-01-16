@@ -66,7 +66,7 @@ public final class SearchServlet extends AbstractServlet
   public static final String DEFAULT_OUTPUT_FORMAT = "DSML";
 
   /** serial version uid. */
-  private static final long serialVersionUID = 1731614499970954068L;
+  private static final long serialVersionUID = 3437252581014900696L;
 
   /** Types of available output. */
   private enum OutputType {
