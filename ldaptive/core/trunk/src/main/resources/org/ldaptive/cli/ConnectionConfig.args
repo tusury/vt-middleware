@@ -1,5 +1,8 @@
+bindControls:fully qualified class name(s) that implements org.ldaptive.control.Control
 bindCredential:password for the bindDn
 bindDn:fully qualified dn to bind as
+bindSaslConfig:SASL configuration data
+connectTimeout:milliseconds to wait for connections
 connectionStrategy:LDAP connection strategy for failover
 hostnameVerifier:fully qualified class name that implements javax.net.ssl.HostnameVerifier
 ldapUrl:URL that identifies the LDAP server to search
@@ -7,6 +10,7 @@ logCredentials:whether to log authentication credentials (true|false)
 operationRetry:number of times to retry LDAP operations on exception
 operationRetryBackoff:factor to multiply operationRetryWait by
 operationRetryWait:milliseconds to wait before retrying LDAP operations
+responseTimeout:milliseconds to wait for LDAP operation responses
 provider:fully qualified class name that implements org.ldaptive.provider.Provider
 providerProperties:LDAP provider specific properties
 ssl:whether to use ssl (true|false)
