@@ -13,6 +13,7 @@
 */
 package org.ldaptive;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -32,6 +33,9 @@ public class LdapAttribute extends AbstractLdapBean
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 313;
+
+  /** serial version uid. */
+  private static final long serialVersionUID = -3902233717232754155L;
 
   /** Name for this attribute. */
   private String attributeName;
@@ -424,11 +428,14 @@ public class LdapAttribute extends AbstractLdapBean
    * @author  Middleware Services
    * @version  $Revision$ $Date$
    */
-  private class LdapAttributeValues<T>
+  private class LdapAttributeValues<T> implements Serializable
   {
 
     /** hash code seed. */
     private static final int HASH_CODE_SEED = 317;
+
+    /** serial version uid. */
+    private static final long serialVersionUID = 8075255677989836494L;
 
     /** Type of values. */
     private final Class<T> type;

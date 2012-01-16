@@ -23,7 +23,7 @@ public class ActivationException extends PoolException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = -6185502955113178610L;
+  private static final long serialVersionUID = 5547712224386623996L;
 
 
   /**

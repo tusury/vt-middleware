@@ -31,6 +31,9 @@ public class LdapEntry extends AbstractLdapBean
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 331;
 
+  /** serial version uid. */
+  private static final long serialVersionUID = 7819007625501406463L;
+
   /** Distinguished name for this entry. */
   private String entryDn;
 

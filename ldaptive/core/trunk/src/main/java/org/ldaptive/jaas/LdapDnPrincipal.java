@@ -32,13 +32,13 @@ public class LdapDnPrincipal
   private static final int HASH_CODE_SEED = 409;
 
   /** serial version uid. */
-  private static final long serialVersionUID = -4530972236127507368L;
+  private static final long serialVersionUID = 8345846704852267195L;
 
   /** LDAP user name. */
   private String ldapDn;
 
   /** User ldap entry. */
-  private LdapEntry ldapEntry = new LdapEntry();
+  private LdapEntry ldapEntry;
 
 
   /**

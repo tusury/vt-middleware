@@ -45,7 +45,7 @@ public final class AttributeServlet extends AbstractServlet
 {
 
   /** serial version uid. */
-  private static final long serialVersionUID = -5918353780927139315L;
+  private static final long serialVersionUID = 3437252581014900696L;
 
 
   /**

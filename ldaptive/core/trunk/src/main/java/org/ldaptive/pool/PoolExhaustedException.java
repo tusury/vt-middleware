@@ -23,7 +23,7 @@ public class PoolExhaustedException extends PoolException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = 900885030182519501L;
+  private static final long serialVersionUID = -2092251274513447389L;
 
 
   /**
