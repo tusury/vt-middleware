@@ -50,6 +50,12 @@ public class AuthenticatorCliTest extends AbstractTest
     final String ldif = TestUtil.readFileIntoString(ldifFile);
     testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
+
+    System.setProperty(
+      "javax.net.ssl.trustStore",
+      "target/test-classes/ldaptive.truststore");
+    System.setProperty("javax.net.ssl.trustStoreType", "BKS");
+    System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
   }
 
 
@@ -58,6 +64,10 @@ public class AuthenticatorCliTest extends AbstractTest
   public void deleteLdapEntry()
     throws Exception
   {
+    System.clearProperty("javax.net.ssl.trustStore");
+    System.clearProperty("javax.net.ssl.trustStoreType");
+    System.clearProperty("javax.net.ssl.trustStorePassword");
+
     super.deleteLdapEntry(testLdapEntry.getDn());
   }
 
@@ -68,17 +78,11 @@ public class AuthenticatorCliTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "cliAuthArgs", "cliAuthResults" })
+  @Parameters({ "cliAuthTLSArgs", "cliAuthResults" })
   @Test(groups = {"authcli"})
-  public void authenticate(final String args, final String ldifFile)
+  public void authenticateTLS(final String args, final String ldifFile)
     throws Exception
   {
-    System.setProperty(
-      "javax.net.ssl.trustStore",
-      "target/test-classes/ldaptive.truststore");
-    System.setProperty("javax.net.ssl.trustStoreType", "BKS");
-    System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-
     final String ldif = TestUtil.readFileIntoString(ldifFile);
     final PrintStream oldStdOut = System.out;
     try {
@@ -93,9 +97,33 @@ public class AuthenticatorCliTest extends AbstractTest
       // Restore STDOUT
       System.setOut(oldStdOut);
     }
+  }
 
-    System.clearProperty("javax.net.ssl.trustStore");
-    System.clearProperty("javax.net.ssl.trustStoreType");
-    System.clearProperty("javax.net.ssl.trustStorePassword");
+
+  /**
+   * @param  args  List of delimited arguments to pass to the CLI.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "cliAuthSSLArgs", "cliAuthResults" })
+  @Test(groups = {"authcli"})
+  public void authenticateSSL(final String args, final String ldifFile)
+    throws Exception
+  {
+    final String ldif = TestUtil.readFileIntoString(ldifFile);
+    final PrintStream oldStdOut = System.out;
+    try {
+      final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+      System.setOut(new PrintStream(outStream));
+
+      AuthenticatorCli.main(args.split("\\|"));
+      AssertJUnit.assertEquals(
+        TestUtil.convertLdifToResult(ldif),
+        TestUtil.convertLdifToResult(outStream.toString()));
+    } finally {
+      // Restore STDOUT
+      System.setOut(oldStdOut);
+    }
   }
 }

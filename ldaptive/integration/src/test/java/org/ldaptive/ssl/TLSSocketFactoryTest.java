@@ -14,11 +14,13 @@
 package org.ldaptive.ssl;
 
 import java.util.Arrays;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
-import org.ldaptive.AnyHostnameVerifier;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.TestUtil;
@@ -92,7 +94,7 @@ public class TLSSocketFactoryTest
    *
    * @throws  Exception  On connection failure.
    */
-  public ConnectionConfig createTLSLdapConnectionConfig()
+  public ConnectionConfig createTLSConnectionConfig()
     throws Exception
   {
     // configure TLSSocketFactory
@@ -110,7 +112,34 @@ public class TLSSocketFactoryTest
     // configure ldap object to use TLS
     cc.setTls(true);
     cc.setSslSocketFactory(sf);
-    cc.setHostnameVerifier(new AnyHostnameVerifier());
+    return cc;
+  }
+
+
+  /**
+   * @return  connection configuration
+   *
+   * @throws  Exception  On connection failure.
+   */
+  public ConnectionConfig createSSLConnectionConfig()
+    throws Exception
+  {
+    // configure TLSSocketFactory
+    final X509CertificatesCredentialReader reader =
+      new X509CertificatesCredentialReader();
+    final X509SSLContextInitializer ctxInit =
+      new X509SSLContextInitializer();
+    ctxInit.setTrustCertificates(
+      reader.read("file:target/test-classes/ldaptive.trust.crt"));
+    final SingletonTLSSocketFactory sf = new SingletonTLSSocketFactory();
+    sf.setSSLContextInitializer(ctxInit);
+    sf.initialize();
+
+    final ConnectionConfig cc = TestUtil.readConnectionConfig(
+      TestUtil.class.getResourceAsStream("/org/ldaptive/ldap.ssl.properties"));
+    // configure ldap object to use SSL
+    cc.setSsl(true);
+    cc.setSslSocketFactory(sf);
     return cc;
   }
 
@@ -120,7 +149,7 @@ public class TLSSocketFactoryTest
   public void setEnabledCipherSuites()
     throws Exception
   {
-    final ConnectionConfig cc = createTLSLdapConnectionConfig();
+    final ConnectionConfig cc = createTLSConnectionConfig();
     final TLSSocketFactory sf = (TLSSocketFactory) cc.getSslSocketFactory();
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     SearchOperation search = new SearchOperation(conn);
@@ -168,7 +197,7 @@ public class TLSSocketFactoryTest
   public void setEnabledProtocols()
     throws Exception
   {
-    final ConnectionConfig cc = createTLSLdapConnectionConfig();
+    final ConnectionConfig cc = createTLSConnectionConfig();
     final TLSSocketFactory sf = (TLSSocketFactory) cc.getSslSocketFactory();
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     SearchOperation search = new SearchOperation(conn);
@@ -218,5 +247,39 @@ public class TLSSocketFactoryTest
     } finally {
       conn.close();
     }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = {"ssl"})
+  public void setHostnameVerifier()
+    throws Exception
+  {
+    final ConnectionConfig cc = createSSLConnectionConfig();
+    final SingletonTLSSocketFactory sf =
+      (SingletonTLSSocketFactory) cc.getSslSocketFactory();
+    final HostnameVerifier existingVerifier = sf.getHostnameVerifier();
+    
+    sf.setHostnameVerifier(new AnyHostnameVerifier());
+    Connection conn = DefaultConnectionFactory.getConnection(cc);
+    try {
+      conn.open();
+    } finally {
+      conn.close();
+    }
+
+    sf.setHostnameVerifier(new NoHostnameVerifier());
+    conn = DefaultConnectionFactory.getConnection(cc);
+    try {
+      conn.open();
+      AssertJUnit.fail("Should have thrown SSLPeerUnverifiedException");
+    } catch (LdapException e) {
+      AssertJUnit.assertEquals(
+        SSLPeerUnverifiedException.class, e.getCause().getCause().getClass());
+    } finally {
+      conn.close();
+    }
+
+    sf.setHostnameVerifier(existingVerifier);
   }
 }
