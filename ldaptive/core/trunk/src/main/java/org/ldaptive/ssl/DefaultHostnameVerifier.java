@@ -94,7 +94,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier
       b = verify(
         name.trim(), (X509Certificate) session.getPeerCertificates()[0]);
     } catch (SSLPeerUnverifiedException e) {
-      logger.debug("Could not get certificate from the SSL session", e);
+      logger.warn("Could not get certificate from the SSL session", e);
     }
     return b;
   }
