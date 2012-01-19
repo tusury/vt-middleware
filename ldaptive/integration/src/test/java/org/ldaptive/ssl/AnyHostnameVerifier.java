@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package org.ldaptive;
+package org.ldaptive.ssl;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
