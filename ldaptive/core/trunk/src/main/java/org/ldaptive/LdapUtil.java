@@ -20,6 +20,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -39,6 +40,22 @@ public final class LdapUtil
 
   /** Prime number to assist in calculating hash codes. */
   private static final int HASH_CODE_PRIME = 113;
+
+  /** Pattern to match ipv4 addresses. */
+  private static final Pattern IPV4_PATTERN =
+    Pattern.compile(
+      "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)" +
+      "(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
+
+  /** Pattern to match ipv6 addresses. */
+  private static final Pattern IPV6_STD_PATTERN =
+    Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+
+  /** Pattern to match ipv6 hex compressed addresses. */
+  private static final Pattern IPV6_HEX_COMPRESSED_PATTERN =
+    Pattern.compile(
+      "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::" +
+      "((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
 
 
   /** Default constructor. */
@@ -228,5 +245,22 @@ public final class LdapUtil
       hc += object.hashCode();
     }
     return hc;
+  }
+
+
+  /**
+   * Returns whether the supplied string represents an IP address. Matches both
+   * IPv4 and IPv6 addresses.
+   *
+   * @param  s  to match
+   *
+   * @return  whether the supplied string represents an IP address
+   */
+  public static boolean isIPAddress(final String s)
+  {
+    return s != null &&
+      (IPV4_PATTERN.matcher(s).matches() ||
+       IPV6_STD_PATTERN.matcher(s).matches() ||
+       IPV6_HEX_COMPRESSED_PATTERN.matcher(s).matches());
   }
 }
