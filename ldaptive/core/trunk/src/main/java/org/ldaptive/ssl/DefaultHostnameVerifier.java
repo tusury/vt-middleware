@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
+import javax.net.SocketFactory;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -325,7 +326,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier
      *
      * @return  socket factory
      */
-    public static SSLSocketFactory getDefault()
+    public static SocketFactory getDefault()
     {
       final SSLSocketFactory sf = new SSLSocketFactory();
       try {
