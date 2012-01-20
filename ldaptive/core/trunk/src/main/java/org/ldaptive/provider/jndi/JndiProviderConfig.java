@@ -40,7 +40,7 @@ public class JndiProviderConfig extends ProviderConfig
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
 
-  /** ldap socket factory used for SSL and TLS. */
+  /** ldap socket factory used for SSL and startTLS. */
   private SSLSocketFactory sslSocketFactory;
 
   /** hostname verifier for TLS connections. */
@@ -139,7 +139,7 @@ public class JndiProviderConfig extends ProviderConfig
 
 
   /**
-   * Returns the SSL socket factory to use for TLS/SSL connections.
+   * Returns the SSL socket factory to use for SSL and startTLS connections.
    *
    * @return  SSL socket factory
    */
@@ -150,7 +150,7 @@ public class JndiProviderConfig extends ProviderConfig
 
 
   /**
-   * Sets the SSL socket factory to use for TLS/SSL connections.
+   * Sets the SSL socket factory to use for SSL and startTLS connections.
    *
    * @param  sf  SSL socket factory
    */
@@ -162,7 +162,7 @@ public class JndiProviderConfig extends ProviderConfig
 
 
   /**
-   * Returns the hostname verifier to use for TLS connections.
+   * Returns the hostname verifier to use for startTLS connections.
    *
    * @return  hostname verifier
    */
@@ -173,7 +173,7 @@ public class JndiProviderConfig extends ProviderConfig
 
 
   /**
-   * Sets the hostname verifier to use for TLS connections.
+   * Sets the hostname verifier to use for startTLS connections.
    *
    * @param  verifier  for hostnames
    */
