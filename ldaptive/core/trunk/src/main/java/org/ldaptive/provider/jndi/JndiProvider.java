@@ -97,8 +97,8 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JndiProviderConfig> cf = null;
-    if (cc.isTlsEnabled()) {
-      cf = new JndiTlsConnectionFactory(cc.getLdapUrl(), createEnvironment(cc));
+    if (cc.getUseStartTLS()) {
+      cf = new JndiStartTLSConnectionFactory(cc.getLdapUrl(), createEnvironment(cc));
     } else {
       cf = new JndiConnectionFactory(cc.getLdapUrl(), createEnvironment(cc));
     }
@@ -146,7 +146,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     final Map<String, Object> env = new HashMap<String, Object>();
     env.put(CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
     env.put(VERSION, "3");
-    if (cc.isSslEnabled()) {
+    if (cc.getUseSSL()) {
       env.put(PROTOCOL, "ssl");
       if (cc.getSslSocketFactory() != null) {
         env.put(SOCKET_FACTORY, cc.getSslSocketFactory().getClass().getName());

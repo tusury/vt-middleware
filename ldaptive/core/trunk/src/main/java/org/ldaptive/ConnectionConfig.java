@@ -28,7 +28,7 @@ import org.ldaptive.sasl.SaslConfig;
 public class ConnectionConfig extends AbstractConfig
 {
 
-  /** Default ldap socket factory used for SSL and TLS. */
+  /** Default ldap socket factory used for SSL and startTLS. */
   private SSLSocketFactory sslSocketFactory;
 
   /** Default hostname verifier for TLS connections. */
@@ -65,10 +65,10 @@ public class ConnectionConfig extends AbstractConfig
   private int operationRetryBackoff;
 
   /** Connect to LDAP using SSL protocol. */
-  private boolean ssl;
+  private boolean useSSL;
 
-  /** Connect to LDAP using TLS protocol. */
-  private boolean tls;
+  /** Connect to LDAP using startTLS. */
+  private boolean useStartTLS;
 
 
   /** Default constructor. */
@@ -87,7 +87,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the SSL socket factory used when making SSL or TLS connections.
+   * Returns the SSL socket factory used for SSL or startTLS connections.
    *
    * @return  SSL socket factory
    */
@@ -111,7 +111,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the hostname verifier used when making SSL or TLS connections.
+   * Returns the hostname verifier used for startTLS connections.
    *
    * @return  hostname verifier
    */
@@ -386,24 +386,13 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * See {@link #isSslEnabled()}.
-   *
-   * @return  whether the SSL protocol will be used
-   */
-  public boolean getSsl()
-  {
-    return isSslEnabled();
-  }
-
-
-  /**
    * Returns whether the SSL protocol will be used for connections.
    *
    * @return  whether the SSL protocol will be used
    */
-  public boolean isSslEnabled()
+  public boolean getUseSSL()
   {
-    return ssl;
+    return useSSL;
   }
 
 
@@ -412,46 +401,35 @@ public class ConnectionConfig extends AbstractConfig
    *
    * @param  b  whether the SSL protocol will be used
    */
-  public void setSsl(final boolean b)
+  public void setUseSSL(final boolean b)
   {
     checkImmutable();
-    logger.trace("setting ssl: {}", b);
-    ssl = b;
+    logger.trace("setting useSSL: {}", b);
+    useSSL = b;
   }
 
 
   /**
-   * See {@link #isTlsEnabled()}.
+   * Returns whether startTLS will be used for connections.
    *
-   * @return  whether the TLS protocol will be used
+   * @return  whether startTLS will be used
    */
-  public boolean getTls()
+  public boolean getUseStartTLS()
   {
-    return isTlsEnabled();
+    return useStartTLS;
   }
 
 
   /**
-   * Returns whether the TLS protocol will be used for connections.
+   * Sets whether startTLS will be used for connections.
    *
-   * @return  whether the TLS protocol will be used
+   * @param  b  whether startTLS will be used
    */
-  public boolean isTlsEnabled()
-  {
-    return tls;
-  }
-
-
-  /**
-   * Sets whether the TLS protocol will be used for connections.
-   *
-   * @param  b  whether the TLS protocol will be used
-   */
-  public void setTls(final boolean b)
+  public void setUseStartTLS(final boolean b)
   {
     checkImmutable();
-    logger.trace("setting tls: {}", b);
-    tls = b;
+    logger.trace("setting useStartTLS: {}", b);
+    useStartTLS = b;
   }
 
 
@@ -468,7 +446,8 @@ public class ConnectionConfig extends AbstractConfig
         "[%s@%d::sslSocketFactory=%s, hostnameVerifier=%s, ldapUrl=%s, " +
         "connectTimeout=%s, responseTimeout=%s, bindDn=%s, " +
         "bindSaslConfig=%s, bindControls=%s, operationRetry=%s, " +
-        "operationRetryWait=%s, operationRetryBackoff=%s, ssl=%s, tls=%s]",
+        "operationRetryWait=%s, operationRetryBackoff=%s, useSSL=%s, " +
+        "useStartTLS=%s]",
         getClass().getName(),
         hashCode(),
         sslSocketFactory,
@@ -482,7 +461,7 @@ public class ConnectionConfig extends AbstractConfig
         operationRetry,
         operationRetryWait,
         operationRetryBackoff,
-        ssl,
-        tls);
+        useSSL,
+        useStartTLS);
   }
 }

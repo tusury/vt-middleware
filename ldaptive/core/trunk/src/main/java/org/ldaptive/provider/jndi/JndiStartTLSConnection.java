@@ -19,12 +19,12 @@ import javax.naming.ldap.StartTlsResponse;
 import org.ldaptive.LdapException;
 
 /**
- * JNDI provider implementation of ldap operations over TLS.
+ * JNDI provider implementation of ldap operations using startTLS.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class JndiTlsConnection extends JndiConnection
+public class JndiStartTLSConnection extends JndiConnection
 {
 
   /** Start TLS response. */
@@ -34,27 +34,27 @@ public class JndiTlsConnection extends JndiConnection
    * Whether to call {@link StartTlsResponse#close()} when {@link #close()} is
    * called.
    */
-  private boolean stopTlsOnClose;
+  private boolean stopTLSOnClose;
 
 
   /**
-   * Creates a new jndi tls connection.
+   * Creates a new jndi startTLS connection.
    *
    * @param  lc  ldap context
    */
-  public JndiTlsConnection(final LdapContext lc)
+  public JndiStartTLSConnection(final LdapContext lc)
   {
     super(lc);
   }
 
 
   /**
-   * Creates a new jndi tls connection.
+   * Creates a new jndi startTLS connection.
    *
    * @param  lc  ldap contxt
    * @param  tlsResponse  of successful TLS handshake
    */
-  public JndiTlsConnection(
+  public JndiStartTLSConnection(
     final LdapContext lc,
     final StartTlsResponse tlsResponse)
   {
@@ -69,9 +69,9 @@ public class JndiTlsConnection extends JndiConnection
    *
    * @return  stop TLS on close
    */
-  public boolean getStopTlsOnClose()
+  public boolean getStopTLSOnClose()
   {
-    return stopTlsOnClose;
+    return stopTLSOnClose;
   }
 
 
@@ -81,10 +81,10 @@ public class JndiTlsConnection extends JndiConnection
    *
    * @param  b  stop TLS on close
    */
-  public void setStopTlsOnClose(final boolean b)
+  public void setStopTLSOnClose(final boolean b)
   {
-    logger.trace("setting stopTlsOnClose: {}", b);
-    stopTlsOnClose = b;
+    logger.trace("setting stopTLSOnClose: {}", b);
+    stopTLSOnClose = b;
   }
 
 
@@ -116,7 +116,7 @@ public class JndiTlsConnection extends JndiConnection
     throws LdapException
   {
     try {
-      if (stopTlsOnClose) {
+      if (stopTLSOnClose) {
         if (startTlsResponse != null) {
           startTlsResponse.close();
         }
