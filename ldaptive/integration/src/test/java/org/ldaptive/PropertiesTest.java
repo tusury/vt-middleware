@@ -110,7 +110,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
     AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", cc.getBindDn());
     AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
-    AssertJUnit.assertFalse(cc.isTlsEnabled());
+    AssertJUnit.assertFalse(cc.getUseStartTLS());
     AssertJUnit.assertEquals(
       1, cf.getProvider().getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals(
@@ -170,7 +170,7 @@ public class PropertiesTest
       "ldap://ed-auth.middleware.vt.edu:14389", authCc.getLdapUrl());
     AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", authCc.getBindDn());
     AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
-    AssertJUnit.assertTrue(authCc.isTlsEnabled());
+    AssertJUnit.assertTrue(authCc.getUseStartTLS());
     AssertJUnit.assertEquals(
       1, authCf.getProvider().getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals(
@@ -234,7 +234,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
     AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", cc.getBindDn());
     AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
-    AssertJUnit.assertTrue(cc.isTlsEnabled());
+    AssertJUnit.assertTrue(cc.getUseStartTLS());
     AssertJUnit.assertEquals(
       1, cf.getProvider().getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals(
@@ -282,7 +282,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(host, authCc.getLdapUrl());
     AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", authCc.getBindDn());
     AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
-    AssertJUnit.assertTrue(authCc.isTlsEnabled());
+    AssertJUnit.assertTrue(authCc.getUseStartTLS());
     AssertJUnit.assertEquals(
       1, authP.getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals(
