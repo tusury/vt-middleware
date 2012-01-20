@@ -73,7 +73,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="connectionConfig"
     class="org.ldaptive.ConnectionConfig"
     p:ldapUrl="${ldapTestHost}"
-    p:tls="true"
+    p:useStartTLS="true"
     p:hostnameVerifier-ref="hostnameVerifier"
     p:bindDn="uid=1,ou=test,dc=vt,dc=edu"
     p:bindCredential="VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2">

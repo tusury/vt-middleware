@@ -16,7 +16,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     p:ldapUrl="${ldapTestHost}"
     p:bindDn="uid=1,ou=test,dc=vt,dc=edu"
     p:bindCredential="VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2"
-    p:tls="true">
+    p:useStartTLS="true">
     <property name="sslSocketFactory">
       <bean class="org.ldaptive.ssl.TLSSocketFactory"
         init-method="initialize">

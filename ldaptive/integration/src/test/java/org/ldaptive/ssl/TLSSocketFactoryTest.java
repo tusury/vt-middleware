@@ -21,10 +21,8 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchRequest;
-import org.ldaptive.TestUtil;
 import org.testng.AssertJUnit;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -90,74 +88,131 @@ public class TLSSocketFactoryTest
 
 
   /**
-   * @return  connection configuration
+   * @return  context initializer
    *
-   * @throws  Exception  On connection failure.
+   * @throws  Exception  if trust material cannot be read.
    */
-  public ConnectionConfig createTLSConnectionConfig()
+  public X509SSLContextInitializer createX509SSLContextInitializer()
     throws Exception
   {
-    // configure TLSSocketFactory
     final X509CertificatesCredentialReader reader =
       new X509CertificatesCredentialReader();
     final X509SSLContextInitializer ctxInit =
       new X509SSLContextInitializer();
     ctxInit.setTrustCertificates(
       reader.read("file:target/test-classes/ldaptive.trust.crt"));
+    return ctxInit;
+  }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @return  connection configuration
+   *
+   * @throws  Exception  On connection failure.
+   */
+  public ConnectionConfig createTLSConnectionConfig(final String url)
+    throws Exception
+  {
     final TLSSocketFactory sf = new TLSSocketFactory();
-    sf.setSSLContextInitializer(ctxInit);
+    sf.setSSLContextInitializer(createX509SSLContextInitializer());
     sf.initialize();
 
-    final ConnectionConfig cc = TestUtil.readConnectionConfig(null);
-    // configure ldap object to use TLS
-    cc.setTls(true);
+    final ConnectionConfig cc = new ConnectionConfig(url);
+    cc.setUseStartTLS(true);
     cc.setSslSocketFactory(sf);
     return cc;
   }
 
 
   /**
+   * @param  url  to connect to
+   *
    * @return  connection configuration
    *
    * @throws  Exception  On connection failure.
    */
-  public ConnectionConfig createSSLConnectionConfig()
+  public ConnectionConfig createSSLConnectionConfig(final String url)
     throws Exception
   {
-    // configure TLSSocketFactory
-    final X509CertificatesCredentialReader reader =
-      new X509CertificatesCredentialReader();
-    final X509SSLContextInitializer ctxInit =
-      new X509SSLContextInitializer();
-    ctxInit.setTrustCertificates(
-      reader.read("file:target/test-classes/ldaptive.trust.crt"));
     final SingletonTLSSocketFactory sf = new SingletonTLSSocketFactory();
-    sf.setSSLContextInitializer(ctxInit);
+    sf.setSSLContextInitializer(createX509SSLContextInitializer());
     sf.initialize();
 
-    final ConnectionConfig cc = TestUtil.readConnectionConfig(
-      TestUtil.class.getResourceAsStream("/org/ldaptive/ldap.ssl.properties"));
-    // configure ldap object to use SSL
-    cc.setSsl(true);
+    final ConnectionConfig cc = new ConnectionConfig(url);
+    cc.setUseSSL(true);
     cc.setSslSocketFactory(sf);
     return cc;
   }
 
 
-  /** @throws  Exception  On test failure. */
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "ldapTestHost" })
   @Test(groups = {"ssl"})
-  public void setEnabledCipherSuites()
+  public void connectTLS(final String url)
     throws Exception
   {
-    final ConnectionConfig cc = createTLSConnectionConfig();
+    // with no trusted certificates, connection should fail
+    final ConnectionConfig cc = createTLSConnectionConfig(url);
+    cc.setSslSocketFactory(null);
+    Connection conn = DefaultConnectionFactory.getConnection(cc);
+    try {
+      conn.open();
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "ldapSslTestHost" })
+  @Test(groups = {"ssl"})
+  public void connectSSL(final String url)
+    throws Exception
+  {
+    // with no trusted certificates, connection should fail
+    final ConnectionConfig cc = createSSLConnectionConfig(url);
+    cc.setSslSocketFactory(null);
+    Connection conn = DefaultConnectionFactory.getConnection(cc);
+    try {
+      conn.open();
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "ldapTestHost" })
+  @Test(groups = {"ssl"})
+  public void setEnabledCipherSuites(final String url)
+    throws Exception
+  {
+    final ConnectionConfig cc = createTLSConnectionConfig(url);
     final TLSSocketFactory sf = (TLSSocketFactory) cc.getSslSocketFactory();
     Connection conn = DefaultConnectionFactory.getConnection(cc);
-    SearchOperation search = new SearchOperation(conn);
 
     try {
       conn.open();
-      search.execute(
-        SearchRequest.newObjectScopeSearchRequest("ou=test,dc=vt,dc=edu"));
       AssertJUnit.assertEquals(
         Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledCipherSuites()),
         Arrays.asList(sf.getDefaultCipherSuites()));
@@ -180,9 +235,6 @@ public class TLSSocketFactoryTest
     conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
-      search = new SearchOperation(conn);
-      search.execute(
-        SearchRequest.newObjectScopeSearchRequest("ou=test,dc=vt,dc=edu"));
       AssertJUnit.assertEquals(
         Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledCipherSuites()),
         Arrays.asList(CIPHERS));
@@ -192,20 +244,22 @@ public class TLSSocketFactoryTest
   }
 
 
-  /** @throws  Exception  On test failure. */
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "ldapTestHost" })
   @Test(groups = {"ssl"})
-  public void setEnabledProtocols()
+  public void setEnabledProtocols(final String url)
     throws Exception
   {
-    final ConnectionConfig cc = createTLSConnectionConfig();
+    final ConnectionConfig cc = createTLSConnectionConfig(url);
     final TLSSocketFactory sf = (TLSSocketFactory) cc.getSslSocketFactory();
     Connection conn = DefaultConnectionFactory.getConnection(cc);
-    SearchOperation search = new SearchOperation(conn);
 
     try {
       conn.open();
-      search.execute(
-        SearchRequest.newObjectScopeSearchRequest("ou=test,dc=vt,dc=edu"));
       AssertJUnit.assertEquals(
         Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
         Arrays.asList(ALL_PROTOCOLS));
@@ -238,9 +292,6 @@ public class TLSSocketFactoryTest
     conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
-      search = new SearchOperation(conn);
-      search.execute(
-        SearchRequest.newObjectScopeSearchRequest("ou=test,dc=vt,dc=edu"));
       AssertJUnit.assertEquals(
         Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
         Arrays.asList(PROTOCOLS));
@@ -250,17 +301,23 @@ public class TLSSocketFactoryTest
   }
 
 
-  /** @throws  Exception  On test failure. */
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "ldapSslTestHost" })
   @Test(groups = {"ssl"})
-  public void setHostnameVerifier()
+  public void setHostnameVerifier(final String url)
     throws Exception
   {
-    final ConnectionConfig cc = createSSLConnectionConfig();
+    final ConnectionConfig cc = createSSLConnectionConfig(url);
     final SingletonTLSSocketFactory sf =
       (SingletonTLSSocketFactory) cc.getSslSocketFactory();
     final HostnameVerifier existingVerifier = sf.getHostnameVerifier();
     
     sf.setHostnameVerifier(new AnyHostnameVerifier());
+    sf.initialize();
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -269,6 +326,7 @@ public class TLSSocketFactoryTest
     }
 
     sf.setHostnameVerifier(new NoHostnameVerifier());
+    sf.initialize();
     conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();

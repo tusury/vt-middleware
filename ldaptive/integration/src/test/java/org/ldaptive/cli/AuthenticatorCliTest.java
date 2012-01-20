@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision$
  */
+@Test(dependsOnGroups = { "ssl", "ssl-hostname" })
 public class AuthenticatorCliTest extends AbstractTest
 {
 
@@ -43,7 +44,7 @@ public class AuthenticatorCliTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry9")
-  @BeforeClass(groups = {"authcli"})
+  @BeforeClass(groups = {"authcli"}, dependsOnGroups = { "ssl", "ssl-hostname" })
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -60,7 +61,7 @@ public class AuthenticatorCliTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"authcli"})
+  @AfterClass(groups = {"authcli"}, dependsOnGroups = { "ssl", "ssl-hostname" })
   public void deleteLdapEntry()
     throws Exception
   {
@@ -83,20 +84,7 @@ public class AuthenticatorCliTest extends AbstractTest
   public void authenticateTLS(final String args, final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    final PrintStream oldStdOut = System.out;
-    try {
-      final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(outStream));
-
-      AuthenticatorCli.main(args.split("\\|"));
-      AssertJUnit.assertEquals(
-        TestUtil.convertLdifToResult(ldif),
-        TestUtil.convertLdifToResult(outStream.toString()));
-    } finally {
-      // Restore STDOUT
-      System.setOut(oldStdOut);
-    }
+    authenticate(args, ldifFile);
   }
 
 
@@ -109,6 +97,19 @@ public class AuthenticatorCliTest extends AbstractTest
   @Parameters({ "cliAuthSSLArgs", "cliAuthResults" })
   @Test(groups = {"authcli"})
   public void authenticateSSL(final String args, final String ldifFile)
+    throws Exception
+  {
+    authenticate(args, ldifFile);
+  }
+
+
+  /**
+   * @param  args  List of delimited arguments to pass to the CLI.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  private void authenticate(final String args, final String ldifFile)
     throws Exception
   {
     final String ldif = TestUtil.readFileIntoString(ldifFile);

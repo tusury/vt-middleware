@@ -5,6 +5,7 @@
 
   <parameter name="ldapTestsIgnoreLock" value="${ldapTestsIgnoreLock}"/>
   <parameter name="ldapTestHost" value="${ldapTestHost}"/>
+  <parameter name="ldapSslTestHost" value="${ldapSslTestHost}"/>
 
   <!-- ldap test parameters -->
   <parameter name="createEntry2"
@@ -291,9 +292,9 @@
              value="-ldapUrl|${ldapTestHost}|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-dn|uid=8,ou=test,dc=vt,dc=edu"/>
 
   <parameter name="cliAuthTLSArgs"
-             value="-ldapUrl|${ldapTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-tls|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={0})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useStartTLS|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={0})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthSSLArgs"
-             value="-ldapUrl|${ldapSslTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-ssl|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={0})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapSslTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useSSL|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={0})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthResults"
              value="/org/ldaptive/searchResults-9.ldif"/>
 
@@ -349,6 +350,7 @@
         <include name="dsml" />
         <include name="ldif" />
         <include name="ssl" />
+        <include name="ssl-hostname" />
         <include name="cache" />
         <include name="ldapcli" />
         <include name="authcli" />
