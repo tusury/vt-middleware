@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
+import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
@@ -39,6 +40,9 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
   /** Hostname verifier for this socket factory. */
   private HostnameVerifier hostnameVerifier;
+
+  /** Handshake completed listeners. */
+  private HandshakeCompletedListener[] handshakeCompletedListeners;
 
   /** Enabled cipher suites. */
   private String[] cipherSuites;
@@ -88,6 +92,29 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   public void setHostnameVerifier(final HostnameVerifier verifier)
   {
     hostnameVerifier = verifier;
+  }
+
+
+  /**
+   * Returns the handshake completed listeners to add when sockets are created.
+   *
+   * @return  handshake completed listeners
+   */
+  public HandshakeCompletedListener[] getHandshakeCompletedListeners()
+  {
+    return handshakeCompletedListeners;
+  }
+
+
+  /**
+   * Sets the handshake completed listeners to add when sockets are created.
+   *
+   * @param  listeners  for SSL handshake events
+   */
+  public void setHandshakeCompletedListeners(
+    final HandshakeCompletedListener ... listeners)
+  {
+    handshakeCompletedListeners = listeners;
   }
 
 
@@ -161,6 +188,11 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     if (enabledProtocols != null) {
       socket.setEnabledProtocols(enabledProtocols);
     }
+    if (handshakeCompletedListeners != null) {
+      for (HandshakeCompletedListener listener : handshakeCompletedListeners) {
+        socket.addHandshakeCompletedListener(listener);
+      }
+    }
     if (hostnameVerifier != null) {
       // calling getSession() will initiate the handshake if necessary
       final String hostname = socket.getSession().getPeerHost();
@@ -197,12 +229,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     final boolean autoClose)
     throws IOException
   {
-    SSLSocket sslSocket = null;
-    if (factory != null) {
-      sslSocket = initSSLSocket(
-        (SSLSocket) factory.createSocket(socket, host, port, autoClose));
-    }
-    return sslSocket;
+    return initSSLSocket(
+      (SSLSocket) factory.createSocket(socket, host, port, autoClose));
   }
 
 
@@ -216,11 +244,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   public Socket createSocket()
     throws IOException
   {
-    SSLSocket socket = null;
-    if (factory != null) {
-      socket = initSSLSocket((SSLSocket) factory.createSocket());
-    }
-    return socket;
+    return initSSLSocket((SSLSocket) factory.createSocket());
   }
 
 
@@ -238,11 +262,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   public Socket createSocket(final InetAddress host, final int port)
     throws IOException
   {
-    SSLSocket socket = null;
-    if (factory != null) {
-      socket = initSSLSocket((SSLSocket) factory.createSocket(host, port));
-    }
-    return socket;
+    return initSSLSocket((SSLSocket) factory.createSocket(host, port));
   }
 
 
@@ -267,16 +287,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     final int localPort)
     throws IOException
   {
-    SSLSocket socket = null;
-    if (factory != null) {
-      socket = initSSLSocket(
-        (SSLSocket) factory.createSocket(
-          address,
-          port,
-          localAddress,
-          localPort));
-    }
-    return socket;
+    return initSSLSocket(
+      (SSLSocket) factory.createSocket(address, port, localAddress, localPort));
   }
 
 
@@ -294,11 +306,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   public Socket createSocket(final String host, final int port)
     throws IOException
   {
-    SSLSocket socket = null;
-    if (factory != null) {
-      socket = initSSLSocket((SSLSocket) factory.createSocket(host, port));
-    }
-    return socket;
+    return initSSLSocket((SSLSocket) factory.createSocket(host, port));
   }
 
 
@@ -323,12 +331,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     final int localPort)
     throws IOException
   {
-    SSLSocket socket = null;
-    if (factory != null) {
-      socket = initSSLSocket(
-        (SSLSocket) factory.createSocket(host, port, localHost, localPort));
-    }
-    return socket;
+    return initSSLSocket(
+      (SSLSocket) factory.createSocket(host, port, localHost, localPort));
   }
 
 
@@ -339,11 +343,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    */
   public String[] getDefaultCipherSuites()
   {
-    String[] ciphers = null;
-    if (factory != null) {
-      ciphers = factory.getDefaultCipherSuites();
-    }
-    return ciphers;
+    return factory.getDefaultCipherSuites();
   }
 
 
@@ -355,10 +355,6 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    */
   public String[] getSupportedCipherSuites()
   {
-    String[] ciphers = null;
-    if (factory != null) {
-      ciphers = factory.getSupportedCipherSuites();
-    }
-    return ciphers;
+    return factory.getSupportedCipherSuites();
   }
 }

@@ -67,7 +67,7 @@ public class JndiConnectionFactory
     // JNDI does not perform hostname validation for LDAPS
     // set a socket factory that will
     if ("ssl".equals(env.get(JndiProvider.PROTOCOL)) ||
-        url.indexOf("ldaps://") != -1) {
+        url.toLowerCase().contains("ldaps://")) {
       if (env.get(JndiProvider.SOCKET_FACTORY) == null) {
         env.put(
           JndiProvider.SOCKET_FACTORY,

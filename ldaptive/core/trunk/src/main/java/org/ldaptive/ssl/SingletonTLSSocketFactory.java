@@ -15,6 +15,7 @@ package org.ldaptive.ssl;
 
 import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
+import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.HostnameVerifier;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,9 @@ public class SingletonTLSSocketFactory extends TLSSocketFactory
 
   /** Hostname verifier for this socket factory. */
   private static HostnameVerifier staticHostnameVerifier;
+
+  /** Handshake completed listeners for this socket factory. */
+  private static HandshakeCompletedListener[] staticHandshakeCompletedListeners;
 
   /** Enabled cipher suites. */
   private static String[] staticCipherSuites;
@@ -68,6 +72,19 @@ public class SingletonTLSSocketFactory extends TLSSocketFactory
 
   /** {@inheritDoc} */
   @Override
+  public void setHandshakeCompletedListeners(
+    final HandshakeCompletedListener ... listeners)
+  {
+    if (staticHandshakeCompletedListeners != null) {
+      LoggerFactory.getLogger(SingletonTLSSocketFactory.class).warn(
+        "Handshake completed listeners are being overridden");
+    }
+    staticHandshakeCompletedListeners = listeners;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public void setEnabledCipherSuites(final String[] suites)
   {
     if (staticCipherSuites != null) {
@@ -97,6 +114,7 @@ public class SingletonTLSSocketFactory extends TLSSocketFactory
   {
     super.setSSLContextInitializer(staticContextInitializer);
     super.setHostnameVerifier(staticHostnameVerifier);
+    super.setHandshakeCompletedListeners(staticHandshakeCompletedListeners);
     super.setEnabledCipherSuites(staticCipherSuites);
     super.setEnabledProtocols(staticEnabledProtocols);
     super.initialize();
