@@ -188,16 +188,21 @@ public class AuthenticatorCli extends AbstractCli
 
     final AuthenticationResponse response = auth.authenticate(request);
     final LdapEntry entry = response.getLdapEntry();
-    if (entry != null) {
-      LdapResultWriter writer = null;
-      if (outputDsmlv1) {
-        writer = new Dsmlv1Writer(
-          new BufferedWriter(new OutputStreamWriter(System.out)));
-      } else {
-        writer = new LdifWriter(
-          new BufferedWriter(new OutputStreamWriter(System.out)));
+    if (response.getResult()) {
+      if (entry != null) {
+        LdapResultWriter writer = null;
+        if (outputDsmlv1) {
+          writer = new Dsmlv1Writer(
+            new BufferedWriter(new OutputStreamWriter(System.out)));
+        } else {
+          writer = new LdifWriter(
+            new BufferedWriter(new OutputStreamWriter(System.out)));
+        }
+        writer.write(new LdapResult(entry));
       }
-      writer.write(new LdapResult(entry));
+    } else {
+      System.out.println(
+        String.format("Authentication failed for %s", entry));
     }
   }
 
