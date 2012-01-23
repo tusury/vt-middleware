@@ -86,14 +86,16 @@ public class DefaultHostnameVerifier implements HostnameVerifier
   {
     boolean b = false;
     try {
-      // if IPv6 strip off the "[]"
-      String name = hostname;
-      if (hostname != null &&
-          hostname.startsWith("[") && hostname.endsWith("]")) {
-        name = hostname.substring(1, hostname.length() - 1);
+      String name = null;
+      if (hostname != null) {
+        // if IPv6 strip off the "[]"
+        if (hostname.startsWith("[") && hostname.endsWith("]")) {
+          name = hostname.substring(1, hostname.length() - 1).trim();
+        } else {
+          name = hostname.trim();
+        }
       }
-      b = verify(
-        name.trim(), (X509Certificate) session.getPeerCertificates()[0]);
+      b = verify(name, (X509Certificate) session.getPeerCertificates()[0]);
     } catch (SSLPeerUnverifiedException e) {
       logger.warn("Could not get certificate from the SSL session", e);
     }
