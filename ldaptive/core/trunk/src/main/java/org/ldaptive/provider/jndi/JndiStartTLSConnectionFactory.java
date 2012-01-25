@@ -21,6 +21,8 @@ import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.provider.AbstractConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
@@ -39,19 +41,31 @@ public class JndiStartTLSConnectionFactory
   /** Environment properties. */
   private Map<String, Object> environment;
 
+  /** SSL socket factory to use for startTLS negotiation. */
+  private SSLSocketFactory sslSocketFactory;
+
+  /** Hostname verifier to use for startTLS negotiation. */
+  private HostnameVerifier hostnameVerifier;
+
 
   /**
    * Creates a new jndi startTLS connection factory.
    *
    * @param  url  of the ldap to connect to
    * @param  env  jndi context environment
+   * @param  factory  SSL socket factory
+   * @param  verifier  hostname verifier
    */
   public JndiStartTLSConnectionFactory(
     final String url,
-    final Map<String, Object> env)
+    final Map<String, Object> env,
+    final SSLSocketFactory factory,
+    final HostnameVerifier verifier)
   {
     super(url);
     environment = env;
+    sslSocketFactory = factory;
+    hostnameVerifier = verifier;
   }
 
 
@@ -66,9 +80,6 @@ public class JndiStartTLSConnectionFactory
       environment);
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
-    if (getProviderConfig().getTracePackets() != null) {
-      env.put(JndiProvider.TRACE, getProviderConfig().getTracePackets());
-    }
 
     JndiStartTLSConnection conn = null;
     boolean closeConn = false;
@@ -124,17 +135,13 @@ public class JndiStartTLSConnectionFactory
   {
     final StartTlsResponse tls = (StartTlsResponse) ctx.extendedOperation(
       new StartTlsRequest());
-    if (getProviderConfig().getHostnameVerifier() != null) {
-      logger.trace(
-        "startTLS hostnameVerifier = {}",
-        getProviderConfig().getHostnameVerifier());
-      tls.setHostnameVerifier(getProviderConfig().getHostnameVerifier());
+    if (hostnameVerifier != null) {
+      logger.trace("startTLS hostnameVerifier = {}", hostnameVerifier);
+      tls.setHostnameVerifier(hostnameVerifier);
     }
-    if (getProviderConfig().getSslSocketFactory() != null) {
-      logger.trace(
-        "startTLS sslSocketFactory = {}",
-        getProviderConfig().getSslSocketFactory());
-      tls.negotiate(getProviderConfig().getSslSocketFactory());
+    if (sslSocketFactory != null) {
+      logger.trace("startTLS sslSocketFactory = {}", sslSocketFactory);
+      tls.negotiate(sslSocketFactory);
     } else {
       tls.negotiate();
     }
@@ -152,9 +159,12 @@ public class JndiStartTLSConnectionFactory
   {
     return
       String.format(
-        "[%s@%d::config=%s]",
+        "[%s@%d::env=%s, config=%s, sslSocketFactory=%s, hostnameVerifier=%s]",
         getClass().getName(),
         hashCode(),
-        getProviderConfig());
+        environment,
+        getProviderConfig(),
+        sslSocketFactory,
+        hostnameVerifier);
   }
 }

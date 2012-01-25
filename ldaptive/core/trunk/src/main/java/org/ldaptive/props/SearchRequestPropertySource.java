@@ -33,6 +33,7 @@ public final class SearchRequestPropertySource
   private static final SearchRequestPropertyInvoker INVOKER =
     new SearchRequestPropertyInvoker(SearchRequest.class);
 
+
   /**
    * Creates a new search request property source using the default properties
    * file.

@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ssl.SslConfig;
 
 /**
  * Reads properties specific to {@link ConnectionConfig} and returns an
@@ -98,6 +99,20 @@ public final class ConnectionConfigPropertySource
   public void initialize()
   {
     initializeObject(INVOKER);
+
+    SslConfig sc = object.getSslConfig();
+    if (sc == null) {
+      sc = new SslConfig();
+
+      final SslConfigPropertySource scSource = new SslConfigPropertySource(
+        sc, propertiesDomain, properties);
+      scSource.initialize();
+      object.setSslConfig(sc);
+    } else {
+      final SimplePropertySource<SslConfig> sPropSource =
+        new SimplePropertySource<SslConfig>(sc, propertiesDomain, properties);
+      sPropSource.initialize();
+    }
   }
 
 

@@ -11,35 +11,26 @@
   Version: $Revision$
   Updated: $Date$
 */
-package org.ldaptive.ssl;
+package org.ldaptive.props;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.ldaptive.props.SimplePropertyInvoker;
 
 /**
- * Parses the configuration data associated with credential configs and ssl
- * socket factories. The format of the property string should be like:
+ * Parses the configuration data associated with credential configs. The format
+ * of the property string should be like:
  *
  * <pre>
-   MySSLSocketFactory
-     {KeyStoreCredentialConfig
-       {{trustStore=/tmp/my.truststore}{trustStoreType=JKS}}}
+   KeyStoreCredentialConfig
+     {{trustStore=file:/tmp/my.truststore}{trustStoreType=JKS}}
  * </pre>
  *
  * <p>or</p>
  *
  * <pre>
-   {KeyStoreCredentialConfig
-     {{trustStore=/tmp/my.truststore}{trustStoreType=JKS}}}
- * </pre>
- *
- * <p>or</p>
- *
- * <pre>
-   {{trustCertificates=/tmp/my.crt}}
+   {{trustCertificates=file:/tmp/my.crt}}
  * </pre>
  *
  * @author  Middleware Services
@@ -49,11 +40,7 @@ public class CredentialConfigParser
 {
 
   /** Property string for configuring a credential config. */
-  private static final Pattern FULL_CONFIG_PATTERN = Pattern.compile(
-    "([^\\{]+)\\s*\\{\\s*([^\\{]+)\\s*\\{\\s*(.*)\\}\\s*\\}\\s*");
-
-  /** Property string for configuring a credential config. */
-  private static final Pattern CREDENTIAL_ONLY_CONFIG_PATTERN = Pattern.compile(
+  private static final Pattern CONFIG_PATTERN = Pattern.compile(
     "\\s*\\{\\s*([^\\{]+)\\s*\\{\\s*(.*)\\}\\s*\\}\\s*");
 
   /** Property string for configuring a credential config. */
@@ -63,10 +50,6 @@ public class CredentialConfigParser
   /** Pattern for finding properties. */
   private static final Pattern PROPERTY_PATTERN = Pattern.compile(
     "([^\\}\\{])+");
-
-  /** SSL socket factory class found in the config. */
-  private String sslSocketFactoryClassName =
-    "org.ldaptive.ssl.TLSSocketFactory";
 
   /** Credential config class found in the config. */
   private String credentialConfigClassName =
@@ -83,20 +66,11 @@ public class CredentialConfigParser
    */
   public CredentialConfigParser(final String config)
   {
-    final Matcher fullMatcher = FULL_CONFIG_PATTERN.matcher(config);
-    final Matcher credentialOnlyMatcher = CREDENTIAL_ONLY_CONFIG_PATTERN
-      .matcher(config);
+    final Matcher credentialOnlyMatcher = CONFIG_PATTERN.matcher(config);
     final Matcher paramsOnlyMatcher = PARAMS_ONLY_CONFIG_PATTERN.matcher(
       config);
     Matcher m = null;
-    if (fullMatcher.matches()) {
-      int i = 1;
-      sslSocketFactoryClassName = fullMatcher.group(i++).trim();
-      credentialConfigClassName = fullMatcher.group(i++).trim();
-      if (!"".equals(fullMatcher.group(i).trim())) {
-        m = PROPERTY_PATTERN.matcher(fullMatcher.group(i).trim());
-      }
-    } else if (credentialOnlyMatcher.matches()) {
+    if (credentialOnlyMatcher.matches()) {
       int i = 1;
       credentialConfigClassName = credentialOnlyMatcher.group(i++).trim();
       if (!"".equals(credentialOnlyMatcher.group(i).trim())) {
@@ -117,17 +91,6 @@ public class CredentialConfigParser
         }
       }
     }
-  }
-
-
-  /**
-   * Returns the SSL socket factory class name from the configuration.
-   *
-   * @return  class name
-   */
-  public String getSslSocketFactoryClassName()
-  {
-    return sslSocketFactoryClassName;
   }
 
 
@@ -165,8 +128,7 @@ public class CredentialConfigParser
   public static boolean isCredentialConfig(final String config)
   {
     return
-      FULL_CONFIG_PATTERN.matcher(config).matches() ||
-      CREDENTIAL_ONLY_CONFIG_PATTERN.matcher(config).matches() ||
+      CONFIG_PATTERN.matcher(config).matches() ||
       PARAMS_ONLY_CONFIG_PATTERN.matcher(config).matches();
   }
 
