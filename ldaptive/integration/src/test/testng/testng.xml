@@ -350,13 +350,15 @@
         <include name="dsml" />
         <include name="ldif" />
         <include name="ssl" />
-        <include name="ssl-hostname" />
         <include name="cache" />
         <include name="ldapcli" />
-        <include name="authcli" />
         <include name="conn" />
         <include name="asn1" />
         <include name="control" />
+      </define>
+      <define name="core-sysprops">
+        <include name="ssl-hostname" />
+        <include name="authcli" />
       </define>
       <define name="load">
         <include name="authload" />

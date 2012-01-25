@@ -30,7 +30,6 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision$
  */
-@Test(dependsOnGroups = { "ssl", "ssl-hostname" })
 public class AuthenticatorCliTest extends AbstractTest
 {
 
@@ -44,7 +43,7 @@ public class AuthenticatorCliTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry9")
-  @BeforeClass(groups = {"authcli"}, dependsOnGroups = { "ssl", "ssl-hostname" })
+  @BeforeClass(groups = {"authcli"})
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -61,7 +60,7 @@ public class AuthenticatorCliTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"authcli"}, dependsOnGroups = { "ssl", "ssl-hostname" })
+  @AfterClass(groups = {"authcli"})
   public void deleteLdapEntry()
     throws Exception
   {

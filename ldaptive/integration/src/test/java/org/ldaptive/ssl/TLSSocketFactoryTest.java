@@ -14,7 +14,6 @@
 package org.ldaptive.ssl;
 
 import java.util.Arrays;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
 import org.ldaptive.Connection;
@@ -88,20 +87,14 @@ public class TLSSocketFactoryTest
 
 
   /**
-   * @return  context initializer
-   *
-   * @throws  Exception  if trust material cannot be read.
+   * @return  ssl config
    */
-  public X509SSLContextInitializer createX509SSLContextInitializer()
+  public SslConfig createSslConfig()
     throws Exception
   {
-    final X509CertificatesCredentialReader reader =
-      new X509CertificatesCredentialReader();
-    final X509SSLContextInitializer ctxInit =
-      new X509SSLContextInitializer();
-    ctxInit.setTrustCertificates(
-      reader.read("file:target/test-classes/ldaptive.trust.crt"));
-    return ctxInit;
+    final X509CredentialConfig config = new X509CredentialConfig();
+    config.setTrustCertificates("file:target/test-classes/ldaptive.trust.crt");
+    return new SslConfig(config);
   }
 
 
@@ -115,13 +108,9 @@ public class TLSSocketFactoryTest
   public ConnectionConfig createTLSConnectionConfig(final String url)
     throws Exception
   {
-    final TLSSocketFactory sf = new TLSSocketFactory();
-    sf.setSSLContextInitializer(createX509SSLContextInitializer());
-    sf.initialize();
-
     final ConnectionConfig cc = new ConnectionConfig(url);
     cc.setUseStartTLS(true);
-    cc.setSslSocketFactory(sf);
+    cc.setSslConfig(createSslConfig());
     return cc;
   }
 
@@ -136,13 +125,9 @@ public class TLSSocketFactoryTest
   public ConnectionConfig createSSLConnectionConfig(final String url)
     throws Exception
   {
-    final SingletonTLSSocketFactory sf = new SingletonTLSSocketFactory();
-    sf.setSSLContextInitializer(createX509SSLContextInitializer());
-    sf.initialize();
-
     final ConnectionConfig cc = new ConnectionConfig(url);
     cc.setUseSSL(true);
-    cc.setSslSocketFactory(sf);
+    cc.setSslConfig(createSslConfig());
     return cc;
   }
 
@@ -159,7 +144,7 @@ public class TLSSocketFactoryTest
   {
     // with no trusted certificates, connection should fail
     final ConnectionConfig cc = createTLSConnectionConfig(url);
-    cc.setSslSocketFactory(null);
+    cc.setSslConfig(null);
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -184,7 +169,7 @@ public class TLSSocketFactoryTest
   {
     // with no trusted certificates, connection should fail
     final ConnectionConfig cc = createSSLConnectionConfig(url);
-    cc.setSslSocketFactory(null);
+    cc.setSslConfig(null);
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -208,22 +193,18 @@ public class TLSSocketFactoryTest
     throws Exception
   {
     final ConnectionConfig cc = createTLSConnectionConfig(url);
-    final TLSSocketFactory sf = (TLSSocketFactory) cc.getSslSocketFactory();
+    final TLSSocketFactory sf = new TLSSocketFactory();
+    sf.setSslConfig(cc.getSslConfig());
+    sf.initialize();
+
+    AssertJUnit.assertEquals(
+      Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledCipherSuites()),
+      Arrays.asList(sf.getDefaultCipherSuites()));
+    AssertJUnit.assertNotSame(
+      Arrays.asList(sf.getDefaultCipherSuites()), Arrays.asList(CIPHERS));
+
+    cc.getSslConfig().setEnabledCipherSuites(UNKNOWN_CIPHERS);
     Connection conn = DefaultConnectionFactory.getConnection(cc);
-
-    try {
-      conn.open();
-      AssertJUnit.assertEquals(
-        Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledCipherSuites()),
-        Arrays.asList(sf.getDefaultCipherSuites()));
-      AssertJUnit.assertNotSame(
-        Arrays.asList(sf.getDefaultCipherSuites()), Arrays.asList(CIPHERS));
-    } finally {
-      conn.close();
-    }
-
-    sf.setEnabledCipherSuites(UNKNOWN_CIPHERS);
-    conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
@@ -231,16 +212,11 @@ public class TLSSocketFactoryTest
       AssertJUnit.assertNotNull(e);
     }
 
-    sf.setEnabledCipherSuites(CIPHERS);
-    conn = DefaultConnectionFactory.getConnection(cc);
-    try {
-      conn.open();
-      AssertJUnit.assertEquals(
-        Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledCipherSuites()),
-        Arrays.asList(CIPHERS));
-    } finally {
-      conn.close();
-    }
+    sf.getSslConfig().setEnabledCipherSuites(CIPHERS);
+    sf.initialize();
+    AssertJUnit.assertEquals(
+      Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledCipherSuites()),
+      Arrays.asList(CIPHERS));
   }
 
 
@@ -255,22 +231,27 @@ public class TLSSocketFactoryTest
     throws Exception
   {
     final ConnectionConfig cc = createTLSConnectionConfig(url);
-    final TLSSocketFactory sf = (TLSSocketFactory) cc.getSslSocketFactory();
+    final TLSSocketFactory sf = new TLSSocketFactory();
+    sf.setSslConfig(cc.getSslConfig());
+    sf.initialize();
+
+    AssertJUnit.assertEquals(
+      Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
+      Arrays.asList(ALL_PROTOCOLS));
+    AssertJUnit.assertNotSame(
+      Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
+      Arrays.asList(PROTOCOLS));
+
+    cc.getSslConfig().setEnabledProtocols(FAIL_PROTOCOLS);
     Connection conn = DefaultConnectionFactory.getConnection(cc);
-
     try {
       conn.open();
-      AssertJUnit.assertEquals(
-        Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
-        Arrays.asList(ALL_PROTOCOLS));
-      AssertJUnit.assertNotSame(
-        Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
-        Arrays.asList(PROTOCOLS));
-    } finally {
-      conn.close();
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
     }
 
-    sf.setEnabledProtocols(FAIL_PROTOCOLS);
+    cc.getSslConfig().setEnabledProtocols(UNKNOWN_PROTOCOLS);
     conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -279,25 +260,11 @@ public class TLSSocketFactoryTest
       AssertJUnit.assertNotNull(e);
     }
 
-    sf.setEnabledProtocols(UNKNOWN_PROTOCOLS);
-    conn = DefaultConnectionFactory.getConnection(cc);
-    try {
-      conn.open();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
-    } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
-    }
-
-    sf.setEnabledProtocols(PROTOCOLS);
-    conn = DefaultConnectionFactory.getConnection(cc);
-    try {
-      conn.open();
-      AssertJUnit.assertEquals(
-        Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
-        Arrays.asList(PROTOCOLS));
-    } finally {
-      conn.close();
-    }
+    sf.getSslConfig().setEnabledProtocols(PROTOCOLS);
+    sf.initialize();
+    AssertJUnit.assertEquals(
+      Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
+      Arrays.asList(PROTOCOLS));
   }
 
 
@@ -312,12 +279,7 @@ public class TLSSocketFactoryTest
     throws Exception
   {
     final ConnectionConfig cc = createSSLConnectionConfig(url);
-    final SingletonTLSSocketFactory sf =
-      (SingletonTLSSocketFactory) cc.getSslSocketFactory();
-    final HostnameVerifier existingVerifier = sf.getHostnameVerifier();
-    
-    sf.setHostnameVerifier(new AnyHostnameVerifier());
-    sf.initialize();
+    cc.getSslConfig().setHostnameVerifier(new AnyHostnameVerifier());
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -325,8 +287,7 @@ public class TLSSocketFactoryTest
       conn.close();
     }
 
-    sf.setHostnameVerifier(new NoHostnameVerifier());
-    sf.initialize();
+    cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
     conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -337,7 +298,5 @@ public class TLSSocketFactoryTest
     } finally {
       conn.close();
     }
-
-    sf.setHostnameVerifier(existingVerifier);
   }
 }

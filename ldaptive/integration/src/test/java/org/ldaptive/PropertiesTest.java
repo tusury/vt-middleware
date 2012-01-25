@@ -73,8 +73,7 @@ public class PropertiesTest
           "/org/ldaptive/ldap.null.properties"));
     ccSource.initialize();
 
-    AssertJUnit.assertNull(cc.getSslSocketFactory());
-    AssertJUnit.assertNull(cc.getHostnameVerifier());
+    AssertJUnit.assertNull(cc.getBindSaslConfig());
 
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource =
