@@ -48,7 +48,7 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
    *
    * @param  managers  trust managers
    */
-  public void setTrustManagers(final TrustManager[] managers)
+  public void setTrustManagers(final TrustManager... managers)
   {
     trustManagers = managers;
   }
@@ -68,7 +68,7 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
    *
    * @param  managers  key managers
    */
-  public void setKeyManagers(final KeyManager[] managers)
+  public void setKeyManagers(final KeyManager... managers)
   {
     keyManagers = managers;
   }

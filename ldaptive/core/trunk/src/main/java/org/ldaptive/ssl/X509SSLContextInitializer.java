@@ -59,7 +59,7 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
    *
    * @param  certs  X.509 certificates
    */
-  public void setTrustCertificates(final X509Certificate[] certs)
+  public void setTrustCertificates(final X509Certificate... certs)
   {
     trustCerts = certs;
   }
