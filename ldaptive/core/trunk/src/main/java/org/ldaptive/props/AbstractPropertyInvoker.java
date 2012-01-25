@@ -34,7 +34,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 {
 
   /** Cache of properties. */
-  protected static final Map<String, Map<String, Method[]>> PROPERTIES_CACHE =
+  private static final Map<String, Map<String, Method[]>> PROPERTIES_CACHE =
     new HashMap<String, Map<String, Method[]>>();
 
   /** Class to invoke methods on. */
@@ -51,14 +51,13 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @param  c  to read methods from
    */
-  protected void initialize(final Class<?> c)
+  protected synchronized void initialize(final Class<?> c)
   {
     final String cacheKey = c.getName();
     if (PROPERTIES_CACHE.containsKey(cacheKey)) {
       properties = PROPERTIES_CACHE.get(cacheKey);
     } else {
       properties = new HashMap<String, Method[]>();
-      PROPERTIES_CACHE.put(cacheKey, properties);
       for (Method method : c.getMethods()) {
         if (!method.isBridge()) {
           if (
@@ -106,6 +105,8 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
           i.remove();
         }
       }
+
+      PROPERTIES_CACHE.put(cacheKey, Collections.unmodifiableMap(properties));
     }
     clazz = c;
   }
