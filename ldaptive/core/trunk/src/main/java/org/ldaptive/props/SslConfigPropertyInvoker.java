@@ -13,27 +13,27 @@
 */
 package org.ldaptive.props;
 
-import org.ldaptive.Credential;
-import org.ldaptive.control.RequestControl;
-import org.ldaptive.provider.Provider;
-import org.ldaptive.sasl.SaslConfig;
+import javax.net.ssl.HandshakeCompletedListener;
+import javax.net.ssl.HostnameVerifier;
+import org.ldaptive.ssl.CredentialConfig;
+import org.ldaptive.ssl.SslConfig;
 
 /**
- * Handles properties for {@link org.ldaptive.ConnectionConfig}.
+ * Handles properties for {@link SslConfig}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
+public class SslConfigPropertyInvoker extends AbstractPropertyInvoker
 {
 
 
   /**
-   * Creates a new connection config property invoker for the supplied class.
+   * Creates a new ssl config property invoker for the supplied class.
    *
    * @param  c  class that has setter methods
    */
-  public ConnectionConfigPropertyInvoker(final Class<?> c)
+  public SslConfigPropertyInvoker(final Class<?> c)
   {
     initialize(c);
   }
@@ -45,31 +45,27 @@ public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
   {
     Object newValue = value;
     if (type != String.class) {
-      if (Provider.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(Provider.class, value);
-      } else if (SaslConfig.class.isAssignableFrom(type)) {
+      if (CredentialConfig.class.isAssignableFrom(type)) {
         if ("null".equals(value)) {
           newValue = null;
         } else {
-          if (PropertyValueParser.isParamsOnlyConfig(value)) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              value,
-              "org.ldaptive.sasl.SaslConfig");
+          if (CredentialConfigParser.isCredentialConfig(value)) {
+            final CredentialConfigParser configParser =
+              new CredentialConfigParser(value);
             newValue = configParser.initializeType();
           } else if (PropertyValueParser.isConfig(value)) {
             final PropertyValueParser configParser = new PropertyValueParser(
               value);
             newValue = configParser.initializeType();
           } else {
-            newValue = instantiateType(SaslConfig.class, value);
+            newValue = instantiateType(SslConfig.class, value);
           }
         }
-      } else if (RequestControl[].class.isAssignableFrom(type)) {
+      } else if (HostnameVerifier.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(HostnameVerifier.class, value);
+      } else if (HandshakeCompletedListener[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(
-          RequestControl.class,
-          value);
-      } else if (Credential.class.isAssignableFrom(type)) {
-        newValue = new Credential(value);
+          HandshakeCompletedListener.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }

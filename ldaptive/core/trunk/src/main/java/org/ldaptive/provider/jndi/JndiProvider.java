@@ -13,11 +13,18 @@
 */
 package org.ldaptive.provider.jndi;
 
+import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.ssl.DefaultHostnameVerifier;
+import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.TLSSocketFactory;
+import org.ldaptive.ssl.ThreadLocalTLSSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,13 +104,59 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JndiProviderConfig> cf = null;
+    config.makeImmutable();
     if (cc.getUseStartTLS()) {
-      cf = new JndiStartTLSConnectionFactory(cc.getLdapUrl(), createEnvironment(cc));
+      // hostname verification always occurs for startTLS
+      // hostname verifier is only executed if the default verification fails
+      SSLSocketFactory factory = config.getSslSocketFactory();
+      HostnameVerifier verifier = config.getHostnameVerifier();
+      if (factory == null &&
+          cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
+        final TLSSocketFactory sf = new TLSSocketFactory();
+        sf.setSslConfig(cc.getSslConfig());
+        // startTLS hostname verification is not done at the socket layer
+        sf.getSslConfig().setHostnameVerifier(null);
+        try {
+          sf.initialize();
+        } catch (GeneralSecurityException e) {
+          throw new IllegalArgumentException(e);
+        }
+        factory = sf;
+      }
+      if (verifier == null &&
+          cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
+        verifier = cc.getSslConfig().getHostnameVerifier();
+      }
+      cf = new JndiStartTLSConnectionFactory(
+        cc.getLdapUrl(), createEnvironment(cc, null), factory, verifier);
     } else {
-      cf = new JndiConnectionFactory(cc.getLdapUrl(), createEnvironment(cc));
+      SSLSocketFactory factory = config.getSslSocketFactory();
+      if (factory == null && cc.getUseSSL()) {
+        // LDAPS hostname verification does not occur by default
+        // set a default hostname verifier
+        final HostnameVerifier verifier = config.getHostnameVerifier();
+        final ThreadLocalTLSSocketFactory sf =
+          new ThreadLocalTLSSocketFactory();
+        if (cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
+          sf.setSslConfig(cc.getSslConfig());
+          if (verifier != null) {
+            sf.getSslConfig().setHostnameVerifier(verifier);
+          } else if (sf.getSslConfig().getHostnameVerifier() == null) {
+            sf.getSslConfig().setHostnameVerifier(
+              new DefaultHostnameVerifier());
+          }
+        } else {
+          sf.setSslConfig(
+            new SslConfig(
+              verifier != null ? verifier : new DefaultHostnameVerifier()));
+        }
+        factory = sf;
+      }
+      cf = new JndiConnectionFactory(
+        cc.getLdapUrl(),
+        createEnvironment(
+          cc, factory != null ? factory.getClass().getName() : null));
     }
-    config.setSslSocketFactory(cc.getSslSocketFactory());
-    config.setHostnameVerifier(cc.getHostnameVerifier());
     cf.setProviderConfig(config);
     return cf;
   }
@@ -138,18 +191,20 @@ public class JndiProvider implements Provider<JndiProviderConfig>
    * properties found in the supplied connection config.
    *
    * @param  cc  connection config
+   * @param  factory  class name of the socket factory to use for LDAPS
    *
    * @return  JNDI ldap context environment
    */
-  protected Map<String, Object> createEnvironment(final ConnectionConfig cc)
+  protected Map<String, Object> createEnvironment(
+    final ConnectionConfig cc, final String factory)
   {
     final Map<String, Object> env = new HashMap<String, Object>();
     env.put(CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
     env.put(VERSION, "3");
     if (cc.getUseSSL()) {
       env.put(PROTOCOL, "ssl");
-      if (cc.getSslSocketFactory() != null) {
-        env.put(SOCKET_FACTORY, cc.getSslSocketFactory().getClass().getName());
+      if (factory != null) {
+        env.put(JndiProvider.SOCKET_FACTORY, factory);
       }
     }
     if (cc.getConnectTimeout() > 0) {
@@ -157,6 +212,9 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     }
     if (cc.getResponseTimeout() > 0) {
       env.put(READ_TIMEOUT, Long.toString(cc.getResponseTimeout()));
+    }
+    if (config.getTracePackets() != null) {
+      env.put(JndiProvider.TRACE, config.getTracePackets());
     }
     if (!config.getProperties().isEmpty()) {
       for (Map.Entry<String, Object> entry :

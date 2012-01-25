@@ -38,17 +38,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   /** SSLSocketFactory used for creating SSL sockets. */
   protected SSLSocketFactory factory;
 
-  /** Hostname verifier for this socket factory. */
-  private HostnameVerifier hostnameVerifier;
-
-  /** Handshake completed listeners. */
-  private HandshakeCompletedListener[] handshakeCompletedListeners;
-
-  /** Enabled cipher suites. */
-  private String[] cipherSuites;
-
-  /** Enabled protocol versions. */
-  private String[] enabledProtocols;
+  /** SSL configuration options. */
+  private SslConfig sslConfig;
 
 
   /**
@@ -74,99 +65,25 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Returns the hostname verifier to invoke when sockets are created.
+   * Returns the SSL configuration used by this socket factory.
    *
-   * @return  hostname verifier
+   * @return  ssl config
    */
-  public HostnameVerifier getHostnameVerifier()
+  public SslConfig getSslConfig()
   {
-    return hostnameVerifier;
+    return sslConfig;
   }
 
 
   /**
-   * Sets the hostname verifier to invoke when sockets are created.
+   * Sets the SSL configuration used by this socket factory. A copy of the
+   * supplied object is created by this method.
    *
-   * @param  verifier  for SSL hostnames
+   * @param  config  ssl config
    */
-  public void setHostnameVerifier(final HostnameVerifier verifier)
+  public void setSslConfig(final SslConfig config)
   {
-    hostnameVerifier = verifier;
-  }
-
-
-  /**
-   * Returns the handshake completed listeners to add when sockets are created.
-   *
-   * @return  handshake completed listeners
-   */
-  public HandshakeCompletedListener[] getHandshakeCompletedListeners()
-  {
-    return handshakeCompletedListeners;
-  }
-
-
-  /**
-   * Sets the handshake completed listeners to add when sockets are created.
-   *
-   * @param  listeners  for SSL handshake events
-   */
-  public void setHandshakeCompletedListeners(
-    final HandshakeCompletedListener ... listeners)
-  {
-    handshakeCompletedListeners = listeners;
-  }
-
-
-  /**
-   * Returns the names of the SSL cipher suites which are currently enabled for
-   * use on sockets created by this factory. A null value indicates that no
-   * specific cipher suites have been enabled and that the default suites are in
-   * use.
-   *
-   * @return  cipher suites
-   */
-  public String[] getEnabledCipherSuites()
-  {
-    return cipherSuites;
-  }
-
-
-  /**
-   * Sets the cipher suites enabled for use on sockets created by this factory.
-   * See {@link javax.net.ssl.SSLSocket#setEnabledCipherSuites(String[])}.
-   *
-   * @param  suites  cipher suites
-   */
-  public void setEnabledCipherSuites(final String[] suites)
-  {
-    cipherSuites = suites;
-  }
-
-
-  /**
-   * Returns the names of the protocol versions which are currently enabled for
-   * use on sockets created by this factory. A null value indicates that no
-   * specific protocols have been enabled and that the default protocols are in
-   * use.
-   *
-   * @return  enabled protocols
-   */
-  public String[] getEnabledProtocols()
-  {
-    return enabledProtocols;
-  }
-
-
-  /**
-   * Sets the protocol versions enabled for use on sockets created by this
-   * factory. See {@link javax.net.ssl.SSLSocket#setEnabledProtocols(String[])}.
-   *
-   * @param  protocols  enabled protocols
-   */
-  public void setEnabledProtocols(final String[] protocols)
-  {
-    enabledProtocols = protocols;
+    sslConfig = config;
   }
 
 
@@ -182,27 +99,32 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   protected SSLSocket initSSLSocket(final SSLSocket socket)
     throws IOException
   {
-    if (cipherSuites != null) {
-      socket.setEnabledCipherSuites(cipherSuites);
-    }
-    if (enabledProtocols != null) {
-      socket.setEnabledProtocols(enabledProtocols);
-    }
-    if (handshakeCompletedListeners != null) {
-      for (HandshakeCompletedListener listener : handshakeCompletedListeners) {
-        socket.addHandshakeCompletedListener(listener);
+    final SslConfig sc = getSslConfig();
+    if (sc != null) {
+      if (sc.getEnabledCipherSuites() != null) {
+        socket.setEnabledCipherSuites(sc.getEnabledCipherSuites());
       }
-    }
-    if (hostnameVerifier != null) {
-      // calling getSession() will initiate the handshake if necessary
-      final String hostname = socket.getSession().getPeerHost();
-      if (!hostnameVerifier.verify(hostname, socket.getSession())) {
-        socket.close();
-        socket.getSession().invalidate();
-        throw new SSLPeerUnverifiedException(
-          String.format(
-            "Hostname '%s' does not match the hostname in the server's " +
-            "certificate", hostname));
+      if (sc.getEnabledProtocols() != null) {
+        socket.setEnabledProtocols(sc.getEnabledProtocols());
+      }
+      if (sc.getHandshakeCompletedListeners() != null) {
+        for (HandshakeCompletedListener listener :
+             sc.getHandshakeCompletedListeners()) {
+          socket.addHandshakeCompletedListener(listener);
+        }
+      }
+      if (sc.getHostnameVerifier() != null) {
+        final HostnameVerifier verifier = sc.getHostnameVerifier();
+        // calling getSession() will initiate the handshake if necessary
+        final String hostname = socket.getSession().getPeerHost();
+        if (!verifier.verify(hostname, socket.getSession())) {
+          socket.close();
+          socket.getSession().invalidate();
+          throw new SSLPeerUnverifiedException(
+            String.format(
+              "Hostname '%s' does not match the hostname in the server's " +
+              "certificate", hostname));
+        }
       }
     }
     return socket;

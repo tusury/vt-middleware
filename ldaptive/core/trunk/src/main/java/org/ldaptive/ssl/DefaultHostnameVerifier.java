@@ -319,7 +319,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier
      */
     public SSLSocketFactory()
     {
-      setHostnameVerifier(new DefaultHostnameVerifier());
+      setSslConfig(new SslConfig(new DefaultHostnameVerifier()));
     }
 
 

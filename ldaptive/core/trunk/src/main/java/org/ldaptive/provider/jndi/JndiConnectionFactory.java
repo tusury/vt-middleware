@@ -20,7 +20,6 @@ import javax.naming.ldap.InitialLdapContext;
 import org.ldaptive.LdapException;
 import org.ldaptive.provider.AbstractConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
-import org.ldaptive.ssl.DefaultHostnameVerifier;
 
 /**
  * Creates connections using the JNDI {@link InitialLdapContext} class.
@@ -60,20 +59,6 @@ public class JndiConnectionFactory
       environment);
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
-    if (getProviderConfig().getTracePackets() != null) {
-      env.put(JndiProvider.TRACE, getProviderConfig().getTracePackets());
-    }
-
-    // JNDI does not perform hostname validation for LDAPS
-    // set a socket factory that will
-    if ("ssl".equals(env.get(JndiProvider.PROTOCOL)) ||
-        url.toLowerCase().contains("ldaps://")) {
-      if (env.get(JndiProvider.SOCKET_FACTORY) == null) {
-        env.put(
-          JndiProvider.SOCKET_FACTORY,
-          DefaultHostnameVerifier.SSLSocketFactory.class.getName());
-      }
-    }
 
     JndiConnection conn = null;
     try {

@@ -85,6 +85,7 @@ public class JndiProviderConfig extends ProviderConfig
    */
   public void setTracePackets(final OutputStream stream)
   {
+    checkImmutable();
     logger.trace("setting tracePackets: {}", stream);
     tracePackets = stream;
   }
@@ -110,6 +111,7 @@ public class JndiProviderConfig extends ProviderConfig
    */
   public void setRemoveDnUrls(final boolean b)
   {
+    checkImmutable();
     logger.trace("setting removeDnUrls: {}", b);
     removeDnUrls = b;
   }
@@ -133,6 +135,7 @@ public class JndiProviderConfig extends ProviderConfig
    */
   public void setSearchIgnoreResultCodes(final ResultCode[] codes)
   {
+    checkImmutable();
     logger.trace("setting searchIgnoreResultCodes: {}", Arrays.toString(codes));
     searchIgnoreResultCodes = codes;
   }
@@ -156,6 +159,7 @@ public class JndiProviderConfig extends ProviderConfig
    */
   public void setSslSocketFactory(final SSLSocketFactory sf)
   {
+    checkImmutable();
     logger.trace("setting sslSocketFactory: {}", sf);
     sslSocketFactory = sf;
   }
@@ -179,6 +183,7 @@ public class JndiProviderConfig extends ProviderConfig
    */
   public void setHostnameVerifier(final HostnameVerifier verifier)
   {
+    checkImmutable();
     logger.trace("setting hostnameVerifier: {}", verifier);
     hostnameVerifier = verifier;
   }
@@ -202,6 +207,7 @@ public class JndiProviderConfig extends ProviderConfig
    */
   public void setControlProcessor(final ControlProcessor<Control> processor)
   {
+    checkImmutable();
     logger.trace("setting controlProcessor: {}", processor);
     controlProcessor = processor;
   }

@@ -14,10 +14,9 @@
 package org.ldaptive;
 
 import java.util.Arrays;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.ssl.SslConfig;
 
 /**
  * Contains all the configuration data needed to control connections.
@@ -27,12 +26,6 @@ import org.ldaptive.sasl.SaslConfig;
  */
 public class ConnectionConfig extends AbstractConfig
 {
-
-  /** Default ldap socket factory used for SSL and startTLS. */
-  private SSLSocketFactory sslSocketFactory;
-
-  /** Default hostname verifier for TLS connections. */
-  private HostnameVerifier hostnameVerifier;
 
   /** URL to the LDAP(s). */
   private String ldapUrl;
@@ -64,6 +57,9 @@ public class ConnectionConfig extends AbstractConfig
   /** Factor to multiply operation retry wait by. */
   private int operationRetryBackoff;
 
+  /** Configuration for SSL and startTLS connections. */
+  private SslConfig sslConfig;
+
   /** Connect to LDAP using SSL protocol. */
   private boolean useSSL;
 
@@ -83,54 +79,6 @@ public class ConnectionConfig extends AbstractConfig
   public ConnectionConfig(final String url)
   {
     setLdapUrl(url);
-  }
-
-
-  /**
-   * Returns the SSL socket factory used for SSL or startTLS connections.
-   *
-   * @return  SSL socket factory
-   */
-  public SSLSocketFactory getSslSocketFactory()
-  {
-    return sslSocketFactory;
-  }
-
-
-  /**
-   * Sets the SSL socket factory.
-   *
-   * @param  factory  SSL socket factory
-   */
-  public void setSslSocketFactory(final SSLSocketFactory factory)
-  {
-    checkImmutable();
-    logger.trace("setting sslSocketFactory: {}", factory);
-    sslSocketFactory = factory;
-  }
-
-
-  /**
-   * Returns the hostname verifier used for startTLS connections.
-   *
-   * @return  hostname verifier
-   */
-  public HostnameVerifier getHostnameVerifier()
-  {
-    return hostnameVerifier;
-  }
-
-
-  /**
-   * Sets the hostname verifier.
-   *
-   * @param  verifier  hostname verifier
-   */
-  public void setHostnameVerifier(final HostnameVerifier verifier)
-  {
-    checkImmutable();
-    logger.trace("setting hostnameVerifier: {}", verifier);
-    hostnameVerifier = verifier;
   }
 
 
@@ -386,6 +334,30 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Returns the ssl config.
+   *
+   * @return  ssl config
+   */
+  public SslConfig getSslConfig()
+  {
+    return sslConfig;
+  }
+
+
+  /**
+   * Sets the ssl config.
+   *
+   * @param  config  ssl config
+   */
+  public void setSslConfig(final SslConfig config)
+  {
+    checkImmutable();
+    logger.trace("setting sslConfig: {}", config);
+    sslConfig = config;
+  }
+
+
+  /**
    * Returns whether the SSL protocol will be used for connections.
    *
    * @return  whether the SSL protocol will be used
@@ -443,15 +415,12 @@ public class ConnectionConfig extends AbstractConfig
   {
     return
       String.format(
-        "[%s@%d::sslSocketFactory=%s, hostnameVerifier=%s, ldapUrl=%s, " +
-        "connectTimeout=%s, responseTimeout=%s, bindDn=%s, " +
-        "bindSaslConfig=%s, bindControls=%s, operationRetry=%s, " +
-        "operationRetryWait=%s, operationRetryBackoff=%s, useSSL=%s, " +
-        "useStartTLS=%s]",
+        "[%s@%d::ldapUrl=%s, connectTimeout=%s, responseTimeout=%s, " +
+        "bindDn=%s, bindSaslConfig=%s, bindControls=%s, operationRetry=%s, " +
+        "operationRetryWait=%s, operationRetryBackoff=%s, sslConfig=%s, " +
+        "useSSL=%s, useStartTLS=%s]",
         getClass().getName(),
         hashCode(),
-        sslSocketFactory,
-        hostnameVerifier,
         ldapUrl,
         connectTimeout,
         responseTimeout,
@@ -461,6 +430,7 @@ public class ConnectionConfig extends AbstractConfig
         operationRetry,
         operationRetryWait,
         operationRetryBackoff,
+        sslConfig,
         useSSL,
         useStartTLS);
   }

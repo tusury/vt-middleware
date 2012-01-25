@@ -16,7 +16,6 @@ package org.ldaptive.ssl;
 import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
-import org.slf4j.LoggerFactory;
 
 /**
  * An extension of SSLSocketFactory that leverages an SSL context initializer.
@@ -30,32 +29,6 @@ import org.slf4j.LoggerFactory;
 public class TLSSocketFactory extends AbstractTLSSocketFactory
 {
 
-  /** SSLContextInitializer used for initializing SSL contexts. */
-  private SSLContextInitializer contextInitializer =
-    new DefaultSSLContextInitializer();
-
-
-  /**
-   * Returns the SSL context initializer.
-   *
-   * @return  SSL context initializer
-   */
-  public SSLContextInitializer getSSLContextInitializer()
-  {
-    return contextInitializer;
-  }
-
-
-  /**
-   * Sets the SSL context initializer.
-   *
-   * @param  initializer  to create SSL contexts with
-   */
-  public void setSSLContextInitializer(final SSLContextInitializer initializer)
-  {
-    contextInitializer = initializer;
-  }
-
 
   /**
    * Creates the underlying SSLContext using truststore and keystore attributes
@@ -67,6 +40,18 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   public void initialize()
     throws GeneralSecurityException
   {
+    SSLContextInitializer contextInitializer = null;
+    final SslConfig sslConfig = getSslConfig();
+    if (sslConfig != null) {
+      final CredentialConfig credConfig = sslConfig.getCredentialConfig();
+      if (credConfig != null) {
+        contextInitializer = credConfig.createSSLContextInitializer();
+      } else {
+        contextInitializer = new DefaultSSLContextInitializer();
+      }
+    } else {
+      contextInitializer = new DefaultSSLContextInitializer();
+    }
     final SSLContext ctx = contextInitializer.initSSLContext(DEFAULT_PROTOCOL);
     factory = ctx.getSocketFactory();
   }
@@ -83,9 +68,8 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
     try {
       sf.initialize();
     } catch (GeneralSecurityException e) {
-      LoggerFactory.getLogger(TLSSocketFactory.class).error(
-        "Error initializing socket factory",
-        e);
+      throw new IllegalArgumentException(
+        "Error initializing socket factory", e);
     }
     return sf;
   }
@@ -101,13 +85,10 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   {
     return
       String.format(
-        "[%s@%d::sslContextInitializer=%s, factory=%s, " +
-        "enabledCipherSuites=%s, enabledProtocols=%s]",
+        "[%s@%d::factory=%s, sslConfig=%s]",
         getClass().getName(),
         hashCode(),
-        getSSLContextInitializer(),
         getFactory(),
-        getEnabledCipherSuites(),
-        getEnabledProtocols());
+        getSslConfig());
   }
 }
