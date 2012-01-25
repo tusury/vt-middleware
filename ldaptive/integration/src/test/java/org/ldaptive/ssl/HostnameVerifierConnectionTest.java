@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision$
  */
-@Test(dependsOnGroups = { "ssl" })
 public class HostnameVerifierConnectionTest
 {
 
@@ -37,7 +36,7 @@ public class HostnameVerifierConnectionTest
   /**
    * @throws  Exception  On test failure.
    */
-  @BeforeClass(groups = {"ssl-hostname"}, dependsOnGroups = { "ssl" })
+  @BeforeClass(groups = {"ssl-hostname"})
   public void setProperties()
   {
     System.setProperty(
@@ -49,7 +48,7 @@ public class HostnameVerifierConnectionTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"ssl-hostname"}, dependsOnGroups = { "ssl" })
+  @AfterClass(groups = {"ssl-hostname"})
   public void clearProperties()
   {
     System.clearProperty("javax.net.ssl.trustStore");

@@ -16,20 +16,16 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     p:ldapUrl="${ldapTestHost}"
     p:bindDn="uid=1,ou=test,dc=vt,dc=edu"
     p:bindCredential="VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2"
-    p:useStartTLS="true">
-    <property name="sslSocketFactory">
-      <bean class="org.ldaptive.ssl.TLSSocketFactory"
-        init-method="initialize">
-        <property name="SSLContextInitializer">
-          <bean
-            factory-bean="sslContextInitializerFactory"
-            factory-method="createSSLContextInitializer" />
-        </property>
-      </bean>
-    </property>
-  </bean>
+    p:useStartTLS="true"
+    p:sslConfig-ref="sslConfig"
+  />
   
-  <bean id="sslContextInitializerFactory"
+  <bean id="sslConfig"
+    class="org.ldaptive.ssl.SslConfig"
+    p:credentialConfig-ref="credentialConfig"
+  />
+  
+  <bean id="credentialConfig"
     class="org.ldaptive.ssl.KeyStoreCredentialConfig"
     p:keyStore="classpath:/ldaptive.keystore"
     p:keyStoreType="BKS"
