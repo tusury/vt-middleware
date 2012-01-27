@@ -8,9 +8,15 @@ TEST_GROUP=core
 while [ $# -gt 0 ]
 do
   case "$1" in
-    -host)  HOST=$1;;
-    -group)  TEST_GROUP=$1;;
-    -provider)  PROVIDER=$1;;
+    -host)
+      shift
+      HOST=$1;;
+    -group)
+      shift
+      TEST_GROUP=$1;;
+    -provider)
+      shift
+      PROVIDER=$1;;
   esac
   shift
 done
