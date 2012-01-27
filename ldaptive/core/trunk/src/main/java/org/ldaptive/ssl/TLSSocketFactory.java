@@ -16,6 +16,7 @@ package org.ldaptive.ssl;
 import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 /**
  * An extension of SSLSocketFactory that leverages an SSL context initializer.
@@ -48,6 +49,10 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
         contextInitializer = credConfig.createSSLContextInitializer();
       } else {
         contextInitializer = new DefaultSSLContextInitializer();
+      }
+      final TrustManager[] managers = sslConfig.getTrustManagers();
+      if (managers != null) {
+        contextInitializer.setTrustManagers(managers);
       }
     } else {
       contextInitializer = new DefaultSSLContextInitializer();

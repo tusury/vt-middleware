@@ -15,7 +15,7 @@ package org.ldaptive.ssl;
 
 import java.util.Arrays;
 import javax.net.ssl.HandshakeCompletedListener;
-import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.TrustManager;
 import org.ldaptive.AbstractConfig;
 
 /**
@@ -34,8 +34,8 @@ public class SslConfig extends AbstractConfig
    */
   private CredentialConfig credentialConfig;
 
-  /** Hostname verifier for this socket factory. */
-  private HostnameVerifier hostnameVerifier;
+  /** Trust managers. */
+  private TrustManager[] trustManagers;
 
   /** Enabled cipher suites. */
   private String[] enabledCipherSuites;
@@ -65,11 +65,11 @@ public class SslConfig extends AbstractConfig
   /**
    * Creates a new ssl config.
    *
-   * @param  verifier  hostname verifier
+   * @param  managers  trust managers
    */
-  public SslConfig(final HostnameVerifier verifier)
+  public SslConfig(final TrustManager... managers)
   {
-    hostnameVerifier = verifier;
+    trustManagers = managers;
   }
 
 
@@ -78,12 +78,13 @@ public class SslConfig extends AbstractConfig
    *
    * @param  config  credential config
    * @param  verifier  hostname verifier
+   * @param  managers  trust managers
    */
   public SslConfig(
-    final CredentialConfig config, final HostnameVerifier verifier)
+    final CredentialConfig config, final TrustManager... managers)
   {
     credentialConfig = config;
-    hostnameVerifier = verifier;
+    trustManagers = managers;
   }
 
 
@@ -94,7 +95,7 @@ public class SslConfig extends AbstractConfig
    */
   public boolean isEmpty()
   {
-    return credentialConfig == null && hostnameVerifier == null &&
+    return credentialConfig == null && trustManagers == null &&
            enabledCipherSuites == null && enabledProtocols == null &&
            handshakeCompletedListeners == null;
   }
@@ -125,26 +126,26 @@ public class SslConfig extends AbstractConfig
 
 
   /**
-   * Returns the hostname verifier.
+   * Returns the trust managers.
    *
-   * @return  hostname verifier
+   * @return  trust managers
    */
-  public HostnameVerifier getHostnameVerifier()
+  public TrustManager[] getTrustManagers()
   {
-    return hostnameVerifier;
+    return trustManagers;
   }
 
 
   /**
-   * Sets the hostname verifier.
+   * Sets the trust managers.
    *
-   * @param  verifier  hostname verifier
+   * @param  managers  trust managers
    */
-  public void setHostnameVerifier(final HostnameVerifier verifier)
+  public void setTrustManagers(final TrustManager... managers)
   {
     checkImmutable();
-    logger.trace("setting hostnameVerifier: {}", verifier);
-    hostnameVerifier = verifier;
+    logger.trace("setting trustManagers: {}", Arrays.toString(managers));
+    trustManagers = managers;
   }
 
 
@@ -215,7 +216,30 @@ public class SslConfig extends AbstractConfig
   public void setHandshakeCompletedListeners(
     final HandshakeCompletedListener ... listeners)
   {
+    checkImmutable();
+    logger.trace(
+      "setting handshakeCompletedListeners: {}",
+      Arrays.toString(handshakeCompletedListeners));
     handshakeCompletedListeners = listeners;
+  }
+
+
+  /**
+   * Returns a ssl config initialized with the supplied config.
+   *
+   * @param  config  ssl config to read properties from
+   *
+   * @return  ssl config
+   */
+  public static SslConfig newSslConfig(final SslConfig config)
+  {
+    final SslConfig sc = new SslConfig();
+    sc.setCredentialConfig(config.getCredentialConfig());
+    sc.setTrustManagers(config.getTrustManagers());
+    sc.setEnabledCipherSuites(config.getEnabledCipherSuites());
+    sc.setEnabledProtocols(config.getEnabledProtocols());
+    sc.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
+    return sc;
   }
 
 
@@ -229,15 +253,15 @@ public class SslConfig extends AbstractConfig
   {
     return
       String.format(
-        "[%s@%d::credentialConfig=%s, hostnameVerifier=%s, " +
+        "[%s@%d::credentialConfig=%s, trustManagers=%s, " +
         "enabledCipherSuites=%s, enabledProtocols=%s, " +
         "handshakeCompletedListeners=%s]",
         getClass().getName(),
         hashCode(),
         credentialConfig,
-        hostnameVerifier,
-        enabledCipherSuites,
-        enabledProtocols,
-        handshakeCompletedListeners);
+        Arrays.toString(trustManagers),
+        Arrays.toString(enabledCipherSuites),
+        Arrays.toString(enabledProtocols),
+        Arrays.toString(handshakeCompletedListeners));
   }
 }

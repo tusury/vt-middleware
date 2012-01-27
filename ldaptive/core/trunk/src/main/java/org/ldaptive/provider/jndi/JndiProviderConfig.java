@@ -43,7 +43,7 @@ public class JndiProviderConfig extends ProviderConfig
   /** ldap socket factory used for SSL and startTLS. */
   private SSLSocketFactory sslSocketFactory;
 
-  /** hostname verifier for TLS connections. */
+  /** hostname verifier for startTLS connections. */
   private HostnameVerifier hostnameVerifier;
 
   /** JNDI specific control handler. */

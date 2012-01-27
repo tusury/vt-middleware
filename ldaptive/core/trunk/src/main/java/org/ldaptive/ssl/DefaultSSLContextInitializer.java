@@ -14,8 +14,11 @@
 package org.ldaptive.ssl;
 
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import org.ldaptive.LdapUtil;
 
 /**
  * Provides a default implementation of SSL context initializer which allows the
@@ -27,9 +30,6 @@ import javax.net.ssl.TrustManager;
 public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
 {
 
-  /** Trust managers. */
-  private TrustManager[] trustManagers;
-
   /** Key managers. */
   private KeyManager[] keyManagers;
 
@@ -39,18 +39,19 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   public TrustManager[] getTrustManagers()
     throws GeneralSecurityException
   {
-    return trustManagers;
-  }
-
-
-  /**
-   * Sets the trust managers.
-   *
-   * @param  managers  trust managers
-   */
-  public void setTrustManagers(final TrustManager... managers)
-  {
-    trustManagers = managers;
+    final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
+      TrustManagerFactory.getDefaultAlgorithm());
+    tmf.init((KeyStore) null);
+    final TrustManager[] tm = tmf.getTrustManagers();
+    TrustManager[] aggregate = null;
+    if (tm == null) {
+      aggregate = super.getTrustManagers() != null ?
+        aggregateTrustManagers(super.getTrustManagers()) : null;
+    } else {
+      aggregate = aggregateTrustManagers(
+        LdapUtil.concatArrays(tm, super.getTrustManagers()));
+    }
+    return aggregate;
   }
 
 
