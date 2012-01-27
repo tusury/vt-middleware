@@ -82,7 +82,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="sslConfig"
     class="org.ldaptive.ssl.SslConfig"
     p:credentialConfig-ref="credentialConfig"
-    p:hostnameVerifier-ref="hostnameVerifier"
   />
 
   <bean id="credentialConfig"
@@ -90,10 +89,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:trustStore="classpath:/ldaptive.truststore"
     p:trustStoreType="BKS"
     p:trustStorePassword="changeit"
-  />
-
-  <bean id="hostnameVerifier"
-    class="org.ldaptive.ssl.AnyHostnameVerifier"
   />
 
 </beans>

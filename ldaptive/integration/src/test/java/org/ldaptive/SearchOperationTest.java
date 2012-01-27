@@ -1365,7 +1365,7 @@ public class SearchOperationTest extends AbstractTest
     System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
     System.setProperty("java.security.krb5.realm", krb5Realm);
     System.setProperty(
-      "java.security.krb5.kdc", TestUtil.getHostFromLdapUrl(krb5Kdc));
+      "java.security.krb5.kdc", LdapUtil.getHostnameAndPort(krb5Kdc)[0][0]);
 
     final String expected = TestUtil.readFileIntoString(ldifFile);
 

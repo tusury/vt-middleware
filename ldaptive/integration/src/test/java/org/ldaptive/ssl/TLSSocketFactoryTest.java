@@ -13,6 +13,7 @@
 */
 package org.ldaptive.ssl;
 
+import java.net.Socket;
 import java.util.Arrays;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
@@ -20,6 +21,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtil;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -278,25 +280,30 @@ public class TLSSocketFactoryTest
   public void setHostnameVerifier(final String url)
     throws Exception
   {
-    final ConnectionConfig cc = createSSLConnectionConfig(url);
-    cc.getSslConfig().setHostnameVerifier(new AnyHostnameVerifier());
-    Connection conn = DefaultConnectionFactory.getConnection(cc);
+    final String[][] hostAndPort = LdapUtil.getHostnameAndPort(url);
+    final TLSSocketFactory sf = new TLSSocketFactory();
+    sf.initialize();
+
+    sf.setHostnameVerifier(new AnyHostnameVerifier());
+    Socket s = null;
     try {
-      conn.open();
+      s = sf.createSocket(
+        hostAndPort[0][0],
+        hostAndPort[0][1] != null ? Integer.parseInt(hostAndPort[0][1]) : 389);
     } finally {
-      conn.close();
+      s.close();
     }
 
-    cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
-    conn = DefaultConnectionFactory.getConnection(cc);
+    sf.setHostnameVerifier(new NoHostnameVerifier());
     try {
-      conn.open();
+      s = sf.createSocket(
+        hostAndPort[0][0],
+        hostAndPort[0][1] != null ? Integer.parseInt(hostAndPort[0][1]) : 389);
       AssertJUnit.fail("Should have thrown SSLPeerUnverifiedException");
-    } catch (LdapException e) {
-      AssertJUnit.assertEquals(
-        SSLPeerUnverifiedException.class, e.getCause().getCause().getClass());
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(SSLPeerUnverifiedException.class, e.getClass());
     } finally {
-      conn.close();
+      s.close();
     }
   }
 }
