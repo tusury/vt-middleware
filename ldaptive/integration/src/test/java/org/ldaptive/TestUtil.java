@@ -397,23 +397,6 @@ public final class TestUtil
 
 
   /**
-   * Returns the hostname by parsing the supplied ldap url.
-   *
-   * @param  url  to parse
-   *
-   * @return  url without prefix or port
-   */
-  public static String getHostFromLdapUrl(final String url)
-  {
-    String newUrl = url.substring("ldap://".length());
-    if (newUrl.indexOf(":") != -1) {
-      newUrl = newUrl.substring(0, newUrl.indexOf(":"));
-    }
-    return newUrl;
-  }
-
-
-  /**
    * Returns a string representation of the supplied byte array in hex format.
    *
    * @param  b  to create hex string with
