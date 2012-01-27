@@ -16,12 +16,13 @@ package org.ldaptive.provider.jndi;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
+import org.ldaptive.ssl.HostnameVerifyingTrustManager;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.TLSSocketFactory;
 import org.ldaptive.ssl.ThreadLocalTLSSocketFactory;
@@ -106,16 +107,12 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     ConnectionFactory<JndiProviderConfig> cf = null;
     config.makeImmutable();
     if (cc.getUseStartTLS()) {
-      // hostname verification always occurs for startTLS
-      // hostname verifier is only executed if the default verification fails
+      // hostname verification always occurs for startTLS after the handshake
       SSLSocketFactory factory = config.getSslSocketFactory();
-      HostnameVerifier verifier = config.getHostnameVerifier();
       if (factory == null &&
           cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
         final TLSSocketFactory sf = new TLSSocketFactory();
         sf.setSslConfig(cc.getSslConfig());
-        // startTLS hostname verification is not done at the socket layer
-        sf.getSslConfig().setHostnameVerifier(null);
         try {
           sf.initialize();
         } catch (GeneralSecurityException e) {
@@ -123,32 +120,32 @@ public class JndiProvider implements Provider<JndiProviderConfig>
         }
         factory = sf;
       }
-      if (verifier == null &&
-          cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
-        verifier = cc.getSslConfig().getHostnameVerifier();
-      }
       cf = new JndiStartTLSConnectionFactory(
-        cc.getLdapUrl(), createEnvironment(cc, null), factory, verifier);
+        cc.getLdapUrl(),
+        createEnvironment(cc, null),
+        factory,
+        config.getHostnameVerifier());
     } else {
       SSLSocketFactory factory = config.getSslSocketFactory();
       if (factory == null && cc.getUseSSL()) {
         // LDAPS hostname verification does not occur by default
         // set a default hostname verifier
-        final HostnameVerifier verifier = config.getHostnameVerifier();
         final ThreadLocalTLSSocketFactory sf =
           new ThreadLocalTLSSocketFactory();
         if (cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
-          sf.setSslConfig(cc.getSslConfig());
-          if (verifier != null) {
-            sf.getSslConfig().setHostnameVerifier(verifier);
-          } else if (sf.getSslConfig().getHostnameVerifier() == null) {
-            sf.getSslConfig().setHostnameVerifier(
-              new DefaultHostnameVerifier());
+          sf.setSslConfig(SslConfig.newSslConfig(cc.getSslConfig()));
+          if (sf.getSslConfig().getTrustManagers() == null) {
+            sf.getSslConfig().setTrustManagers(
+              new TrustManager[]{
+                new HostnameVerifyingTrustManager(
+                  new DefaultHostnameVerifier(), cc.getLdapUrl().split(" "))});
           }
         } else {
           sf.setSslConfig(
             new SslConfig(
-              verifier != null ? verifier : new DefaultHostnameVerifier()));
+              new TrustManager[]{
+                new HostnameVerifyingTrustManager(
+                  new DefaultHostnameVerifier(), cc.getLdapUrl().split(" "))}));
         }
         factory = sf;
       }

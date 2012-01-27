@@ -41,6 +41,9 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   /** SSL configuration options. */
   private SslConfig sslConfig;
 
+  /** Hostname verifier. */
+  private HostnameVerifier hostnameVerifier;
+
 
   /**
    * Prepares this socket factory for use. Must be called before factory can be
@@ -88,6 +91,28 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
+   * Returns the hostname verifier.
+   *
+   * @return  trust managers
+   */
+  public HostnameVerifier getHostnameVerifier()
+  {
+    return hostnameVerifier;
+  }
+
+
+  /**
+   * Sets the hostname verifier.
+   *
+   * @param  verifier  hostname verifier
+   */
+  public void setHostnameVerifier(final HostnameVerifier verifier)
+  {
+    hostnameVerifier = verifier;
+  }
+
+
+  /**
    * Initializes the supplied socket for use.
    *
    * @param  socket  SSL socket to initialize
@@ -113,18 +138,17 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
           socket.addHandshakeCompletedListener(listener);
         }
       }
-      if (sc.getHostnameVerifier() != null) {
-        final HostnameVerifier verifier = sc.getHostnameVerifier();
-        // calling getSession() will initiate the handshake if necessary
-        final String hostname = socket.getSession().getPeerHost();
-        if (!verifier.verify(hostname, socket.getSession())) {
-          socket.close();
-          socket.getSession().invalidate();
-          throw new SSLPeerUnverifiedException(
-            String.format(
-              "Hostname '%s' does not match the hostname in the server's " +
-              "certificate", hostname));
-        }
+    }
+    if (hostnameVerifier != null) {
+      // calling getSession() will initiate the handshake if necessary
+      final String hostname = socket.getSession().getPeerHost();
+      if (!hostnameVerifier.verify(hostname, socket.getSession())) {
+        socket.close();
+        socket.getSession().invalidate();
+        throw new SSLPeerUnverifiedException(
+          String.format(
+            "Hostname '%s' does not match the hostname in the server's " +
+            "certificate", hostname));
       }
     }
     return socket;

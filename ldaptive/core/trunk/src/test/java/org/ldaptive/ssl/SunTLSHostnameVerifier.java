@@ -30,7 +30,8 @@ import sun.security.util.HostnameChecker;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class SunTLSHostnameVerifier implements HostnameVerifier
+public class SunTLSHostnameVerifier
+  implements HostnameVerifier, CertificateHostnameVerifier
 {
 
 

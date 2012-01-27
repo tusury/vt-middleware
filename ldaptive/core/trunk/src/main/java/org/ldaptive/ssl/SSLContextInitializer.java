@@ -54,6 +54,15 @@ public interface SSLContextInitializer
 
 
   /**
+   * Sets the trust managers. May be in isolation or in conjunction with other
+   * trust material.
+   *
+   * @param  managers  trust managers
+   */
+  void setTrustManagers(final TrustManager... managers);
+
+
+  /**
    * Returns the key managers used when creating SSL contexts.
    *
    * @return  key managers

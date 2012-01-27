@@ -42,7 +42,8 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class DefaultHostnameVerifier implements HostnameVerifier
+public class DefaultHostnameVerifier
+  implements HostnameVerifier, CertificateHostnameVerifier
 {
 
   /** Logger for this class. */
@@ -319,7 +320,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier
      */
     public SSLSocketFactory()
     {
-      setSslConfig(new SslConfig(new DefaultHostnameVerifier()));
+      setHostnameVerifier(new DefaultHostnameVerifier());
     }
 
 

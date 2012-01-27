@@ -19,6 +19,7 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import org.ldaptive.LdapUtil;
 
 /**
  * Provides an SSL context initializer which can use java KeyStores to create
@@ -85,7 +86,15 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
       tmf.init(trustKeystore);
       tm = tmf.getTrustManagers();
     }
-    return tm;
+    TrustManager[] aggregate = null;
+    if (tm == null) {
+      aggregate = super.getTrustManagers() != null ?
+        aggregateTrustManagers(super.getTrustManagers()) : null;
+    } else {
+      aggregate = aggregateTrustManagers(
+        LdapUtil.concatArrays(tm, super.getTrustManagers()));
+    }
+    return aggregate;
   }
 
 
