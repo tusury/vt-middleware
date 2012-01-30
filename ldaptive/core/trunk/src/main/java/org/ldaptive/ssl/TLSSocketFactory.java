@@ -16,6 +16,7 @@ package org.ldaptive.ssl;
 import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 /**
@@ -75,6 +76,45 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException(
         "Error initializing socket factory", e);
+    }
+    return sf;
+  }
+
+
+  /**
+   * Returns an instance of this socket factory configured with a hostname
+   * verifying trust manager. If the supplied ssl config does not contain a
+   * trust managers, {@link HostnameVerifyingTrustManager} with
+   * {@link DefaultHostnameVerifier} is set.
+   *
+   * @param  config  to set on the socket factory
+   * @param  names  to use for hostname verification
+   *
+   * @return  socket factory
+   */
+  public static SSLSocketFactory getHostnameVerifierFactory(
+    final SslConfig config, final String[] names)
+  {
+    final TLSSocketFactory sf = new TLSSocketFactory();
+    if (config != null && !config.isEmpty()) {
+      sf.setSslConfig(SslConfig.newSslConfig(config));
+      if (sf.getSslConfig().getTrustManagers() == null) {
+        sf.getSslConfig().setTrustManagers(
+          new TrustManager[]{
+            new HostnameVerifyingTrustManager(
+              new DefaultHostnameVerifier(), names), });
+      }
+    } else {
+      sf.setSslConfig(
+        new SslConfig(
+          new TrustManager[]{
+            new HostnameVerifyingTrustManager(
+              new DefaultHostnameVerifier(), names), }));
+    }
+    try {
+      sf.initialize();
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException(e);
     }
     return sf;
   }

@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id:$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision:$
+  Updated: $Date:$
 */
 package org.ldaptive;
 

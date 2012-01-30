@@ -20,8 +20,7 @@ import javax.net.ssl.SSLSocket;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapURL;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -280,7 +279,7 @@ public class TLSSocketFactoryTest
   public void setHostnameVerifier(final String url)
     throws Exception
   {
-    final String[][] hostAndPort = LdapUtil.getHostnameAndPort(url);
+    final LdapURL ldapUrl = new LdapURL(url);
     final TLSSocketFactory sf = new TLSSocketFactory();
     sf.initialize();
 
@@ -288,8 +287,7 @@ public class TLSSocketFactoryTest
     Socket s = null;
     try {
       s = sf.createSocket(
-        hostAndPort[0][0],
-        hostAndPort[0][1] != null ? Integer.parseInt(hostAndPort[0][1]) : 389);
+        ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
     } finally {
       s.close();
     }
@@ -297,8 +295,7 @@ public class TLSSocketFactoryTest
     sf.setHostnameVerifier(new NoHostnameVerifier());
     try {
       s = sf.createSocket(
-        hostAndPort[0][0],
-        hostAndPort[0][1] != null ? Integer.parseInt(hostAndPort[0][1]) : 389);
+        ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
       AssertJUnit.fail("Should have thrown SSLPeerUnverifiedException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(SSLPeerUnverifiedException.class, e.getClass());

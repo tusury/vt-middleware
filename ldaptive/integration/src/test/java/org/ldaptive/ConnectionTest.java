@@ -267,9 +267,10 @@ public class ConnectionTest
      * SearchServletTest: 6
      * AttributeServletTest: 3
      */
-    final String[][] newHost = LdapUtil.getHostnameAndPort(host);
+    final LdapURL ldapUrl = new LdapURL(host);
     final int openConns = TestUtil.countOpenConnections(
-      newHost[0][0].substring(0, newHost[0][0].indexOf(".")));
+      ldapUrl.getEntry().getHostname().substring(
+        0, ldapUrl.getEntry().getHostname().indexOf(".")));
     AssertJUnit.assertEquals(10, openConns);
   }
 }

@@ -263,40 +263,4 @@ public final class LdapUtil
        IPV6_STD_PATTERN.matcher(s).matches() ||
        IPV6_HEX_COMPRESSED_PATTERN.matcher(s).matches());
   }
-
-
-  /**
-   * Extracts the hostname and port from the supplied url. If the url is a space
-   * delimited string, each entry in the returned array corresponds to each url.
-   *
-   * @param  url  to parse
-   *
-   * @return  string array with {index} => {hostname, port}
-   */
-  public static String[][] getHostnameAndPort(final String url)
-  {
-    final String[] hosts = url.split(" ");
-    final String[][] hostAndPort = new String[hosts.length][2];
-
-    for (int i = 0; i < hosts.length; i++) {
-      String host = hosts[i];
-
-      // remove scheme, if it exists
-      if (host.startsWith("ldap://")) {
-        host = host.substring("ldap://".length());
-      } else if (host.startsWith("ldaps://")) {
-        host = host.substring("ldaps://".length());
-      }
-
-      // remove port, if it exist
-      if (host.indexOf(":") != -1) {
-        hostAndPort[i][0] = host.substring(0, host.indexOf(":"));
-        hostAndPort[i][1] =
-          host.substring(host.indexOf(":") + 1, host.length());
-      } else {
-        hostAndPort[i][0] = host;
-      }
-    }
-    return hostAndPort;
-  }
 }

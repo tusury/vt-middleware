@@ -17,13 +17,10 @@ import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
-import org.ldaptive.ssl.DefaultHostnameVerifier;
-import org.ldaptive.ssl.HostnameVerifyingTrustManager;
-import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.TLSSocketFactory;
 import org.ldaptive.ssl.ThreadLocalTLSSocketFactory;
 import org.slf4j.Logger;
@@ -130,24 +127,9 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       if (factory == null && cc.getUseSSL()) {
         // LDAPS hostname verification does not occur by default
         // set a default hostname verifier
-        final ThreadLocalTLSSocketFactory sf =
-          new ThreadLocalTLSSocketFactory();
-        if (cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
-          sf.setSslConfig(SslConfig.newSslConfig(cc.getSslConfig()));
-          if (sf.getSslConfig().getTrustManagers() == null) {
-            sf.getSslConfig().setTrustManagers(
-              new TrustManager[]{
-                new HostnameVerifyingTrustManager(
-                  new DefaultHostnameVerifier(), cc.getLdapUrl().split(" "))});
-          }
-        } else {
-          sf.setSslConfig(
-            new SslConfig(
-              new TrustManager[]{
-                new HostnameVerifyingTrustManager(
-                  new DefaultHostnameVerifier(), cc.getLdapUrl().split(" "))}));
-        }
-        factory = sf;
+        final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+        factory = ThreadLocalTLSSocketFactory.getHostnameVerifierFactory(
+          cc.getSslConfig(), ldapUrl.getEntriesAsString());
       }
       cf = new JndiConnectionFactory(
         cc.getLdapUrl(),

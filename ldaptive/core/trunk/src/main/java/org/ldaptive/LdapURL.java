@@ -1,0 +1,225 @@
+/*
+  $Id:$
+
+  Copyright (C) 2003-2012 Virginia Tech.
+  All rights reserved.
+
+  SEE LICENSE FOR MORE INFORMATION
+
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
+  Version: $Revision:$
+  Updated: $Date:$
+*/
+package org.ldaptive;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Utility class for parsing LDAP URLs. Supports a space delimited format for
+ * representing multiple URLs. Expects <scheme><hostname>:<port>, where the port
+ * is optional.
+ *
+ * @author  Middleware Services
+ * @version  $Revision: 2198 $ $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
+ */
+public class LdapURL
+{
+
+  /** Default LDAP port, value is {@value}. */
+  public static final int DEFAULT_LDAP_PORT = 389;
+
+  /** Default LDAPS port, value is {@value}. */
+  public static final int DEFAULT_LDAPS_PORT = 636;
+
+  /** URL entries. */
+  private List<Entry> ldapEntries = new ArrayList<Entry>();
+
+
+  /**
+   * Creates a new ldap url.
+   *
+   * @param  url  space delimited list of ldap urls
+   */
+  public LdapURL(final String url)
+  {
+    final String[] urls = url.split(" ");
+
+    for (int i = 0; i < urls.length; i++) {
+      String hostname = urls[i];
+      int port = DEFAULT_LDAP_PORT;
+      // remove scheme, if it exists
+      if (hostname.startsWith("ldap://")) {
+        hostname = hostname.substring("ldap://".length());
+      } else if (hostname.startsWith("ldaps://")) {
+        hostname = hostname.substring("ldaps://".length());
+        port = DEFAULT_LDAPS_PORT;
+      }
+
+      // remove port, if it exist
+      if (hostname.indexOf(":") != -1) {
+        port = Integer.parseInt(
+          hostname.substring(hostname.indexOf(":") + 1, hostname.length()));
+        hostname = hostname.substring(0, hostname.indexOf(":"));
+      }
+
+      ldapEntries.add(new Entry(hostname, port));
+    }
+  }
+
+
+  /**
+   * Returns the first entry of this ldap url.
+   *
+   * @return  first entry
+   */
+  public Entry getEntry()
+  {
+    return ldapEntries.get(0);
+  }
+
+
+  /**
+   * Returns the last entry of this ldap url.
+   *
+   * @return  last entry
+   */
+  public Entry getLastEntry()
+  {
+    return ldapEntries.get(ldapEntries.size() - 1);
+  }
+
+
+  /**
+   * Returns a list of all the ldap url entries in this ldap url.
+   *
+   * @return  ldap url entries
+   */
+  public List<Entry> getEntries()
+  {
+    return Collections.unmodifiableList(ldapEntries);
+  }
+
+
+  /**
+   * Returns a list of all the hostnames in this ldap url.
+   *
+   * @return  ldap url hostnames
+   */
+  public String[] getEntriesAsString()
+  {
+    final String[] entries = new String[ldapEntries.size()];
+    for (int i = 0; i < ldapEntries.size(); i++) {
+      entries[i] = ldapEntries.get(i).getHostname();
+    }
+    return entries;
+  }
+
+
+  /**
+   * Returns the number of entries in this ldap url.
+   *
+   * @return  number of entries in this ldap url
+   */
+  public int size()
+  {
+    return ldapEntries.size();
+  }
+
+
+  /**
+   * Provides a descriptive string representation of this instance.
+   *
+   * @return  string representation
+   */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::ldapEntries=%s]",
+        getClass().getName(),
+        hashCode(),
+        ldapEntries);
+  }
+
+
+  /**
+   * Represents a single LDAP URL entry.
+   */
+  public static class Entry
+  {
+
+    /** Hostname of the ldap url. */
+    private String hostname;
+
+    /** Port of the ldap url. */
+    private int port;
+
+
+    /**
+     * Creates a new entry.
+     *
+     * @param  h  hostname
+     * @param  p  port
+     */
+    public Entry(final String h, final int p)
+    {
+      hostname = h;
+      port = p;
+    }
+
+
+    /**
+     * Returns the hostname.
+     *
+     * @return  hostname
+     */
+    public String getHostname()
+    {
+      return hostname;
+    }
+
+
+    /**
+     * Returns the hostname:port.
+     *
+     * @return  hostname:port
+     */
+    public String getHostnameWithPort()
+    {
+      return String.format("%s:%s", hostname, port);
+    }
+
+
+    /**
+     * Returns the port.
+     *
+     * @return  port
+     */
+    public int getPort()
+    {
+      return port;
+    }
+
+
+    /**
+     * Provides a descriptive string representation of this instance.
+     *
+     * @return  string representation
+     */
+    @Override
+    public String toString()
+    {
+      return
+        String.format(
+          "[%s@%d::hostname=%s, port=%s]",
+          getClass().getName(),
+          hashCode(),
+          hostname,
+          port);
+    }
+  }
+}
