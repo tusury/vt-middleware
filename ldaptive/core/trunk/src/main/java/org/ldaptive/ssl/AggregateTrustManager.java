@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id:$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision:$
+  Updated: $Date:$
 */
 package org.ldaptive.ssl;
 
@@ -18,15 +18,20 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.X509TrustManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Trust manager that delegates to multiple trust managers.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision:$
  */
 public class AggregateTrustManager implements X509TrustManager
 {
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Trust managers to invoke. */
   private X509TrustManager[] trustManagers;
@@ -51,6 +56,7 @@ public class AggregateTrustManager implements X509TrustManager
   {
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
+        logger.debug("invoking checkClientTrusted for {}", tm);
         tm.checkClientTrusted(chain, authType);
       }
     }
@@ -65,6 +71,7 @@ public class AggregateTrustManager implements X509TrustManager
   {
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
+        logger.debug("invoking checkServerTrusted for {}", tm);
         tm.checkServerTrusted(chain, authType);
       }
     }
@@ -78,6 +85,7 @@ public class AggregateTrustManager implements X509TrustManager
     final List<X509Certificate> issuers = new ArrayList<X509Certificate>();
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
+        logger.debug("invoking getAcceptedIssuers invoked for {}", tm);
         for (X509Certificate cert : tm.getAcceptedIssuers()) {
           issuers.add(cert);
         }

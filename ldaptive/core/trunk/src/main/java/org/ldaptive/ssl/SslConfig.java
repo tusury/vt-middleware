@@ -77,7 +77,6 @@ public class SslConfig extends AbstractConfig
    * Creates a new ssl config.
    *
    * @param  config  credential config
-   * @param  verifier  hostname verifier
    * @param  managers  trust managers
    */
   public SslConfig(

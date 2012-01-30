@@ -2,7 +2,6 @@
 
 PROVIDER_VERSION="1.0-SNAPSHOT"
 
-vflag=off
 HOST="ldap-test-1.middleware.vt.edu"
 TEST_GROUP=core
 while [ $# -gt 0 ]

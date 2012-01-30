@@ -1359,13 +1359,14 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    final LdapURL ldapUrl = new LdapURL(krb5Kdc);
     System.setProperty(
       "java.security.auth.login.config",
       "target/test-classes/ldap_jaas.config");
     System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
     System.setProperty("java.security.krb5.realm", krb5Realm);
     System.setProperty(
-      "java.security.krb5.kdc", LdapUtil.getHostnameAndPort(krb5Kdc)[0][0]);
+      "java.security.krb5.kdc", ldapUrl.getEntry().getHostname());
 
     final String expected = TestUtil.readFileIntoString(ldifFile);
 
