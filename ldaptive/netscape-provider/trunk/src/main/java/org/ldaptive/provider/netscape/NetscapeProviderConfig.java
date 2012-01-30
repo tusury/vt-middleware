@@ -29,12 +29,6 @@ import org.ldaptive.provider.ProviderConfig;
 public class NetscapeProviderConfig extends ProviderConfig
 {
 
-  /** Amount of time in milliseconds that connects will block. */
-  private int connectTimeout;
-
-  /** Amount of time in milliseconds that operations will wait. */
-  private int operationTimeLimit;
-
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
 
@@ -60,52 +54,6 @@ public class NetscapeProviderConfig extends ProviderConfig
 
 
   /**
-   * Returns the connect time out value.
-   *
-   * @return  connect time out
-   */
-  public int getConnectTimeout()
-  {
-    return connectTimeout;
-  }
-
-
-  /**
-   * Sets the connect time out value.
-   *
-   * @param  timeout  for connects
-   */
-  public void setConnectTimeout(final int timeout)
-  {
-    logger.trace("setting connectTimeout: {}", timeout);
-    connectTimeout = timeout;
-  }
-
-
-  /**
-   * Returns the operation time limit value.
-   *
-   * @return  operation time limit
-   */
-  public int getOperationTimeLimit()
-  {
-    return operationTimeLimit;
-  }
-
-
-  /**
-   * Sets the operation time limit value.
-   *
-   * @param  timeLimit  for operations
-   */
-  public void setOperationTimeLimit(final int timeLimit)
-  {
-    logger.trace("setting operationTimeLimit: {}", timeLimit);
-    operationTimeLimit = timeLimit;
-  }
-
-
-  /**
    * Returns the search ignore result codes.
    *
    * @return  result codes to ignore
@@ -123,6 +71,7 @@ public class NetscapeProviderConfig extends ProviderConfig
    */
   public void setSearchIgnoreResultCodes(final ResultCode[] codes)
   {
+    checkImmutable();
     logger.trace("setting searchIgnoreResultCodes: {}", Arrays.toString(codes));
     searchIgnoreResultCodes = codes;
   }
@@ -146,6 +95,7 @@ public class NetscapeProviderConfig extends ProviderConfig
    */
   public void setLDAPSocketFactory(final LDAPSocketFactory sf)
   {
+    checkImmutable();
     logger.trace("setting ldapSocketFactory: {}", sf);
     ldapSocketFactory = sf;
   }
@@ -169,6 +119,7 @@ public class NetscapeProviderConfig extends ProviderConfig
    */
   public void setControlProcessor(final ControlProcessor<LDAPControl> processor)
   {
+    checkImmutable();
     logger.trace("setting controlProcessor: {}", processor);
     controlProcessor = processor;
   }
@@ -185,17 +136,15 @@ public class NetscapeProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, connectTimeout=%s, " +
-        "operationTimeLimit=%s, searchIgnoreResultCodes=%s, " +
-        "ldapSocketFactory=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, logCredentials=%s, " +
+        "searchIgnoreResultCodes=%s, ldapSocketFactory=%s, " +
+        "controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         getLogCredentials(),
-        connectTimeout,
-        operationTimeLimit,
         Arrays.toString(searchIgnoreResultCodes),
         ldapSocketFactory,
         controlProcessor);

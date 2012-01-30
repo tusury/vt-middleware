@@ -29,26 +29,11 @@ import org.ldaptive.provider.ProviderConfig;
 public class ApacheLdapProviderConfig extends ProviderConfig
 {
 
-  /** Connection timeout. */
-  private long timeOut;
-
-  /** Whether to use SSL when connecting. */
-  private boolean ssl;
-
-  /** Whether to use TLS when connecting. */
-  private boolean tls;
-
   /** key managers used for SSL and TLS. */
   private KeyManager[] keyManagers;
 
   /** trust managers used for SSL and TLS. */
   private TrustManager[] trustManagers;
-
-  /** protocol for SSL and TLS. */
-  private String sslProtocol;
-
-  /** enabled cipher suites. */
-  private String[] cipherSuites;
 
   /** Apache ldap specific control processor. */
   private ControlProcessor<Control> controlProcessor;
@@ -59,75 +44,6 @@ public class ApacheLdapProviderConfig extends ProviderConfig
   {
     controlProcessor = new ControlProcessor<Control>(
       new ApacheLdapControlHandler());
-  }
-
-
-  /**
-   * Returns the connect socket time out value.
-   *
-   * @return  socket time out
-   */
-  public long getTimeOut()
-  {
-    return timeOut;
-  }
-
-
-  /**
-   * Sets the connect socket time out value.
-   *
-   * @param  l  timeout for socket connections
-   */
-  public void setTimeOut(final long l)
-  {
-    logger.trace("setting timeOut: {}", l);
-    timeOut = l;
-  }
-
-
-  /**
-   * Returns whether to use SSL for connections.
-   *
-   * @return  whether to use SSL for connections.
-   */
-  public boolean getSsl()
-  {
-    return ssl;
-  }
-
-
-  /**
-   * Sets whether to use SSL for connections.
-   *
-   * @param  b  whether to use SSL for connections.
-   */
-  public void setSsl(final boolean b)
-  {
-    logger.trace("setting ssl: {}", b);
-    ssl = b;
-  }
-
-
-  /**
-   * Returns whether to use TLS for connections.
-   *
-   * @return  whether to use TLS for connections.
-   */
-  public boolean getTls()
-  {
-    return tls;
-  }
-
-
-  /**
-   * Sets whether to use TLS for connections.
-   *
-   * @param  b  whether to use TLS for connections.
-   */
-  public void setTls(final boolean b)
-  {
-    logger.trace("setting tls: {}", b);
-    tls = b;
   }
 
 
@@ -149,6 +65,7 @@ public class ApacheLdapProviderConfig extends ProviderConfig
    */
   public void setKeyManagers(final KeyManager[] km)
   {
+    checkImmutable();
     logger.trace("setting keyManagers: {}", Arrays.toString(km));
     keyManagers = km;
   }
@@ -172,54 +89,9 @@ public class ApacheLdapProviderConfig extends ProviderConfig
    */
   public void setTrustManagers(final TrustManager[] tm)
   {
+    checkImmutable();
     logger.trace("setting trustManagers: {}", Arrays.toString(tm));
     trustManagers = tm;
-  }
-
-
-  /**
-   * Returns the protocol to use for TLS/SSL connections.
-   *
-   * @return  ssl protocol
-   */
-  public String getSslProtocol()
-  {
-    return sslProtocol;
-  }
-
-
-  /**
-   * Sets the protocol to use for TLS/SSL connections.
-   *
-   * @param  protocol  ssl protocol
-   */
-  public void setSslProtocol(final String protocol)
-  {
-    logger.trace("setting sslProtocol: {}", protocol);
-    sslProtocol = protocol;
-  }
-
-
-  /**
-   * Returns the cipher suites to use for TLS/SSL connections.
-   *
-   * @return  cipher suites
-   */
-  public String[] getEnabledCipherSuites()
-  {
-    return cipherSuites;
-  }
-
-
-  /**
-   * Sets the cipher suites to use for TLS/SSL connections.
-   *
-   * @param  cs  cipher suites
-   */
-  public void setEnabledCipherSuites(final String[] cs)
-  {
-    logger.trace("setting enabledCipherSuites: {}", cs);
-    cipherSuites = cs;
   }
 
 
@@ -241,6 +113,7 @@ public class ApacheLdapProviderConfig extends ProviderConfig
    */
   public void setControlProcessor(final ControlProcessor<Control> processor)
   {
+    checkImmutable();
     logger.trace("setting controlProcessor: {}", processor);
     controlProcessor = processor;
   }
@@ -257,18 +130,14 @@ public class ApacheLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, timeOut=%s, " +
-        "ssl=%s, tls=%s, keyManagers=%s, trustManagers=%s, " +
-        "controlProcessor=%s]",
+        "connectionStrategy=%s, logCredentials=%s, keyManagers=%s, " +
+        "trustManagers=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         getLogCredentials(),
-        timeOut,
-        ssl,
-        tls,
         Arrays.toString(keyManagers),
         Arrays.toString(trustManagers),
         controlProcessor);

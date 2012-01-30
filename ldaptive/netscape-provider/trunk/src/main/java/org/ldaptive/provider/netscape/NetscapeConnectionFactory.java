@@ -16,7 +16,9 @@ package org.ldaptive.provider.netscape;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPConstraints;
 import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPSocketFactory;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapURL;
 import org.ldaptive.provider.AbstractConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
@@ -33,15 +35,34 @@ public class NetscapeConnectionFactory
   /** LDAP protocol version. */
   public static final int LDAP_VERSION = 3;
 
+  /** Socket factory to use for LDAP and LDAPS. */
+  private LDAPSocketFactory socketFactory;
+
+  /** Amount of time in milliseconds that connect operations will block. */
+  private int connectTimeout;
+
+  /** Amount of time in milliseconds that operations will wait. */
+  private int timeLimit;
+
 
   /**
    * Creates a new Netscape connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  factory  ldap socket factory
+   * @param  cTimeout  connection timeout
+   * @param  rTimeout  response timeout
    */
-  public NetscapeConnectionFactory(final String url)
+  public NetscapeConnectionFactory(
+    final String url,
+    final LDAPSocketFactory factory,
+    final int cTimeout,
+    final int rTimeout)
   {
     super(url);
+    socketFactory = factory;
+    connectTimeout = cTimeout;
+    timeLimit = rTimeout;
   }
 
 
@@ -51,27 +72,27 @@ public class NetscapeConnectionFactory
     throws LdapException
   {
     final LDAPConstraints constraints = new LDAPConstraints();
-    final String[] hostAndPort = getHostnameAndPort(url);
+    final LdapURL ldapUrl = new LdapURL(url);
     NetscapeConnection conn = null;
     boolean closeConn = false;
     try {
       LDAPConnection lc = null;
-      if (getProviderConfig().getLDAPSocketFactory() != null) {
-        lc = new LDAPConnection(getProviderConfig().getLDAPSocketFactory());
+      if (socketFactory != null) {
+        lc = new LDAPConnection(socketFactory);
       } else {
         lc = new LDAPConnection();
       }
-      if (getProviderConfig().getConnectTimeout() > 0) {
-        lc.setConnectTimeout(getProviderConfig().getConnectTimeout());
+      if (connectTimeout > 0) {
+        lc.setConnectTimeout(connectTimeout);
       }
       conn = new NetscapeConnection(lc);
-      if (getProviderConfig().getOperationTimeLimit() > 0) {
-        conn.setTimeLimit(getProviderConfig().getOperationTimeLimit());
+      if (timeLimit > 0) {
+        conn.setTimeLimit(timeLimit);
       }
       lc.connect(
         LDAP_VERSION,
-        hostAndPort[0],
-        Integer.parseInt(hostAndPort[1]),
+        ldapUrl.getLastEntry().getHostname(),
+        ldapUrl.getLastEntry().getPort(),
         null,
         null,
         constraints);
@@ -98,41 +119,5 @@ public class NetscapeConnectionFactory
       }
     }
     return conn;
-  }
-
-
-  /**
-   * Extracts the hostname and port from the supplied url. If the url is a space
-   * delimited string, only the last hostname is used.
-   *
-   * @param  url  to parse
-   *
-   * @return  string array with {hostname, port}
-   */
-  protected static String[] getHostnameAndPort(final String url)
-  {
-    final String[] hostAndPort = new String[2];
-    // if url is a space delimited string, use the last value
-    final String[] hosts = url.split(" ");
-    String host = hosts[hosts.length - 1];
-
-    String port = "389";
-    // remove scheme, if it exists
-    if (host.startsWith("ldap://")) {
-      host = host.substring("ldap://".length());
-    } else if (host.startsWith("ldaps://")) {
-      host = host.substring("ldaps://".length());
-      port = "636";
-    }
-
-    // remove port, if it exist
-    if (host.indexOf(":") != -1) {
-      hostAndPort[0] = host.substring(0, host.indexOf(":"));
-      hostAndPort[1] = host.substring(host.indexOf(":") + 1, host.length());
-    } else {
-      hostAndPort[0] = host;
-      hostAndPort[1] = port;
-    }
-    return hostAndPort;
   }
 }

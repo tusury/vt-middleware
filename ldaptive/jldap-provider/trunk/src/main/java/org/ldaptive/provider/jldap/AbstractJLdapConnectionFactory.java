@@ -16,6 +16,7 @@ package org.ldaptive.provider.jldap;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPException;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapURL;
 import org.ldaptive.provider.AbstractConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
@@ -31,15 +32,20 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
   extends AbstractConnectionFactory<JLdapProviderConfig>
 {
 
+  /** Amount of time in milliseconds that operations will wait. */
+  private int socketTimeOut;
+
 
   /**
    * Creates a new abstract jldap connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  timeOut  time in milliseconds that operations will wait
    */
-  public AbstractJLdapConnectionFactory(final String url)
+  public AbstractJLdapConnectionFactory(final String url, final int timeOut)
   {
     super(url);
+    socketTimeOut = timeOut;
   }
 
 
@@ -48,16 +54,18 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
   protected T createInternal(final String url)
     throws LdapException
   {
-    final String modUrl = getHostname(url);
+    final LdapURL ldapUrl = new LdapURL(url);
     LDAPConnection conn = null;
     T jldapConn = null;
     boolean closeConn = false;
     try {
       conn = createLDAPConnection();
-      if (getProviderConfig().getSocketTimeOut() > 0) {
-        conn.setSocketTimeOut(getProviderConfig().getSocketTimeOut());
+      if (socketTimeOut > 0) {
+        conn.setSocketTimeOut(socketTimeOut);
       }
-      conn.connect(modUrl, LDAPConnection.DEFAULT_PORT);
+      conn.connect(
+        ldapUrl.getLastEntry().getHostnameWithPort(),
+        LDAPConnection.DEFAULT_PORT);
       initializeConnection(conn);
       jldapConn = createJLdapConnection(conn);
       jldapConn.setOperationRetryResultCodes(
@@ -83,31 +91,6 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
       }
     }
     return jldapConn;
-  }
-
-
-  /**
-   * Extracts the hostname from the supplied url. If the url is a space
-   * delimited string, only the last hostname is used.
-   *
-   * @param  url  to strip scheme from
-   *
-   * @return  url without scheme
-   */
-  protected static String getHostname(final String url)
-  {
-    // if url is a space delimited string, use the last value
-    final String[] hosts = url.split(" ");
-    String host = hosts[hosts.length - 1];
-
-    // remove scheme, if it exists
-    if (host.startsWith("ldap://")) {
-      host = host.substring("ldap://".length());
-    } else if (host.startsWith("ldaps://")) {
-      host = host.substring("ldaps://".length());
-    }
-
-    return host;
   }
 
 
