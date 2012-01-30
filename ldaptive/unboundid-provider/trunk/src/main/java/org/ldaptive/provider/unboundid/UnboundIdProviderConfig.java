@@ -29,17 +29,8 @@ import org.ldaptive.provider.ProviderConfig;
 public class UnboundIdProviderConfig extends ProviderConfig
 {
 
-  /** Amount of time in milliseconds that connect operations will block. */
-  private int connectTimeout;
-
-  /** Amount of time in milliseconds that operations will wait. */
-  private long responseTimeout;
-
   /** socket factory for ldap connections. */
   private SocketFactory socketFactory;
-
-  /** Whether to use TLS when connecting. */
-  private boolean tls;
 
   /** Unbound id specific control processor. */
   private ControlProcessor<Control> controlProcessor;
@@ -52,52 +43,6 @@ public class UnboundIdProviderConfig extends ProviderConfig
       new ResultCode[] {ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR, });
     controlProcessor = new ControlProcessor<Control>(
       new UnboundIdControlHandler());
-  }
-
-
-  /**
-   * Returns the connect time out value.
-   *
-   * @return  connect time out
-   */
-  public int getConnectTimeout()
-  {
-    return connectTimeout;
-  }
-
-
-  /**
-   * Sets the connect time out value.
-   *
-   * @param  timeout  for connections
-   */
-  public void setConnectionTimeOut(final int timeout)
-  {
-    logger.trace("setting connectTimeout: {}", timeout);
-    connectTimeout = timeout;
-  }
-
-
-  /**
-   * Returns the response time out in milliseconds.
-   *
-   * @return  response time out
-   */
-  public long getResponseTimeout()
-  {
-    return responseTimeout;
-  }
-
-
-  /**
-   * Sets the response time out.
-   *
-   * @param  timeout  time in milliseconds
-   */
-  public void setResponseTimeout(final long timeout)
-  {
-    logger.trace("setting responseTimeout: {}", timeout);
-    responseTimeout = timeout;
   }
 
 
@@ -119,31 +64,9 @@ public class UnboundIdProviderConfig extends ProviderConfig
    */
   public void setSocketFactory(final SocketFactory sf)
   {
+    checkImmutable();
     logger.trace("setting socketFactory: {}", sf);
     socketFactory = sf;
-  }
-
-
-  /**
-   * Returns whether to use TLS for connections.
-   *
-   * @return  whether to use TLS for connections.
-   */
-  public boolean getTls()
-  {
-    return tls;
-  }
-
-
-  /**
-   * Sets whether to use TLS for connections.
-   *
-   * @param  b  whether to use TLS for connections.
-   */
-  public void setTls(final boolean b)
-  {
-    logger.trace("setting tls: {}", b);
-    tls = b;
   }
 
 
@@ -165,6 +88,7 @@ public class UnboundIdProviderConfig extends ProviderConfig
    */
   public void setControlProcessor(final ControlProcessor<Control> processor)
   {
+    checkImmutable();
     logger.trace("setting controlProcessor: {}", processor);
     controlProcessor = processor;
   }
@@ -181,16 +105,14 @@ public class UnboundIdProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, connectTimeout=%s, " +
-        "responseTimeout=%s, socketFactory=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, logCredentials=%s, socketFactory=%s, " +
+        "controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         getLogCredentials(),
-        connectTimeout,
-        responseTimeout,
         socketFactory,
         controlProcessor);
   }

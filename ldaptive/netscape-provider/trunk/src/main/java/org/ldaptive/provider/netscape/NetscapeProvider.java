@@ -15,12 +15,14 @@ package org.ldaptive.provider.netscape;
 
 import java.io.IOException;
 import java.net.Socket;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.SocketFactory;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSocketFactory;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
  * Netscape provider implementation. Provides connection factories for clear and
@@ -41,24 +43,42 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
   public ConnectionFactory<NetscapeProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    if (cc.getTls()) {
-      throw new UnsupportedOperationException("TLS not supported");
+    if (cc.getUseStartTLS()) {
+      throw new UnsupportedOperationException("startTLS is not supported");
     }
 
+    config.makeImmutable();
+    LDAPSocketFactory factory = config.getLDAPSocketFactory();
+    if (cc.getUseSSL() && factory == null) {
+      factory = getHostnameVerifierSocketFactory(cc);
+    }
     final ConnectionFactory<NetscapeProviderConfig> cf =
-      new NetscapeConnectionFactory(cc.getLdapUrl());
-    if (cc.getConnectTimeout() > 0) {
-      config.setConnectTimeout((int) cc.getConnectTimeout());
-    }
-    if (cc.getResponseTimeout() > 0) {
-      config.setOperationTimeLimit((int) cc.getResponseTimeout());
-    }
-    if (cc.getSslSocketFactory() != null) {
-      config.setLDAPSocketFactory(
-        new NetscapeLDAPSocketFactory(cc.getSslSocketFactory()));
-    }
+      new NetscapeConnectionFactory(
+        cc.getLdapUrl(),
+        factory,
+        (int) cc.getConnectTimeout(),
+        (int) cc.getResponseTimeout());
     cf.setProviderConfig(config);
     return cf;
+  }
+
+
+  /**
+   * Returns an SSL socket factory configured with a default hostname verifier.
+   *
+   * @param  cc  connection configuration
+   *
+   * @return  SSL socket factory
+   */
+  protected LDAPSocketFactory getHostnameVerifierSocketFactory(
+    final ConnectionConfig cc)
+  {
+    // Netscape does not do hostname verification by default
+    // set a default hostname verifier
+    final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+    return new NetscapeLDAPSocketFactory(
+      TLSSocketFactory.getHostnameVerifierFactory(
+        cc.getSslConfig(), ldapUrl.getEntriesAsString()));
   }
 
 
@@ -90,8 +110,8 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
   private static class NetscapeLDAPSocketFactory implements LDAPSocketFactory
   {
 
-    /** SSL socket factory to deletgate to. */
-    private SSLSocketFactory factory;
+    /** SSL socket factory to delegate to. */
+    private SocketFactory factory;
 
 
     /**
@@ -99,7 +119,7 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
      *
      * @param  sf  ssl socket factory
      */
-    public NetscapeLDAPSocketFactory(final SSLSocketFactory sf)
+    public NetscapeLDAPSocketFactory(final SocketFactory sf)
     {
       factory = sf;
     }

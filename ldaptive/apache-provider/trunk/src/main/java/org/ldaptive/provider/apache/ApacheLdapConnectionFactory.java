@@ -14,9 +14,11 @@
 package org.ldaptive.provider.apache;
 
 import java.io.IOException;
+import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.apache.directory.shared.ldap.model.exception.LdapOperationException;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapURL;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.AbstractConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
@@ -31,15 +33,34 @@ public class ApacheLdapConnectionFactory
   extends AbstractConnectionFactory<ApacheLdapProviderConfig>
 {
 
+  /** Connection configuration. */
+  private LdapConnectionConfig ldapConnectionConfig;
+
+  /** Whether to startTLS on connections. */
+  private boolean useStartTLS;
+
+  /** Timeout for responses. */
+  private long responseTimeOut;
+
 
   /**
    * Creates a new Apache LDAP connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  lcc  connection configuration
+   * @param  tls  whether to startTLS on connections
+   * @param  timeOut  timeout for responses
    */
-  public ApacheLdapConnectionFactory(final String url)
+  public ApacheLdapConnectionFactory(
+    final String url,
+    final LdapConnectionConfig lcc,
+    final boolean tls,
+    final long timeOut)
   {
     super(url);
+    ldapConnectionConfig = lcc;
+    useStartTLS = tls;
+    responseTimeOut = timeOut;
   }
 
 
@@ -48,40 +69,22 @@ public class ApacheLdapConnectionFactory
   protected ApacheLdapConnection createInternal(final String url)
     throws LdapException
   {
-    final org.apache.directory.ldap.client.api.LdapConnectionConfig lcc =
-      new org.apache.directory.ldap.client.api.LdapConnectionConfig();
-    final String[] hostAndPort = getHostnameAndPort(url);
-    lcc.setLdapHost(hostAndPort[0]);
-    if (hostAndPort[1] != null) {
-      lcc.setLdapPort(Integer.valueOf(hostAndPort[1]));
-    }
-    if (getProviderConfig().getSsl()) {
-      lcc.setUseSsl(true);
-    }
-    if (getProviderConfig().getKeyManagers() != null) {
-      lcc.setKeyManagers(getProviderConfig().getKeyManagers());
-    }
-    if (getProviderConfig().getTrustManagers() != null) {
-      lcc.setTrustManagers(getProviderConfig().getTrustManagers());
-    }
-    if (getProviderConfig().getEnabledCipherSuites() != null) {
-      lcc.setEnabledCipherSuites(getProviderConfig().getEnabledCipherSuites());
-    }
-    if (getProviderConfig().getSslProtocol() != null) {
-      lcc.setSslProtocol(getProviderConfig().getSslProtocol());
-    }
+    final LdapURL ldapUrl = new LdapURL(url);
+    ldapConnectionConfig.setLdapHost(ldapUrl.getLastEntry().getHostname());
+    ldapConnectionConfig.setLdapPort(ldapUrl.getLastEntry().getPort());
 
     ApacheLdapConnection conn = null;
     boolean closeConn = false;
     try {
-      final LdapNetworkConnection lc = new LdapNetworkConnection(lcc);
+      final LdapNetworkConnection lc = new LdapNetworkConnection(
+        ldapConnectionConfig);
       conn = new ApacheLdapConnection(lc);
-      if (getProviderConfig().getTimeOut() > 0) {
-        lc.setTimeOut(getProviderConfig().getTimeOut());
-      }
       lc.connect();
-      if (getProviderConfig().getTls()) {
+      if (useStartTLS) {
         lc.startTls();
+      }
+      if (responseTimeOut > 0) {
+        lc.setTimeOut(responseTimeOut);
       }
 
       conn.setOperationRetryResultCodes(
@@ -113,38 +116,5 @@ public class ApacheLdapConnectionFactory
       }
     }
     return conn;
-  }
-
-
-  /**
-   * Extracts the hostname and port from the supplied url. If the url is a space
-   * delimited string, only the last hostname is used.
-   *
-   * @param  url  to parse
-   *
-   * @return  string array with {hostname, port}
-   */
-  protected static String[] getHostnameAndPort(final String url)
-  {
-    final String[] hostAndPort = new String[2];
-    // if url is a space delimited string, use the last value
-    final String[] hosts = url.split(" ");
-    String host = hosts[hosts.length - 1];
-
-    // remove scheme, if it exists
-    if (host.startsWith("ldap://")) {
-      host = host.substring("ldap://".length());
-    } else if (host.startsWith("ldaps://")) {
-      host = host.substring("ldaps://".length());
-    }
-
-    // remove port, if it exist
-    if (host.indexOf(":") != -1) {
-      hostAndPort[0] = host.substring(0, host.indexOf(":"));
-      hostAndPort[1] = host.substring(host.indexOf(":") + 1, host.length());
-    } else {
-      hostAndPort[0] = host;
-    }
-    return hostAndPort;
   }
 }

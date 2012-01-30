@@ -13,12 +13,13 @@
 */
 package org.ldaptive.provider.jldap;
 
+import javax.net.ssl.SSLSocketFactory;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPJSSESecureSocketFactory;
 
 /**
- * Creates ldap connections using the JLDAP LDAPConnection class.
+ * Creates LDAPS connections using the JLDAP LDAPConnection class.
  *
  * @author  Middleware Services
  * @version  $Revision$
@@ -27,15 +28,22 @@ public class JLdapSslConnectionFactory
   extends AbstractJLdapConnectionFactory<JLdapSslConnection>
 {
 
+  /** SSL socket factory to use for SSL. */
+  private SSLSocketFactory sslSocketFactory;
+
 
   /**
    * Creates a new jldap ssl connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  timeOut  time in milliseconds that operations will wait
+   * @param  factory  SSL socket factory
    */
-  public JLdapSslConnectionFactory(final String url)
+  public JLdapSslConnectionFactory(
+    final String url, final int timeOut, final SSLSocketFactory factory)
   {
-    super(url);
+    super(url, timeOut);
+    sslSocketFactory = factory;
   }
 
 
@@ -45,10 +53,9 @@ public class JLdapSslConnectionFactory
     throws LDAPException
   {
     LDAPConnection conn = null;
-    if (getProviderConfig().getSslSocketFactory() != null) {
+    if (sslSocketFactory != null) {
       conn = new LDAPConnection(
-        new LDAPJSSESecureSocketFactory(
-          getProviderConfig().getSslSocketFactory()));
+        new LDAPJSSESecureSocketFactory(sslSocketFactory));
     } else {
       conn = new LDAPConnection(new LDAPJSSESecureSocketFactory());
     }

@@ -14,9 +14,12 @@
 package org.ldaptive.provider.jldap;
 
 import java.security.Security;
+import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
  * JLdap provider implementation. Provides connection factories for clear, SSL,
@@ -45,19 +48,43 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JLdapProviderConfig> cf = null;
-    if (cc.isTlsEnabled()) {
-      cf = new JLdapTlsConnectionFactory(cc.getLdapUrl());
-    } else if (cc.isSslEnabled()) {
-      cf = new JLdapSslConnectionFactory(cc.getLdapUrl());
+    config.makeImmutable();
+    if (cc.getUseStartTLS()) {
+      cf = new JLdapTlsConnectionFactory(
+        cc.getLdapUrl(),
+        (int) cc.getResponseTimeout(),
+        config.getSslSocketFactory() != null ?
+          config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
+    } else if (cc.getUseSSL()) {
+      cf = new JLdapSslConnectionFactory(
+        cc.getLdapUrl(),
+        (int) cc.getResponseTimeout(),
+        config.getSslSocketFactory() != null ?
+          config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
     } else {
-      cf = new JLdapConnectionFactory(cc.getLdapUrl());
+      cf = new JLdapConnectionFactory(
+        cc.getLdapUrl(), (int) cc.getResponseTimeout());
     }
-    if (cc.getResponseTimeout() > 0) {
-      config.setSocketTimeOut((int) cc.getResponseTimeout());
-    }
-    config.setSslSocketFactory(cc.getSslSocketFactory());
     cf.setProviderConfig(config);
     return cf;
+  }
+
+
+  /**
+   * Returns an SSL socket factory configured with a default hostname verifier.
+   *
+   * @param  cc  connection configuration
+   *
+   * @return  SSL socket factory
+   */
+  protected SSLSocketFactory getHostnameVerifierSocketFactory(
+    final ConnectionConfig cc)
+  {
+    // JLdap does not do hostname verification by default
+    // set a default hostname verifier
+    final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+    return TLSSocketFactory.getHostnameVerifierFactory(
+      cc.getSslConfig(), ldapUrl.getEntriesAsString());
   }
 
 

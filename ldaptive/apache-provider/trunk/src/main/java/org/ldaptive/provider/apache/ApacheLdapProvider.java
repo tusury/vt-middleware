@@ -14,16 +14,22 @@
 package org.ldaptive.provider.apache;
 
 import java.security.GeneralSecurityException;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.TrustManager;
+import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.shared.ldap.codec.controls.manageDsaIT.ManageDsaITFactory;
 import org.apache.directory.shared.ldap.codec.controls.search.pagedSearch.PagedResultsFactory;
 import org.apache.directory.shared.ldap.codec.standalone.StandaloneLdapApiService;
 import org.apache.directory.shared.ldap.extras.controls.ppolicy.PasswordPolicyFactory;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
-import org.ldaptive.ssl.KeyStoreCredentialConfig;
+import org.ldaptive.ssl.CredentialConfig;
+import org.ldaptive.ssl.DefaultHostnameVerifier;
+import org.ldaptive.ssl.DefaultSSLContextInitializer;
+import org.ldaptive.ssl.HostnameVerifyingTrustManager;
 import org.ldaptive.ssl.SSLContextInitializer;
-import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
  * Exposes a connection factory for creating ldap connections with Apache LDAP.
@@ -68,68 +74,62 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   public ConnectionFactory<ApacheLdapProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
+    config.makeImmutable();
+    SSLContextInitializer contextInit = null;
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getCredentialConfig() != null) {
+      try {
+        final CredentialConfig credConfig =
+          cc.getSslConfig().getCredentialConfig();
+        contextInit = credConfig.createSSLContextInitializer();
+      } catch (GeneralSecurityException e) {
+        throw new IllegalArgumentException(e);
+      }
+    } else {
+      contextInit = new DefaultSSLContextInitializer();
+    }
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getTrustManagers() != null) {
+      contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
+    } else {
+      final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+      contextInit.setTrustManagers(
+        new TrustManager[]{
+          new HostnameVerifyingTrustManager(
+            new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
+    }
+    TrustManager[] trustManagers = config.getTrustManagers();
+    KeyManager[] keyManagers = config.getKeyManagers();
+    try {
+      if (trustManagers == null) {
+        trustManagers = contextInit.getTrustManagers();
+      }
+      if (keyManagers == null) {
+        keyManagers = contextInit.getKeyManagers();
+      }
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException(e);
+    }
+
+    final LdapConnectionConfig lcc = new LdapConnectionConfig();
+    lcc.setUseSsl(cc.getUseSSL());
+    if (keyManagers != null) {
+      lcc.setKeyManagers(keyManagers);
+    }
+    if (trustManagers != null) {
+      lcc.setTrustManagers(trustManagers);
+    }
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getEnabledCipherSuites() != null) {
+      lcc.setEnabledCipherSuites(cc.getSslConfig().getEnabledCipherSuites());
+    }
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getEnabledProtocols() != null) {
+      lcc.setSslProtocol(cc.getSslConfig().getEnabledProtocols()[0]);
+    }
     final ConnectionFactory<ApacheLdapProviderConfig> cf =
-      new ApacheLdapConnectionFactory(cc.getLdapUrl());
-    if (cc.getResponseTimeout() > 0) {
-      config.setTimeOut(cc.getResponseTimeout());
-    }
-    config.setSsl(cc.getSsl());
-    config.setTls(cc.getTls());
-    if (cc.getSslSocketFactory() != null) {
-      if (
-        TLSSocketFactory.class.isAssignableFrom(
-            cc.getSslSocketFactory().getClass())) {
-        try {
-          final TLSSocketFactory factory = (TLSSocketFactory)
-            cc.getSslSocketFactory();
-          config.setKeyManagers(
-            factory.getSSLContextInitializer().getKeyManagers());
-          config.setTrustManagers(
-            factory.getSSLContextInitializer().getTrustManagers());
-          config.setEnabledCipherSuites(factory.getEnabledCipherSuites());
-          if (factory.getEnabledProtocols() != null) {
-            config.setSslProtocol(factory.getEnabledProtocols()[0]);
-          }
-        } catch (GeneralSecurityException e) {
-          throw new IllegalStateException(
-            "Error initializing key and trust managers",
-            e);
-        }
-      } else {
-        throw new IllegalArgumentException(
-          "SSLSocketFactory must be of type " +
-          "org.ldaptive.ssl.TLSSocketFactory");
-      }
-    } else if (System.getProperty("javax.net.ssl.trustStore") != null) {
-      final KeyStoreCredentialConfig ksCc = new KeyStoreCredentialConfig();
-      ksCc.setTrustStore(
-        String.format(
-          "file:%s",
-          System.getProperty("javax.net.ssl.trustStore")));
-      ksCc.setTrustStoreType(
-        System.getProperty("javax.net.ssl.trustStoreType"));
-      ksCc.setTrustStorePassword(
-        System.getProperty("javax.net.ssl.trustStorePassword"));
-      try {
-        final SSLContextInitializer init = ksCc.createSSLContextInitializer();
-        config.setTrustManagers(init.getTrustManagers());
-      } catch (GeneralSecurityException e) {
-        throw new IllegalStateException("Error initializing trust managers", e);
-      }
-    } else if (System.getProperty("javax.net.ssl.keyStore") != null) {
-      final KeyStoreCredentialConfig ksCc = new KeyStoreCredentialConfig();
-      ksCc.setKeyStore(
-        String.format("file:%s", System.getProperty("javax.net.ssl.keyStore")));
-      ksCc.setKeyStoreType(System.getProperty("javax.net.ssl.keyStoreType"));
-      ksCc.setKeyStorePassword(
-        System.getProperty("javax.net.ssl.keyStorePassword"));
-      try {
-        final SSLContextInitializer init = ksCc.createSSLContextInitializer();
-        config.setKeyManagers(init.getKeyManagers());
-      } catch (GeneralSecurityException e) {
-        throw new IllegalStateException("Error initializing key managers", e);
-      }
-    }
+      new ApacheLdapConnectionFactory(
+        cc.getLdapUrl(), lcc, cc.getUseStartTLS(), cc.getResponseTimeout());
     cf.setProviderConfig(config);
     return cf;
   }

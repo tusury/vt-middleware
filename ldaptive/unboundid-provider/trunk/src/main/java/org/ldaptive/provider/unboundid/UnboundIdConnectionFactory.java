@@ -13,7 +13,7 @@
 */
 package org.ldaptive.provider.unboundid;
 
-import java.security.GeneralSecurityException;
+import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import com.unboundid.ldap.sdk.ExtendedResult;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -22,9 +22,9 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapURL;
 import org.ldaptive.provider.AbstractConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
-import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
  * Creates ldap connections using the UnboundId LDAPConnection class.
@@ -36,15 +36,46 @@ public class UnboundIdConnectionFactory
   extends AbstractConnectionFactory<UnboundIdProviderConfig>
 {
 
+  /** Socket factory to use for LDAP and LDAPS, not used for startTLS. */
+  private SocketFactory sslSocketFactory;
+
+  /** SSL context to use for startTLS. */
+  private SSLContext sslContext;
+
+  /** Whether to startTLS on connections. */
+  private boolean useStartTLS;
+
+  /** Amount of time in milliseconds that connect operations will block. */
+  private int connectTimeout;
+
+  /** Amount of time in milliseconds that operations will wait. */
+  private long responseTimeout;
+
 
   /**
    * Creates a new Unbound ID connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  factory  SSL socket factory to use for LDAP and LDAPS
+   * @param  sslCtx  SSL context to use for startTLS
+   * @param  tls  whether to startTLS on connections
+   * @param  cTimeout  connection timeout
+   * @param  rTimeout  response timeout
    */
-  public UnboundIdConnectionFactory(final String url)
+  public UnboundIdConnectionFactory(
+    final String url,
+    final SocketFactory factory,
+    final SSLContext sslCtx,
+    final boolean tls,
+    final int cTimeout,
+    final long rTimeout)
   {
     super(url);
+    sslSocketFactory = factory;
+    sslContext = sslCtx;
+    useStartTLS = tls;
+    connectTimeout = cTimeout;
+    responseTimeout = rTimeout;
   }
 
 
@@ -54,53 +85,32 @@ public class UnboundIdConnectionFactory
     throws LdapException
   {
     final LDAPConnectionOptions options = new LDAPConnectionOptions();
-    final String[] hostAndPort = getHostnameAndPort(url);
+    final LdapURL ldapUrl = new LdapURL(url);
     UnboundIdConnection conn = null;
     boolean closeConn = false;
     try {
       LDAPConnection lc = null;
-      if (getProviderConfig().getTls()) {
+      if (useStartTLS) {
         lc = new LDAPConnection(options);
       } else {
         lc = new LDAPConnection(
-          getProviderConfig().getSocketFactory(),
+          sslSocketFactory,
           options);
       }
       conn = new UnboundIdConnection(lc);
       lc.connect(
-        hostAndPort[0],
-        Integer.parseInt(hostAndPort[1]),
-        getProviderConfig().getConnectTimeout());
+        ldapUrl.getLastEntry().getHostname(),
+        ldapUrl.getLastEntry().getPort(),
+        connectTimeout);
 
-      conn.setResponseTimeout(getProviderConfig().getResponseTimeout());
+      conn.setResponseTimeout(responseTimeout);
       conn.setOperationRetryResultCodes(
         getProviderConfig().getOperationRetryResultCodes());
       conn.setControlProcessor(getProviderConfig().getControlProcessor());
 
-      if (getProviderConfig().getTls()) {
-        SSLContext sslCtx = null;
-        if (getProviderConfig().getSocketFactory() != null) {
-          if (
-            TLSSocketFactory.class.isAssignableFrom(
-                getProviderConfig().getSocketFactory().getClass())) {
-            try {
-              final TLSSocketFactory factory = (TLSSocketFactory)
-                getProviderConfig().getSocketFactory();
-              sslCtx = factory.getSSLContextInitializer().initSSLContext("TLS");
-            } catch (GeneralSecurityException e) {
-              throw new IllegalStateException(
-                "Error initializing key and trust managers",
-                e);
-            }
-          } else {
-            throw new IllegalArgumentException(
-              "SocketFactory must be of type " +
-              "org.ldaptive.ssl.TLSSocketFactory");
-          }
-        }
-
+      if (useStartTLS) {
         final ExtendedResult result = lc.processExtendedOperation(
-          new StartTLSExtendedRequest(sslCtx));
+          new StartTLSExtendedRequest(sslContext));
         if (result.getResultCode() != ResultCode.SUCCESS) {
           closeConn = true;
           throw new ConnectionException(
@@ -127,41 +137,5 @@ public class UnboundIdConnectionFactory
       }
     }
     return conn;
-  }
-
-
-  /**
-   * Extracts the hostname and port from the supplied url. If the url is a space
-   * delimited string, only the last hostname is used.
-   *
-   * @param  url  to parse
-   *
-   * @return  string array with {hostname, port}
-   */
-  protected static String[] getHostnameAndPort(final String url)
-  {
-    final String[] hostAndPort = new String[2];
-    // if url is a space delimited string, use the last value
-    final String[] hosts = url.split(" ");
-    String host = hosts[hosts.length - 1];
-
-    String port = "389";
-    // remove scheme, if it exists
-    if (host.startsWith("ldap://")) {
-      host = host.substring("ldap://".length());
-    } else if (host.startsWith("ldaps://")) {
-      host = host.substring("ldaps://".length());
-      port = "636";
-    }
-
-    // remove port, if it exist
-    if (host.indexOf(":") != -1) {
-      hostAndPort[0] = host.substring(0, host.indexOf(":"));
-      hostAndPort[1] = host.substring(host.indexOf(":") + 1, host.length());
-    } else {
-      hostAndPort[0] = host;
-      hostAndPort[1] = port;
-    }
-    return hostAndPort;
   }
 }

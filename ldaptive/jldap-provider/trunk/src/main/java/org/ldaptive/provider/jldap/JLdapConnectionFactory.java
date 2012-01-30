@@ -31,10 +31,11 @@ public class JLdapConnectionFactory
    * Creates a new jldap connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  timeOut  time in milliseconds that operations will wait
    */
-  public JLdapConnectionFactory(final String url)
+  public JLdapConnectionFactory(final String url, final int timeOut)
   {
-    super(url);
+    super(url, timeOut);
   }
 
 

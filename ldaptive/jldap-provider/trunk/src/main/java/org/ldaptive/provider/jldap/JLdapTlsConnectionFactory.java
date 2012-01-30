@@ -13,13 +13,14 @@
 */
 package org.ldaptive.provider.jldap;
 
+import javax.net.ssl.SSLSocketFactory;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPJSSEStartTLSFactory;
 
 /**
- * Creates ldap connections using the JLDAP LDAPConnection class with the start
- * tls extended operation.
+ * Creates ldap connections using the JLDAP LDAPConnection class with the
+ * startTLS extended operation.
  *
  * @author  Middleware Services
  * @version  $Revision$
@@ -28,15 +29,22 @@ public class JLdapTlsConnectionFactory
   extends AbstractJLdapConnectionFactory<JLdapTlsConnection>
 {
 
+  /** SSL socket factory to use for startTLS. */
+  private SSLSocketFactory sslSocketFactory;
+
 
   /**
    * Creates a new jldap tls connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  timeOut  time in milliseconds that operations will wait
+   * @param  factory  SSL socket factory
    */
-  public JLdapTlsConnectionFactory(final String url)
+  public JLdapTlsConnectionFactory(
+    final String url, final int timeOut, final SSLSocketFactory factory)
   {
-    super(url);
+    super(url, timeOut);
+    sslSocketFactory = factory;
   }
 
 
@@ -46,9 +54,8 @@ public class JLdapTlsConnectionFactory
     throws LDAPException
   {
     LDAPConnection conn = null;
-    if (getProviderConfig().getSslSocketFactory() != null) {
-      conn = new LDAPConnection(
-        new LDAPJSSEStartTLSFactory(getProviderConfig().getSslSocketFactory()));
+    if (sslSocketFactory != null) {
+      conn = new LDAPConnection(new LDAPJSSEStartTLSFactory(sslSocketFactory));
     } else {
       conn = new LDAPConnection(new LDAPJSSEStartTLSFactory());
     }

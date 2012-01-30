@@ -29,9 +29,6 @@ import org.ldaptive.provider.ProviderConfig;
 public class JLdapProviderConfig extends ProviderConfig
 {
 
-  /** Amount of time in milliseconds that operations will wait. */
-  private int socketTimeOut;
-
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
 
@@ -57,29 +54,6 @@ public class JLdapProviderConfig extends ProviderConfig
 
 
   /**
-   * Returns the socket time out value.
-   *
-   * @return  socket time out
-   */
-  public int getSocketTimeOut()
-  {
-    return socketTimeOut;
-  }
-
-
-  /**
-   * Sets the socket time out value.
-   *
-   * @param  timeout  for sockets
-   */
-  public void setSocketTimeOut(final int timeout)
-  {
-    logger.trace("setting socketTimeOut: {}", timeout);
-    socketTimeOut = timeout;
-  }
-
-
-  /**
    * Returns the search ignore result codes.
    *
    * @return  result codes to ignore
@@ -97,6 +71,7 @@ public class JLdapProviderConfig extends ProviderConfig
    */
   public void setSearchIgnoreResultCodes(final ResultCode[] codes)
   {
+    checkImmutable();
     logger.trace("setting searchIgnoreResultCodes: {}", Arrays.toString(codes));
     searchIgnoreResultCodes = codes;
   }
@@ -120,6 +95,7 @@ public class JLdapProviderConfig extends ProviderConfig
    */
   public void setSslSocketFactory(final SSLSocketFactory sf)
   {
+    checkImmutable();
     logger.trace("setting sslSocketFactory: {}", sf);
     sslSocketFactory = sf;
   }
@@ -143,6 +119,7 @@ public class JLdapProviderConfig extends ProviderConfig
    */
   public void setControlProcessor(final ControlProcessor<LDAPControl> processor)
   {
+    checkImmutable();
     logger.trace("setting controlProcessor: {}", processor);
     controlProcessor = processor;
   }
@@ -159,7 +136,7 @@ public class JLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, socketTimeOut=%s, " +
+        "connectionStrategy=%s, logCredentials=%s, " +
         "searchIgnoreResultCodes=%s, sslSocketFactory=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
@@ -167,7 +144,6 @@ public class JLdapProviderConfig extends ProviderConfig
         getProperties(),
         getConnectionStrategy(),
         getLogCredentials(),
-        socketTimeOut,
         Arrays.toString(searchIgnoreResultCodes),
         sslSocketFactory,
         controlProcessor);
