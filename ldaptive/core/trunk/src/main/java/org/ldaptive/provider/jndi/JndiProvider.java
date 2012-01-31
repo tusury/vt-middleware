@@ -124,7 +124,9 @@ public class JndiProvider implements Provider<JndiProviderConfig>
         config.getHostnameVerifier());
     } else {
       SSLSocketFactory factory = config.getSslSocketFactory();
-      if (factory == null && cc.getUseSSL()) {
+      if (factory == null &&
+          (cc.getUseSSL() ||
+           cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
         // LDAPS hostname verification does not occur by default
         // set a default hostname verifier
         final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
@@ -182,9 +184,11 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     env.put(VERSION, "3");
     if (cc.getUseSSL()) {
       env.put(PROTOCOL, "ssl");
-      if (factory != null) {
-        env.put(JndiProvider.SOCKET_FACTORY, factory);
-      }
+    }
+    if (factory != null &&
+        (cc.getUseSSL() ||
+         cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+      env.put(JndiProvider.SOCKET_FACTORY, factory);
     }
     if (cc.getConnectTimeout() > 0) {
       env.put(CONNECT_TIMEOUT, Long.toString(cc.getConnectTimeout()));
