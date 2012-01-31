@@ -68,6 +68,7 @@ public class ProviderConfig extends AbstractConfig
    */
   public void setOperationRetryResultCodes(final ResultCode[] codes)
   {
+    checkImmutable();
     logger.trace(
       "setting operationRetryResultCodes: {}",
       Arrays.toString(codes));
@@ -93,6 +94,7 @@ public class ProviderConfig extends AbstractConfig
    */
   public void setProperties(final Map<String, Object> props)
   {
+    checkImmutable();
     logger.trace("setting properties: {}", props);
     properties = props;
   }
@@ -116,6 +118,7 @@ public class ProviderConfig extends AbstractConfig
    */
   public void setConnectionStrategy(final ConnectionStrategy strategy)
   {
+    checkImmutable();
     logger.trace("setting connectionStrategy: {}", strategy);
     connectionStrategy = strategy;
   }
@@ -139,6 +142,7 @@ public class ProviderConfig extends AbstractConfig
    */
   public void setLogCredentials(final boolean b)
   {
+    checkImmutable();
     logger.trace("setting logCredentials: {}", b);
     logCredentials = b;
   }
