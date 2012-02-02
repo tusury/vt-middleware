@@ -20,7 +20,7 @@ import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.shared.ldap.codec.controls.manageDsaIT.ManageDsaITFactory;
 import org.apache.directory.shared.ldap.codec.controls.search.pagedSearch.PagedResultsFactory;
 import org.apache.directory.shared.ldap.codec.standalone.StandaloneLdapApiService;
-import org.apache.directory.shared.ldap.extras.controls.ppolicy.PasswordPolicyFactory;
+import org.apache.directory.shared.ldap.extras.controls.ppolicy_impl.PasswordPolicyFactory;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
