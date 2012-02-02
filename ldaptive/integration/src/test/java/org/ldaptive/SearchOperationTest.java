@@ -956,8 +956,8 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     final ResultCode retryResultCode = ResultCode.valueOf(resultCode);
-    final DefaultConnectionFactory cf = new DefaultConnectionFactory(
-      TestUtil.readConnectionConfig(null));
+    final ConnectionConfig cc = TestUtil.readConnectionConfig(null);
+    DefaultConnectionFactory cf = new DefaultConnectionFactory(cc);
     cf.getProvider().getProviderConfig().setOperationRetryResultCodes(
       new ResultCode[] {retryResultCode, });
 
@@ -1000,6 +1000,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     // test no exception
+    cf = new DefaultConnectionFactory(cc);
     cf.getProvider().getProviderConfig().setOperationRetryResultCodes(null);
     conn = cf.getConnection();
     search = new RetrySearchOperation(conn);
@@ -1024,6 +1025,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     // test retry count and wait time
+    cf = new DefaultConnectionFactory(cc);
     cf.getProvider().getProviderConfig().setOperationRetryResultCodes(
       new ResultCode[] {retryResultCode, });
     conn = cf.getConnection();
