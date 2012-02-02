@@ -165,10 +165,11 @@ public class ConnectionTest
   public void strategyConnect()
     throws Exception
   {
-    final DefaultConnectionFactory connFactory = new DefaultConnectionFactory(
+    final ConnectionConfig cc = 
       TestUtil.readConnectionConfig(
         TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.conn.properties")));
+          "/org/ldaptive/ldap.conn.properties"));
+    DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
     Connection conn = connFactory.getConnection();
 
     try {
@@ -187,6 +188,7 @@ public class ConnectionTest
       conn.close();
     }
 
+    connFactory = new DefaultConnectionFactory(cc);
     connFactory.getProvider().getProviderConfig().setConnectionStrategy(
       ConnectionStrategy.DEFAULT);
     conn = connFactory.getConnection();
@@ -206,6 +208,7 @@ public class ConnectionTest
       conn.close();
     }
 
+    connFactory = new DefaultConnectionFactory(cc);
     connFactory.getProvider().getProviderConfig().setConnectionStrategy(
       ConnectionStrategy.ACTIVE_PASSIVE);
     conn = connFactory.getConnection();
@@ -225,6 +228,7 @@ public class ConnectionTest
       conn.close();
     }
 
+    connFactory = new DefaultConnectionFactory(cc);
     connFactory.getProvider().getProviderConfig().setConnectionStrategy(
       ConnectionStrategy.RANDOM);
     conn = connFactory.getConnection();
