@@ -16,6 +16,7 @@ package org.ldaptive.ssl;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
@@ -92,5 +93,22 @@ public class AggregateTrustManager implements X509TrustManager
       }
     }
     return issuers.toArray(new X509Certificate[issuers.size()]);
+  }
+
+
+  /**
+   * Provides a descriptive string representation of this instance.
+   *
+   * @return  string representation
+   */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::trustManagers=%s]",
+        getClass().getName(),
+        hashCode(),
+        Arrays.toString(trustManagers));
   }
 }
