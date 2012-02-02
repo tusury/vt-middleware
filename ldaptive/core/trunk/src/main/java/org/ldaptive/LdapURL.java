@@ -34,6 +34,9 @@ public class LdapURL
   /** Default LDAPS port, value is {@value}. */
   public static final int DEFAULT_LDAPS_PORT = 636;
 
+  /** Default delimiter for ldap urls. */
+  private static final String DEFAULT_DELIMITER = " ";
+
   /** URL entries. */
   private List<Entry> ldapEntries = new ArrayList<Entry>();
 
@@ -45,7 +48,19 @@ public class LdapURL
    */
   public LdapURL(final String url)
   {
-    final String[] urls = url.split(" ");
+    this(url, DEFAULT_DELIMITER);
+  }
+
+
+  /**
+   * Creates a new ldap url.
+   *
+   * @param  url  space delimited list of ldap urls
+   * @param  delimiter  to split url with
+   */
+  public LdapURL(final String url, final String delimiter)
+  {
+    final String[] urls = url.split(delimiter);
 
     for (int i = 0; i < urls.length; i++) {
       String hostname = urls[i];
