@@ -44,7 +44,7 @@ public class SpringTest
       });
     AssertJUnit.assertTrue(context.getBeanDefinitionCount() > 0);
     final ConnectionFactory cf =
-      (ConnectionFactory) context.getBean("connectionFactory");
+      context.getBean("connectionFactory", ConnectionFactory.class);
     final Connection conn = cf.getConnection();
     try {
       conn.open();
@@ -59,7 +59,7 @@ public class SpringTest
     AssertJUnit.assertTrue(poolContext.getBeanDefinitionCount() > 0);
     BlockingConnectionPool pool = null;
     try {
-      pool = (BlockingConnectionPool) poolContext.getBean("pool");
+      pool = poolContext.getBean("pool", BlockingConnectionPool.class);
     } finally {
       pool.close();
     }

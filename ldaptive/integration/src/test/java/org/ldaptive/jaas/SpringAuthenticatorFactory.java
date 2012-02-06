@@ -56,7 +56,7 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
       throw new UnsupportedOperationException(
         "Could not initialize spring context");
     }
-    return (Authenticator) context.getBean("authenticator");
+    return context.getBean("authenticator", Authenticator.class);
   }
 
 
@@ -69,7 +69,8 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
       throw new UnsupportedOperationException(
         "Could not initialize spring context");
     }
-    return (AuthenticationRequest) context.getBean("authenticationRequest");
+    return context.getBean(
+      "authenticationRequest", AuthenticationRequest.class);
   }
 
 
@@ -82,7 +83,8 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
       throw new UnsupportedOperationException(
         "Could not initialize spring context");
     }
-    final Authenticator a = (Authenticator) context.getBean("authenticator");
+    final Authenticator a = context.getBean(
+      "authenticator", Authenticator.class);
     if (a.getDnResolver() instanceof PooledConnectionFactoryManager) {
       final PooledConnectionFactoryManager cfm =
         (PooledConnectionFactoryManager) a.getDnResolver();
