@@ -176,7 +176,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /** Attempts to fill the pool to its minimum size. */
+  /**
+   * Attempts to fill the pool to its minimum size.
+   *
+   * @throws  IllegalStateException  if the pool does not contain at least one
+   * connection and it's minimum size is greater than zero
+   */
   private void initializePool()
   {
     logger.debug(
@@ -199,6 +204,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
           }
         }
         count++;
+      }
+      if (available.size() == 0 && getPoolConfig().getMinPoolSize() > 0) {
+        throw new IllegalStateException("Could not initialize pool");
       }
     } finally {
       poolLock.unlock();
