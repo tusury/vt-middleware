@@ -105,14 +105,12 @@ public class UnboundIdProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, socketFactory=%s, " +
-        "controlProcessor=%s]",
+        "connectionStrategy=%s, socketFactory=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
-        getLogCredentials(),
         socketFactory,
         controlProcessor);
   }

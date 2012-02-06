@@ -130,14 +130,13 @@ public class ApacheLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, keyManagers=%s, " +
-        "trustManagers=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, keyManagers=%s, trustManagers=%s, " +
+        "controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
-        getLogCredentials(),
         Arrays.toString(keyManagers),
         Arrays.toString(trustManagers),
         controlProcessor);

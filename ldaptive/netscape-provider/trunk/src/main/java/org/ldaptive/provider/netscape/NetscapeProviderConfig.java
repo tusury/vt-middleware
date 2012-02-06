@@ -136,15 +136,13 @@ public class NetscapeProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, " +
-        "searchIgnoreResultCodes=%s, ldapSocketFactory=%s, " +
-        "controlProcessor=%s]",
+        "connectionStrategy=%s, searchIgnoreResultCodes=%s, " +
+        "ldapSocketFactory=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
-        getLogCredentials(),
         Arrays.toString(searchIgnoreResultCodes),
         ldapSocketFactory,
         controlProcessor);

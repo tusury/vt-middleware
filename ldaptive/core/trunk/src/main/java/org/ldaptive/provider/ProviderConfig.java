@@ -42,9 +42,6 @@ public class ProviderConfig extends AbstractConfig
   /** Connection strategy. */
   private ConnectionStrategy connectionStrategy = ConnectionStrategy.DEFAULT;
 
-  /** Whether to log authentication credentials. */
-  private boolean logCredentials;
-
 
   /** Default constructor. */
   public ProviderConfig() {}
@@ -125,30 +122,6 @@ public class ProviderConfig extends AbstractConfig
 
 
   /**
-   * Returns whether authentication credentials will be logged.
-   *
-   * @return  whether authentication credentials will be logged
-   */
-  public boolean getLogCredentials()
-  {
-    return logCredentials;
-  }
-
-
-  /**
-   * Sets whether authentication credentials will be logged.
-   *
-   * @param  b  whether authentication credentials will be logged
-   */
-  public void setLogCredentials(final boolean b)
-  {
-    checkImmutable();
-    logger.trace("setting logCredentials: {}", b);
-    logCredentials = b;
-  }
-
-
-  /**
    * Provides a descriptive string representation of this instance.
    *
    * @return  string representation
@@ -159,12 +132,11 @@ public class ProviderConfig extends AbstractConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s]",
+        "connectionStrategy=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(operationRetryResultCodes),
         properties,
-        connectionStrategy,
-        logCredentials);
+        connectionStrategy);
   }
 }
