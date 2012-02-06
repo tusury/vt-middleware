@@ -89,9 +89,11 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    */
   public void setBlockWaitTime(final long time)
   {
-    if (time >= 0) {
-      blockWaitTime = time;
+    if (time < 0) {
+      throw new IllegalArgumentException(
+        "Block wait time must be greater than or equal to zero");
     }
+    blockWaitTime = time;
   }
 
 
@@ -155,6 +157,11 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         checkOutLock.unlock();
       }
       if (pc == null) {
+        if (available.size() == 0 && active.size() == 0) {
+          logger.error("Could not service check out request");
+          throw new PoolExhaustedException(
+            "Pool is empty and connection creation failed");
+        }
         logger.debug("create failed, block until connection is available");
         pc = blockAvailableConnection();
       }
