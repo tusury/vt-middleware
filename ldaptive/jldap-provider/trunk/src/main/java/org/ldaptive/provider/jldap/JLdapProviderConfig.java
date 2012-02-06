@@ -136,14 +136,13 @@ public class JLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, " +
-        "searchIgnoreResultCodes=%s, sslSocketFactory=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, searchIgnoreResultCodes=%s, " +
+        "sslSocketFactory=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
-        getLogCredentials(),
         Arrays.toString(searchIgnoreResultCodes),
         sslSocketFactory,
         controlProcessor);

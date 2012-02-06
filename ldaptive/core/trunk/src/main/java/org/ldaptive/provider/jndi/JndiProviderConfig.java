@@ -224,15 +224,14 @@ public class JndiProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, logCredentials=%s, tracePackets=%s, " +
-        "removeDnUrls=%s, searchIgnoreResultCodes=%s, sslSocketFactory=%s, " +
+        "connectionStrategy=%s, tracePackets=%s, removeDnUrls=%s, " +
+        "searchIgnoreResultCodes=%s, sslSocketFactory=%s, " +
         "hostnameVerifier=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
-        getLogCredentials(),
         tracePackets,
         removeDnUrls,
         Arrays.toString(searchIgnoreResultCodes),
