@@ -340,49 +340,49 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=jadams@vt.edu"),
+            new SearchFilter("(mail=jadams@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("2")[1],
         },
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=tjefferson@vt.edu"),
+            new SearchFilter("(mail=tjefferson@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("3")[1],
         },
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=jmadison@vt.edu"),
+            new SearchFilter("(mail=jmadison@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("4")[1],
         },
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=jmonroe@vt.edu"),
+            new SearchFilter("(mail=jmonroe@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("5")[1],
         },
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=jqadams@vt.edu"),
+            new SearchFilter("(mail=jqadams@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("6")[1],
         },
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=ajackson@vt.edu"),
+            new SearchFilter("(mail=ajackson@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("7")[1],
         },
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=mvburen@vt.edu"),
+            new SearchFilter("(mail=mvburen@vt.edu)"),
             new String[] {
               "departmentNumber", "givenName", "sn", "jpegPhoto", }),
           entries.get("8")[1],
@@ -390,14 +390,14 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=whharrison@vt.edu"),
+            new SearchFilter("(mail=whharrison@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("9")[1],
         },
         {
           new SearchRequest(
             "ou=test,dc=vt,dc=edu",
-            new SearchFilter("mail=jtyler@vt.edu"),
+            new SearchFilter("(mail=jtyler@vt.edu)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("10")[1],
         },
