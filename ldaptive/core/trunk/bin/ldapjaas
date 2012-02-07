@@ -3,7 +3,7 @@
 JAVA=java
 
 # sample options for jaas
-JAAS_OPTS="-Djava.security.auth.login.config=properties/ldap_jaas.config"
+JAAS_OPTS="-Djava.security.auth.login.config=bin/ldap_jaas.config"
 
 #KEYSTORE_OPTS="-Djavax.net.ssl.keyStore= -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=BKS"
 
@@ -18,7 +18,6 @@ else
 fi
 
 CLASSPATH="${PREFIX}/jars/ldaptive-${project.version}.jar"
-CLASSPATH=${CLASSPATH}:${PREFIX}/properties
 for JAR in `ls ${PREFIX}/lib/*.jar` ; do
   CLASSPATH=${CLASSPATH}:$JAR
 done

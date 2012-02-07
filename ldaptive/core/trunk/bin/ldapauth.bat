@@ -9,13 +9,13 @@ set JAVA=%JAVA_HOME%\bin\java
 set LDAP_JAR=%LDAPTIVE_HOME%\jars\ldaptive-${project.version}.jar
 set LIBDIR=%LDAPTIVE_HOME%\lib
 
-set CLASSPATH=%LIBDIR%\commons-cli-1.2.jar;%LIBDIR%\commons-codec-1.4.jar;%LDAP_JAR%
+set CLASSPATH=%LIBDIR%\commons-cli-1.2.jar;%LIBDIR%\commons-codec-1.6.jar;%LDAP_JAR%
 
 call "%JAVA%" -cp "%CLASSPATH%" org.ldaptive.cli.AuthenticatorCli %*
 goto end
 
 :no_ldaptive_home
-echo ERROR: LDAPTIVE_HOME environment variable must be set to VT Ldap install path.
+echo ERROR: LDAPTIVE_HOME environment variable must be set to Ldaptive install path.
 goto end
 
 :no_java_home

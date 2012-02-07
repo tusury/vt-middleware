@@ -15,7 +15,6 @@ else
 fi
 
 CLASSPATH="${PREFIX}/jars/ldaptive-${project.version}.jar"
-CLASSPATH=${CLASSPATH}:${PREFIX}/properties
 for JAR in `ls ${PREFIX}/lib/*.jar` ; do
   CLASSPATH=${CLASSPATH}:$JAR
 done
