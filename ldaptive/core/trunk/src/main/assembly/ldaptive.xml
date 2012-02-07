@@ -29,10 +29,6 @@
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
     <fileSet>
-      <directory>properties</directory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
       <directory>target</directory>
       <outputDirectory>jars</outputDirectory>
       <includes>
@@ -51,6 +47,7 @@
       <useDefaultExcludes>true</useDefaultExcludes>
       <includes>
         <include>*.bat</include>
+        <include>*.config</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -60,6 +57,7 @@
       <useDefaultExcludes>true</useDefaultExcludes>
       <excludes>
         <exclude>*.bat</exclude>
+        <exclude>*.config</exclude>
       </excludes>
     </fileSet>
   </fileSets>
