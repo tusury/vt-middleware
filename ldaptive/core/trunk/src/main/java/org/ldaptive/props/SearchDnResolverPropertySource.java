@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.auth.SearchDnResolver;
@@ -42,10 +42,7 @@ public final class SearchDnResolverPropertySource
    */
   public SearchDnResolverPropertySource(final SearchDnResolver resolver)
   {
-    this(
-      resolver,
-      SearchDnResolverPropertySource.class.getResourceAsStream(
-        PROPERTIES_FILE));
+    this(resolver, PROPERTIES_FILE);
   }
 
 
@@ -53,13 +50,27 @@ public final class SearchDnResolverPropertySource
    * Creates a new search dn resolver property source.
    *
    * @param  resolver  search dn resolver to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public SearchDnResolverPropertySource(
     final SearchDnResolver resolver,
-    final InputStream is)
+    final String... paths)
   {
-    this(resolver, loadProperties(is));
+    this(resolver, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new search dn resolver property source.
+   *
+   * @param  resolver  search dn resolver to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public SearchDnResolverPropertySource(
+    final SearchDnResolver resolver,
+    final Reader... readers)
+  {
+    this(resolver, loadProperties(readers));
   }
 
 

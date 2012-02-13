@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.pool.PoolConfig;
@@ -42,9 +42,7 @@ public final class PoolConfigPropertySource
    */
   public PoolConfigPropertySource(final PoolConfig pc)
   {
-    this(
-      pc,
-      PoolConfigPropertySource.class.getResourceAsStream(PROPERTIES_FILE));
+    this(pc, PROPERTIES_FILE);
   }
 
 
@@ -52,11 +50,23 @@ public final class PoolConfigPropertySource
    * Creates a new ldap pool config property source.
    *
    * @param  pc  pool config to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
-  public PoolConfigPropertySource(final PoolConfig pc, final InputStream is)
+  public PoolConfigPropertySource(final PoolConfig pc, final String... paths)
   {
-    this(pc, loadProperties(is));
+    this(pc, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new ldap pool config property source.
+   *
+   * @param  pc  pool config to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public PoolConfigPropertySource(final PoolConfig pc, final Reader... readers)
+  {
+    this(pc, loadProperties(readers));
   }
 
 

@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.DefaultConnectionFactory;
@@ -44,10 +44,7 @@ public final class BlockingConnectionPoolPropertySource
    */
   public BlockingConnectionPoolPropertySource(final BlockingConnectionPool cp)
   {
-    this(
-      cp,
-      BlockingConnectionPoolPropertySource.class.getResourceAsStream(
-        PROPERTIES_FILE));
+    this(cp, PROPERTIES_FILE);
   }
 
 
@@ -55,13 +52,27 @@ public final class BlockingConnectionPoolPropertySource
    * Creates a new blocking connection pool property source.
    *
    * @param  cp  connection pool to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public BlockingConnectionPoolPropertySource(
     final BlockingConnectionPool cp,
-    final InputStream is)
+    final String... paths)
   {
-    this(cp, loadProperties(is));
+    this(cp, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new blocking connection pool property source.
+   *
+   * @param  cp  connection pool to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public BlockingConnectionPoolPropertySource(
+    final BlockingConnectionPool cp,
+    final Reader... readers)
+  {
+    this(cp, loadProperties(readers));
   }
 
 

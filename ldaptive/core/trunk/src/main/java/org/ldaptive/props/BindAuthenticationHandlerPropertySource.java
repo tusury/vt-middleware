@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.auth.BindAuthenticationHandler;
@@ -44,10 +44,7 @@ public final class BindAuthenticationHandlerPropertySource
   public BindAuthenticationHandlerPropertySource(
     final BindAuthenticationHandler handler)
   {
-    this(
-      handler,
-      BindAuthenticationHandlerPropertySource.class.getResourceAsStream(
-        PROPERTIES_FILE));
+    this(handler, PROPERTIES_FILE);
   }
 
 
@@ -55,13 +52,27 @@ public final class BindAuthenticationHandlerPropertySource
    * Creates a new bind authentication handler property source.
    *
    * @param  handler  bind authentication handler to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public BindAuthenticationHandlerPropertySource(
     final BindAuthenticationHandler handler,
-    final InputStream is)
+    final String... paths)
   {
-    this(handler, loadProperties(is));
+    this(handler, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new bind authentication handler property source.
+   *
+   * @param  handler  bind authentication handler to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public BindAuthenticationHandlerPropertySource(
+    final BindAuthenticationHandler handler,
+    final Reader... readers)
+  {
+    this(handler, loadProperties(readers));
   }
 
 

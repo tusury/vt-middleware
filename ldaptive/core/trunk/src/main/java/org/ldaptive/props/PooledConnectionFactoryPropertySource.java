@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
@@ -46,10 +46,7 @@ public final class PooledConnectionFactoryPropertySource
    */
   public PooledConnectionFactoryPropertySource(final PooledConnectionFactory cf)
   {
-    this(
-      cf,
-      DefaultConnectionFactoryPropertySource.class.getResourceAsStream(
-        PROPERTIES_FILE));
+    this(cf, PROPERTIES_FILE);
   }
 
 
@@ -57,13 +54,27 @@ public final class PooledConnectionFactoryPropertySource
    * Creates a new pooled connection factory property source.
    *
    * @param  cf  connection factory to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public PooledConnectionFactoryPropertySource(
     final PooledConnectionFactory cf,
-    final InputStream is)
+    final String... paths)
   {
-    this(cf, loadProperties(is));
+    this(cf, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new pooled connection factory property source.
+   *
+   * @param  cf  connection factory to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public PooledConnectionFactoryPropertySource(
+    final PooledConnectionFactory cf,
+    final Reader... readers)
+  {
+    this(cf, loadProperties(readers));
   }
 
 

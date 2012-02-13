@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.ConnectionConfig;
@@ -43,10 +43,7 @@ public final class ConnectionConfigPropertySource
    */
   public ConnectionConfigPropertySource(final ConnectionConfig cc)
   {
-    this(
-      cc,
-      ConnectionConfigPropertySource.class.getResourceAsStream(
-        PROPERTIES_FILE));
+    this(cc, PROPERTIES_FILE);
   }
 
 
@@ -54,13 +51,27 @@ public final class ConnectionConfigPropertySource
    * Creates a new connection config property source.
    *
    * @param  cc  connection config to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public ConnectionConfigPropertySource(
     final ConnectionConfig cc,
-    final InputStream is)
+    final String... paths)
   {
-    this(cc, loadProperties(is));
+    this(cc, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new connection config property source.
+   *
+   * @param  cc  connection config to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public ConnectionConfigPropertySource(
+    final ConnectionConfig cc,
+    final Reader... readers)
+  {
+    this(cc, loadProperties(readers));
   }
 
 
