@@ -233,8 +233,7 @@ public class AuthenticatorTest extends AbstractTest
   public void loadProperties(final String ldapUrl, final String baseDn)
   {
     final Authenticator auth = TestUtil.readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.tls.properties"));
+      "classpath:/org/ldaptive/ldap.tls.properties");
     final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
     final DefaultConnectionFactory resolverCf =
       (DefaultConnectionFactory) dnResolver.getConnectionFactory();

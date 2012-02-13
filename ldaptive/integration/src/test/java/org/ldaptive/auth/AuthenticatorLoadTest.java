@@ -75,11 +75,9 @@ public class AuthenticatorLoadTest extends AbstractTest
     throws Exception
   {
     singleTLSAuth = TestUtil.readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.tls.load.properties"));
+      "classpath:/org/ldaptive/ldap.tls.load.properties");
     pooledTLSAuth = TestUtil.readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.tls.load.properties"));
+      "classpath:/org/ldaptive/ldap.tls.load.properties");
   }
 
 
