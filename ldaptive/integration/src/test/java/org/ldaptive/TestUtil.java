@@ -15,7 +15,6 @@ package org.ldaptive;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -45,16 +44,16 @@ public final class TestUtil
 
 
   /**
-   * @param  is  to read properties from, if null use default properties
+   * @param  path  to read properties from, if null use default properties
    * @return  authenticator config
    */
   public static ConnectionConfig readConnectionConfig(
-    final InputStream is)
+    final String path)
   {
     final ConnectionConfig cc = new ConnectionConfig();
     ConnectionConfigPropertySource ccSource = null;
-    if (is != null) {
-      ccSource = new ConnectionConfigPropertySource(cc, is);
+    if (path != null) {
+      ccSource = new ConnectionConfigPropertySource(cc, path);
     } else {
       ccSource = new ConnectionConfigPropertySource(cc);
     }
@@ -64,15 +63,15 @@ public final class TestUtil
 
 
   /**
-   * @param  is  to read properties from, if null use default properties
+   * @param  path  to read properties from, if null use default properties
    * @return  authenticator
    */
-  public static Authenticator readAuthenticator(final InputStream is)
+  public static Authenticator readAuthenticator(final String path)
   {
     final Authenticator a = new Authenticator();
     AuthenticatorPropertySource aSource = null;
-    if (is != null) {
-      aSource = new AuthenticatorPropertySource(a, is);
+    if (path != null) {
+      aSource = new AuthenticatorPropertySource(a, path);
     } else {
       aSource = new AuthenticatorPropertySource(a);
     }
@@ -91,9 +90,7 @@ public final class TestUtil
     throws Exception
   {
     return DefaultConnectionFactory.getConnection(
-      readConnectionConfig(
-        TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.setup.properties")));
+      readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
   }
 
 
@@ -120,9 +117,7 @@ public final class TestUtil
     throws Exception
   {
     return DefaultConnectionFactory.getConnection(
-      readConnectionConfig(
-        TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.external.properties")));
+      readConnectionConfig("classpath:/org/ldaptive/ldap.external.properties"));
   }
 
 
@@ -137,8 +132,7 @@ public final class TestUtil
   {
     return DefaultConnectionFactory.getConnection(
       readConnectionConfig(
-        TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.digest-md5.properties")));
+        "classpath:/org/ldaptive/ldap.digest-md5.properties"));
   }
 
 
@@ -152,9 +146,7 @@ public final class TestUtil
     throws Exception
   {
     return DefaultConnectionFactory.getConnection(
-      readConnectionConfig(
-        TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.cram-md5.properties")));
+      readConnectionConfig("classpath:/org/ldaptive/ldap.cram-md5.properties"));
   }
 
 
@@ -168,9 +160,7 @@ public final class TestUtil
     throws Exception
   {
     return DefaultConnectionFactory.getConnection(
-      readConnectionConfig(
-        TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.gssapi.properties")));
+      readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi.properties"));
   }
 
 
@@ -183,9 +173,7 @@ public final class TestUtil
   public static Authenticator createSSLAuthenticator()
     throws Exception
   {
-    return readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.ssl.properties"));
+    return readAuthenticator("classpath:/org/ldaptive/ldap.ssl.properties");
   }
 
 
@@ -199,8 +187,7 @@ public final class TestUtil
     throws Exception
   {
     final Authenticator auth = readAuthenticator(
-        TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.ssl.properties"));
+      "classpath:/org/ldaptive/ldap.ssl.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -215,9 +202,7 @@ public final class TestUtil
   public static Authenticator createTLSAuthenticator()
     throws Exception
   {
-    return readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.tls.properties"));
+    return readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
   }
 
 
@@ -231,8 +216,7 @@ public final class TestUtil
     throws Exception
   {
     final Authenticator auth = readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.tls.properties"));
+      "classpath:/org/ldaptive/ldap.tls.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -248,8 +232,7 @@ public final class TestUtil
     throws Exception
   {
     final Authenticator auth = readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.digest-md5.properties"));
+      "classpath:/org/ldaptive/ldap.digest-md5.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -265,8 +248,7 @@ public final class TestUtil
     throws Exception
   {
     final Authenticator auth = readAuthenticator(
-      TestUtil.class.getResourceAsStream(
-        "/org/ldaptive/ldap.cram-md5.properties"));
+      "classpath:/org/ldaptive/ldap.cram-md5.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }

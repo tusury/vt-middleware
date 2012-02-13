@@ -167,8 +167,7 @@ public class ConnectionTest
   {
     final ConnectionConfig cc = 
       TestUtil.readConnectionConfig(
-        TestUtil.class.getResourceAsStream(
-          "/org/ldaptive/ldap.conn.properties"));
+        "classpath:/org/ldaptive/ldap.conn.properties");
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
     Connection conn = connFactory.getConnection();
 

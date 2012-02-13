@@ -69,8 +69,7 @@ public class PropertiesTest
     final ConnectionConfig cc = new ConnectionConfig();
     final ConnectionConfigPropertySource ccSource =
       new ConnectionConfigPropertySource(
-        cc, PropertiesTest.class.getResourceAsStream(
-          "/org/ldaptive/ldap.null.properties"));
+        cc, "classpath:/org/ldaptive/ldap.null.properties");
     ccSource.initialize();
 
     AssertJUnit.assertNull(cc.getBindSaslConfig());
@@ -78,8 +77,7 @@ public class PropertiesTest
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource =
       new SearchRequestPropertySource(
-        sr, PropertiesTest.class.getResourceAsStream(
-          "/org/ldaptive/ldap.null.properties"));
+        sr, "classpath:/org/ldaptive/ldap.null.properties");
     srSource.initialize();
 
     AssertJUnit.assertNull(sr.getLdapEntryHandlers());
@@ -99,9 +97,7 @@ public class PropertiesTest
     final DefaultConnectionFactory cf = new DefaultConnectionFactory();
     final DefaultConnectionFactoryPropertySource cfSource =
       new DefaultConnectionFactoryPropertySource(
-        cf,
-        PropertiesTest.class.getResourceAsStream(
-          "/org/ldaptive/ldap.parser.properties"));
+        cf, "classpath:/org/ldaptive/ldap.parser.properties");
     cfSource.initialize();
 
     final ConnectionConfig cc = cf.getConnectionConfig();
@@ -123,9 +119,7 @@ public class PropertiesTest
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource =
       new SearchRequestPropertySource(
-        sr,
-        PropertiesTest.class.getResourceAsStream(
-          "/org/ldaptive/ldap.parser.properties"));
+        sr, "classpath:/org/ldaptive/ldap.parser.properties");
     srSource.initialize();
 
     AssertJUnit.assertEquals("ou=test,dc=vt,dc=edu", sr.getBaseDn());
@@ -156,9 +150,7 @@ public class PropertiesTest
     final Authenticator auth = new Authenticator();
     final AuthenticatorPropertySource aSource =
       new AuthenticatorPropertySource(
-        auth,
-        PropertiesTest.class.getResourceAsStream(
-          "/org/ldaptive/ldap.parser.properties"));
+        auth, "classpath:/org/ldaptive/ldap.parser.properties");
     aSource.initialize();
 
     final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
@@ -307,5 +299,26 @@ public class PropertiesTest
         (PooledConnectionFactoryManager) authHandler;
       handlerCfm.getConnectionFactory().getConnectionPool().close();
     }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"props"})
+  public void multipleProperties()
+    throws Exception
+  {
+    final SearchRequest sr = new SearchRequest();
+    final SearchRequestPropertySource srSource =
+      new SearchRequestPropertySource(
+        sr,
+        "classpath:/org/ldaptive/ldap.parser.properties",
+        "classpath:/org/ldaptive/ldap.null.properties");
+    srSource.initialize();
+
+    AssertJUnit.assertEquals(SearchScope.SUBTREE, sr.getSearchScope());
+    AssertJUnit.assertNotNull(sr.getControls());
+    AssertJUnit.assertNull(sr.getLdapEntryHandlers());
   }
 }

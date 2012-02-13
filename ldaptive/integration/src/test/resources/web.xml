@@ -9,11 +9,11 @@
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
       <param-name>org.ldaptive.servlets.propertiesFile</param-name>
-      <param-value>/org/ldaptive/ldap.properties</param-value>
+      <param-value>classpath:/org/ldaptive/ldap.properties</param-value>
     </init-param>
     <init-param>
       <param-name>org.ldaptive.servlets.poolPropertiesFile</param-name>
-      <param-value>/org/ldaptive/ldap.pool.properties</param-value>
+      <param-value>classpath:/org/ldaptive/ldap.pool.properties</param-value>
     </init-param>
     <init-param>
       <param-name>org.ldaptive.servlets.poolType</param-name>
@@ -29,11 +29,11 @@
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
       <param-name>org.ldaptive.servlets.propertiesFile</param-name>
-      <param-value>/org/ldaptive/ldap.properties</param-value>
+      <param-value>classpath:/org/ldaptive/ldap.properties</param-value>
     </init-param>
     <init-param>
       <param-name>org.ldaptive.servlets.poolPropertiesFile</param-name>
-      <param-value>/org/ldaptive/ldap.pool.properties</param-value>
+      <param-value>classpath:/org/ldaptive/ldap.pool.properties</param-value>
     </init-param>
     <init-param>
       <param-name>org.ldaptive.servlets.poolType</param-name>
@@ -49,11 +49,11 @@
     <servlet-class>org.ldaptive.servlets.AttributeServlet</servlet-class>
     <init-param>
       <param-name>org.ldaptive.servlets.propertiesFile</param-name>
-      <param-value>/org/ldaptive/ldap.properties</param-value>
+      <param-value>classpath:/org/ldaptive/ldap.properties</param-value>
     </init-param>
     <init-param>
       <param-name>org.ldaptive.servlets.poolPropertiesFile</param-name>
-      <param-value>/org/ldaptive/ldap.pool.properties</param-value>
+      <param-value>classpath:/org/ldaptive/ldap.pool.properties</param-value>
     </init-param>
     <init-param>
       <param-name>org.ldaptive.servlets.poolType</param-name>
