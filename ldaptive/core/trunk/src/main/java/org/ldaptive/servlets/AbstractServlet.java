@@ -85,9 +85,7 @@ public abstract class AbstractServlet extends HttpServlet
     searchRequest = new SearchRequest();
 
     final SearchRequestPropertySource srSource =
-      new SearchRequestPropertySource(
-        searchRequest,
-        SearchServlet.class.getResourceAsStream(propertiesFile));
+      new SearchRequestPropertySource(searchRequest, propertiesFile);
     srSource.initialize();
 
     final String poolPropertiesFile = getInitParameter(POOL_PROPERTIES_FILE);
@@ -100,8 +98,7 @@ public abstract class AbstractServlet extends HttpServlet
 
     final PooledConnectionFactoryPropertySource cfPropSource =
       new PooledConnectionFactoryPropertySource(
-        connectionFactory,
-        SearchServlet.class.getResourceAsStream(propertiesFile));
+        connectionFactory, propertiesFile);
     cfPropSource.setPoolType(ConnectionPoolType.valueOf(poolType));
     cfPropSource.initialize();
   }

@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.ConnectionConfig;
@@ -46,10 +46,7 @@ public final class DefaultConnectionFactoryPropertySource
   public DefaultConnectionFactoryPropertySource(
     final DefaultConnectionFactory cf)
   {
-    this(
-      cf,
-      DefaultConnectionFactoryPropertySource.class.getResourceAsStream(
-        PROPERTIES_FILE));
+    this(cf, PROPERTIES_FILE);
   }
 
 
@@ -57,13 +54,27 @@ public final class DefaultConnectionFactoryPropertySource
    * Creates a new default connection factory property source.
    *
    * @param  cf  connection factory to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public DefaultConnectionFactoryPropertySource(
     final DefaultConnectionFactory cf,
-    final InputStream is)
+    final String... paths)
   {
-    this(cf, loadProperties(is));
+    this(cf, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new default connection factory property source.
+   *
+   * @param  cf  connection factory to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public DefaultConnectionFactoryPropertySource(
+    final DefaultConnectionFactory cf,
+    final Reader... readers)
+  {
+    this(cf, loadProperties(readers));
   }
 
 

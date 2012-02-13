@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 
 /**
@@ -39,7 +39,7 @@ public final class SimplePropertySource<T> extends AbstractPropertySource<T>
    */
   public SimplePropertySource(final T t)
   {
-    this(t, SimplePropertySource.class.getResourceAsStream(PROPERTIES_FILE));
+    this(t, PROPERTIES_FILE);
   }
 
 
@@ -47,11 +47,23 @@ public final class SimplePropertySource<T> extends AbstractPropertySource<T>
    * Creates a new simple property source.
    *
    * @param  t  object to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
-  public SimplePropertySource(final T t, final InputStream is)
+  public SimplePropertySource(final T t, final String... paths)
   {
-    this(t, loadProperties(is));
+    this(t, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new simple property source.
+   *
+   * @param  t  object to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public SimplePropertySource(final T t, final Reader... readers)
+  {
+    this(t, loadProperties(readers));
   }
 
 

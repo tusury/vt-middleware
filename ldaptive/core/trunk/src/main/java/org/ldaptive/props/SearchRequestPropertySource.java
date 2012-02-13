@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.SearchRequest;
@@ -42,9 +42,7 @@ public final class SearchRequestPropertySource
    */
   public SearchRequestPropertySource(final SearchRequest request)
   {
-    this(
-      request,
-      SearchRequestPropertySource.class.getResourceAsStream(PROPERTIES_FILE));
+    this(request, PROPERTIES_FILE);
   }
 
 
@@ -52,13 +50,27 @@ public final class SearchRequestPropertySource
    * Creates a new search request property source.
    *
    * @param  request  search request to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public SearchRequestPropertySource(
     final SearchRequest request,
-    final InputStream is)
+    final String... paths)
   {
-    this(request, loadProperties(is));
+    this(request, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new search request property source.
+   *
+   * @param  request  search request to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public SearchRequestPropertySource(
+    final SearchRequest request,
+    final Reader... readers)
+  {
+    this(request, loadProperties(readers));
   }
 
 

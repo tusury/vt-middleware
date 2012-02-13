@@ -14,11 +14,10 @@
 package org.ldaptive.ssl;
 
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import org.ldaptive.LdapUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,18 +36,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
 {
 
-  /** Prefix used to indicate a classpath resource. */
-  public static final String CLASSPATH_PREFIX = "classpath:";
-
-  /** Prefix used to indicate a file resource. */
-  public static final String FILE_PREFIX = "file:";
-
-  /** Start index of path specification when given a classpath resource. */
-  private static final int CLASSPATH_START_INDEX = CLASSPATH_PREFIX.length();
-
-  /** Start index of path specification when given a file resource. */
-  private static final int FILE_START_INDEX = FILE_PREFIX.length();
-
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -58,17 +45,7 @@ public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
   public T read(final String path, final String... params)
     throws IOException, GeneralSecurityException
   {
-    InputStream is = null;
-    if (path.startsWith(CLASSPATH_PREFIX)) {
-      is = getClass().getResourceAsStream(
-        path.substring(CLASSPATH_START_INDEX));
-    } else if (path.startsWith(FILE_PREFIX)) {
-      is = new FileInputStream(new File(path.substring(FILE_START_INDEX)));
-    } else {
-      throw new IllegalArgumentException(
-        "path must start with either " + CLASSPATH_PREFIX + " or " +
-        FILE_PREFIX);
-    }
+    final InputStream is = LdapUtil.getResource(path);
     if (is != null) {
       try {
         return read(is, params);

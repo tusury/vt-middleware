@@ -14,6 +14,8 @@
 package org.ldaptive;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -56,6 +58,12 @@ public final class LdapUtil
     Pattern.compile(
       "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::" +
       "((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
+
+  /** Prefix used to indicate a classpath resource. */
+  private static final String CLASSPATH_PREFIX = "classpath:";
+
+  /** Prefix used to indicate a file resource. */
+  private static final String FILE_PREFIX = "file:";
 
 
   /** Default constructor. */
@@ -262,5 +270,37 @@ public final class LdapUtil
       (IPV4_PATTERN.matcher(s).matches() ||
        IPV6_STD_PATTERN.matcher(s).matches() ||
        IPV6_HEX_COMPRESSED_PATTERN.matcher(s).matches());
+  }
+
+
+  /**
+   * Parses the supplied path and returns an input stream based on the prefix
+   * in the path. If a path is prefixed with the string "classpath:" it is
+   * interpreted as a classpath specification. If a path is prefixed with the
+   * string "file:" it is interpreted as a file path.
+   *
+   * @param  path  that designates a resource
+   *
+   * @return  input stream  to read the resource
+   *
+   * @throws  IOException  if the resource cannot be read
+   * @throws  IllegalArgumentException  if path is not prefixed with either
+   * 'classpath:' or 'file:'
+   */
+  public static InputStream getResource(final String path)
+    throws IOException
+  {
+    InputStream is = null;
+    if (path.startsWith(CLASSPATH_PREFIX)) {
+      is = LdapUtil.class.getResourceAsStream(
+        path.substring(CLASSPATH_PREFIX.length()));
+    } else if (path.startsWith(FILE_PREFIX)) {
+      is = new FileInputStream(new File(path.substring(FILE_PREFIX.length())));
+    } else {
+      throw new IllegalArgumentException(
+        "path must start with either " + CLASSPATH_PREFIX + " or " +
+        FILE_PREFIX);
+    }
+    return is;
   }
 }

@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.auth.AuthenticationRequest;
@@ -44,10 +44,7 @@ public final class AuthenticationRequestPropertySource
   public AuthenticationRequestPropertySource(
     final AuthenticationRequest request)
   {
-    this(
-      request,
-      AuthenticationRequestPropertySource.class.getResourceAsStream(
-        PROPERTIES_FILE));
+    this(request, PROPERTIES_FILE);
   }
 
 
@@ -55,13 +52,27 @@ public final class AuthenticationRequestPropertySource
    * Creates a new authentication request property source.
    *
    * @param  request  authentication request to set properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public AuthenticationRequestPropertySource(
     final AuthenticationRequest request,
-    final InputStream is)
+    final String... paths)
   {
-    this(request, loadProperties(is));
+    this(request, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new authentication request property source.
+   *
+   * @param  request  authentication request to set properties on
+   * @param  readers  to read properties from
+   */
+  public AuthenticationRequestPropertySource(
+    final AuthenticationRequest request,
+    final Reader... readers)
+  {
+    this(request, loadProperties(readers));
   }
 
 

@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.provider.ProviderConfig;
@@ -42,9 +42,7 @@ public final class ProviderConfigPropertySource
    */
   public ProviderConfigPropertySource(final ProviderConfig pc)
   {
-    this(
-      pc,
-      ProviderConfigPropertySource.class.getResourceAsStream(PROPERTIES_FILE));
+    this(pc, PROPERTIES_FILE);
   }
 
 
@@ -52,13 +50,27 @@ public final class ProviderConfigPropertySource
    * Creates a new provider config property source.
    *
    * @param  pc  provider config to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
   public ProviderConfigPropertySource(
     final ProviderConfig pc,
-    final InputStream is)
+    final String... paths)
   {
-    this(pc, loadProperties(is));
+    this(pc, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new provider config property source.
+   *
+   * @param  pc  provider config to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public ProviderConfigPropertySource(
+    final ProviderConfig pc,
+    final Reader... readers)
+  {
+    this(pc, loadProperties(readers));
   }
 
 

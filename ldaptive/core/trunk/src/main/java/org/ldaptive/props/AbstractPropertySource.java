@@ -14,11 +14,13 @@
 package org.ldaptive.props;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.ldaptive.LdapUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +37,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 
   /** Default file to read properties from, value is {@value}. */
   public static final String PROPERTIES_FILE =
-    "/org/ldaptive/ldap.properties";
+    "classpath:/org/ldaptive/ldap.properties";
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -73,25 +75,47 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 
 
   /**
-   * Creates properties from the supplied input stream. See {@link
-   * Properties#load(InputStream)}.
+   * Creates properties from the supplied file paths. See {@link
+   * Properties#loadProperties(Reader[])}.
    *
-   * @param  is  input stream to read properties from
+   * @param  paths  to read properties from
    *
    * @return  initialized properties object.
    */
-  protected static Properties loadProperties(final InputStream is)
+  protected static Properties loadProperties(final String... paths)
   {
     try {
-      try {
-        final Properties properties = new Properties();
-        properties.load(is);
-        return properties;
-      } finally {
-        if (is != null) {
-          is.close();
+      final Reader[] readers = new Reader[paths.length];
+      for (int i = 0; i < paths.length; i++) {
+        readers[i] = new InputStreamReader(LdapUtil.getResource(paths[i]));
+      }
+      return loadProperties(readers);
+    } catch (IOException e) {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+
+  /**
+   * Creates properties from the supplied reader. See {@link
+   * Properties#load(Reader)}. Readers supplied to this method will be closed.
+   *
+   * @param  readers  to read properties from
+   *
+   * @return  initialized properties object.
+   */
+  protected static Properties loadProperties(final Reader... readers)
+  {
+    try {
+      final Properties properties = new Properties();
+      for (Reader r : readers) {
+        try {
+          properties.load(r);
+        } finally {
+          r.close();
         }
       }
+      return properties;
     } catch (IOException e) {
       throw new IllegalArgumentException(e);
     }

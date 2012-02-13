@@ -13,7 +13,7 @@
 */
 package org.ldaptive.props;
 
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.ssl.SslConfig;
@@ -41,9 +41,7 @@ public final class SslConfigPropertySource
    */
   public SslConfigPropertySource(final SslConfig config)
   {
-    this(
-      config,
-      SslConfigPropertySource.class.getResourceAsStream(PROPERTIES_FILE));
+    this(config, PROPERTIES_FILE);
   }
 
 
@@ -51,11 +49,25 @@ public final class SslConfigPropertySource
    * Creates a new ssl config property source.
    *
    * @param  config  ssl config to invoke properties on
-   * @param  is  to read properties from
+   * @param  paths  to read properties from
    */
-  public SslConfigPropertySource(final SslConfig config, final InputStream is)
+  public SslConfigPropertySource(
+    final SslConfig config, final String... paths)
   {
-    this(config, loadProperties(is));
+    this(config, loadProperties(paths));
+  }
+
+
+  /**
+   * Creates a new ssl config property source.
+   *
+   * @param  config  ssl config to invoke properties on
+   * @param  readers  to read properties from
+   */
+  public SslConfigPropertySource(
+    final SslConfig config, final Reader... readers)
+  {
+    this(config, loadProperties(readers));
   }
 
 
