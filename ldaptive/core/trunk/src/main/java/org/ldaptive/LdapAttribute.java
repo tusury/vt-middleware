@@ -135,13 +135,32 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns the name of this attribute.
+   * Returns the name of this attribute. Includes options if they exist.
    *
    * @return  attribute name
    */
   public String getName()
   {
-    return attributeName;
+    return getName(true);
+  }
+
+
+  /**
+   * Returns the name of this attribute with or without options.
+   *
+   * @param  withOptions  whether options should be included in the name
+   *
+   * @return  attribute name
+   */
+  public String getName(final boolean withOptions)
+  {
+    if (withOptions) {
+      return attributeName;
+    } else {
+      final int optionIndex = attributeName.indexOf(";");
+      return optionIndex > 0 ?
+        attributeName.substring(0, optionIndex) : attributeName;
+    }
   }
 
 
@@ -153,6 +172,26 @@ public class LdapAttribute extends AbstractLdapBean
   public void setName(final String name)
   {
     attributeName = name;
+  }
+
+
+  /**
+   * Returns the options for this attribute. Returns an empty array if attribute
+   * contains no options.
+   *
+   * @return  options  parsed from the attribute name
+   */
+  public String[] getOptions()
+  {
+    String[] options = null;
+    if (attributeName.indexOf(";") > 0) {
+      final String[] split = attributeName.split(";");
+      if (split.length > 1) {
+        options = new String[split.length - 1];
+        System.arraycopy(split, 1, options, 0, options.length);
+      }
+    }
+    return options != null ? options : new String[0];
   }
 
 

@@ -295,5 +295,30 @@ public class LdapBeanTest
     }
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+
+    // test attribute options
+    la = new LdapAttribute("cn", "William Wallace");
+    AssertJUnit.assertEquals("cn", la.getName());
+    AssertJUnit.assertEquals("cn", la.getName(true));
+    AssertJUnit.assertEquals("cn", la.getName(false));
+    AssertJUnit.assertNotNull(la.getOptions());
+    AssertJUnit.assertEquals(0, la.getOptions().length);
+
+    la = new LdapAttribute("cn;lang-ru", "Уильям Уоллес");
+    AssertJUnit.assertEquals("cn;lang-ru", la.getName());
+    AssertJUnit.assertEquals("cn;lang-ru", la.getName(true));
+    AssertJUnit.assertEquals("cn", la.getName(false));
+    AssertJUnit.assertNotNull(la.getOptions());
+    AssertJUnit.assertEquals(1, la.getOptions().length);
+    AssertJUnit.assertEquals("lang-ru", la.getOptions()[0]);
+
+    la = new LdapAttribute("cn;lang-lv;dynamic", "Viljams Voless");
+    AssertJUnit.assertEquals("cn;lang-lv;dynamic", la.getName());
+    AssertJUnit.assertEquals("cn;lang-lv;dynamic", la.getName(true));
+    AssertJUnit.assertEquals("cn", la.getName(false));
+    AssertJUnit.assertNotNull(la.getOptions());
+    AssertJUnit.assertEquals(2, la.getOptions().length);
+    AssertJUnit.assertEquals("lang-lv", la.getOptions()[0]);
+    AssertJUnit.assertEquals("dynamic", la.getOptions()[1]);
   }
 }
