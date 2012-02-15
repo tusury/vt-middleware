@@ -1,5 +1,5 @@
 /*
-  $Id:$
+  $Id$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision:$
-  Updated: $Date:$
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.ssl;
 
@@ -19,7 +19,7 @@ import java.security.cert.X509Certificate;
  * Interface for verifying a hostname matching a certificate.
  *
  * @author  Middleware Services
- * @version  $Revision:$
+ * @version  $Revision$
  */
 public interface CertificateHostnameVerifier
 {

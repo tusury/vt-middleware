@@ -1,5 +1,5 @@
 /*
-  $Id:$
+  $Id$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision:$
-  Updated: $Date:$
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.ssl;
 
@@ -23,7 +23,7 @@ import javax.net.ssl.X509TrustManager;
  * that verifies passes this trust manager check.
  *
  * @author  Middleware Services
- * @version  $Revision:$
+ * @version  $Revision$
  */
 public class HostnameVerifyingTrustManager implements X509TrustManager
 {

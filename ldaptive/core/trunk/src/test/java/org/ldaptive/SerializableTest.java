@@ -1,5 +1,5 @@
 /*
-  $Id:$
+  $Id$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision:$
-  Updated: $Date:$
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive;
 
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * Test that objects that implement {@link Serializable} can be serialized.
  *
  * @author  Middleware Services
- * @version  $Revision: 2198 $
+ * @version  $Revision$
  */
 public class SerializableTest
 {
