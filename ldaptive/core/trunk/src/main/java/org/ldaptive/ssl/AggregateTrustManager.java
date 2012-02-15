@@ -1,5 +1,5 @@
 /*
-  $Id:$
+  $Id$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision:$
-  Updated: $Date:$
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.ssl;
 
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * Trust manager that delegates to multiple trust managers.
  *
  * @author  Middleware Services
- * @version  $Revision:$
+ * @version  $Revision$
  */
 public class AggregateTrustManager implements X509TrustManager
 {
