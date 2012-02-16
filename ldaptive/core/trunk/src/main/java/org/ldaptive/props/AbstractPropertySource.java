@@ -76,7 +76,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 
   /**
    * Creates properties from the supplied file paths. See {@link
-   * Properties#loadProperties(Reader[])}.
+   * #loadProperties(Reader...)}.
    *
    * @param  paths  to read properties from
    *
