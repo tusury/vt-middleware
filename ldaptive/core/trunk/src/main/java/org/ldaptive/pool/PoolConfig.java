@@ -290,4 +290,30 @@ public class PoolConfig extends AbstractConfig
       expirationTime = time;
     }
   }
+
+
+  /**
+   * Provides a descriptive string representation of this instance.
+   *
+   * @return  string representation
+   */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::minPoolSize=%s, maxPoolSize=%s, validateOnCheckIn=%s, " +
+        "validateOnCheckOut=%s, validatePeriodically=%s, validatePeriod=%s, " +
+        "prunePeriod=%s, expirationTime=%s]",
+        getClass().getName(),
+        hashCode(),
+        minPoolSize,
+        maxPoolSize,
+        validateOnCheckIn,
+        validateOnCheckOut,
+        validatePeriodically,
+        validatePeriod,
+        prunePeriod,
+        expirationTime);
+  }
 }
