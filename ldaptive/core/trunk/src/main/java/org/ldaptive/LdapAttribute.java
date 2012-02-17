@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import org.ldaptive.io.LdapAttributeValueDecoder;
+import org.ldaptive.io.LdapAttributeValueEncoder;
 
 /**
  * Simple bean representing an ldap attribute. Contains a name and a set of
@@ -263,6 +265,49 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
+   * Returns the values of this attribute decoded by the supplied decoder.
+   *
+   * @param  <T>  type of decoded attributes
+   * @param  decoder  to decode attribute values with
+   *
+   * @return  set of decoded attribute values
+   */
+  public <T> Set<T> getValues(final LdapAttributeValueDecoder<T> decoder)
+  {
+    final Set<T> values = new LinkedHashSet<T>();
+    if (isBinary()) {
+      for (byte[] b : getBinaryValues()) {
+        values.add(decoder.decodeBinaryValue(b));
+      }
+    } else {
+      for (String s : getStringValues()) {
+        values.add(decoder.decodeStringValue(s));
+      }
+    }
+    return values;
+  }
+
+
+  /**
+   * Returns a single decoded value of this attribute. See {@link
+   * #getValues(ValueDecoder)}.
+   *
+   * @param  <T>  type of decoded attributes
+   * @param  decoder  to decode attribute values with
+   *
+   * @return  single decoded attribute value
+   */
+  public <T> T getValue(final LdapAttributeValueDecoder<T> decoder)
+  {
+    final Set<T> t = getValues(decoder);
+    if (t.size() == 0) {
+      return null;
+    }
+    return t.iterator().next();
+  }
+
+
+  /**
    * Adds the supplied string as a value for this attribute.
    *
    * @param  value  to add
@@ -316,6 +361,48 @@ public class LdapAttribute extends AbstractLdapBean
   {
     for (byte[] value : values) {
       addBinaryValue(value);
+    }
+  }
+
+
+  /**
+   * Adds the supplied values for this attribute by encoding them with the
+   * supplied encoder.
+   *
+   * @param  <T>  type attribute to encode
+   * @param  encoder  to encode value with
+   * @param  value  to encode and add
+   *
+   * @throws  NullPointerException  if value is null
+   */
+  public <T> void addValue(
+    final LdapAttributeValueEncoder<T> encoder, final T... value)
+  {
+    for (T t : value) {
+      if (isBinary()) {
+        attributeValues.add(encoder.encodeBinaryValue(t));
+      } else {
+        attributeValues.add(encoder.encodeStringValue(t));
+      }
+    }
+  }
+
+
+  /**
+   * Adds all the values in the supplied collection for this attribute by
+   * encoding them with the supplied encoder. See
+   * {@link #addValue(ValueEncoder, Object...)}.
+   *
+   * @param  <T>  type attribute to encode
+   * @param  encoder  to encode value with
+   * @param  values  to encode and add
+   */
+  @SuppressWarnings("unchecked")
+  public <T> void addValues(
+    final LdapAttributeValueEncoder<T> encoder, final Collection<T> values)
+  {
+    for (T value : values) {
+      addValue(encoder, value);
     }
   }
 
@@ -463,6 +550,8 @@ public class LdapAttribute extends AbstractLdapBean
 
   /**
    * Simple bean for ldap attribute values.
+   *
+   * @param  <T>  type of values
    *
    * @author  Middleware Services
    * @version  $Revision$ $Date$
