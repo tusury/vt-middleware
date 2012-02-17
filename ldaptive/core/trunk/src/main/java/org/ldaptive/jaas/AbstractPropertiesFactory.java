@@ -31,14 +31,6 @@ public abstract class AbstractPropertiesFactory
   /** Cache ID option used on the JAAS config. */
   public static final String CACHE_ID = "cacheId";
 
-  /** Regular expression for ldap properties to ignore. */
-  private static final String IGNORE_LDAP_REGEX =
-    "useFirstPass|tryFirstPass|storePass|" +
-    "setLdapPrincipal|setLdapDnPrincipal|setLdapCredential|" +
-    "defaultRole|principalGroupName|roleGroupName|" +
-    "userRoleAttribute|roleFilter|roleAttribute|noResultsIsError|" +
-    "cacheId|authenticatorFactory|roleResolverFactory|roleResolver";
-
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -54,16 +46,14 @@ public abstract class AbstractPropertiesFactory
   {
     final Properties p = new Properties();
     for (Map.Entry<String, ?> entry : options.entrySet()) {
-      if (!entry.getKey().matches(IGNORE_LDAP_REGEX)) {
-        // if property name contains a dot, it isn't an ldaptive property
-        // else add the domain to the ldaptive properties
-        if (entry.getKey().indexOf(".") != -1) {
-          p.setProperty(entry.getKey(), entry.getValue().toString());
-        } else {
-          p.setProperty(
-            PropertyDomain.AUTH.value() + entry.getKey(),
-            entry.getValue().toString());
-        }
+      // if property name contains a dot, it isn't an ldaptive property
+      // else add the domain to the ldaptive properties
+      if (entry.getKey().indexOf(".") != -1) {
+        p.setProperty(entry.getKey(), entry.getValue().toString());
+      } else {
+        p.setProperty(
+          PropertyDomain.AUTH.value() + entry.getKey(),
+          entry.getValue().toString());
       }
     }
     return p;
