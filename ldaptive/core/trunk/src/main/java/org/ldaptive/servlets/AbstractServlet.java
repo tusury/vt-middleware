@@ -13,6 +13,8 @@
 */
 package org.ldaptive.servlets;
 
+import java.util.Enumeration;
+import java.util.Properties;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,6 +28,7 @@ import org.ldaptive.pool.ConnectionPoolType;
 import org.ldaptive.pool.PoolException;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.props.PooledConnectionFactoryPropertySource;
+import org.ldaptive.props.PropertySource.PropertyDomain;
 import org.ldaptive.props.SearchRequestPropertySource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,20 +42,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractServlet extends HttpServlet
 {
 
-  /** Domain to look for properties in, value is {@value}. */
-  public static final String PROPERTIES_DOMAIN =
-    "org.ldaptive.servlets.";
-
-  /** LDAP initialization properties file, value is {@value}. */
-  public static final String PROPERTIES_FILE = PROPERTIES_DOMAIN +
-    "propertiesFile";
-
-  /** LDAP pool initialization properties file, value is {@value}. */
-  public static final String POOL_PROPERTIES_FILE = PROPERTIES_DOMAIN +
-    "poolPropertiesFile";
-
   /** Type of pool used, value is {@value}. */
-  public static final String POOL_TYPE = PROPERTIES_DOMAIN + "poolType";
+  public static final String POOL_TYPE = "poolType";
 
   /** serial version uid. */
   private static final long serialVersionUID = -6245486456044663458L;
@@ -79,28 +70,47 @@ public abstract class AbstractServlet extends HttpServlet
   {
     super.init(config);
 
-    final String propertiesFile = getInitParameter(PROPERTIES_FILE);
-    logger.debug("{} = {}", PROPERTIES_FILE, propertiesFile);
-
     searchRequest = new SearchRequest();
-
     final SearchRequestPropertySource srSource =
-      new SearchRequestPropertySource(searchRequest, propertiesFile);
+      new SearchRequestPropertySource(searchRequest, createProperties(config));
     srSource.initialize();
-
-    final String poolPropertiesFile = getInitParameter(POOL_PROPERTIES_FILE);
-    logger.debug("{} = {}", POOL_PROPERTIES_FILE, poolPropertiesFile);
-
-    final String poolType = getInitParameter(POOL_TYPE);
-    logger.debug("{} = {}", POOL_TYPE, poolType);
+    logger.debug("searchRequest = {}", searchRequest);
 
     connectionFactory = new PooledConnectionFactory();
-
     final PooledConnectionFactoryPropertySource cfPropSource =
       new PooledConnectionFactoryPropertySource(
-        connectionFactory, propertiesFile);
-    cfPropSource.setPoolType(ConnectionPoolType.valueOf(poolType));
+        connectionFactory, createProperties(config));
+    cfPropSource.setPoolType(
+      ConnectionPoolType.valueOf(getInitParameter(POOL_TYPE)));
     cfPropSource.initialize();
+    logger.debug("connectionFactory = {}", connectionFactory);
+  }
+
+
+  /**
+   * Returns context specific properties based on the supplied JAAS options.
+   *
+   * @param  options  to read properties from
+   *
+   * @return  properties
+   */
+  protected static Properties createProperties(final ServletConfig config)
+  {
+    final Properties p = new Properties();
+    final Enumeration<?> e = config.getInitParameterNames();
+    while (e.hasMoreElements()) {
+      final String name = (String) e.nextElement();
+      // if property name contains a dot, it isn't an ldaptive property
+      // else add the domain to the ldaptive properties
+      if (name.indexOf(".") != -1) {
+        p.setProperty(name, config.getInitParameter(name));
+      } else {
+        p.setProperty(
+          PropertyDomain.LDAP.value() + name,
+          config.getInitParameter(name));
+      }
+    }
+    return p;
   }
 
 

@@ -33,9 +33,14 @@ import org.ldaptive.LdapResult;
  * init params can be set for this servlet:
  *
  * <ul>
- *   <li>org.ldaptive.servlets.propertiesFile</li>
- *   <li>org.ldaptive.servlets.poolPropertiesFile</li>
- *   <li>org.ldaptive.servlets.poolType</li>
+ *   <li>poolType</li>
+ * </ul>
+ *
+ * All other init params can be set from properties on:
+ * <ul>
+ *   <li>{@link SearchRequest}</li>
+ *   <li>{@link ConnectionConfig}</li>
+ *   <li>{@link PoolConfig}</li>
  * </ul>
  *
  * @author  Middleware Services

@@ -30,10 +30,15 @@ import org.ldaptive.io.LdifWriter;
  * params can be set for this servlet:
  *
  * <ul>
- *   <li>org.ldaptive.servlets.propertiesFile</li>
- *   <li>org.ldaptive.servlets.poolPropertiesFile</li>
- *   <li>org.ldaptive.servlets.poolType</li>
- *   <li>org.ldaptive.servlets.outputFormat</li>
+ *   <li>poolType</li>
+ *   <li>outputFormat</li>
+ * </ul>
+ *
+ * All other init params can be set from properties on:
+ * <ul>
+ *   <li>{@link SearchRequest}</li>
+ *   <li>{@link ConnectionConfig}</li>
+ *   <li>{@link PoolConfig}</li>
  * </ul>
  *
  * <p>Example: http://www.server.com/Search?query=uid=dfisher If you need to
@@ -60,7 +65,7 @@ public final class SearchServlet extends AbstractServlet
 {
 
   /** Format of search output, value is {@value}. */
-  public static final String OUTPUT_FORMAT = PROPERTIES_DOMAIN + "outputFormat";
+  public static final String OUTPUT_FORMAT = "outputFormat";
 
   /** Default format of search output, value is {@value}. */
   public static final String DEFAULT_OUTPUT_FORMAT = "DSML";
