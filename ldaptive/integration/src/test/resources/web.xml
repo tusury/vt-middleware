@@ -8,39 +8,75 @@
     <servlet-name>LdifSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>org.ldaptive.servlets.propertiesFile</param-name>
-      <param-value>classpath:/org/ldaptive/ldap.properties</param-value>
+      <param-name>ldapUrl</param-name>
+      <param-value>${ldapTestHost}</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.poolPropertiesFile</param-name>
-      <param-value>classpath:/org/ldaptive/ldap.pool.properties</param-value>
+      <param-name>baseDn</param-name>
+      <param-value>ou=test,dc=vt,dc=edu</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.poolType</param-name>
+      <param-name>bindDn</param-name>
+      <param-value>uid=1,ou=test,dc=vt,dc=edu</param-value>
+    </init-param>
+    <init-param>
+      <param-name>bindCredential</param-name>
+      <param-value>VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2</param-value>
+    </init-param>
+    <init-param>
+      <param-name>prunePeriod</param-name>
+      <param-value>5</param-value>
+    </init-param>
+    <init-param>
+      <param-name>expirationTime</param-name>
+      <param-value>1</param-value>
+    </init-param>
+    <init-param>
+      <param-name>poolType</param-name>
       <param-value>BLOCKING</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.outputFormat</param-name>
+      <param-name>outputFormat</param-name>
       <param-value>LDIF</param-value>
+    </init-param>
+    <init-param>
+      <param-name>blockWaitTime</param-name>
+      <param-value>5000</param-value>
     </init-param>
   </servlet>
   <servlet>
     <servlet-name>DsmlSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>org.ldaptive.servlets.propertiesFile</param-name>
-      <param-value>classpath:/org/ldaptive/ldap.properties</param-value>
+      <param-name>ldapUrl</param-name>
+      <param-value>${ldapTestHost}</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.poolPropertiesFile</param-name>
-      <param-value>classpath:/org/ldaptive/ldap.pool.properties</param-value>
+      <param-name>baseDn</param-name>
+      <param-value>ou=test,dc=vt,dc=edu</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.poolType</param-name>
+      <param-name>bindDn</param-name>
+      <param-value>uid=1,ou=test,dc=vt,dc=edu</param-value>
+    </init-param>
+    <init-param>
+      <param-name>bindCredential</param-name>
+      <param-value>VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2</param-value>
+    </init-param>
+    <init-param>
+      <param-name>prunePeriod</param-name>
+      <param-value>5</param-value>
+    </init-param>
+    <init-param>
+      <param-name>expirationTime</param-name>
+      <param-value>1</param-value>
+    </init-param>
+    <init-param>
+      <param-name>poolType</param-name>
       <param-value>SOFTLIMIT</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.outputFormat</param-name>
+      <param-name>outputFormat</param-name>
       <param-value>DSML</param-value>
     </init-param>
   </servlet>
@@ -48,15 +84,31 @@
     <servlet-name>AttributeSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.AttributeServlet</servlet-class>
     <init-param>
-      <param-name>org.ldaptive.servlets.propertiesFile</param-name>
-      <param-value>classpath:/org/ldaptive/ldap.properties</param-value>
+      <param-name>ldapUrl</param-name>
+      <param-value>${ldapTestHost}</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.poolPropertiesFile</param-name>
-      <param-value>classpath:/org/ldaptive/ldap.pool.properties</param-value>
+      <param-name>baseDn</param-name>
+      <param-value>ou=test,dc=vt,dc=edu</param-value>
     </init-param>
     <init-param>
-      <param-name>org.ldaptive.servlets.poolType</param-name>
+      <param-name>bindDn</param-name>
+      <param-value>uid=1,ou=test,dc=vt,dc=edu</param-value>
+    </init-param>
+    <init-param>
+      <param-name>bindCredential</param-name>
+      <param-value>VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2</param-value>
+    </init-param>
+    <init-param>
+      <param-name>prunePeriod</param-name>
+      <param-value>5</param-value>
+    </init-param>
+    <init-param>
+      <param-name>expirationTime</param-name>
+      <param-value>1</param-value>
+    </init-param>
+    <init-param>
+      <param-name>poolType</param-name>
       <param-value>BLOCKING</param-value>
     </init-param>
   </servlet>
