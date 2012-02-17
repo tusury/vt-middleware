@@ -28,7 +28,7 @@ public abstract class AbstractLdapBean implements Serializable
   private static final long serialVersionUID = 4715681585273172940L;
 
   /** Sort behavior. */
-  private SortBehavior sortBehavior;
+  private final SortBehavior sortBehavior;
 
 
   /**
