@@ -50,4 +50,12 @@ public class CertificateValueDecoder
         "Attribute value could not be decoded as a certificate", e);
     }
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Class<Certificate> getType()
+  {
+    return Certificate.class;
+  }
 }
