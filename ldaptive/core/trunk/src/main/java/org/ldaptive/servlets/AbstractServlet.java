@@ -13,6 +13,7 @@
 */
 package org.ldaptive.servlets;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.servlet.ServletConfig;
@@ -90,7 +91,7 @@ public abstract class AbstractServlet extends HttpServlet
   /**
    * Returns context specific properties based on the supplied JAAS options.
    *
-   * @param  options  to read properties from
+   * @param  config  to read properties from
    *
    * @return  properties
    */
@@ -135,8 +136,7 @@ public abstract class AbstractServlet extends HttpServlet
           conn = connectionFactory.getConnection();
 
           final SearchOperation search = new SearchOperation(conn);
-          final SearchRequest sr = SearchRequest.newSearchRequest(
-            searchRequest);
+          final SearchRequest sr = newSearchRequest(searchRequest);
           sr.setSearchFilter(new SearchFilter(query));
           sr.setReturnAttributes(attrs);
           result = search.execute(sr).getResult();
@@ -150,6 +150,52 @@ public abstract class AbstractServlet extends HttpServlet
       }
     }
     return result;
+  }
+
+
+  /**
+   * Returns a search request initialized with the supplied request. Note that
+   * stateful ldap entry handlers could cause thread safety issues.
+   *
+   * @param  request  search request to read properties from
+   *
+   * @return  search request
+   */
+  protected static SearchRequest newSearchRequest(final SearchRequest request)
+  {
+    final SearchRequest sr = new SearchRequest();
+    sr.setBaseDn(request.getBaseDn());
+    sr.setBinaryAttributes(request.getBinaryAttributes());
+    sr.setDerefAliases(request.getDerefAliases());
+    sr.setLdapEntryHandlers(request.getLdapEntryHandlers());
+    sr.setReferralBehavior(request.getReferralBehavior());
+    sr.setReturnAttributes(request.getReturnAttributes());
+    sr.setSearchFilter(
+      request.getSearchFilter() != null
+        ? newSearchFilter(request.getSearchFilter()) : null);
+    sr.setSearchScope(request.getSearchScope());
+    sr.setSizeLimit(request.getSizeLimit());
+    sr.setSortBehavior(request.getSortBehavior());
+    sr.setTimeLimit(request.getTimeLimit());
+    sr.setTypesOnly(request.getTypesOnly());
+    sr.setControls(request.getControls());
+    return sr;
+  }
+
+
+  /**
+   * Returns a search filter initialized with the supplied filter.
+   *
+   * @param  filter  search filter to read properties from
+   *
+   * @return  search filter
+   */
+  protected static SearchFilter newSearchFilter(final SearchFilter filter)
+  {
+    final SearchFilter sf = new SearchFilter();
+    sf.setFilter(filter.getFilter());
+    sf.setFilterArgs(new ArrayList<Object>(filter.getFilterArgs()));
+    return sf;
   }
 
 
