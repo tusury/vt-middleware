@@ -38,9 +38,9 @@ import org.ldaptive.LdapResult;
  *
  * All other init params can be set from properties on:
  * <ul>
- *   <li>{@link SearchRequest}</li>
- *   <li>{@link ConnectionConfig}</li>
- *   <li>{@link PoolConfig}</li>
+ *   <li>{@link org.ldaptive.SearchRequest}</li>
+ *   <li>{@link org.ldaptive.ConnectionConfig}</li>
+ *   <li>{@link org.ldaptive.pool.PoolConfig}</li>
  * </ul>
  *
  * @author  Middleware Services
