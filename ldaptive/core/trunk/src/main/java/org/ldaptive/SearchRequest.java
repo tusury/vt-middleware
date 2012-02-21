@@ -439,35 +439,6 @@ public class SearchRequest extends AbstractRequest
 
 
   /**
-   * Returns a search request initialized with the supplied request.
-   *
-   * @param  request  search request to read properties from
-   *
-   * @return  search request
-   */
-  public static SearchRequest newSearchRequest(final SearchRequest request)
-  {
-    final SearchRequest sr = new SearchRequest();
-    sr.setBaseDn(request.getBaseDn());
-    sr.setBinaryAttributes(request.getBinaryAttributes());
-    sr.setDerefAliases(request.getDerefAliases());
-    sr.setLdapEntryHandlers(request.getLdapEntryHandlers());
-    sr.setReferralBehavior(request.getReferralBehavior());
-    sr.setReturnAttributes(request.getReturnAttributes());
-    sr.setSearchFilter(
-      request.getSearchFilter() != null
-        ? SearchFilter.newSearchFilter(request.getSearchFilter()) : null);
-    sr.setSearchScope(request.getSearchScope());
-    sr.setSizeLimit(request.getSizeLimit());
-    sr.setSortBehavior(request.getSortBehavior());
-    sr.setTimeLimit(request.getTimeLimit());
-    sr.setTypesOnly(request.getTypesOnly());
-    sr.setControls(request.getControls());
-    return sr;
-  }
-
-
-  /**
    * Returns a search request initialized for use with an object level search
    * scope.
    *
