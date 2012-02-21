@@ -58,4 +58,12 @@ public class CertificateValueEncoder
       throw new IllegalArgumentException("Certificate could not be encoded", e);
     }
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Class<Certificate> getType()
+  {
+    return Certificate.class;
+  }
 }

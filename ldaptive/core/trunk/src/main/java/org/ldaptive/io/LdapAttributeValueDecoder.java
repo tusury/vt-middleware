@@ -43,4 +43,12 @@ public interface LdapAttributeValueDecoder<T>
    * @return  decoded value
    */
   T decodeBinaryValue(byte[] value);
+
+
+  /**
+   * Returns the type produced by this value decoder.
+   *
+   * @return  type produced by this value decoder
+   */
+  Class<T> getType();
 }

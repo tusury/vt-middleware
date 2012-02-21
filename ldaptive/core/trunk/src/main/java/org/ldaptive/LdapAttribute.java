@@ -18,14 +18,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
 import java.util.TreeSet;
 import org.ldaptive.io.LdapAttributeValueDecoder;
 import org.ldaptive.io.LdapAttributeValueEncoder;
 
 /**
- * Simple bean representing an ldap attribute. Contains a name and a set of
- * values.
+ * Simple bean representing an ldap attribute. Contains a name and a collection\
+ * of values.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -201,9 +201,9 @@ public class LdapAttribute extends AbstractLdapBean
    * Returns the values of this attribute as strings. Binary data is base64
    * encoded. The return collection cannot be modified.
    *
-   * @return  set of string attribute values
+   * @return  collection of string attribute values
    */
-  public Set<String> getStringValues()
+  public Collection<String> getStringValues()
   {
     return attributeValues.getStringValues();
   }
@@ -217,11 +217,11 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public String getStringValue()
   {
-    final Set<String> s = getStringValues();
-    if (s.size() == 0) {
+    final Collection<String> values = getStringValues();
+    if (values.size() == 0) {
       return null;
     }
-    return s.iterator().next();
+    return values.iterator().next();
   }
 
 
@@ -229,9 +229,9 @@ public class LdapAttribute extends AbstractLdapBean
    * Returns the values of this attribute as byte arrays. String data is UTF-8
    * encoded. The return collection cannot be modified.
    *
-   * @return  set of byte array attribute values
+   * @return  collection of byte array attribute values
    */
-  public Set<byte[]> getBinaryValues()
+  public Collection<byte[]> getBinaryValues()
   {
     return attributeValues.getBinaryValues();
   }
@@ -245,11 +245,11 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public byte[] getBinaryValue()
   {
-    final Set<byte[]> s = getBinaryValues();
-    if (s.size() == 0) {
+    final Collection<byte[]> values = getBinaryValues();
+    if (values.size() == 0) {
       return null;
     }
-    return s.iterator().next();
+    return values.iterator().next();
   }
 
 
@@ -270,11 +270,12 @@ public class LdapAttribute extends AbstractLdapBean
    * @param  <T>  type of decoded attributes
    * @param  decoder  to decode attribute values with
    *
-   * @return  set of decoded attribute values
+   * @return  collection of decoded attribute values
    */
-  public <T> Set<T> getValues(final LdapAttributeValueDecoder<T> decoder)
+  public <T> Collection<T> getValues(final LdapAttributeValueDecoder<T> decoder)
   {
-    final Set<T> values = new LinkedHashSet<T>();
+    final Collection<T> values = createSortBehaviorCollection(
+      decoder.getType());
     if (isBinary()) {
       for (byte[] b : getBinaryValues()) {
         values.add(decoder.decodeBinaryValue(b));
@@ -290,7 +291,7 @@ public class LdapAttribute extends AbstractLdapBean
 
   /**
    * Returns a single decoded value of this attribute. See {@link
-   * #getValues(ValueDecoder)}.
+   * #getValues(LdapAttributeValueDecoder)}.
    *
    * @param  <T>  type of decoded attributes
    * @param  decoder  to decode attribute values with
@@ -299,7 +300,7 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public <T> T getValue(final LdapAttributeValueDecoder<T> decoder)
   {
-    final Set<T> t = getValues(decoder);
+    final Collection<T> t = getValues(decoder);
     if (t.size() == 0) {
       return null;
     }
@@ -391,7 +392,7 @@ public class LdapAttribute extends AbstractLdapBean
   /**
    * Adds all the values in the supplied collection for this attribute by
    * encoding them with the supplied encoder. See
-   * {@link #addValue(ValueEncoder, Object...)}.
+   * {@link #addValue(LdapAttributeValueEncoder, Object...)}.
    *
    * @param  <T>  type attribute to encode
    * @param  encoder  to encode value with
@@ -504,6 +505,31 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
+   * Returns an implementation of collection for the sort behavior of this bean.
+   * This implementation returns HashSet for {@link SortBehavior#UNORDERED},
+   * LinkedHashSet for {@link SortBehavior#ORDERED}, and TreeSet for
+   * {@link SortBehavior#SORTED}.
+   *
+   * @param  <E>  contained in the collection
+   * @param  c  type contained in the collection
+   *
+   * @return  collection corresponding to the sort behavior
+   */
+  protected <E> Collection<E> createSortBehaviorCollection(final Class<E> c)
+  {
+    Collection<E> values = null;
+    if (SortBehavior.UNORDERED == getSortBehavior()) {
+      values = new HashSet<E>();
+    } else if (SortBehavior.ORDERED == getSortBehavior()) {
+      values = new LinkedHashSet<E>();
+    } else if (SortBehavior.SORTED == getSortBehavior()) {
+      values = new TreeSet<E>();
+    }
+    return values;
+  }
+
+
+  /**
    * Creates a new ldap attribute. The collection of values is inspected for
    * either String or byte[] and the appropriate attribute is created.
    *
@@ -521,8 +547,8 @@ public class LdapAttribute extends AbstractLdapBean
     final String name,
     final Collection<Object> values)
   {
-    final Set<String> stringValues = new HashSet<String>();
-    final Set<byte[]> binaryValues = new HashSet<byte[]>();
+    final Collection<String> stringValues = new LinkedList<String>();
+    final Collection<byte[]> binaryValues = new LinkedList<byte[]>();
     for (Object value : values) {
       if (value instanceof byte[]) {
         binaryValues.add((byte[]) value);
@@ -568,8 +594,8 @@ public class LdapAttribute extends AbstractLdapBean
     /** Type of values. */
     private final Class<T> type;
 
-    /** Set of values. */
-    private final Set<T> values;
+    /** Collection of values. */
+    private final Collection<T> values;
 
 
     /**
@@ -588,7 +614,7 @@ public class LdapAttribute extends AbstractLdapBean
           "Only String and byte[] values are supported");
       }
       type = t;
-      values = createSortBehaviorSet(type);
+      values = createSortBehaviorCollection(type);
     }
 
 
@@ -608,38 +634,40 @@ public class LdapAttribute extends AbstractLdapBean
     /**
      * Returns the values in string format. If the type of this values is
      * String, values are returned as is. If the type of this values is byte[],
-     * values are base64 encoded. See {@link #convertValuesToString(Set)}.
+     * values are base64 encoded. See
+     * {@link #convertValuesToString(Collection)}.
      *
-     * @return  unmodifiable set
+     * @return  unmodifiable collection
      */
     @SuppressWarnings("unchecked")
-    public Set<String> getStringValues()
+    public Collection<String> getStringValues()
     {
       if (isType(String.class)) {
-        return Collections.unmodifiableSet((Set<String>) values);
+        return Collections.unmodifiableCollection((Collection<String>) values);
       }
       return
-        Collections.unmodifiableSet(
-          convertValuesToString((Set<byte[]>) values));
+        Collections.unmodifiableCollection(
+          convertValuesToString((Collection<byte[]>) values));
     }
 
 
     /**
      * Returns the values in binary format. If the type of this values is
      * byte[], values are returned as is. If the type of this values is String,
-     * values are UTF-8 encoded. See {@link #convertValuesToByteArray(Set)}.
+     * values are UTF-8 encoded. See
+     * {@link #convertValuesToByteArray(Collection)}.
      *
-     * @return  unmodifiable set
+     * @return  unmodifiable collection
      */
     @SuppressWarnings("unchecked")
-    public Set<byte[]> getBinaryValues()
+    public Collection<byte[]> getBinaryValues()
     {
       if (isType(byte[].class)) {
-        return Collections.unmodifiableSet((Set<byte[]>) values);
+        return Collections.unmodifiableCollection((Collection<byte[]>) values);
       }
       return
-        Collections.unmodifiableSet(
-          convertValuesToByteArray((Set<String>) values));
+        Collections.unmodifiableCollection(
+          convertValuesToByteArray((Collection<String>) values));
     }
 
 
@@ -735,58 +763,40 @@ public class LdapAttribute extends AbstractLdapBean
 
 
     /**
-     * Base64 encodes the supplied set of values.
+     * Base64 encodes the supplied collection of values.
      *
      * @param  v  values to encode
      *
-     * @return  set of string values
+     * @return  collection of string values
      */
-    protected Set<String> convertValuesToString(final Set<byte[]> v)
+    protected Collection<String> convertValuesToString(
+      final Collection<byte[]> v)
     {
-      final Set<String> s = createSortBehaviorSet(String.class);
+      final Collection<String> values = createSortBehaviorCollection(
+        String.class);
       for (byte[] value : v) {
-        s.add(LdapUtil.base64Encode(value));
+        values.add(LdapUtil.base64Encode(value));
       }
-      return s;
+      return values;
     }
 
 
     /**
-     * UTF-8 encodes the supplied set of values.
+     * UTF-8 encodes the supplied collection of values.
      *
      * @param  v  values to encode
      *
-     * @return  set of byte array values
+     * @return  collection of byte array values
      */
-    protected Set<byte[]> convertValuesToByteArray(final Set<String> v)
+    protected Collection<byte[]> convertValuesToByteArray(
+      final Collection<String> v)
     {
-      final Set<byte[]> s = createSortBehaviorSet(byte[].class);
+      final Collection<byte[]> values = createSortBehaviorCollection(
+        byte[].class);
       for (String value : v) {
-        s.add(LdapUtil.utf8Encode(value));
+        values.add(LdapUtil.utf8Encode(value));
       }
-      return s;
-    }
-
-
-    /**
-     * Returns an implementation of set for the sort behavior of this bean.
-     *
-     * @param  <E>  type contained in the set
-     * @param  c  type of set to create
-     *
-     * @return  set
-     */
-    private <E> Set<E> createSortBehaviorSet(final Class<E> c)
-    {
-      Set<E> s = null;
-      if (SortBehavior.UNORDERED == LdapAttribute.this.getSortBehavior()) {
-        s = new HashSet<E>();
-      } else if (SortBehavior.ORDERED == LdapAttribute.this.getSortBehavior()) {
-        s = new LinkedHashSet<E>();
-      } else if (SortBehavior.SORTED == LdapAttribute.this.getSortBehavior()) {
-        s = new TreeSet<E>();
-      }
-      return s;
+      return values;
     }
   }
 }
