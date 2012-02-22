@@ -247,21 +247,18 @@ public class LdapResult extends AbstractLdapBean
 
 
   /**
-   * Merges the search results in the supplied results into a single search
-   * result. This method always returns a ldap result of size zero or one.
+   * Merges the entries in the supplied result into a single entry. This method
+   * always returns a ldap result of size zero or one.
    *
-   * @param  results  ldap result to merge
+   * @param  result  ldap result containing entries to merge
    *
-   * @return  ldap result
-   *
-   * @throws  LdapException  if an error occurs reading attribute values
+   * @return  ldap result containing a single merged entry
    */
-  public static LdapResult mergeResults(final LdapResult results)
-    throws LdapException
+  public static LdapResult mergeEntries(final LdapResult result)
   {
     LdapEntry mergedEntry = null;
-    if (results != null) {
-      for (LdapEntry le : results.getEntries()) {
+    if (result != null) {
+      for (LdapEntry le : result.getEntries()) {
         if (mergedEntry == null) {
           mergedEntry = le;
         } else {
