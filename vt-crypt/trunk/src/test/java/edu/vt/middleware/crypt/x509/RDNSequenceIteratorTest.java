@@ -13,20 +13,21 @@
 */
 package edu.vt.middleware.crypt.x509;
 
+import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.x509.types.AttributeType;
+import edu.vt.middleware.crypt.x509.types.AttributeTypeAndValue;
+import edu.vt.middleware.crypt.x509.types.RelativeDistinguishedName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import edu.vt.middleware.crypt.util.CryptReader;
-import edu.vt.middleware.crypt.x509.types.AttributeType;
-import edu.vt.middleware.crypt.x509.types.AttributeTypeAndValue;
-import edu.vt.middleware.crypt.x509.types.RelativeDistinguishedName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.testng.AssertJUnit;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 
 /**
@@ -43,7 +44,7 @@ public class RDNSequenceIteratorTest
     "src/test/resources/edu/vt/middleware/crypt/x509";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -99,7 +100,7 @@ public class RDNSequenceIteratorTest
     final RelativeDistinguishedName[] expectedSubjectRDNs)
     throws Exception
   {
-    logger.info("Iterating over subject DN of " + certFile);
+    logger.info("Iterating over subject DN of {}", certFile);
 
     final RDNSequenceIterator iterator = new RDNSequenceIterator(
       ((X509Certificate) CryptReader.readCertificate(certFile))

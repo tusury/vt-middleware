@@ -13,16 +13,17 @@
 */
 package edu.vt.middleware.crypt.x509;
 
-import java.io.File;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.AttributeType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 /**
  * Unit test for {@link DNUtils} class.
@@ -38,7 +39,7 @@ public class DNUtilsTest
     "src/test/resources/edu/vt/middleware/crypt/x509";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -119,7 +120,7 @@ public class DNUtilsTest
     throws Exception
   {
     logger.info(
-      "Testing getting attribute values of subject DN of " + certFile);
+        "Testing getting attribute values of subject DN of {}", certFile);
 
     final X509Certificate cert = (X509Certificate) CryptReader.readCertificate(
       certFile);
@@ -149,7 +150,8 @@ public class DNUtilsTest
     final String expectedValue)
     throws Exception
   {
-    logger.info("Testing getting attribute value of subject DN of " + certFile);
+    logger.info(
+        "Testing getting attribute value of subject DN of {}", certFile);
 
     final X509Certificate cert = (X509Certificate) CryptReader.readCertificate(
       certFile);

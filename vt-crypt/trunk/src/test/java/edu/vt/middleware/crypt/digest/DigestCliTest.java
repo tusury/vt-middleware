@@ -13,14 +13,15 @@
 */
 package edu.vt.middleware.crypt.digest;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import edu.vt.middleware.crypt.CliHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 /**
  * Unit test for {@link DigestCli} class.
@@ -36,7 +37,7 @@ public class DigestCliTest
     "src/test/resources/edu/vt/middleware/crypt/plaintext-127.txt";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -144,7 +145,7 @@ public class DigestCliTest
       System.setOut(new PrintStream(outStream));
 
       final String fullLine = partialLine + " -in " + TEST_PLAINTEXT;
-      logger.info("Testing digest CLI with command line:\n\t" + fullLine);
+      logger.info("Testing digest CLI with command line:\n\t{}", fullLine);
       DigestCli.main(CliHelper.splitArgs(fullLine));
 
       final String result = outStream.toString();

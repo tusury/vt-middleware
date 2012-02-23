@@ -13,14 +13,15 @@
 */
 package edu.vt.middleware.crypt.x509;
 
-import java.io.File;
-import java.security.cert.X509Certificate;
 import edu.vt.middleware.crypt.util.CryptReader;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.security.cert.X509Certificate;
 
 /**
  * Unit test for {@link LDAPv3DNFormatter} class.
@@ -36,7 +37,7 @@ public class LDAPv3DNFormatterTest
     "src/test/resources/edu/vt/middleware/crypt/x509";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   /**
    * @return  Certificate test data.
@@ -88,7 +89,7 @@ public class LDAPv3DNFormatterTest
     final String expectedIssuerDn)
     throws Exception
   {
-    logger.info("Testing formatting subject and issuer DNs of " + certFile);
+    logger.info("Testing formatting subject and issuer DNs of {}", certFile);
 
     final X509Certificate cert = (X509Certificate) CryptReader.readCertificate(
       certFile);

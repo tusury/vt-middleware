@@ -13,9 +13,6 @@
 */
 package edu.vt.middleware.crypt.symmetric;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.Key;
 import edu.vt.middleware.crypt.FileHelper;
 import edu.vt.middleware.crypt.io.Base64FilterInputStream;
 import edu.vt.middleware.crypt.io.Base64FilterOutputStream;
@@ -24,11 +21,15 @@ import edu.vt.middleware.crypt.io.HexFilterOutputStream;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.Key;
 
 /**
  * Unit test for all subclasses of {@link SymmetricAlgorithm}.
@@ -47,7 +48,7 @@ public class SymmetricAlgorithmTest
     "/edu/vt/middleware/crypt/plaintext.txt";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -178,8 +179,7 @@ public class SymmetricAlgorithmTest
     final Key key)
     throws Exception
   {
-    logger.info(
-      "Testing symmetric algorithm " + symmetric + " with key " + key);
+    logger.info("Testing symmetric algorithm {} with key {}", symmetric, key);
 
     symmetric.setKey(key);
     if (!RC4.ALGORITHM.equals(symmetric.getAlgorithm())) {
@@ -211,8 +211,9 @@ public class SymmetricAlgorithmTest
     throws Exception
   {
     logger.info(
-      "Testing symmetric algorithm " + symmetric + " with converter " +
-      converter);
+        "Testing symmetric algorithm {} with converter {}",
+        symmetric,
+        converter);
 
     symmetric.setKey(symmetric.generateKey());
     symmetric.setIV(symmetric.getRandomIV());
@@ -240,7 +241,7 @@ public class SymmetricAlgorithmTest
   public void testEncryptDecryptStream(final SymmetricAlgorithm symmetric)
     throws Exception
   {
-    logger.info("Testing stream handling of algorithm " + symmetric);
+    logger.info("Testing stream handling of algorithm {}", symmetric);
 
     encrypt(
       symmetric,
@@ -282,7 +283,7 @@ public class SymmetricAlgorithmTest
   public void testEncryptDecryptStreamHex(final SymmetricAlgorithm symmetric)
     throws Exception
   {
-    logger.info("Testing hex stream handling of algorithm " + symmetric);
+    logger.info("Testing hex stream handling of algorithm {}", symmetric);
 
     encrypt(
       symmetric,
@@ -324,7 +325,7 @@ public class SymmetricAlgorithmTest
   public void testEncryptDecryptStreamBase64(final SymmetricAlgorithm symmetric)
     throws Exception
   {
-    logger.info("Testing base-64 stream handling of algorithm " + symmetric);
+    logger.info("Testing base-64 stream handling of algorithm {}", symmetric);
 
     encrypt(
       symmetric,

@@ -16,8 +16,8 @@ package edu.vt.middleware.crypt.asymmetric;
 import java.io.File;
 import edu.vt.middleware.crypt.CliHelper;
 import edu.vt.middleware.crypt.FileHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -49,7 +49,7 @@ public class AsymmetricCliTest
     "src/test/resources/edu/vt/middleware/crypt/plaintext-127.txt";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**

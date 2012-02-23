@@ -13,14 +13,15 @@
 */
 package edu.vt.middleware.crypt;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
 
 /**
  * Unit test for {@link KeyStoreCli} class.
@@ -43,7 +44,7 @@ public class KeyStoreCliTest
     "src/test/resources/edu/vt/middleware/crypt/x509/";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -216,7 +217,7 @@ public class KeyStoreCliTest
       System.setOut(new PrintStream(outStream));
 
       logger.info(
-        "Importing keypair into keystore with command line " +
+        "Importing keypair into keystore with command line {}",
         CliHelper.toCommandLine(importOptions));
       KeyStoreCli.main(CliHelper.toArgs(importOptions));
       AssertJUnit.assertTrue(new File(keyStorePath).exists());
@@ -226,13 +227,13 @@ public class KeyStoreCliTest
       KeyStoreCli.main(CliHelper.toArgs(listOptions));
 
       final String output = outStream.toString();
-      logger.info("Keystore listing output:\n" + output);
+      logger.info("Keystore listing output:\n{}", output);
       AssertJUnit.assertTrue(output.indexOf(alias) != -1);
 
       outStream.reset();
 
       logger.info(
-        "Exporting keypair from keystore with command line " +
+        "Exporting keypair from keystore with command line {}",
         CliHelper.toCommandLine(exportOptions));
       KeyStoreCli.main(CliHelper.toArgs(exportOptions));
       AssertJUnit.assertTrue(new File(exportCertPath).exists());
@@ -291,7 +292,7 @@ public class KeyStoreCliTest
       System.setOut(new PrintStream(outStream));
 
       logger.info(
-        "Importing trusted cert into keystore with command line " +
+        "Importing trusted cert into keystore with command line {}",
         CliHelper.toCommandLine(importOptions));
       KeyStoreCli.main(CliHelper.toArgs(importOptions));
       AssertJUnit.assertTrue(new File(keyStorePath).exists());
@@ -302,7 +303,7 @@ public class KeyStoreCliTest
       KeyStoreCli.main(CliHelper.toArgs(listOptions));
 
       final String output = outStream.toString();
-      logger.info("Keystore listing output:\n" + output);
+      logger.info("Keystore listing output:\n{}", output);
       AssertJUnit.assertTrue(output.indexOf(testAlias) != -1);
 
       outStream.reset();

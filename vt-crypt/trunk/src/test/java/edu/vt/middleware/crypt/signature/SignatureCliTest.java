@@ -13,18 +13,15 @@
 */
 package edu.vt.middleware.crypt.signature;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import edu.vt.middleware.crypt.CliHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.*;
 
 /**
  * Unit test for {@link SignatureCli} class.
@@ -47,7 +44,7 @@ public class SignatureCliTest
     "src/test/resources/edu/vt/middleware/crypt/keys/";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -123,7 +120,7 @@ public class SignatureCliTest
       String fullLine = partialLine + " -sign " +
         " -key " + privKeyPath + " -in " + TEST_PLAINTEXT;
       logger.info(
-        "Testing signature CLI sign operation with command line:\n\t" +
+        "Testing signature CLI sign operation with command line:\n\t{}",
         fullLine);
       SignatureCli.main(CliHelper.splitArgs(fullLine));
 
@@ -147,8 +144,8 @@ public class SignatureCliTest
       fullLine = partialLine + " -verify " + sigFile + " -key " + pubKeyPath +
         " -in " + TEST_PLAINTEXT;
       logger.info(
-        "Testing signature CLI verify operation with command " +
-        "line:\n\t" + fullLine);
+        "Testing signature CLI verify operation with command line:\n\t{}",
+        fullLine);
       SignatureCli.main(CliHelper.splitArgs(fullLine));
 
       final String result = outStream.toString();

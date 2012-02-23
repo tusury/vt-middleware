@@ -13,15 +13,16 @@
 */
 package edu.vt.middleware.crypt.io;
 
+import edu.vt.middleware.crypt.CryptException;
+import edu.vt.middleware.crypt.util.PemHelper;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import edu.vt.middleware.crypt.CryptException;
-import edu.vt.middleware.crypt.util.PemHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 
 /**
  * Base class for credential readers that handle credentials that can be
@@ -45,7 +46,7 @@ public abstract class AbstractEncodedCredentialReader<T>
     "1.2.840.113549.1.1.1");
 
   /** Logger instance. */
-  protected final Log logger = LogFactory.getLog(getClass());
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
   /** {@inheritDoc} */

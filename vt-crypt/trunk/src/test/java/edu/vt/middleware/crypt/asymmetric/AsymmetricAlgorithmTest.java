@@ -13,12 +13,13 @@
 */
 package edu.vt.middleware.crypt.asymmetric;
 
-import java.security.KeyPair;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.security.KeyPair;
 
 /**
  * Unit test for all subclasses of {@link AsymmetricAlgorithm}.
@@ -33,7 +34,7 @@ public class AsymmetricAlgorithmTest
   private static final String CLEARTEXT = "Able was I ere I saw Elba";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -75,7 +76,7 @@ public class AsymmetricAlgorithmTest
     final KeyPair keys)
     throws Exception
   {
-    logger.info("Testing symmetric algorithm " + asymmetric);
+    logger.info("Testing symmetric algorithm {}", asymmetric);
 
     asymmetric.setKey(keys.getPublic());
     asymmetric.initEncrypt();

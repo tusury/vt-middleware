@@ -13,36 +13,20 @@
 */
 package edu.vt.middleware.crypt.x509;
 
+import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.x509.types.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import edu.vt.middleware.crypt.util.CryptReader;
-import edu.vt.middleware.crypt.x509.types.AccessDescription;
-import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
-import edu.vt.middleware.crypt.x509.types.AccessMethod;
-import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
-import edu.vt.middleware.crypt.x509.types.BasicConstraints;
-import edu.vt.middleware.crypt.x509.types.DistributionPoint;
-import edu.vt.middleware.crypt.x509.types.DistributionPointList;
-import edu.vt.middleware.crypt.x509.types.GeneralName;
-import edu.vt.middleware.crypt.x509.types.GeneralNameList;
-import edu.vt.middleware.crypt.x509.types.GeneralNameType;
-import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
-import edu.vt.middleware.crypt.x509.types.KeyPurposeId;
-import edu.vt.middleware.crypt.x509.types.KeyPurposeIdList;
-import edu.vt.middleware.crypt.x509.types.KeyUsage;
-import edu.vt.middleware.crypt.x509.types.KeyUsageBits;
-import edu.vt.middleware.crypt.x509.types.PolicyInformation;
-import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
-import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.testng.AssertJUnit;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link ExtensionReader} class.
@@ -58,7 +42,7 @@ public class ExtensionReaderTest
     "src/test/resources/edu/vt/middleware/crypt/x509";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -235,23 +219,27 @@ public class ExtensionReaderTest
     final Map<ExtensionType, Object> expectedExtensionMap)
     throws Exception
   {
-    logger.info("Testing read all extended attributes from " + certFile);
+    logger.info("Testing read all extended attributes from {}", certFile);
 
     final Certificate cert = CryptReader.readCertificate(certFile);
 
     /*
-    logger.info("DER dump of " + certFile + ":\n\n" +
-      ASN1Dump.dumpAsString(
-        new ASN1InputStream(cert.getEncoded()).readObject()));
+    logger.info(
+        "DER dump of {}:\n\n{}",
+        certFile,
+        ASN1Dump.dumpAsString(
+            new ASN1InputStream(cert.getEncoded()).readObject()));
     */
 
     final ExtensionReader reader = new ExtensionReader((X509Certificate) cert);
     final Map<ExtensionType, Object> actualExtensionMap = reader.readAll();
 
-    logger.info("Attributes found:");
+    final StringBuilder sb = new StringBuilder();
     for (ExtensionType type : actualExtensionMap.keySet()) {
-      logger.info("\t" + actualExtensionMap.get(type));
+      sb.append('\t').append(type).append('=').append(
+          actualExtensionMap.get(type)).append('\n');
     }
+    logger.info("Attributes found:\n{}", sb.toString());
 
     AssertJUnit.assertEquals(
       expectedExtensionMap.size(),

@@ -13,18 +13,19 @@
 */
 package edu.vt.middleware.crypt.digest;
 
+import edu.vt.middleware.crypt.util.Base64Converter;
+import edu.vt.middleware.crypt.util.Converter;
+import edu.vt.middleware.crypt.util.HexConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
-import edu.vt.middleware.crypt.util.Base64Converter;
-import edu.vt.middleware.crypt.util.Converter;
-import edu.vt.middleware.crypt.util.HexConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.testng.AssertJUnit;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 
 /**
@@ -60,7 +61,7 @@ public class DigestAlgorithmTest
   }
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /** @return  Test data. */
@@ -180,7 +181,7 @@ public class DigestAlgorithmTest
   public void testDigest(final DigestAlgorithm digest, final byte[] salt)
     throws Exception
   {
-    logger.info("Testing digest algorithm " + digest);
+    logger.info("Testing digest algorithm {}", digest);
 
     final DigestAlgorithm copy = new DigestAlgorithm(digest.getDigest());
     if (salt != null) {
@@ -208,7 +209,7 @@ public class DigestAlgorithmTest
     final Converter converter)
     throws Exception
   {
-    logger.info("Testing digest output conversion for " + digest);
+    logger.info("Testing digest output conversion for {}", digest);
 
 
     final DigestAlgorithm copy = new DigestAlgorithm(digest.getDigest());
@@ -234,7 +235,8 @@ public class DigestAlgorithmTest
     throws Exception
   {
     logger.info(
-      "Testing digest stream handling for " + digest + " using converter " +
+      "Testing digest stream handling for {} using converter {}",
+      digest,
       converter);
 
 
@@ -268,7 +270,7 @@ public class DigestAlgorithmTest
   public void testHashCalculationAgainstReference(final DigestAlgorithm digest)
     throws Exception
   {
-    logger.info("Testing " + digest + " calculation against reference value");
+    logger.info("Testing {} calculation against reference value", digest);
 
     final String testHash = digest.digest(
       CLEARTEXT.getBytes("ASCII"),

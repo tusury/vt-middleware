@@ -13,23 +13,15 @@
 */
 package edu.vt.middleware.crypt;
 
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Provider;
-import java.security.Signature;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.security.*;
+import java.security.cert.CertificateFactory;
 
 /**
  * <p><code>CryptProvider</code> contains methods for finding cryptographic
@@ -78,10 +70,7 @@ public final class CryptProvider
     tmp[providers.length] = name;
     providers = tmp;
 
-    final Log logger = LogFactory.getLog(CryptProvider.class);
-    if (logger.isDebugEnabled()) {
-      logger.debug("Added new security provider " + name);
-    }
+    getLogger().debug("Added new security provider {}", name);
   }
 
 
@@ -104,7 +93,7 @@ public final class CryptProvider
     final String padding)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+
     Cipher cipher = null;
     String transformation = null;
     if (mode != null && padding != null) {
@@ -117,20 +106,11 @@ public final class CryptProvider
     for (int i = 0; i < providers.length; i++) {
       try {
         cipher = Cipher.getInstance(transformation, providers[i]);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find algorithm " + algorithm + " in " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
       } catch (NoSuchPaddingException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find padding " + padding + " in " + providers[i]);
-        }
+        getLogger().debug(
+            "{} does not support padding {}", providers[i], padding);
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], algorithm, e);
       } finally {
         if (cipher != null) {
           break;
@@ -140,15 +120,12 @@ public final class CryptProvider
     if (cipher == null) {
       try {
         cipher = Cipher.getInstance(transformation);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find algorithm " + algorithm);
-        }
-        throw new CryptException(e.getMessage());
       } catch (NoSuchPaddingException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find padding " + padding);
-        }
+        getLogger().debug(
+            "Default provider does not support padding {}", padding);
+        throw new CryptException(e.getMessage());
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, algorithm, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -170,20 +147,13 @@ public final class CryptProvider
   public static SecretKeyFactory getSecretKeyFactory(final String algorithm)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     SecretKeyFactory kf = null;
     for (int i = 0; i < providers.length; i++) {
       try {
         kf = SecretKeyFactory.getInstance(algorithm, providers[i]);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find algorithm " + algorithm + " in " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], algorithm, e);
       } finally {
         if (kf != null) {
           break;
@@ -193,10 +163,8 @@ public final class CryptProvider
     if (kf == null) {
       try {
         kf = SecretKeyFactory.getInstance(algorithm);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find algorithm " + algorithm);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, algorithm, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -218,20 +186,13 @@ public final class CryptProvider
   public static KeyFactory getKeyFactory(final String algorithm)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyFactory kf = null;
     for (int i = 0; i < providers.length; i++) {
       try {
         kf = KeyFactory.getInstance(algorithm, providers[i]);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find algorithm " + algorithm + " in " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], algorithm, e);
       } finally {
         if (kf != null) {
           break;
@@ -241,10 +202,8 @@ public final class CryptProvider
     if (kf == null) {
       try {
         kf = KeyFactory.getInstance(algorithm);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find algorithm " + algorithm);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, algorithm, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -266,20 +225,13 @@ public final class CryptProvider
   public static KeyGenerator getKeyGenerator(final String algorithm)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyGenerator generator = null;
     for (int i = 0; i < providers.length; i++) {
       try {
         generator = KeyGenerator.getInstance(algorithm, providers[i]);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find algorithm " + algorithm + " in " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], algorithm, e);
       } finally {
         if (generator != null) {
           break;
@@ -289,10 +241,9 @@ public final class CryptProvider
     if (generator == null) {
       try {
         generator = KeyGenerator.getInstance(algorithm);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find algorithm " + algorithm);
-        }
+
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, algorithm, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -314,20 +265,13 @@ public final class CryptProvider
   public static KeyPairGenerator getKeyPairGenerator(final String algorithm)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyPairGenerator generator = null;
     for (int i = 0; i < providers.length; i++) {
       try {
         generator = KeyPairGenerator.getInstance(algorithm, providers[i]);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find algorithm " + algorithm + " in " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], algorithm, e);
       } finally {
         if (generator != null) {
           break;
@@ -337,10 +281,9 @@ public final class CryptProvider
     if (generator == null) {
       try {
         generator = KeyPairGenerator.getInstance(algorithm);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find algorithm " + algorithm);
-        }
+
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, algorithm, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -367,7 +310,7 @@ public final class CryptProvider
     final String padding)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     Signature sig = null;
     String transformation = null;
     if (digestAlgorithm != null && padding != null) {
@@ -380,15 +323,8 @@ public final class CryptProvider
     for (int i = 0; i < providers.length; i++) {
       try {
         sig = Signature.getInstance(transformation, providers[i]);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find algorithm " + algorithm + " in " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], algorithm, e);
       } finally {
         if (sig != null) {
           break;
@@ -398,10 +334,9 @@ public final class CryptProvider
     if (sig == null) {
       try {
         sig = Signature.getInstance(transformation);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find algorithm " + algorithm);
-        }
+
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, algorithm, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -423,20 +358,13 @@ public final class CryptProvider
   public static MessageDigest getMessageDigest(final String algorithm)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     MessageDigest digest = null;
     for (int i = 0; i < providers.length; i++) {
       try {
         digest = MessageDigest.getInstance(algorithm, providers[i]);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not find algorithm " + algorithm + " in " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], algorithm, e);
       } finally {
         if (digest != null) {
           break;
@@ -446,10 +374,9 @@ public final class CryptProvider
     if (digest == null) {
       try {
         digest = MessageDigest.getInstance(algorithm);
-      } catch (NoSuchAlgorithmException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find algorithm " + algorithm);
-        }
+
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, algorithm, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -470,7 +397,7 @@ public final class CryptProvider
   public static KeyStore getKeyStore(final String type)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyStore store = null;
     String keyStoreType = type;
     if (keyStoreType == null) {
@@ -479,16 +406,8 @@ public final class CryptProvider
     for (int i = 0; i < providers.length; i++) {
       try {
         store = KeyStore.getInstance(keyStoreType, providers[i]);
-      } catch (KeyStoreException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not get instance of keystore type " + type + " from " +
-            providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], type, e);
       } finally {
         if (store != null) {
           break;
@@ -498,10 +417,9 @@ public final class CryptProvider
     if (store == null) {
       try {
         store = KeyStore.getInstance(keyStoreType);
-      } catch (KeyStoreException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not get instance of keystore type " + type);
-        }
+
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, type, e);
         throw new CryptException(e.getMessage());
       }
     }
@@ -539,21 +457,13 @@ public final class CryptProvider
   public static CertificateFactory getCertificateFactory(final String type)
     throws CryptException
   {
-    final Log logger = LogFactory.getLog(CryptProvider.class);
+    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     CertificateFactory cf = null;
     for (int i = 0; i < providers.length; i++) {
       try {
         cf = CertificateFactory.getInstance(type, providers[i]);
-      } catch (CertificateException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not get instance of certificate factory type " + type +
-            " from " + providers[i]);
-        }
-      } catch (NoSuchProviderException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("Could not find provider " + providers[i]);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(providers[i], type, e);
       } finally {
         if (cf != null) {
           break;
@@ -563,14 +473,48 @@ public final class CryptProvider
     if (cf == null) {
       try {
         cf = CertificateFactory.getInstance(type);
-      } catch (CertificateException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-            "Could not get instance of certificate factory type " + type);
-        }
+      } catch (GeneralSecurityException e) {
+        handleProviderError(null, type, e);
         throw new CryptException(e.getMessage());
       }
     }
     return cf;
+  }
+
+
+  /**
+   * Handles a provider algorithm lookup error.
+   *
+   * @param provider Name of provider that was queried for the algorithm or null
+   *                 for the default provider.
+   * @param algorithm Algorithm name.
+   * @param error Exception thrown on provider lookup error.
+   */
+  private static void handleProviderError(
+      final String provider,
+      final String algorithm,
+      final GeneralSecurityException error)
+  {
+    if (error instanceof NoSuchProviderException) {
+      if (provider != null) {
+        getLogger().debug("{} not found", provider);
+      }
+    } else if (error instanceof NoSuchAlgorithmException) {
+      if (provider != null) {
+        getLogger().debug("{} does not support {}", provider, algorithm);
+      } else {
+        getLogger().debug("Default provider does not support {}", provider);
+      }    }
+  }
+
+
+  /**
+   * Gets the class logger.
+   *
+   * @return Logger.
+   */
+  private static Logger getLogger()
+  {
+    return LoggerFactory.getLogger(CryptProvider.class);
   }
 }

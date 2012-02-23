@@ -13,21 +13,17 @@
 */
 package edu.vt.middleware.crypt.util;
 
-import java.io.File;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import javax.crypto.SecretKey;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.MD2;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import javax.crypto.SecretKey;
+import java.io.File;
+import java.security.*;
 
 /**
  * Unit test for {@link CryptReader} and {@link CryptWriter} classes.
@@ -43,7 +39,7 @@ public class CryptReaderWriterTest
     "src/test/resources/edu/vt/middleware/crypt/keys/";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   /**
    * @return  Public key test data.
@@ -157,7 +153,7 @@ public class CryptReaderWriterTest
     throws Exception
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
-    logger.info("Testing read of DER-encoded public key " + keyFile);
+    logger.info("Testing read of DER-encoded public key {}", keyFile);
     AssertJUnit.assertNotNull(CryptReader.readPublicKey(keyFile));
   }
 
@@ -168,7 +164,7 @@ public class CryptReaderWriterTest
     throws Exception
   {
     final File certFile = new File(KEY_DIR_PATH + "rsa-pub-cert.der");
-    logger.info("Testing read of DER-encoded X.509 certificate " + certFile);
+    logger.info("Testing read of DER-encoded X.509 certificate {}", certFile);
     AssertJUnit.assertNotNull(CryptReader.readCertificate(certFile));
   }
 
@@ -188,7 +184,7 @@ public class CryptReaderWriterTest
     throws Exception
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
-    logger.info("Testing read of private key " + keyFile);
+    logger.info("Testing read of private key {}", keyFile);
 
     final PrivateKey key;
     if (password != null) {
@@ -206,7 +202,7 @@ public class CryptReaderWriterTest
     throws Exception
   {
     final File certFile = new File(KEY_DIR_PATH + "rsa-pub-cert.pem");
-    logger.info("Testing read of PEM-encoded X.509 certificate " + certFile);
+    logger.info("Testing read of PEM-encoded X.509 certificate {}", certFile);
     AssertJUnit.assertNotNull(CryptReader.readCertificate(certFile));
   }
 
@@ -226,7 +222,7 @@ public class CryptReaderWriterTest
     final String password)
     throws Exception
   {
-    logger.info("Testing " + key.getAlgorithm() + " private key.");
+    logger.info("Testing {} private key.", key.getAlgorithm());
 
     final File keyFile = new File(getKeyPath(key, "DER", null));
     keyFile.getParentFile().mkdir();
@@ -247,7 +243,7 @@ public class CryptReaderWriterTest
   public void testReadWriteDerPublicKey(final PublicKey key)
     throws Exception
   {
-    logger.info("Testing " + key.getAlgorithm() + " public key.");
+    logger.info("Testing {} public key.", key.getAlgorithm());
 
     final File keyFile = new File(getKeyPath(key, "DER", null));
     keyFile.getParentFile().mkdir();
@@ -271,7 +267,7 @@ public class CryptReaderWriterTest
     final String password)
     throws Exception
   {
-    logger.info("Testing " + key.getAlgorithm() + " private key.");
+    logger.info("Testing {} private key.", key.getAlgorithm());
 
     final char[] pwchars;
     if (password != null) {
@@ -306,7 +302,7 @@ public class CryptReaderWriterTest
   public void testReadWritePemPublicKey(final PublicKey key)
     throws Exception
   {
-    logger.info("Testing " + key.getAlgorithm() + " public key.");
+    logger.info("Testing {} public key.", key.getAlgorithm());
 
     final File keyFile = new File(getKeyPath(key, "PEM", null));
     keyFile.getParentFile().mkdir();

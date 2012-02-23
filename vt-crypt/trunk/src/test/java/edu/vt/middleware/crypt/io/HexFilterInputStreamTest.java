@@ -13,15 +13,16 @@
 */
 package edu.vt.middleware.crypt.io;
 
+import edu.vt.middleware.crypt.FileHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import edu.vt.middleware.crypt.FileHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.testng.AssertJUnit;
-import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link HexFilterInputStream} class.
@@ -37,7 +38,7 @@ public class HexFilterInputStreamTest
     "/edu/vt/middleware/crypt/plaintext.txt";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /** @throws  Exception  On test failure. */
