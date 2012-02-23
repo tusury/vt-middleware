@@ -13,15 +13,15 @@
 */
 package edu.vt.middleware.crypt.digest;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import edu.vt.middleware.crypt.CliHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 /**
  * Unit test for {@link DigestCli} class.

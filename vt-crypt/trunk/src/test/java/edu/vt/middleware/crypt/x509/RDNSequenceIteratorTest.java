@@ -13,6 +13,12 @@
 */
 package edu.vt.middleware.crypt.x509;
 
+import java.io.File;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.AttributeType;
 import edu.vt.middleware.crypt.x509.types.AttributeTypeAndValue;
@@ -22,13 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 
 /**
  * Unit test for {@link RDNSequenceIterator} class.

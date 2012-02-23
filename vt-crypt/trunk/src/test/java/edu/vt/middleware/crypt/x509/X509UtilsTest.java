@@ -13,16 +13,16 @@
 */
 package edu.vt.middleware.crypt.x509;
 
+import java.io.File;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
+import java.util.List;
+
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
-import java.util.List;
 
 /**
  * Description of X509UtilsTest.
@@ -46,16 +46,16 @@ public class X509UtilsTest
   public Object[][] createSubjectNameTestData() throws Exception
   {
     return new Object[][] {
-        new Object[] {
-          "marvin.pem",
-          new GeneralNameType[] { GeneralNameType.EdiPartyName },
-          new String[] { "Marvin S Addison" },
-        },
-        new Object[] {
-            "marvin.pem",
-            new GeneralNameType[] { GeneralNameType.RFC822Name },
-            new String[] { "Marvin S Addison", "serac@vt.edu" },
-        },
+      new Object[] {
+        "marvin.pem",
+        new GeneralNameType[] {GeneralNameType.EdiPartyName},
+        new String[] {"Marvin S Addison"},
+      },
+      new Object[] {
+        "marvin.pem",
+        new GeneralNameType[] {GeneralNameType.RFC822Name},
+        new String[] {"Marvin S Addison", "serac@vt.edu"},
+      },
     };
   }
 
@@ -69,20 +69,30 @@ public class X509UtilsTest
   public Object[][] createEntityCertTestData() throws Exception
   {
     return new Object[][] {
-        new Object[] {
-            new String[] { "marvin.pem", "entity-cert.pem" },
-            "entity-key.pem",
-            "entity-cert.pem",
-        },
-        new Object[] {
-            new String[] { "marvin.pem", "login.live.com-cert.pem" },
-            "entity-key.pem",
-            null,
-        },
+      new Object[] {
+        new String[] {"marvin.pem", "entity-cert.pem"},
+        "entity-key.pem",
+        "entity-cert.pem",
+      },
+      new Object[] {
+        new String[] {"marvin.pem", "login.live.com-cert.pem"},
+        "entity-key.pem",
+        null,
+      },
     };
   }
 
 
+  /**
+   * Test method for {@link X509Utils#getSubjectNames(X509Certificate,
+   * GeneralNameType...)}.
+   *
+   * @param certName Certificate file name.
+   * @param nameTypes Alternative name types to fetch.
+   * @param expectedNames Expected subject names.
+   *
+   * @throws Exception On errors.
+   */
   @Test(
       groups = {"functest", "x509"},
       dataProvider = "subject-names"
@@ -101,6 +111,16 @@ public class X509UtilsTest
   }
 
 
+  /**
+   * Test method for {@link X509Utils#findEntityCertificate(X509Certificate[],
+   * PrivateKey)}.
+   *
+   * @param certNames Certificate file names.
+   * @param keyName Private key file name.
+   * @param expectedName Certificate file name containing expected matching cert
+   *
+   * @throws Exception On errors.
+   */
   @Test(
       groups = {"functest", "x509"},
       dataProvider = "entity-certs"
@@ -128,6 +148,15 @@ public class X509UtilsTest
   }
 
 
+  /**
+   * Gets the certificate from the given file name.
+   *
+   * @param name Certificate file name.
+   *
+   * @return Certificate object created from encoded cert data in file.
+   *
+   * @throws Exception On errors.
+   */
   private X509Certificate getCert(final String name) throws Exception
   {
     return (X509Certificate) CryptReader.readCertificate(

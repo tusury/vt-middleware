@@ -13,13 +13,18 @@
 */
 package edu.vt.middleware.crypt.io;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import edu.vt.middleware.crypt.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
-
-import java.io.*;
 
 /**
  * Unit test for {@link HexFilterOutputStream} class.

@@ -13,20 +13,37 @@
 */
 package edu.vt.middleware.crypt.x509;
 
-import edu.vt.middleware.crypt.util.CryptReader;
-import edu.vt.middleware.crypt.x509.types.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.AssertJUnit;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import edu.vt.middleware.crypt.util.CryptReader;
+import edu.vt.middleware.crypt.x509.types.AccessDescription;
+import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
+import edu.vt.middleware.crypt.x509.types.AccessMethod;
+import edu.vt.middleware.crypt.x509.types.AuthorityKeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.BasicConstraints;
+import edu.vt.middleware.crypt.x509.types.DistributionPoint;
+import edu.vt.middleware.crypt.x509.types.DistributionPointList;
+import edu.vt.middleware.crypt.x509.types.GeneralName;
+import edu.vt.middleware.crypt.x509.types.GeneralNameList;
+import edu.vt.middleware.crypt.x509.types.GeneralNameType;
+import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
+import edu.vt.middleware.crypt.x509.types.KeyPurposeId;
+import edu.vt.middleware.crypt.x509.types.KeyPurposeIdList;
+import edu.vt.middleware.crypt.x509.types.KeyUsage;
+import edu.vt.middleware.crypt.x509.types.KeyUsageBits;
+import edu.vt.middleware.crypt.x509.types.PolicyInformation;
+import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
+import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.AssertJUnit;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link ExtensionReader} class.

@@ -13,6 +13,8 @@
 */
 package edu.vt.middleware.crypt.symmetric;
 
+import java.io.File;
+
 import edu.vt.middleware.crypt.CliHelper;
 import edu.vt.middleware.crypt.FileHelper;
 import org.slf4j.Logger;
@@ -20,8 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.File;
 
 /**
  * Unit test for {@link SymmetricCli} class.

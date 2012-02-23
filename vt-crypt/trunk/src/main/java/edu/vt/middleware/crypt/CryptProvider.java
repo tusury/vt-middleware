@@ -13,15 +13,24 @@
 */
 package edu.vt.middleware.crypt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Provider;
+import java.security.Signature;
+import java.security.cert.CertificateFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
-import java.security.*;
-import java.security.cert.CertificateFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p><code>CryptProvider</code> contains methods for finding cryptographic
@@ -504,7 +513,8 @@ public final class CryptProvider
         getLogger().debug("{} does not support {}", provider, algorithm);
       } else {
         getLogger().debug("Default provider does not support {}", provider);
-      }    }
+      }
+    }
   }
 
 

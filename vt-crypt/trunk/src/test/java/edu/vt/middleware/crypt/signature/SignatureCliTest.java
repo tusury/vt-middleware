@@ -13,6 +13,12 @@
 */
 package edu.vt.middleware.crypt.signature;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 import edu.vt.middleware.crypt.CliHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +26,6 @@ import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.*;
 
 /**
  * Unit test for {@link SignatureCli} class.

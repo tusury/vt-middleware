@@ -13,15 +13,15 @@
 */
 package edu.vt.middleware.crypt.x509;
 
+import java.io.File;
+import java.security.cert.X509Certificate;
+
 import edu.vt.middleware.crypt.util.CryptReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.security.cert.X509Certificate;
 
 /**
  * Unit test for {@link LDAPv3DNFormatter} class.

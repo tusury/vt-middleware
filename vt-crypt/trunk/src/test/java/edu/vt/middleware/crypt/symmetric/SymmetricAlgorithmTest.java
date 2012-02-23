@@ -13,6 +13,10 @@
 */
 package edu.vt.middleware.crypt.symmetric;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.security.Key;
+
 import edu.vt.middleware.crypt.FileHelper;
 import edu.vt.middleware.crypt.io.Base64FilterInputStream;
 import edu.vt.middleware.crypt.io.Base64FilterOutputStream;
@@ -26,10 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.Key;
 
 /**
  * Unit test for all subclasses of {@link SymmetricAlgorithm}.
