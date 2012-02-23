@@ -13,10 +13,6 @@
 */
 package edu.vt.middleware.crypt.signature;
 
-import java.io.InputStream;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.SecureRandom;
 import edu.vt.middleware.crypt.digest.MD5;
 import edu.vt.middleware.crypt.digest.SHA512;
 import edu.vt.middleware.crypt.digest.Tiger;
@@ -24,11 +20,16 @@ import edu.vt.middleware.crypt.digest.Whirlpool;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.InputStream;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 
 
 /**
@@ -48,7 +49,7 @@ public class SignatureAlgorithmTest
     "/edu/vt/middleware/crypt/plaintext.txt";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -130,8 +131,7 @@ public class SignatureAlgorithmTest
     throws Exception
   {
     logger.info(
-      "Testing signature algorithm " + signature + " with converter " +
-      converter);
+      "Testing signature algorithm {} with converter {}", signature, converter);
     signature.setSignKey(keys.getPrivate());
     signature.initSign();
     if (converter == null) {
@@ -168,8 +168,9 @@ public class SignatureAlgorithmTest
     throws Exception
   {
     logger.info(
-      "Testing randomized signature algorithm " + signature +
-      " with converter " + converter);
+        "Testing randomized signature algorithm {} with converter {}",
+        signature,
+        converter);
     signature.setRandomProvider(new SecureRandom());
     signature.setSignKey(keys.getPrivate());
     signature.initSign();
@@ -207,8 +208,9 @@ public class SignatureAlgorithmTest
     throws Exception
   {
     logger.info(
-      "Testing signature stream handling for " + signature +
-      " with converter " + converter);
+        "Testing signature stream handling for {} with converter {}",
+        signature,
+        converter);
 
     final InputStream in1 = getClass().getResourceAsStream(BIG_FILE_PATH);
     final InputStream in2 = getClass().getResourceAsStream(BIG_FILE_PATH);

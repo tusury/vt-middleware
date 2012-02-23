@@ -13,14 +13,15 @@
 */
 package edu.vt.middleware.crypt.symmetric;
 
-import java.io.File;
 import edu.vt.middleware.crypt.CliHelper;
 import edu.vt.middleware.crypt.FileHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.File;
 
 /**
  * Unit test for {@link SymmetricCli} class.
@@ -42,7 +43,7 @@ public class SymmetricCliTest
   private static final int KEY_LENGTH = 128;
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -140,7 +141,7 @@ public class SymmetricCliTest
     String commandLine = cliFragment + " -genkey " + KEY_LENGTH + " -out " +
       keyFile;
     logger.info(
-      "Testing symmetric key generation with command line:\n\t" + commandLine);
+      "Testing symmetric key generation with command line:\n\t{}", commandLine);
     SymmetricCli.main(CliHelper.splitArgs(commandLine));
     AssertJUnit.assertTrue(keyFile.length() > 0L);
 
@@ -148,7 +149,7 @@ public class SymmetricCliTest
     commandLine = cliFragment + " -encrypt -in " + refFile + " -out " +
       cipherFile + " -key " + keyFile;
     logger.info(
-      "Testing symmetric encryption with command line:\n\t" + commandLine);
+      "Testing symmetric encryption with command line:\n\t{}", commandLine);
     SymmetricCli.main(CliHelper.splitArgs(commandLine));
     AssertJUnit.assertTrue(cipherFile.length() > 0L);
 
@@ -156,7 +157,7 @@ public class SymmetricCliTest
     commandLine = cliFragment + " -decrypt -in " + cipherFile + " -out " +
       plainFile + " -key " + keyFile;
     logger.info(
-      "Testing symmetric decryption with command line:\n\t" + commandLine);
+      "Testing symmetric decryption with command line:\n\t{}", commandLine);
     SymmetricCli.main(CliHelper.splitArgs(commandLine));
     AssertJUnit.assertTrue(plainFile.length() > 0L);
     AssertJUnit.assertTrue(FileHelper.equal(refFile, plainFile));
@@ -189,14 +190,14 @@ public class SymmetricCliTest
     // Encrypt plaintext
     String commandLine = cliFragment + " -encrypt -in " + refFile + " -out " +
       cipherFile + " -pbe S33Kr1t -salt DEADF00D00000000";
-    logger.info("Testing PBE encryption with command line:\n\t" + commandLine);
+    logger.info("Testing PBE encryption with command line:\n\t{}", commandLine);
     SymmetricCli.main(CliHelper.splitArgs(commandLine));
     AssertJUnit.assertTrue(cipherFile.length() > 0L);
 
     // Decrypt ciphertext
     commandLine = cliFragment + " -decrypt -in " + cipherFile + " -out " +
       plainFile + " -pbe S33Kr1t -salt DEADF00D00000000";
-    logger.info("Testing PBE decryption with command line:\n\t" + commandLine);
+    logger.info("Testing PBE decryption with command line:\n\t{}", commandLine);
     SymmetricCli.main(CliHelper.splitArgs(commandLine));
     AssertJUnit.assertTrue(plainFile.length() > 0L);
     AssertJUnit.assertTrue(FileHelper.equal(refFile, plainFile));

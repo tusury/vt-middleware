@@ -13,8 +13,8 @@
 */
 package edu.vt.middleware.crypt.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,7 +40,7 @@ public class ConverterTest
     "Pellentesque sollicitud in euismod augue.";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
   /**
@@ -73,10 +73,10 @@ public class ConverterTest
   public void testConvert(final Converter converter)
     throws Exception
   {
-    logger.info("Testing " + converter);
+    logger.info("Testing {}", converter);
 
     final String encoded = converter.fromBytes(CLEARTEXT.getBytes());
-    logger.info("Produced encoded string:\n" + encoded);
+    logger.info("Produced encoded string:\n{}", encoded);
 
     final String text = new String(converter.toBytes(encoded), "UTF-8");
     AssertJUnit.assertEquals(CLEARTEXT, text);

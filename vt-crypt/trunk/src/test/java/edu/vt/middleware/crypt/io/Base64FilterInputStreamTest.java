@@ -13,17 +13,14 @@
 */
 package edu.vt.middleware.crypt.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import edu.vt.middleware.crypt.FileHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.*;
 
 /**
  * Unit test for {@link Base64FilterInputStream}.
@@ -39,7 +36,7 @@ public class Base64FilterInputStreamTest
     "/edu/vt/middleware/crypt/plaintext.txt";
 
   /** Logger instance. */
-  private final Log logger = LogFactory.getLog(this.getClass());
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   /**
    * @return  Test data.
@@ -72,8 +69,8 @@ public class Base64FilterInputStreamTest
     throws Exception
   {
     logger.info(
-      "Decoding base64-encoded file with " + charsPerLine +
-      " characters per line.");
+      "Decoding base64-encoded file with {} characters per line.",
+      charsPerLine);
 
     final String outPath = "target/test-output/decoded-base64-" + charsPerLine +
       ".txt";

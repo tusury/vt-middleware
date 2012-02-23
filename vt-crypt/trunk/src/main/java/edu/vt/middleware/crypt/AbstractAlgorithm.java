@@ -13,9 +13,10 @@
 */
 package edu.vt.middleware.crypt;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.security.SecureRandom;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Abstract cryptographic algorithm that is the basis of digest, encryption, and
@@ -31,7 +32,7 @@ public abstract class AbstractAlgorithm implements Algorithm
   private static final int DEFAULT_RANDOM_BYTE_SIZE = 256;
 
   /** Logger instance. */
-  protected final Log logger = LogFactory.getLog(getClass());
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Algorithm name. */
   protected String algorithm;
