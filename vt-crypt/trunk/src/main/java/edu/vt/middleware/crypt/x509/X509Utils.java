@@ -13,15 +13,19 @@
 */
 package edu.vt.middleware.crypt.x509;
 
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.signature.SignatureAlgorithm;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
 import edu.vt.middleware.crypt.x509.types.GeneralNameList;
 import edu.vt.middleware.crypt.x509.types.GeneralNameType;
-
-import java.security.PrivateKey;
-import java.security.cert.X509Certificate;
-import java.util.*;
 
 /**
  * Utility class providing convenience methods for common operations on X.509
@@ -30,7 +34,8 @@ import java.util.*;
  * @author Middleware Services
  * @version $Revision: $
  */
-public final class X509Utils {
+public final class X509Utils
+{
 
   /** Message to be signed for keypair verification. */
   private static final byte[] SIGN_BYTES = "Quid est veritas?".getBytes();
@@ -48,7 +53,8 @@ public final class X509Utils {
    * alt names are defined.
    */
   public static List<GeneralName> getSubjectAltNames(
-      final X509Certificate cert) {
+      final X509Certificate cert)
+  {
     final GeneralNameList nameList;
     try {
       nameList = new ExtensionReader(cert).readSubjectAlternativeName();
@@ -66,13 +72,14 @@ public final class X509Utils {
    * Gets all subject alternative names of the given type(s) on the given cert.
    *
    * @param cert X.509 certificate to examine.
-   * @param  types  One or more name types to fetch.
+   * @param types One or more name types to fetch.
    *
    * @return List of subject alternative names of the matching type(s) or an
    * empty list if no subject alt names are defined or none match given type.
    */
   public static List<GeneralName> getSubjectAltNames(
-      final X509Certificate cert, final GeneralNameType ... types) {
+      final X509Certificate cert, final GeneralNameType ... types)
+  {
     final List<GeneralName> altNames = new ArrayList<GeneralName>();
     for (GeneralName altName : getSubjectAltNames(cert)) {
       for (GeneralNameType type : types) {
@@ -93,7 +100,8 @@ public final class X509Utils {
    *
    * @return List of subject names.
    */
-  public static List<String> getSubjectNames(final X509Certificate cert) {
+  public static List<String> getSubjectNames(final X509Certificate cert)
+  {
     final List<String> names = new ArrayList<String>();
     names.add(DNUtils.getCN(cert.getSubjectX500Principal()));
     for (GeneralName altName : getSubjectAltNames(cert)) {
@@ -108,11 +116,13 @@ public final class X509Utils {
    * given type.
    *
    * @param cert X.509 certificate to examine.
+   * @param types One or more name types to fetch.
    *
    * @return List of subject names.
    */
   public static List<String> getSubjectNames(
-      final X509Certificate cert, final GeneralNameType ... types) {
+      final X509Certificate cert, final GeneralNameType ... types)
+  {
     final List<String> names = new ArrayList<String>();
     names.add(DNUtils.getCN(cert.getSubjectX500Principal()));
     for (GeneralName altName : getSubjectAltNames(cert, types)) {

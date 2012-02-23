@@ -13,6 +13,11 @@
 */
 package edu.vt.middleware.crypt.signature;
 
+import java.io.InputStream;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
+
 import edu.vt.middleware.crypt.digest.MD5;
 import edu.vt.middleware.crypt.digest.SHA512;
 import edu.vt.middleware.crypt.digest.Tiger;
@@ -25,11 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.InputStream;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.SecureRandom;
 
 
 /**

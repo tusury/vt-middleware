@@ -13,17 +13,18 @@
 */
 package edu.vt.middleware.crypt.x509;
 
+import java.io.File;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+
 import edu.vt.middleware.crypt.util.CryptReader;
 import edu.vt.middleware.crypt.x509.types.AttributeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 /**
  * Unit test for {@link DNUtils} class.

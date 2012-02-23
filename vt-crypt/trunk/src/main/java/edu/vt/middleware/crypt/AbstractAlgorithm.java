@@ -13,10 +13,10 @@
 */
 package edu.vt.middleware.crypt;
 
+import java.security.SecureRandom;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.security.SecureRandom;
 
 /**
  * Abstract cryptographic algorithm that is the basis of digest, encryption, and

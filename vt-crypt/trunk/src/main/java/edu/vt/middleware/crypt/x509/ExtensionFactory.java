@@ -15,6 +15,7 @@ package edu.vt.middleware.crypt.x509;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.vt.middleware.crypt.x509.types.AccessDescription;
 import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
 import edu.vt.middleware.crypt.x509.types.AccessMethod;
@@ -35,6 +36,7 @@ import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
 import edu.vt.middleware.crypt.x509.types.ReasonFlags;
 import edu.vt.middleware.crypt.x509.types.UserNotice;
+
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERBitString;

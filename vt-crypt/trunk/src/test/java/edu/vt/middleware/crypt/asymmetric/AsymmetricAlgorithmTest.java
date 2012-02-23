@@ -13,13 +13,13 @@
 */
 package edu.vt.middleware.crypt.asymmetric;
 
+import java.security.KeyPair;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import java.security.KeyPair;
 
 /**
  * Unit test for all subclasses of {@link AsymmetricAlgorithm}.
