@@ -46,6 +46,10 @@ public final class CryptProvider
   /** Default size of random byte array. */
   public static final int RANDOM_BYTE_ARRAY_SIZE = 256;
 
+  /** Class logger instance. */
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(CryptProvider.class);
+
   /** List of providers to use. */
   private static String[] providers = new String[0];
 
@@ -79,7 +83,7 @@ public final class CryptProvider
     tmp[providers.length] = name;
     providers = tmp;
 
-    getLogger().debug("Added new security provider {}", name);
+    LOGGER.debug("Added new security provider {}", name);
   }
 
 
@@ -116,8 +120,7 @@ public final class CryptProvider
       try {
         cipher = Cipher.getInstance(transformation, providers[i]);
       } catch (NoSuchPaddingException e) {
-        getLogger().debug(
-            "{} does not support padding {}", providers[i], padding);
+        LOGGER.debug("{} does not support padding {}", providers[i], padding);
       } catch (GeneralSecurityException e) {
         handleProviderError(providers[i], algorithm, e);
       } finally {
@@ -130,8 +133,7 @@ public final class CryptProvider
       try {
         cipher = Cipher.getInstance(transformation);
       } catch (NoSuchPaddingException e) {
-        getLogger().debug(
-            "Default provider does not support padding {}", padding);
+        LOGGER.debug("Default provider does not support padding {}", padding);
         throw new CryptException(e.getMessage());
       } catch (GeneralSecurityException e) {
         handleProviderError(null, algorithm, e);
@@ -156,7 +158,6 @@ public final class CryptProvider
   public static SecretKeyFactory getSecretKeyFactory(final String algorithm)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     SecretKeyFactory kf = null;
     for (int i = 0; i < providers.length; i++) {
       try {
@@ -195,7 +196,6 @@ public final class CryptProvider
   public static KeyFactory getKeyFactory(final String algorithm)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyFactory kf = null;
     for (int i = 0; i < providers.length; i++) {
       try {
@@ -234,7 +234,6 @@ public final class CryptProvider
   public static KeyGenerator getKeyGenerator(final String algorithm)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyGenerator generator = null;
     for (int i = 0; i < providers.length; i++) {
       try {
@@ -274,7 +273,6 @@ public final class CryptProvider
   public static KeyPairGenerator getKeyPairGenerator(final String algorithm)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyPairGenerator generator = null;
     for (int i = 0; i < providers.length; i++) {
       try {
@@ -319,7 +317,6 @@ public final class CryptProvider
     final String padding)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     Signature sig = null;
     String transformation = null;
     if (digestAlgorithm != null && padding != null) {
@@ -367,7 +364,6 @@ public final class CryptProvider
   public static MessageDigest getMessageDigest(final String algorithm)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     MessageDigest digest = null;
     for (int i = 0; i < providers.length; i++) {
       try {
@@ -406,7 +402,6 @@ public final class CryptProvider
   public static KeyStore getKeyStore(final String type)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     KeyStore store = null;
     String keyStoreType = type;
     if (keyStoreType == null) {
@@ -466,7 +461,6 @@ public final class CryptProvider
   public static CertificateFactory getCertificateFactory(final String type)
     throws CryptException
   {
-    final Logger logger = LoggerFactory.getLogger(CryptProvider.class);
     CertificateFactory cf = null;
     for (int i = 0; i < providers.length; i++) {
       try {
@@ -506,25 +500,15 @@ public final class CryptProvider
   {
     if (error instanceof NoSuchProviderException) {
       if (provider != null) {
-        getLogger().debug("{} not found", provider);
+        LOGGER.debug("{} not found", provider);
       }
     } else if (error instanceof NoSuchAlgorithmException) {
       if (provider != null) {
-        getLogger().debug("{} does not support {}", provider, algorithm);
+        LOGGER.debug("{} does not support {}", provider, algorithm);
       } else {
-        getLogger().debug("Default provider does not support {}", provider);
+        LOGGER.debug("Default provider does not support {}", provider);
       }
     }
   }
 
-
-  /**
-   * Gets the class logger.
-   *
-   * @return Logger.
-   */
-  private static Logger getLogger()
-  {
-    return LoggerFactory.getLogger(CryptProvider.class);
-  }
 }
