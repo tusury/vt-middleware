@@ -13,7 +13,6 @@
 */
 package org.ldaptive.servlets;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.servlet.ServletConfig;
@@ -170,9 +169,6 @@ public abstract class AbstractServlet extends HttpServlet
     sr.setLdapEntryHandlers(request.getLdapEntryHandlers());
     sr.setReferralBehavior(request.getReferralBehavior());
     sr.setReturnAttributes(request.getReturnAttributes());
-    sr.setSearchFilter(
-      request.getSearchFilter() != null
-        ? newSearchFilter(request.getSearchFilter()) : null);
     sr.setSearchScope(request.getSearchScope());
     sr.setSizeLimit(request.getSizeLimit());
     sr.setSortBehavior(request.getSortBehavior());
@@ -180,22 +176,6 @@ public abstract class AbstractServlet extends HttpServlet
     sr.setTypesOnly(request.getTypesOnly());
     sr.setControls(request.getControls());
     return sr;
-  }
-
-
-  /**
-   * Returns a search filter initialized with the supplied filter.
-   *
-   * @param  filter  search filter to read properties from
-   *
-   * @return  search filter
-   */
-  protected static SearchFilter newSearchFilter(final SearchFilter filter)
-  {
-    final SearchFilter sf = new SearchFilter();
-    sf.setFilter(filter.getFilter());
-    sf.setFilterArgs(new ArrayList<Object>(filter.getFilterArgs()));
-    return sf;
   }
 
 
