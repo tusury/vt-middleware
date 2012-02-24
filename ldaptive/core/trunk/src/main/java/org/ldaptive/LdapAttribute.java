@@ -771,12 +771,12 @@ public class LdapAttribute extends AbstractLdapBean
     protected Collection<String> convertValuesToString(
       final Collection<byte[]> v)
     {
-      final Collection<String> values = createSortBehaviorCollection(
+      final Collection<String> c = createSortBehaviorCollection(
         String.class);
       for (byte[] value : v) {
-        values.add(LdapUtil.base64Encode(value));
+        c.add(LdapUtil.base64Encode(value));
       }
-      return values;
+      return c;
     }
 
 
@@ -790,12 +790,12 @@ public class LdapAttribute extends AbstractLdapBean
     protected Collection<byte[]> convertValuesToByteArray(
       final Collection<String> v)
     {
-      final Collection<byte[]> values = createSortBehaviorCollection(
+      final Collection<byte[]> c = createSortBehaviorCollection(
         byte[].class);
       for (String value : v) {
-        values.add(LdapUtil.utf8Encode(value));
+        c.add(LdapUtil.utf8Encode(value));
       }
-      return values;
+      return c;
     }
   }
 }
