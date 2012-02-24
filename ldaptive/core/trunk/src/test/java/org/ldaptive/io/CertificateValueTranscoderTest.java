@@ -22,13 +22,12 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link CertificateValueDecoder} and
- * {@link CertificateValueEncoder}.
+ * Unit test for {@link CertificateValueTranscoder}.
  *
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class CertificateValueTest
+public class CertificateValueTranscoderTest
 {
 
   /** Certificate with CN=a.foo.com. */
@@ -54,11 +53,9 @@ public class CertificateValueTest
     "CnSl5YzFUMnpzFZtneUhAHeFxrF+RV4f3bHLNs+sWjlmJo0ukCCnOzoiyE4oOJiL" +
     "AhDym4nIfzng6fgYBeLT1Hp/bKHivQP4ef4wgre6r1ztnFA=";
 
-  /** Decoder to test. */
-  private CertificateValueDecoder decoder = new CertificateValueDecoder();
-
-  /** Encoder to test. */
-  private CertificateValueEncoder encoder = new CertificateValueEncoder();
+  /** Transcoder to test. */
+  private CertificateValueTranscoder transcoder =
+    new CertificateValueTranscoder();
 
 
   /**
@@ -95,28 +92,13 @@ public class CertificateValueTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"io"}, dataProvider = "certs")
-  public void testDecode(
+  public void testTranscode(
     final Certificate cert, final String s, final byte[] b)
     throws Exception
   {
-    Assert.assertEquals(cert, decoder.decodeStringValue(s));
-    Assert.assertEquals(cert, decoder.decodeBinaryValue(b));
-  }
-
-
-  /**
-   * @param  cert  certificate to compare
-   * @param  s  ldap attribute string value
-   * @param  b  ldap attribute binary value
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = {"io"}, dataProvider = "certs")
-  public void testEncode(
-    final Certificate cert, final String s, final byte[] b)
-    throws Exception
-  {
-    Assert.assertEquals(s, encoder.encodeStringValue(cert));
-    Assert.assertEquals(b, encoder.encodeBinaryValue(cert));
+    Assert.assertEquals(cert, transcoder.decodeStringValue(s));
+    Assert.assertEquals(cert, transcoder.decodeBinaryValue(b));
+    Assert.assertEquals(s, transcoder.encodeStringValue(cert));
+    Assert.assertEquals(b, transcoder.encodeBinaryValue(cert));
   }
 }
