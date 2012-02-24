@@ -14,6 +14,7 @@
 package org.ldaptive.props;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -206,7 +207,13 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
   {
     try {
       try {
-        return (T) createClass(className).newInstance();
+        final Class<?> clazz = createClass(className);
+        final Constructor<?> con = clazz.getDeclaredConstructor((Class[]) null);
+        return (T) con.newInstance();
+      } catch (NoSuchMethodException e) {
+        throw new IllegalArgumentException(e);
+      } catch (InvocationTargetException e) {
+        throw new IllegalArgumentException(e);
       } catch (InstantiationException e) {
         throw new IllegalArgumentException(e);
       } catch (IllegalAccessException e) {
