@@ -20,11 +20,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
-import org.ldaptive.io.LdapAttributeValueDecoder;
-import org.ldaptive.io.LdapAttributeValueEncoder;
+import org.ldaptive.io.ValueTranscoder;
 
 /**
- * Simple bean representing an ldap attribute. Contains a name and a collection\
+ * Simple bean representing an ldap attribute. Contains a name and a collection
  * of values.
  *
  * @author  Middleware Services
@@ -265,24 +264,24 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns the values of this attribute decoded by the supplied decoder.
+   * Returns the values of this attribute decoded by the supplied transcoder.
    *
    * @param  <T>  type of decoded attributes
-   * @param  decoder  to decode attribute values with
+   * @param  transcoder  to decode attribute values with
    *
    * @return  collection of decoded attribute values
    */
-  public <T> Collection<T> getValues(final LdapAttributeValueDecoder<T> decoder)
+  public <T> Collection<T> getValues(final ValueTranscoder<T> transcoder)
   {
     final Collection<T> values = createSortBehaviorCollection(
-      decoder.getType());
+      transcoder.getType());
     if (isBinary()) {
       for (byte[] b : getBinaryValues()) {
-        values.add(decoder.decodeBinaryValue(b));
+        values.add(transcoder.decodeBinaryValue(b));
       }
     } else {
       for (String s : getStringValues()) {
-        values.add(decoder.decodeStringValue(s));
+        values.add(transcoder.decodeStringValue(s));
       }
     }
     return values;
@@ -291,16 +290,16 @@ public class LdapAttribute extends AbstractLdapBean
 
   /**
    * Returns a single decoded value of this attribute. See {@link
-   * #getValues(LdapAttributeValueDecoder)}.
+   * #getValues(ValueTranscoder)}.
    *
    * @param  <T>  type of decoded attributes
-   * @param  decoder  to decode attribute values with
+   * @param  transcoder  to decode attribute values with
    *
    * @return  single decoded attribute value
    */
-  public <T> T getValue(final LdapAttributeValueDecoder<T> decoder)
+  public <T> T getValue(final ValueTranscoder<T> transcoder)
   {
-    final Collection<T> t = getValues(decoder);
+    final Collection<T> t = getValues(transcoder);
     if (t.size() == 0) {
       return null;
     }
@@ -368,22 +367,22 @@ public class LdapAttribute extends AbstractLdapBean
 
   /**
    * Adds the supplied values for this attribute by encoding them with the
-   * supplied encoder.
+   * supplied transcoder.
    *
    * @param  <T>  type attribute to encode
-   * @param  encoder  to encode value with
+   * @param  transcoder  to encode value with
    * @param  value  to encode and add
    *
    * @throws  NullPointerException  if value is null
    */
   public <T> void addValue(
-    final LdapAttributeValueEncoder<T> encoder, final T... value)
+    final ValueTranscoder<T> transcoder, final T... value)
   {
     for (T t : value) {
       if (isBinary()) {
-        attributeValues.add(encoder.encodeBinaryValue(t));
+        attributeValues.add(transcoder.encodeBinaryValue(t));
       } else {
-        attributeValues.add(encoder.encodeStringValue(t));
+        attributeValues.add(transcoder.encodeStringValue(t));
       }
     }
   }
@@ -391,19 +390,19 @@ public class LdapAttribute extends AbstractLdapBean
 
   /**
    * Adds all the values in the supplied collection for this attribute by
-   * encoding them with the supplied encoder. See
-   * {@link #addValue(LdapAttributeValueEncoder, Object...)}.
+   * encoding them with the supplied transcoder. See
+   * {@link #addValue(ValueTranscoder, Object...)}.
    *
    * @param  <T>  type attribute to encode
-   * @param  encoder  to encode value with
+   * @param  transcoder  to encode value with
    * @param  values  to encode and add
    */
   @SuppressWarnings("unchecked")
   public <T> void addValues(
-    final LdapAttributeValueEncoder<T> encoder, final Collection<T> values)
+    final ValueTranscoder<T> transcoder, final Collection<T> values)
   {
     for (T value : values) {
-      addValue(encoder, value);
+      addValue(transcoder, value);
     }
   }
 
