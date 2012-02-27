@@ -21,7 +21,7 @@ import org.ldaptive.LdapException;
  * @param  <T>  type of provider config for this connection factory
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface ConnectionFactory<T extends ProviderConfig>
 {

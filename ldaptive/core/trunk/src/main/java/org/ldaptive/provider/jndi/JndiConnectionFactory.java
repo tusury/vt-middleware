@@ -25,7 +25,7 @@ import org.ldaptive.provider.ConnectionException;
  * Creates connections using the JNDI {@link InitialLdapContext} class.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class JndiConnectionFactory
   extends AbstractConnectionFactory<JndiProviderConfig>

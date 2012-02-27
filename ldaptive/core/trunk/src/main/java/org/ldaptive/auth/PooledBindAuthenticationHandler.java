@@ -28,7 +28,7 @@ import org.ldaptive.pool.PooledConnectionFactoryManager;
  * connections to perform the LDAP bind operation.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class PooledBindAuthenticationHandler
   extends AbstractBindAuthenticationHandler

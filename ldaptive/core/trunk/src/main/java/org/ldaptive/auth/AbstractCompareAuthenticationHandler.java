@@ -27,7 +27,7 @@ import org.ldaptive.Response;
  * Provides implementation common to compare authentication handlers.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractCompareAuthenticationHandler
   extends AbstractAuthenticationHandler

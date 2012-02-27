@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
  * Converts booleans to and from their DER encoded format.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class BooleanType extends AbstractDERType implements DEREncoder
 {

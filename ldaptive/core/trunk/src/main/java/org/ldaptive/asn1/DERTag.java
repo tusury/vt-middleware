@@ -17,7 +17,7 @@ package org.ldaptive.asn1;
  * Describes the tag of a DER-encoded type.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface DERTag
 {

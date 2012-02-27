@@ -19,7 +19,7 @@ import org.ldaptive.LdapException;
  * Provides an interface for LDAP authentication implementations.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface AuthenticationHandler
 {

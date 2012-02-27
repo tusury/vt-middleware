@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
  * Converts arbitrary-precision integers to and from their DER encoded format.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class IntegerType extends AbstractDERType implements DEREncoder
 {

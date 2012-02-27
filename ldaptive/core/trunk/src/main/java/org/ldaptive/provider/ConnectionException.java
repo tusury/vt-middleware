@@ -21,7 +21,7 @@ import org.ldaptive.control.ResponseControl;
  * Exception thrown when a connection attempt fails.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class ConnectionException extends LdapException
 {

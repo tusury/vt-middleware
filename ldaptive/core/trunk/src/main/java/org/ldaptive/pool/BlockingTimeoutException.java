@@ -18,7 +18,7 @@ package org.ldaptive.pool;
  * ConnectionPool#getConnection()}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class BlockingTimeoutException extends PoolException
 {

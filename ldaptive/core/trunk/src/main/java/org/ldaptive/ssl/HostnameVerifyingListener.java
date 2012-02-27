@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * verification fails, the socket is closed and the SSL session is invalidated.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class HostnameVerifyingListener
   implements HandshakeCompletedListener

@@ -31,7 +31,7 @@ import org.ldaptive.props.ConnectionConfigPropertySource;
  * Command line interface for {@link AddOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class AddOperationCli extends AbstractCli
 {

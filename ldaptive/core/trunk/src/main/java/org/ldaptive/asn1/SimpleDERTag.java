@@ -17,7 +17,7 @@ package org.ldaptive.asn1;
  * Describe the tag of an arbitrary application-specific or private DER type.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class SimpleDERTag implements DERTag
 {

@@ -20,7 +20,7 @@ import java.io.IOException;
  * Encodes sequences to their DER format.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class SequenceEncoder extends AbstractDERType implements DEREncoder
 {

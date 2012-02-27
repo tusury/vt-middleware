@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * {@link #registerHandler} methods.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  * @see  DERPath
  */
 public class DERParser

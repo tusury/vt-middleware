@@ -32,7 +32,7 @@ import org.ldaptive.provider.ConnectionException;
  * startTLS extended operation.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class JndiStartTLSConnectionFactory
   extends AbstractConnectionFactory<JndiProviderConfig>

@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * Test that objects that implement {@link Serializable} can be serialized.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class SerializableTest
 {

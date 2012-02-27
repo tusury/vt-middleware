@@ -17,7 +17,7 @@ package org.ldaptive.pool;
  * Thrown when an attempt to activate a pooled object fails.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class ActivationException extends PoolException
 {

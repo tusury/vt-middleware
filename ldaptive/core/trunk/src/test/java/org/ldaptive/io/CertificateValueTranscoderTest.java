@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link CertificateValueTranscoder}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class CertificateValueTranscoderTest
 {

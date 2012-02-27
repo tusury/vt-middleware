@@ -29,7 +29,7 @@ import org.ldaptive.props.ConnectionConfigPropertySource;
  * Command line interface for {@link CompareOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class CompareOperationCli extends AbstractCli
 {

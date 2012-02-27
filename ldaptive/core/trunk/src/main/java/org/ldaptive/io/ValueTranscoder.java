@@ -19,7 +19,7 @@ package org.ldaptive.io;
  * @param  <T>  type of value
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface ValueTranscoder<T>
 {

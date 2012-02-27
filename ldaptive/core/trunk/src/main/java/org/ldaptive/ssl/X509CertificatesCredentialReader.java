@@ -26,7 +26,7 @@ import java.util.List;
  * resource. Supported certificate formats include: PEM, DER, and PKCS7.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class X509CertificatesCredentialReader
   extends AbstractCredentialReader<X509Certificate[]>

@@ -24,7 +24,7 @@ import java.security.cert.X509Certificate;
  * resource. Supported certificate formats include: PEM, DER, and PKCS7.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class X509CertificateCredentialReader
   extends AbstractCredentialReader<X509Certificate>

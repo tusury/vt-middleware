@@ -25,7 +25,7 @@ import org.ldaptive.LdapException;
  * used is 'SHA'.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class CompareAuthenticationHandler
   extends AbstractCompareAuthenticationHandler

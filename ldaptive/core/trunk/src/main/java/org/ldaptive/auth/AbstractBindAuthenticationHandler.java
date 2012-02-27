@@ -19,7 +19,7 @@ import org.ldaptive.sasl.SaslConfig;
  * Provides implementation common to bind authentication handlers.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractBindAuthenticationHandler
   extends AbstractAuthenticationHandler

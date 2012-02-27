@@ -21,7 +21,7 @@ import org.ldaptive.SearchRequest;
  * Provides post search processing of an ldap entry.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface LdapEntryHandler
 {

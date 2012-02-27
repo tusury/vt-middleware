@@ -27,7 +27,7 @@ import org.ldaptive.ResultCode;
  * operation.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
   implements ConnectionFactoryManager

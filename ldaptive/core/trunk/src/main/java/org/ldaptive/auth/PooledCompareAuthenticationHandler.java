@@ -25,7 +25,7 @@ import org.ldaptive.pool.PooledConnectionFactoryManager;
  * attribute. The default password scheme used is 'SHA'.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class PooledCompareAuthenticationHandler
   extends AbstractCompareAuthenticationHandler

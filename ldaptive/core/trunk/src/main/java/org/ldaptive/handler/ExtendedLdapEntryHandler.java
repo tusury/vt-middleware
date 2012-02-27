@@ -20,7 +20,7 @@ import org.ldaptive.Connection;
  * connection that was used to perform the original search.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface ExtendedLdapEntryHandler extends LdapEntryHandler
 {

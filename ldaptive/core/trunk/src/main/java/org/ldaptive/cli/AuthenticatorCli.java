@@ -39,7 +39,7 @@ import org.ldaptive.props.SearchDnResolverPropertySource;
  * Command line interface for {@link Authenticator}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class AuthenticatorCli extends AbstractCli
 {
