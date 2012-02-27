@@ -13,7 +13,6 @@
 */
 package org.ldaptive.props;
 
-import org.ldaptive.ResultCode;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.handler.LdapEntryHandler;
@@ -55,8 +54,6 @@ public class SearchRequestPropertyInvoker extends AbstractPropertyInvoker
         newValue = createArrayTypeFromPropertyValue(
           LdapEntryHandler.class,
           value);
-      } else if (ResultCode[].class.isAssignableFrom(type)) {
-        newValue = createArrayEnumFromPropertyValue(ResultCode.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }

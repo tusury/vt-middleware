@@ -72,59 +72,6 @@ public class SearchRequest extends AbstractRequest
   /**
    * Creates a new search request.
    *
-   * @param  filter  search filter
-   */
-  public SearchRequest(final SearchFilter filter)
-  {
-    setSearchFilter(filter);
-  }
-
-
-  /**
-   * Creates a new search request.
-   *
-   * @param  filter  search filter
-   * @param  attrs  to return
-   */
-  public SearchRequest(final SearchFilter filter, final String... attrs)
-  {
-    setSearchFilter(filter);
-    setReturnAttributes(attrs);
-  }
-
-
-  /**
-   * Creates a new search request.
-   *
-   * @param  filter  search filter
-   * @param  attrs  to return
-   * @param  handlers  ldap entry handlers
-   */
-  public SearchRequest(
-    final SearchFilter filter,
-    final String[] attrs,
-    final LdapEntryHandler[] handlers)
-  {
-    setSearchFilter(filter);
-    setReturnAttributes(attrs);
-    setLdapEntryHandlers(handlers);
-  }
-
-
-  /**
-   * Creates a new search request.
-   *
-   * @param  dn  to search
-   */
-  public SearchRequest(final String dn)
-  {
-    setBaseDn(dn);
-  }
-
-
-  /**
-   * Creates a new search request.
-   *
    * @param  dn  to search
    * @param  filter  search filter
    */
@@ -158,19 +105,29 @@ public class SearchRequest extends AbstractRequest
    *
    * @param  dn  to search
    * @param  filter  search filter
+   */
+  public SearchRequest(final String dn, final String filter)
+  {
+    setBaseDn(dn);
+    setSearchFilter(new SearchFilter(filter));
+  }
+
+
+  /**
+   * Creates a new search request.
+   *
+   * @param  dn  to search
+   * @param  filter  search filter
    * @param  attrs  to return
-   * @param  handlers  ldap entry handlers
    */
   public SearchRequest(
     final String dn,
-    final SearchFilter filter,
-    final String[] attrs,
-    final LdapEntryHandler[] handlers)
+    final String filter,
+    final String... attrs)
   {
     setBaseDn(dn);
-    setSearchFilter(filter);
+    setSearchFilter(new SearchFilter(filter));
     setReturnAttributes(attrs);
-    setLdapEntryHandlers(handlers);
   }
 
 
