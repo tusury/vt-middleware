@@ -75,15 +75,17 @@ public class LRUCacheTest
     throws Exception
   {
     LdapResult lr = cache.get(
-      new SearchRequest(new SearchFilter("uid=3")));
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=3")));
     AssertJUnit.assertEquals(
-      new LdapResult(new LdapEntry("uid=3,ou=test,dc=vt,dc=edu")), lr);
-    lr = cache.get(new SearchRequest(new SearchFilter("uid=4")));
+      new LdapResult(new LdapEntry("uid=3,ou=test,dc=ldaptive,dc=org")), lr);
+    lr = cache.get(
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=4")));
     AssertJUnit.assertEquals(
-      new LdapResult(new LdapEntry("uid=4,ou=test,dc=vt,dc=edu")), lr);
-    lr = cache.get(new SearchRequest(new SearchFilter("uid=5")));
+      new LdapResult(new LdapEntry("uid=4,ou=test,dc=ldaptive,dc=org")), lr);
+    lr = cache.get(
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=5")));
     AssertJUnit.assertEquals(
-      new LdapResult(new LdapEntry("uid=5,ou=test,dc=vt,dc=edu")), lr);
+      new LdapResult(new LdapEntry("uid=5,ou=test,dc=ldaptive,dc=org")), lr);
   }
 
 
@@ -96,23 +98,27 @@ public class LRUCacheTest
   {
     AssertJUnit.assertEquals(5, cache.size());
     cache.put(
-      new SearchRequest(new SearchFilter("uid=%s", new Object[]{"101"})),
-      new LdapResult(new LdapEntry("uid=101,ou=test,dc=vt,dc=edu")));
+      new SearchRequest(
+        "dc=ldaptive,dc=org", new SearchFilter("uid=%s", new Object[]{"101"})),
+      new LdapResult(new LdapEntry("uid=101,ou=test,dc=ldaptive,dc=org")));
     cache.put(
-      new SearchRequest(new SearchFilter("uid=102")),
-      new LdapResult(new LdapEntry("uid=102,ou=test,dc=vt,dc=edu")));
+      new SearchRequest(
+        "dc=ldaptive,dc=org", new SearchFilter("uid=102")),
+      new LdapResult(new LdapEntry("uid=102,ou=test,dc=ldaptive,dc=org")));
     AssertJUnit.assertEquals(5, cache.size());
 
     LdapResult lr = cache.get(
-      new SearchRequest(new SearchFilter("uid=%s", new Object[]{"101"})));
+      new SearchRequest(
+        "dc=ldaptive,dc=org", new SearchFilter("uid=%s", new Object[]{"101"})));
     AssertJUnit.assertEquals(
-      new LdapResult(new LdapEntry("uid=101,ou=test,dc=vt,dc=edu")), lr);
+      new LdapResult(new LdapEntry("uid=101,ou=test,dc=ldaptive,dc=org")), lr);
     lr = cache.get(
-      new SearchRequest(new SearchFilter("uid=102")));
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=102")));
     AssertJUnit.assertEquals(
-      new LdapResult(new LdapEntry("uid=102,ou=test,dc=vt,dc=edu")), lr);
+      new LdapResult(new LdapEntry("uid=102,ou=test,dc=ldaptive,dc=org")), lr);
     AssertJUnit.assertNull(
-      cache.get(new SearchRequest(new SearchFilter("uid=1"))));
+      cache.get(
+        new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=1"))));
   }
 
 
@@ -122,23 +128,26 @@ public class LRUCacheTest
   private void fillCache()
   {
     cache.put(
-      new SearchRequest(new SearchFilter("uid=1")),
-      new LdapResult(new LdapEntry("uid=1,ou=test,dc=vt,dc=edu")));
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=1")),
+      new LdapResult(new LdapEntry("uid=1,ou=test,dc=ldaptive,dc=org")));
     cache.put(
-      new SearchRequest(new SearchFilter("uid=2")),
-      new LdapResult(new LdapEntry("uid=2,ou=test,dc=vt,dc=edu")));
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=2")),
+      new LdapResult(new LdapEntry("uid=2,ou=test,dc=ldaptive,dc=org")));
     cache.put(
-      new SearchRequest(new SearchFilter("uid=3")),
-      new LdapResult(new LdapEntry("uid=3,ou=test,dc=vt,dc=edu")));
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=3")),
+      new LdapResult(new LdapEntry("uid=3,ou=test,dc=ldaptive,dc=org")));
     cache.put(
-      new SearchRequest(new SearchFilter("uid=4")),
-      new LdapResult(new LdapEntry("uid=4,ou=test,dc=vt,dc=edu")));
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=4")),
+      new LdapResult(new LdapEntry("uid=4,ou=test,dc=ldaptive,dc=org")));
     cache.put(
-      new SearchRequest(new SearchFilter("uid=5")),
-      new LdapResult(new LdapEntry("uid=5,ou=test,dc=vt,dc=edu")));
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=5")),
+      new LdapResult(new LdapEntry("uid=5,ou=test,dc=ldaptive,dc=org")));
     // ensure uid=1 and uid=2 get evicted first
-    cache.get(new SearchRequest(new SearchFilter("uid=3")));
-    cache.get(new SearchRequest(new SearchFilter("uid=4")));
-    cache.get(new SearchRequest(new SearchFilter("uid=5")));
+    cache.get(
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=3")));
+    cache.get(
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=4")));
+    cache.get(
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=5")));
   }
 }
