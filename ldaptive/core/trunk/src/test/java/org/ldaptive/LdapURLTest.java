@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link LdapURL}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class LdapURLTest
 {

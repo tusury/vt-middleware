@@ -27,7 +27,7 @@ import org.ldaptive.props.ConnectionConfigPropertySource;
  * Command line interface for {@link DeleteOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class DeleteOperationCli extends AbstractCli
 {

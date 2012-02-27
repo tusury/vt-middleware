@@ -20,7 +20,7 @@ import org.ldaptive.control.ResponseControl;
  * can be found using {@link #getCause()}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class LdapException extends Exception implements Message<ResponseControl>
 {

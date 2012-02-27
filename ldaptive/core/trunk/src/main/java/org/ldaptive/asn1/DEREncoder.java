@@ -17,7 +17,7 @@ package org.ldaptive.asn1;
  * Interface for encoding DER objects.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface DEREncoder
 {

@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
  *   -extensions my_ext
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class DefaultHostnameVerifierTest
 {

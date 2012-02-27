@@ -20,7 +20,7 @@ import java.util.Map;
  * Enumeration with common BER/DER universal tag types.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public enum UniversalDERTag implements DERTag {
 

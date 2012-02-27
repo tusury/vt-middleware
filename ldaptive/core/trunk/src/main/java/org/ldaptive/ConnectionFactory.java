@@ -17,7 +17,7 @@ package org.ldaptive;
  * Factory for creating connections.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface ConnectionFactory
 {

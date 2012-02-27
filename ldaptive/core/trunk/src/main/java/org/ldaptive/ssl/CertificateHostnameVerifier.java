@@ -19,7 +19,7 @@ import java.security.cert.X509Certificate;
  * Interface for verifying a hostname matching a certificate.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface CertificateHostnameVerifier
 {

@@ -17,7 +17,7 @@ package org.ldaptive.provider;
  * Enum to define the type of connection strategy.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public enum ConnectionStrategy {
 

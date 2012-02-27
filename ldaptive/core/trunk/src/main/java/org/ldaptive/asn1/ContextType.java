@@ -19,7 +19,7 @@ import java.math.BigInteger;
  * Converts context types to their DER encoded format.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class ContextType extends AbstractDERType implements DEREncoder
 {

@@ -19,7 +19,7 @@ import org.ldaptive.control.ResponseControl;
  * Exception thrown when an ldap operation attempt fails.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class OperationException extends LdapException
 {

@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @param  <T>  type of provider config for this connection factory
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractConnectionFactory<T extends ProviderConfig>
   implements ConnectionFactory<T>

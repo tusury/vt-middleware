@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link LRUCache}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class LRUCacheTest
 {

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @param  <T>  Type of credential read by this instance.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
 {

@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
  * Provides functionality common to DER types implementations.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractDERType
 {

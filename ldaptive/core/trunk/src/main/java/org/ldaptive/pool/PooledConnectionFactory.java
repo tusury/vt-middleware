@@ -21,7 +21,7 @@ import org.ldaptive.LdapException;
  * Leverages a pool to obtain connections for performing ldap operations.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class PooledConnectionFactory implements ConnectionFactory
 {

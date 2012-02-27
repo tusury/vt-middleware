@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * Creates connections for performing ldap operations.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class DefaultConnectionFactory implements ConnectionFactory
 {

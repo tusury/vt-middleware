@@ -17,7 +17,7 @@ package org.ldaptive.pool;
  * Thrown when the pool is empty and no new requests can be serviced.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class PoolExhaustedException extends PoolException
 {

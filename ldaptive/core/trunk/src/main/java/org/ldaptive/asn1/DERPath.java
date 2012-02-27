@@ -37,7 +37,7 @@ import org.ldaptive.LdapUtil;
  * method.</p>
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class DERPath
 {
@@ -195,7 +195,7 @@ public class DERPath
    * Node which encapsulates the path name and it's location in the path.
    *
    * @author  Middleware Services
-   * @version:  $Revision$
+   * @version:  $Revision$ $Date$
    */
   private class Node
   {

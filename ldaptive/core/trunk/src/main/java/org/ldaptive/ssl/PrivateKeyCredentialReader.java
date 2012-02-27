@@ -26,7 +26,7 @@ import org.ldaptive.LdapUtil;
  * Supported private key formats include: PKCS8.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class PrivateKeyCredentialReader
   extends AbstractCredentialReader<PrivateKey>

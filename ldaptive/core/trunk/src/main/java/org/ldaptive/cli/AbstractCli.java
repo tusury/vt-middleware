@@ -37,7 +37,7 @@ import org.ldaptive.props.PropertySource.PropertyDomain;
  * Abstract base class for all CLI classes.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractCli
 {

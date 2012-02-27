@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
  * Converts strings to and from their DER encoded format.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class OctetStringType extends AbstractDERType implements DEREncoder
 {

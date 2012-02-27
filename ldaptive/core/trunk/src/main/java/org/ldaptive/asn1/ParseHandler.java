@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
  * encountered.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface ParseHandler
 {

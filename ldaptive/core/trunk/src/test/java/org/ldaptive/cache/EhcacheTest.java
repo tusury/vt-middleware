@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link Ehcache}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class EhcacheTest
 {

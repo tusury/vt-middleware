@@ -23,7 +23,7 @@ import java.util.Arrays;
  * Reads keystore credentials from a classpath, filepath, or stream resource.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class KeyStoreCredentialReader extends AbstractCredentialReader<KeyStore>
 {

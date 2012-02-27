@@ -35,7 +35,7 @@ import org.ldaptive.props.SearchRequestPropertySource;
  * Command line interface for {@link SearchOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class SearchOperationCli extends AbstractCli
 {

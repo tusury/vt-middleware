@@ -17,7 +17,7 @@ package org.ldaptive.pool;
  * Thrown when an attempt to validate a pooled object fails.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class ValidationException extends PoolException
 {

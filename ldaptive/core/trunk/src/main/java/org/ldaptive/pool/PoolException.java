@@ -19,7 +19,7 @@ import org.ldaptive.LdapException;
  * Base exception thrown when a pool operation fails.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class PoolException extends LdapException
 {

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * Base class for an LDAP authentication implementations.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractAuthenticationHandler
   implements AuthenticationHandler

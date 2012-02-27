@@ -17,7 +17,7 @@ package org.ldaptive.pool;
  * Thrown when a pool thread is unexpectedly interrupted while blocking.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class PoolInterruptedException extends PoolException
 {

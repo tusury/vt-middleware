@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * Trust manager that delegates to multiple trust managers.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class AggregateTrustManager implements X509TrustManager
 {

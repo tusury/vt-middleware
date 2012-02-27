@@ -23,7 +23,7 @@ import javax.net.ssl.X509TrustManager;
  * that verifies passes this trust manager check.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class HostnameVerifyingTrustManager implements X509TrustManager
 {

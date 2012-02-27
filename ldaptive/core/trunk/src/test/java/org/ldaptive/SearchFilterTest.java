@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link SearchFilter}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class SearchFilterTest
 {

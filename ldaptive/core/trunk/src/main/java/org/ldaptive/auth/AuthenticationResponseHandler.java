@@ -17,7 +17,7 @@ package org.ldaptive.auth;
  * Provides post processing of authentication responses.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public interface AuthenticationResponseHandler
 {

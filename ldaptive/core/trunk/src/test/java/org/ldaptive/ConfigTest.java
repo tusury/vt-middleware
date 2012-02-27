@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  * Unit tests for objects that extends {@link AbstractConfig}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class ConfigTest
 {

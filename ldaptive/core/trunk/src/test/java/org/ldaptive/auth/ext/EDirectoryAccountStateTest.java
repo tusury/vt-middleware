@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link EDirectoryAccountState}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class EDirectoryAccountStateTest
 {

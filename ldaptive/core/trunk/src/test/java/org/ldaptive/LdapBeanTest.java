@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * {@link LdapAttribute}.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class LdapBeanTest
 {
