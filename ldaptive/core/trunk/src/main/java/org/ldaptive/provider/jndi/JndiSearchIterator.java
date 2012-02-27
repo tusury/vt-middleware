@@ -25,7 +25,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
@@ -284,7 +283,7 @@ public class JndiSearchIterator implements SearchIterator
       ctx.search(
         sr.getBaseDn(),
         sr.getSearchFilter() != null ?
-          SearchFilter.format(request.getSearchFilter()) : null,
+          request.getSearchFilter().format() : null,
         getSearchControls(sr));
   }
 

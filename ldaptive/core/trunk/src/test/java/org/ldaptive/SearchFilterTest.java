@@ -75,6 +75,6 @@ public class SearchFilterTest
   public void testFormat(final String encodedFilter, final SearchFilter filter)
     throws Exception
   {
-    Assert.assertEquals(SearchFilter.format(filter), encodedFilter);
+    Assert.assertEquals(filter.format(), encodedFilter);
   }
 }
