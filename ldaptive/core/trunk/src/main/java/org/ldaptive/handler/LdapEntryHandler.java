@@ -15,6 +15,7 @@ package org.ldaptive.handler;
 
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.SearchRequest;
 
 /**
  * Provides post search processing of an ldap entry.
@@ -29,13 +30,13 @@ public interface LdapEntryHandler
   /**
    * Process an entry from an ldap search.
    *
-   * @param  criteria  search criteria used to perform the search
+   * @param  request  used to perform the search
    * @param  entry  search result
    *
    * @return  handler result
    *
    * @throws  LdapException  if the LDAP returns an error
    */
-  HandlerResult process(SearchCriteria criteria, LdapEntry entry)
+  HandlerResult process(SearchRequest request, LdapEntry entry)
     throws LdapException;
 }

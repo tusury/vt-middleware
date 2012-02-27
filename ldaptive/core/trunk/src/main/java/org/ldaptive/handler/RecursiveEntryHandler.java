@@ -194,7 +194,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   public HandlerResult process(
-    final SearchCriteria criteria,
+    final SearchRequest request,
     final LdapEntry entry)
     throws LdapException
   {
