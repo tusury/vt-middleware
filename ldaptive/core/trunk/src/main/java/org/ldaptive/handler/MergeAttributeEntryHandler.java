@@ -17,6 +17,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtil;
+import org.ldaptive.SearchRequest;
 
 /**
  * Merges the values of one or more attributes into a single attribute. The
@@ -86,7 +87,7 @@ public class MergeAttributeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected void processAttributes(
-    final SearchCriteria criteria,
+    final SearchRequest request,
     final LdapEntry entry)
     throws LdapException
   {

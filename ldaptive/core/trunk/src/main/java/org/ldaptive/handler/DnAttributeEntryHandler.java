@@ -17,6 +17,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtil;
+import org.ldaptive.SearchRequest;
 
 /**
  * Adds the entry DN as an attribute to the result set. Provides a client side
@@ -92,7 +93,7 @@ public class DnAttributeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected void processAttributes(
-    final SearchCriteria criteria,
+    final SearchRequest request,
     final LdapEntry entry)
     throws LdapException
   {

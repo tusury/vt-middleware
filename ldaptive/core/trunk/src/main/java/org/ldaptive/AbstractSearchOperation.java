@@ -17,7 +17,6 @@ import org.ldaptive.cache.Cache;
 import org.ldaptive.handler.ExtendedLdapEntryHandler;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.LdapEntryHandler;
-import org.ldaptive.handler.SearchCriteria;
 
 /**
  * Provides common implementation for search operations.
@@ -164,10 +163,9 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
     boolean abort = false;
     final LdapEntryHandler[] handler = request.getLdapEntryHandlers();
     if (handler != null && handler.length > 0) {
-      final SearchCriteria sc = new SearchCriteria(request);
       for (int i = 0; i < handler.length; i++) {
         if (handler[i] != null) {
-          final HandlerResult hr = handler[i].process(sc, processedEntry);
+          final HandlerResult hr = handler[i].process(request, processedEntry);
           if (hr.getAbortSearch()) {
             abort = true;
           }

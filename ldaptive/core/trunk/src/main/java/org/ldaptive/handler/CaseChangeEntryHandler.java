@@ -15,6 +15,7 @@ package org.ldaptive.handler;
 
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtil;
+import org.ldaptive.SearchRequest;
 
 /**
  * Provides the ability to modify the case of ldap entry DNs, attribute names,
@@ -143,7 +144,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected String processDn(
-    final SearchCriteria criteria,
+    final SearchRequest request,
     final LdapEntry entry)
   {
     return CaseChange.perform(dnCaseChange, entry.getDn());
@@ -153,7 +154,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected String processAttributeName(
-    final SearchCriteria sc,
+    final SearchRequest request,
     final String name)
   {
     return CaseChange.perform(attributeNameCaseChange, name);
@@ -163,7 +164,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected String processAttributeValue(
-    final SearchCriteria sc,
+    final SearchRequest request,
     final String value)
   {
     return CaseChange.perform(attributeValueCaseChange, value);
@@ -173,7 +174,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected byte[] processAttributeValue(
-    final SearchCriteria sc,
+    final SearchRequest request,
     final byte[] value)
   {
     return value;
