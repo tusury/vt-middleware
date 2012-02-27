@@ -150,8 +150,10 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
         loginSuccess = true;
       }
 
-      final Object[] filterArgs = new Object[] {loginDn, loginName, };
-      searchRequest.setSearchFilter(new SearchFilter(roleFilter, filterArgs));
+      final SearchFilter filter = new SearchFilter(roleFilter);
+      filter.setParameter("dn", loginDn);
+      filter.setParameter("user", loginName);
+      searchRequest.setSearchFilter(filter);
 
       final Set<LdapRole> lr = roleResolver.search(searchRequest);
       if (lr.size() == 0 && noResultsIsError) {

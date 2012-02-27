@@ -14,6 +14,7 @@
 package org.ldaptive.handler;
 
 import java.util.Arrays;
+import java.util.Map;
 import org.ldaptive.SearchRequest;
 
 /**
@@ -31,8 +32,8 @@ public class SearchCriteria
   /** filter. */
   private String searchFilter;
 
-  /** filter arguments. */
-  private Object[] filterArgs;
+  /** filter parameters. */
+  private Map<String, Object> filterParameters;
 
   /** return attributes. */
   private String[] returnAttrs;
@@ -63,7 +64,7 @@ public class SearchCriteria
     setDn(request.getBaseDn());
     if (request.getSearchFilter() != null) {
       setFilter(request.getSearchFilter().getFilter());
-      setFilterArgs(request.getSearchFilter().getFilterArgs().toArray());
+      setFilterParameters(request.getSearchFilter().getParameters());
     }
     setReturnAttrs(request.getReturnAttributes());
   }
@@ -114,24 +115,24 @@ public class SearchCriteria
 
 
   /**
-   * Gets the filter arguments.
+   * Gets the filter parameters.
    *
-   * @return  filter args
+   * @return  filter parameters
    */
-  public Object[] getFilterArgs()
+  public Map<String, Object> getFilterParameters()
   {
-    return filterArgs;
+    return filterParameters;
   }
 
 
   /**
-   * Sets the filter arguments.
+   * Sets the filter parameters.
    *
-   * @param  args  to set filter arguments
+   * @param  params  to set filter parameters
    */
-  public void setFilterArgs(final Object[] args)
+  public void setFilterParameters(final Map<String, Object> params)
   {
-    filterArgs = args;
+    filterParameters = params;
   }
 
 
@@ -167,12 +168,12 @@ public class SearchCriteria
   {
     return
       String.format(
-        "[%s@%d::dn=%s, filter=%s, filterArgs=%s, returnAttrs=%s]",
+        "[%s@%d::dn=%s, filter=%s, filterParameters=%s, returnAttrs=%s]",
         getClass().getName(),
         hashCode(),
         searchDn,
         searchFilter,
-        Arrays.toString(filterArgs),
+        filterParameters,
         Arrays.toString(returnAttrs));
   }
 }

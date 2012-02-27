@@ -13,10 +13,8 @@
 */
 package org.ldaptive.auth;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import org.ldaptive.Connection;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
@@ -48,8 +46,8 @@ public abstract class AbstractSearchDnResolver implements DnResolver
   /** Filter for searching for the user. */
   private String userFilter;
 
-  /** Filter arguments for searching for the user. */
-  private Object[] userFilterArgs;
+  /** Filter parameters for searching for the user. */
+  private Object[] userFilterParameters;
 
   /** Whether to throw an exception if multiple DNs are found. */
   private boolean allowMultipleDns;
@@ -111,25 +109,26 @@ public abstract class AbstractSearchDnResolver implements DnResolver
 
 
   /**
-   * Returns the filter arguments used to search for the user.
+   * Returns the filter parameters used to search for the user.
    *
-   * @return  filter arguments
+   * @return  filter parameters
    */
-  public Object[] getUserFilterArgs()
+  public Object[] getUserFilterParameters()
   {
-    return userFilterArgs;
+    return userFilterParameters;
   }
 
 
   /**
-   * Sets the filter arguments used to search for the user.
+   * Sets the filter parameters used to search for the user.
    *
-   * @param  filterArgs  filter arguments
+   * @param  filterParams  filter parameters
    */
-  public void setUserFilterArgs(final Object[] filterArgs)
+  public void setUserFilterParameters(final Object[] filterParams)
   {
-    logger.trace("setting userFilterArgs: {}", Arrays.toString(filterArgs));
-    userFilterArgs = filterArgs;
+    logger.trace(
+      "setting userFilterParameters: {}", Arrays.toString(filterParams));
+    userFilterParameters = filterParams;
   }
 
 
@@ -232,7 +231,7 @@ public abstract class AbstractSearchDnResolver implements DnResolver
   /**
    * Attempts to find the DN for the supplied user. {@link #getUserFilter()} is
    * used to look up the DN. The user is provided as the {0} variable filter
-   * argument. If more than one entry matches the search, the result is
+   * parameter. If more than one entry matches the search, the result is
    * controlled by {@link #setAllowMultipleDns(boolean)}.
    *
    * @param  user  to find DN for
@@ -285,9 +284,9 @@ public abstract class AbstractSearchDnResolver implements DnResolver
 
 
   /**
-   * Returns a search filter using the user filter and user filter args of the
-   * authentication config. The user parameter is injected as the first filter
-   * argument.
+   * Returns a search filter using the user filter and user filter parameters of
+   * the authentication config. The user parameter is injected as a named
+   * parameter of 'user'.
    *
    * @param  user  identifier
    *
@@ -299,13 +298,11 @@ public abstract class AbstractSearchDnResolver implements DnResolver
     if (userFilter != null) {
       logger.debug("searching for DN using userFilter");
       filter.setFilter(userFilter);
-      filter.setFilterArgs(userFilterArgs);
-
-      // make user the first filter arg
-      final List<Object> filterArgs = new ArrayList<Object>();
-      filterArgs.add(user);
-      filterArgs.addAll(filter.getFilterArgs());
-      filter.setFilterArgs(filterArgs);
+      if (userFilterParameters != null) {
+        filter.setParameters(userFilterParameters);
+      }
+      // assign user as a named parameter
+      filter.setParameter("user", user);
     } else {
       logger.error("Invalid userFilter, cannot be null or empty.");
     }
