@@ -13,9 +13,7 @@
 */
 package org.ldaptive;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.codec.binary.Hex;
 
@@ -50,19 +48,6 @@ public class SearchFilter
   public SearchFilter(final String filter)
   {
     searchFilter = filter;
-  }
-
-
-  /**
-   * Creates a new string search filter with the supplied filter and parameters.
-   *
-   * @param  filter  to set
-   * @param  params  to set
-   */
-  public SearchFilter(final String filter, final List<Object> params)
-  {
-    setFilter(filter);
-    setParameters(params);
   }
 
 
@@ -102,17 +87,6 @@ public class SearchFilter
 
 
   /**
-   * Gets the filter parameters.
-   *
-   * @return  unmodifiable filter parameters
-   */
-  public Map<String, Object> getParameters()
-  {
-    return Collections.unmodifiableMap(parameters);
-  }
-
-
-  /**
    * Sets a positional filter parameter.
    *
    * @param  position  of the parameter in the filter
@@ -137,28 +111,6 @@ public class SearchFilter
 
 
   /**
-   * Sets the filter parameters.
-   *
-   * @param  values  to set
-   */
-  public void setParameters(final Map<String, Object> values)
-  {
-    parameters.putAll(values);
-  }
-
-
-  /**
-   * Sets positional filter parameters.
-   *
-   * @param  values  to set
-   */
-  public void setParameters(final List<Object> values)
-  {
-    setParameters(values.toArray());
-  }
-
-
-  /**
    * Sets positional filter parameters.
    *
    * @param  values  to set
@@ -173,20 +125,16 @@ public class SearchFilter
 
 
   /**
-   * Returns an ldap filter with it's parameters encoded and replaced. See
+   * Returns this filter with it's parameters encoded and replaced. See
    * {@link #encode(Object)}.
-   *
-   * @param  filter  to format
    *
    * @return  formated and encoded filter
    */
-  public static String format(final SearchFilter filter)
+  public String format()
   {
-    String s = filter.getFilter();
-
-    final Map<String, Object> params = filter.getParameters();
-    if (params.size() > 0) {
-      for (Map.Entry<String, Object> e : params.entrySet()) {
+    String s = searchFilter;
+    if (parameters.size() > 0) {
+      for (Map.Entry<String, Object> e : parameters.entrySet()) {
         final String encoded = encode(e.getValue());
         if (encoded != null) {
           s = s.replace("{" + e.getKey() + "}", encoded);
