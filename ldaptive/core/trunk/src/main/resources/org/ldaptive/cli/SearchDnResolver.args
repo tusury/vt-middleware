@@ -5,4 +5,4 @@ derefAliases:how to handle aliases (NEVER|SEARCHING|FINDING|ALWAYS)
 referralBehavior:how to handle referrals (FOLLOW|THROW|IGNORE)
 subtreeSearch:whether to search for the user using a subtree search (true|false)
 userFilter:LDAP filter to search for the user
-userFilterArgs:LDAP filter arguments to apply to the userFilter
+userFilterParameters:LDAP filter parameters to apply to the userFilter

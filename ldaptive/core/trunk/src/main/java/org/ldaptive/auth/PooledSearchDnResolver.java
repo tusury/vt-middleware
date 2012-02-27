@@ -89,15 +89,15 @@ public class PooledSearchDnResolver extends AbstractSearchDnResolver
   {
     return
       String.format(
-        "[%s@%d::factory=%s, baseDn=%s, userFilter=%s, userFilterArgs=%s, " +
-        "allowMultipleDns=%s, subtreeSearch=%s, derefAliases=%s, " +
-        "referralBehavior=%s]",
+        "[%s@%d::factory=%s, baseDn=%s, userFilter=%s, " +
+        "userFilterParameters=%s, allowMultipleDns=%s, subtreeSearch=%s, " +
+        "derefAliases=%s, referralBehavior=%s]",
         getClass().getName(),
         hashCode(),
         factory,
         getBaseDn(),
         getUserFilter(),
-        Arrays.toString(getUserFilterArgs()),
+        Arrays.toString(getUserFilterParameters()),
         getAllowMultipleDns(),
         getSubtreeSearch(),
         getDerefAliases(),

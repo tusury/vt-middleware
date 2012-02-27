@@ -13,13 +13,14 @@
 */
 package org.ldaptive;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.codec.binary.Hex;
 
 /**
- * Simple bean for an ldap search filter and it's arguments.
+ * Simple bean for an ldap search filter and it's parameters.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -33,8 +34,8 @@ public class SearchFilter
   /** filter. */
   private String searchFilter;
 
-  /** filter arguments. */
-  private List<Object> searchFilterArgs = new ArrayList<Object>();
+  /** filter parameters. */
+  private Map<String, Object> parameters = new HashMap<String, Object>();
 
 
   /** Default constructor. */
@@ -53,28 +54,28 @@ public class SearchFilter
 
 
   /**
-   * Creates a new string search filter with the supplied filter and arguments.
+   * Creates a new string search filter with the supplied filter and parameters.
    *
    * @param  filter  to set
-   * @param  args  to set
+   * @param  params  to set
    */
-  public SearchFilter(final String filter, final List<Object> args)
+  public SearchFilter(final String filter, final List<Object> params)
   {
     setFilter(filter);
-    setFilterArgs(args);
+    setParameters(params);
   }
 
 
   /**
-   * Creates a new search filter with the supplied filter and arguments.
+   * Creates a new search filter with the supplied filter and parameters.
    *
    * @param  filter  to set
-   * @param  args  to set
+   * @param  params  to set
    */
-  public SearchFilter(final String filter, final Object[] args)
+  public SearchFilter(final String filter, final Object[] params)
   {
     setFilter(filter);
-    setFilterArgs(args);
+    setParameters(params);
   }
 
 
@@ -101,45 +102,79 @@ public class SearchFilter
 
 
   /**
-   * Gets the filter arguments.
+   * Gets the filter parameters.
    *
-   * @return  filter args
+   * @return  unmodifiable filter parameters
    */
-  public List<Object> getFilterArgs()
+  public Map<String, Object> getParameters()
   {
-    return searchFilterArgs;
+    return Collections.unmodifiableMap(parameters);
   }
 
 
   /**
-   * Sets the filter arguments.
+   * Sets a positional filter parameter.
    *
-   * @param  args  to set
+   * @param  position  of the parameter in the filter
+   * @param  value  to set
    */
-  public void setFilterArgs(final List<Object> args)
+  public void setParameter(final int position, final Object value)
   {
-    if (args != null) {
-      searchFilterArgs = args;
+    parameters.put(Integer.toString(position), value);
+  }
+
+
+  /**
+   * Sets a named filter parameter.
+   *
+   * @param  name  of the parameter in the filter
+   * @param  value  to set
+   */
+  public void setParameter(final String name, final Object value)
+  {
+    parameters.put(name, value);
+  }
+
+
+  /**
+   * Sets the filter parameters.
+   *
+   * @param  values  to set
+   */
+  public void setParameters(final Map<String, Object> values)
+  {
+    parameters.putAll(values);
+  }
+
+
+  /**
+   * Sets positional filter parameters.
+   *
+   * @param  values  to set
+   */
+  public void setParameters(final List<Object> values)
+  {
+    setParameters(values.toArray());
+  }
+
+
+  /**
+   * Sets positional filter parameters.
+   *
+   * @param  values  to set
+   */
+  public void setParameters(final Object[] values)
+  {
+    int i = 0;
+    for (Object o : values) {
+      parameters.put(Integer.toString(i++), o);
     }
   }
 
 
   /**
-   * Sets the filter arguments.
-   *
-   * @param  args  to set
-   */
-  public void setFilterArgs(final Object[] args)
-  {
-    if (args != null) {
-      searchFilterArgs = Arrays.asList(args);
-    }
-  }
-
-
-  /**
-   * Returns an ldap filter with it's arguments encoded and replaced. See {@link
-   * #encode(Object)}.
+   * Returns an ldap filter with it's parameters encoded and replaced. See
+   * {@link #encode(Object)}.
    *
    * @param  filter  to format
    *
@@ -149,11 +184,13 @@ public class SearchFilter
   {
     String s = filter.getFilter();
 
-    final List<Object> args = filter.getFilterArgs();
-    if (args.size() > 0) {
-      int i = 0;
-      for (Object o : args) {
-        s = s.replaceAll("\\{" + i++ + "\\}", encode(o));
+    final Map<String, Object> params = filter.getParameters();
+    if (params.size() > 0) {
+      for (Map.Entry<String, Object> e : params.entrySet()) {
+        final String encoded = encode(e.getValue());
+        if (encoded != null) {
+          s = s.replace("{" + e.getKey() + "}", encoded);
+        }
       }
     }
     return s;
@@ -176,11 +213,11 @@ public class SearchFilter
 
     String str;
     if (obj instanceof byte[]) {
-      final String s = Hex.encodeHexString((byte[]) obj);
-      final StringBuffer sb = new StringBuffer(s.length() * 2);
-      for (int i = 0; i < s.length(); i++) {
+      final char[] c = Hex.encodeHex((byte[]) obj, false);
+      final StringBuilder sb = new StringBuilder(c.length + c.length / 2);
+      for (int i = 0; i < c.length; i += 2) {
         sb.append('\\');
-        sb.append(s.charAt(i));
+        sb.append(c[i]).append(c[i + 1]);
       }
       str = sb.toString();
     } else {
@@ -263,7 +300,7 @@ public class SearchFilter
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(HASH_CODE_SEED, searchFilter, searchFilterArgs);
+      LdapUtil.computeHashCode(HASH_CODE_SEED, searchFilter, parameters);
   }
 
 
@@ -277,10 +314,10 @@ public class SearchFilter
   {
     return
       String.format(
-        "[%s@%d::filter=%s, filterArgs=%s]",
+        "[%s@%d::filter=%s, parameters=%s]",
         getClass().getName(),
         hashCode(),
         searchFilter,
-        searchFilterArgs);
+        parameters);
   }
 }
