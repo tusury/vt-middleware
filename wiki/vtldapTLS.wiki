@@ -103,7 +103,7 @@ edu.vt.middleware.ldap.sslSocketFactory={{trustCertificates=/tmp/certs.pem}}
 }}}
 
 = Hostname Validation =
-[http://www.ietf.org/rfc/rfc2830.txt RFC 2830] section 3.6 specifies how hostnames should be validated for startTLS. No such RFC exists for LDAPS and JNDI does not perform any hostname checks after the SSL handshake. To solve this problem [http://code.google.com/p/vt-middleware/source/browse/vt-ldap/branches/vt-ldap-3/src/main/java/edu/vt/middleware/ldap/ssl/DefaultHostnameVerifier.java hostname validation] is performed with a trust manager when an LDAPS connection is detected. If you determine that hostname validation is not required in your environment this behavior can be disabled by providing a your own custom SSLSocketFactory or specifying the default JNDI SSLSocketFactory: 
+[http://www.ietf.org/rfc/rfc2830.txt RFC 2830] section 3.6 specifies how hostnames should be validated for startTLS. No such RFC exists for LDAPS and JNDI does not perform any hostname checks after the SSL handshake. To solve this problem [http://code.google.com/p/vt-middleware/source/browse/vt-ldap/branches/vt-ldap-3/src/main/java/edu/vt/middleware/ldap/ssl/DefaultHostnameVerifier.java hostname validation] is performed with a trust manager when an LDAPS connection is detected. If you determine that hostname validation is not required in your environment this behavior can be disabled by providing a your own custom SSLSocketFactory or by specifying the default JNDI SSLSocketFactory: 
 
 {{{
 java.naming.ldap.factory.socket=javax.net.ssl.SSLSocketFactory
