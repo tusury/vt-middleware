@@ -28,6 +28,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtil;
+import org.ldaptive.Response;
 
 /**
  * Contains the base implementation for pooling connections. The main design
@@ -271,17 +272,21 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   protected PooledConnectionHandler createConnection()
   {
-    PooledConnectionHandler conn = new PooledConnectionHandler(
-      connectionFactory.getConnection());
+    Connection c = connectionFactory.getConnection();
+    Response<Void> r = null;
     if (connectOnCreate) {
       try {
-        conn.getConnection().open();
+        r = c.open();
       } catch (LdapException e) {
-        logger.error("unabled to connect to the ldap", e);
-        conn = null;
+        logger.error("unable to connect to the ldap", e);
+        c = null;
       }
     }
-    return conn;
+    if (c != null) {
+      return new PooledConnectionHandler(c, r);
+    } else {
+      return null;
+    }
   }
 
 
@@ -654,6 +659,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     /** Underlying connection. */
     private Connection conn;
 
+    /** Response produced when the connection was opened. */
+    private Response<Void> openResponse;
+
     /** Time this connection was created. */
     private long createdTime = System.currentTimeMillis();
 
@@ -662,10 +670,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
      * Creates a new pooled connection.
      *
      * @param  c  connection to participate in this pool
+     * @param  r  response produced by opening the connection
      */
-    public PooledConnectionHandler(final Connection c)
+    public PooledConnectionHandler(final Connection c, final Response<Void> r)
     {
       conn = c;
+      openResponse = r;
     }
 
 
@@ -730,7 +740,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       final Object[] args)
       throws Throwable
     {
-      if ("close".equals(method.getName())) {
+      if ("open".equals(method.getName())) {
+        return openResponse;
+      } else if ("close".equals(method.getName())) {
         putConnection((Connection) proxy);
         return null;
       } else {

@@ -40,7 +40,7 @@ public class ConnectActivator implements Activator<Connection>
         c.open();
         success = true;
       } catch (Exception e) {
-        logger.error("unabled to connect to the ldap", e);
+        logger.error("unable to connect to the ldap", e);
       }
     }
     return success;
