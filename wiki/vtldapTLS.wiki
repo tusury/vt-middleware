@@ -109,7 +109,7 @@ edu.vt.middleware.ldap.sslSocketFactory={{trustCertificates=/tmp/certs.pem}}
 java.naming.ldap.factory.socket=javax.net.ssl.SSLSocketFactory
 }}}
 
-Note that using {{{edu.vt.middleware.ldap.ssl.sslSocketFactory}}} has no affect on LDAPS connections. That property only impacts connections that use startTLS.
+Note that using the {{{edu.vt.middleware.ldap.ssl.sslSocketFactory}}} property has no affect on LDAPS connections. That property only impacts connections that use startTLS.
 
 = Useful Links =
   * [http://java.sun.com/j2se/1.5.0/docs/guide/security/jsse/JSSERefGuide.html]
