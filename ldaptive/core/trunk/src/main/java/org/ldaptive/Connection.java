@@ -60,6 +60,16 @@ public interface Connection
 
 
   /**
+   * Returns whether {@link #open(BindRequest)} was successfully invoked on this
+   * connection and {@link #close()} and not been invoked. This method does not
+   * indicate the viability of this connection for use.
+   *
+   * @return  whether this connection is open
+   */
+  boolean isOpen();
+
+
+  /**
    * Returns the provider connection to invoke the provider specific
    * implementation. Must be called after a successful call to {@link #open()}.
    *
