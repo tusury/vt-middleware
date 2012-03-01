@@ -734,6 +734,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings("unchecked")
     public Object invoke(
       final Object proxy,
       final Method method,
@@ -741,6 +742,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       throws Throwable
     {
       if ("open".equals(method.getName())) {
+        if (!conn.isOpen()) {
+          openResponse = (Response<Void>) method.invoke(conn, args);
+        }
         return openResponse;
       } else if ("close".equals(method.getName())) {
         putConnection((Connection) proxy);

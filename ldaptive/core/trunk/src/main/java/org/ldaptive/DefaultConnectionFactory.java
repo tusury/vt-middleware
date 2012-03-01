@@ -280,7 +280,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      */
     public org.ldaptive.provider.Connection getProviderConnection()
     {
-      if (providerConnection == null) {
+      if (!isOpen()) {
         throw new IllegalStateException("Connection is not open");
       }
       return providerConnection;
@@ -328,7 +328,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
     public synchronized Response<Void> open(final BindRequest request)
       throws LdapException
     {
-      if (providerConnection != null) {
+      if (isOpen()) {
         throw new IllegalStateException("Connection already open");
       }
       providerConnection = providerConnectionFactory.create();
@@ -336,11 +336,22 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
+    /**
+     * Returns whether the underlying provider connection is not null.
+     *
+     * @return  whether the provider connection has been initialized
+     */
+    public boolean isOpen()
+    {
+      return providerConnection != null;
+    }
+
+
     /** This will close the connection to the LDAP. */
     public synchronized void close()
     {
       try {
-        if (providerConnection != null) {
+        if (isOpen()) {
           providerConnection.close();
         }
       } catch (LdapException e) {
