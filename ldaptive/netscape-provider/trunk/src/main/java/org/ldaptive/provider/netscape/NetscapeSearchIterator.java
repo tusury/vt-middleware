@@ -26,7 +26,6 @@ import org.ldaptive.LdapException;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
@@ -198,7 +197,8 @@ public class NetscapeSearchIterator implements SearchIterator
       conn.search(
         sr.getBaseDn(),
         getSearchScope(sr.getSearchScope()),
-        SearchFilter.format(sr.getSearchFilter()),
+        sr.getSearchFilter() != null ?
+          sr.getSearchFilter().format() : null,
         retAttrs,
         sr.getTypesOnly(),
         getLDAPSearchConstraints(request));
