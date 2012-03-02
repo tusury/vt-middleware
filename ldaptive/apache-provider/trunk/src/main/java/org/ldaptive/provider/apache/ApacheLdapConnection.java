@@ -243,7 +243,7 @@ public class ApacheLdapConnection implements Connection
       }
       bri.setVersion3(true);
       bri.setSimple(true);
-      bri.setName(new Dn(request.getDn()));
+      bri.setDn(new Dn(request.getDn()));
       bri.setCredentials(request.getCredential().getBytes());
 
       final BindResponse br = connection.bind(bri);
