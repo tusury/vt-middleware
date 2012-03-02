@@ -185,6 +185,28 @@ public final class X509Utils
 
 
   /**
+   * Reads a single extension field from the given X.509 certificate.
+   *
+   * @param cert Certificate from which to read extensions.
+   * @param type Type that describes the extension to read.
+   *
+   * @return Value type of extension from the
+   * {@link edu.vt.middleware.crypt.x509.types} package or null if no such
+   * extension is defined.
+   */
+  public static Object readExtension(
+      final X509Certificate cert, final ExtensionType type)
+  {
+    final ExtensionReader reader = new ExtensionReader(cert);
+    try {
+      return reader.read(type);
+    } catch (CryptException e) {
+      throw new RuntimeException("Error reading " + type, e);
+    }
+  }
+
+
+  /**
    * Reads all the X.509 extension fields from the certificate and makes them
    * available as a map of types to values.
    *
