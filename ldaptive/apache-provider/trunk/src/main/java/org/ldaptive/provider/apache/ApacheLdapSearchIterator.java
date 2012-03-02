@@ -28,7 +28,6 @@ import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
@@ -192,7 +191,9 @@ public class ApacheLdapSearchIterator implements SearchIterator
     if (deref != null) {
       apacheSr.setDerefAliases(deref);
     }
-    apacheSr.setFilter(SearchFilter.format(sr.getSearchFilter()));
+    if (sr.getSearchFilter() != null) {
+      apacheSr.setFilter(sr.getSearchFilter().format());
+    }
 
     final SearchScope searchScope = getSearchScope(sr.getSearchScope());
     if (searchScope != null) {
