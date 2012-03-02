@@ -25,7 +25,6 @@ import org.ldaptive.LdapException;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
@@ -174,7 +173,8 @@ public class JLdapSearchIterator implements SearchIterator
       conn.search(
         request.getBaseDn(),
         getSearchScope(request.getSearchScope()),
-        SearchFilter.format(request.getSearchFilter()),
+        request.getSearchFilter() != null ?
+          request.getSearchFilter().format() : null,
         getReturnAttributes(request),
         request.getTypesOnly(),
         constraints);
