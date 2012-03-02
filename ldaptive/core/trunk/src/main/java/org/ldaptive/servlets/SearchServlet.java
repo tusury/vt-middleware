@@ -138,7 +138,7 @@ public final class SearchServlet extends AbstractServlet
             new OutputStreamWriter(response.getOutputStream())));
       } else {
         final String content = request.getParameter("content-type");
-        if (content != null && "text".equalsIgnoreCase(content)) {
+        if ("text".equalsIgnoreCase(content)) {
           response.setContentType("text/plain");
         } else {
           response.setContentType("text/xml");
