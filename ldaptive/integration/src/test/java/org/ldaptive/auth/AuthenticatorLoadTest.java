@@ -205,72 +205,54 @@ public class AuthenticatorLoadTest extends AbstractTest
         {
           "jadams@vt.edu",
           "password2",
-          "departmentNumber={1}",
-          "0822",
           "cn",
           "cn=John Adams",
         },
         {
           "tjefferson@vt.edu",
           "password3",
-          "departmentNumber={1}",
-          "0823",
           "givenName|sn",
           "givenName=Thomas|sn=Jefferson",
         },
         {
           "jmadison@vt.edu",
           "password4",
-          "departmentNumber={1}",
-          "0824",
           "givenName|sn",
           "givenName=James|sn=Madison",
         },
         {
           "jmonroe@vt.edu",
           "password5",
-          "departmentNumber={1}",
-          "0825",
           "givenName|sn",
           "givenName=James|sn=Monroe",
         },
         {
           "jqadams@vt.edu",
           "password6",
-          "departmentNumber={1}",
-          "0826",
           "cn",
           "cn=John Quincy Adams",
         },
         {
           "ajackson@vt.edu",
           "password7",
-          "departmentNumber={1}",
-          "0827",
           "givenName|sn",
           "givenName=Andrew|sn=Jackson",
         },
         {
           "mvburen@vt.edu",
           "password8",
-          "departmentNumber={1}",
-          "0828",
           "givenName|sn",
           "givenName=Martin|sn=Buren",
         },
         {
           "whharrison@vt.edu",
           "password9",
-          "departmentNumber={1}",
-          "0829",
           "givenName|sn",
           "givenName=William|sn=Harrison",
         },
         {
           "jtyler@vt.edu",
           "password10",
-          "departmentNumber={1}",
-          "0830",
           "givenName|sn",
           "givenName=John|sn=Tyler",
         },
@@ -281,8 +263,6 @@ public class AuthenticatorLoadTest extends AbstractTest
   /**
    * @param  user  to authenticate.
    * @param  credential  to authenticate with.
-   * @param  filter  to authorize with.
-   * @param  filterArgs  to authorize with
    * @param  returnAttrs  to search for.
    * @param  expectedAttrs  to expect from the search.
    *
@@ -298,8 +278,6 @@ public class AuthenticatorLoadTest extends AbstractTest
   public void authenticate(
     final String user,
     final String credential,
-    final String filter,
-    final String filterArgs,
     final String returnAttrs,
     final String expectedAttrs)
     throws Exception
@@ -318,8 +296,6 @@ public class AuthenticatorLoadTest extends AbstractTest
   /**
    * @param  user  to authenticate.
    * @param  credential  to authenticate with.
-   * @param  filter  to authorize with.
-   * @param  filterArgs  to authorize with
    * @param  returnAttrs  to search for.
    * @param  expectedAttrs  to expect from the search.
    *
@@ -335,8 +311,6 @@ public class AuthenticatorLoadTest extends AbstractTest
   public void authenticatePooled(
     final String user,
     final String credential,
-    final String filter,
-    final String filterArgs,
     final String returnAttrs,
     final String expectedAttrs)
     throws Exception

@@ -108,14 +108,14 @@
 
   <parameter name="searchDn" value="ou=test,dc=vt,dc=edu"/>
   <parameter name="searchFilter" value="(uid={0})"/>
-  <parameter name="searchFilterArgs" value="2"/>
+  <parameter name="searchFilterParameters" value="2"/>
   <parameter name="searchReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="searchResults"
              value="/org/ldaptive/searchResults-2.ldif"/>
 
   <parameter name="recursiveSearchDn" value="ou=test,dc=vt,dc=edu"/>
   <parameter name="recursiveSearchFilter" value="(uugid={0})"/>
-  <parameter name="recursiveSearchFilterArgs" value="group2"/>
+  <parameter name="recursiveSearchFilterParameters" value="group2"/>
   <parameter name="recursiveHandlerResults"
              value="/org/ldaptive/recursiveHandlerResults.ldif"/>
 
@@ -142,7 +142,10 @@
              value="/9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k="/>
 
   <parameter name="specialCharSearchDn" value="ou=test,dc=vt,dc=edu"/>
-  <parameter name="specialCharSearchFilter" value="(uid=17893)"/>
+  <parameter name="specialCharSearchFilter" value="(&amp;(uid=17893)(sn={0}))"/>
+  <parameter name="specialCharSearchFilterParameters" value="(Us\er)*"/>
+  <parameter name="specialCharBinarySearchFilter" value="(givenName={0})"/>
+  <parameter name="specialCharBinarySearchFilterParameters" value="VGVzdA=="/>
   <parameter name="specialCharSearchResults"
              value="/org/ldaptive/specialChars.ldif"/>
 
@@ -215,21 +218,21 @@
 
   <parameter name="digestMd5SearchDn" value="ou=test,dc=vt,dc=edu"/>
   <parameter name="digestMd5SearchFilter" value="(uid={0})"/>
-  <parameter name="digestMd5SearchFilterArgs" value="2"/>
+  <parameter name="digestMd5SearchFilterParameters" value="2"/>
   <parameter name="digestMd5SearchReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="digestMd5SearchResults"
              value="/org/ldaptive/searchResults-2.ldif"/>
 
   <parameter name="cramMd5SearchDn" value="ou=test,dc=vt,dc=edu"/>
   <parameter name="cramMd5SearchFilter" value="(uid={0})"/>
-  <parameter name="cramMd5SearchFilterArgs" value="test3"/>
+  <parameter name="cramMd5SearchFilterParameters" value="test3"/>
   <parameter name="cramMd5SearchReturnAttrs" value="cn|sn|uid"/>
   <parameter name="cramMd5SearchResults"
              value="/org/ldaptive/test3.ldif"/>
 
   <parameter name="saslExternalSearchDn" value="ou=test,dc=vt,dc=edu"/>
   <parameter name="saslExternalSearchFilter" value="(uid={0})"/>
-  <parameter name="saslExternalSearchFilterArgs" value="2"/>
+  <parameter name="saslExternalSearchFilterParameters" value="2"/>
   <parameter name="saslExternalSearchReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="saslExternalSearchResults"
              value="/org/ldaptive/searchResults-2.ldif"/>
@@ -238,7 +241,7 @@
   <parameter name="krb5Kdc" value="${ldapTestHost}"/>
   <parameter name="gssApiSearchDn" value="ou=test,dc=vt,dc=edu"/>
   <parameter name="gssApiSearchFilter" value="(uid={0})"/>
-  <parameter name="gssApiSearchFilterArgs" value="2"/>
+  <parameter name="gssApiSearchFilterParameters" value="2"/>
   <parameter name="gssApiSearchReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="gssApiSearchResults"
              value="/org/ldaptive/searchResults-2.ldif"/>
@@ -252,8 +255,8 @@
 
   <parameter name="authenticateDn" value="uid=6,ou=test,dc=vt,dc=edu"/>
   <parameter name="authenticateDnCredential" value="password6"/>
-  <parameter name="authenticateDnFilter" value="(departmentNumber={1})"/>
-  <parameter name="authenticateDnFilterArgs" value="0826"/>
+  <parameter name="authenticateDnFilter" value="(departmentNumber={0})"/>
+  <parameter name="authenticateDnFilterParameters" value="0826"/>
   <parameter name="authenticateDnReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="authenticateDnResults"
              value="/org/ldaptive/searchResults-6.ldif"/>
@@ -292,9 +295,9 @@
              value="-ldapUrl|${ldapTestHost}|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-dn|uid=8,ou=test,dc=vt,dc=edu"/>
 
   <parameter name="cliAuthTLSArgs"
-             value="-ldapUrl|${ldapTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useStartTLS|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={0})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useStartTLS|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthSSLArgs"
-             value="-ldapUrl|${ldapSslTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useSSL|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={0})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapSslTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useSSL|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthResults"
              value="/org/ldaptive/searchResults-9.ldif"/>
 

@@ -405,7 +405,7 @@ public class AuthenticatorTest extends AbstractTest
    * @param  dn  to authenticate.
    * @param  credential  to authenticate with.
    * @param  filter  to authorize with.
-   * @param  filterArgs  to authorize with.
+   * @param  filterParameters  to authorize with.
    *
    * @throws  Exception  On test failure.
    */
@@ -414,7 +414,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateDn",
       "authenticateDnCredential",
       "authenticateDnFilter",
-      "authenticateDnFilterArgs"
+      "authenticateDnFilterParameters"
     }
   )
   @Test(groups = {"auth"})
@@ -422,7 +422,7 @@ public class AuthenticatorTest extends AbstractTest
     final String dn,
     final String credential,
     final String filter,
-    final String filterArgs)
+    final String filterParameters)
     throws Exception
   {
     final Authenticator auth = createTLSDnAuthenticator(true);

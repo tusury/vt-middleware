@@ -27,6 +27,8 @@ import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
+import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.PooledConnectionFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -248,7 +250,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
-   * @param  filterArgs  to replace args in filter with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
@@ -258,7 +260,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "searchDn",
       "searchFilter",
-      "searchFilterArgs",
+      "searchFilterParameters",
       "searchReturnAttrs",
       "searchResults"
     }
@@ -272,7 +274,7 @@ public class SearchOperationTest extends AbstractTest
   public void search(
     final String dn,
     final String filter,
-    final String filterArgs,
+    final String filterParameters,
     final String returnAttrs,
     final String ldifFile)
     throws Exception
@@ -290,7 +292,7 @@ public class SearchOperationTest extends AbstractTest
     LdapResult result = search.execute(
       new SearchRequest(
         dn,
-        new SearchFilter(filter, filterArgs.split("\\|")),
+        new SearchFilter(filter, filterParameters.split("\\|")),
         returnAttrs.split("\\|"))).getResult();
     AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
 
@@ -298,39 +300,29 @@ public class SearchOperationTest extends AbstractTest
     result = search.execute(
       new SearchRequest(
         dn,
-        new SearchFilter(filter, filterArgs.split("\\|")),
+        new SearchFilter(filter, filterParameters.split("\\|")),
         new String[]{})).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching without handler
-    result = search.execute(
-      new SearchRequest(
-        dn,
-        new SearchFilter(filter, filterArgs.split("\\|")),
-        returnAttrs.split("\\|"),
-        new LdapEntryHandler[0])).getResult();
+    final SearchRequest sr = new SearchRequest(
+      dn,
+      new SearchFilter(filter, filterParameters.split("\\|")),
+      returnAttrs.split("\\|"));
+    sr.setLdapEntryHandlers(new LdapEntryHandler[0]);
+    result = search.execute(sr).getResult();
     AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
 
     // test searching with multiple handlers
     final DnAttributeEntryHandler srh = new DnAttributeEntryHandler();
-    result = search.execute(
-      new SearchRequest(
-        dn,
-        new SearchFilter(filter, filterArgs.split("\\|")),
-        returnAttrs.split("\\|"),
-        new LdapEntryHandler[]{
-          new NoOpEntryHandler(), srh, })).getResult();
+    sr.setLdapEntryHandlers(new NoOpEntryHandler(), srh);
+    result = search.execute(sr).getResult();
     AssertJUnit.assertEquals(entryDnResult, result);
 
     // test that entry dn handler is no-op if attribute name conflicts
     srh.setDnAttributeName("givenName");
-    result = search.execute(
-      new SearchRequest(
-        dn,
-        new SearchFilter(filter, filterArgs.split("\\|")),
-        returnAttrs.split("\\|"),
-        new LdapEntryHandler[]{
-          new NoOpEntryHandler(), srh, })).getResult();
+    sr.setLdapEntryHandlers(new NoOpEntryHandler(), srh);
+    result = search.execute(sr).getResult();
     AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
   }
 
@@ -435,7 +427,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
-   * @param  filterArgs  to replace args in filter with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -444,7 +436,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "recursiveSearchDn",
       "recursiveSearchFilter",
-      "recursiveSearchFilterArgs",
+      "recursiveSearchFilterParameters",
       "recursiveHandlerResults"
     }
   )
@@ -452,7 +444,7 @@ public class SearchOperationTest extends AbstractTest
   public void recursiveHandlerSearch(
     final String dn,
     final String filter,
-    final String filterArgs,
+    final String filterParameters,
     final String ldifFile)
     throws Exception
   {
@@ -466,12 +458,10 @@ public class SearchOperationTest extends AbstractTest
       "member",
       new String[] {"uugid", "uid"});
 
-    final LdapResult result = search.execute(
-      new SearchRequest(
-        dn,
-        new SearchFilter(filter, filterArgs.split("\\|")),
-        null,
-        new LdapEntryHandler[]{rsrh})).getResult();
+    final SearchRequest sr = new SearchRequest(
+      dn, new SearchFilter(filter, filterParameters.split("\\|")));
+    sr.setLdapEntryHandlers(rsrh);
+    final LdapResult result = search.execute(sr).getResult();
     AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
   }
 
@@ -508,7 +498,7 @@ public class SearchOperationTest extends AbstractTest
       final LdapResult result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(
         TestUtil.convertLdifToResult(expected),
-        LdapResult.mergeResults(result));
+        LdapResult.mergeEntries(result));
     } finally {
       conn.close();
     }
@@ -549,7 +539,7 @@ public class SearchOperationTest extends AbstractTest
       final LdapResult result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(
         TestUtil.convertLdifToResult(expected),
-        LdapResult.mergeResults(result));
+        LdapResult.mergeEntries(result));
     } finally {
       conn.close();
     }
@@ -595,8 +585,8 @@ public class SearchOperationTest extends AbstractTest
       final SearchRequest sr = new SearchRequest(
         dn,
         new SearchFilter(filter),
-        returnAttrs.split("\\|"),
-        new LdapEntryHandler[]{handler});
+        returnAttrs.split("\\|"));
+      sr.setLdapEntryHandlers(handler);
       sr.setSortBehavior(SortBehavior.SORTED);
       final LdapResult result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
@@ -657,7 +647,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
-   * @param  filterArgs  to replace args in filter with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
@@ -667,7 +657,7 @@ public class SearchOperationTest extends AbstractTest
       {
         "searchDn",
         "searchFilter",
-        "searchFilterArgs",
+        "searchFilterParameters",
         "searchReturnAttrs",
         "searchResults"
       }
@@ -676,7 +666,7 @@ public class SearchOperationTest extends AbstractTest
   public void caseChangeSearch(
     final String dn,
     final String filter,
-    final String filterArgs,
+    final String filterParameters,
     final String returnAttrs,
     final String ldifFile)
     throws Exception
@@ -691,12 +681,12 @@ public class SearchOperationTest extends AbstractTest
 
       // test no case change
       final LdapResult noChangeResult = TestUtil.convertLdifToResult(expected);
-      LdapResult result = search.execute(
-        new SearchRequest(
-          dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
-          returnAttrs.split("\\|"),
-          new LdapEntryHandler[]{srh})).getResult();
+      SearchRequest sr = new SearchRequest(
+        dn,
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        returnAttrs.split("\\|"));
+      sr.setLdapEntryHandlers(srh);
+      LdapResult result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(noChangeResult, result);
 
       // test lower case attribute values
@@ -711,12 +701,12 @@ public class SearchOperationTest extends AbstractTest
         la.clear();
         la.addStringValues(s);
       }
-      result = search.execute(
-        new SearchRequest(
-          dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
-          returnAttrs.split("\\|"),
-          new LdapEntryHandler[]{srh})).getResult();
+      sr = new SearchRequest(
+        dn,
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        returnAttrs.split("\\|"));
+      sr.setLdapEntryHandlers(srh);
+      result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(lcValuesChangeResult, result);
 
       // test upper case attribute names
@@ -727,12 +717,12 @@ public class SearchOperationTest extends AbstractTest
       for (LdapAttribute la : ucNamesChangeResult.getEntry().getAttributes()) {
         la.setName(la.getName().toUpperCase());
       }
-      result = search.execute(
-        new SearchRequest(
-          dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
-          returnAttrs.split("\\|"),
-          new LdapEntryHandler[]{srh})).getResult();
+      sr = new SearchRequest(
+        dn,
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        returnAttrs.split("\\|"));
+      sr.setLdapEntryHandlers(srh);
+      result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(ucNamesChangeResult, result);
 
       // test lower case everything
@@ -752,12 +742,12 @@ public class SearchOperationTest extends AbstractTest
         la.clear();
         la.addStringValues(s);
       }
-      result = search.execute(
-        new SearchRequest(
-          dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
-          returnAttrs.split("\\|"),
-          new LdapEntryHandler[]{srh})).getResult();
+      sr = new SearchRequest(
+        dn,
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        returnAttrs.split("\\|"));
+      sr.setLdapEntryHandlers(srh);
+      result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(ucNamesChangeResult, result);
     } finally {
       conn.close();
@@ -768,6 +758,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -776,6 +767,9 @@ public class SearchOperationTest extends AbstractTest
     {
       "specialCharSearchDn",
       "specialCharSearchFilter",
+      "specialCharSearchFilterParameters",
+      "specialCharBinarySearchFilter",
+      "specialCharBinarySearchFilterParameters",
       "specialCharSearchResults"
     }
   )
@@ -783,6 +777,9 @@ public class SearchOperationTest extends AbstractTest
   public void specialCharsSearch(
     final String dn,
     final String filter,
+    final String filterParameters,
+    final String binaryFilter,
+    final String binaryFilterParameters,
     final String ldifFile)
     throws Exception
   {
@@ -792,11 +789,21 @@ public class SearchOperationTest extends AbstractTest
     final LdapResult specialCharsResult = TestUtil.convertLdifToResult(
       expected);
 
-    // test special character searching
-    final LdapResult result = search.execute(
+    LdapResult result = search.execute(
       new SearchRequest(
         dn,
-        new SearchFilter(filter))).getResult();
+        new SearchFilter(filter, filterParameters.split("\\|")))).getResult();
+    // DNs returned from JNDI may have escaped characters
+    result.getEntry().setDn(result.getEntry().getDn().replaceAll("\\\\", ""));
+    AssertJUnit.assertEquals(specialCharsResult, result);
+
+    result = search.execute(
+      new SearchRequest(
+        dn,
+        new SearchFilter(
+          binaryFilter,
+          new Object[] {
+            LdapUtil.base64Decode(binaryFilterParameters)}))).getResult();
     // DNs returned from JNDI may have escaped characters
     result.getEntry().setDn(result.getEntry().getDn().replaceAll("\\\\", ""));
     AssertJUnit.assertEquals(specialCharsResult, result);
@@ -1199,7 +1206,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
-   * @param  filterArgs  to replace args in filter with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
@@ -1209,7 +1216,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "digestMd5SearchDn",
       "digestMd5SearchFilter",
-      "digestMd5SearchFilterArgs",
+      "digestMd5SearchFilterParameters",
       "digestMd5SearchReturnAttrs",
       "digestMd5SearchResults"
     }
@@ -1218,7 +1225,7 @@ public class SearchOperationTest extends AbstractTest
   public void digestMd5Search(
     final String dn,
     final String filter,
-    final String filterArgs,
+    final String filterParameters,
     final String returnAttrs,
     final String ldifFile)
     throws Exception
@@ -1231,7 +1238,7 @@ public class SearchOperationTest extends AbstractTest
       final LdapResult result = search.execute(
         new SearchRequest(
           dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
+          new SearchFilter(filter, filterParameters.split("\\|")),
           returnAttrs.split("\\|"))).getResult();
       AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
     } finally {
@@ -1243,7 +1250,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
-   * @param  filterArgs  to replace args in filter with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
@@ -1253,7 +1260,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "cramMd5SearchDn",
       "cramMd5SearchFilter",
-      "cramMd5SearchFilterArgs",
+      "cramMd5SearchFilterParameters",
       "cramMd5SearchReturnAttrs",
       "cramMd5SearchResults"
     }
@@ -1262,7 +1269,7 @@ public class SearchOperationTest extends AbstractTest
   public void cramMd5Search(
     final String dn,
     final String filter,
-    final String filterArgs,
+    final String filterParameters,
     final String returnAttrs,
     final String ldifFile)
     throws Exception
@@ -1275,7 +1282,7 @@ public class SearchOperationTest extends AbstractTest
       final LdapResult result = search.execute(
         new SearchRequest(
           dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
+          new SearchFilter(filter, filterParameters.split("\\|")),
           returnAttrs.split("\\|"))).getResult();
       AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
     } finally {
@@ -1287,7 +1294,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
-   * @param  filterArgs  to replace args in filter with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
@@ -1297,7 +1304,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "saslExternalSearchDn",
       "saslExternalSearchFilter",
-      "saslExternalSearchFilterArgs",
+      "saslExternalSearchFilterParameters",
       "saslExternalSearchReturnAttrs",
       "saslExternalSearchResults"
     }
@@ -1306,7 +1313,7 @@ public class SearchOperationTest extends AbstractTest
   public void saslExternalSearch(
     final String dn,
     final String filter,
-    final String filterArgs,
+    final String filterParameters,
     final String returnAttrs,
     final String ldifFile)
     throws Exception
@@ -1319,7 +1326,7 @@ public class SearchOperationTest extends AbstractTest
       final LdapResult result = search.execute(
         new SearchRequest(
           dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
+          new SearchFilter(filter, filterParameters.split("\\|")),
           returnAttrs.split("\\|"))).getResult();
       AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
     } finally {
@@ -1333,7 +1340,7 @@ public class SearchOperationTest extends AbstractTest
    * @param  krb5Kdc  kerberos kdc
    * @param  dn  to search on.
    * @param  filter  to search with.
-   * @param  filterArgs  to replace args in filter with.
+   * @param  filterParameters  to replace parameters in filter with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
@@ -1345,7 +1352,7 @@ public class SearchOperationTest extends AbstractTest
       "ldapTestHost",
       "gssApiSearchDn",
       "gssApiSearchFilter",
-      "gssApiSearchFilterArgs",
+      "gssApiSearchFilterParameters",
       "gssApiSearchReturnAttrs",
       "gssApiSearchResults"
     }
@@ -1356,7 +1363,7 @@ public class SearchOperationTest extends AbstractTest
     final String krb5Kdc,
     final String dn,
     final String filter,
-    final String filterArgs,
+    final String filterParameters,
     final String returnAttrs,
     final String ldifFile)
     throws Exception
@@ -1379,7 +1386,7 @@ public class SearchOperationTest extends AbstractTest
       final LdapResult result = search.execute(
         new SearchRequest(
           dn,
-          new SearchFilter(filter, filterArgs.split("\\|")),
+          new SearchFilter(filter, filterParameters.split("\\|")),
           returnAttrs.split("\\|"))).getResult();
       AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
     } finally {
@@ -1389,5 +1396,65 @@ public class SearchOperationTest extends AbstractTest
       System.clearProperty("java.security.krb5.kdc");
       conn.close();
     }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "searchDn",
+      "searchFilter",
+      "searchFilterParameters",
+      "searchReturnAttrs",
+      "searchResults"
+    }
+  )
+  @Test(groups = {"search"})
+  public void executorSearch(
+    final String dn,
+    final String filter,
+    final String filterParameters,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final SearchExecutor executor = new SearchExecutor();
+    executor.setBaseDn(dn);
+    executor.setSearchFilter(
+      new SearchFilter(filter, filterParameters.split("\\|")));
+    executor.setReturnAttributes(returnAttrs.split("\\|"));
+
+    final String expected = TestUtil.readFileIntoString(ldifFile);
+
+    final ConnectionFactory cf = new DefaultConnectionFactory(
+      TestUtil.readConnectionConfig(null));
+    LdapResult result = executor.search(cf).getResult();
+    AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
+
+    BlockingConnectionPool pool = new BlockingConnectionPool(
+      new DefaultConnectionFactory(TestUtil.readConnectionConfig(null)));
+    pool.setConnectOnCreate(false);
+    pool.initialize();
+    PooledConnectionFactory pcf = new PooledConnectionFactory(pool);
+    result = executor.search(pcf).getResult();
+    pool.close();
+    AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
+
+    pool = new BlockingConnectionPool(
+      new DefaultConnectionFactory(TestUtil.readConnectionConfig(null)));
+    pool.setConnectOnCreate(true);
+    pool.initialize();
+    pcf = new PooledConnectionFactory(pool);
+    result = executor.search(pcf).getResult();
+    pool.close();
+    AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
   }
 }
