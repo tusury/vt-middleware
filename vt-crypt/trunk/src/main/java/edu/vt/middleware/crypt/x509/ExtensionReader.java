@@ -313,19 +313,18 @@ public final class ExtensionReader
    * @throws  CryptException  On errors reading encoded certificate extension
    * field data.
    */
-  public Map<ExtensionType, Object> readAll()
-    throws CryptException
+  public Map<ExtensionType, Object> readAll() throws CryptException
   {
-    final Map<ExtensionType, Object> extMap =
+    final Map<ExtensionType, Object> map =
       new HashMap<ExtensionType, Object>(ExtensionType.values().length);
     for (ExtensionType type : ExtensionType.values()) {
       logger.debug("Reading {}", type);
       final Object extension = read(type);
       if (extension != null) {
-        extMap.put(type, extension);
+        map.put(type, extension);
       }
     }
-    return extMap;
+    return map;
   }
 
 

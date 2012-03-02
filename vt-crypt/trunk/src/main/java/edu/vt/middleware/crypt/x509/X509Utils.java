@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.signature.SignatureAlgorithm;
@@ -179,5 +181,34 @@ public final class X509Utils
       }
     }
     return null;
+  }
+
+
+  /**
+   * Reads all the X.509 extension fields from the certificate and makes them
+   * available as a map of types to values.
+   *
+   * @param cert Certificate to read.
+   *
+   * @return  Map of X.509 extension types to the corresponding value object in
+   * the {@link edu.vt.middleware.crypt.x509.types} package.
+   */
+  public static Map<ExtensionType, Object> readExtensions(
+      final X509Certificate cert)
+  {
+    final Map<ExtensionType, Object> map =
+        new HashMap<ExtensionType, Object>(ExtensionType.values().length);
+    final ExtensionReader reader = new ExtensionReader(cert);
+    for (ExtensionType type : ExtensionType.values()) {
+      try {
+        final Object extension = reader.read(type);
+        if (extension != null) {
+          map.put(type, extension);
+        }
+      } catch (CryptException e) {
+        throw new RuntimeException("Error reading " + type, e);
+      }
+    }
+    return map;
   }
 }
