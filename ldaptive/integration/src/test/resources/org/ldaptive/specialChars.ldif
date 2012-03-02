@@ -5,5 +5,5 @@ objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person
 objectClass: top
-sn: User
+sn: (Us\er)*
 uid: 17893
