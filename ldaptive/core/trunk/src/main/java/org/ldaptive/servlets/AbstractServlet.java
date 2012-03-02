@@ -18,14 +18,10 @@ import java.util.Properties;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapResult;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchExecutor;
 import org.ldaptive.pool.ConnectionPoolType;
-import org.ldaptive.pool.PoolException;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.props.PooledConnectionFactoryPropertySource;
 import org.ldaptive.props.PropertySource.PropertyDomain;
@@ -54,8 +50,8 @@ public abstract class AbstractServlet extends HttpServlet
   /** Connections for searching. */
   private PooledConnectionFactory connectionFactory;
 
-  /** Search request for storing search properties. */
-  private SearchRequest searchRequest;
+  /** Search executor for storing search properties. */
+  private SearchExecutor searchExecutor;
 
 
   /**
@@ -70,11 +66,11 @@ public abstract class AbstractServlet extends HttpServlet
   {
     super.init(config);
 
-    searchRequest = new SearchRequest();
+    searchExecutor = new SearchExecutor();
     final SearchRequestPropertySource srSource =
-      new SearchRequestPropertySource(searchRequest, createProperties(config));
+      new SearchRequestPropertySource(searchExecutor, createProperties(config));
     srSource.initialize();
-    logger.debug("searchRequest = {}", searchRequest);
+    logger.debug("searchExecutor = {}", searchExecutor);
 
     connectionFactory = new PooledConnectionFactory();
     final PooledConnectionFactoryPropertySource cfPropSource =
@@ -129,53 +125,10 @@ public abstract class AbstractServlet extends HttpServlet
   {
     LdapResult result = null;
     if (query != null) {
-      try {
-        Connection conn = null;
-        try {
-          conn = connectionFactory.getConnection();
-
-          final SearchOperation search = new SearchOperation(conn);
-          final SearchRequest sr = newSearchRequest(searchRequest);
-          sr.setSearchFilter(new SearchFilter(query));
-          sr.setReturnAttributes(attrs);
-          result = search.execute(sr).getResult();
-        } finally {
-          if (conn != null) {
-            conn.close();
-          }
-        }
-      } catch (PoolException e) {
-        logger.error("Error using LDAP pool", e);
-      }
+      result = searchExecutor.search(
+        connectionFactory, query, attrs).getResult();
     }
     return result;
-  }
-
-
-  /**
-   * Returns a search request initialized with the supplied request. Note that
-   * stateful ldap entry handlers could cause thread safety issues.
-   *
-   * @param  request  search request to read properties from
-   *
-   * @return  search request
-   */
-  protected static SearchRequest newSearchRequest(final SearchRequest request)
-  {
-    final SearchRequest sr = new SearchRequest();
-    sr.setBaseDn(request.getBaseDn());
-    sr.setBinaryAttributes(request.getBinaryAttributes());
-    sr.setDerefAliases(request.getDerefAliases());
-    sr.setLdapEntryHandlers(request.getLdapEntryHandlers());
-    sr.setReferralBehavior(request.getReferralBehavior());
-    sr.setReturnAttributes(request.getReturnAttributes());
-    sr.setSearchScope(request.getSearchScope());
-    sr.setSizeLimit(request.getSizeLimit());
-    sr.setSortBehavior(request.getSortBehavior());
-    sr.setTimeLimit(request.getTimeLimit());
-    sr.setTypesOnly(request.getTypesOnly());
-    sr.setControls(request.getControls());
-    return sr;
   }
 
 
