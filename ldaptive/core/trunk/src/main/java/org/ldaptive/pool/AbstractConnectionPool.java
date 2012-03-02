@@ -741,17 +741,18 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       final Object[] args)
       throws Throwable
     {
+      Object retValue = null;
       if ("open".equals(method.getName())) {
         if (!conn.isOpen()) {
           openResponse = (Response<Void>) method.invoke(conn, args);
         }
-        return openResponse;
+        retValue = openResponse;
       } else if ("close".equals(method.getName())) {
         putConnection((Connection) proxy);
-        return null;
       } else {
-        return method.invoke(conn, args);
+        retValue = method.invoke(conn, args);
       }
+      return retValue;
     }
   }
 }
