@@ -29,7 +29,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
@@ -203,7 +202,8 @@ public class UnboundIdSearchIterator implements SearchIterator
       (int) sr.getSizeLimit(),
       (int) sr.getTimeLimit(),
       sr.getTypesOnly(),
-      SearchFilter.format(sr.getSearchFilter()),
+      sr.getSearchFilter() != null ?
+        sr.getSearchFilter().format() : null,
       retAttrs);
     unboundIdSr.setResponseTimeoutMillis(responseTimeout);
     return unboundIdSr;
