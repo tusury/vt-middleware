@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$
  */
-public abstract class AbstractEncodedCredentialReader<T>
-  implements CredentialReader<T>
+public abstract class AbstractEncodedCredentialReader<T> implements CredentialReader<T>
 {
 
   /** DSA algorithm OID. */
@@ -51,8 +50,7 @@ public abstract class AbstractEncodedCredentialReader<T>
 
 
   /** {@inheritDoc} */
-  public T read(final File file)
-    throws IOException, CryptException
+  public T read(final File file) throws IOException, CryptException
   {
     byte[] data = IOHelper.read(new FileInputStream(file).getChannel());
     if (PemHelper.isPem(data)) {
@@ -63,8 +61,7 @@ public abstract class AbstractEncodedCredentialReader<T>
 
 
   /** {@inheritDoc} */
-  public T read(final InputStream in)
-    throws IOException, CryptException
+  public T read(final InputStream in) throws IOException, CryptException
   {
     byte[] data = IOHelper.read(in);
     if (PemHelper.isPem(data)) {

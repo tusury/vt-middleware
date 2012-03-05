@@ -31,8 +31,7 @@ import edu.vt.middleware.crypt.CryptProvider;
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class X509CertificateCredentialReader
-  implements CredentialReader<X509Certificate>
+public class X509CertificateCredentialReader implements CredentialReader<X509Certificate>
 {
 
   /** Certificate type. */
@@ -40,20 +39,17 @@ public class X509CertificateCredentialReader
 
 
   /** {@inheritDoc} */
-  public X509Certificate read(final File file)
-    throws IOException, CryptException
+  public X509Certificate read(final File file) throws IOException, CryptException
   {
     return read(new BufferedInputStream(new FileInputStream(file)));
   }
 
 
   /** {@inheritDoc} */
-  public X509Certificate read(final InputStream in)
-    throws IOException, CryptException
+  public X509Certificate read(final InputStream in) throws IOException, CryptException
   {
     try {
-      final CertificateFactory cf = CryptProvider.getCertificateFactory(
-        CERTIFICATE_TYPE);
+      final CertificateFactory cf = CryptProvider.getCertificateFactory(CERTIFICATE_TYPE);
       return (X509Certificate) cf.generateCertificate(in);
     } catch (CertificateException e) {
       throw new CryptException("Failed reading X.509 certificate.", e);
