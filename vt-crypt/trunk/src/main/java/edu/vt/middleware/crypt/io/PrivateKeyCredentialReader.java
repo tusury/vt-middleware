@@ -67,8 +67,7 @@ public class PrivateKeyCredentialReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public PrivateKey read(final File file, final char[] password)
-    throws IOException, CryptException
+  public PrivateKey read(final File file, final char[] password) throws IOException, CryptException
   {
     byte[] data = IOHelper.read(new FileInputStream(file).getChannel());
     data = decryptKey(data, password);
@@ -90,8 +89,7 @@ public class PrivateKeyCredentialReader
    * @throws  CryptException  On cryptography errors such as invalid formats,
    * unsupported ciphers, illegal settings.
    */
-  public PrivateKey read(final InputStream in, final char[] password)
-    throws CryptException, IOException
+  public PrivateKey read(final InputStream in, final char[] password) throws CryptException, IOException
   {
     byte[] data = IOHelper.read(in);
     data = decryptKey(data, password);
@@ -100,8 +98,7 @@ public class PrivateKeyCredentialReader
 
 
   /** {@inheritDoc} */
-  protected PrivateKey decode(final byte[] encoded)
-    throws CryptException
+  protected PrivateKey decode(final byte[] encoded) throws CryptException
   {
     final KeySpec spec;
     final String algorithm;
@@ -279,10 +276,8 @@ public class PrivateKeyCredentialReader
         // {encryptionAlgorithmOid, iv}
         // }
         final DERSequence pbeSeq = (DERSequence) alg.getParameters();
-        final PBKDF2Parameters kdfParms = PBKDF2Parameters.decode(
-          (DERSequence) pbeSeq.getObjectAt(0));
-        final PBES2CipherGenerator cipherGen = new PBES2CipherGenerator(
-          (DERSequence) pbeSeq.getObjectAt(1));
+        final PBKDF2Parameters kdfParms = PBKDF2Parameters.decode((DERSequence) pbeSeq.getObjectAt(0));
+        final PBES2CipherGenerator cipherGen = new PBES2CipherGenerator((DERSequence) pbeSeq.getObjectAt(1));
         if (kdfParms.getLength() == 0) {
           kdfParms.setLength(cipherGen.getKeySize() / 8);
         }
