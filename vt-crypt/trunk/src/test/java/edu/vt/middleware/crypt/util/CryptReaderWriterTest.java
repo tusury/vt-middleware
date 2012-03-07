@@ -44,8 +44,13 @@ public class CryptReaderWriterTest
   private static final String KEY_DIR_PATH =
     "src/test/resources/edu/vt/middleware/crypt/keys/";
 
+  /** Path to directory containing CRL data. */
+  private static final String CRL_DIR_PATH =
+      "src/test/resources/edu/vt/middleware/crypt/x509/";
+
   /** Logger instance. */
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
   /**
    * @return  Public key test data.
@@ -53,8 +58,7 @@ public class CryptReaderWriterTest
    * @throws  Exception  On test data generation failure.
    */
   @DataProvider(name = "pubkeydata")
-  public Object[][] createPubKeyTestData()
-    throws Exception
+  public Object[][] createPubKeyTestData() throws Exception
   {
     final KeyPairGenerator rsaKeyGen = KeyPairGenerator.getInstance("RSA");
     final KeyPair rsaKeys = rsaKeyGen.generateKeyPair();
@@ -74,8 +78,7 @@ public class CryptReaderWriterTest
    * @throws  Exception  On test data generation failure.
    */
   @DataProvider(name = "privkeydata")
-  public Object[][] createPrivKeyTestData()
-    throws Exception
+  public Object[][] createPrivKeyTestData() throws Exception
   {
     final KeyPairGenerator rsaKeyGen = KeyPairGenerator.getInstance("RSA");
     final KeyPair rsaKeys = rsaKeyGen.generateKeyPair();
@@ -97,8 +100,7 @@ public class CryptReaderWriterTest
    * @throws  Exception  On test data generation failure.
    */
   @DataProvider(name = "readprivkeydata")
-  public Object[][] createReadPrivKeyTestData()
-    throws Exception
+  public Object[][] createReadPrivKeyTestData() throws Exception
   {
     return
       new Object[][] {
@@ -133,8 +135,7 @@ public class CryptReaderWriterTest
    * @throws  Exception  On test data generation failure.
    */
   @DataProvider(name = "readpubkeydata")
-  public Object[][] createReadDerPubKeyTestData()
-    throws Exception
+  public Object[][] createReadDerPubKeyTestData() throws Exception
   {
     return
       new Object[][] {
@@ -147,6 +148,21 @@ public class CryptReaderWriterTest
 
 
   /**
+   * @return  CRL test data.
+   *
+   * @throws  Exception  On test data generation failure.
+   */
+  @DataProvider(name = "crldata")
+  public Object[][] createCRLTestData() throws Exception
+  {
+    return new Object[][] {
+      {"vtuca-crl.der"},
+      {"vtuca-crl.pem"},
+    };
+  }
+
+
+  /**
    * @param  file  Key file to read.
    *
    * @throws  Exception  On test failure.
@@ -155,8 +171,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "readpubkeydata"
   )
-  public void testReadPublicKey(final String file)
-    throws Exception
+  public void testReadPublicKey(final String file) throws Exception
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
     logger.info("Testing read of DER-encoded public key {}", keyFile);
@@ -166,8 +181,7 @@ public class CryptReaderWriterTest
 
   /** @throws  Exception  On test failure. */
   @Test(groups = {"functest", "util"})
-  public void testReadDerCertificate()
-    throws Exception
+  public void testReadDerCertificate() throws Exception
   {
     final File certFile = new File(KEY_DIR_PATH + "rsa-pub-cert.der");
     logger.info("Testing read of DER-encoded X.509 certificate {}", certFile);
@@ -186,8 +200,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "readprivkeydata"
   )
-  public void testReadPrivateKey(final String file, final String password)
-    throws Exception
+  public void testReadPrivateKey(final String file, final String password) throws Exception
   {
     final File keyFile = new File(KEY_DIR_PATH + file);
     logger.info("Testing read of private key {}", keyFile);
@@ -204,8 +217,7 @@ public class CryptReaderWriterTest
 
   /** @throws  Exception  On test failure. */
   @Test(groups = {"functest", "util"})
-  public void testReadPemCertificate()
-    throws Exception
+  public void testReadPemCertificate() throws Exception
   {
     final File certFile = new File(KEY_DIR_PATH + "rsa-pub-cert.pem");
     logger.info("Testing read of PEM-encoded X.509 certificate {}", certFile);
@@ -223,10 +235,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "privkeydata"
   )
-  public void testReadWriteDerPrivateKey(
-    final PrivateKey key,
-    final String password)
-    throws Exception
+  public void testReadWriteDerPrivateKey(final PrivateKey key, final String password) throws Exception
   {
     logger.info("Testing {} private key.", key.getAlgorithm());
 
@@ -246,8 +255,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "pubkeydata"
   )
-  public void testReadWriteDerPublicKey(final PublicKey key)
-    throws Exception
+  public void testReadWriteDerPublicKey(final PublicKey key) throws Exception
   {
     logger.info("Testing {} public key.", key.getAlgorithm());
 
@@ -268,10 +276,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "privkeydata"
   )
-  public void testReadWritePemPrivateKey(
-    final PrivateKey key,
-    final String password)
-    throws Exception
+  public void testReadWritePemPrivateKey(final PrivateKey key, final String password) throws Exception
   {
     logger.info("Testing {} private key.", key.getAlgorithm());
 
@@ -305,8 +310,7 @@ public class CryptReaderWriterTest
     groups = {"functest", "util"},
     dataProvider = "pubkeydata"
   )
-  public void testReadWritePemPublicKey(final PublicKey key)
-    throws Exception
+  public void testReadWritePemPublicKey(final PublicKey key) throws Exception
   {
     logger.info("Testing {} public key.", key.getAlgorithm());
 
@@ -314,6 +318,24 @@ public class CryptReaderWriterTest
     keyFile.getParentFile().mkdir();
     CryptWriter.writePemKey(key, keyFile);
     AssertJUnit.assertEquals(key, CryptReader.readPublicKey(keyFile));
+  }
+
+
+  /**
+   * @param  file  CRL file to read.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+      groups = {"functest", "util"},
+      dataProvider = "crldata"
+  )
+  public void testReadCRL(final String file) throws Exception
+  {
+    final File crlFile = new File(CRL_DIR_PATH + file);
+    logger.info("Testing read of CRL {}", crlFile);
+
+    AssertJUnit.assertNotNull(CryptReader.readCRL(crlFile));
   }
 
 
@@ -326,8 +348,7 @@ public class CryptReaderWriterTest
    *
    * @throws  CryptException  On hash calculation errors.
    */
-  private String fingerPrint(final Key key)
-    throws CryptException
+  private String fingerPrint(final Key key) throws CryptException
   {
     final MD2 hash = new MD2();
     return hash.digest(key.getEncoded(), new HexConverter());
