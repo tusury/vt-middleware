@@ -101,6 +101,20 @@ public final class LdapUtil
 
 
   /**
+   * This will convert the supplied value to a UTF-8 encoded string. Returns
+   * null if the bytes cannot be encoded.
+   *
+   * @param  value  to UTF-8 encode
+   *
+   * @return  UTF-8 encoded value
+   */
+  public static String utf8Encode(final byte[] value)
+  {
+    return value != null ? new String(value, UTF8_CHARSET) : null;
+  }
+
+
+  /**
    * This will convert the supplied value to a UTF-8 encoded byte array. Returns
    * null if the string cannot be encoded.
    *
