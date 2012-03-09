@@ -1,0 +1,14 @@
+- Authenticate a user and return their ldap entry
+
+   ldapauth -ldapUrl ldap://directory.vt.edu -baseDn ou=People,dc=vt,dc=edu \
+            -useStartTLS true -userFilter uupid={0}
+
+- Authenticate a user and return their mail attribute in dsmlv1 format
+
+   ldapauth -ldapUrl ldap://directory.vt.edu -baseDn ou=People,dc=vt,dc=edu \
+            -useStartTLS true -dsmlv1 \
+            -userFilter uupid={0} -returnAttributes mail
+
+- Display all the command line options available 
+
+   ldapauth -help
