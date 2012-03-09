@@ -61,7 +61,8 @@
   </developers>
 
   <properties>
-    <project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>${basedir}/src/main/checkstyle</checkstyle.dir>
     <assembly.dir>${basedir}/src/main/assembly</assembly.dir>
   </properties>
