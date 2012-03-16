@@ -47,7 +47,7 @@ public class SearchFilter
    */
   public SearchFilter(final String filter)
   {
-    searchFilter = filter;
+    setFilter(filter);
   }
 
 

@@ -455,6 +455,34 @@ public class SearchRequest extends AbstractRequest
 
 
   /**
+   * Returns a search request initialized with the supplied request. Note that
+   * stateful ldap entry handlers could cause thread safety issues.
+   *
+   * @param  request  search request to read properties from
+   *
+   * @return  search request
+   */
+  protected static SearchRequest newSearchRequest(final SearchRequest request)
+  {
+    final SearchRequest sr = new SearchRequest();
+    sr.setBaseDn(request.getBaseDn());
+    sr.setBinaryAttributes(request.getBinaryAttributes());
+    sr.setDerefAliases(request.getDerefAliases());
+    sr.setLdapEntryHandlers(request.getLdapEntryHandlers());
+    sr.setReferralBehavior(request.getReferralBehavior());
+    sr.setReturnAttributes(request.getReturnAttributes());
+    sr.setSearchFilter(request.getSearchFilter());
+    sr.setSearchScope(request.getSearchScope());
+    sr.setSizeLimit(request.getSizeLimit());
+    sr.setSortBehavior(request.getSortBehavior());
+    sr.setTimeLimit(request.getTimeLimit());
+    sr.setTypesOnly(request.getTypesOnly());
+    sr.setControls(request.getControls());
+    return sr;
+  }
+
+
+  /**
    * Returns whether the supplied object contains the same data as this request.
    * Delegates to {@link #hashCode()} implementation.
    *
