@@ -182,4 +182,33 @@ public class DnParserTest
       Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
     }
   }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"dnParser"})
+  public void testSubstring()
+    throws Exception
+  {
+    final String dn = "CN=Jim Smith,UID=jsmith,DC=ldaptive,DC=org";
+    try {
+      DnParser.substring(dn, -1);
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+    }
+    Assert.assertEquals(
+      DnParser.substring(dn, 0), "CN=Jim Smith,UID=jsmith,DC=ldaptive,DC=org");
+    Assert.assertEquals(
+      DnParser.substring(dn, 1), "UID=jsmith,DC=ldaptive,DC=org");
+    Assert.assertEquals(DnParser.substring(dn, 2), "DC=ldaptive,DC=org");
+    Assert.assertEquals(DnParser.substring(dn, 3), "DC=org");
+    try {
+      DnParser.substring(dn, 4);
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+    }
+  }
 }

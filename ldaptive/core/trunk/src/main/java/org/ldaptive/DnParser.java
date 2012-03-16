@@ -88,6 +88,43 @@ public final class DnParser
 
 
   /**
+   * Returns a string representation of the supplied DN beginning at the
+   * supplied index. The leftmost component begins at index 0.
+   *
+   * @param  dn  to parse
+   * @param  index  components included in the result
+   *
+   * @return  DN from the supplied index
+   *
+   * @throws  IndexOutOfBoundsException  if index is less than 0 or greater
+   * than the number of RDNs
+   */
+  public static String substring(final String dn, final int index)
+  {
+    if (index < 0) {
+      throw new IndexOutOfBoundsException("index cannot be negative");
+    }
+    final List<LdapAttribute> attrs = convertDnToAttributes(dn);
+    if (index >= attrs.size()) {
+      throw new IndexOutOfBoundsException(
+        "index cannot be larger than the number of RDNs");
+    }
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < attrs.size(); i++) {
+      if (i >= index) {
+        final LdapAttribute la = attrs.get(i);
+        sb.append(
+          la.getName()).append("=").append(la.getStringValue()).append(",");
+      }
+    }
+    if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
+      sb.deleteCharAt(sb.length() - 1);
+    }
+    return sb.toString();
+  }
+
+
+  /**
    * Parses the supplied DN and converts each RDN into a {@link LdapAttribute}.
    *
    * @param  dn  to parse
