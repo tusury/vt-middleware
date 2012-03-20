@@ -167,9 +167,9 @@ public class UnboundIdSearchIterator implements SearchIterator
     final org.ldaptive.SearchRequest sr)
     throws LDAPException
   {
-    final SearchRequest unboundIdSr = getSearchRequest(request);
+    final SearchRequest unboundIdSr = getSearchRequest(sr);
     final Control[] c = controlProcessor.processRequestControls(
-      request.getControls());
+      sr.getControls());
     unboundIdSr.addControls(c);
     return new LDAPEntrySource(connection, unboundIdSr, false);
   }
