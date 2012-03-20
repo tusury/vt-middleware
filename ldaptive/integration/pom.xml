@@ -222,5 +222,24 @@
         <ldapTestProvider>org.ldaptive.provider.unboundid.UnboundIdProvider</ldapTestProvider>
       </properties>
     </profile>
+    <profile>
+      <id>opends</id>
+      <activation>
+        <property>
+          <name>opends.version</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.ldaptive</groupId>
+          <artifactId>ldaptive-opends</artifactId>
+          <version>${opends.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <properties>
+        <ldapTestProvider>org.ldaptive.provider.opends.OpenDSProvider</ldapTestProvider>
+      </properties>
+    </profile>
   </profiles>
 </project>
