@@ -163,7 +163,7 @@ public class JLdapSearchIterator implements SearchIterator
     final SearchRequest sr)
     throws LDAPException
   {
-    final LDAPSearchConstraints constraints = getLDAPSearchConstraints(request);
+    final LDAPSearchConstraints constraints = getLDAPSearchConstraints(sr);
     final LDAPControl[] lc = controlProcessor.processRequestControls(
       sr.getControls());
     if (lc != null) {
@@ -171,12 +171,11 @@ public class JLdapSearchIterator implements SearchIterator
     }
     return
       conn.search(
-        request.getBaseDn(),
-        getSearchScope(request.getSearchScope()),
-        request.getSearchFilter() != null ?
-          request.getSearchFilter().format() : null,
-        getReturnAttributes(request),
-        request.getTypesOnly(),
+        sr.getBaseDn(),
+        getSearchScope(sr.getSearchScope()),
+        sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
+        getReturnAttributes(sr),
+        sr.getTypesOnly(),
         constraints);
   }
 
