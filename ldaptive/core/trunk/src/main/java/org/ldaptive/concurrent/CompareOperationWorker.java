@@ -16,7 +16,6 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.CompareOperation;
 import org.ldaptive.CompareRequest;
-import org.ldaptive.Connection;
 
 /**
  * Executes an ldap compare operation on a separate thread.
@@ -32,22 +31,23 @@ public class CompareOperationWorker
   /**
    * Creates a new compare operation worker.
    *
-   * @param  conn  connection
+   * @param  op  compare operation to execute
    */
-  public CompareOperationWorker(final Connection conn)
+  public CompareOperationWorker(final CompareOperation op)
   {
-    this(conn, null);
+    super(op);
   }
 
 
   /**
    * Creates a new compare operation worker.
    *
-   * @param  conn  connection
+   * @param  op  compare operation to execute
    * @param  es  executor service
    */
-  public CompareOperationWorker(final Connection conn, final ExecutorService es)
+  public CompareOperationWorker(
+    final CompareOperation op, final ExecutorService es)
   {
-    super(new CompareOperation(conn), es);
+    super(op, es);
   }
 }

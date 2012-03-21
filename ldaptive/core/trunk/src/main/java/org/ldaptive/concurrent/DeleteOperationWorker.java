@@ -14,7 +14,6 @@
 package org.ldaptive.concurrent;
 
 import java.util.concurrent.ExecutorService;
-import org.ldaptive.Connection;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
 
@@ -32,22 +31,23 @@ public class DeleteOperationWorker
   /**
    * Creates a new delete operation worker.
    *
-   * @param  conn  connection
+   * @param  op  delete operation to execute
    */
-  public DeleteOperationWorker(final Connection conn)
+  public DeleteOperationWorker(final DeleteOperation op)
   {
-    this(conn, null);
+    super(op);
   }
 
 
   /**
    * Creates a new delete operation worker.
    *
-   * @param  conn  connection
+   * @param  op  delete operation to execute
    * @param  es  executor service
    */
-  public DeleteOperationWorker(final Connection conn, final ExecutorService es)
+  public DeleteOperationWorker(
+    final DeleteOperation op, final ExecutorService es)
   {
-    super(new DeleteOperation(conn), es);
+    super(op, es);
   }
 }

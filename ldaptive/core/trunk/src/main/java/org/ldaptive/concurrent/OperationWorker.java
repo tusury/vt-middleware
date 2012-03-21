@@ -14,7 +14,6 @@
 package org.ldaptive.concurrent;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
@@ -60,10 +59,6 @@ public interface OperationWorker<Q extends Request, S>
    * @param  requests  containing the data required by this operation
    *
    * @return  responses for this operation
-   *
-   * @throws  ExecutionException  if the callable throws an exception
-   * @throws  InterruptedException  if a thread is interrupted while waiting
    */
-  Collection<Response<S>> executeToCompletion(final Q... requests)
-    throws ExecutionException, InterruptedException;
+  Collection<Response<S>> executeToCompletion(final Q... requests);
 }

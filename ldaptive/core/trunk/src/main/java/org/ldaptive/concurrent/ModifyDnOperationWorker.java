@@ -14,7 +14,6 @@
 package org.ldaptive.concurrent;
 
 import java.util.concurrent.ExecutorService;
-import org.ldaptive.Connection;
 import org.ldaptive.ModifyDnOperation;
 import org.ldaptive.ModifyDnRequest;
 
@@ -32,23 +31,23 @@ public class ModifyDnOperationWorker
   /**
    * Creates a new modify dn operation worker.
    *
-   * @param  conn  connection
+   * @param  op  modify dn operation to execute
    */
-  public ModifyDnOperationWorker(final Connection conn)
+  public ModifyDnOperationWorker(final ModifyDnOperation op)
   {
-    this(conn, null);
+    super(op);
   }
 
 
   /**
    * Creates a new modify dn operation worker.
    *
-   * @param  conn  connection
+   * @param  op  modify dn operation to execute
    * @param  es  executor service
    */
   public ModifyDnOperationWorker(
-    final Connection conn, final ExecutorService es)
+    final ModifyDnOperation op, final ExecutorService es)
   {
-    super(new ModifyDnOperation(conn), es);
+    super(op, es);
   }
 }

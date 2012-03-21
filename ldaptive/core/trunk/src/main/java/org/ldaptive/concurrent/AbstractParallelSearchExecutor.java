@@ -14,8 +14,8 @@
 package org.ldaptive.concurrent;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapResult;
@@ -23,10 +23,13 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.OperationResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Base class for parallel search executors. If no {@link ExecutorService} is
- * provided a cached thread pool is used by default.
+ * Base class for parallel search executors. A cached thread pool is used by
+ * default.
  *
  * @param  <T>  type of connection factory
  *
@@ -38,8 +41,14 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
   extends SearchRequest
 {
 
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+
   /** to submit operations to. */
   private final ExecutorService service;
+
+  /** Handlers to process search responses. */
+  private OperationResponseHandler<LdapResult>[] searchResponseHandlers;
 
 
   /**
@@ -49,11 +58,10 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    */
   public AbstractParallelSearchExecutor(final ExecutorService es)
   {
-    if (es != null) {
-      service = es;
-    } else {
-      service = Executors.newCachedThreadPool();
+    if (es == null) {
+      throw new NullPointerException("ExecutorService cannot be null");
     }
+    service = es;
   }
 
 
@@ -65,6 +73,50 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
   protected ExecutorService getExecutorService()
   {
     return service;
+  }
+
+
+  /**
+   * Returns the search response handlers.
+   *
+   * @return  search response handlers
+   */
+  public OperationResponseHandler<LdapResult>[] getSearchResponseHandlers()
+  {
+    return searchResponseHandlers;
+  }
+
+
+  /**
+   * Sets the search response handlers.
+   *
+   * @param  handlers  search response handlers
+   */
+  public void setSearchResponseHandlers(
+    final OperationResponseHandler<LdapResult>... handlers)
+  {
+    searchResponseHandlers = handlers;
+  }
+
+
+  /**
+   * Shuts down the executor service. See {@link ExecutorService#shutdown()}.
+   */
+  public void shutdown()
+  {
+    service.shutdown();
+  }
+
+
+  /**
+   * Immediately shuts down the executor service. See
+   * {@link ExecutorService#shutdownNow()}.
+   *
+   * @return  list of tasks that never executed
+   */
+  public List<Runnable> shutdownNow()
+  {
+    return service.shutdownNow();
   }
 
 

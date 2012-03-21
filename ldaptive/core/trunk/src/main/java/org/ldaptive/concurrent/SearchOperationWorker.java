@@ -14,11 +14,9 @@
 package org.ldaptive.concurrent;
 
 import java.util.concurrent.ExecutorService;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapResult;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.cache.Cache;
 
 /**
  * Executes an ldap search operation on a separate thread.
@@ -34,51 +32,23 @@ public class SearchOperationWorker
   /**
    * Creates a new search operation worker.
    *
-   * @param  conn  connection
+   * @param  op  search operation to execute
    */
-  public SearchOperationWorker(final Connection conn)
+  public SearchOperationWorker(final SearchOperation op)
   {
-    this(conn, null, null);
+    super(op);
   }
 
 
   /**
    * Creates a new search operation worker.
    *
-   * @param  conn  connection
-   * @param  es  executor service
-   */
-  public SearchOperationWorker(final Connection conn, final ExecutorService es)
-  {
-    this(conn, null, es);
-  }
-
-
-  /**
-   * Creates a new search operation worker.
-   *
-   * @param  conn  connection
-   * @param  c  cache
-   */
-  public SearchOperationWorker(
-    final Connection conn, final Cache<SearchRequest> c)
-  {
-    this(conn, c, null);
-  }
-
-
-  /**
-   * Creates a new search operation worker.
-   *
-   * @param  conn  connection
-   * @param  c  cache
+   * @param  op  search operation to execute
    * @param  es  executor service
    */
   public SearchOperationWorker(
-    final Connection conn,
-    final Cache<SearchRequest> c,
-    final ExecutorService es)
+    final SearchOperation op, final ExecutorService es)
   {
-    super(new SearchOperation(conn, c), es);
+    super(op, es);
   }
 }
