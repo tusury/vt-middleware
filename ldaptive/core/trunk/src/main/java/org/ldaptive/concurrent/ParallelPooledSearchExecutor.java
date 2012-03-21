@@ -14,18 +14,19 @@
 package org.ldaptive.concurrent;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.Executors;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapResult;
+import org.ldaptive.Operation;
+import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
@@ -51,7 +52,7 @@ public class ParallelPooledSearchExecutor
    */
   public ParallelPooledSearchExecutor()
   {
-    this(null);
+    this(Executors.newCachedThreadPool());
   }
 
 
@@ -77,49 +78,64 @@ public class ParallelPooledSearchExecutor
   {
     final List<Response<LdapResult>> response =
       new LinkedList<Response<LdapResult>>();
-    final Map<Future<Response<LdapResult>>, Connection> conns =
-      new HashMap<Future<Response<LdapResult>>, Connection>(filters.length);
-    final CompletionService<Response<LdapResult>> cs =
+    final CompletionService<Response<LdapResult>> searches =
       new ExecutorCompletionService<Response<LdapResult>>(getExecutorService());
-    try {
-      for (int i = 0; i < filters.length; i++) {
-        final Connection conn = factory.getConnection();
-        conn.open();
-        final SearchRequest sr = newSearchRequest(this);
-        if (filters[i] != null) {
-          sr.setSearchFilter(filters[i]);
-        }
-        if (attrs != null) {
-          sr.setReturnAttributes(attrs);
-        }
-        if (handlers != null) {
-          sr.setLdapEntryHandlers(handlers);
-        }
-        conns.put(
-          cs.submit(
-            SearchOperationWorker.createCallable(
-              new SearchOperation(conn), sr)),
-          conn);
+    for (int i = 0; i < filters.length; i++) {
+      final SearchRequest sr = newSearchRequest(this);
+      if (filters[i] != null) {
+        sr.setSearchFilter(filters[i]);
       }
-      for (int i = 0; i < filters.length; i++) {
-        try {
-          final Future<Response<LdapResult>> future = cs.take();
-          response.add(future.get());
-          conns.remove(future).close();
-        } catch (ExecutionException e) {
-          throw new LdapException(e);
-        } catch (InterruptedException e) {
-          throw new LdapException(e);
-        }
+      if (attrs != null) {
+        sr.setReturnAttributes(attrs);
       }
-    } finally {
-      if (!conns.isEmpty()) {
-        for (Map.Entry<Future<Response<LdapResult>>, Connection> entry :
-          conns.entrySet()) {
-          entry.getValue().close();
-        }
+      if (handlers != null) {
+        sr.setLdapEntryHandlers(handlers);
+      }
+      final Connection conn = factory.getConnection();
+      final SearchOperation op = new SearchOperation(conn);
+      op.setOperationResponseHandlers(getSearchResponseHandlers());
+      searches.submit(createCallable(conn, op, sr));
+    }
+    for (int i = 0; i < filters.length; i++) {
+      try {
+        response.add(searches.take().get());
+      } catch (ExecutionException e) {
+        logger.debug("ExecutionException thrown, ignoring", e);
+      } catch (InterruptedException e) {
+        logger.warn("InterrupedException thrown, ignoring", e);
       }
     }
     return response;
+  }
+
+
+  /**
+   * Returns a {@link Callable} that executes the supplied request with the
+   * supplied operation in a try-finally block that opens and closes the
+   * connection.
+   *
+   * @param  <Q>  type of ldap request
+   * @param  <S>  type of ldap response
+   * @param  conn  connection  that the operation will execute on
+   * @param  operation  to execute
+   * @param  request  to pass to the operation
+   *
+   * @return  callable for the supplied operation and request
+   */
+  protected static <Q extends Request, S> Callable<Response<S>> createCallable(
+    final Connection conn, final Operation<Q, S> operation, final Q request)
+  {
+    return new Callable<Response<S>>() {
+      public Response<S> call()
+        throws LdapException
+      {
+        try {
+          conn.open();
+          return operation.execute(request);
+        } finally {
+          conn.close();
+        }
+      }
+    };
   }
 }

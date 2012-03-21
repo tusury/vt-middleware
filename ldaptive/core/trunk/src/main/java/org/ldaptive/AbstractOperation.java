@@ -13,6 +13,8 @@
 */
 package org.ldaptive;
 
+import java.util.Arrays;
+import org.ldaptive.handler.OperationResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +45,9 @@ public abstract class AbstractOperation<Q extends Request, S>
 
   /** Factor to multiply operation retry wait by. */
   private int operationRetryBackoff;
+
+  /** Handlers to process operation responses. */
+  private OperationResponseHandler<S>[] operationResponseHandlers;
 
 
   /**
@@ -145,6 +150,29 @@ public abstract class AbstractOperation<Q extends Request, S>
 
 
   /**
+   * Returns the operation response handlers.
+   *
+   * @return  operation response handlers
+   */
+  public OperationResponseHandler<S>[] getOperationResponseHandlers()
+  {
+    return operationResponseHandlers;
+  }
+
+
+  /**
+   * Sets the operation response handlers.
+   *
+   * @param  handlers  operation response handlers
+   */
+  public void setOperationResponseHandlers(
+    final OperationResponseHandler<S>... handlers)
+  {
+    operationResponseHandlers = handlers;
+  }
+
+
+  /**
    * Call the provider specific implementation of this ldap operation.
    *
    * @param  request  ldap request
@@ -186,6 +214,14 @@ public abstract class AbstractOperation<Q extends Request, S>
         operationRetry(e, i);
       }
     }
+    // execute response handlers
+    if (getOperationResponseHandlers() != null &&
+        getOperationResponseHandlers().length > 0) {
+      for (OperationResponseHandler<S> h : getOperationResponseHandlers()) {
+        h.process(response);
+      }
+    }
+
     logger.debug(
       "execute response={} for request={} with connection={}",
       new Object[] {response, request, connection});
@@ -228,5 +264,27 @@ public abstract class AbstractOperation<Q extends Request, S>
     } else {
       throw e;
     }
+  }
+
+
+  /**
+   * Provides a descriptive string representation of this instance.
+   *
+   * @return  string representation
+   */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::connection=%s, operationRetry=%s, operationRetryWait=%s, " +
+        "operationRetryBackoff=%s, operationResponseHandlers=%s]",
+        getClass().getName(),
+        hashCode(),
+        connection,
+        operationRetry,
+        operationRetryWait,
+        operationRetryBackoff,
+        Arrays.toString(operationResponseHandlers));
   }
 }

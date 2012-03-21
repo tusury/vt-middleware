@@ -14,14 +14,15 @@
 package org.ldaptive.concurrent;
 
 import java.util.Collection;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapResult;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.handler.LdapEntryHandler;
 
@@ -42,7 +43,7 @@ public class ParallelSearchExecutor
    */
   public ParallelSearchExecutor()
   {
-    this(null);
+    this(Executors.newCachedThreadPool());
   }
 
 
@@ -70,8 +71,10 @@ public class ParallelSearchExecutor
     final Connection conn = factory.getConnection();
     try {
       conn.open();
-      final SearchOperationWorker op = new SearchOperationWorker(
-        conn, getExecutorService());
+      final SearchOperation op = new SearchOperation(conn);
+      op.setOperationResponseHandlers(getSearchResponseHandlers());
+      final SearchOperationWorker worker = new SearchOperationWorker(
+        op, getExecutorService());
       final SearchRequest[] sr = new SearchRequest[filters.length];
       for (int i = 0; i < filters.length; i++) {
         sr[i] = newSearchRequest(this);
@@ -85,13 +88,7 @@ public class ParallelSearchExecutor
           sr[i].setLdapEntryHandlers(handlers);
         }
       }
-      try {
-        response = op.executeToCompletion(sr);
-      } catch (ExecutionException e) {
-        throw new LdapException(e);
-      } catch (InterruptedException e) {
-        throw new LdapException(e);
-      }
+      response = worker.executeToCompletion(sr);
     } finally {
       conn.close();
     }

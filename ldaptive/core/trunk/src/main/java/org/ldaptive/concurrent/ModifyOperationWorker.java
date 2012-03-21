@@ -14,7 +14,6 @@
 package org.ldaptive.concurrent;
 
 import java.util.concurrent.ExecutorService;
-import org.ldaptive.Connection;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 
@@ -32,22 +31,23 @@ public class ModifyOperationWorker
   /**
    * Creates a new modify operation worker.
    *
-   * @param  conn  connection
+   * @param  op  modify operation to execute
    */
-  public ModifyOperationWorker(final Connection conn)
+  public ModifyOperationWorker(final ModifyOperation op)
   {
-    this(conn, null);
+    super(op);
   }
 
 
   /**
    * Creates a new modify operation worker.
    *
-   * @param  conn  connection
+   * @param  op  modify operation to execute
    * @param  es  executor service
    */
-  public ModifyOperationWorker(final Connection conn, final ExecutorService es)
+  public ModifyOperationWorker(
+    final ModifyOperation op, final ExecutorService es)
   {
-    super(new ModifyOperation(conn), es);
+    super(op, es);
   }
 }

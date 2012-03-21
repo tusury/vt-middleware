@@ -27,6 +27,8 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Operation;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for worker operations. If no {@link ExecutorService} is provided
@@ -42,6 +44,9 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   implements OperationWorker<Q, S>
 {
 
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+
   /** operation to execute. */
   private final Operation<Q, S> operation;
 
@@ -56,7 +61,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    */
   public AbstractOperationWorker(final Operation<Q, S> op)
   {
-    this(op, null);
+    this(op, Executors.newCachedThreadPool());
   }
 
 
@@ -70,11 +75,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
     final Operation<Q, S> op, final ExecutorService es)
   {
     operation = op;
-    if (es != null) {
-      service = es;
-    } else {
-      service = Executors.newCachedThreadPool();
-    }
+    service = es;
   }
 
 
@@ -111,17 +112,13 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
 
   /**
    * Execute an ldap operation for each request on a separate thread and waits
-   * for each operation to complete.
+   * for all operations to complete.
    *
    * @param  requests  containing the data required by this operation
    *
    * @return  responses for this operation
-   *
-   * @throws  ExecutionException  if the operation throws an exception
-   * @throws  InterruptedException  if a thread is interrupted while waiting
    */
   public Collection<Response<S>> executeToCompletion(final Q... requests)
-    throws ExecutionException, InterruptedException
   {
     final CompletionService<Response<S>> cs =
       new ExecutorCompletionService<Response<S>>(service);
@@ -130,7 +127,13 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
       cs.submit(createCallable(operation, request));
     }
     for (int i = 0; i < requests.length; i++) {
-      results.add(cs.take().get());
+      try {
+        results.add(cs.take().get());
+      } catch (ExecutionException e) {
+        logger.debug("ExecutionException thrown, ignoring", e);
+      } catch (InterruptedException e) {
+        logger.warn("InterrupedException thrown, ignoring", e);
+      }
     }
     return results;
   }

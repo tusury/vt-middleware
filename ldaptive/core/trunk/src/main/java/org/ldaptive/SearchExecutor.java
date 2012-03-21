@@ -14,6 +14,7 @@
 package org.ldaptive;
 
 import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.OperationResponseHandler;
 
 /**
  * Helper class which encapsulates the try, finally idiom used to execute a
@@ -27,6 +28,32 @@ import org.ldaptive.handler.LdapEntryHandler;
  */
 public class SearchExecutor extends SearchRequest
 {
+
+  /** Handlers to process search responses. */
+  private OperationResponseHandler<LdapResult>[] searchResponseHandlers;
+
+
+  /**
+   * Returns the search response handlers.
+   *
+   * @return  search response handlers
+   */
+  public OperationResponseHandler<LdapResult>[] getSearchResponseHandlers()
+  {
+    return searchResponseHandlers;
+  }
+
+
+  /**
+   * Sets the search response handlers.
+   *
+   * @param  handlers  search response handlers
+   */
+  public void setSearchResponseHandlers(
+    final OperationResponseHandler<LdapResult>... handlers)
+  {
+    searchResponseHandlers = handlers;
+  }
 
 
   /**
@@ -151,6 +178,7 @@ public class SearchExecutor extends SearchRequest
     try {
       conn.open();
       final SearchOperation op = new SearchOperation(conn);
+      op.setOperationResponseHandlers(searchResponseHandlers);
       final SearchRequest sr = newSearchRequest(this);
       if (filter != null) {
         sr.setSearchFilter(filter);

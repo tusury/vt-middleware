@@ -16,7 +16,6 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
-import org.ldaptive.Connection;
 
 /**
  * Executes an ldap add operation on a separate thread.
@@ -32,22 +31,22 @@ public class AddOperationWorker
   /**
    * Creates a new add operation worker.
    *
-   * @param  conn  connection
+   * @param  op  add operation to execute
    */
-  public AddOperationWorker(final Connection conn)
+  public AddOperationWorker(final AddOperation op)
   {
-    this(conn, null);
+    super(op);
   }
 
 
   /**
    * Creates a new add operation worker.
    *
-   * @param  conn  connection
+   * @param  op  add operation to execute
    * @param  es  executor service
    */
-  public AddOperationWorker(final Connection conn, final ExecutorService es)
+  public AddOperationWorker(final AddOperation op, final ExecutorService es)
   {
-    super(new AddOperation(conn), es);
+    super(op, es);
   }
 }

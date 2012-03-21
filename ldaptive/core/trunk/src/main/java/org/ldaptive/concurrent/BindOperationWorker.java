@@ -16,7 +16,6 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.BindOperation;
 import org.ldaptive.BindRequest;
-import org.ldaptive.Connection;
 
 /**
  * Executes an ldap bind operation on a separate thread.
@@ -32,22 +31,23 @@ public class BindOperationWorker
   /**
    * Creates a new bind operation worker.
    *
-   * @param  conn  connection
+   * @param  op  bind operation to execute
    */
-  public BindOperationWorker(final Connection conn)
+  public BindOperationWorker(final BindOperation op)
   {
-    this(conn, null);
+    super(op);
   }
 
 
   /**
    * Creates a new bind operation worker.
    *
-   * @param  conn  connection
+   * @param  op  bind operation to execute
    * @param  es  executor service
    */
-  public BindOperationWorker(final Connection conn, final ExecutorService es)
+  public BindOperationWorker(
+    final BindOperation op, final ExecutorService es)
   {
-    super(new BindOperation(conn), es);
+    super(op, es);
   }
 }
