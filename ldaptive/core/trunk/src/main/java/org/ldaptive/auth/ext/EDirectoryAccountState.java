@@ -188,7 +188,7 @@ public class EDirectoryAccountState extends AccountState
    */
   public EDirectoryAccountState(final Calendar exp, final int remaining)
   {
-    super(new AccountState.Warning(exp, remaining));
+    super(new AccountState.DefaultWarning(exp, remaining));
     edError = null;
   }
 

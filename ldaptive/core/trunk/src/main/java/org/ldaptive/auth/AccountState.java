@@ -18,7 +18,7 @@ import javax.security.auth.login.LoginException;
 
 /**
  * Represents the state of an LDAP account based account policies for that LDAP.
- * Note that only a warning or an error may be set, not both.
+ * Note that only warning(s) or error(s) may be set, not both.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -27,55 +27,79 @@ public class AccountState
 {
 
   /** account warning. */
-  private final AccountState.Warning accountWarning;
+  private final AccountState.Warning[] accountWarnings;
 
   /** account error. */
-  private final AccountState.Error accountError;
+  private final AccountState.Error[] accountErrors;
 
 
   /**
    * Creates a new account state.
    *
-   * @param  warning  associated with the account
+   * @param  warnings  associated with the account
    */
-  public AccountState(final AccountState.Warning warning)
+  public AccountState(final AccountState.Warning... warnings)
   {
-    accountWarning = warning;
-    accountError = null;
+    accountWarnings = warnings;
+    accountErrors = null;
   }
 
 
   /**
    * Creates a new account state.
    *
-   * @param  error  associated with the account
+   * @param  errors  associated with the account
    */
-  public AccountState(final AccountState.Error error)
+  public AccountState(final AccountState.Error... errors)
   {
-    accountWarning = null;
-    accountError = error;
+    accountWarnings = null;
+    accountErrors = errors;
   }
 
 
   /**
-   * Returns the account state warning.
+   * Returns the account state warnings.
    *
-   * @return  account state warning
+   * @return  account state warnings
+   */
+  public AccountState.Warning[] getWarnings()
+  {
+    return accountWarnings;
+  }
+
+
+  /**
+   * Returns the first account state warning or null if no warnings exist.
+   *
+   * @return  first account state warning
    */
   public AccountState.Warning getWarning()
   {
-    return accountWarning;
+    return accountWarnings != null && accountWarnings.length > 0 ?
+      accountWarnings[0] : null;
   }
 
 
   /**
-   * Returns the account state error.
+   * Returns the account state errors.
    *
-   * @return  account state error
+   * @return  account state errors
+   */
+  public AccountState.Error[] getErrors()
+  {
+    return accountErrors;
+  }
+
+
+  /**
+   * Returns the first account state error or null if no errors exist.
+   *
+   * @return  first account state error
    */
   public AccountState.Error getError()
   {
-    return accountError;
+    return accountErrors != null && accountErrors.length > 0 ?
+      accountErrors[0] : null;
   }
 
 
@@ -111,10 +135,33 @@ public class AccountState
 
 
   /**
-   * Contains warning information for an account state. <T> indicates the type
-   * of expirationTime the LDAP uses.
+   * Contains warning information for an account state.
    */
-  public static class Warning
+  public interface Warning
+  {
+
+
+    /**
+     * Returns the expiration.
+     *
+     * @return  expiration
+     */
+    Calendar getExpiration();
+
+
+    /**
+     * Returns the number of logins remaining until the account locks.
+     *
+     * @return  number of logins remaining
+     */
+    int getLoginsRemaining();
+  }
+
+
+  /**
+   * Default warning implementation.
+   */
+  public static class DefaultWarning implements Warning
   {
 
     /** expiration. */
@@ -130,29 +177,23 @@ public class AccountState
      * @param  exp  date of expiration
      * @param  remaining  number of logins
      */
-    public Warning(final Calendar exp, final int remaining)
+    public DefaultWarning(final Calendar exp, final int remaining)
     {
       expiration = exp;
       loginsRemaining = remaining;
     }
 
 
-    /**
-     * Returns the expiration.
-     *
-     * @return  expiration
-     */
+    /** {@inheritDoc} */
+    @Override
     public Calendar getExpiration()
     {
       return expiration;
     }
 
 
-    /**
-     * Returns the number of logins remaining until the account locks.
-     *
-     * @return  number of logins remaining
-     */
+    /** {@inheritDoc} */
+    @Override
     public int getLoginsRemaining()
     {
       return loginsRemaining;
