@@ -13,6 +13,7 @@
 */
 package org.ldaptive.handler;
 
+import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 
 /**
@@ -31,6 +32,10 @@ public interface OperationResponseHandler<T>
    * Process the response from an ldap operation.
    *
    * @param  response  produced from an operation
+   *
+   * @throws  LdapException  if an error occurs processing the operation
+   * response
    */
-  void process(Response<T> response);
+  void process(Response<T> response)
+    throws LdapException;
 }
