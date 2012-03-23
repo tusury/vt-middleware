@@ -46,7 +46,7 @@ public class AuthenticationResponse extends Response<Boolean>
    * @param  entry  of the authenticated user
    */
   public AuthenticationResponse(
-    final Boolean success,
+    final boolean success,
     final ResultCode rc,
     final LdapEntry entry)
   {
@@ -65,7 +65,7 @@ public class AuthenticationResponse extends Response<Boolean>
    * @param  msg  authentication message
    */
   public AuthenticationResponse(
-    final Boolean success,
+    final boolean success,
     final ResultCode rc,
     final LdapEntry entry,
     final String msg)
@@ -86,7 +86,7 @@ public class AuthenticationResponse extends Response<Boolean>
    * @param  controls  response controls from the underlying ldap operation
    */
   public AuthenticationResponse(
-    final Boolean success,
+    final boolean success,
     final ResultCode rc,
     final LdapEntry entry,
     final String msg,
