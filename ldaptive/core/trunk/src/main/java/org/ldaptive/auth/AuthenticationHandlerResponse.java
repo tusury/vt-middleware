@@ -43,7 +43,7 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
    * @param  conn  connection the authentication occurred on
    */
   public AuthenticationHandlerResponse(
-    final Boolean success,
+    final boolean success,
     final ResultCode rc,
     final Connection conn)
   {
@@ -62,7 +62,7 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
    * @param  msg  authentication message
    */
   public AuthenticationHandlerResponse(
-    final Boolean success,
+    final boolean success,
     final ResultCode rc,
     final Connection conn,
     final String msg)
@@ -83,7 +83,7 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
    * @param  controls  response controls from the underlying ldap operation
    */
   public AuthenticationHandlerResponse(
-    final Boolean success,
+    final boolean success,
     final ResultCode rc,
     final Connection conn,
     final String msg,
