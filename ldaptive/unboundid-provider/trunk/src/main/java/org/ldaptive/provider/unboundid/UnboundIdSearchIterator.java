@@ -13,22 +13,24 @@
 */
 package org.ldaptive.provider.unboundid;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import com.unboundid.ldap.sdk.Control;
 import com.unboundid.ldap.sdk.DereferencePolicy;
-import com.unboundid.ldap.sdk.Entry;
-import com.unboundid.ldap.sdk.EntrySourceException;
 import com.unboundid.ldap.sdk.LDAPConnection;
-import com.unboundid.ldap.sdk.LDAPEntrySource;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.SearchRequest;
 import com.unboundid.ldap.sdk.SearchResult;
-import com.unboundid.ldap.sdk.SearchResultReferenceEntrySourceException;
+import com.unboundid.ldap.sdk.SearchResultEntry;
+import com.unboundid.ldap.sdk.SearchResultListener;
+import com.unboundid.ldap.sdk.SearchResultReference;
 import com.unboundid.ldap.sdk.SearchScope;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
+import org.ldaptive.control.ResponseControl;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
@@ -58,17 +60,14 @@ public class UnboundIdSearchIterator implements SearchIterator
   /** Ldap connection. */
   private LDAPConnection connection;
 
-  /** Ldap entry source. */
-  private LDAPEntrySource source;
-
-  /** Last entry read from the entry source. */
-  private Entry entry;
+  /** Search result iterator. */
+  private SearchResultIterator resultIterator;
 
   /** Codes to retry operations on. */
   private ResultCode[] operationRetryResultCodes;
 
-  /** Operation response timeout. */
-  private long responseTimeout;
+  /** Search result codes to ignore. */
+  private ResultCode[] searchIgnoreResultCodes;
 
 
   /**
@@ -109,24 +108,24 @@ public class UnboundIdSearchIterator implements SearchIterator
 
 
   /**
-   * Returns the response time out in milliseconds.
+   * Returns the search ignore result codes.
    *
-   * @return  response time out
+   * @return  result codes to ignore
    */
-  public long getResponseTimeout()
+  public ResultCode[] getSearchIgnoreResultCodes()
   {
-    return responseTimeout;
+    return searchIgnoreResultCodes;
   }
 
 
   /**
-   * Sets the response time out.
+   * Sets the search ignore result codes.
    *
-   * @param  timeout  time in milliseconds
+   * @param  codes  to ignore
    */
-  public void setResponseTimeout(final long timeout)
+  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
   {
-    responseTimeout = timeout;
+    searchIgnoreResultCodes = codes;
   }
 
 
@@ -141,14 +140,7 @@ public class UnboundIdSearchIterator implements SearchIterator
     throws org.ldaptive.LdapException
   {
     connection = conn;
-    try {
-      source = search(connection, request);
-    } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
-        operationRetryResultCodes,
-        e,
-        controlProcessor);
-    }
+    resultIterator = search(connection, request);
   }
 
 
@@ -160,18 +152,40 @@ public class UnboundIdSearchIterator implements SearchIterator
    *
    * @return  ldap search results
    *
-   * @throws  LDAPException  if an error occurs
+   * @throws  LdapException  if an error occurs
    */
-  protected LDAPEntrySource search(
+  protected SearchResultIterator search(
     final LDAPConnection conn,
     final org.ldaptive.SearchRequest sr)
-    throws LDAPException
+    throws LdapException
   {
-    final SearchRequest unboundIdSr = getSearchRequest(sr);
-    final Control[] c = controlProcessor.processRequestControls(
-      sr.getControls());
-    unboundIdSr.addControls(c);
-    return new LDAPEntrySource(connection, unboundIdSr, false);
+    final SearchResultIterator i = new SearchResultIterator();
+    try {
+      final SearchRequest unboundIdSr = getSearchRequest(request, i);
+      final Control[] c = controlProcessor.processRequestControls(
+        request.getControls());
+      unboundIdSr.addControls(c);
+      i.setResult(connection.search(unboundIdSr));
+    } catch (LDAPException e) {
+      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      if (rc == null) {
+        UnboundIdUtil.throwOperationException(
+          operationRetryResultCodes,
+          e,
+          controlProcessor);
+      }
+      i.setResult(
+        new SearchResult(
+          -1,
+          e.getResultCode(),
+          e.getDiagnosticMessage(),
+          e.getMatchedDN(),
+          e.getReferralURLs(),
+          0,
+          0,
+          e.getResponseControls()));
+    }
+    return i;
   }
 
 
@@ -181,13 +195,14 @@ public class UnboundIdSearchIterator implements SearchIterator
    *
    * @param  sr  search request containing configuration to create unbound id
    * search request
+   * @param  listener  search result listener
    *
    * @return  search request
    *
    * @throws  LDAPException  if the search request cannot be initialized
    */
   protected SearchRequest getSearchRequest(
-    final org.ldaptive.SearchRequest sr)
+    final org.ldaptive.SearchRequest sr, final SearchResultListener listener)
     throws LDAPException
   {
     String[] retAttrs = sr.getReturnAttributes();
@@ -196,6 +211,7 @@ public class UnboundIdSearchIterator implements SearchIterator
     }
 
     final SearchRequest unboundIdSr = new SearchRequest(
+      listener,
       sr.getBaseDn(),
       getSearchScope(sr.getSearchScope()),
       getDereferencePolicy(sr.getDerefAliases()),
@@ -205,7 +221,6 @@ public class UnboundIdSearchIterator implements SearchIterator
       sr.getSearchFilter() != null ?
         sr.getSearchFilter().format() : null,
       retAttrs);
-    unboundIdSr.setResponseTimeoutMillis(responseTimeout);
     return unboundIdSr;
   }
 
@@ -261,69 +276,28 @@ public class UnboundIdSearchIterator implements SearchIterator
   public boolean hasNext()
     throws org.ldaptive.LdapException
   {
-    if (source == null || response != null) {
+    if (resultIterator == null || response != null) {
       return false;
     }
-    while (entry == null) {
-      try {
-        entry = source.nextEntry();
-        if (entry == null) {
-          final SearchResult result = source.getSearchResult();
-          final org.ldaptive.control.ResponseControl[] respControls =
-            controlProcessor.processResponseControls(
-              request.getControls(),
-              result.getResponseControls());
-          final boolean searchAgain = ControlProcessor.searchAgain(
-            respControls);
-          if (searchAgain) {
-            source = search(connection, request);
-          } else {
-            UnboundIdUtil.throwOperationException(
-              operationRetryResultCodes,
-              result.getResultCode());
-            response = new org.ldaptive.Response<Void>(
-              null,
-              ResultCode.valueOf(result.getResultCode().intValue()),
-              respControls);
-            break;
-          }
-        }
-      } catch (SearchResultReferenceEntrySourceException e) {
-        if (request.getReferralBehavior() == ReferralBehavior.FOLLOW) {
-          throw new UnsupportedOperationException(
-            "Referral following not supported");
-        } else if (request.getReferralBehavior() == ReferralBehavior.IGNORE) {
-          e.getSearchReference();
-        } else {
-          throw new LdapException(
-            "Encountered referral: " + e.getSearchReference(),
-            ResultCode.REFERRAL);
-        }
-      } catch (EntrySourceException e) {
-        if (!e.mayContinueReading()) {
-          final SearchResult result = source.getSearchResult();
-          UnboundIdUtil.throwOperationException(
-            operationRetryResultCodes,
-            result.getResultCode());
-
-          final org.ldaptive.control.ResponseControl[] respControls =
-            controlProcessor.processResponseControls(
-              request.getControls(),
-              result.getResponseControls());
-          response = new org.ldaptive.Response<Void>(
-            null,
-            ResultCode.valueOf(result.getResultCode().intValue()),
-            respControls);
-          break;
-        }
-      } catch (LDAPException e) {
-        UnboundIdUtil.throwOperationException(
-          operationRetryResultCodes,
-          e,
-          controlProcessor);
+    boolean more = resultIterator.hasNext();
+    if (!more) {
+      final SearchResult result = resultIterator.getResult();
+      final ResponseControl[] respControls =
+        controlProcessor.processResponseControls(
+          request.getControls(), result.getResponseControls());
+      final boolean searchAgain = ControlProcessor.searchAgain(respControls);
+      if (searchAgain) {
+        resultIterator = search(connection, request);
+        more = resultIterator.hasNext();
+      }
+      if (!more) {
+        response = new org.ldaptive.Response<Void>(
+          null,
+          ResultCode.valueOf(result.getResultCode().intValue()),
+          respControls);
       }
     }
-    return entry != null;
+    return more;
   }
 
 
@@ -332,12 +306,44 @@ public class UnboundIdSearchIterator implements SearchIterator
   public LdapEntry next()
     throws org.ldaptive.LdapException
   {
-    final UnboundIdUtil bu = new UnboundIdUtil(request.getSortBehavior());
-    bu.setBinaryAttributes(request.getBinaryAttributes());
+    final UnboundIdUtil util = new UnboundIdUtil(request.getSortBehavior());
+    util.setBinaryAttributes(request.getBinaryAttributes());
+    SearchResultEntry entry = null;
+    try {
+      entry = resultIterator.getSearchResultEntry();
+    } catch (LDAPException e) {
+      UnboundIdUtil.throwOperationException(
+        operationRetryResultCodes,
+        e,
+        controlProcessor);
+    }
+    return util.toLdapEntry(entry);
+  }
 
-    final LdapEntry le = bu.toLdapEntry(entry);
-    entry = null;
-    return le;
+
+  /**
+   * Determines whether the supplied ldap exception should be ignored.
+   *
+   * @param  ignoreResultCodes  to match against the exception
+   * @param  e  ldap exception to match
+   *
+   * @return  result code that should be ignored or null
+   */
+  protected ResultCode ignoreSearchException(
+    final ResultCode[] ignoreResultCodes,
+    final LDAPException e)
+  {
+    ResultCode ignore = null;
+    if (ignoreResultCodes != null && ignoreResultCodes.length > 0) {
+      for (ResultCode rc : ignoreResultCodes) {
+        if (e.getResultCode().intValue() == rc.value()) {
+          logger.debug("Ignoring ldap exception", e);
+          ignore = rc;
+          break;
+        }
+      }
+    }
+    return ignore;
   }
 
 
@@ -351,9 +357,107 @@ public class UnboundIdSearchIterator implements SearchIterator
 
   /** {@inheritDoc} */
   @Override
-  public void close()
-    throws LdapException
+  public void close() throws LdapException {}
+
+
+  /**
+   * Search results listener for storing entries returned by the search
+   * operation.
+   */
+  private class SearchResultIterator implements SearchResultListener
   {
-    source.close();
+
+    /** serial version uid. */
+    private static final long serialVersionUID = -6869001221533530602L;
+
+    /** Search results. */
+    private Queue<SearchResultEntry> responseQueue =
+      new ConcurrentLinkedQueue<SearchResultEntry>();
+
+    /** Search result. */
+    private SearchResult result;
+
+    /** Ldap search exception to report. */
+    private LDAPException searchException;
+
+    /** Runtime exception to report. */
+    private RuntimeException runtimeException;
+
+
+    /**
+     * Returns the next search result entry from the queue.
+     *
+     * @return  search result entry
+     *
+     * @throws  LDAPException  if an ldap search error needs to be
+     * reported
+     * @throws  RuntimeException  if an unsupported operation was attempted
+     */
+    public SearchResultEntry getSearchResultEntry()
+      throws LDAPException
+    {
+      if (runtimeException != null) {
+        throw runtimeException;
+      } else if (searchException != null) {
+        throw searchException;
+      }
+      return responseQueue.poll();
+    }
+
+
+    /**
+     * Returns the result of the search.
+     *
+     * @return  search result
+     */
+    public SearchResult getResult()
+    {
+      return result;
+    }
+
+
+    /**
+     * Sets the result of the search.
+     *
+     * @param  sr  search result
+     */
+    public void setResult(final SearchResult sr)
+    {
+      result = sr;
+    }
+
+
+    /**
+     * Whether the response queue is empty.
+     *
+     * @return  whether the response queue is empty
+     */
+    public boolean hasNext()
+    {
+      return !responseQueue.isEmpty();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void searchEntryReturned(final SearchResultEntry entry)
+    {
+      responseQueue.add(entry);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void searchReferenceReturned(final SearchResultReference ref)
+    {
+      if (request.getReferralBehavior() == ReferralBehavior.FOLLOW) {
+        runtimeException = new UnsupportedOperationException(
+          "Referral following not supported");
+      } else  if (request.getReferralBehavior() == ReferralBehavior.THROW) {
+        searchException = new LDAPException(
+          com.unboundid.ldap.sdk.ResultCode.REFERRAL,
+          "Encountered referral: " + ref);
+      }
+    }
   }
 }

@@ -62,11 +62,11 @@ public class UnboundIdConnection implements Connection
   /** Result codes to retry operations on. */
   private ResultCode[] operationRetryResultCodes;
 
+  /** Search result codes to ignore. */
+  private ResultCode[] searchIgnoreResultCodes;
+
   /** Control processor. */
   private ControlProcessor<Control> controlProcessor;
-
-  /** Operation response timeout. */
-  private long responseTimeout;
 
 
   /**
@@ -103,6 +103,28 @@ public class UnboundIdConnection implements Connection
 
 
   /**
+   * Returns the search ignore result codes.
+   *
+   * @return  result codes to ignore
+   */
+  public ResultCode[] getSearchIgnoreResultCodes()
+  {
+    return searchIgnoreResultCodes;
+  }
+
+
+  /**
+   * Sets the search ignore result codes.
+   *
+   * @param  codes  to ignore
+   */
+  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
+  {
+    searchIgnoreResultCodes = codes;
+  }
+
+
+  /**
    * Returns the control processor.
    *
    * @return  control processor
@@ -121,28 +143,6 @@ public class UnboundIdConnection implements Connection
   public void setControlProcessor(final ControlProcessor<Control> processor)
   {
     controlProcessor = processor;
-  }
-
-
-  /**
-   * Returns the response time out in milliseconds.
-   *
-   * @return  response time out
-   */
-  public long getResponseTimeout()
-  {
-    return responseTimeout;
-  }
-
-
-  /**
-   * Sets the response time out.
-   *
-   * @param  timeout  time in milliseconds
-   */
-  public void setResponseTimeout(final long timeout)
-  {
-    responseTimeout = timeout;
   }
 
 
@@ -212,7 +212,6 @@ public class UnboundIdConnection implements Connection
       } else {
         sbr = new SimpleBindRequest();
       }
-      sbr.setResponseTimeoutMillis(responseTimeout);
 
       final BindResult result = connection.bind(sbr);
       response = new Response<Void>(
@@ -256,7 +255,6 @@ public class UnboundIdConnection implements Connection
           request.getDn(),
           request.getCredential().getBytes());
       }
-      sbr.setResponseTimeoutMillis(responseTimeout);
 
       final BindResult result = connection.bind(sbr);
       response = new Response<Void>(
@@ -345,7 +343,6 @@ public class UnboundIdConnection implements Connection
         throw new IllegalArgumentException(
           "Unknown SASL authentication mechanism: " + config.getMechanism());
       }
-      sbr.setResponseTimeoutMillis(responseTimeout);
 
       final BindResult result = connection.bind(sbr);
       response = new Response<Void>(
@@ -377,7 +374,6 @@ public class UnboundIdConnection implements Connection
           new DN(request.getDn()),
           util.fromLdapAttributes(request.getLdapAttributes()),
           controlProcessor.processRequestControls(request.getControls()));
-      ar.setResponseTimeoutMillis(responseTimeout);
 
       final LDAPResult result = connection.add(ar);
       response = new Response<Void>(
@@ -417,7 +413,6 @@ public class UnboundIdConnection implements Connection
           request.getAttribute().getStringValue(),
           controlProcessor.processRequestControls(request.getControls()));
       }
-      cr.setResponseTimeoutMillis(responseTimeout);
 
       final CompareResult result = connection.compare(cr);
       response = new Response<Boolean>(
@@ -447,7 +442,6 @@ public class UnboundIdConnection implements Connection
         new com.unboundid.ldap.sdk.DeleteRequest(
           new DN(request.getDn()),
           controlProcessor.processRequestControls(request.getControls()));
-      dr.setResponseTimeoutMillis(responseTimeout);
 
       final LDAPResult result = connection.delete(dr);
       response = new Response<Void>(
@@ -479,7 +473,6 @@ public class UnboundIdConnection implements Connection
           new DN(request.getDn()),
           bu.fromAttributeModification(request.getAttributeModifications()),
           controlProcessor.processRequestControls(request.getControls()));
-      mr.setResponseTimeoutMillis(responseTimeout);
 
       final LDAPResult result = connection.modify(mr);
       response = new Response<Void>(
@@ -514,7 +507,6 @@ public class UnboundIdConnection implements Connection
           request.getDeleteOldRDn(),
           newDn.getParent(),
           controlProcessor.processRequestControls(request.getControls()));
-      mdr.setResponseTimeoutMillis(responseTimeout);
 
       final LDAPResult result = connection.modifyDN(mdr);
       response = new Response<Void>(
@@ -543,7 +535,7 @@ public class UnboundIdConnection implements Connection
       request,
       controlProcessor);
     i.setOperationRetryResultCodes(operationRetryResultCodes);
-    i.setResponseTimeout(responseTimeout);
+    i.setSearchIgnoreResultCodes(searchIgnoreResultCodes);
     i.initialize(connection);
     return i;
   }

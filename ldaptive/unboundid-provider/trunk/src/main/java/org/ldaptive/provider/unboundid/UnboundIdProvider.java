@@ -17,6 +17,7 @@ import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
@@ -50,35 +51,10 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
     config.makeImmutable();
     SocketFactory factory = config.getSocketFactory();
     SSLContext sslContext = null;
+    // Unboundid does not do hostname verification by default
+    // set a default hostname verifier if no trust settings have been configured
     if (cc.getUseStartTLS()) {
-      SSLContextInitializer contextInit = null;
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getCredentialConfig() != null) {
-        try {
-          final CredentialConfig credConfig =
-            cc.getSslConfig().getCredentialConfig();
-          contextInit = credConfig.createSSLContextInitializer();
-        } catch (GeneralSecurityException e) {
-          throw new IllegalArgumentException(e);
-        }
-      } else {
-        contextInit = new DefaultSSLContextInitializer();
-      }
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getTrustManagers() != null) {
-        contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
-      } else {
-        final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-        contextInit.setTrustManagers(
-          new TrustManager[]{
-            new HostnameVerifyingTrustManager(
-              new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
-      }
-      try {
-        sslContext = contextInit.initSSLContext("TLS");
-      } catch (GeneralSecurityException e) {
-        throw new IllegalArgumentException(e);
-      }
+      sslContext = getHostnameVerifierSSLContext(cc);
     } else if (cc.getUseSSL() && factory == null) {
       factory = getHostnameVerifierSocketFactory(cc);
     }
@@ -92,16 +68,63 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
       throw new UnsupportedOperationException(
         "UnboundID provider does not support the protocols property");
     }
-    final ConnectionFactory<UnboundIdProviderConfig> cf =
-      new UnboundIdConnectionFactory(
-        cc.getLdapUrl(),
-        factory,
-        sslContext,
-        cc.getUseStartTLS(),
-        cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0,
-        cc.getResponseTimeout());
+    final LDAPConnectionOptions options = new LDAPConnectionOptions();
+    options.setUseSynchronousMode(true);
+    options.setConnectTimeoutMillis(
+      cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0);
+    options.setResponseTimeoutMillis(cc.getResponseTimeout());
+    ConnectionFactory<UnboundIdProviderConfig> cf = null;
+    if (cc.getUseStartTLS()) {
+      cf = new UnboundIdStartTLSConnectionFactory(
+        cc.getLdapUrl(), factory, sslContext, options);
+    } else {
+      cf = new UnboundIdConnectionFactory(cc.getLdapUrl(), factory, options);
+    }
     cf.setProviderConfig(config);
     return cf;
+  }
+
+
+  /**
+   * Returns an SSLContext configured with a default hostname verifier. Uses a
+   * {@link DefaultHostnameVerifier} if no trust managers have been configured.
+   *
+   * @param  cc  connection configuration
+   *
+   * @return  SSL Context
+   */
+  protected SSLContext getHostnameVerifierSSLContext(final ConnectionConfig cc)
+  {
+    SSLContext sslContext = null;
+    SSLContextInitializer contextInit = null;
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getCredentialConfig() != null) {
+      try {
+        final CredentialConfig credConfig =
+          cc.getSslConfig().getCredentialConfig();
+        contextInit = credConfig.createSSLContextInitializer();
+      } catch (GeneralSecurityException e) {
+        throw new IllegalArgumentException(e);
+      }
+    } else {
+      contextInit = new DefaultSSLContextInitializer();
+    }
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getTrustManagers() != null) {
+      contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
+    } else {
+      final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+      contextInit.setTrustManagers(
+        new TrustManager[]{
+          new HostnameVerifyingTrustManager(
+            new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
+    }
+    try {
+      sslContext = contextInit.initSSLContext("TLS");
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException(e);
+    }
+    return sslContext;
   }
 
 
@@ -115,8 +138,6 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
   protected SocketFactory getHostnameVerifierSocketFactory(
     final ConnectionConfig cc)
   {
-    // Unboundid does not do hostname verification by default
-    // set a default hostname verifier
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
     return TLSSocketFactory.getHostnameVerifierFactory(
       cc.getSslConfig(), ldapUrl.getEntriesAsString());

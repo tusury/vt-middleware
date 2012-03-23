@@ -32,6 +32,9 @@ public class UnboundIdProviderConfig extends ProviderConfig
   /** socket factory for ldap connections. */
   private SocketFactory socketFactory;
 
+  /** Search result codes to ignore. */
+  private ResultCode[] searchIgnoreResultCodes;
+
   /** Unbound id specific control processor. */
   private ControlProcessor<Control> controlProcessor;
 
@@ -41,6 +44,9 @@ public class UnboundIdProviderConfig extends ProviderConfig
   {
     setOperationRetryResultCodes(
       new ResultCode[] {ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR, });
+    setSearchIgnoreResultCodes(
+      new ResultCode[] {
+        ResultCode.TIME_LIMIT_EXCEEDED, ResultCode.SIZE_LIMIT_EXCEEDED, });
     controlProcessor = new ControlProcessor<Control>(
       new UnboundIdControlHandler());
   }
@@ -67,6 +73,30 @@ public class UnboundIdProviderConfig extends ProviderConfig
     checkImmutable();
     logger.trace("setting socketFactory: {}", sf);
     socketFactory = sf;
+  }
+
+
+  /**
+   * Returns the search ignore result codes.
+   *
+   * @return  result codes to ignore
+   */
+  public ResultCode[] getSearchIgnoreResultCodes()
+  {
+    return searchIgnoreResultCodes;
+  }
+
+
+  /**
+   * Sets the search ignore result codes.
+   *
+   * @param  codes  to ignore
+   */
+  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
+  {
+    checkImmutable();
+    logger.trace("setting searchIgnoreResultCodes: {}", Arrays.toString(codes));
+    searchIgnoreResultCodes = codes;
   }
 
 
@@ -105,13 +135,15 @@ public class UnboundIdProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, socketFactory=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, socketFactory=%s, " +
+        "searchIgnoreResultCodes=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         socketFactory,
+        Arrays.toString(searchIgnoreResultCodes),
         controlProcessor);
   }
 }
