@@ -38,7 +38,7 @@ public class PasswordPolicyAccountState extends AccountState
    */
   public PasswordPolicyAccountState(final Calendar exp, final int remaining)
   {
-    super(new AccountState.Warning(exp, remaining));
+    super(new AccountState.DefaultWarning(exp, remaining));
     ppError = null;
   }
 
