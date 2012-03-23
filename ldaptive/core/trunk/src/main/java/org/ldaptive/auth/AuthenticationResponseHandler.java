@@ -13,6 +13,8 @@
 */
 package org.ldaptive.auth;
 
+import org.ldaptive.LdapException;
+
 /**
  * Provides post processing of authentication responses.
  *
@@ -27,6 +29,10 @@ public interface AuthenticationResponseHandler
    * Process the response from an ldap authentication.
    *
    * @param  response  produced from an authentication
+   *
+   * @throws  LdapException  if an error occurs processing an authentication
+   * response
    */
-  void process(AuthenticationResponse response);
+  void process(AuthenticationResponse response)
+    throws LdapException;
 }
