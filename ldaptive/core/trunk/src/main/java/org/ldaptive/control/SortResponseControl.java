@@ -14,7 +14,7 @@
 package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
@@ -170,7 +170,7 @@ public class SortResponseControl extends AbstractControl
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         getOID(),
         getCriticality(),

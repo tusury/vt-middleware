@@ -23,8 +23,8 @@ import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapUtil;
-import org.ldaptive.TestUtil;
+import org.ldaptive.LdapUtils;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -58,8 +58,8 @@ public class AttributeServletTest extends AbstractTest
   public void createLdapEntry(final String ldifFile, final String webXml)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
     servletRunner = new ServletRunner(new File(webXml));
@@ -128,7 +128,7 @@ public class AttributeServletTest extends AbstractTest
     }
     AssertJUnit.assertEquals(
       attributeValue,
-      LdapUtil.base64Encode(data.toByteArray()));
+      LdapUtils.base64Encode(data.toByteArray()));
   }
 
 

@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id: JLdapUtil.java 2328 2012-03-26 02:53:02Z dfisher $
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision: 2328 $
+  Updated: $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
 */
 package org.ldaptive.provider.jldap;
 
@@ -20,7 +20,6 @@ import java.util.List;
 import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPEntry;
-import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPModification;
 import com.novell.ldap.controls.LDAPSortKey;
 import com.novell.ldap.util.Base64;
@@ -28,9 +27,6 @@ import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.OperationException;
-import org.ldaptive.ResultCode;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.control.SortKey;
 
@@ -39,9 +35,9 @@ import org.ldaptive.control.SortKey;
  * specific objects.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
+ * @version  $Revision: 2328 $ $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
  */
-public class JLdapUtil
+public class JLdapUtils
 {
 
   /** Ldap result sort behavior. */
@@ -52,7 +48,7 @@ public class JLdapUtil
 
 
   /** Default constructor. */
-  public JLdapUtil()
+  public JLdapUtils()
   {
     sortBehavior = SortBehavior.getDefaultSortBehavior();
   }
@@ -63,7 +59,7 @@ public class JLdapUtil
    *
    * @param  sb  sort behavior
    */
-  public JLdapUtil(final SortBehavior sb)
+  public JLdapUtils(final SortBehavior sb)
   {
     sortBehavior = sb;
   }
@@ -226,37 +222,6 @@ public class JLdapUtil
         fromLdapAttribute(am[i].getAttribute()));
     }
     return mods;
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  e  ldap exception to examine
-   *
-   * @throws  OperationException  if the operation should be retried
-   * @throws  LdapException  to propagate the exception out
-   */
-  public static void throwOperationException(
-    final ResultCode[] operationRetryResultCodes,
-    final LDAPException e)
-    throws LdapException
-  {
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == e.getResultCode()) {
-          throw new OperationException(
-            e,
-            ResultCode.valueOf(e.getResultCode()));
-        }
-      }
-    }
-    throw new LdapException(e, ResultCode.valueOf(e.getResultCode()));
   }
 
 

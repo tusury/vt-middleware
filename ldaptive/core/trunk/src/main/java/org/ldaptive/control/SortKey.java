@@ -13,7 +13,7 @@
 */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Used by {@link SortRequestControl} to declare how sorting should occur.
@@ -173,7 +173,7 @@ public class SortKey
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         attributeDescription,
         matchingRuleId,

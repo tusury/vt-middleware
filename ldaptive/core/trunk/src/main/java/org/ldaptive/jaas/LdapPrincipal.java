@@ -16,7 +16,7 @@ package org.ldaptive.jaas;
 import java.io.Serializable;
 import java.security.Principal;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides a custom implementation for adding LDAP principals to a subject.
@@ -102,7 +102,7 @@ public class LdapPrincipal
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, ldapName);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, ldapName);
   }
 
 

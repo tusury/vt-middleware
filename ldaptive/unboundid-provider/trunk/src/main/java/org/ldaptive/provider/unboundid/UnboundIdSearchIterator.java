@@ -32,6 +32,7 @@ import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.provider.ControlProcessor;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,10 +121,13 @@ public class UnboundIdSearchIterator implements SearchIterator
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        UnboundIdUtil.throwOperationException(
+        ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          config.getControlProcessor());
+          e.getResultCode().intValue(),
+          config.getControlProcessor().processResponseControls(
+            request.getControls(), e.getResponseControls()),
+          true);
       }
       i.setResult(
         new SearchResult(
@@ -257,16 +261,19 @@ public class UnboundIdSearchIterator implements SearchIterator
   public LdapEntry next()
     throws org.ldaptive.LdapException
   {
-    final UnboundIdUtil util = new UnboundIdUtil(request.getSortBehavior());
+    final UnboundIdUtils util = new UnboundIdUtils(request.getSortBehavior());
     util.setBinaryAttributes(request.getBinaryAttributes());
     SearchResultEntry entry = null;
     try {
       entry = resultIterator.getSearchResultEntry();
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return util.toLdapEntry(entry);
   }

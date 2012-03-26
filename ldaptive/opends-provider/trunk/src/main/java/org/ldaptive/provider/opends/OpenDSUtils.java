@@ -21,23 +21,17 @@ import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.OperationException;
 import org.ldaptive.SortBehavior;
-import org.ldaptive.provider.ControlProcessor;
 import org.opends.sdk.Attribute;
 import org.opends.sdk.ByteString;
 import org.opends.sdk.ByteStringBuilder;
 import org.opends.sdk.DN;
 import org.opends.sdk.Entry;
-import org.opends.sdk.ErrorResultException;
 import org.opends.sdk.LinkedAttribute;
 import org.opends.sdk.LinkedHashMapEntry;
 import org.opends.sdk.Modification;
 import org.opends.sdk.ModificationType;
-import org.opends.sdk.ResultCode;
 import org.opends.sdk.SortKey;
-import org.opends.sdk.controls.Control;
 
 /**
  * Provides methods for converting between OpenDS specific objects and
@@ -46,7 +40,7 @@ import org.opends.sdk.controls.Control;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class OpenDSUtil
+public class OpenDSUtils
 {
 
   /** Default binary attributes. */
@@ -64,7 +58,7 @@ public class OpenDSUtil
 
 
   /** Default constructor. */
-  public OpenDSUtil()
+  public OpenDSUtils()
   {
     sortBehavior = SortBehavior.getDefaultSortBehavior();
   }
@@ -75,7 +69,7 @@ public class OpenDSUtil
    *
    * @param  sb  sort behavior
    */
-  public OpenDSUtil(final SortBehavior sb)
+  public OpenDSUtils(final SortBehavior sb)
   {
     sortBehavior = sb;
   }
@@ -317,77 +311,6 @@ public class OpenDSUtil
       }
     }
     return mods;
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or do nothing. If operation
-   * exception is thrown, the operation will be retried.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  code  opends result code to examine
-   *
-   * @throws  OperationException  if the operation should be retried
-   */
-  public static void throwOperationException(
-    final org.ldaptive.ResultCode[] operationRetryResultCodes,
-    final ResultCode code)
-    throws OperationException
-  {
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (org.ldaptive.ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == code.intValue()) {
-          throw new OperationException(
-            String.format(
-              "Ldap returned result code: %s(%s)",
-              code,
-              code.intValue()),
-            org.ldaptive.ResultCode.valueOf(code.intValue()));
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  e  opends exception to examine
-   * @param  processor  control processor
-   *
-   * @throws  OperationException  if the operation should be retried
-   * @throws  LdapException  to propagate the exception out
-   */
-  public static void throwOperationException(
-    final org.ldaptive.ResultCode[] operationRetryResultCodes,
-    final ErrorResultException e,
-    final ControlProcessor<Control> processor)
-    throws LdapException
-  {
-    final ResultCode rcEnum = e.getResult().getResultCode();
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (org.ldaptive.ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == rcEnum.intValue()) {
-          throw new OperationException(
-            e,
-            org.ldaptive.ResultCode.valueOf(rcEnum.intValue()),
-            processor.processResponseControls(
-              null, e.getResult().getControls().toArray(new Control[0])));
-        }
-      }
-    }
-    throw new org.ldaptive.LdapException(
-      e,
-      org.ldaptive.ResultCode.valueOf(rcEnum.intValue()),
-      processor.processResponseControls(
-        null, e.getResult().getControls().toArray(new Control[0])));
   }
 
 

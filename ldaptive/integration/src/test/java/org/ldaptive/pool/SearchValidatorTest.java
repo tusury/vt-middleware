@@ -17,7 +17,7 @@ import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
@@ -38,7 +38,7 @@ public class SearchValidatorTest extends AbstractTest
   public void defaultSettings()
     throws Exception
   {
-    final Connection c = TestUtil.createConnection();
+    final Connection c = TestUtils.createConnection();
     final SearchValidator sv = new SearchValidator();
     try {
       c.open();
@@ -57,7 +57,7 @@ public class SearchValidatorTest extends AbstractTest
   public void customSettings()
     throws Exception
   {
-    final Connection c = TestUtil.createConnection();
+    final Connection c = TestUtils.createConnection();
     final SearchValidator sv = new SearchValidator(
       new SearchRequest("ou=test,dc=vt,dc=edu", new SearchFilter("uid=*")));
     try {

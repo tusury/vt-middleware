@@ -23,7 +23,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SortBehavior;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -53,8 +53,8 @@ public class LdifTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -82,7 +82,7 @@ public class LdifTest extends AbstractTest
   public void searchAndCompareLdif(final String dn, final String filter)
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -121,9 +121,9 @@ public class LdifTest extends AbstractTest
     final String ldifSortedFile)
     throws Exception
   {
-    final String ldifStringSorted = TestUtil.readFileIntoString(ldifSortedFile);
+    final String ldifStringSorted = TestUtils.readFileIntoString(ldifSortedFile);
     final LdifReader ldifReader = new LdifReader(
-      new StringReader(TestUtil.readFileIntoString(ldifFile)),
+      new StringReader(TestUtils.readFileIntoString(ldifFile)),
       SortBehavior.SORTED);
     final LdapResult result = ldifReader.read();
 
@@ -151,11 +151,11 @@ public class LdifTest extends AbstractTest
     final String ldifFileOut)
     throws Exception
   {
-    final String ldifStringIn = TestUtil.readFileIntoString(ldifFileIn);
+    final String ldifStringIn = TestUtils.readFileIntoString(ldifFileIn);
     LdifReader ldifReader = new LdifReader(new StringReader(ldifStringIn));
     final LdapResult result1 = ldifReader.read();
 
-    final String ldifStringOut = TestUtil.readFileIntoString(ldifFileOut);
+    final String ldifStringOut = TestUtils.readFileIntoString(ldifFileOut);
     ldifReader = new LdifReader(new StringReader(ldifStringOut));
     final LdapResult result2 = ldifReader.read();
 

@@ -31,6 +31,7 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.Connection;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
@@ -186,10 +187,12 @@ public class NetscapeConnection implements Connection
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -222,10 +225,12 @@ public class NetscapeConnection implements Connection
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -271,10 +276,12 @@ public class NetscapeConnection implements Connection
       }
       response = new Response<Void>(null, ResultCode.SUCCESS);
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -287,7 +294,7 @@ public class NetscapeConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final NetscapeUtil util = new NetscapeUtil();
+      final NetscapeUtils util = new NetscapeUtils();
       final LDAPResponseListener listener = connection.add(
         new LDAPEntry(
           request.getDn(),
@@ -302,10 +309,12 @@ public class NetscapeConnection implements Connection
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -318,7 +327,7 @@ public class NetscapeConnection implements Connection
   {
     Response<Boolean> response = null;
     try {
-      final NetscapeUtil util = new NetscapeUtil();
+      final NetscapeUtils util = new NetscapeUtils();
       final LDAPResponseListener listener = connection.compare(
         request.getDn(),
         util.fromLdapAttribute(request.getAttribute()),
@@ -332,10 +341,12 @@ public class NetscapeConnection implements Connection
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -360,10 +371,12 @@ public class NetscapeConnection implements Connection
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -376,7 +389,7 @@ public class NetscapeConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final NetscapeUtil util = new NetscapeUtil();
+      final NetscapeUtils util = new NetscapeUtils();
       final LDAPResponseListener listener = connection.modify(
         request.getDn(),
         util.fromAttributeModification(request.getAttributeModifications()),
@@ -390,10 +403,12 @@ public class NetscapeConnection implements Connection
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -415,10 +430,12 @@ public class NetscapeConnection implements Connection
         getLDAPConstraints(request));
       response = new Response<Void>(null, ResultCode.SUCCESS);
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getLDAPResultCode(),
+        null,
+        true);
     }
     return response;
   }

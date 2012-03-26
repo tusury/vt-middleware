@@ -32,6 +32,7 @@ import org.apache.directory.shared.ldap.model.message.ModifyDnRequestImpl;
 import org.apache.directory.shared.ldap.model.message.ModifyDnResponse;
 import org.apache.directory.shared.ldap.model.message.ModifyRequestImpl;
 import org.apache.directory.shared.ldap.model.message.ModifyResponse;
+import org.apache.directory.shared.ldap.model.message.ResultCodeEnum;
 import org.apache.directory.shared.ldap.model.name.Dn;
 import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
@@ -44,6 +45,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.Connection;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,19 +158,25 @@ public class ApacheLdapConnection implements Connection
       }
 
       final BindResponse br = connection.bind(bri);
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), br);
+      final ResultCodeEnum rcEnum = br.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        br.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Void>(
-        null,
-        ResultCode.valueOf(br.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          br));
+        null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     } catch (IOException e) {
@@ -204,19 +212,25 @@ public class ApacheLdapConnection implements Connection
       bri.setCredentials(request.getCredential().getBytes());
 
       final BindResponse br = connection.bind(bri);
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), br);
+      final ResultCodeEnum rcEnum = br.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        br.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Void>(
-        null,
-        ResultCode.valueOf(br.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          br));
+        null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     } catch (IOException e) {
@@ -248,7 +262,7 @@ public class ApacheLdapConnection implements Connection
 
       case DIGEST_MD5:
 
-        final DigestMd5Request digestMd5Request = ApacheLdapSaslUtil
+        final DigestMd5Request digestMd5Request = ApacheLdapSaslUtils
           .createDigestMd5Request(
             request.getDn(),
             request.getCredential(),
@@ -258,7 +272,7 @@ public class ApacheLdapConnection implements Connection
 
       case CRAM_MD5:
 
-        final CramMd5Request cramMd5Request = ApacheLdapSaslUtil
+        final CramMd5Request cramMd5Request = ApacheLdapSaslUtils
           .createCramMd5Request(
             request.getDn(),
             request.getCredential(),
@@ -268,7 +282,7 @@ public class ApacheLdapConnection implements Connection
 
       case GSSAPI:
 
-        final GssApiRequest gssApiRequest = ApacheLdapSaslUtil
+        final GssApiRequest gssApiRequest = ApacheLdapSaslUtils
           .createGssApiRequest(
             request.getDn(),
             request.getCredential(),
@@ -281,19 +295,25 @@ public class ApacheLdapConnection implements Connection
           "Unknown SASL authentication mechanism: " +
           request.getSaslConfig().getMechanism());
       }
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), br);
+      final ResultCodeEnum rcEnum = br.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        br.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Void>(
-        null,
-        ResultCode.valueOf(br.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          br));
+        null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     } catch (IOException e) {
@@ -310,7 +330,7 @@ public class ApacheLdapConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final ApacheLdapUtil bu = new ApacheLdapUtil();
+      final ApacheLdapUtils bu = new ApacheLdapUtils();
       final AddRequestImpl ari = new AddRequestImpl();
       if (request.getControls() != null) {
         ari.addAllControls(
@@ -322,19 +342,25 @@ public class ApacheLdapConnection implements Connection
           new LdapEntry(request.getDn(), request.getLdapAttributes())));
 
       final AddResponse ar = connection.add(ari);
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), ar);
+      final ResultCodeEnum rcEnum = ar.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        ar.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Void>(
-        null,
-        ResultCode.valueOf(ar.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          ar));
+        null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -364,19 +390,25 @@ public class ApacheLdapConnection implements Connection
       }
 
       final CompareResponse cr = connection.compare(cri);
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), cr);
+      final ResultCodeEnum rcEnum = cr.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        cr.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Boolean>(
-        cr.isTrue(),
-        ResultCode.valueOf(cr.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          cr));
+        cr.isTrue(), ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -400,19 +432,25 @@ public class ApacheLdapConnection implements Connection
       dri.setName(new Dn(request.getDn()));
 
       final DeleteResponse dr = connection.delete(dri);
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), dr);
+      final ResultCodeEnum rcEnum = dr.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        dr.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Void>(
-        null,
-        ResultCode.valueOf(dr.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          dr));
+        null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -427,7 +465,7 @@ public class ApacheLdapConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final ApacheLdapUtil bu = new ApacheLdapUtil();
+      final ApacheLdapUtils bu = new ApacheLdapUtils();
       final ModifyRequestImpl mri = new ModifyRequestImpl();
       if (request.getControls() != null) {
         mri.addAllControls(
@@ -442,19 +480,25 @@ public class ApacheLdapConnection implements Connection
       }
 
       final ModifyResponse mr = connection.modify(mri);
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), mr);
+      final ResultCodeEnum rcEnum = mr.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        mr.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Void>(
-        null,
-        ResultCode.valueOf(mr.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          mr));
+        null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -483,19 +527,25 @@ public class ApacheLdapConnection implements Connection
       mdri.setDeleteOldRdn(request.getDeleteOldRDn());
 
       final ModifyDnResponse mdr = connection.modifyDn(mdri);
-      ApacheLdapUtil.throwOperationException(
+      final org.ldaptive.control.ResponseControl[] respControls =
+        ApacheLdapUtils.processResponseControls(
+          config.getControlProcessor(), request.getControls(), mdr);
+      final ResultCodeEnum rcEnum = mdr.getLdapResult().getResultCode();
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
-        mdr.getLdapResult().getResultCode());
+        String.format("Ldap returned result code: %s", rcEnum),
+        rcEnum.getResultCode(),
+        respControls,
+        false);
       response = new Response<Void>(
-        null,
-        ResultCode.valueOf(mdr.getLdapResult().getResultCode().getResultCode()),
-        ApacheLdapUtil.processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          mdr));
+        null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }

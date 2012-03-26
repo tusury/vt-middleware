@@ -25,7 +25,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +106,7 @@ public class DefaultHostnameVerifier
 
   /**
    * Verify if the hostname is an IP address using
-   * {@link LdapUtil#isIPAddress(String)}. Delegates to
+   * {@link LdapUtils#isIPAddress(String)}. Delegates to
    * {@link #verifyIP(String, X509Certificate)} and
    * {@link #verifyDNS(String, X509Certificate)} accordingly.
    *
@@ -122,7 +122,7 @@ public class DefaultHostnameVerifier
       hostname,
       cert.getSubjectX500Principal().toString());
     boolean b = false;
-    if (LdapUtil.isIPAddress(hostname)) {
+    if (LdapUtils.isIPAddress(hostname)) {
       b = verifyIP(hostname, cert);
     } else {
       b = verifyDNS(hostname, cert);

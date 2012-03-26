@@ -16,7 +16,7 @@ package org.ldaptive.control;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ContextType;
 import org.ldaptive.asn1.DEREncoder;
 import org.ldaptive.asn1.OctetStringType;
@@ -108,7 +108,7 @@ public class SortRequestControl extends AbstractControl
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         getOID(),
         getCriticality(),

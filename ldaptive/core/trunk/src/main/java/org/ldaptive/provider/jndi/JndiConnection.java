@@ -33,6 +33,7 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.provider.Connection;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.SaslConfig;
@@ -153,7 +154,7 @@ public class JndiConnection implements Connection
     } catch (NamingException e) {
       throw new LdapException(
         e,
-        NamingExceptionUtil.getResultCode(e.getClass()));
+        NamingExceptionUtils.getResultCode(e.getClass()));
     } finally {
       context = null;
     }
@@ -200,18 +201,20 @@ public class JndiConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.SUCCESS,
-        JndiUtil.processResponseControls(
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
           context));
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          context));
+          context),
+        true);
     }
     return response;
   }
@@ -240,18 +243,20 @@ public class JndiConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.SUCCESS,
-        JndiUtil.processResponseControls(
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
           context));
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          context));
+          context),
+        true);
     }
     return response;
   }
@@ -271,7 +276,7 @@ public class JndiConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final String authenticationType = JndiUtil.getAuthenticationType(
+      final String authenticationType = JndiUtils.getAuthenticationType(
         request.getSaslConfig().getMechanism());
       for (
         Map.Entry<String, Object> entry :
@@ -293,18 +298,20 @@ public class JndiConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.SUCCESS,
-        JndiUtil.processResponseControls(
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
           context));
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          context));
+          context),
+        true);
     }
     return response;
   }
@@ -323,14 +330,14 @@ public class JndiConnection implements Connection
           config.getControlProcessor().processRequestControls(
             request.getControls()));
 
-        final JndiUtil bu = new JndiUtil();
+        final JndiUtils bu = new JndiUtils();
         ctx.createSubcontext(
           new LdapName(request.getDn()),
           bu.fromLdapAttributes(request.getLdapAttributes())).close();
         response = new Response<Void>(
           null,
           ResultCode.SUCCESS,
-          JndiUtil.processResponseControls(
+          JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
             ctx));
@@ -340,13 +347,15 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          ctx));
+          ctx),
+        true);
     }
     return response;
   }
@@ -377,7 +386,7 @@ public class JndiConnection implements Connection
         response = new Response<Boolean>(
           success,
           success ? ResultCode.COMPARE_TRUE : ResultCode.COMPARE_FALSE,
-          JndiUtil.processResponseControls(
+          JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
             ctx));
@@ -390,13 +399,15 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          ctx));
+          ctx),
+        true);
     }
     return response;
   }
@@ -418,7 +429,7 @@ public class JndiConnection implements Connection
         response = new Response<Void>(
           null,
           ResultCode.SUCCESS,
-          JndiUtil.processResponseControls(
+          JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
             ctx));
@@ -428,13 +439,15 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          ctx));
+          ctx),
+        true);
     }
     return response;
   }
@@ -453,14 +466,14 @@ public class JndiConnection implements Connection
           config.getControlProcessor().processRequestControls(
             request.getControls()));
 
-        final JndiUtil bu = new JndiUtil();
+        final JndiUtils bu = new JndiUtils();
         ctx.modifyAttributes(
           new LdapName(request.getDn()),
           bu.fromAttributeModification(request.getAttributeModifications()));
         response = new Response<Void>(
           null,
           ResultCode.SUCCESS,
-          JndiUtil.processResponseControls(
+          JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
             ctx));
@@ -470,13 +483,15 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          ctx));
+          ctx),
+        true);
     }
     return response;
   }
@@ -503,7 +518,7 @@ public class JndiConnection implements Connection
         response = new Response<Void>(
           null,
           ResultCode.SUCCESS,
-          JndiUtil.processResponseControls(
+          JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
             ctx));
@@ -513,13 +528,15 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          ctx));
+          ctx),
+        true);
     }
     return response;
   }
@@ -568,12 +585,12 @@ public class JndiConnection implements Connection
     if (config.getQualityOfProtection() != null) {
       env.put(
         SASL_QOP,
-        JndiUtil.getQualityOfProtection(config.getQualityOfProtection()));
+        JndiUtils.getQualityOfProtection(config.getQualityOfProtection()));
     }
     if (config.getSecurityStrength() != null) {
       env.put(
         SASL_STRENGTH,
-        JndiUtil.getSecurityStrength(config.getSecurityStrength()));
+        JndiUtils.getSecurityStrength(config.getSecurityStrength()));
     }
     if (config.getMutualAuthentication() != null) {
       env.put(SASL_MUTUAL_AUTH, config.getMutualAuthentication().toString());

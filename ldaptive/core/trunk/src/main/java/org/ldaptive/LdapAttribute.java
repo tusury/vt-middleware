@@ -484,7 +484,7 @@ public class LdapAttribute extends AbstractLdapBean
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         attributeName != null ? attributeName.toLowerCase() : null,
         attributeValues);
@@ -745,7 +745,7 @@ public class LdapAttribute extends AbstractLdapBean
     @Override
     public int hashCode()
     {
-      return LdapUtil.computeHashCode(HASH_CODE_SEED, values);
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, values);
     }
 
 
@@ -774,7 +774,7 @@ public class LdapAttribute extends AbstractLdapBean
       final Collection<String> c = createSortBehaviorCollection(
         String.class);
       for (byte[] value : v) {
-        c.add(LdapUtil.base64Encode(value));
+        c.add(LdapUtils.base64Encode(value));
       }
       return c;
     }
@@ -793,7 +793,7 @@ public class LdapAttribute extends AbstractLdapBean
       final Collection<byte[]> c = createSortBehaviorCollection(
         byte[].class);
       for (String value : v) {
-        c.add(LdapUtil.utf8Encode(value));
+        c.add(LdapUtils.utf8Encode(value));
       }
       return c;
     }

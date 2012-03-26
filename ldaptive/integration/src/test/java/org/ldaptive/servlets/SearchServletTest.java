@@ -23,7 +23,7 @@ import com.meterware.servletunit.ServletUnitClient;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapResult;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.ldaptive.io.Dsmlv1Writer;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -61,8 +61,8 @@ public class SearchServletTest extends AbstractTest
   public void createLdapEntry(final String ldifFile, final String webXml)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
     ldifServletRunner = new ServletRunner(new File(webXml));
@@ -100,7 +100,7 @@ public class SearchServletTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final String expected = TestUtil.readFileIntoString(ldifFile);
+    final String expected = TestUtils.readFileIntoString(ldifFile);
 
     final ServletUnitClient sc = ldifServletRunner.newClient();
     final WebRequest request = new PostMethodWebRequest(
@@ -113,8 +113,8 @@ public class SearchServletTest extends AbstractTest
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/plain", response.getContentType());
 
-    final LdapResult result = TestUtil.convertLdifToResult(response.getText());
-    AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
+    final LdapResult result = TestUtils.convertLdifToResult(response.getText());
+    AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
 
 
@@ -139,8 +139,8 @@ public class SearchServletTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    final LdapResult result = TestUtil.convertLdifToResult(ldif);
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    final LdapResult result = TestUtils.convertLdifToResult(ldif);
     // convert ldif into dsmlv1
     final StringWriter s1w = new StringWriter();
     final Dsmlv1Writer d1w = new Dsmlv1Writer(s1w);

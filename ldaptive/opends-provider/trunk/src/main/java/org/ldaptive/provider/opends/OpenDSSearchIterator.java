@@ -22,6 +22,7 @@ import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.provider.ControlProcessor;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.opends.sdk.Connection;
 import org.opends.sdk.DereferenceAliasesPolicy;
@@ -123,10 +124,14 @@ public class OpenDSSearchIterator implements SearchIterator
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        OpenDSUtil.throwOperationException(
+        ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          config.getControlProcessor());
+          e.getResult().getResultCode().intValue(),
+          config.getControlProcessor().processResponseControls(
+            request.getControls(),
+            e.getResult().getControls().toArray(new Control[0])),
+          true);
       }
     } catch (InterruptedException e) {
       throw new LdapException(e);
@@ -250,16 +255,20 @@ public class OpenDSSearchIterator implements SearchIterator
   public LdapEntry next()
     throws LdapException
   {
-    final OpenDSUtil util = new OpenDSUtil(request.getSortBehavior());
+    final OpenDSUtils util = new OpenDSUtils(request.getSortBehavior());
     util.setBinaryAttributes(request.getBinaryAttributes());
     SearchResultEntry entry = null;
     try {
       entry = resultIterator.getSearchResultEntry();
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     }
     return util.toLdapEntry(entry);
   }

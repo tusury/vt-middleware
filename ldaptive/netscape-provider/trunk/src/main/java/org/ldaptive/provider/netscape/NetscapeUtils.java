@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id: NetscapeUtil.java 2328 2012-03-26 02:53:02Z dfisher $
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision: 2328 $
+  Updated: $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
 */
 package org.ldaptive.provider.netscape;
 
@@ -19,32 +19,25 @@ import java.util.Enumeration;
 import java.util.List;
 import netscape.ldap.LDAPAttribute;
 import netscape.ldap.LDAPAttributeSet;
-import netscape.ldap.LDAPControl;
 import netscape.ldap.LDAPEntry;
-import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPModification;
 import netscape.ldap.LDAPModificationSet;
-import netscape.ldap.LDAPReferralException;
 import netscape.ldap.LDAPSortKey;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.OperationException;
-import org.ldaptive.ResultCode;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.control.SortKey;
-import org.ldaptive.provider.ControlProcessor;
 
 /**
  * Provides methods for converting between Netscape specific objects and
  * ldaptive specific objects.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
+ * @version  $Revision: 2328 $ $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
  */
-public class NetscapeUtil
+public class NetscapeUtils
 {
 
   /** Default binary attributes. */
@@ -62,7 +55,7 @@ public class NetscapeUtil
 
 
   /** Default constructor. */
-  public NetscapeUtil()
+  public NetscapeUtils()
   {
     sortBehavior = SortBehavior.getDefaultSortBehavior();
   }
@@ -73,7 +66,7 @@ public class NetscapeUtil
    *
    * @param  sb  sort behavior
    */
-  public NetscapeUtil(final SortBehavior sb)
+  public NetscapeUtils(final SortBehavior sb)
   {
     sortBehavior = sb;
   }
@@ -223,41 +216,6 @@ public class NetscapeUtil
         fromLdapAttribute(am[i].getAttribute()));
     }
     return mods;
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  e  netscape exception to examine
-   * @param  processor  control processor
-   *
-   * @throws  OperationException  if the operation should be retried
-   * @throws  LdapException  to propagate the exception out
-   */
-  public static void throwOperationException(
-    final org.ldaptive.ResultCode[] operationRetryResultCodes,
-    final LDAPException e,
-    final ControlProcessor<LDAPControl> processor)
-    throws LdapException
-  {
-    int code = e.getLDAPResultCode();
-    if (e instanceof LDAPReferralException) {
-      code = ResultCode.REFERRAL.value();
-    }
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == code) {
-          throw new OperationException(e, ResultCode.valueOf(code));
-        }
-      }
-    }
-    throw new LdapException(e, ResultCode.valueOf(code));
   }
 
 

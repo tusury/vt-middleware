@@ -28,7 +28,7 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.BlockingConnectionPool;
@@ -84,11 +84,11 @@ public class AuthenticatorTest extends AbstractTest
   public AuthenticatorTest()
     throws Exception
   {
-    singleTLSAuth = TestUtil.createTLSAuthenticator();
-    singleSSLAuth = TestUtil.createSSLAuthenticator();
-    singleTLSDnAuth = TestUtil.createTLSDnAuthenticator();
-    singleSSLDnAuth = TestUtil.createSSLDnAuthenticator();
-    pooledTLSAuth = TestUtil.createTLSAuthenticator();
+    singleTLSAuth = TestUtils.createTLSAuthenticator();
+    singleSSLAuth = TestUtils.createSSLAuthenticator();
+    singleTLSDnAuth = TestUtils.createTLSDnAuthenticator();
+    singleSSLDnAuth = TestUtils.createSSLDnAuthenticator();
+    pooledTLSAuth = TestUtils.createTLSAuthenticator();
   }
 
 
@@ -102,8 +102,8 @@ public class AuthenticatorTest extends AbstractTest
   public void createAuthEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
     final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
@@ -133,8 +133,8 @@ public class AuthenticatorTest extends AbstractTest
   public void createSpecialCharsEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    specialCharsLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    specialCharsLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(specialCharsLdapEntry);
   }
 
@@ -164,7 +164,7 @@ public class AuthenticatorTest extends AbstractTest
     throws Exception
   {
     if (createNew) {
-      return TestUtil.createTLSAuthenticator();
+      return TestUtils.createTLSAuthenticator();
     }
     return singleTLSAuth;
   }
@@ -182,7 +182,7 @@ public class AuthenticatorTest extends AbstractTest
     throws Exception
   {
     if (createNew) {
-      return TestUtil.createTLSDnAuthenticator();
+      return TestUtils.createTLSDnAuthenticator();
     }
     return singleTLSDnAuth;
   }
@@ -200,7 +200,7 @@ public class AuthenticatorTest extends AbstractTest
     throws Exception
   {
     if (createNew) {
-      return TestUtil.createSSLAuthenticator();
+      return TestUtils.createSSLAuthenticator();
     }
     return singleSSLAuth;
   }
@@ -218,7 +218,7 @@ public class AuthenticatorTest extends AbstractTest
     throws Exception
   {
     if (createNew) {
-      return TestUtil.createSSLDnAuthenticator();
+      return TestUtils.createSSLDnAuthenticator();
     }
     return singleSSLDnAuth;
   }
@@ -232,7 +232,7 @@ public class AuthenticatorTest extends AbstractTest
   @Test(groups = {"auth"})
   public void loadProperties(final String ldapUrl, final String baseDn)
   {
-    final Authenticator auth = TestUtil.readAuthenticator(
+    final Authenticator auth = TestUtils.readAuthenticator(
       "classpath:/org/ldaptive/ldap.tls.properties");
     final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
     final DefaultConnectionFactory resolverCf =
@@ -341,12 +341,12 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertTrue(response.getResult());
 
     // test auth with return attributes
-    final String expected = TestUtil.readFileIntoString(ldifFile);
+    final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(
       new AuthenticationRequest(
         dn, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
-      TestUtil.convertLdifToResult(expected),
+      TestUtils.convertLdifToResult(expected),
       new LdapResult(response.getLdapEntry()));
   }
 
@@ -391,12 +391,12 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertTrue(response.getResult());
 
     // test auth with return attributes
-    final String expected = TestUtil.readFileIntoString(ldifFile);
+    final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(
       new AuthenticationRequest(
         dn, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
-      TestUtil.convertLdifToResult(expected),
+      TestUtils.convertLdifToResult(expected),
       new LdapResult(response.getLdapEntry()));
   }
 
@@ -463,7 +463,7 @@ public class AuthenticatorTest extends AbstractTest
   public void authenticateDigestMd5(final String user, final String credential)
     throws Exception
   {
-    final Authenticator auth = TestUtil.createDigestMD5Authenticator();
+    final Authenticator auth = TestUtils.createDigestMD5Authenticator();
 
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(
@@ -488,7 +488,7 @@ public class AuthenticatorTest extends AbstractTest
   public void authenticateCramMd5(final String user, final String credential)
     throws Exception
   {
-    final Authenticator auth = TestUtil.createCramMD5Authenticator();
+    final Authenticator auth = TestUtils.createCramMD5Authenticator();
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(
         user, new Credential(INVALID_PASSWD), new String[0]));
@@ -546,7 +546,7 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertNull(response.getMessage());
 
     // test auth with return attributes
-    final String expected = TestUtil.readFileIntoString(ldifFile);
+    final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(
       new AuthenticationRequest(
         user,
@@ -556,7 +556,7 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     AssertJUnit.assertNull(response.getMessage());
     AssertJUnit.assertEquals(
-      TestUtil.convertLdifToResult(expected),
+      TestUtils.convertLdifToResult(expected),
       new LdapResult(response.getLdapEntry()));
   }
 
@@ -602,14 +602,14 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertTrue(response.getResult());
 
     // test auth with return attributes
-    final String expected = TestUtil.readFileIntoString(ldifFile);
+    final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(
       new AuthenticationRequest(
         user,
         new Credential(credential),
         returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
-      TestUtil.convertLdifToResult(expected),
+      TestUtils.convertLdifToResult(expected),
       new LdapResult(response.getLdapEntry()));
   }
 
@@ -656,14 +656,14 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertTrue(response.getResult());
 
     // test auth with return attributes
-    final String expected = TestUtil.readFileIntoString(ldifFile);
+    final String expected = TestUtils.readFileIntoString(ldifFile);
     response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(
         user,
         new Credential(credential),
         returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
-      TestUtil.convertLdifToResult(expected),
+      TestUtils.convertLdifToResult(expected),
       new LdapResult(response.getLdapEntry()));
   }
 
@@ -792,7 +792,7 @@ public class AuthenticatorTest extends AbstractTest
     throws Exception
   {
     final PasswordPolicyControl ppc = new PasswordPolicyControl();
-    final Connection conn = TestUtil.createSetupConnection();
+    final Connection conn = TestUtils.createSetupConnection();
     AuthenticationResponse response = null;
     PasswordPolicyControl ppcResponse = null;
     final Authenticator auth = createTLSAuthenticator(true);

@@ -16,7 +16,7 @@ package org.ldaptive.ssl;
 import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -232,28 +232,28 @@ public class DefaultHostnameVerifierTest
     final CertificateFactory cf = CertificateFactory.getInstance("X.509");
     final X509Certificate aFooComCert =
       (X509Certificate) cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtil.base64Decode(A_FOO_COM_CERT)));
+        new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
     final X509Certificate wcFooComCert =
       (X509Certificate) cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtil.base64Decode(WC_FOO_COM_CERT)));
+        new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_COM_CERT)));
     final X509Certificate wcFooBarComCert =
       (X509Certificate) cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtil.base64Decode(WC_FOO_BAR_COM_CERT)));
+        new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_BAR_COM_CERT)));
     final X509Certificate aFooComAltNameCert =
       (X509Certificate) cf.generateCertificate(
         new ByteArrayInputStream(
-          LdapUtil.base64Decode(A_FOO_COM_ALTNAME_CERT)));
+          LdapUtils.base64Decode(A_FOO_COM_ALTNAME_CERT)));
     final X509Certificate wcFooComAltNameCert =
       (X509Certificate) cf.generateCertificate(
         new ByteArrayInputStream(
-          LdapUtil.base64Decode(WC_FOO_COM_ALTNAME_CERT)));
+          LdapUtils.base64Decode(WC_FOO_COM_ALTNAME_CERT)));
     final X509Certificate localhostCert =
       (X509Certificate) cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtil.base64Decode(LOCALHOST_CERT)));
+        new ByteArrayInputStream(LdapUtils.base64Decode(LOCALHOST_CERT)));
     final X509Certificate localhostAltNameCert =
       (X509Certificate) cf.generateCertificate(
         new ByteArrayInputStream(
-          LdapUtil.base64Decode(LOCALHOST_ALTNAME_CERT)));
+          LdapUtils.base64Decode(LOCALHOST_ALTNAME_CERT)));
 
     return new Object[][] {
       /* a.foo.com == CN=a.foo.com */

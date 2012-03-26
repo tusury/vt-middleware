@@ -14,7 +14,7 @@
 package org.ldaptive.jaas;
 
 import java.io.Serializable;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides a custom implementation for adding LDAP credentials to a subject.
@@ -83,7 +83,7 @@ public class LdapCredential implements Serializable
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, credential);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, credential);
   }
 
 

@@ -352,7 +352,9 @@
         <include name="servlet" />
         <include name="dsml" />
         <include name="ldif" />
+<!--
         <include name="ssl" />
+-->
         <include name="cache" />
         <include name="ldapcli" />
         <include name="conn" />

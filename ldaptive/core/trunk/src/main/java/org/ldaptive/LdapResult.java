@@ -230,7 +230,7 @@ public class LdapResult extends AbstractLdapBean
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, resultEntries.values());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, resultEntries.values());
   }
 
 

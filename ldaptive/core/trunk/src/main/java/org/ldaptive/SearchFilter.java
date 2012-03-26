@@ -248,7 +248,7 @@ public class SearchFilter
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(HASH_CODE_SEED, searchFilter, parameters);
+      LdapUtils.computeHashCode(HASH_CODE_SEED, searchFilter, parameters);
   }
 
 

@@ -23,7 +23,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SortBehavior;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -54,8 +54,8 @@ public class DsmlTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -83,7 +83,7 @@ public class DsmlTest extends AbstractTest
   public void searchAndCompareDsmlv1(final String dn, final String filter)
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -122,9 +122,9 @@ public class DsmlTest extends AbstractTest
     final String dsmlSortedFile)
     throws Exception
   {
-    final String dsmlStringSorted = TestUtil.readFileIntoString(dsmlSortedFile);
+    final String dsmlStringSorted = TestUtils.readFileIntoString(dsmlSortedFile);
     final Dsmlv1Reader dsmlReader = new Dsmlv1Reader(
-      new StringReader(TestUtil.readFileIntoString(dsmlFile)),
+      new StringReader(TestUtils.readFileIntoString(dsmlFile)),
       SortBehavior.SORTED);
     final LdapResult result = dsmlReader.read();
 

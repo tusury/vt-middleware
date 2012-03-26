@@ -13,7 +13,7 @@
 */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 
 import org.testng.Assert;
@@ -42,7 +42,7 @@ public class SortResponseControlTest
       // result code success
       // BER: 30:03:0A:01:00
       new Object[] {
-        LdapUtil.base64Decode("MAMKAQA="),
+        LdapUtils.base64Decode("MAMKAQA="),
         new SortResponseControl(ResultCode.SUCCESS, true),
       },
     };

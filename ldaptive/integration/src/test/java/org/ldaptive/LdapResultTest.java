@@ -42,8 +42,8 @@ public class LdapResultTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -81,7 +81,7 @@ public class LdapResultTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -89,8 +89,8 @@ public class LdapResultTest extends AbstractTest
       final LdapResult result = search.execute(
         new SearchRequest(
           dn, new SearchFilter(filter), returnAttrs.split("\\|"))).getResult();
-      final String expected = TestUtil.readFileIntoString(ldifFile);
-      AssertJUnit.assertEquals(TestUtil.convertLdifToResult(expected), result);
+      final String expected = TestUtils.readFileIntoString(ldifFile);
+      AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } finally {
       conn.close();
     }

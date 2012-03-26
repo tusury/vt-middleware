@@ -35,6 +35,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.Connection;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.GssApiConfig;
@@ -151,10 +152,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }
@@ -195,10 +199,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }
@@ -286,10 +293,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }
@@ -302,7 +312,7 @@ public class UnboundIdConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final UnboundIdUtil util = new UnboundIdUtil();
+      final UnboundIdUtils util = new UnboundIdUtils();
       final com.unboundid.ldap.sdk.AddRequest ar =
         new com.unboundid.ldap.sdk.AddRequest(
           new DN(request.getDn()),
@@ -318,10 +328,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }
@@ -359,10 +372,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }
@@ -389,10 +405,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }
@@ -405,7 +424,7 @@ public class UnboundIdConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final UnboundIdUtil bu = new UnboundIdUtil();
+      final UnboundIdUtils bu = new UnboundIdUtils();
       final com.unboundid.ldap.sdk.ModifyRequest mr =
         new com.unboundid.ldap.sdk.ModifyRequest(
           new DN(request.getDn()),
@@ -421,10 +440,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }
@@ -456,10 +478,13 @@ public class UnboundIdConnection implements Connection
           request.getControls(),
           result.getResponseControls()));
     } catch (LDAPException e) {
-      UnboundIdUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), e.getResponseControls()),
+        true);
     }
     return response;
   }

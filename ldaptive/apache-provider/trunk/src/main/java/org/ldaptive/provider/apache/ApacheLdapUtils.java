@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id: ApacheLdapUtil.java 2328 2012-03-26 02:53:02Z dfisher $
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision: 2328 $
+  Updated: $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
 */
 package org.ldaptive.provider.apache;
 
@@ -29,16 +29,12 @@ import org.apache.directory.shared.ldap.model.entry.ModificationOperation;
 import org.apache.directory.shared.ldap.model.entry.StringValue;
 import org.apache.directory.shared.ldap.model.entry.Value;
 import org.apache.directory.shared.ldap.model.exception.LdapException;
-import org.apache.directory.shared.ldap.model.exception.LdapOperationException;
 import org.apache.directory.shared.ldap.model.message.Control;
 import org.apache.directory.shared.ldap.model.message.Message;
-import org.apache.directory.shared.ldap.model.message.ResultCodeEnum;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.OperationException;
-import org.ldaptive.ResultCode;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.provider.ControlProcessor;
@@ -48,9 +44,9 @@ import org.ldaptive.provider.ControlProcessor;
  * ldaptive specific objects.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
+ * @version  $Revision: 2328 $ $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
  */
-public class ApacheLdapUtil
+public class ApacheLdapUtils
 {
 
   /** Default binary attributes. */
@@ -68,7 +64,7 @@ public class ApacheLdapUtil
 
 
   /** Default constructor. */
-  public ApacheLdapUtil()
+  public ApacheLdapUtils()
   {
     sortBehavior = SortBehavior.getDefaultSortBehavior();
   }
@@ -79,7 +75,7 @@ public class ApacheLdapUtil
    *
    * @param  sb  sort behavior
    */
-  public ApacheLdapUtil(final SortBehavior sb)
+  public ApacheLdapUtils(final SortBehavior sb)
   {
     sortBehavior = sb;
   }
@@ -256,72 +252,6 @@ public class ApacheLdapUtil
         fromLdapAttribute(am[i].getAttribute()));
     }
     return mods;
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or do nothing. If operation
-   * exception is thrown, the operation will be retried.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  rcEnum  apache ldap result code to examine
-   *
-   * @throws  OperationException  if the operation should be retried
-   */
-  public static void throwOperationException(
-    final ResultCode[] operationRetryResultCodes,
-    final ResultCodeEnum rcEnum)
-    throws OperationException
-  {
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == rcEnum.getResultCode()) {
-          throw new OperationException(
-            String.format(
-              "Ldap returned result code: %s(%s)",
-              rcEnum,
-              rcEnum.getResultCode()),
-            ResultCode.valueOf(rcEnum.getResultCode()));
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  e  apache ldap exception to examine
-   *
-   * @throws  OperationException  if the operation should be retried
-   * @throws  org.ldaptive.LdapException  to propagate the exception
-   * out
-   */
-  public static void throwOperationException(
-    final ResultCode[] operationRetryResultCodes,
-    final LdapOperationException e)
-    throws org.ldaptive.LdapException
-  {
-    final ResultCodeEnum rcEnum = e.getResultCode();
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == rcEnum.getResultCode()) {
-          throw new OperationException(
-            e,
-            ResultCode.valueOf(rcEnum.getResultCode()));
-        }
-      }
-    }
-    throw new org.ldaptive.LdapException(
-      e,
-      ResultCode.valueOf(rcEnum.getResultCode()));
   }
 
 

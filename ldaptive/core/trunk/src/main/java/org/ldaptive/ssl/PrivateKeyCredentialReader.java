@@ -19,7 +19,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Reads private key credentials from classpath, filepath, or stream resource.
@@ -55,7 +55,7 @@ public class PrivateKeyCredentialReader
 
     final KeyFactory kf = KeyFactory.getInstance(algorithm);
     final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(
-      LdapUtil.readInputStream(getBufferedInputStream(is)));
+      LdapUtils.readInputStream(getBufferedInputStream(is)));
     return kf.generatePrivate(spec);
   }
 }

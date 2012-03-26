@@ -19,6 +19,7 @@ import org.apache.directory.shared.ldap.model.exception.LdapException;
 import org.apache.directory.shared.ldap.model.exception.LdapOperationException;
 import org.apache.directory.shared.ldap.model.message.AliasDerefMode;
 import org.apache.directory.shared.ldap.model.message.Control;
+import org.apache.directory.shared.ldap.model.message.ResultCodeEnum;
 import org.apache.directory.shared.ldap.model.message.SearchRequest;
 import org.apache.directory.shared.ldap.model.message.SearchRequestImpl;
 import org.apache.directory.shared.ldap.model.message.SearchResultDone;
@@ -29,6 +30,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.ControlProcessor;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,8 +95,12 @@ public class ApacheLdapSearchIterator implements SearchIterator
       cursor = search(connection, request);
     } catch (LdapOperationException e) {
       closeCursor = true;
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (Exception e) {
       closeCursor = true;
       throw new org.ldaptive.LdapException(e);
@@ -242,7 +248,7 @@ public class ApacheLdapSearchIterator implements SearchIterator
       if (!more) {
         final SearchResultDone done = cursor.getSearchResultDone();
         final org.ldaptive.control.ResponseControl[] respControls =
-          ApacheLdapUtil.processResponseControls(
+          ApacheLdapUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
             done);
@@ -252,19 +258,24 @@ public class ApacheLdapSearchIterator implements SearchIterator
           more = cursor.next();
         }
         if (!more) {
-          ApacheLdapUtil.throwOperationException(
+          final ResultCodeEnum rcEnum = done.getLdapResult().getResultCode();
+          ProviderUtils.throwOperationException(
             config.getOperationRetryResultCodes(),
-            done.getLdapResult().getResultCode());
+            String.format("Ldap returned result code: %s", rcEnum),
+            rcEnum.getResultCode(),
+            respControls,
+            false);
           response = new org.ldaptive.Response<Void>(
-            null,
-            ResultCode.valueOf(
-              done.getLdapResult().getResultCode().getResultCode()),
-            respControls);
+            null, ResultCode.valueOf(rcEnum.getResultCode()), respControls);
         }
       }
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.ldaptive.LdapException e) {
       throw e;
     } catch (Exception e) {
@@ -279,7 +290,7 @@ public class ApacheLdapSearchIterator implements SearchIterator
   public LdapEntry next()
     throws org.ldaptive.LdapException
   {
-    final ApacheLdapUtil bu = new ApacheLdapUtil(request.getSortBehavior());
+    final ApacheLdapUtils bu = new ApacheLdapUtils(request.getSortBehavior());
     bu.setBinaryAttributes(request.getBinaryAttributes());
 
     LdapEntry le = null;
@@ -301,8 +312,12 @@ public class ApacheLdapSearchIterator implements SearchIterator
         throw new UnsupportedOperationException("Intermediate response");
       }
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode().getResultCode(),
+        null,
+        true);
     } catch (org.ldaptive.LdapException e) {
       throw e;
     } catch (Exception e) {

@@ -20,7 +20,7 @@ import java.net.URL;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapResult;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SortBehavior;
 
 /**
@@ -134,9 +134,9 @@ public class LdifReader implements LdapResultReader
                 ldapEntry.addAttribute(ldapAttr);
               }
               if (isBinary) {
-                ldapAttr.addBinaryValue(LdapUtil.base64Decode(attrValue));
+                ldapAttr.addBinaryValue(LdapUtils.base64Decode(attrValue));
               } else if (isUrl) {
-                ldapAttr.addBinaryValue(LdapUtil.readURL(new URL(attrValue)));
+                ldapAttr.addBinaryValue(LdapUtils.readURL(new URL(attrValue)));
               } else {
                 ldapAttr.addStringValue(attrValue);
               }

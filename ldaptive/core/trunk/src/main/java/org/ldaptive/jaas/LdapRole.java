@@ -21,7 +21,7 @@ import java.util.Set;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapResult;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides a custom implementation for adding LDAP principals to a subject that
@@ -91,7 +91,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, roleName);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, roleName);
   }
 
 

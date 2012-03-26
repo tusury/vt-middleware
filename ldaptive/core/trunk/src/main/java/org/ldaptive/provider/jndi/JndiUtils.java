@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id: JndiUtil.java 2198 2012-01-04 21:02:09Z dfisher $
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision: 2198 $
+  Updated: $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
 */
 package org.ldaptive.provider.jndi;
 
@@ -29,9 +29,6 @@ import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.OperationException;
-import org.ldaptive.ResultCode;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -48,9 +45,9 @@ import org.slf4j.LoggerFactory;
  * specific objects.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
+ * @version  $Revision: 2198 $ $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
  */
-public class JndiUtil
+public class JndiUtils
 {
 
   /** Whether to ignore case when creating basic attributes. */
@@ -61,7 +58,7 @@ public class JndiUtil
 
 
   /** Default constructor. */
-  public JndiUtil()
+  public JndiUtils()
   {
     sortBehavior = SortBehavior.getDefaultSortBehavior();
   }
@@ -72,7 +69,7 @@ public class JndiUtil
    *
    * @param  sb  sort behavior
    */
-  public JndiUtil(final SortBehavior sb)
+  public JndiUtils(final SortBehavior sb)
   {
     sortBehavior = sb;
   }
@@ -200,39 +197,6 @@ public class JndiUtil
         fromLdapAttribute(mods[i].getAttribute()));
     }
     return mi;
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  e  naming exception to examine
-   * @param  respControls  response controls
-   *
-   * @throws  OperationException  if the operation should be retried
-   * @throws  LdapException  to propagate the exception out
-   */
-  public static void throwOperationException(
-    final ResultCode[] operationRetryResultCodes,
-    final NamingException e,
-    final ResponseControl[] respControls)
-    throws LdapException
-  {
-    final ResultCode exResultCode = NamingExceptionUtil.getResultCode(
-      e.getClass());
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (ResultCode rc : operationRetryResultCodes) {
-        if (rc == exResultCode) {
-          throw new OperationException(e, exResultCode, respControls);
-        }
-      }
-    }
-    throw new LdapException(e, exResultCode, respControls);
   }
 
 
@@ -406,7 +370,7 @@ public class JndiUtil
           requestControls,
           ctx.getResponseControls());
       } catch (NamingException e) {
-        final Logger l = LoggerFactory.getLogger(JndiUtil.class);
+        final Logger l = LoggerFactory.getLogger(JndiUtils.class);
         l.warn("Error retrieving response controls.", e);
       }
     }

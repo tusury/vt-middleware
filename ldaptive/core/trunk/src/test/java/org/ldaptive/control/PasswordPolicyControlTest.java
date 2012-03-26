@@ -13,7 +13,7 @@
 */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -48,25 +48,25 @@ public class PasswordPolicyControlTest
       // Test case #1
       // only timeBeforeExpiration is set
       new Object[] {
-        LdapUtil.base64Decode("MAegBYADJlir"),
+        LdapUtils.base64Decode("MAegBYADJlir"),
         p1,
       },
       // Test case #2
       // only graceAuthNsRemaining is set
       new Object[] {
-        LdapUtil.base64Decode("MAWgA4EBBA=="),
+        LdapUtils.base64Decode("MAWgA4EBBA=="),
         p2,
       },
       // Test case #3
       // error=passwordExpired
       new Object[] {
-        LdapUtil.base64Decode("MAOBAQA="),
+        LdapUtils.base64Decode("MAOBAQA="),
         p3,
       },
       // Test case #4
       // error=accountLocked
       new Object[] {
-        LdapUtil.base64Decode("MAOBAQE="),
+        LdapUtils.base64Decode("MAOBAQE="),
         p4,
       },
     };

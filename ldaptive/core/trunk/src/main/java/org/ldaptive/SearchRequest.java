@@ -505,7 +505,7 @@ public class SearchRequest extends AbstractRequest
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         baseDn,
         binaryAttrs,

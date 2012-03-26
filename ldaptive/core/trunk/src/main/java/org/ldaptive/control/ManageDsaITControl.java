@@ -13,7 +13,7 @@
 */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Request control for ManageDsaIT. See RFC 3296.
@@ -58,7 +58,8 @@ public class ManageDsaITControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
+    return LdapUtils.computeHashCode(
+      HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 

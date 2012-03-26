@@ -21,7 +21,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides a custom implementation for grouping principals.
@@ -141,7 +141,7 @@ public class LdapGroup implements Group, Serializable
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, roleName, members);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, roleName, members);
   }
 
 

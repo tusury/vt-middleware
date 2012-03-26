@@ -13,7 +13,7 @@
 */
 package org.ldaptive.handler;
 
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Entry handler that does nothing.
@@ -32,6 +32,6 @@ public class NoOpEntryHandler extends AbstractLdapEntryHandler
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, (Object) null);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, (Object) null);
   }
 }

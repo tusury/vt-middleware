@@ -42,8 +42,8 @@ public class ModifyOperationTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -68,8 +68,8 @@ public class ModifyOperationTest extends AbstractTest
   public void addAttribute(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtil.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtil.createConnection();
+    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -102,8 +102,8 @@ public class ModifyOperationTest extends AbstractTest
   public void addAttributes(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtil.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtil.createConnection();
+    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -141,8 +141,8 @@ public class ModifyOperationTest extends AbstractTest
   public void replaceAttribute(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtil.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtil.createConnection();
+    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -176,8 +176,8 @@ public class ModifyOperationTest extends AbstractTest
   public void replaceAttributes(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtil.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtil.createConnection();
+    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -216,12 +216,12 @@ public class ModifyOperationTest extends AbstractTest
   public void removeAttribute(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtil.convertStringToEntry(dn, attrs);
-    final LdapEntry remove = TestUtil.convertStringToEntry(dn, attrs);
+    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
+    final LdapEntry remove = TestUtils.convertStringToEntry(dn, attrs);
     remove.getAttribute().removeStringValue("Unit Test User");
     expected.getAttribute().removeStringValue("Best Test User");
 
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -256,14 +256,14 @@ public class ModifyOperationTest extends AbstractTest
   public void removeAttributes(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtil.convertStringToEntry(dn, attrs);
-    final LdapEntry remove = TestUtil.convertStringToEntry(dn, attrs);
+    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
+    final LdapEntry remove = TestUtils.convertStringToEntry(dn, attrs);
 
     final String[] attrsName = remove.getAttributeNames();
     remove.getAttributes().remove(remove.getAttribute(attrsName[0]));
     expected.getAttributes().remove(expected.getAttribute(attrsName[1]));
 
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);

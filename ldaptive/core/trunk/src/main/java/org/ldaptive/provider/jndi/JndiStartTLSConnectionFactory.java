@@ -93,7 +93,7 @@ public class JndiStartTLSConnectionFactory
       closeConn = true;
       throw new ConnectionException(
         e,
-        NamingExceptionUtil.getResultCode(e.getClass()));
+        NamingExceptionUtils.getResultCode(e.getClass()));
     } catch (IOException e) {
       closeConn = true;
       throw new ConnectionException(e);

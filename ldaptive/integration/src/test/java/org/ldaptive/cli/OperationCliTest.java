@@ -16,7 +16,7 @@ package org.ldaptive.cli;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.ldaptive.AbstractTest;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -90,7 +90,7 @@ public class OperationCliTest extends AbstractTest
   public void search(final String args, final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
     final PrintStream oldStdOut = System.out;
     try {
       final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -98,8 +98,8 @@ public class OperationCliTest extends AbstractTest
 
       SearchOperationCli.main(args.split("\\|"));
       AssertJUnit.assertEquals(
-        TestUtil.convertLdifToResult(ldif),
-        TestUtil.convertLdifToResult(outStream.toString()));
+        TestUtils.convertLdifToResult(ldif),
+        TestUtils.convertLdifToResult(outStream.toString()));
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);

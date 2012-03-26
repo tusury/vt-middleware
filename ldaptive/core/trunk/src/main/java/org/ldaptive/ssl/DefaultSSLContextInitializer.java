@@ -18,7 +18,7 @@ import java.security.KeyStore;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides a default implementation of SSL context initializer which allows the
@@ -49,7 +49,7 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
         aggregateTrustManagers(super.getTrustManagers()) : null;
     } else {
       aggregate = aggregateTrustManagers(
-        LdapUtil.concatArrays(tm, super.getTrustManagers()));
+        LdapUtils.concatArrays(tm, super.getTrustManagers()));
     }
     return aggregate;
   }
