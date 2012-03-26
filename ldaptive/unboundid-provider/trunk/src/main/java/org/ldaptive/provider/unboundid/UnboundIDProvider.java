@@ -30,22 +30,22 @@ import org.ldaptive.ssl.SSLContextInitializer;
 import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
- * UnboundId provider implementation. Provides connection factories for clear,
+ * UnboundID provider implementation. Provides connection factories for clear,
  * SSL, and TLS connections.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
+public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
 {
 
   /** Provider configuration. */
-  private UnboundIdProviderConfig config = new UnboundIdProviderConfig();
+  private UnboundIDProviderConfig config = new UnboundIDProviderConfig();
 
 
   /** {@inheritDoc} */
   @Override
-  public ConnectionFactory<UnboundIdProviderConfig> getConnectionFactory(
+  public ConnectionFactory<UnboundIDProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
     SocketFactory factory = config.getSocketFactory();
@@ -74,12 +74,12 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
         cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0);
       options.setResponseTimeoutMillis(cc.getResponseTimeout());
     }
-    ConnectionFactory<UnboundIdProviderConfig> cf = null;
+    ConnectionFactory<UnboundIDProviderConfig> cf = null;
     if (cc.getUseStartTLS()) {
-      cf = new UnboundIdStartTLSConnectionFactory(
+      cf = new UnboundIDStartTLSConnectionFactory(
         cc.getLdapUrl(), config, factory, sslContext, options);
     } else {
-      cf = new UnboundIdConnectionFactory(
+      cf = new UnboundIDConnectionFactory(
         cc.getLdapUrl(), config, factory, options);
     }
     return cf;
@@ -147,7 +147,7 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public UnboundIdProviderConfig getProviderConfig()
+  public UnboundIDProviderConfig getProviderConfig()
   {
     return config;
   }
@@ -155,7 +155,7 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public void setProviderConfig(final UnboundIdProviderConfig jpc)
+  public void setProviderConfig(final UnboundIDProviderConfig jpc)
   {
     config = jpc;
   }
@@ -163,8 +163,8 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public UnboundIdProvider newInstance()
+  public UnboundIDProvider newInstance()
   {
-    return new UnboundIdProvider();
+    return new UnboundIDProvider();
   }
 }

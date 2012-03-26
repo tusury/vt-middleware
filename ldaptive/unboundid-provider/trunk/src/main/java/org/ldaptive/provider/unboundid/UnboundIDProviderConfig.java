@@ -22,12 +22,12 @@ import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConfig;
 
 /**
- * Contains configuration data for the UnboundId provider.
+ * Contains configuration data for the UnboundID provider.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class UnboundIdProviderConfig extends ProviderConfig
+public class UnboundIDProviderConfig extends ProviderConfig
 {
 
   /** Connection options. */
@@ -44,7 +44,7 @@ public class UnboundIdProviderConfig extends ProviderConfig
 
 
   /** Default constructor. */
-  public UnboundIdProviderConfig()
+  public UnboundIDProviderConfig()
   {
     setOperationRetryResultCodes(
       new ResultCode[] {ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR, });
@@ -52,7 +52,7 @@ public class UnboundIdProviderConfig extends ProviderConfig
       new ResultCode[] {
         ResultCode.TIME_LIMIT_EXCEEDED, ResultCode.SIZE_LIMIT_EXCEEDED, };
     controlProcessor = new ControlProcessor<Control>(
-      new UnboundIdControlHandler());
+      new UnboundIDControlHandler());
   }
 
 

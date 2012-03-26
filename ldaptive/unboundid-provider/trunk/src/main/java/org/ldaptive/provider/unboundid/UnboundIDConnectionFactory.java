@@ -23,13 +23,13 @@ import org.ldaptive.provider.AbstractConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
- * Creates ldap connections using the UnboundId LDAPConnection class.
+ * Creates ldap connections using the UnboundID LDAPConnection class.
  *
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class UnboundIdConnectionFactory
-  extends AbstractConnectionFactory<UnboundIdProviderConfig>
+public class UnboundIDConnectionFactory
+  extends AbstractConnectionFactory<UnboundIDProviderConfig>
 {
 
   /** Socket factory to use for LDAP and LDAPS connections. */
@@ -47,9 +47,9 @@ public class UnboundIdConnectionFactory
    * @param  factory  SSL socket factory to use for LDAP and LDAPS
    * @param  options  connection options
    */
-  public UnboundIdConnectionFactory(
+  public UnboundIDConnectionFactory(
     final String url,
-    final UnboundIdProviderConfig config,
+    final UnboundIDProviderConfig config,
     final SocketFactory factory,
     final LDAPConnectionOptions options)
   {
@@ -61,15 +61,15 @@ public class UnboundIdConnectionFactory
 
   /** {@inheritDoc} */
   @Override
-  protected UnboundIdConnection createInternal(final String url)
+  protected UnboundIDConnection createInternal(final String url)
     throws LdapException
   {
     final LdapURL ldapUrl = new LdapURL(url);
-    UnboundIdConnection conn = null;
+    UnboundIDConnection conn = null;
     boolean closeConn = false;
     try {
       final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
-      conn = new UnboundIdConnection(lc, getProviderConfig());
+      conn = new UnboundIDConnection(lc, getProviderConfig());
       lc.connect(
         ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
     } catch (LDAPException e) {
