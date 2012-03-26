@@ -39,30 +39,32 @@ public class JndiStartTLSConnectionFactory
 {
 
   /** Environment properties. */
-  private Map<String, Object> environment;
+  private final Map<String, Object> environment;
 
   /** SSL socket factory to use for startTLS negotiation. */
-  private SSLSocketFactory sslSocketFactory;
+  private final SSLSocketFactory sslSocketFactory;
 
   /** Hostname verifier to use for startTLS negotiation. */
-  private HostnameVerifier hostnameVerifier;
+  private final HostnameVerifier hostnameVerifier;
 
 
   /**
    * Creates a new jndi startTLS connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  env  jndi context environment
    * @param  factory  SSL socket factory
    * @param  verifier  hostname verifier
    */
   public JndiStartTLSConnectionFactory(
     final String url,
+    final JndiProviderConfig config,
     final Map<String, Object> env,
     final SSLSocketFactory factory,
     final HostnameVerifier verifier)
   {
-    super(url);
+    super(url, config);
     environment = env;
     sslSocketFactory = factory;
     hostnameVerifier = verifier;
@@ -84,14 +86,9 @@ public class JndiStartTLSConnectionFactory
     JndiStartTLSConnection conn = null;
     boolean closeConn = false;
     try {
-      conn = new JndiStartTLSConnection(new InitialLdapContext(env, null));
+      conn = new JndiStartTLSConnection(
+        new InitialLdapContext(env, null), getProviderConfig());
       conn.setStartTlsResponse(startTLS(conn.getLdapContext()));
-      conn.setRemoveDnUrls(getProviderConfig().getRemoveDnUrls());
-      conn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      conn.setSearchIgnoreResultCodes(
-        getProviderConfig().getSearchIgnoreResultCodes());
-      conn.setControlProcessor(getProviderConfig().getControlProcessor());
     } catch (NamingException e) {
       closeConn = true;
       throw new ConnectionException(

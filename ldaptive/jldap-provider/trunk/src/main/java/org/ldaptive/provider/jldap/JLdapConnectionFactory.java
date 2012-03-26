@@ -31,11 +31,13 @@ public class JLdapConnectionFactory
    * Creates a new jldap connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  timeOut  time in milliseconds that operations will wait
    */
-  public JLdapConnectionFactory(final String url, final int timeOut)
+  public JLdapConnectionFactory(
+    final String url, final JLdapProviderConfig config, final int timeOut)
   {
-    super(url, timeOut);
+    super(url, config, timeOut);
   }
 
 
@@ -50,8 +52,9 @@ public class JLdapConnectionFactory
 
   /** {@inheritDoc} */
   @Override
-  protected JLdapConnection createJLdapConnection(final LDAPConnection conn)
+  protected JLdapConnection createJLdapConnection(
+    final LDAPConnection conn, final JLdapProviderConfig config)
   {
-    return new JLdapConnection(conn);
+    return new JLdapConnection(conn, config);
   }
 }

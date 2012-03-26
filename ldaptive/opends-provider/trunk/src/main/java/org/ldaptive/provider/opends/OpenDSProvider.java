@@ -47,60 +47,76 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
   public ConnectionFactory<OpenDSProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    config.makeImmutable();
+    LDAPOptions options = config.getOptions();
+    if (options == null) {
+      options = new LDAPOptions();
+      SSLContext sslContext = null;
+      if (cc.getUseStartTLS() || cc.getUseSSL()) {
+        sslContext = getHostnameVerifierSSLContext(cc);
+        options.setSSLContext(sslContext);
+      }
+      if (cc.getUseStartTLS()) {
+        options.setUseStartTLS(true);
+      } else if (cc.getUseSSL()) {
+        options.setUseStartTLS(false);
+      }
+      if (cc.getSslConfig() != null &&
+          cc.getSslConfig().getEnabledCipherSuites() != null) {
+        options.addEnabledCipherSuite(
+          cc.getSslConfig().getEnabledCipherSuites());
+      }
+      if (cc.getSslConfig() != null &&
+          cc.getSslConfig().getEnabledProtocols() != null) {
+        options.addEnabledProtocol(cc.getSslConfig().getEnabledProtocols());
+      }
+      options.setTimeout(cc.getResponseTimeout(), TimeUnit.MILLISECONDS);
+    }
+    final ConnectionFactory<OpenDSProviderConfig> cf =
+      new OpenDSConnectionFactory(cc.getLdapUrl(), config, options);
+    return cf;
+  }
+
+
+  /**
+   * Returns an SSLContext configured with a default hostname verifier. Uses a
+   * {@link DefaultHostnameVerifier} if no trust managers have been configured.
+   *
+   * @param  cc  connection configuration
+   *
+   * @return  SSL Context
+   */
+  protected SSLContext getHostnameVerifierSSLContext(final ConnectionConfig cc)
+  {
     SSLContext sslContext = null;
-    if (cc.getUseStartTLS() || cc.getUseSSL()) {
-      SSLContextInitializer contextInit = null;
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getCredentialConfig() != null) {
-        try {
-          final CredentialConfig credConfig =
-            cc.getSslConfig().getCredentialConfig();
-          contextInit = credConfig.createSSLContextInitializer();
-        } catch (GeneralSecurityException e) {
-          throw new IllegalArgumentException(e);
-        }
-      } else {
-        contextInit = new DefaultSSLContextInitializer();
-      }
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getTrustManagers() != null) {
-        contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
-      } else {
-        final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-        contextInit.setTrustManagers(
-          new TrustManager[]{
-            new HostnameVerifyingTrustManager(
-              new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
-      }
+    SSLContextInitializer contextInit = null;
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getCredentialConfig() != null) {
       try {
-        sslContext = contextInit.initSSLContext("TLS");
+        final CredentialConfig credConfig =
+          cc.getSslConfig().getCredentialConfig();
+        contextInit = credConfig.createSSLContextInitializer();
       } catch (GeneralSecurityException e) {
         throw new IllegalArgumentException(e);
       }
-    }
-    final LDAPOptions options = new LDAPOptions();
-    if (cc.getUseStartTLS()) {
-      options.setUseStartTLS(true);
-    } else if (cc.getUseSSL()) {
-      options.setUseStartTLS(false);
+    } else {
+      contextInit = new DefaultSSLContextInitializer();
     }
     if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getEnabledCipherSuites() != null) {
-      options.addEnabledCipherSuite(cc.getSslConfig().getEnabledCipherSuites());
+        cc.getSslConfig().getTrustManagers() != null) {
+      contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
+    } else {
+      final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+      contextInit.setTrustManagers(
+        new TrustManager[]{
+          new HostnameVerifyingTrustManager(
+            new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
     }
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getEnabledProtocols() != null) {
-      options.addEnabledProtocol(cc.getSslConfig().getEnabledProtocols());
+    try {
+      sslContext = contextInit.initSSLContext("TLS");
+    } catch (GeneralSecurityException e) {
+      throw new IllegalArgumentException(e);
     }
-    if (sslContext != null) {
-      options.setSSLContext(sslContext);
-    }
-    options.setTimeout(cc.getResponseTimeout(), TimeUnit.MILLISECONDS);
-    final ConnectionFactory<OpenDSProviderConfig> cf =
-      new OpenDSConnectionFactory(cc.getLdapUrl(), options);
-    cf.setProviderConfig(config);
-    return cf;
+    return sslContext;
   }
 
 

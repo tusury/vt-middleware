@@ -43,15 +43,17 @@ public class UnboundIdConnectionFactory
    * Creates a new Unbound ID connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  factory  SSL socket factory to use for LDAP and LDAPS
    * @param  options  connection options
    */
   public UnboundIdConnectionFactory(
     final String url,
+    final UnboundIdProviderConfig config,
     final SocketFactory factory,
     final LDAPConnectionOptions options)
   {
-    super(url);
+    super(url, config);
     socketFactory = factory;
     ldapOptions = options;
   }
@@ -67,15 +69,9 @@ public class UnboundIdConnectionFactory
     boolean closeConn = false;
     try {
       final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
-      conn = new UnboundIdConnection(lc);
+      conn = new UnboundIdConnection(lc, getProviderConfig());
       lc.connect(
         ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
-
-      conn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      conn.setSearchIgnoreResultCodes(
-        getProviderConfig().getSearchIgnoreResultCodes());
-      conn.setControlProcessor(getProviderConfig().getControlProcessor());
     } catch (LDAPException e) {
       closeConn = true;
       throw new ConnectionException(

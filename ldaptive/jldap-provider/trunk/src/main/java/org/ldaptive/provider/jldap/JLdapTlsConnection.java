@@ -37,10 +37,12 @@ public class JLdapTlsConnection extends JLdapConnection
    * Creates a new jldap tls connection.
    *
    * @param  conn  ldap connection
+   * @param  pc  provider configuration
    */
-  public JLdapTlsConnection(final LDAPConnection conn)
+  public JLdapTlsConnection(
+    final LDAPConnection conn, final JLdapProviderConfig pc)
   {
-    super(conn);
+    super(conn, pc);
   }
 
 

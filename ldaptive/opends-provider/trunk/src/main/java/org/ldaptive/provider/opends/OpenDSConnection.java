@@ -23,7 +23,6 @@ import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
@@ -55,90 +54,20 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   /** Ldap connection. */
   private Connection connection;
 
-  /** Result codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Search result codes to ignore. */
-  private ResultCode[] searchIgnoreResultCodes;
-
-  /** Control processor. */
-  private ControlProcessor<Control> controlProcessor;
+  /** Provider configuration. */
+  private final OpenDSProviderConfig config;
 
 
   /**
    * Creates a new opends ldap connection.
    *
    * @param  c  ldap connection
+   * @param  pc  provider configuration
    */
-  public OpenDSConnection(final Connection c)
+  public OpenDSConnection(final Connection c, final OpenDSProviderConfig pc)
   {
     connection = c;
-  }
-
-
-  /**
-   * Returns the result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the search ignore result codes.
-   *
-   * @return  result codes to ignore
-   */
-  public ResultCode[] getSearchIgnoreResultCodes()
-  {
-    return searchIgnoreResultCodes;
-  }
-
-
-  /**
-   * Sets the search ignore result codes.
-   *
-   * @param  codes  to ignore
-   */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
-  {
-    searchIgnoreResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<Control> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<Control> processor)
-  {
-    controlProcessor = processor;
+    config = pc;
   }
 
 
@@ -202,7 +131,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       final SimpleBindRequest sbr = Requests.newSimpleBindRequest();
       if (request.getControls() != null) {
         for (Control c :
-             controlProcessor.processRequestControls(request.getControls())) {
+             config.getControlProcessor().processRequestControls(
+               request.getControls())) {
           sbr.addControl(c);
         }
       }
@@ -211,14 +141,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(result.getResultCode().intValue()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -244,7 +174,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
         request.getDn(), request.getCredential().getChars());
       if (request.getControls() != null) {
         for (Control c :
-             controlProcessor.processRequestControls(request.getControls())) {
+             config.getControlProcessor().processRequestControls(
+               request.getControls())) {
           sbr.addControl(c);
         }
       }
@@ -253,14 +184,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(result.getResultCode().intValue()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -285,8 +216,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     SASLBindRequest sbr = null;
     final ByteStringBuilder builder = new ByteStringBuilder();
     */
-    final SaslConfig config = request.getSaslConfig();
-    switch (config.getMechanism()) {
+    final SaslConfig sc = request.getSaslConfig();
+    switch (sc.getMechanism()) {
 
     case EXTERNAL:
       throw new UnsupportedOperationException("SASL External not supported");
@@ -304,8 +235,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       sbr = Requests.newDigestMD5SASLBindRequest(
         request.getDn() != null ? request.getDn() : "",
         builder.toByteString());
-      String digestMd5Realm = config instanceof DigestMd5Config
-        ? ((DigestMd5Config) config).getRealm() : null;
+      String digestMd5Realm = sc instanceof DigestMd5Config
+        ? ((DigestMd5Config) sc).getRealm() : null;
       if (digestMd5Realm == null && request.getDn().contains("@")) {
         digestMd5Realm = request.getDn().substring(
           request.getDn().indexOf("@") + 1);
@@ -338,28 +269,29 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
         request.getDn() != null ? request.getDn() : "",
         builder.toByteString());
       ((GSSAPISASLBindRequest) sbr).setAuthorizationID(
-        config.getAuthorizationId());
-      final String gssApiRealm = config instanceof GssApiConfig
-        ? ((GssApiConfig) config).getRealm() : null;
+        sc.getAuthorizationId());
+      final String gssApiRealm = sc instanceof GssApiConfig
+        ? ((GssApiConfig) sc).getRealm() : null;
       if (gssApiRealm != null) {
         ((GSSAPISASLBindRequest) sbr).setRealm(gssApiRealm);
       }
-      if (config.getQualityOfProtection() != null) {
+      if (sc.getQualityOfProtection() != null) {
         ((GSSAPISASLBindRequest) sbr).addQOP(
-          getQualityOfProtection(config.getQualityOfProtection()));
+          getQualityOfProtection(sc.getQualityOfProtection()));
       }
       break;
       */
 
     default:
       throw new IllegalArgumentException(
-        "Unknown SASL authentication mechanism: " + config.getMechanism());
+        "Unknown SASL authentication mechanism: " + sc.getMechanism());
     }
 
     /*
     if (request.getControls() != null) {
       for (Control c :
-           controlProcessor.processRequestControls(request.getControls())) {
+           config.getControlProcessor().processRequestControls(
+             request.getControls())) {
         sbr.addControl(c);
       }
     }
@@ -368,7 +300,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     response = new Response<Void>(
       null,
       ResultCode.valueOf(result.getResultCode().intValue()),
-      controlProcessor.processResponseControls(
+      config.getControlProcessor().processResponseControls(
         request.getControls(),
         result.getControls().toArray(new Control[0])));
     return response;
@@ -422,7 +354,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
             new LdapEntry(request.getDn(), request.getLdapAttributes())));
       if (request.getControls() != null) {
         for (Control c :
-             controlProcessor.processRequestControls(request.getControls())) {
+             config.getControlProcessor().processRequestControls(
+               request.getControls())) {
           ar.addControl(c);
         }
       }
@@ -431,14 +364,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(result.getResultCode().intValue()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -468,7 +401,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       }
       if (request.getControls() != null) {
         for (Control c :
-             controlProcessor.processRequestControls(request.getControls())) {
+             config.getControlProcessor().processRequestControls(
+               request.getControls())) {
           cr.addControl(c);
         }
       }
@@ -477,14 +411,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       response = new Response<Boolean>(
         result.matched(),
         ResultCode.valueOf(result.getResultCode().intValue()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -503,7 +437,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
         Requests.newDeleteRequest(request.getDn());
       if (request.getControls() != null) {
         for (Control c :
-             controlProcessor.processRequestControls(request.getControls())) {
+             config.getControlProcessor().processRequestControls(
+               request.getControls())) {
           dr.addControl(c);
         }
       }
@@ -512,14 +447,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(result.getResultCode().intValue()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -544,7 +479,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       }
       if (request.getControls() != null) {
         for (Control c :
-             controlProcessor.processRequestControls(request.getControls())) {
+             config.getControlProcessor().processRequestControls(
+               request.getControls())) {
           mr.addControl(c);
         }
       }
@@ -553,14 +489,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(result.getResultCode().intValue()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -580,7 +516,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       mdr.setDeleteOldRDN(request.getDeleteOldRDn());
       if (request.getControls() != null) {
         for (Control c :
-             controlProcessor.processRequestControls(request.getControls())) {
+             config.getControlProcessor().processRequestControls(
+               request.getControls())) {
           mdr.addControl(c);
         }
       }
@@ -589,14 +526,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(result.getResultCode().intValue()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -610,11 +547,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     final org.ldaptive.SearchRequest request)
     throws LdapException
   {
-    final OpenDSSearchIterator i = new OpenDSSearchIterator(
-      request,
-      controlProcessor);
-    i.setOperationRetryResultCodes(operationRetryResultCodes);
-    i.setSearchIgnoreResultCodes(searchIgnoreResultCodes);
+    final OpenDSSearchIterator i = new OpenDSSearchIterator(request, config);
     i.initialize(connection);
     return i;
   }

@@ -32,18 +32,22 @@ public class JndiConnectionFactory
 {
 
   /** Environment properties. */
-  private Map<String, Object> environment;
+  private final Map<String, Object> environment;
 
 
   /**
    * Creates a new jndi connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  env  jndi context environment
    */
-  public JndiConnectionFactory(final String url, final Map<String, Object> env)
+  public JndiConnectionFactory(
+    final String url,
+    final JndiProviderConfig config,
+    final Map<String, Object> env)
   {
-    super(url);
+    super(url, config);
     environment = env;
   }
 
@@ -62,13 +66,8 @@ public class JndiConnectionFactory
 
     JndiConnection conn = null;
     try {
-      conn = new JndiConnection(new InitialLdapContext(env, null));
-      conn.setRemoveDnUrls(getProviderConfig().getRemoveDnUrls());
-      conn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      conn.setSearchIgnoreResultCodes(
-        getProviderConfig().getSearchIgnoreResultCodes());
-      conn.setControlProcessor(getProviderConfig().getControlProcessor());
+      conn = new JndiConnection(
+        new InitialLdapContext(env, null), getProviderConfig());
     } catch (NamingException e) {
       throw new ConnectionException(
         e,

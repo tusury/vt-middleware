@@ -26,7 +26,6 @@ import org.apache.directory.shared.ldap.model.message.BindRequestImpl;
 import org.apache.directory.shared.ldap.model.message.BindResponse;
 import org.apache.directory.shared.ldap.model.message.CompareRequestImpl;
 import org.apache.directory.shared.ldap.model.message.CompareResponse;
-import org.apache.directory.shared.ldap.model.message.Control;
 import org.apache.directory.shared.ldap.model.message.DeleteRequestImpl;
 import org.apache.directory.shared.ldap.model.message.DeleteResponse;
 import org.apache.directory.shared.ldap.model.message.ModifyDnRequestImpl;
@@ -45,7 +44,6 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.Connection;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,65 +63,21 @@ public class ApacheLdapConnection implements Connection
   /** Ldap connection. */
   private LdapNetworkConnection connection;
 
-  /** Result codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Control processor. */
-  private ControlProcessor<Control> controlProcessor;
+  /** Provider configuration. */
+  private final ApacheLdapProviderConfig config;
 
 
   /**
    * Creates a new apache ldap connection.
    *
    * @param  lc  ldap connection
+   * @param  pc  provider configuration
    */
-  public ApacheLdapConnection(final LdapNetworkConnection lc)
+  public ApacheLdapConnection(
+    final LdapNetworkConnection lc, final ApacheLdapProviderConfig pc)
   {
     connection = lc;
-  }
-
-
-  /**
-   * Returns the result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<Control> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<Control> processor)
-  {
-    controlProcessor = processor;
+    config = pc;
   }
 
 
@@ -197,22 +151,24 @@ public class ApacheLdapConnection implements Connection
       final BindRequestImpl bri = new BindRequestImpl();
       if (request.getControls() != null) {
         bri.addAllControls(
-          controlProcessor.processRequestControls(request.getControls()));
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
       }
 
       final BindResponse br = connection.bind(bri);
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         br.getLdapResult().getResultCode());
       response = new Response<Void>(
         null,
         ResultCode.valueOf(br.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           br));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     } catch (IOException e) {
@@ -239,7 +195,8 @@ public class ApacheLdapConnection implements Connection
       final BindRequestImpl bri = new BindRequestImpl();
       if (request.getControls() != null) {
         bri.addAllControls(
-          controlProcessor.processRequestControls(request.getControls()));
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
       }
       bri.setVersion3(true);
       bri.setSimple(true);
@@ -248,17 +205,18 @@ public class ApacheLdapConnection implements Connection
 
       final BindResponse br = connection.bind(bri);
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         br.getLdapResult().getResultCode());
       response = new Response<Void>(
         null,
         ResultCode.valueOf(br.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           br));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     } catch (IOException e) {
@@ -324,17 +282,18 @@ public class ApacheLdapConnection implements Connection
           request.getSaslConfig().getMechanism());
       }
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         br.getLdapResult().getResultCode());
       response = new Response<Void>(
         null,
         ResultCode.valueOf(br.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           br));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     } catch (IOException e) {
@@ -355,7 +314,8 @@ public class ApacheLdapConnection implements Connection
       final AddRequestImpl ari = new AddRequestImpl();
       if (request.getControls() != null) {
         ari.addAllControls(
-          controlProcessor.processRequestControls(request.getControls()));
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
       }
       ari.setEntry(
         bu.fromLdapEntry(
@@ -363,17 +323,18 @@ public class ApacheLdapConnection implements Connection
 
       final AddResponse ar = connection.add(ari);
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         ar.getLdapResult().getResultCode());
       response = new Response<Void>(
         null,
         ResultCode.valueOf(ar.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           ar));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -391,7 +352,8 @@ public class ApacheLdapConnection implements Connection
       final CompareRequestImpl cri = new CompareRequestImpl();
       if (request.getControls() != null) {
         cri.addAllControls(
-          controlProcessor.processRequestControls(request.getControls()));
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
       }
       cri.setName(new Dn(request.getDn()));
       cri.setAttributeId(request.getAttribute().getName());
@@ -403,17 +365,18 @@ public class ApacheLdapConnection implements Connection
 
       final CompareResponse cr = connection.compare(cri);
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         cr.getLdapResult().getResultCode());
       response = new Response<Boolean>(
         cr.isTrue(),
         ResultCode.valueOf(cr.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           cr));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -431,23 +394,25 @@ public class ApacheLdapConnection implements Connection
       final DeleteRequestImpl dri = new DeleteRequestImpl();
       if (request.getControls() != null) {
         dri.addAllControls(
-          controlProcessor.processRequestControls(request.getControls()));
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
       }
       dri.setName(new Dn(request.getDn()));
 
       final DeleteResponse dr = connection.delete(dri);
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         dr.getLdapResult().getResultCode());
       response = new Response<Void>(
         null,
         ResultCode.valueOf(dr.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           dr));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -466,7 +431,8 @@ public class ApacheLdapConnection implements Connection
       final ModifyRequestImpl mri = new ModifyRequestImpl();
       if (request.getControls() != null) {
         mri.addAllControls(
-          controlProcessor.processRequestControls(request.getControls()));
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
       }
       mri.setName(new Dn(request.getDn()));
       for (
@@ -477,17 +443,18 @@ public class ApacheLdapConnection implements Connection
 
       final ModifyResponse mr = connection.modify(mri);
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         mr.getLdapResult().getResultCode());
       response = new Response<Void>(
         null,
         ResultCode.valueOf(mr.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           mr));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -507,7 +474,8 @@ public class ApacheLdapConnection implements Connection
       final ModifyDnRequestImpl mdri = new ModifyDnRequestImpl();
       if (request.getControls() != null) {
         mdri.addAllControls(
-          controlProcessor.processRequestControls(request.getControls()));
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
       }
       mdri.setName(dn);
       mdri.setNewRdn(newDn.getRdn());
@@ -516,17 +484,18 @@ public class ApacheLdapConnection implements Connection
 
       final ModifyDnResponse mdr = connection.modifyDn(mdri);
       ApacheLdapUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         mdr.getLdapResult().getResultCode());
       response = new Response<Void>(
         null,
         ResultCode.valueOf(mdr.getLdapResult().getResultCode().getResultCode()),
         ApacheLdapUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           mdr));
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
       throw new LdapException(e);
     }
@@ -541,9 +510,7 @@ public class ApacheLdapConnection implements Connection
     throws LdapException
   {
     final ApacheLdapSearchIterator i = new ApacheLdapSearchIterator(
-      request,
-      controlProcessor);
-    i.setOperationRetryResultCodes(operationRetryResultCodes);
+      request, config);
     i.initialize(connection);
     return i;
   }

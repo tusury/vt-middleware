@@ -51,17 +51,19 @@ public class UnboundIdStartTLSConnectionFactory
    * Creates a new Unbound ID connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  factory  SSL socket factory to use for LDAP and LDAPS
    * @param  sslCtx  SSL context to use for startTLS
    * @param  options  connection options
    */
   public UnboundIdStartTLSConnectionFactory(
     final String url,
+    final UnboundIdProviderConfig config,
     final SocketFactory factory,
     final SSLContext sslCtx,
     final LDAPConnectionOptions options)
   {
-    super(url);
+    super(url, config);
     socketFactory = factory;
     sslContext = sslCtx;
     ldapOptions = options;
@@ -78,16 +80,9 @@ public class UnboundIdStartTLSConnectionFactory
     boolean closeConn = false;
     try {
       final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
-      conn = new UnboundIdConnection(lc);
+      conn = new UnboundIdConnection(lc, getProviderConfig());
       lc.connect(
         ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
-
-      conn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      conn.setSearchIgnoreResultCodes(
-        getProviderConfig().getSearchIgnoreResultCodes());
-      conn.setControlProcessor(getProviderConfig().getControlProcessor());
-
       final ExtendedResult result = lc.processExtendedOperation(
         new StartTLSExtendedRequest(sslContext));
       if (result.getResultCode() != ResultCode.SUCCESS) {

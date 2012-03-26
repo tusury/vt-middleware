@@ -71,10 +71,10 @@ public class JndiSearchIterator implements SearchIterator
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search request. */
-  private SearchRequest request;
+  private final SearchRequest request;
 
-  /** Control processor. */
-  private ControlProcessor<javax.naming.ldap.Control> controlProcessor;
+  /** Provider configuration. */
+  private final JndiProviderConfig config;
 
   /** Response data. */
   private Response<Void> response;
@@ -88,96 +88,17 @@ public class JndiSearchIterator implements SearchIterator
   /** Results read from the search operation. */
   private NamingEnumeration<SearchResult> results;
 
-  /** Codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Whether to remove the URL from any DNs which are not relative. */
-  private boolean removeDnUrls;
-
-  /** Search result codes to ignore. */
-  private ResultCode[] searchIgnoreResultCodes;
-
 
   /**
    * Creates a new jndi search iterator.
    *
    * @param  sr  search request
-   * @param  processor  control processor
+   * @param  pc  provider configuration
    */
-  public JndiSearchIterator(
-    final SearchRequest sr,
-    final ControlProcessor<javax.naming.ldap.Control> processor)
+  public JndiSearchIterator(final SearchRequest sr, final JndiProviderConfig pc)
   {
     request = sr;
-    controlProcessor = processor;
-  }
-
-
-  /**
-   * Returns whether the URL will be removed from any DNs which are not
-   * relative. The default value is true.
-   *
-   * @return  whether the URL will be removed from DNs
-   */
-  public boolean getRemoveDnUrls()
-  {
-    return removeDnUrls;
-  }
-
-
-  /**
-   * Sets whether the URL will be removed from any DNs which are not relative
-   * The default value is true.
-   *
-   * @param  b  whether the URL will be removed from DNs
-   */
-  public void setRemoveDnUrls(final boolean b)
-  {
-    removeDnUrls = b;
-  }
-
-
-  /**
-   * Returns the ldap result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the ldap result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the search ignore result codes.
-   *
-   * @return  result codes to ignore
-   */
-  public ResultCode[] getSearchIgnoreResultCodes()
-  {
-    return searchIgnoreResultCodes;
-  }
-
-
-  /**
-   * Sets the search ignore result codes.
-   *
-   * @param  codes  to ignore
-   */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
-  {
-    searchIgnoreResultCodes = codes;
+    config = pc;
   }
 
 
@@ -194,16 +115,17 @@ public class JndiSearchIterator implements SearchIterator
     boolean closeContext = false;
     try {
       context = ctx.newInstance(
-        controlProcessor.processRequestControls(request.getControls()));
+        config.getControlProcessor().processRequestControls(
+          request.getControls()));
       initializeSearchContext(context, request);
       results = search(context, request);
     } catch (NamingException e) {
       closeContext = true;
       JndiUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
         JndiUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           context));
     } finally {
@@ -352,11 +274,12 @@ public class JndiSearchIterator implements SearchIterator
       more = results.hasMore();
       if (!more) {
         final ResponseControl[] respControls = JndiUtil.processResponseControls(
-          controlProcessor, request.getControls(), context);
+          config.getControlProcessor(), request.getControls(), context);
         final boolean searchAgain = ControlProcessor.searchAgain(respControls);
         if (searchAgain) {
           context.setRequestControls(
-            controlProcessor.processRequestControls(request.getControls()));
+            config.getControlProcessor().processRequestControls(
+              request.getControls()));
           results = search(context, request);
           more = results.hasMore();
         }
@@ -369,13 +292,14 @@ public class JndiSearchIterator implements SearchIterator
         }
       }
     } catch (NamingException e) {
-      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      final ResultCode rc = ignoreSearchException(
+        config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
         JndiUtil.throwOperationException(
-          operationRetryResultCodes,
+          config.getOperationRetryResultCodes(),
           e,
           JndiUtil.processResponseControls(
-            controlProcessor,
+            config.getControlProcessor(),
             request.getControls(),
             context));
       }
@@ -383,7 +307,7 @@ public class JndiSearchIterator implements SearchIterator
         null,
         rc,
         JndiUtil.processResponseControls(
-          controlProcessor,
+          config.getControlProcessor(),
           request.getControls(),
           context));
     }
@@ -404,13 +328,14 @@ public class JndiSearchIterator implements SearchIterator
       result.setName(formatDn(result, getSearchDn(context, request)));
       le = bu.toLdapEntry(result);
     } catch (NamingException e) {
-      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      final ResultCode rc = ignoreSearchException(
+        config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
         JndiUtil.throwOperationException(
-          operationRetryResultCodes,
+          config.getOperationRetryResultCodes(),
           e,
           JndiUtil.processResponseControls(
-            controlProcessor,
+            config.getControlProcessor(),
             request.getControls(),
             context));
       }
@@ -511,7 +436,7 @@ public class JndiSearchIterator implements SearchIterator
         }
       } else {
         logger.trace("formatting non-relative dn {}", resultName);
-        if (removeDnUrls) {
+        if (config.getRemoveDnUrls()) {
           fqName = new StringBuilder(
             readCompositeName(URI.create(resultName).getPath().substring(1)));
         } else {

@@ -33,20 +33,22 @@ public class OpenDSConnectionFactory
 {
 
   /** Ldap connection options. */
-  private LDAPOptions ldapOptions;
+  private final LDAPOptions ldapOptions;
 
 
   /**
    * Creates a new OpenDS connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  options  connection options
    */
   public OpenDSConnectionFactory(
     final String url,
+    final OpenDSProviderConfig config,
     final LDAPOptions options)
   {
-    super(url);
+    super(url, config);
     ldapOptions = options;
   }
 
@@ -65,12 +67,7 @@ public class OpenDSConnectionFactory
         ldapUrl.getLastEntry().getPort(),
         ldapOptions);
       final Connection c = cf.getConnection();
-      conn = new OpenDSConnection(c);
-      conn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      conn.setSearchIgnoreResultCodes(
-        getProviderConfig().getSearchIgnoreResultCodes());
-      conn.setControlProcessor(getProviderConfig().getControlProcessor());
+      conn = new OpenDSConnection(c, getProviderConfig());
     } catch (ErrorResultException e) {
       closeConn = true;
       throw new ConnectionException(

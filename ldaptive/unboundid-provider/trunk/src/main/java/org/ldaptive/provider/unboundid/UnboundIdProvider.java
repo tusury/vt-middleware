@@ -48,7 +48,6 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
   public ConnectionFactory<UnboundIdProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    config.makeImmutable();
     SocketFactory factory = config.getSocketFactory();
     SSLContext sslContext = null;
     // Unboundid does not do hostname verification by default
@@ -68,19 +67,21 @@ public class UnboundIdProvider implements Provider<UnboundIdProviderConfig>
       throw new UnsupportedOperationException(
         "UnboundID provider does not support the protocols property");
     }
-    final LDAPConnectionOptions options = new LDAPConnectionOptions();
-    options.setUseSynchronousMode(true);
-    options.setConnectTimeoutMillis(
-      cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0);
-    options.setResponseTimeoutMillis(cc.getResponseTimeout());
+    LDAPConnectionOptions options = config.getConnectionOptions();
+    if (options == null) {
+      options = new LDAPConnectionOptions();
+      options.setConnectTimeoutMillis(
+        cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0);
+      options.setResponseTimeoutMillis(cc.getResponseTimeout());
+    }
     ConnectionFactory<UnboundIdProviderConfig> cf = null;
     if (cc.getUseStartTLS()) {
       cf = new UnboundIdStartTLSConnectionFactory(
-        cc.getLdapUrl(), factory, sslContext, options);
+        cc.getLdapUrl(), config, factory, sslContext, options);
     } else {
-      cf = new UnboundIdConnectionFactory(cc.getLdapUrl(), factory, options);
+      cf = new UnboundIdConnectionFactory(
+        cc.getLdapUrl(), config, factory, options);
     }
-    cf.setProviderConfig(config);
     return cf;
   }
 

@@ -14,7 +14,6 @@
 package org.ldaptive.provider.netscape;
 
 import netscape.ldap.LDAPConnection;
-import netscape.ldap.LDAPControl;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPReferralException;
 import netscape.ldap.LDAPSearchConstraints;
@@ -47,10 +46,10 @@ public class NetscapeSearchIterator implements SearchIterator
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search request. */
-  private SearchRequest request;
+  private final SearchRequest request;
 
-  /** Control processor. */
-  private ControlProcessor<LDAPControl> controlProcessor;
+  /** Provider configuration. */
+  private final NetscapeProviderConfig config;
 
   /** Response data. */
   private Response<Void> response;
@@ -61,12 +60,6 @@ public class NetscapeSearchIterator implements SearchIterator
   /** Ldap search results. */
   private LDAPSearchResults results;
 
-  /** Codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Search result codes to ignore. */
-  private ResultCode[] searchIgnoreResultCodes;
-
   /** Operation time limit. */
   private int timeLimit;
 
@@ -75,58 +68,13 @@ public class NetscapeSearchIterator implements SearchIterator
    * Creates a new netscape search iterator.
    *
    * @param  sr  search request
-   * @param  processor  control processor
+   * @param  pc  provider configuration
    */
   public NetscapeSearchIterator(
-    final SearchRequest sr,
-    final ControlProcessor<LDAPControl> processor)
+    final SearchRequest sr, final NetscapeProviderConfig pc)
   {
     request = sr;
-    controlProcessor = processor;
-  }
-
-
-  /**
-   * Returns the ldap result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the ldap result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the search ignore result codes.
-   *
-   * @return  result codes to ignore
-   */
-  public ResultCode[] getSearchIgnoreResultCodes()
-  {
-    return searchIgnoreResultCodes;
-  }
-
-
-  /**
-   * Sets the search ignore result codes.
-   *
-   * @param  codes  to ignore
-   */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
-  {
-    searchIgnoreResultCodes = codes;
+    config = pc;
   }
 
 
@@ -167,9 +115,9 @@ public class NetscapeSearchIterator implements SearchIterator
       results = search(connection, request);
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
   }
 
@@ -227,7 +175,8 @@ public class NetscapeSearchIterator implements SearchIterator
     cons.setReferrals(
       ReferralBehavior.FOLLOW == request.getReferralBehavior() ? true : false);
     cons.setServerControls(
-      controlProcessor.processRequestControls(request.getControls()));
+      config.getControlProcessor().processRequestControls(
+        request.getControls()));
     cons.setServerTimeLimit((int) request.getTimeLimit());
     return cons;
   }
@@ -291,7 +240,7 @@ public class NetscapeSearchIterator implements SearchIterator
       more = results.hasMoreElements();
       if (!more) {
         final ResponseControl[] respControls =
-          controlProcessor.processResponseControls(
+          config.getControlProcessor().processResponseControls(
             request.getControls(),
             results.getResponseControls());
         final boolean searchAgain = ControlProcessor.searchAgain(respControls);
@@ -303,23 +252,24 @@ public class NetscapeSearchIterator implements SearchIterator
           response = new Response<Void>(
             null,
             ResultCode.SUCCESS,
-            controlProcessor.processResponseControls(
+            config.getControlProcessor().processResponseControls(
               request.getControls(),
               results.getResponseControls()));
         }
       }
     } catch (LDAPException e) {
-      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      final ResultCode rc = ignoreSearchException(
+        config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
         NetscapeUtil.throwOperationException(
-          operationRetryResultCodes,
+          config.getOperationRetryResultCodes(),
           e,
-          controlProcessor);
+          config.getControlProcessor());
       }
       response = new Response<Void>(
         null,
         rc,
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           results.getResponseControls()));
     }
@@ -343,22 +293,23 @@ public class NetscapeSearchIterator implements SearchIterator
         logger.debug("Ignoring referral exception", e);
       } else {
         NetscapeUtil.throwOperationException(
-          operationRetryResultCodes,
+          config.getOperationRetryResultCodes(),
           e,
-          controlProcessor);
+          config.getControlProcessor());
       }
     } catch (LDAPException e) {
-      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      final ResultCode rc = ignoreSearchException(
+        config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
         NetscapeUtil.throwOperationException(
-          operationRetryResultCodes,
+          config.getOperationRetryResultCodes(),
           e,
-          controlProcessor);
+          config.getControlProcessor());
       }
       response = new Response<Void>(
         null,
         rc,
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           results.getResponseControls()));
     }

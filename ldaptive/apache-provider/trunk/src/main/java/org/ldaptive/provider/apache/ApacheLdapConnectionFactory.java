@@ -34,30 +34,32 @@ public class ApacheLdapConnectionFactory
 {
 
   /** Connection configuration. */
-  private LdapConnectionConfig ldapConnectionConfig;
+  private final LdapConnectionConfig ldapConnectionConfig;
 
   /** Whether to startTLS on connections. */
-  private boolean useStartTLS;
+  private final boolean useStartTLS;
 
   /** Timeout for responses. */
-  private long responseTimeOut;
+  private final long responseTimeOut;
 
 
   /**
    * Creates a new Apache LDAP connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  lcc  connection configuration
    * @param  tls  whether to startTLS on connections
    * @param  timeOut  timeout for responses
    */
   public ApacheLdapConnectionFactory(
     final String url,
+    final ApacheLdapProviderConfig config,
     final LdapConnectionConfig lcc,
     final boolean tls,
     final long timeOut)
   {
-    super(url);
+    super(url, config);
     ldapConnectionConfig = lcc;
     useStartTLS = tls;
     responseTimeOut = timeOut;
@@ -78,7 +80,7 @@ public class ApacheLdapConnectionFactory
     try {
       final LdapNetworkConnection lc = new LdapNetworkConnection(
         ldapConnectionConfig);
-      conn = new ApacheLdapConnection(lc);
+      conn = new ApacheLdapConnection(lc, getProviderConfig());
       lc.connect();
       if (useStartTLS) {
         lc.startTls();
@@ -86,10 +88,6 @@ public class ApacheLdapConnectionFactory
       if (responseTimeOut > 0) {
         lc.setTimeOut(responseTimeOut);
       }
-
-      conn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      conn.setControlProcessor(getProviderConfig().getControlProcessor());
     } catch (LdapOperationException e) {
       closeConn = true;
       throw new ConnectionException(

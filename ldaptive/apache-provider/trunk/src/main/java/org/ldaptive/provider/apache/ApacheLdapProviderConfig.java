@@ -14,8 +14,7 @@
 package org.ldaptive.provider.apache;
 
 import java.util.Arrays;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.TrustManager;
+import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.shared.ldap.model.message.Control;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConfig;
@@ -29,11 +28,8 @@ import org.ldaptive.provider.ProviderConfig;
 public class ApacheLdapProviderConfig extends ProviderConfig
 {
 
-  /** key managers used for SSL and TLS. */
-  private KeyManager[] keyManagers;
-
-  /** trust managers used for SSL and TLS. */
-  private TrustManager[] trustManagers;
+  /** Connection configuration. */
+  private LdapConnectionConfig connectionConfig;
 
   /** Apache ldap specific control processor. */
   private ControlProcessor<Control> controlProcessor;
@@ -48,50 +44,26 @@ public class ApacheLdapProviderConfig extends ProviderConfig
 
 
   /**
-   * Returns the key managers to use for TLS/SSL connections.
+   * Returns the connection configuration.
    *
-   * @return  key managers
+   * @return  connection configuration
    */
-  public KeyManager[] getKeyManagers()
+  public LdapConnectionConfig getLdapConnectionConfig()
   {
-    return keyManagers;
+    return connectionConfig;
   }
 
 
   /**
-   * Sets the key managers to use for TLS/SSL connections.
+   * Sets the connection configuration.
    *
-   * @param  km  key managers
+   * @param  config  connection configuration
    */
-  public void setKeyManagers(final KeyManager[] km)
+  public void setLdapConnectionConfig(final LdapConnectionConfig config)
   {
     checkImmutable();
-    logger.trace("setting keyManagers: {}", Arrays.toString(km));
-    keyManagers = km;
-  }
-
-
-  /**
-   * Returns the trust managers to use for TLS/SSL connections.
-   *
-   * @return  trust managers
-   */
-  public TrustManager[] getTrustManagers()
-  {
-    return trustManagers;
-  }
-
-
-  /**
-   * Sets the trust managers to use for TLS/SSL connections.
-   *
-   * @param  tm  trust managers
-   */
-  public void setTrustManagers(final TrustManager[] tm)
-  {
-    checkImmutable();
-    logger.trace("setting trustManagers: {}", Arrays.toString(tm));
-    trustManagers = tm;
+    logger.trace("setting ldapConnectionConfig: {}", config);
+    connectionConfig = config;
   }
 
 
@@ -130,15 +102,13 @@ public class ApacheLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, keyManagers=%s, trustManagers=%s, " +
-        "controlProcessor=%s]",
+        "connectionStrategy=%s, ldapConnectionConfig=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
-        Arrays.toString(keyManagers),
-        Arrays.toString(trustManagers),
+        connectionConfig,
         controlProcessor);
   }
 }

@@ -50,10 +50,10 @@ public class OpenDSSearchIterator implements SearchIterator
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search request. */
-  private org.ldaptive.SearchRequest request;
+  private final org.ldaptive.SearchRequest request;
 
-  /** Control processor. */
-  private ControlProcessor<Control> controlProcessor;
+  /** Provider configuration. */
+  private final OpenDSProviderConfig config;
 
   /** Response data. */
   private org.ldaptive.Response<Void> response;
@@ -64,69 +64,18 @@ public class OpenDSSearchIterator implements SearchIterator
   /** Search result iterator. */
   private SearchResultIterator resultIterator;
 
-  /** Codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Search result codes to ignore. */
-  private ResultCode[] searchIgnoreResultCodes;
-
 
   /**
    * Creates a new opends search iterator.
    *
    * @param  sr  search request
-   * @param  processor  control processor
+   * @param  pc  provider configuration
    */
   public OpenDSSearchIterator(
-    final org.ldaptive.SearchRequest sr,
-    final ControlProcessor<Control> processor)
+    final org.ldaptive.SearchRequest sr, final OpenDSProviderConfig pc)
   {
     request = sr;
-    controlProcessor = processor;
-  }
-
-
-  /**
-   * Returns the ldap result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the ldap result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the search ignore result codes.
-   *
-   * @return  result codes to ignore
-   */
-  public ResultCode[] getSearchIgnoreResultCodes()
-  {
-    return searchIgnoreResultCodes;
-  }
-
-
-  /**
-   * Sets the search ignore result codes.
-   *
-   * @param  codes  to ignore
-   */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
-  {
-    searchIgnoreResultCodes = codes;
+    config = pc;
   }
 
 
@@ -162,7 +111,8 @@ public class OpenDSSearchIterator implements SearchIterator
     final SearchRequest opendsSr = getSearchRequest(sr);
     if (sr.getControls() != null) {
       for (Control c :
-           controlProcessor.processRequestControls(sr.getControls())) {
+           config.getControlProcessor().processRequestControls(
+             sr.getControls())) {
         opendsSr.addControl(c);
       }
     }
@@ -170,10 +120,13 @@ public class OpenDSSearchIterator implements SearchIterator
     try {
       conn.search(opendsSr, i);
     } catch (ErrorResultException e) {
-      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      final ResultCode rc = ignoreSearchException(
+        config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
         OpenDSUtil.throwOperationException(
-          operationRetryResultCodes, e, controlProcessor);
+          config.getOperationRetryResultCodes(),
+          e,
+          config.getControlProcessor());
       }
     } catch (InterruptedException e) {
       throw new LdapException(e);
@@ -274,7 +227,7 @@ public class OpenDSSearchIterator implements SearchIterator
     if (!more) {
       final Result result = resultIterator.getResult();
       final ResponseControl[] respControls =
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(), result.getControls().toArray(new Control[0]));
       final boolean searchAgain = ControlProcessor.searchAgain(respControls);
       if (searchAgain) {
@@ -304,9 +257,9 @@ public class OpenDSSearchIterator implements SearchIterator
       entry = resultIterator.getSearchResultEntry();
     } catch (ErrorResultException e) {
       OpenDSUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return util.toLdapEntry(entry);
   }

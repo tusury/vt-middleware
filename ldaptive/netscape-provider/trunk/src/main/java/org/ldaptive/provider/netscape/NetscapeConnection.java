@@ -16,7 +16,6 @@ package org.ldaptive.provider.netscape;
 import javax.security.auth.callback.CallbackHandler;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPConstraints;
-import netscape.ldap.LDAPControl;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPResponse;
@@ -32,7 +31,6 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.Connection;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
@@ -53,14 +51,8 @@ public class NetscapeConnection implements Connection
   /** Ldap connection. */
   private LDAPConnection connection;
 
-  /** Result codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Search result codes to ignore. */
-  private ResultCode[] searchIgnoreResultCodes;
-
-  /** Control processor. */
-  private ControlProcessor<LDAPControl> controlProcessor;
+  /** Provider configuration. */
+  private final NetscapeProviderConfig config;
 
   /** Operation time limit. */
   private int timeLimit;
@@ -70,76 +62,13 @@ public class NetscapeConnection implements Connection
    * Creates a new netscape ldap connection.
    *
    * @param  lc  ldap connection
+   * @param  pc  provider configuration
    */
-  public NetscapeConnection(final LDAPConnection lc)
+  public NetscapeConnection(
+    final LDAPConnection lc, final NetscapeProviderConfig pc)
   {
     connection = lc;
-  }
-
-
-  /**
-   * Returns the result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the search ignore result codes.
-   *
-   * @return  result codes to ignore
-   */
-  public ResultCode[] getSearchIgnoreResultCodes()
-  {
-    return searchIgnoreResultCodes;
-  }
-
-
-  /**
-   * Sets the search ignore result codes.
-   *
-   * @param  codes  to ignore
-   */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
-  {
-    searchIgnoreResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<LDAPControl> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<LDAPControl> processor)
-  {
-    controlProcessor = processor;
+    config = pc;
   }
 
 
@@ -224,7 +153,8 @@ public class NetscapeConnection implements Connection
     final LDAPConstraints cons = new LDAPConstraints();
     cons.setTimeLimit(timeLimit);
     cons.setServerControls(
-      controlProcessor.processRequestControls(request.getControls()));
+      config.getControlProcessor().processRequestControls(
+        request.getControls()));
     return cons;
   }
 
@@ -252,14 +182,14 @@ public class NetscapeConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(r.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -288,14 +218,14 @@ public class NetscapeConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(r.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -315,8 +245,8 @@ public class NetscapeConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final SaslConfig config = request.getSaslConfig();
-      switch (config.getMechanism()) {
+      final SaslConfig sc = request.getSaslConfig();
+      switch (sc.getMechanism()) {
 
       case EXTERNAL:
         connection.bind(
@@ -337,14 +267,14 @@ public class NetscapeConnection implements Connection
 
       default:
         throw new IllegalArgumentException(
-          "Unknown SASL authentication mechanism: " + config.getMechanism());
+          "Unknown SASL authentication mechanism: " + sc.getMechanism());
       }
       response = new Response<Void>(null, ResultCode.SUCCESS);
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -368,14 +298,14 @@ public class NetscapeConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(r.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -398,14 +328,14 @@ public class NetscapeConnection implements Connection
       response = new Response<Boolean>(
         ResultCode.COMPARE_TRUE.value() == r.getResultCode() ? true : false,
         ResultCode.valueOf(r.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -426,14 +356,14 @@ public class NetscapeConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(r.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -456,14 +386,14 @@ public class NetscapeConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(r.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           r.getControls()));
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -486,9 +416,9 @@ public class NetscapeConnection implements Connection
       response = new Response<Void>(null, ResultCode.SUCCESS);
     } catch (LDAPException e) {
       NetscapeUtil.throwOperationException(
-        operationRetryResultCodes,
+        config.getOperationRetryResultCodes(),
         e,
-        controlProcessor);
+        config.getControlProcessor());
     }
     return response;
   }
@@ -501,10 +431,7 @@ public class NetscapeConnection implements Connection
     throws LdapException
   {
     final NetscapeSearchIterator i = new NetscapeSearchIterator(
-      request,
-      controlProcessor);
-    i.setOperationRetryResultCodes(operationRetryResultCodes);
-    i.setSearchIgnoreResultCodes(searchIgnoreResultCodes);
+      request, config);
     i.setTimeLimit(timeLimit);
     i.initialize(connection);
     return i;

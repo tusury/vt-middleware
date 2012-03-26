@@ -30,20 +30,24 @@ public class JLdapTlsConnectionFactory
 {
 
   /** SSL socket factory to use for startTLS. */
-  private SSLSocketFactory sslSocketFactory;
+  private final SSLSocketFactory sslSocketFactory;
 
 
   /**
    * Creates a new jldap tls connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  timeOut  time in milliseconds that operations will wait
    * @param  factory  SSL socket factory
    */
   public JLdapTlsConnectionFactory(
-    final String url, final int timeOut, final SSLSocketFactory factory)
+    final String url,
+    final JLdapProviderConfig config,
+    final int timeOut,
+    final SSLSocketFactory factory)
   {
-    super(url, timeOut);
+    super(url, config, timeOut);
     sslSocketFactory = factory;
   }
 
@@ -74,8 +78,9 @@ public class JLdapTlsConnectionFactory
 
   /** {@inheritDoc} */
   @Override
-  protected JLdapTlsConnection createJLdapConnection(final LDAPConnection conn)
+  protected JLdapTlsConnection createJLdapConnection(
+    final LDAPConnection conn, final JLdapProviderConfig config)
   {
-    return new JLdapTlsConnection(conn);
+    return new JLdapTlsConnection(conn, config);
   }
 }

@@ -41,10 +41,12 @@ public class JndiStartTLSConnection extends JndiConnection
    * Creates a new jndi startTLS connection.
    *
    * @param  lc  ldap context
+   * @param  pc  provider configuration
    */
-  public JndiStartTLSConnection(final LdapContext lc)
+  public JndiStartTLSConnection(
+    final LdapContext lc, final JndiProviderConfig pc)
   {
-    super(lc);
+    super(lc, pc);
   }
 
 
@@ -52,13 +54,15 @@ public class JndiStartTLSConnection extends JndiConnection
    * Creates a new jndi startTLS connection.
    *
    * @param  lc  ldap contxt
+   * @param  pc  provider configuration
    * @param  tlsResponse  of successful TLS handshake
    */
   public JndiStartTLSConnection(
     final LdapContext lc,
+    final JndiProviderConfig pc,
     final StartTlsResponse tlsResponse)
   {
-    super(lc);
+    super(lc, pc);
     startTlsResponse = tlsResponse;
   }
 

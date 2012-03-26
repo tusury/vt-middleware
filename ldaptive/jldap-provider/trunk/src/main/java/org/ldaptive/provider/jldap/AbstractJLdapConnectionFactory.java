@@ -33,18 +33,20 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
 {
 
   /** Amount of time in milliseconds that operations will wait. */
-  private int socketTimeOut;
+  private final int socketTimeOut;
 
 
   /**
    * Creates a new abstract jldap connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider connfiguration
    * @param  timeOut  time in milliseconds that operations will wait
    */
-  public AbstractJLdapConnectionFactory(final String url, final int timeOut)
+  public AbstractJLdapConnectionFactory(
+    final String url, final JLdapProviderConfig config, final int timeOut)
   {
-    super(url);
+    super(url, config);
     socketTimeOut = timeOut;
   }
 
@@ -67,12 +69,7 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
         ldapUrl.getLastEntry().getHostnameWithPort(),
         LDAPConnection.DEFAULT_PORT);
       initializeConnection(conn);
-      jldapConn = createJLdapConnection(conn);
-      jldapConn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      jldapConn.setSearchIgnoreResultCodes(
-        getProviderConfig().getSearchIgnoreResultCodes());
-      jldapConn.setControlProcessor(getProviderConfig().getControlProcessor());
+      jldapConn = createJLdapConnection(conn, getProviderConfig());
     } catch (LDAPException e) {
       closeConn = true;
       throw new ConnectionException(e);
@@ -121,8 +118,10 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
    * factory.
    *
    * @param  conn  to create jldap connection with
+   * @param  config  provider configuration
    *
    * @return  jldap connection
    */
-  protected abstract T createJLdapConnection(final LDAPConnection conn);
+  protected abstract T createJLdapConnection(
+    final LDAPConnection conn, final JLdapProviderConfig config);
 }
