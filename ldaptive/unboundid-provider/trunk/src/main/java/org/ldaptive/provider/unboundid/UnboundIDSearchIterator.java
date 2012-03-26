@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class UnboundIdSearchIterator implements SearchIterator
+public class UnboundIDSearchIterator implements SearchIterator
 {
 
   /** Logger for this class. */
@@ -53,7 +53,7 @@ public class UnboundIdSearchIterator implements SearchIterator
   private final org.ldaptive.SearchRequest request;
 
   /** Provider configuration. */
-  private final UnboundIdProviderConfig config;
+  private final UnboundIDProviderConfig config;
 
   /** Response data. */
   private org.ldaptive.Response<Void> response;
@@ -71,9 +71,9 @@ public class UnboundIdSearchIterator implements SearchIterator
    * @param  sr  search request
    * @param  pc  provider configuration
    */
-  public UnboundIdSearchIterator(
+  public UnboundIDSearchIterator(
     final org.ldaptive.SearchRequest sr,
-    final UnboundIdProviderConfig pc)
+    final UnboundIDProviderConfig pc)
   {
     request = sr;
     config = pc;
@@ -261,7 +261,7 @@ public class UnboundIdSearchIterator implements SearchIterator
   public LdapEntry next()
     throws org.ldaptive.LdapException
   {
-    final UnboundIdUtils util = new UnboundIdUtils(request.getSortBehavior());
+    final UnboundIDUtils util = new UnboundIDUtils(request.getSortBehavior());
     util.setBinaryAttributes(request.getBinaryAttributes());
     SearchResultEntry entry = null;
     try {

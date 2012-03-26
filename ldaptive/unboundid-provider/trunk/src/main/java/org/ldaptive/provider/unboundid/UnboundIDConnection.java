@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class UnboundIdConnection implements Connection
+public class UnboundIDConnection implements Connection
 {
 
   /** Logger for this class. */
@@ -59,7 +59,7 @@ public class UnboundIdConnection implements Connection
   private LDAPConnection connection;
 
   /** Provider configuration. */
-  private final UnboundIdProviderConfig config;
+  private final UnboundIDProviderConfig config;
 
 
   /**
@@ -68,8 +68,8 @@ public class UnboundIdConnection implements Connection
    * @param  lc  ldap connection
    * @param  pc  provider configuration
    */
-  public UnboundIdConnection(
-    final LDAPConnection lc, final UnboundIdProviderConfig pc)
+  public UnboundIDConnection(
+    final LDAPConnection lc, final UnboundIDProviderConfig pc)
   {
     connection = lc;
     config = pc;
@@ -312,7 +312,7 @@ public class UnboundIdConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final UnboundIdUtils util = new UnboundIdUtils();
+      final UnboundIDUtils util = new UnboundIDUtils();
       final com.unboundid.ldap.sdk.AddRequest ar =
         new com.unboundid.ldap.sdk.AddRequest(
           new DN(request.getDn()),
@@ -424,7 +424,7 @@ public class UnboundIdConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final UnboundIdUtils bu = new UnboundIdUtils();
+      final UnboundIDUtils bu = new UnboundIDUtils();
       final com.unboundid.ldap.sdk.ModifyRequest mr =
         new com.unboundid.ldap.sdk.ModifyRequest(
           new DN(request.getDn()),
@@ -496,7 +496,7 @@ public class UnboundIdConnection implements Connection
     final org.ldaptive.SearchRequest request)
     throws LdapException
   {
-    final UnboundIdSearchIterator i = new UnboundIdSearchIterator(
+    final UnboundIDSearchIterator i = new UnboundIDSearchIterator(
       request, config);
     i.initialize(connection);
     return i;

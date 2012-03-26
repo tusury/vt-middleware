@@ -27,7 +27,7 @@ import org.ldaptive.provider.ControlHandler;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class UnboundIdControlHandler
+public class UnboundIDControlHandler
   implements ControlHandler<com.unboundid.ldap.sdk.Control>
 {
 

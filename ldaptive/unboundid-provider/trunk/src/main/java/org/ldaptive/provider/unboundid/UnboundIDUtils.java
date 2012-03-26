@@ -1,5 +1,5 @@
 /*
-  $Id: UnboundIdUtil.java 2328 2012-03-26 02:53:02Z dfisher $
+  $Id: UnboundIDUtil.java 2328 2012-03-26 02:53:02Z dfisher $
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -35,7 +35,7 @@ import org.ldaptive.SortBehavior;
  * @author  Middleware Services
  * @version  $Revision: 2328 $ $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
  */
-public class UnboundIdUtils
+public class UnboundIDUtils
 {
 
   /** Ldap result sort behavior. */
@@ -46,7 +46,7 @@ public class UnboundIdUtils
 
 
   /** Default constructor. */
-  public UnboundIdUtils()
+  public UnboundIDUtils()
   {
     sortBehavior = SortBehavior.getDefaultSortBehavior();
   }
@@ -57,7 +57,7 @@ public class UnboundIdUtils
    *
    * @param  sb  sort behavior
    */
-  public UnboundIdUtils(final SortBehavior sb)
+  public UnboundIDUtils(final SortBehavior sb)
   {
     sortBehavior = sb;
   }
