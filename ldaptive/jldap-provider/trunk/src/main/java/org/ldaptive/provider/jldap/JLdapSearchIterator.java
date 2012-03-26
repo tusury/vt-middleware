@@ -46,10 +46,10 @@ public class JLdapSearchIterator implements SearchIterator
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search request. */
-  private SearchRequest request;
+  private final SearchRequest request;
 
-  /** Control processor. */
-  private ControlProcessor<LDAPControl> controlProcessor;
+  /** Provider configuration. */
+  private final JLdapProviderConfig config;
 
   /** Response data. */
   private Response<Void> response;
@@ -63,69 +63,18 @@ public class JLdapSearchIterator implements SearchIterator
   /** Ldap search results. */
   private LDAPSearchResults results;
 
-  /** Codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Search result codes to ignore. */
-  private ResultCode[] searchIgnoreResultCodes;
-
 
   /**
    * Creates a new jldap search iterator.
    *
    * @param  sr  search request
-   * @param  processor  control processor
+   * @param  pc  provider configuration
    */
   public JLdapSearchIterator(
-    final SearchRequest sr,
-    final ControlProcessor<LDAPControl> processor)
+    final SearchRequest sr, final JLdapProviderConfig pc)
   {
     request = sr;
-    controlProcessor = processor;
-  }
-
-
-  /**
-   * Returns the ldap result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the ldap result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the search ignore result codes.
-   *
-   * @return  result codes to ignore
-   */
-  public ResultCode[] getSearchIgnoreResultCodes()
-  {
-    return searchIgnoreResultCodes;
-  }
-
-
-  /**
-   * Sets the search ignore result codes.
-   *
-   * @param  codes  to ignore
-   */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
-  {
-    searchIgnoreResultCodes = codes;
+    config = pc;
   }
 
 
@@ -143,7 +92,8 @@ public class JLdapSearchIterator implements SearchIterator
     try {
       results = search(connection, request);
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
   }
 
@@ -164,8 +114,8 @@ public class JLdapSearchIterator implements SearchIterator
     throws LDAPException
   {
     final LDAPSearchConstraints constraints = getLDAPSearchConstraints(sr);
-    final LDAPControl[] lc = controlProcessor.processRequestControls(
-      sr.getControls());
+    final LDAPControl[] lc =
+      config.getControlProcessor().processRequestControls(sr.getControls());
     if (lc != null) {
       constraints.setControls(lc);
     }
@@ -274,7 +224,7 @@ public class JLdapSearchIterator implements SearchIterator
       more = results.hasMore();
       if (!more) {
         final ResponseControl[] respControls =
-          controlProcessor.processResponseControls(
+          config.getControlProcessor().processResponseControls(
             request.getControls(),
             results.getResponseControls());
         final boolean searchAgain = ControlProcessor.searchAgain(respControls);
@@ -291,14 +241,16 @@ public class JLdapSearchIterator implements SearchIterator
         }
       }
     } catch (LDAPException e) {
-      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      final ResultCode rc = ignoreSearchException(
+        config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+        JLdapUtil.throwOperationException(
+          config.getOperationRetryResultCodes(), e);
       }
       response = new Response<Void>(
         null,
         rc,
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           results.getResponseControls()));
     }
@@ -319,9 +271,11 @@ public class JLdapSearchIterator implements SearchIterator
       final LDAPEntry entry = results.next();
       le = bu.toLdapEntry(entry);
     } catch (LDAPException e) {
-      final ResultCode rc = ignoreSearchException(searchIgnoreResultCodes, e);
+      final ResultCode rc = ignoreSearchException(
+        config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+        JLdapUtil.throwOperationException(
+          config.getOperationRetryResultCodes(), e);
       }
       responseResultCode = rc;
     }

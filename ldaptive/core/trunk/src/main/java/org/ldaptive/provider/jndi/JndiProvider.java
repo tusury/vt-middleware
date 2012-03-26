@@ -102,7 +102,6 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JndiProviderConfig> cf = null;
-    config.makeImmutable();
     if (cc.getUseStartTLS()) {
       // hostname verification always occurs for startTLS after the handshake
       SSLSocketFactory factory = config.getSslSocketFactory();
@@ -119,6 +118,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       }
       cf = new JndiStartTLSConnectionFactory(
         cc.getLdapUrl(),
+        config,
         createEnvironment(cc, null),
         factory,
         config.getHostnameVerifier());
@@ -135,10 +135,10 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       }
       cf = new JndiConnectionFactory(
         cc.getLdapUrl(),
+        config,
         createEnvironment(
           cc, factory != null ? factory.getClass().getName() : null));
     }
-    cf.setProviderConfig(config);
     return cf;
   }
 

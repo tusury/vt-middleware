@@ -45,7 +45,7 @@ public class JLdapUtil
 {
 
   /** Ldap result sort behavior. */
-  private SortBehavior sortBehavior;
+  private final SortBehavior sortBehavior;
 
   /** Attributes that should be treated as binary. */
   private List<String> binaryAttrs;

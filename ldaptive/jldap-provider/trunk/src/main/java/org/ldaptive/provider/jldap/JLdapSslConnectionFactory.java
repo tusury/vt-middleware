@@ -29,20 +29,24 @@ public class JLdapSslConnectionFactory
 {
 
   /** SSL socket factory to use for SSL. */
-  private SSLSocketFactory sslSocketFactory;
+  private final SSLSocketFactory sslSocketFactory;
 
 
   /**
    * Creates a new jldap ssl connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  timeOut  time in milliseconds that operations will wait
    * @param  factory  SSL socket factory
    */
   public JLdapSslConnectionFactory(
-    final String url, final int timeOut, final SSLSocketFactory factory)
+    final String url,
+    final JLdapProviderConfig config,
+    final int timeOut,
+    final SSLSocketFactory factory)
   {
-    super(url, timeOut);
+    super(url, config, timeOut);
     sslSocketFactory = factory;
   }
 
@@ -65,8 +69,9 @@ public class JLdapSslConnectionFactory
 
   /** {@inheritDoc} */
   @Override
-  protected JLdapSslConnection createJLdapConnection(final LDAPConnection conn)
+  protected JLdapSslConnection createJLdapConnection(
+    final LDAPConnection conn, final JLdapProviderConfig config)
   {
-    return new JLdapSslConnection(conn);
+    return new JLdapSslConnection(conn, config);
   }
 }

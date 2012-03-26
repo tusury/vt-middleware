@@ -74,7 +74,58 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   public ConnectionFactory<ApacheLdapProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    config.makeImmutable();
+    LdapConnectionConfig lcc = config.getLdapConnectionConfig();
+    if (lcc == null) {
+      lcc = new LdapConnectionConfig();
+      if (cc.getUseSSL() || cc.getUseStartTLS()) {
+        final SSLContextInitializer contextInit =
+          getHostnameVerifierSSLContextInitializer(cc);
+        TrustManager[] trustManagers = null;
+        KeyManager[] keyManagers = null;
+        try {
+          trustManagers = contextInit.getTrustManagers();
+          keyManagers = contextInit.getKeyManagers();
+        } catch (GeneralSecurityException e) {
+          throw new IllegalArgumentException(e);
+        }
+
+        lcc.setUseSsl(cc.getUseSSL());
+        lcc.setTrustManagers(trustManagers);
+        lcc.setKeyManagers(keyManagers);
+        if (cc.getSslConfig() != null &&
+            cc.getSslConfig().getEnabledCipherSuites() != null) {
+          lcc.setEnabledCipherSuites(
+            cc.getSslConfig().getEnabledCipherSuites());
+        }
+        if (cc.getSslConfig() != null &&
+            cc.getSslConfig().getEnabledProtocols() != null) {
+          lcc.setSslProtocol(cc.getSslConfig().getEnabledProtocols()[0]);
+        }
+      }
+    }
+    final ConnectionFactory<ApacheLdapProviderConfig> cf =
+      new ApacheLdapConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        lcc,
+        cc.getUseStartTLS(),
+        cc.getResponseTimeout());
+    return cf;
+  }
+
+
+  /**
+   * Returns an SSLContextInitializer configured with a default hostname
+   * verifier. Uses a {@link DefaultHostnameVerifier} if no credential config
+   * has been configured.
+   *
+   * @param  cc  connection configuration
+   *
+   * @return  SSL Context Initializer
+   */
+  protected SSLContextInitializer getHostnameVerifierSSLContextInitializer(
+    final ConnectionConfig cc)
+  {
     SSLContextInitializer contextInit = null;
     if (cc.getSslConfig() != null &&
         cc.getSslConfig().getCredentialConfig() != null) {
@@ -98,40 +149,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
           new HostnameVerifyingTrustManager(
             new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
     }
-    TrustManager[] trustManagers = config.getTrustManagers();
-    KeyManager[] keyManagers = config.getKeyManagers();
-    try {
-      if (trustManagers == null) {
-        trustManagers = contextInit.getTrustManagers();
-      }
-      if (keyManagers == null) {
-        keyManagers = contextInit.getKeyManagers();
-      }
-    } catch (GeneralSecurityException e) {
-      throw new IllegalArgumentException(e);
-    }
-
-    final LdapConnectionConfig lcc = new LdapConnectionConfig();
-    lcc.setUseSsl(cc.getUseSSL());
-    if (keyManagers != null) {
-      lcc.setKeyManagers(keyManagers);
-    }
-    if (trustManagers != null) {
-      lcc.setTrustManagers(trustManagers);
-    }
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getEnabledCipherSuites() != null) {
-      lcc.setEnabledCipherSuites(cc.getSslConfig().getEnabledCipherSuites());
-    }
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getEnabledProtocols() != null) {
-      lcc.setSslProtocol(cc.getSslConfig().getEnabledProtocols()[0]);
-    }
-    final ConnectionFactory<ApacheLdapProviderConfig> cf =
-      new ApacheLdapConnectionFactory(
-        cc.getLdapUrl(), lcc, cc.getUseStartTLS(), cc.getResponseTimeout());
-    cf.setProviderConfig(config);
-    return cf;
+    return contextInit;
   }
 
 

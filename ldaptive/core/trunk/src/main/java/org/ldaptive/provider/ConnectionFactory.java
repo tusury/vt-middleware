@@ -36,14 +36,6 @@ public interface ConnectionFactory<T extends ProviderConfig>
 
 
   /**
-   * Sets the provider configuration.
-   *
-   * @param  pc  provider configuration
-   */
-  void setProviderConfig(T pc);
-
-
-  /**
    * Create a connection to an LDAP.
    *
    * @return  provider connection

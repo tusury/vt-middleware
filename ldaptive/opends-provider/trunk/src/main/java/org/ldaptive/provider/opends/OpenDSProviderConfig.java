@@ -17,6 +17,7 @@ import java.util.Arrays;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConfig;
+import org.opends.sdk.LDAPOptions;
 import org.opends.sdk.controls.Control;
 
 /**
@@ -27,6 +28,9 @@ import org.opends.sdk.controls.Control;
  */
 public class OpenDSProviderConfig extends ProviderConfig
 {
+
+  /** Connection options. */
+  private LDAPOptions options;
 
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
@@ -46,6 +50,28 @@ public class OpenDSProviderConfig extends ProviderConfig
     };
     controlProcessor = new ControlProcessor<Control>(
       new OpenDSControlHandler());
+  }
+
+
+  /**
+   * Returns the connection options.
+   *
+   * @return  ldap options
+   */
+  public LDAPOptions getOptions()
+  {
+    return options;
+  }
+
+
+  /**
+   * Sets the connection options.
+   *
+   * @param  o  ldap options
+   */
+  public void setOptions(final LDAPOptions o)
+  {
+    options = o;
   }
 
 
@@ -108,12 +134,14 @@ public class OpenDSProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, options=%s, searchIgnoreResultCodes=%s, " +
+        "controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        options,
         Arrays.toString(searchIgnoreResultCodes),
         controlProcessor);
   }

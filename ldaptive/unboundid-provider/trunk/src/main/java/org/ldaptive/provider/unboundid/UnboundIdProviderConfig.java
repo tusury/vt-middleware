@@ -16,6 +16,7 @@ package org.ldaptive.provider.unboundid;
 import java.util.Arrays;
 import javax.net.SocketFactory;
 import com.unboundid.ldap.sdk.Control;
+import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConfig;
@@ -28,6 +29,9 @@ import org.ldaptive.provider.ProviderConfig;
  */
 public class UnboundIdProviderConfig extends ProviderConfig
 {
+
+  /** Connection options. */
+  private LDAPConnectionOptions connectionOptions;
 
   /** socket factory for ldap connections. */
   private SocketFactory socketFactory;
@@ -44,11 +48,33 @@ public class UnboundIdProviderConfig extends ProviderConfig
   {
     setOperationRetryResultCodes(
       new ResultCode[] {ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR, });
-    setSearchIgnoreResultCodes(
+    searchIgnoreResultCodes =
       new ResultCode[] {
-        ResultCode.TIME_LIMIT_EXCEEDED, ResultCode.SIZE_LIMIT_EXCEEDED, });
+        ResultCode.TIME_LIMIT_EXCEEDED, ResultCode.SIZE_LIMIT_EXCEEDED, };
     controlProcessor = new ControlProcessor<Control>(
       new UnboundIdControlHandler());
+  }
+
+
+  /**
+   * Returns the connection options.
+   *
+   * @return ldap connection options
+   */
+  public LDAPConnectionOptions getConnectionOptions()
+  {
+    return connectionOptions;
+  }
+
+
+  /**
+   * Sets the connection options.
+   *
+   * @param  options  ldap connection options
+   */
+  public void setConnectionOptions(final LDAPConnectionOptions options)
+  {
+    connectionOptions = options;
   }
 
 
@@ -135,13 +161,14 @@ public class UnboundIdProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, socketFactory=%s, " +
+        "connectionStrategy=%s, connectionOptions=%s, socketFactory=%s, " +
         "searchIgnoreResultCodes=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        connectionOptions,
         socketFactory,
         Arrays.toString(searchIgnoreResultCodes),
         controlProcessor);

@@ -47,7 +47,6 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
       throw new UnsupportedOperationException("startTLS is not supported");
     }
 
-    config.makeImmutable();
     LDAPSocketFactory factory = config.getLDAPSocketFactory();
     if (cc.getUseSSL() && factory == null) {
       factory = getHostnameVerifierSocketFactory(cc);
@@ -55,10 +54,10 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
     final ConnectionFactory<NetscapeProviderConfig> cf =
       new NetscapeConnectionFactory(
         cc.getLdapUrl(),
+        config,
         factory,
         (int) cc.getConnectTimeout(),
         (int) cc.getResponseTimeout());
-    cf.setProviderConfig(config);
     return cf;
   }
 

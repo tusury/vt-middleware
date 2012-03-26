@@ -21,7 +21,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
-import com.novell.ldap.LDAPControl;
 import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPResponse;
@@ -40,7 +39,6 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.provider.Connection;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,90 +58,21 @@ public class JLdapConnection implements Connection
   /** Ldap connection. */
   private LDAPConnection connection;
 
-  /** Codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
-  /** Search result codes to ignore. */
-  private ResultCode[] searchIgnoreResultCodes;
-
-  /** Control processor. */
-  private ControlProcessor<LDAPControl> controlProcessor;
+  /** Provider configuration. */
+  private final JLdapProviderConfig config;
 
 
   /**
    * Creates a new jldap connection.
    *
    * @param  conn  ldap connection
+   * @param  pc  provider configuration
    */
-  public JLdapConnection(final LDAPConnection conn)
+  public JLdapConnection(
+    final LDAPConnection conn, final JLdapProviderConfig pc)
   {
     connection = conn;
-  }
-
-
-  /**
-   * Returns the ldap result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the ldap result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the search ignore result codes.
-   *
-   * @return  result codes to ignore
-   */
-  public ResultCode[] getSearchIgnoreResultCodes()
-  {
-    return searchIgnoreResultCodes;
-  }
-
-
-  /**
-   * Sets the search ignore result codes.
-   *
-   * @param  codes  to ignore
-   */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
-  {
-    searchIgnoreResultCodes = codes;
-  }
-
-
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<LDAPControl> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<LDAPControl> processor)
-  {
-    controlProcessor = processor;
+    config = pc;
   }
 
 
@@ -216,11 +145,12 @@ public class JLdapConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(lr.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return response;
   }
@@ -250,11 +180,12 @@ public class JLdapConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(lr.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return response;
   }
@@ -312,7 +243,8 @@ public class JLdapConnection implements Connection
           request.getSaslConfig().getMechanism());
       }
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return new Response<Void>(null, ResultCode.SUCCESS, null);
   }
@@ -336,11 +268,12 @@ public class JLdapConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(lr.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return response;
   }
@@ -363,11 +296,12 @@ public class JLdapConnection implements Connection
       response = new Response<Boolean>(
         lr.getResultCode() == ResultCode.COMPARE_TRUE.value() ? true : false,
         ResultCode.valueOf(lr.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return response;
   }
@@ -388,11 +322,12 @@ public class JLdapConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(lr.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return response;
   }
@@ -415,11 +350,12 @@ public class JLdapConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(lr.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return response;
   }
@@ -444,11 +380,12 @@ public class JLdapConnection implements Connection
       response = new Response<Void>(
         null,
         ResultCode.valueOf(lr.getResultCode()),
-        controlProcessor.processResponseControls(
+        config.getControlProcessor().processResponseControls(
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      JLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     }
     return response;
   }
@@ -459,11 +396,7 @@ public class JLdapConnection implements Connection
   public SearchIterator search(final SearchRequest request)
     throws LdapException
   {
-    final JLdapSearchIterator i = new JLdapSearchIterator(
-      request,
-      controlProcessor);
-    i.setOperationRetryResultCodes(operationRetryResultCodes);
-    i.setSearchIgnoreResultCodes(searchIgnoreResultCodes);
+    final JLdapSearchIterator i = new JLdapSearchIterator(request, config);
     i.initialize(connection);
     return i;
   }
@@ -481,7 +414,8 @@ public class JLdapConnection implements Connection
     final LDAPConstraints constraints = new LDAPConstraints();
     if (request.getControls() != null) {
       constraints.setControls(
-        controlProcessor.processRequestControls(request.getControls()));
+        config.getControlProcessor().processRequestControls(
+          request.getControls()));
     }
     return constraints;
   }

@@ -36,30 +36,32 @@ public class NetscapeConnectionFactory
   public static final int LDAP_VERSION = 3;
 
   /** Socket factory to use for LDAP and LDAPS. */
-  private LDAPSocketFactory socketFactory;
+  private final LDAPSocketFactory socketFactory;
 
   /** Amount of time in milliseconds that connect operations will block. */
-  private int connectTimeout;
+  private final int connectTimeout;
 
   /** Amount of time in milliseconds that operations will wait. */
-  private int timeLimit;
+  private final int timeLimit;
 
 
   /**
    * Creates a new Netscape connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    * @param  factory  ldap socket factory
    * @param  cTimeout  connection timeout
    * @param  rTimeout  response timeout
    */
   public NetscapeConnectionFactory(
     final String url,
+    final NetscapeProviderConfig config,
     final LDAPSocketFactory factory,
     final int cTimeout,
     final int rTimeout)
   {
-    super(url);
+    super(url, config);
     socketFactory = factory;
     connectTimeout = cTimeout;
     timeLimit = rTimeout;
@@ -71,7 +73,6 @@ public class NetscapeConnectionFactory
   protected NetscapeConnection createInternal(final String url)
     throws LdapException
   {
-    final LDAPConstraints constraints = new LDAPConstraints();
     final LdapURL ldapUrl = new LdapURL(url);
     NetscapeConnection conn = null;
     boolean closeConn = false;
@@ -85,7 +86,7 @@ public class NetscapeConnectionFactory
       if (connectTimeout > 0) {
         lc.setConnectTimeout(connectTimeout);
       }
-      conn = new NetscapeConnection(lc);
+      conn = new NetscapeConnection(lc, getProviderConfig());
       if (timeLimit > 0) {
         conn.setTimeLimit(timeLimit);
       }
@@ -95,13 +96,7 @@ public class NetscapeConnectionFactory
         ldapUrl.getLastEntry().getPort(),
         null,
         null,
-        constraints);
-
-      conn.setOperationRetryResultCodes(
-        getProviderConfig().getOperationRetryResultCodes());
-      conn.setSearchIgnoreResultCodes(
-        getProviderConfig().getSearchIgnoreResultCodes());
-      conn.setControlProcessor(getProviderConfig().getControlProcessor());
+        new LDAPConstraints());
     } catch (LDAPException e) {
       closeConn = true;
       throw new ConnectionException(

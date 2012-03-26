@@ -36,27 +36,32 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Provider configuration. */
-  private T config;
-
   /** LDAP URL for connections. */
-  private String ldapUrl;
+  private final String ldapUrl;
+
+  /** Provider configuration. */
+  private final T providerConfig;
 
   /** Number of connections made. */
   private ConnectionCount connectionCount = new ConnectionCount();
 
 
   /**
-   * Creates a new abstract connection factory.
+   * Creates a new abstract connection factory. Once invoked the supplied
+   * provider config is made immutable. See
+   * {@link ProviderConfig#makeImmutable()}.
    *
    * @param  url  of the ldap to connect to
+   * @param  config  provider configuration
    */
-  public AbstractConnectionFactory(final String url)
+  public AbstractConnectionFactory(final String url, final T config)
   {
     if (url == null) {
       throw new IllegalArgumentException("LDAP URL cannot be null");
     }
     ldapUrl = url;
+    providerConfig = config;
+    providerConfig.makeImmutable();
   }
 
 
@@ -64,15 +69,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
   @Override
   public T getProviderConfig()
   {
-    return config;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public void setProviderConfig(final T t)
-  {
-    config = t;
+    return providerConfig;
   }
 
 
@@ -104,7 +101,8 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
     throws LdapException
   {
     LdapException lastThrown = null;
-    final String[] urls = parseLdapUrl(ldapUrl, config.getConnectionStrategy());
+    final String[] urls = parseLdapUrl(
+      ldapUrl, providerConfig.getConnectionStrategy());
     Connection conn = null;
     for (String url : urls) {
       try {
@@ -113,7 +111,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
           new Object[] {
             connectionCount,
             url,
-            config.getConnectionStrategy(),
+            providerConfig.getConnectionStrategy(),
           });
         conn = createInternal(url);
         connectionCount.incrementCount();
@@ -214,7 +212,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
         getClass().getName(),
         hashCode(),
         ldapUrl,
-        config,
+        providerConfig,
         connectionCount);
   }
 

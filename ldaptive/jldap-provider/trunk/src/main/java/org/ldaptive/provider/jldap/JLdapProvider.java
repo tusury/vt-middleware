@@ -48,24 +48,24 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JLdapProviderConfig> cf = null;
-    config.makeImmutable();
     if (cc.getUseStartTLS()) {
       cf = new JLdapTlsConnectionFactory(
         cc.getLdapUrl(),
+        config,
         (int) cc.getResponseTimeout(),
         config.getSslSocketFactory() != null ?
           config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
     } else if (cc.getUseSSL()) {
       cf = new JLdapSslConnectionFactory(
         cc.getLdapUrl(),
+        config,
         (int) cc.getResponseTimeout(),
         config.getSslSocketFactory() != null ?
           config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
     } else {
       cf = new JLdapConnectionFactory(
-        cc.getLdapUrl(), (int) cc.getResponseTimeout());
+        cc.getLdapUrl(), config, (int) cc.getResponseTimeout());
     }
-    cf.setProviderConfig(config);
     return cf;
   }
 

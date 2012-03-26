@@ -46,10 +46,10 @@ public class ApacheLdapSearchIterator implements SearchIterator
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search request. */
-  private org.ldaptive.SearchRequest request;
+  private final org.ldaptive.SearchRequest request;
 
-  /** Control processor. */
-  private ControlProcessor<Control> controlProcessor;
+  /** Provider configuration. */
+  private final ApacheLdapProviderConfig config;
 
   /** Response data. */
   private org.ldaptive.Response<Void> response;
@@ -60,44 +60,19 @@ public class ApacheLdapSearchIterator implements SearchIterator
   /** Ldap search cursor. */
   private SearchCursor cursor;
 
-  /** Codes to retry operations on. */
-  private ResultCode[] operationRetryResultCodes;
-
 
   /**
    * Creates a new apache ldap search iterator.
    *
    * @param  sr  search request
-   * @param  processor  control processor
+   * @param  pc  provider configuration
    */
   public ApacheLdapSearchIterator(
     final org.ldaptive.SearchRequest sr,
-    final ControlProcessor<Control> processor)
+    final ApacheLdapProviderConfig pc)
   {
     request = sr;
-    controlProcessor = processor;
-  }
-
-
-  /**
-   * Returns the ldap result codes to retry operations on.
-   *
-   * @return  result codes
-   */
-  public ResultCode[] getOperationRetryResultCodes()
-  {
-    return operationRetryResultCodes;
-  }
-
-
-  /**
-   * Sets the ldap result codes to retry operations on.
-   *
-   * @param  codes  result codes
-   */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
-  {
-    operationRetryResultCodes = codes;
+    config = pc;
   }
 
 
@@ -118,7 +93,8 @@ public class ApacheLdapSearchIterator implements SearchIterator
       cursor = search(connection, request);
     } catch (LdapOperationException e) {
       closeCursor = true;
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (Exception e) {
       closeCursor = true;
       throw new org.ldaptive.LdapException(e);
@@ -152,7 +128,7 @@ public class ApacheLdapSearchIterator implements SearchIterator
     throws LdapException
   {
     final SearchRequest apacheSr = getSearchRequest(sr);
-    final Control[] c = controlProcessor.processRequestControls(
+    final Control[] c = config.getControlProcessor().processRequestControls(
       sr.getControls());
     if (c != null) {
       apacheSr.addAllControls(c);
@@ -267,7 +243,7 @@ public class ApacheLdapSearchIterator implements SearchIterator
         final SearchResultDone done = cursor.getSearchResultDone();
         final org.ldaptive.control.ResponseControl[] respControls =
           ApacheLdapUtil.processResponseControls(
-            controlProcessor,
+            config.getControlProcessor(),
             request.getControls(),
             done);
         final boolean searchAgain = ControlProcessor.searchAgain(respControls);
@@ -277,7 +253,7 @@ public class ApacheLdapSearchIterator implements SearchIterator
         }
         if (!more) {
           ApacheLdapUtil.throwOperationException(
-            operationRetryResultCodes,
+            config.getOperationRetryResultCodes(),
             done.getLdapResult().getResultCode());
           response = new org.ldaptive.Response<Void>(
             null,
@@ -287,7 +263,8 @@ public class ApacheLdapSearchIterator implements SearchIterator
         }
       }
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.ldaptive.LdapException e) {
       throw e;
     } catch (Exception e) {
@@ -324,7 +301,8 @@ public class ApacheLdapSearchIterator implements SearchIterator
         throw new UnsupportedOperationException("Intermediate response");
       }
     } catch (LdapOperationException e) {
-      ApacheLdapUtil.throwOperationException(operationRetryResultCodes, e);
+      ApacheLdapUtil.throwOperationException(
+        config.getOperationRetryResultCodes(), e);
     } catch (org.ldaptive.LdapException e) {
       throw e;
     } catch (Exception e) {
