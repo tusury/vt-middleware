@@ -23,7 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapResult;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SortBehavior;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -231,7 +231,7 @@ public class Dsmlv1Reader implements LdapResultReader
   {
     final String value = valueElement.getChildNodes().item(0).getNodeValue();
     if (base64) {
-      return LdapUtil.base64Decode(value);
+      return LdapUtils.base64Decode(value);
     }
     return value;
   }

@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id: LdapUtil.java 2310 2012-03-08 19:59:50Z dfisher $
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision: 2310 $
+  Updated: $Date: 2012-03-08 14:59:50 -0500 (Thu, 08 Mar 2012) $
 */
 package org.ldaptive;
 
@@ -29,9 +29,9 @@ import org.apache.commons.codec.binary.Base64;
  * Provides utility methods for this package.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
+ * @version  $Revision: 2310 $ $Date: 2012-03-08 14:59:50 -0500 (Thu, 08 Mar 2012) $
  */
-public final class LdapUtil
+public final class LdapUtils
 {
 
   /** UTF-8 character set. */
@@ -67,7 +67,7 @@ public final class LdapUtil
 
 
   /** Default constructor. */
-  private LdapUtil() {}
+  private LdapUtils() {}
 
 
   /**
@@ -306,7 +306,7 @@ public final class LdapUtil
   {
     InputStream is = null;
     if (path.startsWith(CLASSPATH_PREFIX)) {
-      is = LdapUtil.class.getResourceAsStream(
+      is = LdapUtils.class.getResourceAsStream(
         path.substring(CLASSPATH_PREFIX.length()));
     } else if (path.startsWith(FILE_PREFIX)) {
       is = new FileInputStream(new File(path.substring(FILE_PREFIX.length())));

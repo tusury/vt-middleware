@@ -17,7 +17,7 @@ import org.ldaptive.AbstractTest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
@@ -38,7 +38,7 @@ public class CompareValidatorTest extends AbstractTest
   public void defaultSettings()
     throws Exception
   {
-    final Connection c = TestUtil.createConnection();
+    final Connection c = TestUtils.createConnection();
     final CompareValidator sv = new CompareValidator();
     try {
       c.open();
@@ -57,7 +57,7 @@ public class CompareValidatorTest extends AbstractTest
   public void customSettings()
     throws Exception
   {
-    final Connection c = TestUtil.createConnection();
+    final Connection c = TestUtils.createConnection();
     final CompareValidator cv = new CompareValidator(
       new CompareRequest(
         "uid=1,ou=test,dc=vt,dc=edu",

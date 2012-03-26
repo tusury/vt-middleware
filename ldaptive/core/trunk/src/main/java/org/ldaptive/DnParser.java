@@ -241,7 +241,7 @@ public final class DnParser
       }
       if (appendHex) {
         sb.append(
-          LdapUtil.utf8Encode(
+          LdapUtils.utf8Encode(
             decodeHexValue(hexValue.toString().toCharArray())));
         hexValue.setLength(0);
       }

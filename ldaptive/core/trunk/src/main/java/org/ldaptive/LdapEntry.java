@@ -278,7 +278,7 @@ public class LdapEntry extends AbstractLdapBean
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         entryDn != null ? entryDn.toLowerCase() : null,
         entryAttributes.values());

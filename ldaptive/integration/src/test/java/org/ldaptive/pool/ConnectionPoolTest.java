@@ -25,7 +25,7 @@ import org.ldaptive.LdapResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.ldaptive.io.LdifWriter;
 import org.ldaptive.provider.ConnectionStrategy;
 import org.slf4j.Logger;
@@ -95,7 +95,7 @@ public class ConnectionPoolTest extends AbstractTest
   public ConnectionPoolTest(final String host)
     throws Exception
   {
-    final ConnectionConfig cc = TestUtil.readConnectionConfig(null);
+    final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
 
     final PoolConfig softLimitPc = new PoolConfig();
     softLimitPc.setValidateOnCheckIn(true);
@@ -131,7 +131,7 @@ public class ConnectionPoolTest extends AbstractTest
     blockingTimeoutPool.setBlockWaitTime(1000L);
     blockingTimeoutPool.setValidator(new SearchValidator());
 
-    final ConnectionConfig connStrategyCc = TestUtil.readConnectionConfig(null);
+    final ConnectionConfig connStrategyCc = TestUtils.readConnectionConfig(null);
     connStrategyCc.setLdapUrl(
       String.format("%s ldap://dne.middleware.vt.edu", host));
     final DefaultConnectionFactory connStrategyCf =
@@ -190,24 +190,24 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    entries.get("2")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile2)).getEntry();
-    entries.get("3")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile3)).getEntry();
-    entries.get("4")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile4)).getEntry();
-    entries.get("5")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile5)).getEntry();
-    entries.get("6")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile6)).getEntry();
-    entries.get("7")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile7)).getEntry();
-    entries.get("8")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile8)).getEntry();
-    entries.get("9")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile9)).getEntry();
-    entries.get("10")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile10)).getEntry();
+    entries.get("2")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    entries.get("3")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    entries.get("4")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile4)).getEntry();
+    entries.get("5")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile5)).getEntry();
+    entries.get("6")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile6)).getEntry();
+    entries.get("7")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile7)).getEntry();
+    entries.get("8")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile8)).getEntry();
+    entries.get("9")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile9)).getEntry();
+    entries.get("10")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile10)).getEntry();
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : entries.entrySet()) {
@@ -268,24 +268,24 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    entries.get("2")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile2)).getEntry();
-    entries.get("3")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile3)).getEntry();
-    entries.get("4")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile4)).getEntry();
-    entries.get("5")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile5)).getEntry();
-    entries.get("6")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile6)).getEntry();
-    entries.get("7")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile7)).getEntry();
-    entries.get("8")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile8)).getEntry();
-    entries.get("9")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile9)).getEntry();
-    entries.get("10")[1] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile10)).getEntry();
+    entries.get("2")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    entries.get("3")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    entries.get("4")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile4)).getEntry();
+    entries.get("5")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile5)).getEntry();
+    entries.get("6")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile6)).getEntry();
+    entries.get("7")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile7)).getEntry();
+    entries.get("8")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile8)).getEntry();
+    entries.get("9")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile9)).getEntry();
+    entries.get("10")[1] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile10)).getEntry();
     // CheckStyle:Indentation ON
   }
 
@@ -772,7 +772,7 @@ public class ConnectionPoolTest extends AbstractTest
     lw.write(result);
     AssertJUnit.assertEquals(
       results,
-      TestUtil.convertLdifToResult(sw.toString()).getEntry());
+      TestUtils.convertLdifToResult(sw.toString()).getEntry());
     return System.currentTimeMillis() - startTime;
   }
 }

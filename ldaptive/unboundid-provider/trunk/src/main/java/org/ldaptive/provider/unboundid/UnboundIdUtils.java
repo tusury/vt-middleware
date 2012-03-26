@@ -1,5 +1,5 @@
 /*
-  $Id$
+  $Id: UnboundIdUtil.java 2328 2012-03-26 02:53:02Z dfisher $
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
+  Version: $Revision: 2328 $
+  Updated: $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
 */
 package org.ldaptive.provider.unboundid;
 
@@ -18,30 +18,24 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import com.unboundid.ldap.sdk.Attribute;
-import com.unboundid.ldap.sdk.Control;
 import com.unboundid.ldap.sdk.Entry;
-import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
-import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.controls.SortKey;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.OperationException;
 import org.ldaptive.SortBehavior;
-import org.ldaptive.provider.ControlProcessor;
 
 /**
  * Provides methods for converting between Unbound ID specific objects and
  * ldaptive specific objects.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
+ * @version  $Revision: 2328 $ $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
  */
-public class UnboundIdUtil
+public class UnboundIdUtils
 {
 
   /** Ldap result sort behavior. */
@@ -52,7 +46,7 @@ public class UnboundIdUtil
 
 
   /** Default constructor. */
-  public UnboundIdUtil()
+  public UnboundIdUtils()
   {
     sortBehavior = SortBehavior.getDefaultSortBehavior();
   }
@@ -63,7 +57,7 @@ public class UnboundIdUtil
    *
    * @param  sb  sort behavior
    */
-  public UnboundIdUtil(final SortBehavior sb)
+  public UnboundIdUtils(final SortBehavior sb)
   {
     sortBehavior = sb;
   }
@@ -200,75 +194,6 @@ public class UnboundIdUtil
       }
     }
     return mods;
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or do nothing. If operation
-   * exception is thrown, the operation will be retried.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  code  unbound id result code to examine
-   *
-   * @throws  OperationException  if the operation should be retried
-   */
-  public static void throwOperationException(
-    final org.ldaptive.ResultCode[] operationRetryResultCodes,
-    final ResultCode code)
-    throws OperationException
-  {
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (org.ldaptive.ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == code.intValue()) {
-          throw new OperationException(
-            String.format(
-              "Ldap returned result code: %s(%s)",
-              code,
-              code.intValue()),
-            org.ldaptive.ResultCode.valueOf(code.intValue()));
-        }
-      }
-    }
-  }
-
-
-  /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
-   *
-   * @param  operationRetryResultCodes  to compare result code against
-   * @param  e  unbound id exception to examine
-   * @param  processor  control processor
-   *
-   * @throws  OperationException  if the operation should be retried
-   * @throws  LdapException  to propagate the exception out
-   */
-  public static void throwOperationException(
-    final org.ldaptive.ResultCode[] operationRetryResultCodes,
-    final LDAPException e,
-    final ControlProcessor<Control> processor)
-    throws LdapException
-  {
-    final ResultCode rcEnum = e.getResultCode();
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
-      for (org.ldaptive.ResultCode rc : operationRetryResultCodes) {
-        if (rc.value() == rcEnum.intValue()) {
-          throw new OperationException(
-            e,
-            org.ldaptive.ResultCode.valueOf(rcEnum.intValue()),
-            processor.processResponseControls(null, e.getResponseControls()));
-        }
-      }
-    }
-    throw new org.ldaptive.LdapException(
-      e,
-      org.ldaptive.ResultCode.valueOf(rcEnum.intValue()),
-      processor.processResponseControls(null, e.getResponseControls()));
   }
 
 

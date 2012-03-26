@@ -22,7 +22,7 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides an SSL context initializer which can use X.509 certificates to
@@ -138,7 +138,7 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
         aggregateTrustManagers(super.getTrustManagers()) : null;
     } else {
       aggregate = aggregateTrustManagers(
-        LdapUtil.concatArrays(tm, super.getTrustManagers()));
+        LdapUtils.concatArrays(tm, super.getTrustManagers()));
     }
     return aggregate;
   }

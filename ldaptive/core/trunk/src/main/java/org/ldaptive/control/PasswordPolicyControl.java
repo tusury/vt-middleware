@@ -19,7 +19,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
@@ -281,7 +281,7 @@ public class PasswordPolicyControl extends AbstractControl
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         getOID(),
         getCriticality(),

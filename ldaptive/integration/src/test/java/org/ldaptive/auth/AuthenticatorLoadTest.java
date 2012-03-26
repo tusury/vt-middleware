@@ -20,7 +20,7 @@ import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
@@ -74,9 +74,9 @@ public class AuthenticatorLoadTest extends AbstractTest
   public AuthenticatorLoadTest()
     throws Exception
   {
-    singleTLSAuth = TestUtil.readAuthenticator(
+    singleTLSAuth = TestUtils.readAuthenticator(
       "classpath:/org/ldaptive/ldap.tls.load.properties");
-    pooledTLSAuth = TestUtil.readAuthenticator(
+    pooledTLSAuth = TestUtils.readAuthenticator(
       "classpath:/org/ldaptive/ldap.tls.load.properties");
   }
 
@@ -142,24 +142,24 @@ public class AuthenticatorLoadTest extends AbstractTest
     pooledTLSAuth.setAuthenticationHandler(ah);
 
     // CheckStyle:Indentation OFF
-    entries.get("2")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile2)).getEntry();
-    entries.get("3")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile3)).getEntry();
-    entries.get("4")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile4)).getEntry();
-    entries.get("5")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile5)).getEntry();
-    entries.get("6")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile6)).getEntry();
-    entries.get("7")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile7)).getEntry();
-    entries.get("8")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile8)).getEntry();
-    entries.get("9")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile9)).getEntry();
-    entries.get("10")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile10)).getEntry();
+    entries.get("2")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    entries.get("3")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    entries.get("4")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile4)).getEntry();
+    entries.get("5")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile5)).getEntry();
+    entries.get("6")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile6)).getEntry();
+    entries.get("7")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile7)).getEntry();
+    entries.get("8")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile8)).getEntry();
+    entries.get("9")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile9)).getEntry();
+    entries.get("10")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile10)).getEntry();
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : entries.entrySet()) {
@@ -283,7 +283,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     throws Exception
   {
     // test auth with return attributes
-    final LdapEntry expected = TestUtil.convertStringToEntry(
+    final LdapEntry expected = TestUtils.convertStringToEntry(
       null, expectedAttrs);
     final AuthenticationResponse response = singleTLSAuth.authenticate(
       new AuthenticationRequest(
@@ -316,7 +316,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     throws Exception
   {
     // test auth with return attributes
-    final LdapEntry expected = TestUtil.convertStringToEntry(
+    final LdapEntry expected = TestUtils.convertStringToEntry(
       null, expectedAttrs);
     final AuthenticationResponse response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(

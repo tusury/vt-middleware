@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -47,8 +47,8 @@ public class AuthenticatorCliTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
     System.setProperty(
@@ -111,7 +111,7 @@ public class AuthenticatorCliTest extends AbstractTest
   private void authenticate(final String args, final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
     final PrintStream oldStdOut = System.out;
     try {
       final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -119,8 +119,8 @@ public class AuthenticatorCliTest extends AbstractTest
 
       AuthenticatorCli.main(args.split("\\|"));
       AssertJUnit.assertEquals(
-        TestUtil.convertLdifToResult(ldif),
-        TestUtil.convertLdifToResult(outStream.toString()));
+        TestUtils.convertLdifToResult(ldif),
+        TestUtils.convertLdifToResult(outStream.toString()));
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);

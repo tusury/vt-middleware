@@ -39,6 +39,7 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.provider.Connection;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,8 +150,12 @@ public class JLdapConnection implements Connection
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -184,8 +189,12 @@ public class JLdapConnection implements Connection
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -243,8 +252,12 @@ public class JLdapConnection implements Connection
           request.getSaslConfig().getMechanism());
       }
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return new Response<Void>(null, ResultCode.SUCCESS, null);
   }
@@ -257,7 +270,7 @@ public class JLdapConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final JLdapUtil bu = new JLdapUtil();
+      final JLdapUtils bu = new JLdapUtils();
       final LDAPResponseQueue queue = connection.add(
         new LDAPEntry(
           request.getDn(),
@@ -272,8 +285,12 @@ public class JLdapConnection implements Connection
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -286,7 +303,7 @@ public class JLdapConnection implements Connection
   {
     Response<Boolean> response = null;
     try {
-      final JLdapUtil bu = new JLdapUtil();
+      final JLdapUtils bu = new JLdapUtils();
       final LDAPResponseQueue queue = connection.compare(
         request.getDn(),
         bu.fromLdapAttribute(request.getAttribute()),
@@ -300,8 +317,12 @@ public class JLdapConnection implements Connection
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -326,8 +347,12 @@ public class JLdapConnection implements Connection
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -340,7 +365,7 @@ public class JLdapConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      final JLdapUtil bu = new JLdapUtil();
+      final JLdapUtils bu = new JLdapUtils();
       final LDAPResponseQueue queue = connection.modify(
         request.getDn(),
         bu.fromAttributeModification(request.getAttributeModifications()),
@@ -354,8 +379,12 @@ public class JLdapConnection implements Connection
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return response;
   }
@@ -384,8 +413,12 @@ public class JLdapConnection implements Connection
           request.getControls(),
           lr.getControls()));
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
     return response;
   }

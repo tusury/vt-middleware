@@ -15,7 +15,7 @@ package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
@@ -179,7 +179,7 @@ public class PagedResultsControl extends AbstractControl
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         getOID(),
         getCriticality(),

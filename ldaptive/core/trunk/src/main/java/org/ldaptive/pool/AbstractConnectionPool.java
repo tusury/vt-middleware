@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Response;
 
 /**
@@ -728,7 +728,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     @Override
     public int hashCode()
     {
-      return LdapUtil.computeHashCode(HASH_CODE_SEED, conn);
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, conn);
     }
 
 

@@ -16,7 +16,7 @@ package org.ldaptive.handler;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 
 /**
@@ -119,7 +119,7 @@ public class MergeAttributeEntryHandler extends AbstractLdapEntryHandler
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         attributeNames,
         mergeAttributeName);

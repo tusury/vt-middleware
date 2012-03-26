@@ -32,7 +32,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
-import org.ldaptive.TestUtil;
+import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -78,8 +78,8 @@ public class LdapLoginModuleTest extends AbstractTest
   public void createAuthEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
     System.setProperty(
@@ -113,14 +113,14 @@ public class LdapLoginModuleTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    groupEntries.get("6")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile6)).getEntry();
-    groupEntries.get("7")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile7)).getEntry();
-    groupEntries.get("8")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile8)).getEntry();
-    groupEntries.get("9")[0] = TestUtil.convertLdifToResult(
-      TestUtil.readFileIntoString(ldifFile9)).getEntry();
+    groupEntries.get("6")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile6)).getEntry();
+    groupEntries.get("7")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile7)).getEntry();
+    groupEntries.get("8")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile8)).getEntry();
+    groupEntries.get("9")[0] = TestUtils.convertLdifToResult(
+      TestUtils.readFileIntoString(ldifFile9)).getEntry();
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : groupEntries.entrySet()) {
@@ -128,7 +128,7 @@ public class LdapLoginModuleTest extends AbstractTest
     }
 
     // setup group relationships
-    final Connection conn = TestUtil.createSetupConnection();
+    final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);

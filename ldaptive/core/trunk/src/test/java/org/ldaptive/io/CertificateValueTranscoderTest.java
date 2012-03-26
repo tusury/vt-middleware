@@ -16,7 +16,7 @@ package org.ldaptive.io;
 import java.io.ByteArrayInputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -71,7 +71,7 @@ public class CertificateValueTranscoderTest
   {
     final CertificateFactory cf = CertificateFactory.getInstance("X.509");
     final Certificate cert = cf.generateCertificate(
-      new ByteArrayInputStream(LdapUtil.base64Decode(A_FOO_COM_CERT)));
+      new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
 
     return new Object[][] {
       new Object[] {
@@ -79,7 +79,7 @@ public class CertificateValueTranscoderTest
         "-----BEGIN CERTIFICATE-----\n" +
           A_FOO_COM_CERT +
           "\n-----END CERTIFICATE-----",
-        LdapUtil.base64Decode(A_FOO_COM_CERT), },
+        LdapUtils.base64Decode(A_FOO_COM_CERT), },
     };
   }
 

@@ -18,7 +18,7 @@ import java.io.Writer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapResult;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Writes an LDIF to a {@link Writer} using an {@link LdapResult}.
@@ -122,7 +122,7 @@ public class LdifWriter implements LdapResultWriter
     final String dn = entry.getDn();
     if (dn != null) {
       if (encodeData(dn)) {
-        final String encodedDn = LdapUtil.base64Encode(dn);
+        final String encodedDn = LdapUtils.base64Encode(dn);
         if (encodedDn != null) {
           entryLdif.append("dn:: ").append(dn).append(LINE_SEPARATOR);
         }
@@ -139,7 +139,7 @@ public class LdifWriter implements LdapResultWriter
             LINE_SEPARATOR);
         } else if (encodeData(attrValue)) {
           entryLdif.append(attrName).append(":: ").append(
-            LdapUtil.base64Encode(attrValue)).append(LINE_SEPARATOR);
+            LdapUtils.base64Encode(attrValue)).append(LINE_SEPARATOR);
         } else {
           entryLdif.append(attrName).append(": ").append(attrValue).append(
             LINE_SEPARATOR);

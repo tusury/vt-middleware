@@ -50,13 +50,13 @@ public abstract class AbstractTest
   public void createLdapEntry(final LdapEntry entry)
     throws Exception
   {
-    Connection conn = TestUtil.createSetupConnection();
+    Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
       final AddOperation create = new AddOperation(conn);
       create.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
       conn.close();
-      conn = TestUtil.createConnection();
+      conn = TestUtils.createConnection();
       conn.open();
       while (!entryExists(conn, entry)) {
         Thread.sleep(100);
@@ -82,7 +82,7 @@ public abstract class AbstractTest
   public void deleteLdapEntry(final String dn)
     throws Exception
   {
-    final Connection conn = TestUtil.createSetupConnection();
+    final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
       if (entryExists(conn, new LdapEntry(dn))) {

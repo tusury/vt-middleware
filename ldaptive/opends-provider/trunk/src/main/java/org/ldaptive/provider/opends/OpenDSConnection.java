@@ -23,6 +23,7 @@ import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
@@ -145,10 +146,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -188,10 +193,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -347,7 +356,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   {
     Response<Void> response = null;
     try {
-      final OpenDSUtil util = new OpenDSUtil();
+      final OpenDSUtils util = new OpenDSUtils();
       final org.opends.sdk.requests.AddRequest ar =
         Requests.newAddRequest(
           util.fromLdapEntry(
@@ -368,10 +377,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -386,7 +399,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   {
     Response<Boolean> response = null;
     try {
-      final OpenDSUtil util = new OpenDSUtil();
+      final OpenDSUtils util = new OpenDSUtils();
       org.opends.sdk.requests.CompareRequest cr = null;
       if (request.getAttribute().isBinary()) {
         cr = Requests.newCompareRequest(
@@ -415,10 +428,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -451,10 +468,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -469,7 +490,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   {
     Response<Void> response = null;
     try {
-      final OpenDSUtil util = new OpenDSUtil();
+      final OpenDSUtils util = new OpenDSUtils();
       final org.opends.sdk.requests.ModifyRequest mr =
         Requests.newModifyRequest(request.getDn());
       for (Modification m :
@@ -493,10 +514,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }
@@ -530,10 +555,14 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
           request.getControls(),
           result.getControls().toArray(new Control[0])));
     } catch (ErrorResultException e) {
-      OpenDSUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
     } catch (InterruptedException e) {
       throw new LdapException(e);
     }

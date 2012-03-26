@@ -43,9 +43,9 @@ public class ConnectionTest
   public void add(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
-    final Connection conn = TestUtil.createConnection();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final AddOperation add = new AddOperation(conn);
@@ -63,7 +63,7 @@ public class ConnectionTest
   public void compare()
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final CompareOperation compare = new CompareOperation(conn);
@@ -83,7 +83,7 @@ public class ConnectionTest
   public void delete()
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final DeleteOperation delete = new DeleteOperation(conn);
@@ -101,7 +101,7 @@ public class ConnectionTest
   public void modify()
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -123,7 +123,7 @@ public class ConnectionTest
   public void modifyDn()
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
@@ -146,7 +146,7 @@ public class ConnectionTest
   public void search()
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -166,7 +166,7 @@ public class ConnectionTest
     throws Exception
   {
     final ConnectionConfig cc = 
-      TestUtil.readConnectionConfig(
+      TestUtils.readConnectionConfig(
         "classpath:/org/ldaptive/ldap.conn.properties");
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
     Connection conn = connFactory.getConnection();
@@ -271,7 +271,7 @@ public class ConnectionTest
      * AttributeServletTest: 3
      */
     final LdapURL ldapUrl = new LdapURL(host);
-    final int openConns = TestUtil.countOpenConnections(
+    final int openConns = TestUtils.countOpenConnections(
       ldapUrl.getEntry().getHostname().substring(
         0, ldapUrl.getEntry().getHostname().indexOf(".")));
     AssertJUnit.assertEquals(10, openConns);

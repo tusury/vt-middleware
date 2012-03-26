@@ -29,6 +29,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.provider.ControlProcessor;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +93,12 @@ public class JLdapSearchIterator implements SearchIterator
     try {
       results = search(connection, request);
     } catch (LDAPException e) {
-      JLdapUtil.throwOperationException(
-        config.getOperationRetryResultCodes(), e);
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResultCode(),
+        null,
+        true);
     }
   }
 
@@ -241,18 +246,21 @@ public class JLdapSearchIterator implements SearchIterator
         }
       }
     } catch (LDAPException e) {
+      final ResponseControl[] respControls =
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          results.getResponseControls());
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        JLdapUtil.throwOperationException(
-          config.getOperationRetryResultCodes(), e);
+        ProviderUtils.throwOperationException(
+          config.getOperationRetryResultCodes(),
+          e,
+          e.getResultCode(),
+          respControls,
+          true);
       }
-      response = new Response<Void>(
-        null,
-        rc,
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          results.getResponseControls()));
+      response = new Response<Void>(null, rc, respControls);
     }
     return more;
   }
@@ -263,7 +271,7 @@ public class JLdapSearchIterator implements SearchIterator
   public LdapEntry next()
     throws LdapException
   {
-    final JLdapUtil bu = new JLdapUtil(request.getSortBehavior());
+    final JLdapUtils bu = new JLdapUtils(request.getSortBehavior());
     bu.setBinaryAttributes(request.getBinaryAttributes());
 
     LdapEntry le = null;
@@ -274,8 +282,12 @@ public class JLdapSearchIterator implements SearchIterator
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        JLdapUtil.throwOperationException(
-          config.getOperationRetryResultCodes(), e);
+        ProviderUtils.throwOperationException(
+          config.getOperationRetryResultCodes(),
+          e,
+          e.getResultCode(),
+          null,
+          true);
       }
       responseResultCode = rc;
     }

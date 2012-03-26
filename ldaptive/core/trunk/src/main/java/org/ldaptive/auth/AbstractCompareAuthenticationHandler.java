@@ -20,7 +20,7 @@ import org.ldaptive.CompareRequest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Response;
 
 /**
@@ -83,7 +83,7 @@ public abstract class AbstractCompareAuthenticationHandler
 
     final LdapAttribute la = new LdapAttribute(
       "userPassword",
-      String.format("{%s}%s", passwordScheme, LdapUtil.base64Encode(hash))
+      String.format("{%s}%s", passwordScheme, LdapUtils.base64Encode(hash))
         .getBytes());
     final CompareOperation compare = new CompareOperation(c);
     final CompareRequest request = new CompareRequest(criteria.getDn(), la);

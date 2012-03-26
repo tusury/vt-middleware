@@ -45,8 +45,8 @@ public class ModifyDnOperationTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtil.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtil.convertLdifToResult(ldif).getEntry();
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -74,7 +74,7 @@ public class ModifyDnOperationTest extends AbstractTest
   public void modifyDnLdapEntry(final String oldDn, final String newDn)
     throws Exception
   {
-    final Connection conn = TestUtil.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);

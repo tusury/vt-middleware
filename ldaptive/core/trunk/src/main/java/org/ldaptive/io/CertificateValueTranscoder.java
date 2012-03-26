@@ -18,7 +18,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Decodes and encodes a certificate for use in an ldap attribute value.
@@ -43,7 +43,7 @@ public class CertificateValueTranscoder
   @Override
   public Certificate decodeStringValue(final String value)
   {
-    return decodeBinaryValue(LdapUtil.utf8Encode(value));
+    return decodeBinaryValue(LdapUtils.utf8Encode(value));
   }
 
 
@@ -67,7 +67,7 @@ public class CertificateValueTranscoder
   {
     final StringBuilder sb = new StringBuilder();
     sb.append(BEGIN_CERT);
-    sb.append(LdapUtil.base64Encode(encodeBinaryValue(value)));
+    sb.append(LdapUtils.base64Encode(encodeBinaryValue(value)));
     sb.append(END_CERT);
     return sb.toString();
   }

@@ -29,6 +29,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.provider.ControlProcessor;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,13 +122,15 @@ public class JndiSearchIterator implements SearchIterator
       results = search(context, request);
     } catch (NamingException e) {
       closeContext = true;
-      JndiUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        JndiUtil.processResponseControls(
+        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
-          context));
+          context),
+        true);
     } finally {
       if (closeContext) {
         try {
@@ -273,8 +276,9 @@ public class JndiSearchIterator implements SearchIterator
     try {
       more = results.hasMore();
       if (!more) {
-        final ResponseControl[] respControls = JndiUtil.processResponseControls(
-          config.getControlProcessor(), request.getControls(), context);
+        final ResponseControl[] respControls =
+          JndiUtils.processResponseControls(
+            config.getControlProcessor(), request.getControls(), context);
         final boolean searchAgain = ControlProcessor.searchAgain(respControls);
         if (searchAgain) {
           context.setRequestControls(
@@ -295,18 +299,20 @@ public class JndiSearchIterator implements SearchIterator
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        JndiUtil.throwOperationException(
+        ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          JndiUtil.processResponseControls(
+          NamingExceptionUtils.getResultCode(e.getClass()).value(),
+          JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
-            context));
+            context),
+          true);
       }
       response = new Response<Void>(
         null,
         rc,
-        JndiUtil.processResponseControls(
+        JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
           context));
@@ -320,7 +326,7 @@ public class JndiSearchIterator implements SearchIterator
   public LdapEntry next()
     throws LdapException
   {
-    final JndiUtil bu = new JndiUtil(request.getSortBehavior());
+    final JndiUtils bu = new JndiUtils(request.getSortBehavior());
     LdapEntry le = null;
     try {
       final SearchResult result = results.next();
@@ -331,13 +337,15 @@ public class JndiSearchIterator implements SearchIterator
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        JndiUtil.throwOperationException(
+        ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          JndiUtil.processResponseControls(
+          NamingExceptionUtils.getResultCode(e.getClass()).value(),
+          JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
-            context));
+            context),
+          true);
       }
       responseResultCode = rc;
     }
@@ -360,7 +368,7 @@ public class JndiSearchIterator implements SearchIterator
     ResultCode ignore = null;
     if (ignoreResultCodes != null && ignoreResultCodes.length > 0) {
       for (ResultCode rc : ignoreResultCodes) {
-        if (NamingExceptionUtil.matches(e.getClass(), rc)) {
+        if (NamingExceptionUtils.matches(e.getClass(), rc)) {
           logger.debug("Ignoring naming exception", e);
           ignore = rc;
           break;

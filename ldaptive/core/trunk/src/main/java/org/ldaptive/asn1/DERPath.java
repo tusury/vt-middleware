@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 
 /**
  * Describes paths to individual elements of an encoded DER object that may be
@@ -168,7 +168,7 @@ public class DERPath
   @Override
   public int hashCode()
   {
-    return LdapUtil.computeHashCode(HASH_CODE_SEED, nodeList);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, nodeList);
   }
 
 
@@ -266,7 +266,7 @@ public class DERPath
     @Override
     public int hashCode()
     {
-      return LdapUtil.computeHashCode(HASH_CODE_SEED, name, childIndex);
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, name, childIndex);
     }
 
 

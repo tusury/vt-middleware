@@ -29,6 +29,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.provider.ControlProcessor;
+import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,10 +115,13 @@ public class NetscapeSearchIterator implements SearchIterator
     try {
       results = search(connection, request);
     } catch (LDAPException e) {
-      NetscapeUtil.throwOperationException(
+      ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        config.getControlProcessor());
+        e instanceof LDAPReferralException ?
+          ResultCode.REFERRAL.value() : e.getLDAPResultCode(),
+        null,
+        true);
     }
   }
 
@@ -258,20 +262,21 @@ public class NetscapeSearchIterator implements SearchIterator
         }
       }
     } catch (LDAPException e) {
+      final ResponseControl[] respControls =
+        config.getControlProcessor().processResponseControls(
+          request.getControls(), results.getResponseControls());
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        NetscapeUtil.throwOperationException(
+        ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          config.getControlProcessor());
+          e instanceof LDAPReferralException ?
+            ResultCode.REFERRAL.value() : e.getLDAPResultCode(),
+          respControls,
+          true);
       }
-      response = new Response<Void>(
-        null,
-        rc,
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          results.getResponseControls()));
+      response = new Response<Void>(null, rc, respControls);
     }
     return more;
   }
@@ -282,7 +287,7 @@ public class NetscapeSearchIterator implements SearchIterator
   public LdapEntry next()
     throws LdapException
   {
-    final NetscapeUtil bu = new NetscapeUtil(request.getSortBehavior());
+    final NetscapeUtils bu = new NetscapeUtils(request.getSortBehavior());
     bu.setBinaryAttributes(request.getBinaryAttributes());
 
     LdapEntry le = null;
@@ -292,19 +297,25 @@ public class NetscapeSearchIterator implements SearchIterator
       if (request.getReferralBehavior() == ReferralBehavior.IGNORE) {
         logger.debug("Ignoring referral exception", e);
       } else {
-        NetscapeUtil.throwOperationException(
+        ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          config.getControlProcessor());
+          e instanceof LDAPReferralException ?
+            ResultCode.REFERRAL.value() : e.getLDAPResultCode(),
+          null,
+          true);
       }
     } catch (LDAPException e) {
       final ResultCode rc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
       if (rc == null) {
-        NetscapeUtil.throwOperationException(
+        ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          config.getControlProcessor());
+          e instanceof LDAPReferralException ?
+            ResultCode.REFERRAL.value() : e.getLDAPResultCode(),
+          null,
+          true);
       }
       response = new Response<Void>(
         null,

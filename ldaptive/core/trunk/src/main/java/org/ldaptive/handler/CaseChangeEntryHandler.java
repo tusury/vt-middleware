@@ -14,7 +14,7 @@
 package org.ldaptive.handler;
 
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 
 /**
@@ -186,7 +186,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   public int hashCode()
   {
     return
-      LdapUtil.computeHashCode(
+      LdapUtils.computeHashCode(
         HASH_CODE_SEED,
         dnCaseChange,
         attributeNameCaseChange,

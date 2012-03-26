@@ -22,7 +22,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 
 /**
@@ -87,7 +87,7 @@ public class CompareOperationCli extends AbstractCli
       if (attr[1].startsWith(":")) {
         la = new LdapAttribute(
           attr[0],
-          LdapUtil.base64Decode(attr[1].substring(1)));
+          LdapUtils.base64Decode(attr[1].substring(1)));
       } else {
         la = new LdapAttribute(attr[0], attr[1]);
       }

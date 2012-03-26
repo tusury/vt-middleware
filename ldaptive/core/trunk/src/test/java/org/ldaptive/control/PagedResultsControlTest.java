@@ -13,7 +13,7 @@
 */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtil;
+import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,13 +40,13 @@ public class PagedResultsControlTest
       // request size 0, no cookie
       // BER: 30:05:02:01:00:04:00
       new Object[] {
-        LdapUtil.base64Decode("MAUCAQAEAA=="),
+        LdapUtils.base64Decode("MAUCAQAEAA=="),
         new PagedResultsControl(0, null, true),
       },
       // request size 0, cookie
       // BER: 30:0D:02:01:00:04:08:FF:FF:FF:FF:FF:FF:FF:FF
       new Object[] {
-        LdapUtil.base64Decode("MA0CAQAECP//////////"),
+        LdapUtils.base64Decode("MA0CAQAECP//////////"),
         new PagedResultsControl(
           0,
           new byte[] {
@@ -64,13 +64,13 @@ public class PagedResultsControlTest
       // request size 1, no cookie
       // BER: 30:05:02:01:01:04:00
       new Object[] {
-        LdapUtil.base64Decode("MAUCAQEEAA=="),
+        LdapUtils.base64Decode("MAUCAQEEAA=="),
         new PagedResultsControl(1, null, true),
       },
       // request size 1, cookie
       // BER: 30:0D:02:01:01:04:08:EF:5C:15:00:00:00:00:00
       new Object[] {
-        LdapUtil.base64Decode("MA0CAQEECO9cFQAAAAAA"),
+        LdapUtils.base64Decode("MA0CAQEECO9cFQAAAAAA"),
         new PagedResultsControl(
           1,
           new byte[] {
@@ -88,13 +88,13 @@ public class PagedResultsControlTest
       // request size 20, no cookie
       // BER: 30:05:02:01:14:04:00
       new Object[] {
-        LdapUtil.base64Decode("MAUCARQEAA=="),
+        LdapUtils.base64Decode("MAUCARQEAA=="),
         new PagedResultsControl(20, null, true),
       },
       // request size 20, cookie
       // BER: 30:0D:02:01:14:04:08:A7:C7:18:00:00:00:00:00
       new Object[] {
-        LdapUtil.base64Decode("MA0CARQECKfHGAAAAAAA"),
+        LdapUtils.base64Decode("MA0CARQECKfHGAAAAAAA"),
         new PagedResultsControl(
           20,
           new byte[] {

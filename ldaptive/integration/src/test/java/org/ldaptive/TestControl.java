@@ -54,7 +54,7 @@ public class TestControl
     throws Exception
   {
     if (!Boolean.valueOf(ignoreLock)) {
-      final Connection conn = TestUtil.createSetupConnection();
+      final Connection conn = TestUtils.createSetupConnection();
       try {
         conn.open();
         final CompareOperation compare = new CompareOperation(conn);
@@ -88,7 +88,7 @@ public class TestControl
   public void teardown()
     throws Exception
   {
-    final Connection conn = TestUtil.createSetupConnection();
+    final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
       // set attribute when tests are finished
