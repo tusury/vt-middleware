@@ -13,8 +13,8 @@
 */
 package org.ldaptive.provider.opends;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -321,8 +321,8 @@ public class OpenDSSearchIterator implements SearchIterator
   {
 
     /** Search results. */
-    private BlockingQueue<SearchResultEntry> responseQueue =
-      new LinkedBlockingQueue<SearchResultEntry>();
+    private Queue<SearchResultEntry> responseQueue =
+      new ConcurrentLinkedQueue<SearchResultEntry>();
 
     /** Search result. */
     private Result result;
