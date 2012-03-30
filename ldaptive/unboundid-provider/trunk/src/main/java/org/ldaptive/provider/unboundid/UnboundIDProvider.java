@@ -69,10 +69,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
     }
     LDAPConnectionOptions options = config.getConnectionOptions();
     if (options == null) {
-      options = new LDAPConnectionOptions();
-      options.setConnectTimeoutMillis(
-        cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0);
-      options.setResponseTimeoutMillis(cc.getResponseTimeout());
+      options = getDefaultLDAPConnectionOptions(cc);
     }
     ConnectionFactory<UnboundIDProviderConfig> cf = null;
     if (cc.getUseStartTLS()) {
@@ -142,6 +139,24 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
     return TLSSocketFactory.getHostnameVerifierFactory(
       cc.getSslConfig(), ldapUrl.getEntriesAsString());
+  }
+
+
+  /**
+   * Returns the default connection options for this provider.
+   *
+   * @param  cc  to configure options with
+   *
+   * @return  ldap connection options
+   */
+  protected LDAPConnectionOptions getDefaultLDAPConnectionOptions(
+    final ConnectionConfig cc)
+  {
+    final LDAPConnectionOptions options = new LDAPConnectionOptions();
+    options.setConnectTimeoutMillis(
+      cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0);
+    options.setResponseTimeoutMillis(cc.getResponseTimeout());
+    return options;
   }
 
 
