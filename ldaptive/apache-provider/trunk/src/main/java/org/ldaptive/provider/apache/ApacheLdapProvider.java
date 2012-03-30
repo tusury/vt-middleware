@@ -76,32 +76,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   {
     LdapConnectionConfig lcc = config.getLdapConnectionConfig();
     if (lcc == null) {
-      lcc = new LdapConnectionConfig();
-      if (cc.getUseSSL() || cc.getUseStartTLS()) {
-        final SSLContextInitializer contextInit =
-          getHostnameVerifierSSLContextInitializer(cc);
-        TrustManager[] trustManagers = null;
-        KeyManager[] keyManagers = null;
-        try {
-          trustManagers = contextInit.getTrustManagers();
-          keyManagers = contextInit.getKeyManagers();
-        } catch (GeneralSecurityException e) {
-          throw new IllegalArgumentException(e);
-        }
-
-        lcc.setUseSsl(cc.getUseSSL());
-        lcc.setTrustManagers(trustManagers);
-        lcc.setKeyManagers(keyManagers);
-        if (cc.getSslConfig() != null &&
-            cc.getSslConfig().getEnabledCipherSuites() != null) {
-          lcc.setEnabledCipherSuites(
-            cc.getSslConfig().getEnabledCipherSuites());
-        }
-        if (cc.getSslConfig() != null &&
-            cc.getSslConfig().getEnabledProtocols() != null) {
-          lcc.setSslProtocol(cc.getSslConfig().getEnabledProtocols()[0]);
-        }
-      }
+      lcc = getDefaultLdapConnectionConfig(cc);
     }
     final ConnectionFactory<ApacheLdapProviderConfig> cf =
       new ApacheLdapConnectionFactory(
@@ -150,6 +125,46 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
             new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
     }
     return contextInit;
+  }
+
+
+  /**
+   * Returns the default connection configuration for this provider.
+   *
+   * @param  cc  to configure with
+   *
+   * @return  ldap connection configuration
+   */
+  protected LdapConnectionConfig getDefaultLdapConnectionConfig(
+    final ConnectionConfig cc)
+  {
+    final LdapConnectionConfig lcc = new LdapConnectionConfig();
+    if (cc.getUseSSL() || cc.getUseStartTLS()) {
+      final SSLContextInitializer contextInit =
+        getHostnameVerifierSSLContextInitializer(cc);
+      TrustManager[] trustManagers = null;
+      KeyManager[] keyManagers = null;
+      try {
+        trustManagers = contextInit.getTrustManagers();
+        keyManagers = contextInit.getKeyManagers();
+      } catch (GeneralSecurityException e) {
+        throw new IllegalArgumentException(e);
+      }
+
+      lcc.setUseSsl(cc.getUseSSL());
+      lcc.setTrustManagers(trustManagers);
+      lcc.setKeyManagers(keyManagers);
+      if (cc.getSslConfig() != null &&
+          cc.getSslConfig().getEnabledCipherSuites() != null) {
+        lcc.setEnabledCipherSuites(
+          cc.getSslConfig().getEnabledCipherSuites());
+      }
+      if (cc.getSslConfig() != null &&
+          cc.getSslConfig().getEnabledProtocols() != null) {
+        lcc.setSslProtocol(cc.getSslConfig().getEnabledProtocols()[0]);
+      }
+    }
+    return lcc;
   }
 
 
