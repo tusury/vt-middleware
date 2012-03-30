@@ -49,27 +49,7 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
   {
     LDAPOptions options = config.getOptions();
     if (options == null) {
-      options = new LDAPOptions();
-      SSLContext sslContext = null;
-      if (cc.getUseStartTLS() || cc.getUseSSL()) {
-        sslContext = getHostnameVerifierSSLContext(cc);
-        options.setSSLContext(sslContext);
-      }
-      if (cc.getUseStartTLS()) {
-        options.setUseStartTLS(true);
-      } else if (cc.getUseSSL()) {
-        options.setUseStartTLS(false);
-      }
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getEnabledCipherSuites() != null) {
-        options.addEnabledCipherSuite(
-          cc.getSslConfig().getEnabledCipherSuites());
-      }
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getEnabledProtocols() != null) {
-        options.addEnabledProtocol(cc.getSslConfig().getEnabledProtocols());
-      }
-      options.setTimeout(cc.getResponseTimeout(), TimeUnit.MILLISECONDS);
+      options = getDefaultLDAPOptions(cc);
     }
     final ConnectionFactory<OpenDSProviderConfig> cf =
       new OpenDSConnectionFactory(cc.getLdapUrl(), config, options);
@@ -117,6 +97,40 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
       throw new IllegalArgumentException(e);
     }
     return sslContext;
+  }
+
+
+  /**
+   * Returns the default connection options for this provider.
+   *
+   * @param  cc  to configure options with
+   *
+   * @return  ldap connection options
+   */
+  protected LDAPOptions getDefaultLDAPOptions(final ConnectionConfig cc)
+  {
+    final LDAPOptions options = new LDAPOptions();
+    SSLContext sslContext = null;
+    if (cc.getUseStartTLS() || cc.getUseSSL()) {
+      sslContext = getHostnameVerifierSSLContext(cc);
+      options.setSSLContext(sslContext);
+    }
+    if (cc.getUseStartTLS()) {
+      options.setUseStartTLS(true);
+    } else if (cc.getUseSSL()) {
+      options.setUseStartTLS(false);
+    }
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getEnabledCipherSuites() != null) {
+      options.addEnabledCipherSuite(
+        cc.getSslConfig().getEnabledCipherSuites());
+    }
+    if (cc.getSslConfig() != null &&
+        cc.getSslConfig().getEnabledProtocols() != null) {
+      options.addEnabledProtocol(cc.getSslConfig().getEnabledProtocols());
+    }
+    options.setTimeout(cc.getResponseTimeout(), TimeUnit.MILLISECONDS);
+    return options;
   }
 
 
