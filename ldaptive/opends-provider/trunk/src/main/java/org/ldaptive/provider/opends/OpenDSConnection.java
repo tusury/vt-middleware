@@ -237,6 +237,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
 
     case DIGEST_MD5:
       throw new UnsupportedOperationException("DIGEST-MD5 not supported");
+      // returns a result code 82 (Local Error) when the server returns 49
       /*
       builder.append(
         request.getCredential() != null ?
@@ -258,6 +259,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
 
     case CRAM_MD5:
       throw new UnsupportedOperationException("CRAM-MD5 not supported");
+      // LDAP reports: error: SASL bind in progress (tag=99)
       /*
       builder.append(
         request.getCredential() != null ?
@@ -305,13 +307,26 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       }
     }
 
-    final BindResult result = connection.bind(sbr);
-    response = new Response<Void>(
-      null,
-      ResultCode.valueOf(result.getResultCode().intValue()),
-      config.getControlProcessor().processResponseControls(
-        request.getControls(),
-        result.getControls().toArray(new Control[0])));
+    try {
+      final BindResult result = connection.bind(sbr);
+      response = new Response<Void>(
+        null,
+        ResultCode.valueOf(result.getResultCode().intValue()),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          result.getControls().toArray(new Control[0])));
+    } catch (ErrorResultException e) {
+      ProviderUtils.throwOperationException(
+        config.getOperationRetryResultCodes(),
+        e,
+        e.getResult().getResultCode().intValue(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          e.getResult().getControls().toArray(new Control[0])),
+        true);
+    } catch (InterruptedException e) {
+      throw new LdapException(e);
+    }
     return response;
     */
   }
