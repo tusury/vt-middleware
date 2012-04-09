@@ -264,7 +264,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
         newEntry = result.getEntry(dn);
       } catch (LdapException e) {
         logger.warn(
-          "Error retreiving attribute(s): {}",
+          "Error retrieving attribute(s): {}",
           Arrays.toString(retAttrs),
           e);
       }
