@@ -27,6 +27,7 @@ import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
+import org.ldaptive.handler.ext.RangeEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.testng.AssertJUnit;
@@ -784,6 +785,55 @@ public class SearchOperationTest extends AbstractTest
       sr.setLdapEntryHandlers(srh);
       result = search.execute(sr).getResult();
       AssertJUnit.assertEquals(ucNamesChangeResult, result);
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "rangeSearchDn",
+      "rangeSearchFilter",
+      "rangeSearchReturnAttrs",
+      "rangeHandlerResults"
+    }
+  )
+  @Test(groups = {"search"})
+  public void rangeHandlerSearch(
+    final String dn,
+    final String filter,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final Connection conn = createLdapConnection(true);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      final SearchRequest sr = new SearchRequest(
+        dn, new SearchFilter(filter), returnAttrs.split("\\|"));
+      sr.setLdapEntryHandlers(new RangeEntryHandler());
+      final LdapResult result = search.execute(sr).getResult();
+      // ignore the case of member; some directories return it in mixed case
+      AssertJUnit.assertEquals(
+        0,
+        (new LdapEntryIgnoreCaseComparator("member")).compare(
+          TestUtils.convertLdifToResult(expected).getEntry(),
+          result.getEntry()));
     } finally {
       conn.close();
     }
