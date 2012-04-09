@@ -6,6 +6,9 @@
   <parameter name="ldapTestsIgnoreLock" value="${ldapTestsIgnoreLock}"/>
   <parameter name="ldapTestHost" value="${ldapTestHost}"/>
   <parameter name="ldapSslTestHost" value="${ldapSslTestHost}"/>
+  <parameter name="ldapBaseDn" value="${ldapBaseDn}"/>
+  <parameter name="ldapBindDn" value="${ldapBindDn}"/>
+  <parameter name="ldapBindCredential" value="${ldapBindCredential}"/>
 
   <!-- ldap test parameters -->
   <parameter name="createEntry2"
@@ -106,131 +109,136 @@
   <parameter name="searchResults15"
              value="/org/ldaptive/searchResults-15.ldif"/>
 
-  <parameter name="searchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="searchDn" value="${ldapBaseDn}"/>
   <parameter name="searchFilter" value="(uid={0})"/>
   <parameter name="searchFilterParameters" value="2"/>
   <parameter name="searchReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="searchResults"
              value="/org/ldaptive/searchResults-2.ldif"/>
 
-  <parameter name="recursiveSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="recursiveSearchDn" value="${ldapBaseDn}"/>
   <parameter name="recursiveSearchFilter" value="(uugid={0})"/>
   <parameter name="recursiveSearchFilterParameters" value="group2"/>
+  <parameter name="recursiveSearchReturnAttrs" value="cn|contactPerson|creationDate|member|objectClass|uid|uugid"/>
   <parameter name="recursiveHandlerResults"
              value="/org/ldaptive/recursiveHandlerResults.ldif"/>
 
-  <parameter name="mergeSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="mergeSearchDn" value="${ldapBaseDn}"/>
   <parameter name="mergeSearchFilter" value="(|(uugid=group3)(uugid=group4)(uugid=group5))"/>
+  <parameter name="mergeSearchReturnAttrs" value="cn|contactPerson|creationDate|member|objectClass|uid|uugid"/>
   <parameter name="mergeSearchResults"
              value="/org/ldaptive/mergeResults.ldif"/>
 
-  <parameter name="mergeDuplicateSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="mergeDuplicateSearchDn" value="${ldapBaseDn}"/>
   <parameter name="mergeDuplicateSearchFilter" value="(|(uugid=group3)(uugid=group4)(uugid=group5))"/>
+  <parameter name="mergeDuplicateReturnAttrs" value="cn|contactPerson|creationDate|member|objectClass|uid|uugid"/>
   <parameter name="mergeDuplicateSearchResults"
              value="/org/ldaptive/mergeDuplicateResults.ldif"/>
 
-  <parameter name="mergeAttributeSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="mergeAttributeSearchDn" value="${ldapBaseDn}"/>
   <parameter name="mergeAttributeSearchFilter" value="(uid=2)"/>
   <parameter name="mergeAttributeReturnAttrs" value="cn|departmentNumber|displayName|givenName|sn|uid"/>
   <parameter name="mergeAttributeSearchResults"
              value="/org/ldaptive/mergeAttributeResults.ldif"/>
 
-  <parameter name="binarySearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="binarySearchDn" value="${ldapBaseDn}"/>
   <parameter name="binarySearchFilter" value="(uid=2)"/>
   <parameter name="binarySearchReturnAttr" value="jpegPhoto"/>
   <parameter name="binarySearchResult"
              value="/9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k="/>
 
-  <parameter name="specialCharSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="specialCharSearchDn" value="${ldapBaseDn}"/>
   <parameter name="specialCharSearchFilter" value="(&amp;(uid=17893)(sn={0}))"/>
   <parameter name="specialCharSearchFilterParameters" value="(Us\er)*"/>
-  <parameter name="specialCharBinarySearchFilter" value="(givenName={0})"/>
+  <parameter name="specialCharBinarySearchFilter" value="(&amp;(uid=17893)(givenName={0}))"/>
   <parameter name="specialCharBinarySearchFilterParameters" value="VGVzdA=="/>
+  <parameter name="specialCharReturnAttrs" value="cn|givenName|sn|uid"/>
   <parameter name="specialCharSearchResults"
-             value="/org/ldaptive/specialChars.ldif"/>
+             value="/org/ldaptive/specialCharsResults.ldif"/>
 
   <parameter name="rewriteSearchDn" value="dc=blah"/>
   <parameter name="rewriteSearchFilter" value="(uid=17893)"/>
   <parameter name="rewriteSearchResults"
              value="/org/ldaptive/specialChars.ldif"/>
 
-  <parameter name="searchExceededDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="searchExceededDn" value="${ldapBaseDn}"/>
   <parameter name="searchExceededFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4))"/>
   <parameter name="searchExceededResultsSize" value="3"/>
 
   <parameter name="searchReferralDn" value="dc=vt,dc=edu"/>
   <parameter name="searchReferralFilter" value="(objectClass=*)"/>
 
+  <parameter name="searchRetryDn" value="ou=dne,${ldapBaseDn}"/>
   <parameter name="searchRetryResultCode" value="NO_SUCH_OBJECT"/>
 
-  <parameter name="getAttributesDn" value="uid=2,ou=test,dc=vt,dc=edu"/>
+  <parameter name="getAttributesDn" value="cn=John Adams,${ldapBaseDn}"/>
   <parameter name="getAttributesReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="getAttributesResults"
              value="departmentNumber=0822|givenName=John|sn=Adams"/>
 
-  <parameter name="getAttributesBase64Dn" value="uid=2,ou=test,dc=vt,dc=edu"/>
+  <parameter name="getAttributesBase64Dn" value="cn=John Adams,${ldapBaseDn}"/>
   <parameter name="getAttributesBase64ReturnAttrs" value="sn|jpegPhoto"/>
   <parameter name="getAttributesBase64Results"
              value="sn=Adams|jpegPhoto=/9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k="/>
 
-  <parameter name="pagedSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="pagedSearchDn" value="${ldapBaseDn}"/>
   <parameter name="pagedSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
   <parameter name="pagedSearchResults"
              value="/org/ldaptive/pagedResults.ldif"/>
 
-  <parameter name="sortSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="sortSearchDn" value="${ldapBaseDn}"/>
   <parameter name="sortSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
 
-  <parameter name="getSchemaDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="getSchemaDn" value="${ldapBaseDn}"/>
   <parameter name="getSchemaResults"
              value="/org/ldaptive/getSchemaResults.ldif"/>
 
-  <parameter name="compareDn" value="uid=3,ou=test,dc=vt,dc=edu"/>
+  <parameter name="compareDn" value="cn=Thomas Jefferson,${ldapBaseDn}"/>
   <parameter name="compareAttrName" value="departmentNumber"/>
   <parameter name="compareAttrValue" value="0823"/>
 
-  <parameter name="addAttributeDn" value="uid=4,ou=test,dc=vt,dc=edu"/>
+  <parameter name="addAttributeDn" value="cn=James Madison,${ldapBaseDn}"/>
   <parameter name="addAttributeAttribute"
-             value="title=Test User|title=Best User"/>
+             value="title=Test User"/>
 
-  <parameter name="addAttributesDn" value="uid=4,ou=test,dc=vt,dc=edu"/>
+  <parameter name="addAttributesDn" value="cn=James Madison,${ldapBaseDn}"/>
   <parameter name="addAttributesAttributes"
              value="telephoneNumber=15408675309|homePhone=15555555555"/>
 
-  <parameter name="replaceAttributeDn" value="uid=4,ou=test,dc=vt,dc=edu"/>
+  <parameter name="replaceAttributeDn" value="cn=James Madison,${ldapBaseDn}"/>
   <parameter name="replaceAttributeAttribute"
-             value="title=Unit Test User|title=Best Test User"/>
+             value="title=Best Test User"/>
 
-  <parameter name="replaceAttributesDn" value="uid=4,ou=test,dc=vt,dc=edu"/>
+  <parameter name="replaceAttributesDn" value="cn=James Madison,${ldapBaseDn}"/>
   <parameter name="replaceAttributesAttributes"
              value="telephoneNumber=12223334444|homePhone=155566677777"/>
 
-  <parameter name="removeAttributeDn" value="uid=4,ou=test,dc=vt,dc=edu"/>
+  <parameter name="removeAttributeDn" value="cn=James Madison,${ldapBaseDn}"/>
   <parameter name="removeAttributeAttribute"
-             value="title=Unit Test User|title=Best Test User"/>
+             value="title=Best Test User"/>
 
-  <parameter name="removeAttributesDn" value="uid=4,ou=test,dc=vt,dc=edu"/>
+  <parameter name="removeAttributesDn" value="cn=James Madison,${ldapBaseDn}"/>
   <parameter name="removeAttributesAttributes"
              value="telephoneNumber=12223334444|homePhone=155566677777"/>
 
-  <parameter name="modifyOldDn" value="uid=5,ou=test,dc=vt,dc=edu"/>
-  <parameter name="modifyNewDn" value="uid=1005,ou=test,dc=vt,dc=edu"/>
+  <parameter name="modifyOldDn" value="cn=James Monroe,${ldapBaseDn}"/>
+  <parameter name="modifyNewDn" value="cn=James Spence Monroe,${ldapBaseDn}"/>
 
-  <parameter name="digestMd5SearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="digestMd5SearchDn" value="${ldapBaseDn}"/>
   <parameter name="digestMd5SearchFilter" value="(uid={0})"/>
   <parameter name="digestMd5SearchFilterParameters" value="2"/>
   <parameter name="digestMd5SearchReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="digestMd5SearchResults"
              value="/org/ldaptive/searchResults-2.ldif"/>
 
-  <parameter name="cramMd5SearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="cramMd5SearchDn" value="${ldapBaseDn}"/>
   <parameter name="cramMd5SearchFilter" value="(uid={0})"/>
   <parameter name="cramMd5SearchFilterParameters" value="test3"/>
   <parameter name="cramMd5SearchReturnAttrs" value="cn|sn|uid"/>
   <parameter name="cramMd5SearchResults"
              value="/org/ldaptive/test3.ldif"/>
 
-  <parameter name="saslExternalSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="saslExternalSearchDn" value="${ldapBaseDn}"/>
   <parameter name="saslExternalSearchFilter" value="(uid={0})"/>
   <parameter name="saslExternalSearchFilterParameters" value="2"/>
   <parameter name="saslExternalSearchReturnAttrs" value="departmentNumber|givenName|sn"/>
@@ -239,7 +247,7 @@
 
   <parameter name="krb5Realm" value="VT.EDU"/>
   <parameter name="krb5Kdc" value="${ldapTestHost}"/>
-  <parameter name="gssApiSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="gssApiSearchDn" value="${ldapBaseDn}"/>
   <parameter name="gssApiSearchFilter" value="(uid={0})"/>
   <parameter name="gssApiSearchFilterParameters" value="2"/>
   <parameter name="gssApiSearchReturnAttrs" value="departmentNumber|givenName|sn"/>
@@ -247,13 +255,13 @@
              value="/org/ldaptive/searchResults-2.ldif"/>
 
   <parameter name="loadPropertiesUrl" value="${ldapTestHost}"/>
-  <parameter name="loadPropertiesBaseDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="loadPropertiesBaseDn" value="${ldapBaseDn}"/>
 
-  <parameter name="getDnUid" value="6"/>
+  <parameter name="getDnCn" value="John Quincy Adams"/>
   <parameter name="getDnUser" value="jqadams@vt.edu"/>
-  <parameter name="getDnDuplicateFilter" value="(uid=*)"/>
+  <parameter name="getDnDuplicateFilter" value="(cn=*)"/>
 
-  <parameter name="authenticateDn" value="uid=6,ou=test,dc=vt,dc=edu"/>
+  <parameter name="authenticateDn" value="cn=John Quincy Adams,${ldapBaseDn}"/>
   <parameter name="authenticateDnCredential" value="password6"/>
   <parameter name="authenticateDnFilter" value="(departmentNumber={0})"/>
   <parameter name="authenticateDnFilterParameters" value="0826"/>
@@ -269,7 +277,7 @@
              value="/org/ldaptive/searchResults-6.ldif"/>
 
   <parameter name="authenticateSpecialCharsUser" value="17894"/>
-  <parameter name="authenticateSpecialCharsCredential" value="password2"/>
+  <parameter name="authenticateSpecialCharsCredential" value="password17894"/>
 
   <parameter name="digestMd5User" value="test3@vt.edu"/>
   <parameter name="digestMd5Credential" value="password"/>
@@ -277,36 +285,36 @@
   <parameter name="cramMd5User" value="test3"/>
   <parameter name="cramMd5Credential" value="password"/>
 
-  <parameter name="toSearchResultsDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="toSearchResultsDn" value="${ldapBaseDn}"/>
   <parameter name="toSearchResultsFilter" value="(uid=7)"/>
   <parameter name="toSearchResultsAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="toSearchResultsResults"
              value="/org/ldaptive/searchResults-7.ldif"/>
 
   <parameter name="cliAddArgs"
-             value="-ldapUrl|${ldapTestHost}|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-file|target/test-classes/org/ldaptive/createLdapEntry-8.ldif"/>
+             value="-ldapUrl|${ldapTestHost}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-file|target/test-classes/org/ldaptive/createLdapEntry-8.ldif"/>
   <parameter name="cliSearchArgs"
-             value="-ldapUrl|${ldapTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-searchFilter|(mail=mvburen@vt.edu)|-returnAttributes|departmentNumber,givenName,jpegPhoto,sn"/>
+             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-searchFilter|(mail=mvburen@vt.edu)|-returnAttributes|departmentNumber,givenName,jpegPhoto,sn"/>
   <parameter name="cliSearchResults"
              value="/org/ldaptive/searchResults-8.ldif"/>
   <parameter name="cliCompareArgs"
-             value="-ldapUrl|${ldapTestHost}|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-dn|uid=8,ou=test,dc=vt,dc=edu|-attribute|sn:buren"/>
+             value="-ldapUrl|${ldapTestHost}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-dn|cn=Martin Van Buren,${ldapBaseDn}|-attribute|sn:buren"/>
   <parameter name="cliDeleteArgs"
-             value="-ldapUrl|${ldapTestHost}|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-dn|uid=8,ou=test,dc=vt,dc=edu"/>
+             value="-ldapUrl|${ldapTestHost}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-dn|cn=Martin Van Buren,${ldapBaseDn}"/>
 
   <parameter name="cliAuthTLSArgs"
-             value="-ldapUrl|${ldapTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useStartTLS|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-useStartTLS|true|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthSSLArgs"
-             value="-ldapUrl|${ldapSslTestHost}|-baseDn|ou=test,dc=vt,dc=edu|-useSSL|true|-bindDn|uid=1,ou=test,dc=vt,dc=edu|-bindCredential|VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapSslTestHost}|-baseDn|${ldapBaseDn}|-useSSL|true|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthResults"
              value="/org/ldaptive/searchResults-9.ldif"/>
 
-  <parameter name="jaasDn" value="uid=10,ou=test,dc=vt,dc=edu"/>
+  <parameter name="jaasDn" value="cn=John Tyler,${ldapBaseDn}"/>
   <parameter name="jaasUser" value="jtyler@vt.edu"/>
   <parameter name="jaasUserRole" value="0830"/>
   <parameter name="jaasUserRoleDefault" value="0830|test-role1|test-role2"/>
-  <parameter name="jaasRole" value="inetOrgPerson|organizationalPerson|person|top"/>
-  <parameter name="jaasRoleCombined" value="0830|inetOrgPerson|organizationalPerson|person|top"/>
+  <parameter name="jaasRole" value="John Tyler|John|Tyler"/>
+  <parameter name="jaasRoleCombined" value="0830|John Tyler|John|Tyler"/>
   <parameter name="jaasRoleCombinedRecursive" value="0830|group6|group7|group8|group9"/>
   <parameter name="jaasCredential" value="password10"/>
 
@@ -324,10 +332,10 @@
   <parameter name="attributeServletAttr" value="jpegPhoto"/>
   <parameter name="attributeServletValue" value="/9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k="/>
 
-  <parameter name="dsmlSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="dsmlSearchDn" value="${ldapBaseDn}"/>
   <parameter name="dsmlSearchFilter" value="(uid=13)"/>
 
-  <parameter name="ldifSearchDn" value="ou=test,dc=vt,dc=edu"/>
+  <parameter name="ldifSearchDn" value="${ldapBaseDn}"/>
   <parameter name="ldifSearchFilter" value="(uid=14)"/>
 
   <parameter name="sleepTime" value="10000"/>
@@ -347,19 +355,13 @@
         <include name="modifyDn" />
         <include name="spring" />
         <include name="auth" />
-        <include name="auth-ext" />
         <include name="jaas" />
         <include name="servlet" />
         <include name="dsml" />
         <include name="ldif" />
-<!--
         <include name="ssl" />
--->
-        <include name="cache" />
         <include name="ldapcli" />
         <include name="conn" />
-        <include name="asn1" />
-        <include name="control" />
       </define>
       <define name="core-sysprops">
         <include name="ssl-hostname" />

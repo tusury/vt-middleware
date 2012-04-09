@@ -1,4 +1,4 @@
-dn: uid=7,ou=test,dc=vt,dc=edu
+dn: CN=Andrew Jackson,${ldapBaseDn}
 departmentNumber: 0827
 givenName: Andrew
 sn: Jackson

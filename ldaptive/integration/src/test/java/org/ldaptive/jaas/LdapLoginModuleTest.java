@@ -26,6 +26,7 @@ import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.Connection;
+import org.ldaptive.DnParser;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -74,7 +75,7 @@ public class LdapLoginModuleTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry10")
-  @BeforeClass(groups = {"jaas"})
+  @BeforeClass(groups = {"jaas", "jaasInit"})
   public void createAuthEntry(final String ldifFile)
     throws Exception
   {
@@ -104,7 +105,7 @@ public class LdapLoginModuleTest extends AbstractTest
       "createGroup9"
     }
   )
-  @BeforeClass(groups = {"jaas"})
+  @BeforeClass(groups = {"jaas"}, dependsOnGroups = {"jaasInit"})
   public void createGroupEntry(
     final String ldifFile6,
     final String ldifFile7,
@@ -140,8 +141,10 @@ public class LdapLoginModuleTest extends AbstractTest
               new LdapAttribute(
                 "member",
                 new String[]{
-                  "uid=10,ou=test,dc=vt,dc=edu",
-                  "uugid=group7,ou=test,dc=vt,dc=edu", }))));
+                  "cn=John Tyler," +
+                    DnParser.substring(testLdapEntry.getDn(), 1),
+                  "cn=Group 7," +
+                    DnParser.substring(testLdapEntry.getDn(), 1), }))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -156,8 +159,10 @@ public class LdapLoginModuleTest extends AbstractTest
               new LdapAttribute(
                 "member",
                 new String[]{
-                  "uugid=group8,ou=test,dc=vt,dc=edu",
-                  "uugid=group9,ou=test,dc=vt,dc=edu", }))));
+                  "cn=Group 8," +
+                    DnParser.substring(testLdapEntry.getDn(), 1),
+                  "cn=Group 9," +
+                    DnParser.substring(testLdapEntry.getDn(), 1), }))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -171,7 +176,9 @@ public class LdapLoginModuleTest extends AbstractTest
               AttributeModificationType.ADD,
               new LdapAttribute(
                 "member",
-                new String[]{"uugid=group7,ou=test,dc=vt,dc=edu"}))));
+                new String[]{
+                  "cn=Group 7," +
+                    DnParser.substring(testLdapEntry.getDn(), 1)}))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -523,7 +530,7 @@ public class LdapLoginModuleTest extends AbstractTest
       AssertJUnit.assertEquals(1, dnPrincipals.size());
 
       final LdapDnPrincipal dnP = dnPrincipals.iterator().next();
-      AssertJUnit.assertEquals(dnP.getName(), dn);
+      AssertJUnit.assertEquals(dnP.getName().toLowerCase(), dn.toLowerCase());
       if (!"".equals(role)) {
         AssertJUnit.assertTrue(dnP.getLdapEntry().getAttributes().size() > 0);
       }

@@ -13,15 +13,15 @@
     </init-param>
     <init-param>
       <param-name>baseDn</param-name>
-      <param-value>ou=test,dc=vt,dc=edu</param-value>
+      <param-value>${ldapBaseDn}</param-value>
     </init-param>
     <init-param>
       <param-name>bindDn</param-name>
-      <param-value>uid=1,ou=test,dc=vt,dc=edu</param-value>
+      <param-value>${ldapBindDn}</param-value>
     </init-param>
     <init-param>
       <param-name>bindCredential</param-name>
-      <param-value>VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2</param-value>
+      <param-value>${ldapBindCredential}</param-value>
     </init-param>
     <init-param>
       <param-name>prunePeriod</param-name>
@@ -53,15 +53,15 @@
     </init-param>
     <init-param>
       <param-name>baseDn</param-name>
-      <param-value>ou=test,dc=vt,dc=edu</param-value>
+      <param-value>${ldapBaseDn}</param-value>
     </init-param>
     <init-param>
       <param-name>bindDn</param-name>
-      <param-value>uid=1,ou=test,dc=vt,dc=edu</param-value>
+      <param-value>${ldapBindDn}</param-value>
     </init-param>
     <init-param>
       <param-name>bindCredential</param-name>
-      <param-value>VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2</param-value>
+      <param-value>${ldapBindCredential}</param-value>
     </init-param>
     <init-param>
       <param-name>prunePeriod</param-name>
@@ -89,15 +89,15 @@
     </init-param>
     <init-param>
       <param-name>baseDn</param-name>
-      <param-value>ou=test,dc=vt,dc=edu</param-value>
+      <param-value>${ldapBaseDn}</param-value>
     </init-param>
     <init-param>
       <param-name>bindDn</param-name>
-      <param-value>uid=1,ou=test,dc=vt,dc=edu</param-value>
+      <param-value>${ldapBindDn}</param-value>
     </init-param>
     <init-param>
       <param-name>bindCredential</param-name>
-      <param-value>VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2</param-value>
+      <param-value>${ldapBindCredential}</param-value>
     </init-param>
     <init-param>
       <param-name>prunePeriod</param-name>

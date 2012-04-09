@@ -217,9 +217,6 @@ public class ModifyOperationTest extends AbstractTest
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final LdapEntry remove = TestUtils.convertStringToEntry(dn, attrs);
-    remove.getAttribute().removeStringValue("Unit Test User");
-    expected.getAttribute().removeStringValue("Best Test User");
 
     final Connection conn = TestUtils.createConnection();
     try {
@@ -228,14 +225,13 @@ public class ModifyOperationTest extends AbstractTest
       modify.execute(new ModifyRequest(
         dn,
         new AttributeModification(
-          AttributeModificationType.REMOVE, remove.getAttribute())));
+          AttributeModificationType.REMOVE, expected.getAttribute())));
 
       final SearchOperation search = new SearchOperation(conn);
       final LdapResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, new String[] {expected.getAttribute().getName()})).getResult();
-      AssertJUnit.assertEquals(
-        expected.getAttribute(), result.getEntry().getAttribute());
+      AssertJUnit.assertEquals(0, result.getEntry().getAttributes().size());
     } finally {
       conn.close();
     }

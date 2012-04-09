@@ -15,7 +15,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
   <bean id="dnResolver"
     class="org.ldaptive.auth.PooledSearchDnResolver"
-    p:baseDn="ou=test,dc=vt,dc=edu"
+    p:baseDn="${ldapBaseDn}"
     p:userFilter="(&amp;(mail={user})(objectClass={0}))"
     p:userFilterParameters="person">
     <constructor-arg index="0" ref="drConnectionFactory"/>
@@ -74,8 +74,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     class="org.ldaptive.ConnectionConfig"
     p:ldapUrl="${ldapTestHost}"
     p:useStartTLS="true"
-    p:bindDn="uid=1,ou=test,dc=vt,dc=edu"
-    p:bindCredential="VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2"
+    p:bindDn="${ldapBindDn}"
+    p:bindCredential="${ldapBindCredential}"
     p:sslConfig-ref="sslConfig"
   />
 

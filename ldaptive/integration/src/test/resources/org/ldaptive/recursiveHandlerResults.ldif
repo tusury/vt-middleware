@@ -1,7 +1,8 @@
-dn: uugid=group2,ou=test,dc=vt,dc=edu
-contactPerson: uid=2,ou=test,dc=vt,dc=edu
+dn: cn=Group 2,${ldapBaseDn}
+cn: Group 2
+contactPerson: cn=John Adams,${ldapBaseDn}
 creationDate: 2010-06-06T12:00:00
-member: uugid=group3,ou=test,dc=vt,dc=edu
+member: cn=Group 3,${ldapBaseDn}
 objectClass: virginiaTechGroup
 objectClass: top
 uid: 2002

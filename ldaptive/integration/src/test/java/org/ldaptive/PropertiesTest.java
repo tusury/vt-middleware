@@ -85,13 +85,19 @@ public class PropertiesTest
 
 
   /**
+   * @param  bindDn  used to make connections
    * @param  host  that should match a property.
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters("ldapTestHost")
+  @Parameters(
+    {
+      "ldapBindDn",
+      "ldapTestHost"
+    }
+  )
   @Test(groups = {"props"})
-  public void parserProperties(final String host)
+  public void parserProperties(final String bindDn, final String host)
     throws Exception
   {
     final DefaultConnectionFactory cf = new DefaultConnectionFactory();
@@ -103,7 +109,7 @@ public class PropertiesTest
     final ConnectionConfig cc = cf.getConnectionConfig();
 
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
-    AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", cc.getBindDn());
+    AssertJUnit.assertEquals(bindDn, cc.getBindDn());
     AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
     AssertJUnit.assertFalse(cc.getUseStartTLS());
     AssertJUnit.assertEquals(
@@ -122,7 +128,9 @@ public class PropertiesTest
         sr, "classpath:/org/ldaptive/ldap.parser.properties");
     srSource.initialize();
 
-    AssertJUnit.assertEquals("ou=test,dc=vt,dc=edu", sr.getBaseDn());
+    AssertJUnit.assertEquals(
+      DnParser.substring(bindDn, 1).toLowerCase(),
+      sr.getBaseDn().toLowerCase());
     AssertJUnit.assertEquals(SearchScope.OBJECT, sr.getSearchScope());
     AssertJUnit.assertEquals(5000, sr.getTimeLimit());
     AssertJUnit.assertEquals("jpegPhoto", sr.getBinaryAttributes()[0]);
@@ -159,7 +167,7 @@ public class PropertiesTest
     final ConnectionConfig authCc = authCf.getConnectionConfig();
     AssertJUnit.assertEquals(
       "ldap://ed-auth.middleware.vt.edu:14389", authCc.getLdapUrl());
-    AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", authCc.getBindDn());
+    AssertJUnit.assertEquals(bindDn, authCc.getBindDn());
     AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
     AssertJUnit.assertTrue(authCc.getUseStartTLS());
     AssertJUnit.assertEquals(
@@ -184,13 +192,19 @@ public class PropertiesTest
 
 
   /**
+   * @param  bindDn  used to make connections
    * @param  host  that should match a property.
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters("ldapTestHost")
+  @Parameters(
+    {
+      "ldapBindDn",
+      "ldapTestHost"
+    }
+  )
   @Test(groups = {"props"})
-  public void jaasProperties(final String host)
+  public void jaasProperties(final String bindDn, final String host)
     throws Exception
   {
     final LoginContext lc = new LoginContext(
@@ -223,7 +237,7 @@ public class PropertiesTest
 
     AssertJUnit.assertNotNull(cf.getProvider().getClass());
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
-    AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", cc.getBindDn());
+    AssertJUnit.assertEquals(bindDn, cc.getBindDn());
     AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
     AssertJUnit.assertTrue(cc.getUseStartTLS());
     AssertJUnit.assertEquals(
@@ -236,7 +250,9 @@ public class PropertiesTest
     AssertJUnit.assertEquals(2000, cc.getOperationRetryWait());
     AssertJUnit.assertEquals(3, cc.getOperationRetryBackoff());
 
-    AssertJUnit.assertEquals("ou=test,dc=vt,dc=edu", searchRequest.getBaseDn());
+    AssertJUnit.assertEquals(
+      DnParser.substring(bindDn, 1).toLowerCase(),
+      searchRequest.getBaseDn().toLowerCase());
     AssertJUnit.assertEquals(
       SearchScope.OBJECT, searchRequest.getSearchScope());
     AssertJUnit.assertEquals(5000, searchRequest.getTimeLimit());
@@ -271,7 +287,7 @@ public class PropertiesTest
     final Provider<?> authP =
       authCp.getConnectionFactory().getProvider();
     AssertJUnit.assertEquals(host, authCc.getLdapUrl());
-    AssertJUnit.assertEquals("uid=1,ou=test,dc=vt,dc=edu", authCc.getBindDn());
+    AssertJUnit.assertEquals(bindDn, authCc.getBindDn());
     AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
     AssertJUnit.assertTrue(authCc.getUseStartTLS());
     AssertJUnit.assertEquals(

@@ -1,4 +1,4 @@
-dn: uid=12,ou=test,dc=vt,dc=edu
+dn: CN=Zachary Taylor,${ldapBaseDn}
 cn: Zachary Taylor
 departmentNumber: 0832
 displayName: Zachary Taylor

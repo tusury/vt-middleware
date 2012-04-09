@@ -96,7 +96,7 @@ public class SearchOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry2")
-  @BeforeClass(groups = {"search"})
+  @BeforeClass(groups = {"search", "searchInit"})
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -122,7 +122,7 @@ public class SearchOperationTest extends AbstractTest
       "createGroup5"
     }
   )
-  @BeforeClass(groups = {"search"})
+  @BeforeClass(groups = {"search"}, dependsOnGroups = {"searchInit"})
   public void createGroupEntry(
     final String ldifFile2,
     final String ldifFile3,
@@ -145,6 +145,8 @@ public class SearchOperationTest extends AbstractTest
       super.createLdapEntry(e.getValue()[0]);
     }
 
+    final String baseDn = DnParser.substring(
+      groupEntries.get("2")[0].getDn(), 1);
     // setup group relationships
     final Connection conn = TestUtils.createSetupConnection();
     try {
@@ -156,8 +158,7 @@ public class SearchOperationTest extends AbstractTest
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
-                "member",
-                new String[]{"uugid=group3,ou=test,dc=vt,dc=edu"}))));
+                "member", new String[]{ "cn=Group 3," + baseDn}))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -172,8 +173,7 @@ public class SearchOperationTest extends AbstractTest
               new LdapAttribute(
                 "member",
                 new String[]{
-                  "uugid=group4,ou=test,dc=vt,dc=edu",
-                  "uugid=group5,ou=test,dc=vt,dc=edu", }))));
+                  "cn=Group 4," + baseDn, "cn=Group 5," + baseDn, }))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -186,8 +186,7 @@ public class SearchOperationTest extends AbstractTest
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
-                "member",
-                new String[]{"uugid=group3,ou=test,dc=vt,dc=edu"}))));
+                "member", new String[]{ "cn=Group 3," + baseDn}))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -317,13 +316,22 @@ public class SearchOperationTest extends AbstractTest
     final DnAttributeEntryHandler srh = new DnAttributeEntryHandler();
     sr.setLdapEntryHandlers(new NoOpEntryHandler(), srh);
     result = search.execute(sr).getResult();
-    AssertJUnit.assertEquals(entryDnResult, result);
+    // ignore the case of entryDN; some directories return those in mixed case
+    AssertJUnit.assertEquals(
+      0,
+      (new LdapEntryIgnoreCaseComparator("entryDN")).compare(
+        entryDnResult.getEntry(), result.getEntry()));
 
     // test that entry dn handler is no-op if attribute name conflicts
     srh.setDnAttributeName("givenName");
     sr.setLdapEntryHandlers(new NoOpEntryHandler(), srh);
     result = search.execute(sr).getResult();
-    AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // ignore the case of entryDN; some directories return those in mixed case
+    AssertJUnit.assertEquals(
+      0,
+      (new LdapEntryIgnoreCaseComparator("entryDN")).compare(
+        TestUtils.convertLdifToResult(expected).getEntry(),
+        result.getEntry()));
   }
 
 
@@ -428,6 +436,7 @@ public class SearchOperationTest extends AbstractTest
    * @param  dn  to search on.
    * @param  filter  to search with.
    * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -437,6 +446,7 @@ public class SearchOperationTest extends AbstractTest
       "recursiveSearchDn",
       "recursiveSearchFilter",
       "recursiveSearchFilterParameters",
+      "recursiveSearchReturnAttrs",
       "recursiveHandlerResults"
     }
   )
@@ -445,6 +455,7 @@ public class SearchOperationTest extends AbstractTest
     final String dn,
     final String filter,
     final String filterParameters,
+    final String returnAttrs,
     final String ldifFile)
     throws Exception
   {
@@ -459,16 +470,25 @@ public class SearchOperationTest extends AbstractTest
       new String[] {"uugid", "uid"});
 
     final SearchRequest sr = new SearchRequest(
-      dn, new SearchFilter(filter, filterParameters.split("\\|")));
+      dn,
+      new SearchFilter(filter, filterParameters.split("\\|")),
+      returnAttrs.split("\\|"));
     sr.setLdapEntryHandlers(rsrh);
     final LdapResult result = search.execute(sr).getResult();
-    AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // ignore the case of member and contactPerson; some directories return
+    // those in mixed case
+    AssertJUnit.assertEquals(
+      0,
+      (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
+        TestUtils.convertLdifToResult(expected).getEntry(),
+        result.getEntry()));
   }
 
 
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
+   * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -476,12 +496,14 @@ public class SearchOperationTest extends AbstractTest
   @Parameters({
       "mergeSearchDn",
       "mergeSearchFilter",
+      "mergeSearchReturnAttrs",
       "mergeSearchResults"
     })
   @Test(groups = {"search"})
   public void mergeSearch(
     final String dn,
     final String filter,
+    final String returnAttrs,
     final String ldifFile)
     throws Exception
   {
@@ -493,12 +515,17 @@ public class SearchOperationTest extends AbstractTest
       final String expected = TestUtils.readFileIntoString(ldifFile);
 
       // test result merge
-      final SearchRequest sr = new SearchRequest(dn, new SearchFilter(filter));
+      final SearchRequest sr = new SearchRequest(
+        dn, new SearchFilter(filter), returnAttrs.split("\\|"));
       sr.setSortBehavior(SortBehavior.SORTED);
       final LdapResult result = search.execute(sr).getResult();
+      // ignore the case of member and contactPerson; some directories return
+      // those in mixed case
       AssertJUnit.assertEquals(
-        TestUtils.convertLdifToResult(expected),
-        LdapResult.mergeEntries(result));
+        0,
+        (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
+          TestUtils.convertLdifToResult(expected).getEntry(),
+          LdapResult.mergeEntries(result).getEntry()));
     } finally {
       conn.close();
     }
@@ -508,6 +535,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
+   * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -516,6 +544,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "mergeDuplicateSearchDn",
       "mergeDuplicateSearchFilter",
+      "mergeDuplicateReturnAttrs",
       "mergeDuplicateSearchResults"
     }
   )
@@ -523,6 +552,7 @@ public class SearchOperationTest extends AbstractTest
   public void mergeDuplicateSearch(
     final String dn,
     final String filter,
+    final String returnAttrs,
     final String ldifFile)
     throws Exception
   {
@@ -534,12 +564,17 @@ public class SearchOperationTest extends AbstractTest
       final String expected = TestUtils.readFileIntoString(ldifFile);
 
       // test result merge
-      final SearchRequest sr = new SearchRequest(dn, new SearchFilter(filter));
+      final SearchRequest sr = new SearchRequest(
+        dn, new SearchFilter(filter), returnAttrs.split("\\|"));
       sr.setSortBehavior(SortBehavior.SORTED);
       final LdapResult result = search.execute(sr).getResult();
+      // ignore the case of member and contactPerson; some directories return
+      // those in mixed case
       AssertJUnit.assertEquals(
-        TestUtils.convertLdifToResult(expected),
-        LdapResult.mergeEntries(result));
+        0,
+        (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
+          TestUtils.convertLdifToResult(expected).getEntry(),
+          LdapResult.mergeEntries(result).getEntry()));
     } finally {
       conn.close();
     }
@@ -759,6 +794,7 @@ public class SearchOperationTest extends AbstractTest
    * @param  dn  to search on.
    * @param  filter  to search with.
    * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -770,6 +806,7 @@ public class SearchOperationTest extends AbstractTest
       "specialCharSearchFilterParameters",
       "specialCharBinarySearchFilter",
       "specialCharBinarySearchFilterParameters",
+      "specialCharReturnAttrs",
       "specialCharSearchResults"
     }
   )
@@ -780,6 +817,7 @@ public class SearchOperationTest extends AbstractTest
     final String filterParameters,
     final String binaryFilter,
     final String binaryFilterParameters,
+    final String returnAttrs,
     final String ldifFile)
     throws Exception
   {
@@ -792,7 +830,8 @@ public class SearchOperationTest extends AbstractTest
     LdapResult result = search.execute(
       new SearchRequest(
         dn,
-        new SearchFilter(filter, filterParameters.split("\\|")))).getResult();
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        returnAttrs.split("\\|"))).getResult();
     // DNs returned from JNDI may have escaped characters
     result.getEntry().setDn(result.getEntry().getDn().replaceAll("\\\\", ""));
     AssertJUnit.assertEquals(specialCharsResult, result);
@@ -803,7 +842,8 @@ public class SearchOperationTest extends AbstractTest
         new SearchFilter(
           binaryFilter,
           new Object[] {
-            LdapUtils.base64Decode(binaryFilterParameters)}))).getResult();
+            LdapUtils.base64Decode(binaryFilterParameters)}),
+        returnAttrs.split("\\|"))).getResult();
     // DNs returned from JNDI may have escaped characters
     result.getEntry().setDn(result.getEntry().getDn().replaceAll("\\\\", ""));
     AssertJUnit.assertEquals(specialCharsResult, result);
@@ -942,7 +982,8 @@ public class SearchOperationTest extends AbstractTest
       request.setReferralBehavior(ReferralBehavior.THROW);
       try {
         response = search.execute(request);
-        AssertJUnit.fail("Should have thrown LdapException");
+        AssertJUnit.fail(
+          "Should have thrown LdapException, returned " + response);
       } catch (LdapException e) {
         AssertJUnit.assertEquals(ResultCode.REFERRAL, e.getResultCode());
       }
@@ -953,13 +994,19 @@ public class SearchOperationTest extends AbstractTest
 
 
   /**
+   * @param  dn  to search on.
    * @param  resultCode  to retry operations on.
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters("searchRetryResultCode")
+  @Parameters(
+    {
+      "searchRetryDn",
+      "searchRetryResultCode"
+    }
+  )
   @Test(groups = {"search"})
-  public void searchWithRetry(final String resultCode)
+  public void searchWithRetry(final String dn, final String resultCode)
     throws Exception
   {
     final ResultCode retryResultCode = ResultCode.valueOf(resultCode);
@@ -976,10 +1023,10 @@ public class SearchOperationTest extends AbstractTest
 
       // test defaults
       try {
-        search.execute(
-          new SearchRequest(
-            "ou=dne,dc=vt,dc=edu", new SearchFilter("(objectclass=*)")));
-        AssertJUnit.fail("Should have thrown LdapException");
+        final Response<LdapResult> response = search.execute(
+          new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
+        AssertJUnit.fail(
+          "Should have thrown LdapException, returned: " + response);
       } catch (LdapException e) {
         AssertJUnit.assertEquals(
           ResultCode.NO_SUCH_OBJECT, e.getResultCode());
@@ -992,10 +1039,10 @@ public class SearchOperationTest extends AbstractTest
       search.setOperationRetry(0);
 
       try {
-        search.execute(
-          new SearchRequest(
-            "ou=dne,dc=vt,dc=edu", new SearchFilter("(objectclass=*)")));
-        AssertJUnit.fail("Should have thrown LdapException");
+        final Response<LdapResult> response = search.execute(
+          new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
+        AssertJUnit.fail(
+          "Should have thrown LdapException, returned: " + response);
       } catch (LdapException e) {
         AssertJUnit.assertEquals(
           ResultCode.NO_SUCH_OBJECT, e.getResultCode());
@@ -1017,8 +1064,7 @@ public class SearchOperationTest extends AbstractTest
       conn.open();
       try {
         final Response<LdapResult> response = search.execute(
-          new SearchRequest(
-            "ou=dne,dc=vt,dc=edu", new SearchFilter("(objectclass=*)")));
+          new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
         AssertJUnit.assertEquals(
           ResultCode.NO_SUCH_OBJECT, response.getResultCode());
       } catch (LdapException e) {
@@ -1043,10 +1089,10 @@ public class SearchOperationTest extends AbstractTest
     try {
       conn.open();
       try {
-        search.execute(
-          new SearchRequest(
-            "ou=dne,dc=vt,dc=edu", new SearchFilter("(objectclass=*)")));
-        AssertJUnit.fail("Should have thrown LdapException");
+        final Response<LdapResult> response = search.execute(
+          new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
+        AssertJUnit.fail(
+          "Should have thrown LdapException, returned: " + response);
       } catch (LdapException e) {
         AssertJUnit.assertEquals(
           ResultCode.NO_SUCH_OBJECT, e.getResultCode());
@@ -1058,10 +1104,10 @@ public class SearchOperationTest extends AbstractTest
       search.reset();
       search.setOperationRetryBackoff(2);
       try {
-        search.execute(
-          new SearchRequest(
-            "ou=dne,dc=vt,dc=edu", new SearchFilter("(objectclass=*)")));
-        AssertJUnit.fail("Should have thrown LdapException");
+        final Response<LdapResult> response = search.execute(
+          new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
+        AssertJUnit.fail(
+          "Should have thrown LdapException, returned: " + response);
       } catch (LdapException e) {
         AssertJUnit.assertEquals(
           ResultCode.NO_SUCH_OBJECT, e.getResultCode());
@@ -1074,10 +1120,10 @@ public class SearchOperationTest extends AbstractTest
       search.setStopCount(10);
       search.setOperationRetry(-1);
       try {
-        search.execute(
-          new SearchRequest(
-            "ou=dne,dc=vt,dc=edu", new SearchFilter("(objectclass=*)")));
-        AssertJUnit.fail("Should have thrown LdapException");
+        final Response<LdapResult> response = search.execute(
+          new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
+        AssertJUnit.fail(
+          "Should have thrown LdapException, returned: " + response);
       } catch (LdapException e) {
         AssertJUnit.assertEquals(
           ResultCode.NO_SUCH_OBJECT, e.getResultCode());
