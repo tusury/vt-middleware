@@ -43,7 +43,8 @@ import org.ldaptive.ResultCode;
 
 /**
  * Utility class that provides a bridge between JNDI naming exceptions and ldap
- * result codes.
+ * result codes. See
+ * http://docs.oracle.com/javase/tutorial/jndi/ldap/exceptions.html
  *
  * @author  Middleware Services
  * @version  $Revision: 2198 $ $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
@@ -331,7 +332,7 @@ public final class NamingExceptionUtils
 
   /**
    * Returns the result code that map to the supplied naming exception. If the
-   * exception maps to multiple result codes, null is returned
+   * exception maps to multiple result codes, the first one is returned.
    *
    * @param  clazz  naming exception
    *
@@ -341,7 +342,7 @@ public final class NamingExceptionUtils
     final Class<? extends NamingException> clazz)
   {
     final ResultCode[] codes = getResultCodes(clazz);
-    if (codes != null && codes.length == 1) {
+    if (codes != null && codes.length > 0) {
       return codes[0];
     } else {
       return null;

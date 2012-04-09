@@ -166,7 +166,7 @@ public class JndiConnection implements Connection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -206,10 +206,11 @@ public class JndiConnection implements Connection
           request.getControls(),
           context));
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -248,10 +249,11 @@ public class JndiConnection implements Connection
           request.getControls(),
           context));
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -303,10 +305,11 @@ public class JndiConnection implements Connection
           request.getControls(),
           context));
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -347,10 +350,11 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -382,7 +386,7 @@ public class JndiConnection implements Connection
             new Object[] {request.getAttribute().getStringValue()},
           getCompareSearchControls());
 
-        final boolean success = en.hasMore() ? true : false;
+        final boolean success = en.hasMore();
         response = new Response<Boolean>(
           success,
           success ? ResultCode.COMPARE_TRUE : ResultCode.COMPARE_FALSE,
@@ -399,10 +403,11 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -439,10 +444,11 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -483,10 +489,11 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -528,10 +535,11 @@ public class JndiConnection implements Connection
         }
       }
     } catch (NamingException e) {
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
