@@ -23,6 +23,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SortBehavior;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -88,8 +89,12 @@ public class DsmlTest extends AbstractTest
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
 
-      final LdapResult result1 = search.execute(
-        new SearchRequest(dn, new SearchFilter(filter))).getResult();
+      final SearchRequest request =
+        new SearchRequest(dn, new SearchFilter(filter));
+      if (TestControl.isActiveDirectory()) {
+        request.setBinaryAttributes("objectSid", "objectGUID");
+      }
+      final LdapResult result1 = search.execute(request).getResult();
 
       final StringWriter writer = new StringWriter();
       final Dsmlv1Writer dsmlWriter = new Dsmlv1Writer(writer);

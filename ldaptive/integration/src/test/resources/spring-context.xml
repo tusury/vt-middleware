@@ -14,8 +14,8 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
   <bean id="connectionConfig"
     class="org.ldaptive.ConnectionConfig"
     p:ldapUrl="${ldapTestHost}"
-    p:bindDn="uid=1,ou=test,dc=vt,dc=edu"
-    p:bindCredential="VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2"
+    p:bindDn="${ldapBindDn}"
+    p:bindCredential="${ldapBindCredential}"
     p:useStartTLS="true"
     p:sslConfig-ref="sslConfig"
   />

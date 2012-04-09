@@ -28,7 +28,10 @@ import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
+import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.BlockingConnectionPool;
@@ -140,7 +143,7 @@ public class AuthenticatorTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"auth"})
+  @AfterClass(groups = {"auth"}, dependsOnGroups = {"authAccountState"})
   public void deleteAuthEntry()
     throws Exception
   {
@@ -246,16 +249,16 @@ public class AuthenticatorTest extends AbstractTest
 
 
   /**
-   * @param  uid  to get dn for.
+   * @param  cn  to get dn for.
    * @param  user  to get dn for.
    * @param  duplicateFilter  for user lookups
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "getDnUid", "getDnUser", "getDnDuplicateFilter" })
+  @Parameters({ "getDnCn", "getDnUser", "getDnDuplicateFilter" })
   @Test(groups = {"auth"})
   public void resolveDn(
-    final String uid,
+    final String cn,
     final String user,
     final String duplicateFilter)
     throws Exception
@@ -270,12 +273,13 @@ public class AuthenticatorTest extends AbstractTest
 
     // test format dn
     auth.setDnResolver(
-      new FormatDnResolver("uid=%s,%s", new Object[] {resolver.getBaseDn()}));
-    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(uid));
+      new FormatDnResolver("cn=%s,%s", new Object[] {resolver.getBaseDn()}));
+    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(cn));
     auth.setDnResolver(resolver);
 
     // test one level searching
-    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(user));
+    AssertJUnit.assertEquals(
+      testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
 
     // test duplicate DNs
     final String filter = resolver.getUserFilter();
@@ -297,7 +301,8 @@ public class AuthenticatorTest extends AbstractTest
     resolver.setReferralBehavior(ReferralBehavior.IGNORE);
     final String baseDn = resolver.getBaseDn();
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
-    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(user));
+    AssertJUnit.assertEquals(
+      testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
   }
 
 
@@ -786,11 +791,14 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential"
     }
   )
-  @Test(groups = {"auth"})
+  @AfterClass(groups = {"auth", "authAccountState"})
   public void authenticatePasswordPolicy(
     final String user, final String credential)
     throws Exception
   {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
     final PasswordPolicyControl ppc = new PasswordPolicyControl();
     final Connection conn = TestUtils.createSetupConnection();
     AuthenticationResponse response = null;
@@ -849,5 +857,94 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
     AssertJUnit.assertNotNull(
       response.getAccountState().getWarning().getExpiration());
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential"
+    }
+  )
+  @AfterClass(groups = {"auth", "authAccountState"})
+  public void authenticateActiveDirectory(
+    final String user, final String credential)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    final Authenticator auth = createTLSAuthenticator(true);
+    auth.setAuthenticationResponseHandlers(
+      new ActiveDirectoryAuthenticationResponseHandler());
+
+    // success, store the entry for modify operations
+    AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(credential), null));
+    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertNull(response.getAccountState());
+    final LdapEntry entry = response.getLdapEntry();
+
+    // bad password
+    response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
+    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertEquals(
+      ActiveDirectoryAccountState.Error.LOGON_FAILURE,
+      response.getAccountState().getError());
+
+    final Connection conn = TestUtils.createSetupConnection();
+    try {
+      conn.open();
+      final ModifyOperation modify = new ModifyOperation(conn);
+
+      // account disabled
+      final String userAccountControl =
+        entry.getAttribute("userAccountControl").getStringValue();
+      modify.execute(
+        new ModifyRequest(
+          entry.getDn(),
+          new AttributeModification(
+            AttributeModificationType.REPLACE,
+            new LdapAttribute("userAccountControl", "514"))));
+
+      response = auth.authenticate(
+        new AuthenticationRequest(user, new Credential(credential)));
+      AssertJUnit.assertFalse(response.getResult());
+      AssertJUnit.assertEquals(
+        ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED,
+        response.getAccountState().getError());
+
+      modify.execute(
+        new ModifyRequest(
+          entry.getDn(),
+          new AttributeModification(
+            AttributeModificationType.REPLACE,
+            new LdapAttribute("userAccountControl", userAccountControl))));
+
+      // account must change password
+      modify.execute(
+        new ModifyRequest(
+          entry.getDn(),
+          new AttributeModification(
+            AttributeModificationType.REPLACE,
+            new LdapAttribute("pwdLastSet", "0"))));
+
+      response = auth.authenticate(
+        new AuthenticationRequest(user, new Credential(credential)));
+      AssertJUnit.assertFalse(response.getResult());
+      AssertJUnit.assertEquals(
+        ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE,
+        response.getAccountState().getError());
+    } finally {
+      conn.close();
+    }
   }
 }

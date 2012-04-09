@@ -19,6 +19,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -51,21 +52,24 @@ public class CompareValidatorTest extends AbstractTest
 
 
   /**
+   * @param  compareDn  to test with
+   *
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"validator"})
-  public void customSettings()
+  @Parameters("ldapBindDn")
+  public void customSettings(final String compareDn)
     throws Exception
   {
     final Connection c = TestUtils.createConnection();
     final CompareValidator cv = new CompareValidator(
       new CompareRequest(
-        "uid=1,ou=test,dc=vt,dc=edu",
+        compareDn,
         new LdapAttribute("objectClass", "inetOrgPerson")));
     try {
       c.open();
       AssertJUnit.assertTrue(cv.validate(c));
-      cv.getCompareRequest().setDn("uid=dne,ou=test,dc=vt,dc=edu");
+      cv.getCompareRequest().setDn(compareDn);
       AssertJUnit.assertFalse(cv.validate(c));
     } finally {
       c.close();

@@ -129,11 +129,15 @@ public class ConnectionTest
       final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
       Response<Void> response = modifyDn.execute(
         new ModifyDnRequest(
-          testLdapEntry.getDn(), "uid=1500,ou=test,dc=vt,dc=edu"));
+          testLdapEntry.getDn(),
+          "cn=James Buchanan\\, Jr.," +
+            DnParser.substring(testLdapEntry.getDn(), 1)));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       response = modifyDn.execute(
         new ModifyDnRequest(
-          "uid=1500,ou=test,dc=vt,dc=edu", testLdapEntry.getDn()));
+          "cn=James Buchanan\\, Jr.," +
+            DnParser.substring(testLdapEntry.getDn(), 1),
+          testLdapEntry.getDn()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
       conn.close();
@@ -152,8 +156,11 @@ public class ConnectionTest
       final SearchOperation search = new SearchOperation(conn);
       final LdapResult lr = search.execute(
         new SearchRequest(
-          "ou=test,dc=vt,dc=edu", new SearchFilter("(uid=15)"))).getResult();
-      AssertJUnit.assertEquals(testLdapEntry.getDn(), lr.getEntry().getDn());
+          DnParser.substring(testLdapEntry.getDn(), 1),
+          new SearchFilter("(uid=15)"))).getResult();
+      AssertJUnit.assertEquals(
+        testLdapEntry.getDn().toLowerCase(),
+        lr.getEntry().getDn().toLowerCase());
     } finally {
       conn.close();
     }

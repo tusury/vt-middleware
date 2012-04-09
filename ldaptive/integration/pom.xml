@@ -47,8 +47,8 @@
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk16</artifactId>
-      <version>1.46</version>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.47</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -90,6 +90,15 @@
                 </requireProperty>
                 <requireProperty>
                   <property>ldapSslTestHost</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>ldapBaseDn</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>ldapBindDn</property>
+                </requireProperty>
+                <requireProperty>
+                  <property>ldapBindCredential</property>
                 </requireProperty>
                 <requireProperty>
                   <property>ldapTestGroup</property>
@@ -219,7 +228,7 @@
         </dependency>
       </dependencies>
       <properties>
-        <ldapTestProvider>org.ldaptive.provider.unboundid.UnboundIdProvider</ldapTestProvider>
+        <ldapTestProvider>org.ldaptive.provider.unboundid.UnboundIDProvider</ldapTestProvider>
       </properties>
     </profile>
     <profile>

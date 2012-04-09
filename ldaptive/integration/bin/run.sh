@@ -2,7 +2,6 @@
 
 PROVIDER_VERSION="1.0-SNAPSHOT"
 
-HOST="ldap-test-1.middleware.vt.edu"
 TEST_GROUP=core
 while [ $# -gt 0 ]
 do
@@ -10,6 +9,15 @@ do
     -host)
       shift
       HOST=$1;;
+    -baseDn)
+      shift
+      BASE_DN=$1;;
+    -bindDn)
+      shift
+      BIND_DN=$1;;
+    -bindCredential)
+      shift
+      BIND_CREDENTIAL=$1;;
     -group)
       shift
       TEST_GROUP=$1;;
@@ -19,6 +27,7 @@ do
   esac
   shift
 done
+SSL_HOST=`echo ${HOST} |sed 's/389/636/'`
 
 MVN_CMD="clean test"
 if [ ! -z "${PROVIDER}" ]; then
@@ -26,8 +35,11 @@ if [ ! -z "${PROVIDER}" ]; then
 fi
 
 mvn \
-  -DldapTestHost=ldap://${HOST}:10389 \
-  -DldapSslTestHost=ldap://${HOST}:10636 \
+  -DldapTestHost=ldap://${HOST} \
+  -DldapSslTestHost=ldap://${SSL_HOST} \
+  -DldapBaseDn="${BASE_DN}" \
+  -DldapBindDn="${BIND_DN}" \
+  -DldapBindCredential="${BIND_CREDENTIAL}" \
   -DldapTestGroup=${TEST_GROUP} \
   -DldapTestsIgnoreLock=true \
   ${MVN_CMD}
