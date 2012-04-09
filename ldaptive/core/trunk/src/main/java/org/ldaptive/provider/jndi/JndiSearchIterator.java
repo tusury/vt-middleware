@@ -106,7 +106,8 @@ public class JndiSearchIterator implements SearchIterator
   /**
    * Initializes this jndi search iterator.
    *
-   * @param  ctx  to call {@link LdapContext#newInstance(Control[])} on
+   * @param  ctx  to call
+   * {@link LdapContext#newInstance(javax.naming.ldap.Control[])} on
    *
    * @throws  LdapException  if an error occurs
    */
@@ -122,10 +123,11 @@ public class JndiSearchIterator implements SearchIterator
       results = search(context, request);
     } catch (NamingException e) {
       closeContext = true;
+      final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
       ProviderUtils.throwOperationException(
         config.getOperationRetryResultCodes(),
         e,
-        NamingExceptionUtils.getResultCode(e.getClass()).value(),
+        rc != null ? rc.value() : -1,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -296,13 +298,14 @@ public class JndiSearchIterator implements SearchIterator
         }
       }
     } catch (NamingException e) {
-      final ResultCode rc = ignoreSearchException(
+      final ResultCode ignoreRc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
-      if (rc == null) {
+      if (ignoreRc == null) {
+        final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
         ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          NamingExceptionUtils.getResultCode(e.getClass()).value(),
+          rc != null ? rc.value() : -1,
           JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
@@ -311,7 +314,7 @@ public class JndiSearchIterator implements SearchIterator
       }
       response = new Response<Void>(
         null,
-        rc,
+        ignoreRc,
         JndiUtils.processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
@@ -334,20 +337,21 @@ public class JndiSearchIterator implements SearchIterator
       result.setName(formatDn(result, getSearchDn(context, request)));
       le = bu.toLdapEntry(result);
     } catch (NamingException e) {
-      final ResultCode rc = ignoreSearchException(
+      final ResultCode ignoreRc = ignoreSearchException(
         config.getSearchIgnoreResultCodes(), e);
-      if (rc == null) {
+      if (ignoreRc == null) {
+        final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
         ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          NamingExceptionUtils.getResultCode(e.getClass()).value(),
+          rc != null ? rc.value() : -1,
           JndiUtils.processResponseControls(
             config.getControlProcessor(),
             request.getControls(),
             context),
           true);
       }
-      responseResultCode = rc;
+      responseResultCode = ignoreRc;
     }
     return le;
   }
@@ -414,7 +418,7 @@ public class JndiSearchIterator implements SearchIterator
    * Returns a fully-qualified DN for the supplied search result. If search
    * result is relative, the DN is created by concatenating the relative name
    * with the base DN. Otherwise the behavior is controlled by {@link
-   * #removeDnUrls}.
+   * JndiProviderConfig#getRemoveDnUrls()}.
    *
    * @param  sr  to determine DN for
    * @param  baseDn  that search was performed on
@@ -429,7 +433,7 @@ public class JndiSearchIterator implements SearchIterator
     String newDn = null;
     final String resultName = sr.getName();
     if (resultName != null) {
-      StringBuilder fqName = null;
+      StringBuilder fqName;
       if (sr.isRelative()) {
         logger.trace("formatting relative dn {}", resultName);
         if (baseDn != null) {
@@ -471,7 +475,7 @@ public class JndiSearchIterator implements SearchIterator
   protected String readCompositeName(final String s)
     throws InvalidNameException
   {
-    final StringBuffer name = new StringBuffer();
+    final StringBuilder name = new StringBuilder();
     final CompositeName cName = new CompositeName(s);
     for (int i = 0; i < cName.size(); i++) {
       name.append(cName.get(i));
