@@ -147,7 +147,13 @@
   <parameter name="binarySearchResult"
              value="/9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k="/>
 
-  <parameter name="specialCharSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="rangeSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="rangeSearchFilter" value="(uugid=group550000)"/>
+  <parameter name="rangeSearchReturnAttrs" value="cn|member|uid|uugid"/>
+  <parameter name="rangeHandlerResults"
+             value="/org/ldaptive/rangeHandlerResults.ldif"/>
+
+    <parameter name="specialCharSearchDn" value="${ldapBaseDn}"/>
   <parameter name="specialCharSearchFilter" value="(&amp;(uid=17893)(sn={0}))"/>
   <parameter name="specialCharSearchFilterParameters" value="(Us\er)*"/>
   <parameter name="specialCharBinarySearchFilter" value="(&amp;(uid=17893)(givenName={0}))"/>
