@@ -13,6 +13,7 @@
 */
 package org.ldaptive.provider.unboundid;
 
+import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.BindResult;
 import com.unboundid.ldap.sdk.CRAMMD5BindRequest;
 import com.unboundid.ldap.sdk.CompareResult;
@@ -20,6 +21,7 @@ import com.unboundid.ldap.sdk.DIGESTMD5BindRequest;
 import com.unboundid.ldap.sdk.DN;
 import com.unboundid.ldap.sdk.GSSAPIBindRequest;
 import com.unboundid.ldap.sdk.GSSAPIBindRequestProperties;
+import com.unboundid.ldap.sdk.GenericSASLBindRequest;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.LDAPResult;
@@ -230,12 +232,13 @@ public class UnboundIDConnection implements Connection
       switch (sc.getMechanism()) {
 
       case EXTERNAL:
-        throw new UnsupportedOperationException("SASL External not supported");
-        /* current implementation appears to be broken
-         * sbr = new EXTERNALBindRequest(
-         * controlHandler.processRequestControls(request.getControls()));
-         * break;
-         */
+        sbr = new GenericSASLBindRequest(
+          "",
+          "EXTERNAL",
+          new ASN1OctetString(""),
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
+         break;
 
       case DIGEST_MD5:
 
