@@ -62,6 +62,7 @@ public class JndiProviderConfig extends ProviderConfig
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
+      ResultCode.PARTIAL_RESULTS,
     };
     controlProcessor = new ControlProcessor<Control>(new JndiControlHandler());
   }
