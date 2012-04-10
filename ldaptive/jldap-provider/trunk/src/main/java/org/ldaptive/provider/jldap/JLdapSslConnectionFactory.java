@@ -22,7 +22,7 @@ import com.novell.ldap.LDAPJSSESecureSocketFactory;
  * Creates LDAPS connections using the JLDAP LDAPConnection class.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class JLdapSslConnectionFactory
   extends AbstractJLdapConnectionFactory<JLdapSslConnection>

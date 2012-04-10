@@ -31,7 +31,7 @@ import org.ldaptive.provider.ConnectionException;
  * performs the startTLS extended operation.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class UnboundIDStartTLSConnectionFactory
   extends AbstractConnectionFactory<UnboundIDProviderConfig>

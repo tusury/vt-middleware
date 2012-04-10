@@ -1,5 +1,5 @@
 /*
-  $Id: TestUtil.java 2250 2012-02-13 21:38:35Z dfisher $
+  $Id$
 
   Copyright (C) 2003-2010 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 2250 $
-  Updated: $Date: 2012-02-13 16:38:35 -0500 (Mon, 13 Feb 2012) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive;
 
@@ -30,7 +30,7 @@ import org.testng.annotations.DataProvider;
  * Utility methods for ldap tests.
  *
  * @author  Middleware Services
- * @version  $Revision: 2250 $
+ * @version  $Revision$ $Date$
  */
 public final class TestUtils
 {

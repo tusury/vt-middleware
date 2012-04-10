@@ -1,5 +1,5 @@
 /*
-  $Id: ApacheLdapSaslUtil.java 2198 2012-01-04 21:02:09Z dfisher $
+  $Id$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 2198 $
-  Updated: $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.provider.apache;
 
@@ -30,7 +30,7 @@ import org.ldaptive.sasl.SecurityStrength;
  * Support for SASL authentication.
  *
  * @author  Middleware Services
- * @version  $Revision: 2198 $ $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
+ * @version  $Revision$ $Date$
  */
 public final class ApacheLdapSaslUtils
 {

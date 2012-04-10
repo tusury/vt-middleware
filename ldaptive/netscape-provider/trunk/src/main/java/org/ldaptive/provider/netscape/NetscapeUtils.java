@@ -1,5 +1,5 @@
 /*
-  $Id: NetscapeUtil.java 2328 2012-03-26 02:53:02Z dfisher $
+  $Id$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 2328 $
-  Updated: $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.provider.netscape;
 
@@ -35,7 +35,7 @@ import org.ldaptive.control.SortKey;
  * ldaptive specific objects.
  *
  * @author  Middleware Services
- * @version  $Revision: 2328 $ $Date: 2012-03-25 22:53:02 -0400 (Sun, 25 Mar 2012) $
+ * @version  $Revision$ $Date$
  */
 public class NetscapeUtils
 {

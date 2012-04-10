@@ -26,7 +26,7 @@ import org.ldaptive.provider.ConnectionException;
  * @param  <T>  type of jldap connection
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
   extends AbstractConnectionFactory<JLdapProviderConfig>
