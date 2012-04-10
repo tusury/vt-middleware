@@ -1,5 +1,5 @@
 /*
-  $Id: LdapUtil.java 2310 2012-03-08 19:59:50Z dfisher $
+  $Id$
 
   Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: 2310 $
-  Updated: $Date: 2012-03-08 14:59:50 -0500 (Thu, 08 Mar 2012) $
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive;
 
@@ -29,7 +29,7 @@ import org.apache.commons.codec.binary.Base64;
  * Provides utility methods for this package.
  *
  * @author  Middleware Services
- * @version  $Revision: 2310 $ $Date: 2012-03-08 14:59:50 -0500 (Thu, 08 Mar 2012) $
+ * @version  $Revision$ $Date$
  */
 public final class LdapUtils
 {

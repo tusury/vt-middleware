@@ -20,7 +20,7 @@ import com.novell.ldap.LDAPException;
  * Creates ldap connections using the JLDAP LDAPConnection class.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class JLdapConnectionFactory
   extends AbstractJLdapConnectionFactory<JLdapConnection>

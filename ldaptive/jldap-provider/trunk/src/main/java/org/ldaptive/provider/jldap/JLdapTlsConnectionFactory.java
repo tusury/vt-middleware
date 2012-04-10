@@ -23,7 +23,7 @@ import com.novell.ldap.LDAPJSSEStartTLSFactory;
  * startTLS extended operation.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 public class JLdapTlsConnectionFactory
   extends AbstractJLdapConnectionFactory<JLdapTlsConnection>
