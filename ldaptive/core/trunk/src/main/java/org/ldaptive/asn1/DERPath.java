@@ -141,30 +141,15 @@ public class DERPath
   }
 
 
-  /**
-   * Returns whether the supplied object contains the same node list. Delegates
-   * to {@link #hashCode()} implementation.
-   *
-   * @param  o  to compare for equality
-   *
-   * @return  equality result
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
-  /**
-   * Returns the hash code for this object.
-   *
-   * @return  hash code
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -172,11 +157,7 @@ public class DERPath
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -195,7 +176,7 @@ public class DERPath
    * Node which encapsulates the path name and it's location in the path.
    *
    * @author  Middleware Services
-   * @version:  $Revision$ $Date$
+   * @version  $Revision$ $Date$
    */
   private class Node
   {
@@ -249,20 +230,11 @@ public class DERPath
     @Override
     public boolean equals(final Object o)
     {
-      if (o == null) {
-        return false;
-      }
-      return
-        o == this || (getClass() == o.getClass() &&
-          o.hashCode() == hashCode());
+      return LdapUtils.areEqual(this, o);
     }
 
 
-    /**
-     * Returns the hash code for this object.
-     *
-     * @return  hash code
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -270,11 +242,7 @@ public class DERPath
     }
 
 
-    /**
-     * Provides a descriptive string representation of this instance.
-     *
-     * @return  string representation
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {

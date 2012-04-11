@@ -27,10 +27,6 @@ public class NoOpEntryResolver implements EntryResolver
 {
 
 
-  /** Default constructor. */
-  public NoOpEntryResolver() {}
-
-
   /** {@inheritDoc} */
   @Override
   public LdapEntry resolve(

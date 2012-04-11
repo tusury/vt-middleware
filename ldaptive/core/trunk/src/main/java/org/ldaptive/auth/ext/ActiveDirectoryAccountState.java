@@ -77,7 +77,7 @@ public class ActiveDirectoryAccountState extends AccountState
     private static final Pattern PATTERN = Pattern.compile("data (\\w+)");
 
     /** underlying error code. */
-    private int code;
+    private final int code;
 
 
     /**

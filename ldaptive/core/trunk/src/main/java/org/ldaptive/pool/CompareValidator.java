@@ -86,8 +86,7 @@ public class CompareValidator implements Validator<Connection>
     if (c != null) {
       try {
         final CompareOperation compare = new CompareOperation(c);
-        final Boolean b = compare.execute(compareRequest).getResult();
-        success = b.booleanValue();
+        success = compare.execute(compareRequest).getResult();
       } catch (Exception e) {
         logger.debug(
           "validation failed for compare request {}",

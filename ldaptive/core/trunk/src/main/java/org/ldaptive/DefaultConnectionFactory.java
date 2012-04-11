@@ -133,6 +133,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    *
    * @return  connection
    */
+  @Override
   public Connection getConnection()
   {
     return new DefaultConnection(config, provider.getConnectionFactory(config));
@@ -180,7 +181,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    */
   public static Provider<?> getDefaultProvider()
   {
-    Provider<?> p = null;
+    Provider<?> p;
     final String providerClass = System.getProperty(PROVIDER);
     if (providerClass != null) {
       final Logger l = LoggerFactory.getLogger(DefaultConnectionFactory.class);
@@ -203,11 +204,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -234,10 +231,10 @@ public class DefaultConnectionFactory implements ConnectionFactory
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Connection configuration. */
-    private ConnectionConfig config;
+    private final ConnectionConfig config;
 
     /** Connection factory. */
-    private org.ldaptive.provider.ConnectionFactory<?>
+    private final org.ldaptive.provider.ConnectionFactory<?>
     providerConnectionFactory;
 
     /** Provider connection. */
@@ -264,6 +261,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      *
      * @return  connection configuration
      */
+    @Override
     public ConnectionConfig getConnectionConfig()
     {
       return config;
@@ -278,6 +276,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      *
      * @throws  IllegalStateException  if the connection is not open
      */
+    @Override
     public org.ldaptive.provider.Connection getProviderConnection()
     {
       if (!isOpen()) {
@@ -301,6 +300,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      *
      * @throws  LdapException  if the LDAP cannot be reached
      */
+    @Override
     public synchronized Response<Void> open()
       throws LdapException
     {
@@ -325,6 +325,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      * @throws  IllegalStateException  if the connection is already open
      * @throws  LdapException  if the LDAP cannot be reached
      */
+    @Override
     public synchronized Response<Void> open(final BindRequest request)
       throws LdapException
     {
@@ -341,6 +342,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      *
      * @return  whether the provider connection has been initialized
      */
+    @Override
     public boolean isOpen()
     {
       return providerConnection != null;
@@ -348,6 +350,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
     /** This will close the connection to the LDAP. */
+    @Override
     public synchronized void close()
     {
       try {
@@ -362,11 +365,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /**
-     * Provides a descriptive string representation of this instance.
-     *
-     * @return  string representation
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -382,11 +381,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /**
-     * Closes this connection if it is garbage collected.
-     *
-     * @throws  Throwable  if an exception is thrown by this method
-     */
+    /** {@inheritDoc} */
+    @Override
     protected void finalize()
       throws Throwable
     {

@@ -53,6 +53,7 @@ public class PooledSearchDnResolver extends AbstractSearchDnResolver
    *
    * @return  connection factory
    */
+  @Override
   public PooledConnectionFactory getConnectionFactory()
   {
     return factory;
@@ -64,6 +65,7 @@ public class PooledSearchDnResolver extends AbstractSearchDnResolver
    *
    * @param  cf  connection factory
    */
+  @Override
   public void setConnectionFactory(final PooledConnectionFactory cf)
   {
     factory = cf;
@@ -79,11 +81,7 @@ public class PooledSearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -80,7 +80,7 @@ public final class DnParser
   public static String getValue(final String dn, final String name)
   {
     final Collection<String> values = getValues(dn, name);
-    if (values.size() == 0) {
+    if (values.isEmpty()) {
       return "";
     }
     return values.iterator().next();
@@ -135,7 +135,7 @@ public final class DnParser
   {
     LOGGER.debug("parsing DN: {}", dn);
     final List<LdapAttribute> attributes = new ArrayList<LdapAttribute>();
-    if (dn.length() == 0) {
+    if (dn.isEmpty()) {
       return attributes;
     }
 
@@ -229,13 +229,13 @@ public final class DnParser
               throw new IllegalArgumentException("Invalid HEX value: " + c);
             }
           } else {
-            appendHex = hexValue.length() > 0 ? true : false;
+            appendHex = hexValue.length() > 0;
             appendValue = true;
           }
         }
         break;
       default:
-        appendHex = hexValue.length() > 0 ? true : false;
+        appendHex = hexValue.length() > 0;
         appendValue = true;
         break;
       }

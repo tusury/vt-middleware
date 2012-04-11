@@ -168,6 +168,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
+  @Override
   public Socket createSocket(
     final Socket socket,
     final String host,
@@ -187,6 +188,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
+  @Override
   public Socket createSocket()
     throws IOException
   {
@@ -205,6 +207,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
+  @Override
   public Socket createSocket(final InetAddress host, final int port)
     throws IOException
   {
@@ -226,6 +229,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
+  @Override
   public Socket createSocket(
     final InetAddress address,
     final int port,
@@ -249,6 +253,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
+  @Override
   public Socket createSocket(final String host, final int port)
     throws IOException
   {
@@ -270,6 +275,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
+  @Override
   public Socket createSocket(
     final String host,
     final int port,
@@ -287,6 +293,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @return  cipher suites
    */
+  @Override
   public String[] getDefaultCipherSuites()
   {
     return factory.getDefaultCipherSuites();
@@ -299,6 +306,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    *
    * @return  cipher suites
    */
+  @Override
   public String[] getSupportedCipherSuites()
   {
     return factory.getSupportedCipherSuites();

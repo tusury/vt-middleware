@@ -53,6 +53,7 @@ public class SearchDnResolver extends AbstractSearchDnResolver
    *
    * @return  connection factory
    */
+  @Override
   public ConnectionFactory getConnectionFactory()
   {
     return factory;
@@ -64,6 +65,7 @@ public class SearchDnResolver extends AbstractSearchDnResolver
    *
    * @param  cf  connection factory
    */
+  @Override
   public void setConnectionFactory(final ConnectionFactory cf)
   {
     factory = cf;
@@ -81,11 +83,7 @@ public class SearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

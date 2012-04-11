@@ -36,8 +36,8 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
   implements RoleResolverFactory
 {
 
-  /** Object cache. */
-  private static Map<String, RoleResolver> cache =
+  /** Object CACHE. */
+  private static final Map<String, RoleResolver> CACHE =
     new HashMap<String, RoleResolver>();
 
 
@@ -45,17 +45,17 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
   @Override
   public RoleResolver createRoleResolver(final Map<String, ?> jaasOptions)
   {
-    RoleResolver rr = null;
+    RoleResolver rr;
     if (jaasOptions.containsKey(CACHE_ID)) {
       final String cacheId = (String) jaasOptions.get(CACHE_ID);
-      synchronized (cache) {
-        if (!cache.containsKey(cacheId)) {
+      synchronized (CACHE) {
+        if (!CACHE.containsKey(cacheId)) {
           rr = createRoleResolverInternal(jaasOptions);
           logger.trace("Created role resolver: {}", rr);
-          cache.put(cacheId, rr);
+          CACHE.put(cacheId, rr);
         } else {
-          rr = cache.get(cacheId);
-          logger.trace("Retrieved role resolver from cache: {}", rr);
+          rr = CACHE.get(cacheId);
+          logger.trace("Retrieved role resolver from CACHE: {}", rr);
         }
       }
     } else {
@@ -76,7 +76,7 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
   protected RoleResolver createRoleResolverInternal(
     final Map<String, ?> options)
   {
-    RoleResolver rr = null;
+    RoleResolver rr;
     if (options.containsKey("roleResolver")) {
       try {
         final String className = (String) options.get("roleResolver");
@@ -133,10 +133,10 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
   }
 
 
-  /** Iterates over the cache and closes all role resolvers. */
+  /** Iterates over the CACHE and closes all role resolvers. */
   public static void close()
   {
-    for (RoleResolver rr : cache.values()) {
+    for (RoleResolver rr : CACHE.values()) {
       if (rr instanceof PooledConnectionFactoryManager) {
         final PooledConnectionFactoryManager cfm =
           (PooledConnectionFactoryManager) rr;

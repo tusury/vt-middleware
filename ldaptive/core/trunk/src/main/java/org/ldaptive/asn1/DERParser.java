@@ -42,7 +42,7 @@ public class DERParser
   private final Set<DERTag> applicationTags;
 
   /** Handlers for DER paths. */
-  private Map<DERPath, ParseHandler> handlerMap =
+  private final Map<DERPath, ParseHandler> handlerMap =
     new HashMap<DERPath, ParseHandler>();
 
   /** Current path location. */
@@ -149,7 +149,7 @@ public class DERParser
       return null;
     }
 
-    DERTag tag = null;
+    DERTag tag;
     final byte b = encoded.get();
     // CheckStyle:MagicNumber OFF
     final int tagNo = b & 0x1F;

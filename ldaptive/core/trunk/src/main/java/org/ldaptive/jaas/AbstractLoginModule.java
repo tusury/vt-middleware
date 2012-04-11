@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -127,9 +126,7 @@ public abstract class AbstractLoginModule implements LoginModule
     callbackHandler = handler;
     sharedState = state;
 
-    final Iterator<String> i = options.keySet().iterator();
-    while (i.hasNext()) {
-      final String key = i.next();
+    for (String key : options.keySet()) {
       final String value = (String) options.get(key);
       if ("useFirstPass".equalsIgnoreCase(key)) {
         useFirstPass = Boolean.valueOf(value);
@@ -230,7 +227,7 @@ public abstract class AbstractLoginModule implements LoginModule
     logger.trace("Begin abort");
     if (!loginSuccess) {
       return false;
-    } else if (loginSuccess && !commitSuccess) {
+    } else if (!commitSuccess) {
       loginSuccess = false;
       clearState();
     } else {
@@ -251,34 +248,27 @@ public abstract class AbstractLoginModule implements LoginModule
       throw new LoginException("Subject is read-only.");
     }
 
-    final Iterator<LdapPrincipal> prinIter = subject.getPrincipals(
-      LdapPrincipal.class).iterator();
-    while (prinIter.hasNext()) {
-      subject.getPrincipals().remove(prinIter.next());
+    for (LdapPrincipal ldapPrincipal :
+         subject.getPrincipals(LdapPrincipal.class)) {
+      subject.getPrincipals().remove(ldapPrincipal);
     }
 
-    final Iterator<LdapDnPrincipal> dnPrinIter = subject.getPrincipals(
-      LdapDnPrincipal.class).iterator();
-    while (dnPrinIter.hasNext()) {
-      subject.getPrincipals().remove(dnPrinIter.next());
+    for (LdapDnPrincipal ldapDnPrincipal :
+         subject.getPrincipals(LdapDnPrincipal.class)) {
+      subject.getPrincipals().remove(ldapDnPrincipal);
     }
 
-    final Iterator<LdapRole> roleIter = subject.getPrincipals(LdapRole.class)
-      .iterator();
-    while (roleIter.hasNext()) {
-      subject.getPrincipals().remove(roleIter.next());
+    for (LdapRole ldapRole : subject.getPrincipals(LdapRole.class)) {
+      subject.getPrincipals().remove(ldapRole);
     }
 
-    final Iterator<LdapGroup> groupIter = subject.getPrincipals(LdapGroup.class)
-      .iterator();
-    while (groupIter.hasNext()) {
-      subject.getPrincipals().remove(groupIter.next());
+    for (LdapGroup ldapGroup : subject.getPrincipals(LdapGroup.class)) {
+      subject.getPrincipals().remove(ldapGroup);
     }
 
-    final Iterator<LdapCredential> credIter = subject.getPrivateCredentials(
-      LdapCredential.class).iterator();
-    while (credIter.hasNext()) {
-      subject.getPrivateCredentials().remove(credIter.next());
+    for (LdapCredential ldapCredential :
+         subject.getPrivateCredentials(LdapCredential.class)) {
+      subject.getPrivateCredentials().remove(ldapCredential);
     }
 
     clearState();

@@ -27,15 +27,15 @@ public class X509CredentialConfig implements CredentialConfig
 {
 
   /** Reads X.509 certificates credential. */
-  private X509CertificatesCredentialReader certsReader =
+  private final X509CertificatesCredentialReader certsReader =
     new X509CertificatesCredentialReader();
 
   /** Reads X.509 certificate credential. */
-  private X509CertificateCredentialReader certReader =
+  private final X509CertificateCredentialReader certReader =
     new X509CertificateCredentialReader();
 
   /** Reads private key credential. */
-  private PrivateKeyCredentialReader keyReader =
+  private final PrivateKeyCredentialReader keyReader =
     new PrivateKeyCredentialReader();
 
   /** Name of the trust certificates to use for the SSL connection. */

@@ -84,11 +84,8 @@ public class SearchOperationCli extends AbstractCli
    * @param  line  parsed command line arguments
    *
    * @return  search request that has been initialized
-   *
-   * @throws  Exception  if a search request cannot be created
    */
   protected SearchRequest initSearchRequest(final CommandLine line)
-    throws Exception
   {
     final SearchRequest request = new SearchRequest();
     final SearchRequestPropertySource srSource =
@@ -132,7 +129,7 @@ public class SearchOperationCli extends AbstractCli
 
     final SearchOperation op = new SearchOperation(conn);
     final LdapResult result = op.execute(request).getResult();
-    LdapResultWriter writer = null;
+    LdapResultWriter writer;
     if (outputDsmlv1) {
       writer = new Dsmlv1Writer(
         new BufferedWriter(new OutputStreamWriter(System.out)));

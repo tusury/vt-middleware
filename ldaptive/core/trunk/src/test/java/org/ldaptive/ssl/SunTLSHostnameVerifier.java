@@ -39,7 +39,7 @@ public class SunTLSHostnameVerifier
   @Override
   public boolean verify(final String hostname, final SSLSession session)
   {
-    boolean b = false;
+    boolean b;
     try {
       b = verify(hostname, (X509Certificate) session.getPeerCertificates()[0]);
     } catch (SSLPeerUnverifiedException e) {
@@ -57,9 +57,10 @@ public class SunTLSHostnameVerifier
    *
    * @return  whether the certificate is allowed
    */
+  @Override
   public boolean verify(final String hostname, final X509Certificate cert)
   {
-    boolean b = false;
+    boolean b;
     final HostnameChecker checker = HostnameChecker.getInstance(
       HostnameChecker.TYPE_LDAP);
     try {

@@ -15,7 +15,6 @@ package org.ldaptive.servlets;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,29 +52,8 @@ public final class AttributeServlet extends AbstractServlet
   private static final long serialVersionUID = 3437252581014900696L;
 
 
-  /**
-   * Initialize this servlet.
-   *
-   * @param  config  servlet configuration
-   *
-   * @throws  ServletException  if an error occurs
-   */
-  public void init(final ServletConfig config)
-    throws ServletException
-  {
-    super.init(config);
-  }
-
-
-  /**
-   * Handle all requests sent to this servlet.
-   *
-   * @param  request  http servlet reqeust
-   * @param  response  http servlet response
-   *
-   * @throws  ServletException  if an error occurs
-   * @throws  IOException  if an error occurs
-   */
+  /** {@inheritDoc} */
+  @Override
   public void service(
     final HttpServletRequest request,
     final HttpServletResponse response)

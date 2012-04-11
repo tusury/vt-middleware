@@ -39,10 +39,11 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
    *
    * @throws  GeneralSecurityException  if the SSLContext cannot be created
    */
+  @Override
   public void initialize()
     throws GeneralSecurityException
   {
-    SSLContextInitializer contextInitializer = null;
+    SSLContextInitializer contextInitializer;
     final SslConfig sslConfig = getSslConfig();
     if (sslConfig != null) {
       final CredentialConfig credConfig = sslConfig.getCredentialConfig();
@@ -92,6 +93,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
    *
    * @return  socket factory
    */
+  @SuppressWarnings("RedundantArrayCreation")
   public static SSLSocketFactory getHostnameVerifierFactory(
     final SslConfig config, final String[] names)
   {
@@ -100,16 +102,14 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
       sf.setSslConfig(SslConfig.newSslConfig(config));
       if (sf.getSslConfig().getTrustManagers() == null) {
         sf.getSslConfig().setTrustManagers(
-          new TrustManager[]{
-            new HostnameVerifyingTrustManager(
-              new DefaultHostnameVerifier(), names), });
+          new HostnameVerifyingTrustManager(
+            new DefaultHostnameVerifier(), names));
       }
     } else {
       sf.setSslConfig(
         new SslConfig(
-          new TrustManager[]{
-            new HostnameVerifyingTrustManager(
-              new DefaultHostnameVerifier(), names), }));
+          new HostnameVerifyingTrustManager(
+            new DefaultHostnameVerifier(), names)));
     }
     try {
       sf.initialize();
@@ -120,11 +120,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

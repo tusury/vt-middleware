@@ -54,7 +54,7 @@ public class CertificateValueTranscoderTest
     "AhDym4nIfzng6fgYBeLT1Hp/bKHivQP4ef4wgre6r1ztnFA=";
 
   /** Transcoder to test. */
-  private CertificateValueTranscoder transcoder =
+  private final CertificateValueTranscoder transcoder =
     new CertificateValueTranscoder();
 
 

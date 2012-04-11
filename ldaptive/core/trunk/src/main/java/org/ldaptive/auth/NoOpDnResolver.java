@@ -25,10 +25,6 @@ public class NoOpDnResolver implements DnResolver
 {
 
 
-  /** Default constructor. */
-  public NoOpDnResolver() {}
-
-
   /**
    * Returns the user as the DN.
    *
@@ -38,6 +34,7 @@ public class NoOpDnResolver implements DnResolver
    *
    * @throws  LdapException  never
    */
+  @Override
   public String resolve(final String user)
     throws LdapException
   {

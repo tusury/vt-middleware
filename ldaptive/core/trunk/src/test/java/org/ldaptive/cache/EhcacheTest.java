@@ -35,7 +35,7 @@ public class EhcacheTest
 {
 
   /** Ehcache cache manager. */
-  private CacheManager manager = CacheManager.create();
+  private final CacheManager manager = CacheManager.create();
 
   /** Cache for testing. */
   private Ehcache<SearchRequest> cache;

@@ -35,7 +35,7 @@ public abstract class AbstractOperation<Q extends Request, S>
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Connection to perform operation. */
-  private Connection connection;
+  private final Connection connection;
 
   /** Number of times to retry ldap operations. */
   private int operationRetry;
@@ -267,11 +267,7 @@ public abstract class AbstractOperation<Q extends Request, S>
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

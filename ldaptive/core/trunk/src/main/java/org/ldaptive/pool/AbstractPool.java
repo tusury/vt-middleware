@@ -96,7 +96,7 @@ public abstract class AbstractPool<T>
    */
   public boolean activate(final T t)
   {
-    boolean success = false;
+    boolean success;
     if (activator == null) {
       success = true;
       logger.trace("no activator configured");
@@ -139,7 +139,7 @@ public abstract class AbstractPool<T>
    */
   public boolean passivate(final T t)
   {
-    boolean success = false;
+    boolean success;
     if (passivator == null) {
       success = true;
       logger.trace("no passivator configured");
@@ -182,7 +182,7 @@ public abstract class AbstractPool<T>
    */
   public boolean validate(final T t)
   {
-    boolean success = false;
+    boolean success;
     if (validator == null) {
       success = true;
       logger.warn("validate called, but no validator configured");

@@ -56,7 +56,7 @@ public class CredentialConfigParser
     "org.ldaptive.ssl.X509CredentialConfig";
 
   /** Properties found in the config to set on the credential config. */
-  private Map<String, String> properties = new HashMap<String, String>();
+  private final Map<String, String> properties = new HashMap<String, String>();
 
 
   /**

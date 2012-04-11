@@ -113,7 +113,7 @@ public class LdapResult extends AbstractLdapBean
    */
   public LdapEntry getEntry()
   {
-    if (resultEntries.size() == 0) {
+    if (resultEntries.isEmpty()) {
       return null;
     }
     return resultEntries.values().iterator().next();
@@ -234,11 +234,7 @@ public class LdapResult extends AbstractLdapBean
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

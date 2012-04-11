@@ -87,13 +87,8 @@ public final class SearchServlet extends AbstractServlet
   private OutputType output;
 
 
-  /**
-   * Initialize this servlet.
-   *
-   * @param  config  servlet config
-   *
-   * @throws  ServletException  if an error occurs
-   */
+  /** {@inheritDoc} */
+  @Override
   public void init(final ServletConfig config)
     throws ServletException
   {
@@ -108,15 +103,8 @@ public final class SearchServlet extends AbstractServlet
   }
 
 
-  /**
-   * Handle all requests sent to this servlet.
-   *
-   * @param  request  http servlet reqeust
-   * @param  response  http servlet response
-   *
-   * @throws  ServletException  if an error occurs
-   * @throws  IOException  if an error occurs
-   */
+  /** {@inheritDoc} */
+  @Override
   public void service(
     final HttpServletRequest request,
     final HttpServletResponse response)
@@ -130,7 +118,7 @@ public final class SearchServlet extends AbstractServlet
       final LdapResult result = search(
         request.getParameter("query"),
         request.getParameterValues("attrs"));
-      LdapResultWriter writer = null;
+      LdapResultWriter writer;
       if (output == OutputType.LDIF) {
         response.setContentType("text/plain");
         writer = new LdifWriter(

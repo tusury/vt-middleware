@@ -33,8 +33,8 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory
   implements AuthenticatorFactory
 {
 
-  /** Object cache. */
-  private static Map<String, Authenticator> cache =
+  /** Object CACHE. */
+  private static final Map<String, Authenticator> CACHE =
     new HashMap<String, Authenticator>();
 
 
@@ -42,17 +42,17 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory
   @Override
   public Authenticator createAuthenticator(final Map<String, ?> jaasOptions)
   {
-    Authenticator a = null;
+    Authenticator a;
     if (jaasOptions.containsKey(CACHE_ID)) {
       final String cacheId = (String) jaasOptions.get(CACHE_ID);
-      synchronized (cache) {
-        if (!cache.containsKey(cacheId)) {
+      synchronized (CACHE) {
+        if (!CACHE.containsKey(cacheId)) {
           a = createAuthenticatorInternal(jaasOptions);
           logger.trace("Created authenticator: {}", a);
-          cache.put(cacheId, a);
+          CACHE.put(cacheId, a);
         } else {
-          a = cache.get(cacheId);
-          logger.trace("Retrieved authenticator from cache: {}", a);
+          a = CACHE.get(cacheId);
+          logger.trace("Retrieved authenticator from CACHE: {}", a);
         }
       }
     } else {
@@ -99,12 +99,12 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory
 
 
   /**
-   * Iterates over the cache and closes any managed dn resolvers and managed
+   * Iterates over the CACHE and closes any managed dn resolvers and managed
    * authentication handlers.
    */
   public static void close()
   {
-    for (Map.Entry<String, Authenticator> e : cache.entrySet()) {
+    for (Map.Entry<String, Authenticator> e : CACHE.entrySet()) {
       final Authenticator a = e.getValue();
       if (a.getDnResolver() instanceof PooledConnectionFactoryManager) {
         final PooledConnectionFactoryManager cfm =

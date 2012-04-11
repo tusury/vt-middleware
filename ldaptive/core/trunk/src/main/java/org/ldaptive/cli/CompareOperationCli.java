@@ -82,7 +82,7 @@ public class CompareOperationCli extends AbstractCli
     if (line.hasOption(OPT_HELP)) {
       printHelp();
     } else {
-      LdapAttribute la = null;
+      LdapAttribute la;
       final String[] attr = line.getOptionValue(OPT_ATTR).split(":", 2);
       if (attr[1].startsWith(":")) {
         la = new LdapAttribute(

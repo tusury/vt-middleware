@@ -121,7 +121,7 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
   {
     logger.debug("invoke request={}", request);
 
-    Response<LdapResult> response = null;
+    Response<LdapResult> response;
     if (cache != null) {
       final LdapResult lr = cache.get(request);
       if (lr == null) {
@@ -161,11 +161,11 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
   {
     LdapEntry processedEntry = entry;
     boolean abort = false;
-    final LdapEntryHandler[] handler = request.getLdapEntryHandlers();
-    if (handler != null && handler.length > 0) {
-      for (int i = 0; i < handler.length; i++) {
-        if (handler[i] != null) {
-          final HandlerResult hr = handler[i].process(request, processedEntry);
+    final LdapEntryHandler[] handlers = request.getLdapEntryHandlers();
+    if (handlers != null && handlers.length > 0) {
+      for (LdapEntryHandler handler : handlers) {
+        if (handler != null) {
+          final HandlerResult hr = handler.process(request, processedEntry);
           if (hr.getAbortSearch()) {
             abort = true;
           }

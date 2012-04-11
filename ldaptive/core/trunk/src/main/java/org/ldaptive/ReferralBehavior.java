@@ -28,5 +28,5 @@ public enum ReferralBehavior {
   THROW,
 
   /** ignore referrals. */
-  IGNORE;
+  IGNORE
 }

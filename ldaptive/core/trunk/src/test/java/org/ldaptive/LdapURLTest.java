@@ -40,21 +40,21 @@ public class LdapURLTest
       new Object[] {
         new LdapURL("ldap://directory.ldaptive.org"),
         new String[] {"directory.ldaptive.org"},
-        new Integer[] {new Integer(389)}, },
+        new Integer[] {389}, },
       new Object[] {
         new LdapURL("ldaps://directory.ldaptive.org"),
         new String[] {"directory.ldaptive.org"},
-        new Integer[] {new Integer(636)}, },
+        new Integer[] {636}, },
       new Object[] {
         new LdapURL("ldap://directory.ldaptive.org:10389"),
         new String[] {"directory.ldaptive.org"},
-        new Integer[] {new Integer(10389)}, },
+        new Integer[] {10389}, },
       new Object[] {
         new LdapURL(
           "ldaps://directory1.ldaptive.org " +
           "ldap://directory2.ldaptive.org:10389"),
         new String[] {"directory1.ldaptive.org", "directory2.ldaptive.org", },
-        new Integer[] {new Integer(636), new Integer(10389), }, },
+        new Integer[] {636, 10389, }, },
     };
   }
 

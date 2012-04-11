@@ -68,8 +68,7 @@ public class SearchExecutor extends SearchRequest
   public Response<LdapResult> search(final ConnectionFactory factory)
     throws LdapException
   {
-    return search(
-      factory, (SearchFilter) null, (String[]) null, (LdapEntryHandler[]) null);
+    return search(factory, null, (String[]) null, (LdapEntryHandler[]) null);
   }
 
 

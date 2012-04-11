@@ -64,7 +64,7 @@ public class JndiConnectionFactory
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
 
-    JndiConnection conn = null;
+    JndiConnection conn;
     try {
       conn = new JndiConnection(
         new InitialLdapContext(env, null), getProviderConfig());
@@ -77,11 +77,7 @@ public class JndiConnectionFactory
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

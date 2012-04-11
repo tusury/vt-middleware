@@ -77,7 +77,7 @@ public class DefaultHostnameVerifier
     IP_ADDRESS,
 
     /** registered id (8). */
-    REGISTERED_ID;
+    REGISTERED_ID
   }
 
 
@@ -115,13 +115,14 @@ public class DefaultHostnameVerifier
    *
    * @return  whether hostname is valid for the supplied certificate
    */
+  @Override
   public boolean verify(final String hostname, final X509Certificate cert)
   {
     logger.debug(
       "verifying hostname={} against cert={}",
       hostname,
       cert.getSubjectX500Principal().toString());
-    boolean b = false;
+    boolean b;
     if (LdapUtils.isIPAddress(hostname)) {
       b = verifyIP(hostname, cert);
     } else {
@@ -230,7 +231,7 @@ public class DefaultHostnameVerifier
       if (subjAltNames != null) {
         for (List<?> generalName : subjAltNames) {
           final Integer nameType = (Integer) generalName.get(0);
-          if (nameType.intValue() == type.ordinal()) {
+          if (nameType == type.ordinal()) {
             names.add((String) generalName.get(1));
           }
         }
@@ -287,11 +288,11 @@ public class DefaultHostnameVerifier
       "matching for hostname={}, certName={}, isWildcard={}",
       new Object[] {hostname, certName, isWildcard});
 
-    boolean match = false;
+    boolean match;
     if (isWildcard) {
       final String certNameDomain = certName.substring(certName.indexOf("."));
 
-      final int hostnameIdx = hostname.indexOf(".") != -1 ?
+      final int hostnameIdx = hostname.contains(".") ?
         hostname.indexOf(".") : hostname.length();
       final String hostnameDomain = hostname.substring(hostnameIdx);
 

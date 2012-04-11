@@ -80,10 +80,10 @@ public class ParallelPooledSearchExecutor
       new LinkedList<Response<LdapResult>>();
     final CompletionService<Response<LdapResult>> searches =
       new ExecutorCompletionService<Response<LdapResult>>(getExecutorService());
-    for (int i = 0; i < filters.length; i++) {
+    for (SearchFilter filter : filters) {
       final SearchRequest sr = newSearchRequest(this);
-      if (filters[i] != null) {
-        sr.setSearchFilter(filters[i]);
+      if (filter != null) {
+        sr.setSearchFilter(filter);
       }
       if (attrs != null) {
         sr.setReturnAttributes(attrs);
@@ -96,7 +96,7 @@ public class ParallelPooledSearchExecutor
       op.setOperationResponseHandlers(getSearchResponseHandlers());
       searches.submit(createCallable(conn, op, sr));
     }
-    for (int i = 0; i < filters.length; i++) {
+    for (SearchFilter filter : filters) {
       try {
         response.add(searches.take().get());
       } catch (ExecutionException e) {
@@ -126,6 +126,7 @@ public class ParallelPooledSearchExecutor
     final Connection conn, final Operation<Q, S> operation, final Q request)
   {
     return new Callable<Response<S>>() {
+      @Override
       public Response<S> call()
         throws LdapException
       {

@@ -41,7 +41,7 @@ public final class ControlFactory
     final boolean critical,
     final byte[] encoded)
   {
-    ResponseControl ctl = null;
+    ResponseControl ctl;
     if (SortResponseControl.OID.equals(oid)) {
       ctl = new SortResponseControl(critical);
       ctl.decode(encoded);

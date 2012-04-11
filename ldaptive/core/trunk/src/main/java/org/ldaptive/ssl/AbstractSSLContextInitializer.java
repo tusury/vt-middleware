@@ -46,6 +46,7 @@ public abstract class AbstractSSLContextInitializer
    *
    * @param  managers  trust managers
    */
+  @Override
   public void setTrustManagers(final TrustManager... managers)
   {
     trustManagers = managers;

@@ -73,9 +73,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   private boolean connectOnCreate = true;
 
   /** Executor for scheduling pool tasks. */
-  private ScheduledExecutorService poolExecutor =
+  private final ScheduledExecutorService poolExecutor =
     Executors.newSingleThreadScheduledExecutor(
       new ThreadFactory() {
+        @Override
         public Thread newThread(final Runnable r)
         {
           final Thread t = new Thread(r);
@@ -142,6 +143,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     getPoolConfig().makeImmutable();
 
     final Runnable prune = new Runnable() {
+      @Override
       public void run()
       {
         logger.debug("Begin prune task for {}", this);
@@ -157,6 +159,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     logger.debug("prune pool task scheduled");
 
     final Runnable validate = new Runnable() {
+      @Override
       public void run()
       {
         logger.debug("Begin validate task for {}", this);
@@ -206,7 +209,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         }
         count++;
       }
-      if (available.size() == 0 && getPoolConfig().getMinPoolSize() > 0) {
+      if (available.isEmpty() && getPoolConfig().getMinPoolSize() > 0) {
         throw new IllegalStateException("Could not initialize pool");
       }
     } finally {
@@ -220,12 +223,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   {
     poolLock.lock();
     try {
-      while (available.size() > 0) {
+      while (!available.isEmpty()) {
         final PooledConnectionHandler pc = available.remove();
         pc.getConnection().close();
         logger.trace("destroyed connection: {}", pc);
       }
-      while (active.size() > 0) {
+      while (!active.isEmpty()) {
         final PooledConnectionHandler pc = active.remove();
         pc.getConnection().close();
         logger.trace("destroyed connection: {}", pc);
@@ -486,7 +489,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       poolLock.getQueueLength());
     poolLock.lock();
     try {
-      if (active.size() == 0) {
+      if (active.isEmpty()) {
         logger.debug("pruning pool of size {}", available.size());
         while (available.size() > getPoolConfig().getMinPoolSize()) {
           PooledConnectionHandler pc = available.peek();
@@ -520,7 +523,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   {
     poolLock.lock();
     try {
-      if (active.size() == 0) {
+      if (active.isEmpty()) {
         if (getPoolConfig().isValidatePeriodically()) {
           logger.debug("validate for pool of size {}", available.size());
 
@@ -624,11 +627,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -657,13 +656,13 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     private static final int HASH_CODE_SEED = 503;
 
     /** Underlying connection. */
-    private Connection conn;
+    private final Connection conn;
 
     /** Response produced when the connection was opened. */
     private Response<Void> openResponse;
 
     /** Time this connection was created. */
-    private long createdTime = System.currentTimeMillis();
+    private final long createdTime = System.currentTimeMillis();
 
 
     /**
@@ -701,30 +700,15 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /**
-     * Returns whether the supplied object is the same as this one.
-     *
-     * @param  o  to compare against
-     *
-     * @return  whether the supplied object is the same as this one
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o)
     {
-      if (o == null) {
-        return false;
-      }
-      return
-        o == this || (getClass() == o.getClass() &&
-          o.hashCode() == hashCode());
+      return LdapUtils.areEqual(this, o);
     }
 
 
-    /**
-     * Returns the hash code for this object.
-     *
-     * @return  hash code
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {

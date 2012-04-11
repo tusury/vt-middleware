@@ -54,13 +54,8 @@ public abstract class AbstractServlet extends HttpServlet
   private SearchExecutor searchExecutor;
 
 
-  /**
-   * Initialize this servlet.
-   *
-   * @param  config  servlet configuration
-   *
-   * @throws  ServletException  if an error occurs
-   */
+  /** {@inheritDoc} */
+  @Override
   public void init(final ServletConfig config)
     throws ServletException
   {
@@ -98,7 +93,7 @@ public abstract class AbstractServlet extends HttpServlet
       final String name = (String) e.nextElement();
       // if property name contains a dot, it isn't an ldaptive property
       // else add the domain to the ldaptive properties
-      if (name.indexOf(".") != -1) {
+      if (name.contains(".")) {
         p.setProperty(name, config.getInitParameter(name));
       } else {
         p.setProperty(
@@ -132,10 +127,8 @@ public abstract class AbstractServlet extends HttpServlet
   }
 
 
-  /**
-   * Called by the servlet container to indicate to a servlet that the servlet
-   * is being taken out of service.
-   */
+  /** {@inheritDoc} */
+  @Override
   public void destroy()
   {
     try {

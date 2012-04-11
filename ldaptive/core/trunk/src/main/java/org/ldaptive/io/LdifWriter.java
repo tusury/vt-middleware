@@ -76,6 +76,7 @@ public class LdifWriter implements LdapResultWriter
    *
    * @throws  IOException  if an error occurs using the writer
    */
+  @Override
   public void write(final LdapResult result)
     throws IOException
   {
@@ -118,7 +119,7 @@ public class LdifWriter implements LdapResultWriter
       return "";
     }
 
-    final StringBuffer entryLdif = new StringBuffer();
+    final StringBuilder entryLdif = new StringBuilder();
     final String dn = entry.getDn();
     if (dn != null) {
       if (encodeData(dn)) {

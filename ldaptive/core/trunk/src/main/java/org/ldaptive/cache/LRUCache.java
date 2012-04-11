@@ -44,9 +44,10 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
   private Map<Q, Item> cache;
 
   /** Executor for performing eviction. */
-  private ScheduledExecutorService executor =
+  private final ScheduledExecutorService executor =
     Executors.newSingleThreadScheduledExecutor(
       new ThreadFactory() {
+        @Override
         public Thread newThread(final Runnable r)
         {
           final Thread t = new Thread(r);
@@ -80,6 +81,7 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
     };
 
     final Runnable expire = new Runnable() {
+      @Override
       public void run()
       {
         synchronized (cache) {
@@ -157,10 +159,10 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
   {
 
     /** Ldap result. */
-    private LdapResult result;
+    private final LdapResult result;
 
     /** Timestamp when this item is created. */
-    private long creationTime;
+    private final long creationTime;
 
 
     /**

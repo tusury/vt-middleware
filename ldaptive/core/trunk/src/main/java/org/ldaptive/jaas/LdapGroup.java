@@ -39,10 +39,10 @@ public class LdapGroup implements Group, Serializable
   private static final long serialVersionUID = 2075424472884533862L;
 
   /** LDAP role name. */
-  private String roleName;
+  private final String roleName;
 
   /** Principal members. */
-  private Set<Principal> members = new HashSet<Principal>();
+  private final Set<Principal> members = new HashSet<Principal>();
 
 
   /**
@@ -56,11 +56,8 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /**
-   * Returns the name for this ldap group.
-   *
-   * @return  name
-   */
+  /** {@inheritDoc} */
+  @Override
   public String getName()
   {
     return roleName;
@@ -115,29 +112,15 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /**
-   * Returns whether the supplied object is equal to this ldap group.
-   *
-   * @param  o  to compare
-   *
-   * @return  whether the supplied object is equal
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
-  /**
-   * Returns the hash code for this ldap group.
-   *
-   * @return  hash code
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -145,11 +128,7 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

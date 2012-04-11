@@ -28,5 +28,5 @@ public enum AttributeModificationType {
   REPLACE,
 
   /** remove an attribute. */
-  REMOVE;
+  REMOVE
 }

@@ -43,10 +43,6 @@ public class ProviderConfig extends AbstractConfig
   private ConnectionStrategy connectionStrategy = ConnectionStrategy.DEFAULT;
 
 
-  /** Default constructor. */
-  public ProviderConfig() {}
-
-
   /**
    * Returns the result codes that trigger an operation retry.
    *
@@ -121,11 +117,7 @@ public class ProviderConfig extends AbstractConfig
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -293,7 +293,7 @@ public class Authenticator
     final AuthenticationCriteria criteria)
     throws LdapException
   {
-    LdapEntry entry = null;
+    LdapEntry entry;
     if (conn == null) {
       entry = NOOP_RESOLVER.resolve(conn, criteria);
     } else if (entryResolver != null) {
@@ -313,11 +313,7 @@ public class Authenticator
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

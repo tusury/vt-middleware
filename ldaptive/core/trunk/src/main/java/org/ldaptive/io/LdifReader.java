@@ -73,12 +73,13 @@ public class LdifReader implements LdapResultReader
    *
    * @throws  IOException  if an error occurs using the reader
    */
+  @Override
   public LdapResult read()
     throws IOException
   {
     final LdapResult ldapResult = new LdapResult(sortBehavior);
     final BufferedReader br = new BufferedReader(ldifReader);
-    String line = null;
+    String line;
     int lineCount = 0;
     LdapEntry ldapEntry = null;
     StringBuffer lineValue = new StringBuffer();
@@ -108,7 +109,7 @@ public class LdifReader implements LdapResultReader
           lineValue.append(line.substring(1));
         } else {
           final String s = lineValue.toString();
-          if (s.indexOf(":") != -1) {
+          if (s.contains(":")) {
             boolean isBinary = false;
             boolean isUrl = false;
             final String[] parts = s.split(":", 2);

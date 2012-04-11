@@ -67,10 +67,10 @@ public enum UniversalDERTag implements DERTag {
   }
 
   /** Tag number. */
-  private int tagNo;
+  private final int tagNo;
 
   /** Flag indicating whether value is primitive or constructed. */
-  private boolean constructed;
+  private final boolean constructed;
 
 
   /**
@@ -91,6 +91,7 @@ public enum UniversalDERTag implements DERTag {
    *
    * @return  decimal tag number.
    */
+  @Override
   public int getTagNo()
   {
     return tagNo;
@@ -102,6 +103,7 @@ public enum UniversalDERTag implements DERTag {
    *
    * @return  true if constructed, false if primitive.
    */
+  @Override
   public boolean isConstructed()
   {
     return constructed;

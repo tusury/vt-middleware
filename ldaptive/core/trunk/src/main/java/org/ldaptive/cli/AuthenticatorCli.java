@@ -99,11 +99,8 @@ public class AuthenticatorCli extends AbstractCli
    * @param  line  parsed command line arguments
    *
    * @return  authenticator that has been initialized
-   *
-   * @throws  Exception  if an authenticator cannot be created
    */
   protected Authenticator initAuthenticator(final CommandLine line)
-    throws Exception
   {
     final Authenticator auth = new Authenticator();
     final AuthenticatorPropertySource aSource = new AuthenticatorPropertySource(
@@ -119,12 +116,9 @@ public class AuthenticatorCli extends AbstractCli
    * @param  line  parsed command line arguments
    *
    * @return  authentication request that has been initialized
-   *
-   * @throws  Exception  if an authentication request cannot be created
    */
   protected AuthenticationRequest initAuthenticationRequest(
     final CommandLine line)
-    throws Exception
   {
     final AuthenticationRequest request = new AuthenticationRequest();
     final AuthenticationRequestPropertySource arSource =
@@ -190,7 +184,7 @@ public class AuthenticatorCli extends AbstractCli
     final LdapEntry entry = response.getLdapEntry();
     if (response.getResult()) {
       if (entry != null) {
-        LdapResultWriter writer = null;
+        LdapResultWriter writer;
         if (outputDsmlv1) {
           writer = new Dsmlv1Writer(
             new BufferedWriter(new OutputStreamWriter(System.out)));

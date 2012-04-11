@@ -48,7 +48,7 @@ public abstract class AbstractPropertiesFactory
     for (Map.Entry<String, ?> entry : options.entrySet()) {
       // if property name contains a dot, it isn't an ldaptive property
       // else add the domain to the ldaptive properties
-      if (entry.getKey().indexOf(".") != -1) {
+      if (entry.getKey().contains(".")) {
         p.setProperty(entry.getKey(), entry.getValue().toString());
       } else {
         p.setProperty(
