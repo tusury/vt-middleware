@@ -198,11 +198,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -247,11 +243,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
     }
 
 
-    /**
-     * Returns a string representation of this object.
-     *
-     * @return  count as a string
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {

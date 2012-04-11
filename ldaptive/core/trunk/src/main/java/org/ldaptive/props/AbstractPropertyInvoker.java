@@ -65,9 +65,9 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             method.getName().startsWith("set") &&
               method.getParameterTypes().length == 1) {
             final String mName = method.getName().substring(3);
-            final String pName = new StringBuilder(
-              mName.substring(0, 1).toLowerCase()).append(
-                mName.substring(1, mName.length())).toString();
+            final String pName =
+              mName.substring(0, 1).toLowerCase() +
+              mName.substring(1, mName.length());
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[1] = method;
@@ -79,9 +79,9 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             method.getName().startsWith("get") &&
               method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(3);
-            final String pName = new StringBuilder(
-              mName.substring(0, 1).toLowerCase()).append(
-                mName.substring(1, mName.length())).toString();
+            final String pName =
+              mName.substring(0, 1).toLowerCase() +
+              mName.substring(1, mName.length());
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[0] = method;
@@ -92,7 +92,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
           } else if (
             "initialize".equals(method.getName()) &&
               method.getParameterTypes().length == 0) {
-            final String pName = new StringBuilder(method.getName()).toString();
+            final String pName = method.getName();
             properties.put(pName, new Method[] {method, method});
           }
         }
@@ -123,6 +123,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @throws  IllegalArgumentException  if an invocation exception occurs
    */
+  @Override
   public void setProperty(
     final Object object,
     final String name,
@@ -173,6 +174,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @return  whether the supplied property exists
    */
+  @Override
   public boolean hasProperty(final String name)
   {
     return properties.containsKey(name);
@@ -184,6 +186,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @return  set of property names
    */
+  @Override
   public Set<String> getProperties()
   {
     return Collections.unmodifiableSet(properties.keySet());
@@ -320,7 +323,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    */
   protected Object createTypeFromPropertyValue(final Class<?> c, final String s)
   {
-    Object newObject = null;
+    Object newObject;
     if ("null".equals(s)) {
       newObject = null;
     } else {
@@ -352,11 +355,11 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
     final Class<?> c,
     final String s)
   {
-    Object newObject = null;
+    Object newObject;
     if ("null".equals(s)) {
       newObject = null;
     } else {
-      if (s.indexOf("},") != -1) {
+      if (s.contains("},")) {
         final String[] classes = s.split("\\},");
         newObject = Array.newInstance(c, classes.length);
         for (int i = 0; i < classes.length; i++) {
@@ -405,7 +408,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
     final Class<?> c,
     final String s)
   {
-    Object newObject = null;
+    Object newObject;
     if ("null".equals(s)) {
       newObject = null;
     } else {

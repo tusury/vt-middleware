@@ -38,7 +38,7 @@ public class LdapURL
   private static final String DEFAULT_DELIMITER = " ";
 
   /** URL entries. */
-  private List<Entry> ldapEntries = new ArrayList<Entry>();
+  private final List<Entry> ldapEntries = new ArrayList<Entry>();
 
 
   /**
@@ -62,8 +62,8 @@ public class LdapURL
   {
     final String[] urls = url.split(delimiter);
 
-    for (int i = 0; i < urls.length; i++) {
-      String hostname = urls[i];
+    for (String s : urls) {
+      String hostname = s;
       int port = DEFAULT_LDAP_PORT;
       // remove scheme, if it exists
       if (hostname.startsWith("ldap://")) {
@@ -74,7 +74,7 @@ public class LdapURL
       }
 
       // remove port, if it exist
-      if (hostname.indexOf(":") != -1) {
+      if (hostname.contains(":")) {
         port = Integer.parseInt(
           hostname.substring(hostname.indexOf(":") + 1, hostname.length()));
         hostname = hostname.substring(0, hostname.indexOf(":"));
@@ -144,11 +144,7 @@ public class LdapURL
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -168,10 +164,10 @@ public class LdapURL
   {
 
     /** Hostname of the ldap url. */
-    private String hostname;
+    private final String hostname;
 
     /** Port of the ldap url. */
-    private int port;
+    private final int port;
 
 
     /**
@@ -220,11 +216,7 @@ public class LdapURL
     }
 
 
-    /**
-     * Provides a descriptive string representation of this instance.
-     *
-     * @return  string representation
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {

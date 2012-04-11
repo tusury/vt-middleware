@@ -35,7 +35,7 @@ public class AggregateTrustManager implements X509TrustManager
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Trust managers to invoke. */
-  private X509TrustManager[] trustManagers;
+  private final X509TrustManager[] trustManagers;
 
 
   /**
@@ -96,11 +96,7 @@ public class AggregateTrustManager implements X509TrustManager
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

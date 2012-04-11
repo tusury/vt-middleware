@@ -29,10 +29,10 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
 {
 
   /** Hostnames to allow. */
-  private String[] hostnames;
+  private final String[] hostnames;
 
   /** Hostname verifier to use for trust. */
-  private CertificateHostnameVerifier hostnameVerifier;
+  private final CertificateHostnameVerifier hostnameVerifier;
 
 
   /**

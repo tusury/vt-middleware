@@ -27,7 +27,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
 {
 
   /** Handles loading keystores. */
-  private KeyStoreCredentialReader keyStoreReader =
+  private final KeyStoreCredentialReader keyStoreReader =
     new KeyStoreCredentialReader();
 
   /** Name of the truststore to use for the SSL connection. */

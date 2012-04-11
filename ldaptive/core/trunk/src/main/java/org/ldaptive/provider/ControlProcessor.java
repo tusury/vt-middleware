@@ -38,7 +38,7 @@ public class ControlProcessor<T>
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Control handler. */
-  private ControlHandler<T> controlHandler;
+  private final ControlHandler<T> controlHandler;
 
 
   /**

@@ -101,7 +101,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   public ConnectionFactory<JndiProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    ConnectionFactory<JndiProviderConfig> cf = null;
+    ConnectionFactory<JndiProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       // hostname verification always occurs for startTLS after the handshake
       SSLSocketFactory factory = config.getSslSocketFactory();

@@ -33,7 +33,7 @@ public class SearchFilter
   private String searchFilter;
 
   /** filter parameters. */
-  private Map<String, Object> parameters = new HashMap<String, Object>();
+  private final Map<String, Object> parameters = new HashMap<String, Object>();
 
 
   /** Default constructor. */
@@ -133,7 +133,7 @@ public class SearchFilter
   public String format()
   {
     String s = searchFilter;
-    if (parameters.size() > 0) {
+    if (!parameters.isEmpty()) {
       for (Map.Entry<String, Object> e : parameters.entrySet()) {
         final String encoded = encode(e.getValue());
         if (encoded != null) {
@@ -169,7 +169,7 @@ public class SearchFilter
       }
       str = sb.toString();
     } else {
-      String s = null;
+      String s;
       if (obj instanceof String) {
         s = (String) obj;
       } else {
@@ -191,7 +191,7 @@ public class SearchFilter
   private static String escape(final String s)
   {
     final int len = s.length();
-    final StringBuffer sb = new StringBuffer(len);
+    final StringBuilder sb = new StringBuilder(len);
     char ch;
     for (int i = 0; i < len; i++) {
       ch = s.charAt(i);
@@ -225,21 +225,11 @@ public class SearchFilter
   }
 
 
-  /**
-   * Returns whether the supplied object contains the same data as this filter.
-   * Delegates to {@link #hashCode()} implementation.
-   *
-   * @param  o  to compare for equality
-   *
-   * @return  equality result
-   */
+  /** {@inheritDoc} */
+  @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
@@ -252,11 +242,7 @@ public class SearchFilter
   }
 
 
-  /**
-   * This returns a string representation of this search filter.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

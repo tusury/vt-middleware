@@ -482,21 +482,11 @@ public class SearchRequest extends AbstractRequest
   }
 
 
-  /**
-   * Returns whether the supplied object contains the same data as this request.
-   * Delegates to {@link #hashCode()} implementation.
-   *
-   * @param  o  to compare for equality
-   *
-   * @return  equality result
-   */
+  /** {@inheritDoc} */
+  @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
@@ -523,11 +513,7 @@ public class SearchRequest extends AbstractRequest
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

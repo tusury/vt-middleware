@@ -86,6 +86,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    *
    * @return  future response for this operation
    */
+  @Override
   public Future<Response<S>> execute(final Q request)
   {
     return service.submit(createCallable(operation, request));
@@ -99,6 +100,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    *
    * @return  future responses for this operation
    */
+  @Override
   public Collection<Future<Response<S>>> execute(final Q... requests)
   {
     final List<Future<Response<S>>> results =
@@ -118,6 +120,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    *
    * @return  responses for this operation
    */
+  @Override
   public Collection<Response<S>> executeToCompletion(final Q... requests)
   {
     final CompletionService<Response<S>> cs =
@@ -126,7 +129,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
     for (Q request : requests) {
       cs.submit(createCallable(operation, request));
     }
-    for (int i = 0; i < requests.length; i++) {
+    for (Q request : requests) {
       try {
         results.add(cs.take().get());
       } catch (ExecutionException e) {
@@ -154,6 +157,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
     final Operation<Q, S> operation, final Q request)
   {
     return new Callable<Response<S>>() {
+      @Override
       public Response<S> call()
         throws LdapException
       {

@@ -130,7 +130,7 @@ public final class PooledConnectionFactoryPropertySource
   @Override
   public void initialize()
   {
-    ConnectionPool cp = null;
+    ConnectionPool cp;
     if (poolType == ConnectionPoolType.BLOCKING) {
       cp = new BlockingConnectionPool();
 

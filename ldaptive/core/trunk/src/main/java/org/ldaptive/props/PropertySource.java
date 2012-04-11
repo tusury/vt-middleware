@@ -37,7 +37,7 @@ public interface PropertySource<T>
     POOL("org.ldaptive.pool.");
 
     /** properties domain. */
-    private String domain;
+    private final String domain;
 
 
     /**

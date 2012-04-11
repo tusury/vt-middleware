@@ -49,6 +49,7 @@ public class KeyStoreCredentialReader extends AbstractCredentialReader<KeyStore>
    * @throws  IOException  On IO errors.
    * @throws  GeneralSecurityException  On errors with the credential data.
    */
+  @Override
   public KeyStore read(final InputStream is, final String... params)
     throws IOException, GeneralSecurityException
   {

@@ -28,5 +28,5 @@ public enum QualityOfProtection {
   AUTH_INT,
 
   /** Authentication with integrity and privacy protection. */
-  AUTH_CONF;
+  AUTH_CONF
 }

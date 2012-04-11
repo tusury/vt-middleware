@@ -33,9 +33,6 @@ public abstract class AbstractCompareAuthenticationHandler
   extends AbstractAuthenticationHandler
 {
 
-  /** Maximum digest size. Value is {@value}. */
-  protected static final int DIGEST_SIZE = 256;
-
   /** Default password scheme. Value is {@value}. */
   protected static final String DEFAULT_SCHEME = "SHA";
 
@@ -72,7 +69,7 @@ public abstract class AbstractCompareAuthenticationHandler
     final AuthenticationCriteria criteria)
     throws LdapException
   {
-    byte[] hash = new byte[DIGEST_SIZE];
+    byte[] hash;
     try {
       final MessageDigest md = MessageDigest.getInstance(passwordScheme);
       md.update(criteria.getCredential().getBytes());
@@ -107,6 +104,7 @@ public abstract class AbstractCompareAuthenticationHandler
    *
    * @throws  LdapException  if an error occurs provisioning the connection
    */
+  @Override
   protected abstract Connection getConnection()
     throws LdapException;
 }

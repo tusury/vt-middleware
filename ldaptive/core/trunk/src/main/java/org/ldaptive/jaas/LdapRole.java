@@ -40,7 +40,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   private static final long serialVersionUID = 1578734888816839199L;
 
   /** LDAP role name. */
-  private String roleName;
+  private final String roleName;
 
 
   /**
@@ -54,40 +54,23 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /**
-   * Returns the name for this ldap role.
-   *
-   * @return  role name
-   */
+  /** {@inheritDoc} */
+  @Override
   public String getName()
   {
     return roleName;
   }
 
 
-  /**
-   * Returns whether the supplied object is equal to this ldap role.
-   *
-   * @param  o  to compare
-   *
-   * @return  whether the supplied object is equal
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
-  /**
-   * Returns the hash code for this ldap role.
-   *
-   * @return  hash code
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -95,11 +78,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -108,15 +87,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /**
-   * Principals are compared lexicographically by name. See {@link
-   * Comparable#compareTo(Object)}.
-   *
-   * @param  p  principal to compare
-   *
-   * @return  a negative integer, zero, or a positive integer as this object is
-   * less than, equal to, or greater than the specified object.
-   */
+  /** {@inheritDoc} */
   @Override
   public int compareTo(final Principal p)
   {

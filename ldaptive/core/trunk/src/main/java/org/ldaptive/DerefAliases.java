@@ -40,5 +40,5 @@ public enum DerefAliases {
    * dereference when searching for the starting entry and when searching the
    * entries beneath the starting point.
    */
-  ALWAYS;
+  ALWAYS
 }

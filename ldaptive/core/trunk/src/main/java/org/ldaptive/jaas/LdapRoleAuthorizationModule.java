@@ -15,7 +15,6 @@ package org.ldaptive.jaas;
 
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -24,7 +23,6 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
 import com.sun.security.auth.callback.TextCallbackHandler;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchFilter;
@@ -39,7 +37,6 @@ import org.ldaptive.SearchRequest;
  * @version  $Revision$ $Date$
  */
 public class LdapRoleAuthorizationModule extends AbstractLoginModule
-  implements LoginModule
 {
 
   /** Ldap filter for role searches. */
@@ -71,9 +68,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
   {
     super.initialize(subject, callbackHandler, sharedState, options);
 
-    final Iterator<String> i = options.keySet().iterator();
-    while (i.hasNext()) {
-      final String key = i.next();
+    for (String key : options.keySet()) {
       final String value = (String) options.get(key);
       if ("roleFilter".equalsIgnoreCase(key)) {
         roleFilter = value;
@@ -156,7 +151,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
       searchRequest.setSearchFilter(filter);
 
       final Set<LdapRole> lr = roleResolver.search(searchRequest);
-      if (lr.size() == 0 && noResultsIsError) {
+      if (lr.isEmpty() && noResultsIsError) {
         loginSuccess = false;
         throw new LoginException("Could not find roles using " + roleFilter);
       }
@@ -198,9 +193,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
     final Set<Principal> principals = lc.getSubject().getPrincipals();
     System.out.println("Subject Principal(s): ");
 
-    final Iterator<Principal> i = principals.iterator();
-    while (i.hasNext()) {
-      final Principal p = i.next();
+    for (Principal p : principals) {
       System.out.println("  " + p.getName());
     }
     lc.logout();

@@ -29,7 +29,7 @@ public class Ehcache<Q extends SearchRequest> implements Cache<Q>
 {
 
   /** Underlying ehcache. */
-  protected net.sf.ehcache.Cache cache;
+  protected final net.sf.ehcache.Cache cache;
 
 
   /**

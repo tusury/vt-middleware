@@ -205,7 +205,7 @@ public enum ResultCode {
   TLS_NOT_SUPPORTED(112);
 
   /** underlying error code. */
-  private int code;
+  private final int code;
 
 
   /**

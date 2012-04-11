@@ -32,7 +32,7 @@ public class LRUCacheTest
 {
 
   /** Cache for testing. */
-  private LRUCache<SearchRequest> cache =
+  private final LRUCache<SearchRequest> cache =
     new LRUCache<SearchRequest>(5, 60, 3);
 
 

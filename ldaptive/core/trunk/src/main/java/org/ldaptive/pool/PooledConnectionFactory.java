@@ -75,6 +75,7 @@ public class PooledConnectionFactory implements ConnectionFactory
    *
    * @throws  LdapException  if a connection cannot be retrieved from the pool
    */
+  @Override
   public Connection getConnection()
     throws LdapException
   {
@@ -82,11 +83,7 @@ public class PooledConnectionFactory implements ConnectionFactory
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -240,6 +240,7 @@ public abstract class AbstractSearchDnResolver implements DnResolver
    *
    * @throws  LdapException  if the entry resolution fails
    */
+  @Override
   public String resolve(final String user)
     throws LdapException
   {

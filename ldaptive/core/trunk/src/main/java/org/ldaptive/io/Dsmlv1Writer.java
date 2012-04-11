@@ -81,6 +81,7 @@ public class Dsmlv1Writer implements LdapResultWriter
    *
    * @throws  IOException  if an error occurs using the writer
    */
+  @Override
   public void write(final LdapResult result)
     throws IOException
   {
@@ -160,7 +161,7 @@ public class Dsmlv1Writer implements LdapResultWriter
     final List<Element> attrElements = new ArrayList<Element>();
     for (LdapAttribute attr : attrs) {
       final String attrName = attr.getName();
-      Element attrElement = null;
+      Element attrElement;
       if ("objectclass".equalsIgnoreCase(attrName)) {
         attrElement = createObjectclassElement(doc, attr);
         if (attrElement.hasChildNodes()) {

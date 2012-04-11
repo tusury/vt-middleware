@@ -112,7 +112,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       // if an available connection exists, use it
       // if no available connections and the pool can grow, attempt to create
       // otherwise the pool is full, block until a connection is returned
-      if (available.size() > 0) {
+      if (!available.isEmpty()) {
         try {
           logger.trace("retrieve available connection");
           pc = retrieveAvailableConnection();
@@ -157,7 +157,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         checkOutLock.unlock();
       }
       if (pc == null) {
-        if (available.size() == 0 && active.size() == 0) {
+        if (available.isEmpty() && active.isEmpty()) {
           logger.error("Could not service check out request");
           throw new PoolExhaustedException(
             "Pool is empty and connection creation failed");

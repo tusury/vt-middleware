@@ -93,7 +93,7 @@ public class PasswordPolicyControl extends AbstractControl
     PASSWORD_IN_HISTORY(8);
 
     /** underlying error code. */
-    private int code;
+    private final int code;
 
 
     /**
@@ -291,11 +291,7 @@ public class PasswordPolicyControl extends AbstractControl
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

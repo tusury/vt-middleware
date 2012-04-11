@@ -23,13 +23,13 @@ public class SimpleDERTag implements DERTag
 {
 
   /** Tag number. */
-  private int tagNo;
+  private final int tagNo;
 
   /** Tag name. */
-  private String tagName;
+  private final String tagName;
 
   /** Flag indicating whether value is primitive or constructed. */
-  private boolean constructed;
+  private final boolean constructed;
 
 
   /**

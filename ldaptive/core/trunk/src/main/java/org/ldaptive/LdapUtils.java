@@ -216,6 +216,27 @@ public final class LdapUtils
 
 
   /**
+   * Determines equality of the supplied objects by delegating to their hashCode
+   * methods.
+   *
+   * @param  o1  to test equality of
+   * @param  o2  to test equality of
+   *
+   * @return  whether o1 equals o2
+   */
+  public static boolean areEqual(final Object o1, final Object o2)
+  {
+    if (o1 == null) {
+      return o2 == null;
+    }
+    return
+      o2 != null &&
+      (o1 == o2 ||
+        o1.getClass() == o2.getClass() && o1.hashCode() == o2.hashCode());
+  }
+
+
+  /**
    * Computes a hash code for the supplied objects using the supplied seed. If a
    * Collection type is found it is iterated over.
    *
@@ -304,7 +325,7 @@ public final class LdapUtils
   public static InputStream getResource(final String path)
     throws IOException
   {
-    InputStream is = null;
+    InputStream is;
     if (path.startsWith(CLASSPATH_PREFIX)) {
       is = LdapUtils.class.getResourceAsStream(
         path.substring(CLASSPATH_PREFIX.length()));

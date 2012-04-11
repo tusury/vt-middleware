@@ -29,7 +29,7 @@ public class Credential
   private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
   /** Credential stored as a byte array. */
-  private byte[] bytes;
+  private final byte[] bytes;
 
 
   /**
@@ -98,11 +98,7 @@ public class Credential
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

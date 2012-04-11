@@ -52,6 +52,7 @@ public class PooledSearchRoleResolver extends AbstractSearchRoleResolver
    *
    * @return  connection factory
    */
+  @Override
   public PooledConnectionFactory getConnectionFactory()
   {
     return factory;
@@ -63,6 +64,7 @@ public class PooledSearchRoleResolver extends AbstractSearchRoleResolver
    *
    * @param  cf  connection factory
    */
+  @Override
   public void setConnectionFactory(final PooledConnectionFactory cf)
   {
     factory = cf;
@@ -78,11 +80,7 @@ public class PooledSearchRoleResolver extends AbstractSearchRoleResolver
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

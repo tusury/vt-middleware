@@ -67,7 +67,7 @@ public class EDirectoryAccountState extends AccountState
       "NDS error: (.+) \\((-\\d+)\\)");
 
     /** underlying error code. */
-    private int code;
+    private final int code;
 
 
     /**

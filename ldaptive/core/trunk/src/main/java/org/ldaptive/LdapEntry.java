@@ -153,7 +153,7 @@ public class LdapEntry extends AbstractLdapBean
    */
   public LdapAttribute getAttribute()
   {
-    if (entryAttributes.size() == 0) {
+    if (entryAttributes.isEmpty()) {
       return null;
     }
     return entryAttributes.values().iterator().next();
@@ -285,11 +285,7 @@ public class LdapEntry extends AbstractLdapBean
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

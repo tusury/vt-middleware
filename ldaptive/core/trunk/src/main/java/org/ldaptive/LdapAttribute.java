@@ -217,7 +217,7 @@ public class LdapAttribute extends AbstractLdapBean
   public String getStringValue()
   {
     final Collection<String> values = getStringValues();
-    if (values.size() == 0) {
+    if (values.isEmpty()) {
       return null;
     }
     return values.iterator().next();
@@ -245,7 +245,7 @@ public class LdapAttribute extends AbstractLdapBean
   public byte[] getBinaryValue()
   {
     final Collection<byte[]> values = getBinaryValues();
-    if (values.size() == 0) {
+    if (values.isEmpty()) {
       return null;
     }
     return values.iterator().next();
@@ -300,7 +300,7 @@ public class LdapAttribute extends AbstractLdapBean
   public <T> T getValue(final ValueTranscoder<T> transcoder)
   {
     final Collection<T> t = getValues(transcoder);
-    if (t.size() == 0) {
+    if (t.isEmpty()) {
       return null;
     }
     return t.iterator().next();
@@ -491,11 +491,7 @@ public class LdapAttribute extends AbstractLdapBean
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -559,7 +555,7 @@ public class LdapAttribute extends AbstractLdapBean
       }
     }
 
-    LdapAttribute la = null;
+    LdapAttribute la;
     if (!binaryValues.isEmpty()) {
       la = new LdapAttribute(sb, true);
       la.setName(name);
@@ -749,11 +745,7 @@ public class LdapAttribute extends AbstractLdapBean
     }
 
 
-    /**
-     * Provides a descriptive string representation of this instance.
-     *
-     * @return  string representation
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString()
     {

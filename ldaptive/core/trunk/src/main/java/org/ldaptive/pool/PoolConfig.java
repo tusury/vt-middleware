@@ -74,10 +74,6 @@ public class PoolConfig extends AbstractConfig
   private long expirationTime = DEFAULT_EXPIRATION_TIME;
 
 
-  /** Default constructor. */
-  public PoolConfig() {}
-
-
   /**
    * Returns the min pool size. Default value is {@link #DEFAULT_MIN_POOL_SIZE}.
    * This value represents the size of the pool after a prune has occurred.
@@ -292,11 +288,7 @@ public class PoolConfig extends AbstractConfig
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

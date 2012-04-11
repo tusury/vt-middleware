@@ -15,7 +15,6 @@ package org.ldaptive.jaas;
 
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -24,7 +23,6 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
 import com.sun.security.auth.callback.TextCallbackHandler;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
@@ -39,7 +37,7 @@ import org.ldaptive.auth.Authenticator;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LdapLoginModule extends AbstractLoginModule implements LoginModule
+public class LdapLoginModule extends AbstractLoginModule
 {
 
   /** User attribute to add to role data. */
@@ -68,9 +66,7 @@ public class LdapLoginModule extends AbstractLoginModule implements LoginModule
 
     super.initialize(subject, callbackHandler, sharedState, options);
 
-    final Iterator<String> i = options.keySet().iterator();
-    while (i.hasNext()) {
-      final String key = i.next();
+    for (String key : options.keySet()) {
       final String value = (String) options.get(key);
       if ("userRoleAttribute".equalsIgnoreCase(key)) {
         if ("*".equals(value)) {
@@ -209,9 +205,7 @@ public class LdapLoginModule extends AbstractLoginModule implements LoginModule
     final Set<Principal> principals = lc.getSubject().getPrincipals();
     System.out.println("Subject Principal(s): ");
 
-    final Iterator<Principal> i = principals.iterator();
-    while (i.hasNext()) {
-      final Principal p = i.next();
+    for (Principal p : principals) {
       System.out.println("  " + p);
     }
     lc.logout();

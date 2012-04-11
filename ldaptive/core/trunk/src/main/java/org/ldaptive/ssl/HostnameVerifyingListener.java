@@ -36,7 +36,7 @@ public class HostnameVerifyingListener
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Hostname verifier invoked when the handshake completes. */
-  private HostnameVerifier hostnameVerifier;
+  private final HostnameVerifier hostnameVerifier;
 
   /** Whether this listener has been invoked. */
   private boolean invoked;

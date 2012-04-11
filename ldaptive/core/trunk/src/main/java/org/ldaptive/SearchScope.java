@@ -28,5 +28,5 @@ public enum SearchScope {
   ONELEVEL,
 
   /** subtree search. */
-  SUBTREE;
+  SUBTREE
 }

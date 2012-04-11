@@ -50,11 +50,7 @@ public class ManageDsaITControl extends AbstractControl
   }
 
 
-  /**
-   * Returns the hash code for this object.
-   *
-   * @return  hash code
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -63,11 +59,7 @@ public class ManageDsaITControl extends AbstractControl
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

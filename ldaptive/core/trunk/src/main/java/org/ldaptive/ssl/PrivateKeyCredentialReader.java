@@ -45,6 +45,7 @@ public class PrivateKeyCredentialReader
    * @throws  IOException  On IO errors.
    * @throws  GeneralSecurityException  On errors with the credential data.
    */
+  @Override
   public PrivateKey read(final InputStream is, final String... params)
     throws IOException, GeneralSecurityException
   {

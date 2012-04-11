@@ -94,6 +94,7 @@ public class Dsmlv1Reader implements LdapResultReader
    *
    * @throws  IOException  if an error occurs using the reader
    */
+  @Override
   public LdapResult read()
     throws IOException
   {
@@ -124,9 +125,7 @@ public class Dsmlv1Reader implements LdapResultReader
       final NodeList nodes = doc.getElementsByTagName("dsml:entry");
       for (int i = 0; i < nodes.getLength(); i++) {
         final LdapEntry le = createLdapEntry((Element) nodes.item(i));
-        if (result != null) {
-          result.addEntry(le);
-        }
+        result.addEntry(le);
       }
     }
 

@@ -56,30 +56,15 @@ public abstract class AbstractLdapBean implements Serializable
   }
 
 
-  /**
-   * Returns whether the supplied object contains the same data as this bean.
-   * Delegates to {@link #hashCode()} implementation.
-   *
-   * @param  o  to compare for equality
-   *
-   * @return  equality result
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
-  /**
-   * Returns the hash code for this object.
-   *
-   * @return  hash code
-   */
+  /** {@inheritDoc} */
   @Override
   public abstract int hashCode();
 }

@@ -29,7 +29,7 @@ public final class SimplePropertySource<T> extends AbstractPropertySource<T>
 {
 
   /** Invoker for simple properties. */
-  private SimplePropertyInvoker invoker;
+  private final SimplePropertyInvoker invoker;
 
 
   /**

@@ -52,6 +52,7 @@ public class SearchRoleResolver extends AbstractSearchRoleResolver
    *
    * @return  connection factory
    */
+  @Override
   public ConnectionFactory getConnectionFactory()
   {
     return factory;
@@ -63,6 +64,7 @@ public class SearchRoleResolver extends AbstractSearchRoleResolver
    *
    * @param  cf  connection factory
    */
+  @Override
   public void setConnectionFactory(final ConnectionFactory cf)
   {
     factory = cf;
@@ -76,6 +78,7 @@ public class SearchRoleResolver extends AbstractSearchRoleResolver
    *
    * @throws  LdapException  if an error occurs opening the connection
    */
+  @Override
   protected Connection getConnection()
     throws LdapException
   {
@@ -85,11 +88,7 @@ public class SearchRoleResolver extends AbstractSearchRoleResolver
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

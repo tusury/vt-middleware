@@ -132,7 +132,7 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
       tmf.init(ks);
       tm = tmf.getTrustManagers();
     }
-    TrustManager[] aggregate = null;
+    TrustManager[] aggregate;
     if (tm == null) {
       aggregate = super.getTrustManagers() != null ?
         aggregateTrustManagers(super.getTrustManagers()) : null;

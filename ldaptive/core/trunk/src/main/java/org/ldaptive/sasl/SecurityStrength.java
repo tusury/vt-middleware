@@ -28,5 +28,5 @@ public enum SecurityStrength {
   MEDIUM,
 
   /** Low security strength. */
-  LOW;
+  LOW
 }

@@ -35,10 +35,10 @@ public class LdapPrincipal
   private static final long serialVersionUID = 762147223399104252L;
 
   /** LDAP user name. */
-  private String ldapName;
+  private final String ldapName;
 
   /** User ldap entry. */
-  private LdapEntry ldapEntry;
+  private final LdapEntry ldapEntry;
 
 
   /**
@@ -54,11 +54,8 @@ public class LdapPrincipal
   }
 
 
-  /**
-   * Returns the name for this ldap principal.
-   *
-   * @return  ldap principal name
-   */
+  /** {@inheritDoc} */
+  @Override
   public String getName()
   {
     return ldapName;
@@ -76,29 +73,15 @@ public class LdapPrincipal
   }
 
 
-  /**
-   * Returns whether the supplied object is equal to this ldap principal.
-   *
-   * @param  o  to compare
-   *
-   * @return  whether the supplied object is equal
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
-  /**
-   * Returns the hash code for this ldap principal.
-   *
-   * @return  hash code
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -106,11 +89,7 @@ public class LdapPrincipal
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -124,15 +103,7 @@ public class LdapPrincipal
   }
 
 
-  /**
-   * Principals are compared lexicographically by name. See {@link
-   * Comparable#compareTo(Object)}.
-   *
-   * @param  p  principal to compare
-   *
-   * @return  a negative integer, zero, or a positive integer as this object is
-   * less than, equal to, or greater than the specified object.
-   */
+  /** {@inheritDoc} */
   @Override
   public int compareTo(final Principal p)
   {

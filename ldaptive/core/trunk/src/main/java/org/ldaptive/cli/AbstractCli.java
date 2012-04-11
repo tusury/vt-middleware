@@ -49,7 +49,7 @@ public abstract class AbstractCli
   protected static final String OPT_PROVIDER_PROPERTIES = "providerProperties";
 
   /** command line options. */
-  protected Options options = new Options();
+  protected final Options options = new Options();
 
   /** whether to output dsml version 1, the default is ldif. */
   protected boolean outputDsmlv1;
@@ -103,11 +103,8 @@ public abstract class AbstractCli
    * @param  line  parsed command line arguments
    *
    * @return  connection factory that has been initialized
-   *
-   * @throws  Exception  if a connection config cannot be created
    */
   protected ConnectionFactory initConnectionFactory(final CommandLine line)
-    throws Exception
   {
     final DefaultConnectionFactory factory = new DefaultConnectionFactory();
     final DefaultConnectionFactoryPropertySource cfSource =
@@ -168,7 +165,7 @@ public abstract class AbstractCli
       try {
         System.out.println();
 
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
           System.out.println(line);
         }
@@ -205,7 +202,7 @@ public abstract class AbstractCli
         final BufferedReader reader = new BufferedReader(
           new InputStreamReader(in));
         try {
-          String line = null;
+          String line;
           while ((line = reader.readLine()) != null) {
             final String[] s = line.split(":");
             if (s.length > 1) {

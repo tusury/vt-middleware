@@ -54,7 +54,7 @@ public class JndiUtils
   public static final boolean DEFAULT_IGNORE_CASE = true;
 
   /** Ldap result sort behavior. */
-  private SortBehavior sortBehavior;
+  private final SortBehavior sortBehavior;
 
 
   /** Default constructor. */
@@ -255,7 +255,7 @@ public class JndiUtils
    */
   public static String getQualityOfProtection(final QualityOfProtection qop)
   {
-    String s = null;
+    String s;
     switch (qop) {
 
     case AUTH:
@@ -287,7 +287,7 @@ public class JndiUtils
    */
   public static String getSecurityStrength(final SecurityStrength ss)
   {
-    String s = null;
+    String s;
     switch (ss) {
 
     case HIGH:
@@ -320,7 +320,7 @@ public class JndiUtils
    */
   public static String getAuthenticationType(final Mechanism m)
   {
-    String s = null;
+    String s;
     switch (m) {
 
     case EXTERNAL:

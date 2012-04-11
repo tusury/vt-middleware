@@ -31,5 +31,5 @@ public enum Mechanism {
   CRAM_MD5,
 
   /** Kerberos authentication type. */
-  GSSAPI;
+  GSSAPI
 }

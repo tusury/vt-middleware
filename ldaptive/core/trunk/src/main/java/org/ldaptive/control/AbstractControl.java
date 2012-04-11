@@ -13,6 +13,8 @@
 */
 package org.ldaptive.control;
 
+import org.ldaptive.LdapUtils;
+
 /**
  * Base class for ldap controls.
  *
@@ -70,22 +72,11 @@ public abstract class AbstractControl implements Control
   }
 
 
-  /**
-   * Returns whether the supplied object contains the same data as this control.
-   * Delegates to {@link #hashCode()} implementation.
-   *
-   * @param  o  to compare for equality
-   *
-   * @return  equality result
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 

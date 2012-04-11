@@ -76,7 +76,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
     try {
       // if an available connection exists, use it
       // if no available connections, attempt to create
-      if (available.size() > 0) {
+      if (!available.isEmpty()) {
         try {
           logger.trace("retrieve available connection");
           pc = retrieveAvailableConnection();
@@ -94,7 +94,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
       pc = createActiveConnection();
       logger.trace("created new active connection: {}", pc);
       if (pc == null) {
-        if (available.size() == 0 && active.size() == 0) {
+        if (available.isEmpty() && active.isEmpty()) {
           logger.error("Could not service check out request");
           throw new PoolExhaustedException(
             "Pool is empty and connection creation failed");

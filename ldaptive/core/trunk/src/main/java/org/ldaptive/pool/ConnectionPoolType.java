@@ -25,5 +25,5 @@ public enum ConnectionPoolType {
   BLOCKING,
 
   /** soft limit. */
-  SOFTLIMIT;
+  SOFTLIMIT
 }

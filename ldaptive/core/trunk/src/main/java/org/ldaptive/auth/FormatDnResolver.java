@@ -117,6 +117,7 @@ public class FormatDnResolver implements DnResolver
    *
    * @throws  LdapException  never
    */
+  @Override
   public String resolve(final String user)
     throws LdapException
   {

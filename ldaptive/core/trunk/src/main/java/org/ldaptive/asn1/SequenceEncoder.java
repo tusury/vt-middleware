@@ -29,7 +29,7 @@ public class SequenceEncoder extends AbstractDERType implements DEREncoder
   public static final int ASN_CONSTRUCTED = 0x20;
 
   /** Encoders in this sequence. */
-  private DEREncoder[] derEncoders;
+  private final DEREncoder[] derEncoders;
 
 
   /**

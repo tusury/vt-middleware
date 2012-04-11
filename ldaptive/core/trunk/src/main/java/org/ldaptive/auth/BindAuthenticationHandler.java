@@ -84,7 +84,7 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
     final AuthenticationCriteria criteria)
     throws LdapException
   {
-    AuthenticationHandlerResponse response = null;
+    AuthenticationHandlerResponse response;
     final BindRequest request = new BindRequest(
       criteria.getDn(),
       criteria.getCredential());
@@ -114,11 +114,7 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

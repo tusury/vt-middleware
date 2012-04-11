@@ -16,7 +16,6 @@ package org.ldaptive.ssl;
 import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 
 /**
  * TLSSocketFactory implementation that uses a thread local variable to store
@@ -90,16 +89,14 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
       sf.setSslConfig(SslConfig.newSslConfig(config));
       if (sf.getSslConfig().getTrustManagers() == null) {
         sf.getSslConfig().setTrustManagers(
-          new TrustManager[]{
-            new HostnameVerifyingTrustManager(
-              new DefaultHostnameVerifier(), names), });
+          new HostnameVerifyingTrustManager(
+            new DefaultHostnameVerifier(), names));
       }
     } else {
       sf.setSslConfig(
         new SslConfig(
-          new TrustManager[]{
-            new HostnameVerifyingTrustManager(
-              new DefaultHostnameVerifier(), names), }));
+          new HostnameVerifyingTrustManager(
+            new DefaultHostnameVerifier(), names)));
     }
     try {
       sf.initialize();
@@ -110,11 +107,7 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {

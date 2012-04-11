@@ -14,7 +14,6 @@
 package org.ldaptive.jaas;
 
 import java.security.Principal;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.Subject;
@@ -23,7 +22,6 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
 import com.sun.security.auth.callback.TextCallbackHandler;
 import org.ldaptive.LdapException;
 import org.ldaptive.auth.Authenticator;
@@ -37,7 +35,6 @@ import org.ldaptive.auth.Authenticator;
  * @version  $Revision$ $Date$
  */
 public class LdapDnAuthorizationModule extends AbstractLoginModule
-  implements LoginModule
 {
 
   /** Whether failing to find a DN should raise an exception. */
@@ -60,9 +57,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
   {
     super.initialize(subject, callbackHandler, sharedState, options);
 
-    final Iterator<String> i = options.keySet().iterator();
-    while (i.hasNext()) {
-      final String key = i.next();
+    for (String key : options.keySet()) {
       final String value = (String) options.get(key);
       if ("noResultsIsError".equalsIgnoreCase(key)) {
         noResultsIsError = Boolean.valueOf(value);
@@ -161,9 +156,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
     final Set<Principal> principals = lc.getSubject().getPrincipals();
     System.out.println("Subject Principal(s): ");
 
-    final Iterator<Principal> i = principals.iterator();
-    while (i.hasNext()) {
-      final Principal p = i.next();
+    for (Principal p : principals) {
       System.out.println("  " + p.getName());
     }
     lc.logout();

@@ -92,7 +92,7 @@ public class ConfigTest
         try {
           final Class<?> type = method.getParameterTypes()[0];
           if (type.isPrimitive()) {
-            method.invoke(config, new Object[] {PRIMITIVE_TYPES.get(type)});
+            method.invoke(config, PRIMITIVE_TYPES.get(type));
           } else {
             method.invoke(config, new Object[] {null});
           }

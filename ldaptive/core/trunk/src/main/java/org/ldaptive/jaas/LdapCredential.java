@@ -32,7 +32,7 @@ public class LdapCredential implements Serializable
   private static final long serialVersionUID = 1965949592374728021L;
 
   /** LDAP credential. */
-  private Object credential;
+  private final Object credential;
 
 
   /**
@@ -57,29 +57,15 @@ public class LdapCredential implements Serializable
   }
 
 
-  /**
-   * Returns whether the supplied object is equal to this ldap credential.
-   *
-   * @param  o  to compare
-   *
-   * @return  whether the supplied object is equal
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
-    if (o == null) {
-      return false;
-    }
-    return
-      o == this || (getClass() == o.getClass() && o.hashCode() == hashCode());
+    return LdapUtils.areEqual(this, o);
   }
 
 
-  /**
-   * Returns the hash code for this ldap credential.
-   *
-   * @return  hash code
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -87,11 +73,7 @@ public class LdapCredential implements Serializable
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
