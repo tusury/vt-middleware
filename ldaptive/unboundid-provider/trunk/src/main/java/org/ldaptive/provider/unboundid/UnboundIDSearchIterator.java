@@ -165,7 +165,7 @@ public class UnboundIDSearchIterator implements SearchIterator
       retAttrs = new String[] {"1.1"};
     }
 
-    final SearchRequest unboundIdSr = new SearchRequest(
+    return new SearchRequest(
       listener,
       sr.getBaseDn(),
       getSearchScope(sr.getSearchScope()),
@@ -176,7 +176,6 @@ public class UnboundIDSearchIterator implements SearchIterator
       sr.getSearchFilter() != null ?
         sr.getSearchFilter().format() : null,
       retAttrs);
-    return unboundIdSr;
   }
 
 

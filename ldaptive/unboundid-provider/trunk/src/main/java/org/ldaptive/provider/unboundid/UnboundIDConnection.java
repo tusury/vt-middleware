@@ -13,15 +13,14 @@
 */
 package org.ldaptive.provider.unboundid;
 
-import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.BindResult;
 import com.unboundid.ldap.sdk.CRAMMD5BindRequest;
 import com.unboundid.ldap.sdk.CompareResult;
 import com.unboundid.ldap.sdk.DIGESTMD5BindRequest;
 import com.unboundid.ldap.sdk.DN;
+import com.unboundid.ldap.sdk.EXTERNALBindRequest;
 import com.unboundid.ldap.sdk.GSSAPIBindRequest;
 import com.unboundid.ldap.sdk.GSSAPIBindRequestProperties;
-import com.unboundid.ldap.sdk.GenericSASLBindRequest;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.LDAPResult;
@@ -109,7 +108,7 @@ public class UnboundIDConnection implements Connection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -135,7 +134,7 @@ public class UnboundIDConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      SimpleBindRequest sbr = null;
+      SimpleBindRequest sbr;
       if (request.getControls() != null) {
         sbr = new SimpleBindRequest(
           "",
@@ -180,7 +179,7 @@ public class UnboundIDConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      SimpleBindRequest sbr = null;
+      SimpleBindRequest sbr;
       if (request.getControls() != null) {
         sbr = new SimpleBindRequest(
           new DN(request.getDn()),
@@ -227,15 +226,13 @@ public class UnboundIDConnection implements Connection
   {
     Response<Void> response = null;
     try {
-      SASLBindRequest sbr = null;
+      SASLBindRequest sbr;
       final SaslConfig sc = request.getSaslConfig();
       switch (sc.getMechanism()) {
 
       case EXTERNAL:
-        sbr = new GenericSASLBindRequest(
-          "",
-          "EXTERNAL",
-          new ASN1OctetString(""),
+        sbr = new EXTERNALBindRequest(
+          sc.getAuthorizationId(),
           config.getControlProcessor().processRequestControls(
             request.getControls()));
          break;
@@ -249,7 +246,7 @@ public class UnboundIDConnection implements Connection
         }
         sbr = new DIGESTMD5BindRequest(
           request.getDn(),
-          sc.getAuthorizationId(),
+          "".equals(sc.getAuthorizationId()) ? null : sc.getAuthorizationId(),
           request.getCredential() != null ? request.getCredential().getBytes()
                                           : null,
           realm,
@@ -350,7 +347,7 @@ public class UnboundIDConnection implements Connection
   {
     Response<Boolean> response = null;
     try {
-      com.unboundid.ldap.sdk.CompareRequest cr = null;
+      com.unboundid.ldap.sdk.CompareRequest cr;
       if (request.getAttribute().isBinary()) {
         cr = new com.unboundid.ldap.sdk.CompareRequest(
           new DN(request.getDn()),

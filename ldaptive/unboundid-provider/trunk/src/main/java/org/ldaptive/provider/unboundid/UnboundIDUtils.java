@@ -97,7 +97,7 @@ public class UnboundIDUtils
    */
   public Attribute fromLdapAttribute(final LdapAttribute la)
   {
-    Attribute attribute = null;
+    Attribute attribute;
     if (la.isBinary()) {
       attribute = new Attribute(
         la.getName(),
