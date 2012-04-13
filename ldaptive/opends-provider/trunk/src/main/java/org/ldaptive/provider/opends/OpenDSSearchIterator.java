@@ -321,7 +321,7 @@ public class OpenDSSearchIterator implements SearchIterator
   {
 
     /** Search results. */
-    private Queue<SearchResultEntry> responseQueue =
+    private final Queue<SearchResultEntry> responseQueue =
       new ConcurrentLinkedQueue<SearchResultEntry>();
 
     /** Search result. */

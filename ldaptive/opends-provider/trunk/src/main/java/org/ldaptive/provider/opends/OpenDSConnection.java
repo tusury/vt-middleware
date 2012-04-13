@@ -103,7 +103,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -232,6 +232,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       throw new UnsupportedOperationException("SASL External not supported");
       /*
       sbr = Requests.newExternalSASLBindRequest();
+      ((ExternalSASLBindRequest) sbr).setAuthorizationID(
+        sc.getAuthorizationId());
       break;
       */
 
@@ -341,7 +343,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
    */
   protected static String getQualityOfProtection(final QualityOfProtection qop)
   {
-    String name = null;
+    String name;
     switch (qop) {
 
     case AUTH:
@@ -415,7 +417,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     Response<Boolean> response = null;
     try {
       final OpenDSUtils util = new OpenDSUtils();
-      org.opends.sdk.requests.CompareRequest cr = null;
+      org.opends.sdk.requests.CompareRequest cr;
       if (request.getAttribute().isBinary()) {
         cr = Requests.newCompareRequest(
           request.getDn(),
