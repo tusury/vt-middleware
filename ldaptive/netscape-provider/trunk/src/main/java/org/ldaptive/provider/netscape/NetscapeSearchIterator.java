@@ -177,7 +177,7 @@ public class NetscapeSearchIterator implements SearchIterator
     cons.setDereference(getDereference(request.getDerefAliases()));
     cons.setMaxResults((int) request.getSizeLimit());
     cons.setReferrals(
-      ReferralBehavior.FOLLOW == request.getReferralBehavior() ? true : false);
+      ReferralBehavior.FOLLOW == request.getReferralBehavior());
     cons.setServerControls(
       config.getControlProcessor().processRequestControls(
         request.getControls()));
@@ -300,8 +300,7 @@ public class NetscapeSearchIterator implements SearchIterator
         ProviderUtils.throwOperationException(
           config.getOperationRetryResultCodes(),
           e,
-          e instanceof LDAPReferralException ?
-            ResultCode.REFERRAL.value() : e.getLDAPResultCode(),
+          ResultCode.REFERRAL.value(),
           null,
           true);
       }

@@ -77,7 +77,7 @@ public class NetscapeConnectionFactory
     NetscapeConnection conn = null;
     boolean closeConn = false;
     try {
-      LDAPConnection lc = null;
+      LDAPConnection lc;
       if (socketFactory != null) {
         lc = new LDAPConnection(socketFactory);
       } else {
