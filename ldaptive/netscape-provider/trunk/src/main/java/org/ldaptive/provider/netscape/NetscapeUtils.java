@@ -130,7 +130,7 @@ public class NetscapeUtils
   public LdapAttribute toLdapAttribute(final LDAPAttribute a)
   {
     boolean isBinary = false;
-    if (a.getName().indexOf(";binary") != -1) {
+    if (a.getName().contains(";binary")) {
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getName())) {
       isBinary = true;
@@ -210,10 +210,10 @@ public class NetscapeUtils
     final AttributeModification[] am)
   {
     final LDAPModificationSet mods = new LDAPModificationSet();
-    for (int i = 0; i < am.length; i++) {
+    for (AttributeModification anAm : am) {
       mods.add(
-        getModificationType(am[i].getAttributeModificationType()),
-        fromLdapAttribute(am[i].getAttribute()));
+        getModificationType(anAm.getAttributeModificationType()),
+        fromLdapAttribute(anAm.getAttribute()));
     }
     return mods;
   }

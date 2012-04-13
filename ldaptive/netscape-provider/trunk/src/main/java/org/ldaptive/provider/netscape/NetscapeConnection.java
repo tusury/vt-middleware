@@ -130,7 +130,7 @@ public class NetscapeConnection implements Connection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -335,7 +335,7 @@ public class NetscapeConnection implements Connection
         getLDAPConstraints(request));
       final LDAPResponse r = listener.getResponse();
       response = new Response<Boolean>(
-        ResultCode.COMPARE_TRUE.value() == r.getResultCode() ? true : false,
+        ResultCode.COMPARE_TRUE.value() == r.getResultCode(),
         ResultCode.valueOf(r.getResultCode()),
         config.getControlProcessor().processResponseControls(
           request.getControls(),

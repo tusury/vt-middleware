@@ -51,14 +51,12 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
     if (cc.getUseSSL() && factory == null) {
       factory = getHostnameVerifierSocketFactory(cc);
     }
-    final ConnectionFactory<NetscapeProviderConfig> cf =
-      new NetscapeConnectionFactory(
-        cc.getLdapUrl(),
-        config,
-        factory,
-        (int) cc.getConnectTimeout(),
-        (int) cc.getResponseTimeout());
-    return cf;
+    return new NetscapeConnectionFactory(
+      cc.getLdapUrl(),
+      config,
+      factory,
+      (int) cc.getConnectTimeout(),
+      (int) cc.getResponseTimeout());
   }
 
 
@@ -110,7 +108,7 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
   {
 
     /** SSL socket factory to delegate to. */
-    private SocketFactory factory;
+    private final SocketFactory factory;
 
 
     /**
