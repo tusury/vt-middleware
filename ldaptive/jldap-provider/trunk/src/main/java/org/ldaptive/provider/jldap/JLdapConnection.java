@@ -41,6 +41,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
+import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +111,7 @@ public class JLdapConnection implements Connection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -213,7 +214,8 @@ public class JLdapConnection implements Connection
     throws LdapException
   {
     try {
-      switch (request.getSaslConfig().getMechanism()) {
+      final SaslConfig sc = request.getSaslConfig();
+      switch (sc.getMechanism()) {
 
       case EXTERNAL:
         throw new UnsupportedOperationException("SASL External not supported");
@@ -221,7 +223,7 @@ public class JLdapConnection implements Connection
          * see http://tinyurl.com/7ojdzlz
          * connection.bind(
          * (String) null,
-         * (String) null,
+         * sc.getAuthorizationId(),
          * new String[] {"EXTERNAL"},
          * null,
          * (Object) null);
@@ -248,8 +250,7 @@ public class JLdapConnection implements Connection
 
       default:
         throw new IllegalArgumentException(
-          "Unknown SASL authentication mechanism: " +
-          request.getSaslConfig().getMechanism());
+          "Unknown SASL authentication mechanism: " + sc.getMechanism());
       }
     } catch (LDAPException e) {
       ProviderUtils.throwOperationException(
@@ -311,7 +312,7 @@ public class JLdapConnection implements Connection
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = new Response<Boolean>(
-        lr.getResultCode() == ResultCode.COMPARE_TRUE.value() ? true : false,
+        lr.getResultCode() == ResultCode.COMPARE_TRUE.value(),
         ResultCode.valueOf(lr.getResultCode()),
         config.getControlProcessor().processResponseControls(
           request.getControls(),
@@ -459,10 +460,10 @@ public class JLdapConnection implements Connection
   {
 
     /** user name. */
-    private String user;
+    private final String user;
 
     /** password. */
-    private char[] pass;
+    private final char[] pass;
 
 
     /**
@@ -476,6 +477,8 @@ public class JLdapConnection implements Connection
       user = u;
       if (p != null) {
         pass = p.toCharArray();
+      } else {
+        pass = null;
       }
     }
 

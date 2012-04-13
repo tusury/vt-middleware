@@ -47,7 +47,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
   public ConnectionFactory<JLdapProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    ConnectionFactory<JLdapProviderConfig> cf = null;
+    ConnectionFactory<JLdapProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = new JLdapTlsConnectionFactory(
         cc.getLdapUrl(),
