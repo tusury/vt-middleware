@@ -16,7 +16,6 @@ package org.ldaptive.provider.opends;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
@@ -51,9 +50,7 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
     if (options == null) {
       options = getDefaultLDAPOptions(cc);
     }
-    final ConnectionFactory<OpenDSProviderConfig> cf =
-      new OpenDSConnectionFactory(cc.getLdapUrl(), config, options);
-    return cf;
+    return new OpenDSConnectionFactory(cc.getLdapUrl(), config, options);
   }
 
 
@@ -67,8 +64,8 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
    */
   protected SSLContext getHostnameVerifierSSLContext(final ConnectionConfig cc)
   {
-    SSLContext sslContext = null;
-    SSLContextInitializer contextInit = null;
+    SSLContext sslContext;
+    SSLContextInitializer contextInit;
     if (cc.getSslConfig() != null &&
         cc.getSslConfig().getCredentialConfig() != null) {
       try {
@@ -87,9 +84,8 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
     } else {
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
-        new TrustManager[]{
-          new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
+        new HostnameVerifyingTrustManager(
+          new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()));
     }
     try {
       sslContext = contextInit.initSSLContext("TLS");
@@ -110,7 +106,7 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
   protected LDAPOptions getDefaultLDAPOptions(final ConnectionConfig cc)
   {
     final LDAPOptions options = new LDAPOptions();
-    SSLContext sslContext = null;
+    SSLContext sslContext;
     if (cc.getUseStartTLS() || cc.getUseSSL()) {
       sslContext = getHostnameVerifierSSLContext(cc);
       options.setSSLContext(sslContext);

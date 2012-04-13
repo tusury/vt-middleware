@@ -185,7 +185,7 @@ public class OpenDSUtils
    */
   public Attribute fromLdapAttribute(final LdapAttribute la)
   {
-    Attribute attribute = null;
+    Attribute attribute;
     if (la.isBinary()) {
       attribute = new LinkedAttribute(
         la.getName(), (Object[]) fromBinaryValues(la.getBinaryValues()));
@@ -207,7 +207,7 @@ public class OpenDSUtils
   public LdapAttribute toLdapAttribute(final Attribute a)
   {
     boolean isBinary = false;
-    if (a.getAttributeDescriptionAsString().indexOf(";binary") != -1) {
+    if (a.getAttributeDescriptionAsString().contains(";binary")) {
       isBinary = true;
     } else if (binaryAttrs != null &&
                binaryAttrs.contains(a.getAttributeDescriptionAsString())) {
@@ -220,7 +220,7 @@ public class OpenDSUtils
       isBinary = "1.3.6.1.4.1.1466.115.121.1.5".equals(oid);
     }
 
-    LdapAttribute la = null;
+    LdapAttribute la;
     if (isBinary) {
       la = new LdapAttribute(sortBehavior, true);
       la.setName(a.getAttributeDescriptionAsString());
