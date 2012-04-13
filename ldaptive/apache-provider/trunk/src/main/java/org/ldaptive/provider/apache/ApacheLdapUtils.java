@@ -159,7 +159,7 @@ public class ApacheLdapUtils
   public LdapAttribute toLdapAttribute(final Attribute a)
   {
     boolean isBinary = false;
-    if (a.getId().indexOf(";binary") != -1) {
+    if (a.getId().contains(";binary")) {
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getUpId())) {
       isBinary = true;

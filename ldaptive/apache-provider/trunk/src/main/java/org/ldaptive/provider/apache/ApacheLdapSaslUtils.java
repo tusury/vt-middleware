@@ -65,8 +65,7 @@ public final class ApacheLdapSaslUtils
       request.setAuthorizationId(config.getAuthorizationId());
     }
     if (config.getMutualAuthentication() != null) {
-      request.setMutualAuthentication(
-        config.getMutualAuthentication().booleanValue());
+      request.setMutualAuthentication(config.getMutualAuthentication());
     }
     if (config.getQualityOfProtection() != null) {
       request.setQualityOfProtection(
@@ -111,8 +110,7 @@ public final class ApacheLdapSaslUtils
       request.setAuthorizationId(config.getAuthorizationId());
     }
     if (config.getMutualAuthentication() != null) {
-      request.setMutualAuthentication(
-        config.getMutualAuthentication().booleanValue());
+      request.setMutualAuthentication(config.getMutualAuthentication());
     }
     if (config.getQualityOfProtection() != null) {
       request.setQualityOfProtection(
@@ -151,8 +149,7 @@ public final class ApacheLdapSaslUtils
       request.setAuthorizationId(config.getAuthorizationId());
     }
     if (config.getMutualAuthentication() != null) {
-      request.setMutualAuthentication(
-        config.getMutualAuthentication().booleanValue());
+      request.setMutualAuthentication(config.getMutualAuthentication());
     }
     if (config.getQualityOfProtection() != null) {
       request.setQualityOfProtection(
@@ -198,7 +195,7 @@ public final class ApacheLdapSaslUtils
    */
   protected static SaslQoP getQualityOfProtection(final QualityOfProtection qop)
   {
-    SaslQoP e = null;
+    SaslQoP e;
     switch (qop) {
 
     case AUTH:
@@ -231,7 +228,7 @@ public final class ApacheLdapSaslUtils
   protected static SaslSecurityStrength getSecurityStrength(
     final SecurityStrength ss)
   {
-    SaslSecurityStrength e = null;
+    SaslSecurityStrength e;
     switch (ss) {
 
     case HIGH:
