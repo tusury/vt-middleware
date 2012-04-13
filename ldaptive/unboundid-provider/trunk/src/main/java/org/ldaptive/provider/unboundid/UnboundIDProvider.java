@@ -16,7 +16,6 @@ package org.ldaptive.provider.unboundid;
 import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
@@ -71,7 +70,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
     if (options == null) {
       options = getDefaultLDAPConnectionOptions(cc);
     }
-    ConnectionFactory<UnboundIDProviderConfig> cf = null;
+    ConnectionFactory<UnboundIDProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = new UnboundIDStartTLSConnectionFactory(
         cc.getLdapUrl(), config, factory, sslContext, options);
@@ -93,8 +92,8 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
    */
   protected SSLContext getHostnameVerifierSSLContext(final ConnectionConfig cc)
   {
-    SSLContext sslContext = null;
-    SSLContextInitializer contextInit = null;
+    SSLContext sslContext;
+    SSLContextInitializer contextInit;
     if (cc.getSslConfig() != null &&
         cc.getSslConfig().getCredentialConfig() != null) {
       try {
@@ -113,9 +112,8 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
     } else {
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
-        new TrustManager[]{
-          new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
+        new HostnameVerifyingTrustManager(
+          new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()));
     }
     try {
       sslContext = contextInit.initSSLContext("TLS");
