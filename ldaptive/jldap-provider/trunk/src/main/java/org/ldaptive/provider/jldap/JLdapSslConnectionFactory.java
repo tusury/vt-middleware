@@ -56,7 +56,7 @@ public class JLdapSslConnectionFactory
   protected LDAPConnection createLDAPConnection()
     throws LDAPException
   {
-    LDAPConnection conn = null;
+    LDAPConnection conn;
     if (sslSocketFactory != null) {
       conn = new LDAPConnection(
         new LDAPJSSESecureSocketFactory(sslSocketFactory));

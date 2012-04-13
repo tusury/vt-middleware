@@ -15,7 +15,6 @@ package org.ldaptive.provider.jldap;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
@@ -123,7 +122,7 @@ public class JLdapUtils
   public LdapAttribute toLdapAttribute(final LDAPAttribute a)
   {
     boolean isBinary = false;
-    if (a.getName().indexOf(";binary") != -1) {
+    if (a.getName().contains(";binary")) {
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getName())) {
       isBinary = true;
@@ -196,9 +195,8 @@ public class JLdapUtils
     final LdapEntry le = new LdapEntry(sortBehavior);
     le.setDn(entry.getDN());
 
-    final Iterator<LDAPAttribute> i = entry.getAttributeSet().iterator();
-    while (i.hasNext()) {
-      le.addAttribute(toLdapAttribute(i.next()));
+    for (Object o : entry.getAttributeSet()) {
+      le.addAttribute(toLdapAttribute((LDAPAttribute) o));
     }
     return le;
   }

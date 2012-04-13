@@ -125,11 +125,7 @@ public class JLdapProviderConfig extends ProviderConfig
   }
 
 
-  /**
-   * Provides a descriptive string representation of this instance.
-   *
-   * @return  string representation
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString()
   {
