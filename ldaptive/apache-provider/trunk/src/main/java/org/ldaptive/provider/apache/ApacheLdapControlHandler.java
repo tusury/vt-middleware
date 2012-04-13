@@ -57,7 +57,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ctl = new PagedResultsImpl();
       ((PagedResultsImpl) ctl).setSize(c.getSize());
       ((PagedResultsImpl) ctl).setCookie(c.getCookie());
-      ((PagedResultsImpl) ctl).setCritical(c.getCriticality());
+      ctl.setCritical(c.getCriticality());
     } else if (PasswordPolicyControl.OID.equals(requestControl.getOID())) {
       final PasswordPolicyControl c = (PasswordPolicyControl) requestControl;
       ctl = new PasswordPolicyImpl();

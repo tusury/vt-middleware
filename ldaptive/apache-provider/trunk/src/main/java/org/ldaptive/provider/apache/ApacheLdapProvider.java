@@ -78,14 +78,12 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     if (lcc == null) {
       lcc = getDefaultLdapConnectionConfig(cc);
     }
-    final ConnectionFactory<ApacheLdapProviderConfig> cf =
-      new ApacheLdapConnectionFactory(
-        cc.getLdapUrl(),
-        config,
-        lcc,
-        cc.getUseStartTLS(),
-        cc.getResponseTimeout());
-    return cf;
+    return new ApacheLdapConnectionFactory(
+      cc.getLdapUrl(),
+      config,
+      lcc,
+      cc.getUseStartTLS(),
+      cc.getResponseTimeout());
   }
 
 
@@ -101,7 +99,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   protected SSLContextInitializer getHostnameVerifierSSLContextInitializer(
     final ConnectionConfig cc)
   {
-    SSLContextInitializer contextInit = null;
+    SSLContextInitializer contextInit;
     if (cc.getSslConfig() != null &&
         cc.getSslConfig().getCredentialConfig() != null) {
       try {
@@ -120,9 +118,8 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     } else {
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
-        new TrustManager[]{
-          new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()), });
+        new HostnameVerifyingTrustManager(
+          new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()));
     }
     return contextInit;
   }
@@ -142,8 +139,8 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     if (cc.getUseSSL() || cc.getUseStartTLS()) {
       final SSLContextInitializer contextInit =
         getHostnameVerifierSSLContextInitializer(cc);
-      TrustManager[] trustManagers = null;
-      KeyManager[] keyManagers = null;
+      TrustManager[] trustManagers;
+      KeyManager[] keyManagers;
       try {
         trustManagers = contextInit.getTrustManagers();
         keyManagers = contextInit.getKeyManagers();
