@@ -16,6 +16,7 @@ package org.ldaptive.provider.netscape;
 import java.io.IOException;
 import java.net.Socket;
 import javax.net.SocketFactory;
+import netscape.ldap.LDAPConstraints;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSocketFactory;
 import org.ldaptive.ConnectionConfig;
@@ -47,6 +48,10 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
       throw new UnsupportedOperationException("startTLS is not supported");
     }
 
+    LDAPConstraints constraints = config.getLDAPConstraints();
+    if (constraints == null) {
+      constraints = getDefaultLDAPConstraints(cc);
+    }
     LDAPSocketFactory factory = config.getLDAPSocketFactory();
     if (cc.getUseSSL() && factory == null) {
       factory = getHostnameVerifierSocketFactory(cc);
@@ -54,6 +59,7 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
     return new NetscapeConnectionFactory(
       cc.getLdapUrl(),
       config,
+      constraints,
       factory,
       (int) cc.getConnectTimeout(),
       (int) cc.getResponseTimeout());
@@ -76,6 +82,20 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
     return new NetscapeLDAPSocketFactory(
       TLSSocketFactory.getHostnameVerifierFactory(
         cc.getSslConfig(), ldapUrl.getEntriesAsString()));
+  }
+
+
+  /**
+   * Returns the default connection constraints for this provider.
+   *
+   * @param  cc  to configure options with
+   *
+   * @return  ldap connection constraints
+   */
+  protected LDAPConstraints getDefaultLDAPConstraints(
+    final ConnectionConfig cc)
+  {
+    return new LDAPConstraints();
   }
 
 

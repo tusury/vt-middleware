@@ -14,6 +14,7 @@
 package org.ldaptive.provider.netscape;
 
 import java.util.Arrays;
+import netscape.ldap.LDAPConstraints;
 import netscape.ldap.LDAPControl;
 import netscape.ldap.LDAPSocketFactory;
 import org.ldaptive.ResultCode;
@@ -28,6 +29,9 @@ import org.ldaptive.provider.ProviderConfig;
  */
 public class NetscapeProviderConfig extends ProviderConfig
 {
+
+  /** Connection constraints. */
+  private LDAPConstraints ldapConstraints;
 
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
@@ -50,6 +54,30 @@ public class NetscapeProviderConfig extends ProviderConfig
     };
     controlProcessor = new ControlProcessor<LDAPControl>(
       new NetscapeControlHandler());
+  }
+
+
+  /**
+   * Returns the connection constraints.
+   *
+   * @return ldap connection constraints
+   */
+  public LDAPConstraints getLDAPConstraints()
+  {
+    return ldapConstraints;
+  }
+
+
+  /**
+   * Sets the connection constraints.
+   *
+   * @param  constraints  ldap connection constraints
+   */
+  public void setLDAPConstraints(final LDAPConstraints constraints)
+  {
+    checkImmutable();
+    logger.trace("setting ldapConstraints: {}", constraints);
+    ldapConstraints = constraints;
   }
 
 
@@ -132,13 +160,15 @@ public class NetscapeProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, searchIgnoreResultCodes=%s, " +
-        "ldapSocketFactory=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, ldapConstraints=%s, " +
+        "searchIgnoreResultCodes=%s, ldapSocketFactory=%s, " +
+        "controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        ldapConstraints,
         Arrays.toString(searchIgnoreResultCodes),
         ldapSocketFactory,
         controlProcessor);
