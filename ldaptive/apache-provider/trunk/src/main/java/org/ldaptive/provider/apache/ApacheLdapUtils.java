@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import org.apache.directory.shared.ldap.model.entry.Attribute;
 import org.apache.directory.shared.ldap.model.entry.BinaryValue;
 import org.apache.directory.shared.ldap.model.entry.DefaultAttribute;
@@ -29,15 +28,11 @@ import org.apache.directory.shared.ldap.model.entry.ModificationOperation;
 import org.apache.directory.shared.ldap.model.entry.StringValue;
 import org.apache.directory.shared.ldap.model.entry.Value;
 import org.apache.directory.shared.ldap.model.exception.LdapException;
-import org.apache.directory.shared.ldap.model.message.Control;
-import org.apache.directory.shared.ldap.model.message.Message;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SortBehavior;
-import org.ldaptive.control.RequestControl;
-import org.ldaptive.provider.ControlProcessor;
 
 /**
  * Provides methods for converting between Apache Ldap specific objects and
@@ -163,7 +158,7 @@ public class ApacheLdapUtils
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getUpId())) {
       isBinary = true;
-    } else if (!a.isHumanReadable()) {
+    } else if (!a.isHumanReadable() && a.get() != null) {
       isBinary = true;
     }
 
@@ -275,46 +270,5 @@ public class ApacheLdapUtils
       op = ModificationOperation.REPLACE_ATTRIBUTE;
     }
     return op;
-  }
-
-
-  /**
-   * Retrieves the response controls from the supplied response.
-   *
-   * @param  response  to get controls from
-   *
-   * @return  response controls
-   */
-  public static Control[] getResponseControls(final Message response)
-  {
-    Control[] ctls = null;
-    if (response != null) {
-      final Map<String, Control> respControls = response.getControls();
-      ctls = respControls.values().toArray(new Control[respControls.size()]);
-    }
-    return ctls;
-  }
-
-
-  /**
-   * Retrieves the response controls from the supplied response and processes
-   * them with the supplied control processor.
-   *
-   * @param  processor  control processor
-   * @param  requestControls  that produced this response
-   * @param  response  to get controls from
-   *
-   * @return  response controls
-   */
-  public static org.ldaptive.control.ResponseControl[]
-  processResponseControls(
-    final ControlProcessor<Control> processor,
-    final RequestControl[] requestControls,
-    final Message response)
-  {
-    return
-      processor.processResponseControls(
-        requestControls,
-        getResponseControls(response));
   }
 }
