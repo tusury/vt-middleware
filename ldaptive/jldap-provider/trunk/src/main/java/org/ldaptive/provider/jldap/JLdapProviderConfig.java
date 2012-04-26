@@ -15,6 +15,7 @@ package org.ldaptive.provider.jldap;
 
 import java.util.Arrays;
 import javax.net.ssl.SSLSocketFactory;
+import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPControl;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.ControlProcessor;
@@ -28,6 +29,9 @@ import org.ldaptive.provider.ProviderConfig;
  */
 public class JLdapProviderConfig extends ProviderConfig
 {
+
+  /** Connection constraints. */
+  private LDAPConstraints ldapConstraints;
 
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
@@ -50,6 +54,30 @@ public class JLdapProviderConfig extends ProviderConfig
     };
     controlProcessor = new ControlProcessor<LDAPControl>(
       new JLdapControlHandler());
+  }
+
+
+  /**
+   * Returns the connection constraints.
+   *
+   * @return ldap connection constraints
+   */
+  public LDAPConstraints getLDAPConstraints()
+  {
+    return ldapConstraints;
+  }
+
+
+  /**
+   * Sets the connection constraints.
+   *
+   * @param  constraints  ldap connection constraints
+   */
+  public void setLDAPConstraints(final LDAPConstraints constraints)
+  {
+    checkImmutable();
+    logger.trace("setting ldapConstraints: {}", constraints);
+    ldapConstraints = constraints;
   }
 
 
@@ -132,13 +160,14 @@ public class JLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, searchIgnoreResultCodes=%s, " +
-        "sslSocketFactory=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, ldapConstraints=%s, " +
+        "searchIgnoreResultCodes=%s, sslSocketFactory=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        ldapConstraints,
         Arrays.toString(searchIgnoreResultCodes),
         sslSocketFactory,
         controlProcessor);

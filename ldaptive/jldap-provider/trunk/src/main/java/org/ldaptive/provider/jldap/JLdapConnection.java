@@ -14,6 +14,7 @@
 package org.ldaptive.provider.jldap;
 
 import java.io.IOException;
+import java.util.Arrays;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -21,24 +22,34 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
+import com.novell.ldap.LDAPControl;
 import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPException;
+import com.novell.ldap.LDAPReferralException;
 import com.novell.ldap.LDAPResponse;
 import com.novell.ldap.LDAPResponseQueue;
+import com.novell.ldap.LDAPSearchConstraints;
+import com.novell.ldap.LDAPSearchResults;
 import com.novell.security.sasl.RealmCallback;
 import com.novell.security.sasl.RealmChoiceCallback;
 import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.DerefAliases;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchScope;
+import org.ldaptive.control.ResponseControl;
 import org.ldaptive.provider.Connection;
+import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.SaslConfig;
@@ -144,19 +155,9 @@ public class JLdapConnection implements Connection
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = new Response<Void>(
-        null,
-        ResultCode.valueOf(lr.getResultCode()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          lr.getControls()));
+      response = createResponse(request, null, lr);
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
     return response;
   }
@@ -183,19 +184,9 @@ public class JLdapConnection implements Connection
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = new Response<Void>(
-        null,
-        ResultCode.valueOf(lr.getResultCode()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          lr.getControls()));
+      response = createResponse(request, null, lr);
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
     return response;
   }
@@ -253,14 +244,9 @@ public class JLdapConnection implements Connection
           "Unknown SASL authentication mechanism: " + sc.getMechanism());
       }
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
-    return new Response<Void>(null, ResultCode.SUCCESS, null);
+    return new Response<Void>(null, ResultCode.SUCCESS);
   }
 
 
@@ -279,19 +265,9 @@ public class JLdapConnection implements Connection
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = new Response<Void>(
-        null,
-        ResultCode.valueOf(lr.getResultCode()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          lr.getControls()));
+      response = createResponse(request, null, lr);
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
     return response;
   }
@@ -311,19 +287,10 @@ public class JLdapConnection implements Connection
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = new Response<Boolean>(
-        lr.getResultCode() == ResultCode.COMPARE_TRUE.value(),
-        ResultCode.valueOf(lr.getResultCode()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          lr.getControls()));
+      response = createResponse(
+        request, lr.getResultCode() == ResultCode.COMPARE_TRUE.value(), lr);
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
     return response;
   }
@@ -341,19 +308,9 @@ public class JLdapConnection implements Connection
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = new Response<Void>(
-        null,
-        ResultCode.valueOf(lr.getResultCode()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          lr.getControls()));
+      response = createResponse(request, null, lr);
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
     return response;
   }
@@ -373,19 +330,9 @@ public class JLdapConnection implements Connection
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = new Response<Void>(
-        null,
-        ResultCode.valueOf(lr.getResultCode()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          lr.getControls()));
+      response = createResponse(request, null, lr);
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
     return response;
   }
@@ -407,19 +354,9 @@ public class JLdapConnection implements Connection
         (LDAPResponseQueue) null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = new Response<Void>(
-        null,
-        ResultCode.valueOf(lr.getResultCode()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          lr.getControls()));
+      response = createResponse(request, null, lr);
     } catch (LDAPException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResultCode(),
-        null,
-        true);
+      processLDAPException(e);
     }
     return response;
   }
@@ -430,7 +367,7 @@ public class JLdapConnection implements Connection
   public SearchIterator search(final SearchRequest request)
     throws LdapException
   {
-    final JLdapSearchIterator i = new JLdapSearchIterator(request, config);
+    final JLdapSearchIterator i = new JLdapSearchIterator(request);
     i.initialize(connection);
     return i;
   }
@@ -445,13 +382,65 @@ public class JLdapConnection implements Connection
    */
   protected LDAPConstraints getLDAPConstraints(final Request request)
   {
-    final LDAPConstraints constraints = new LDAPConstraints();
+    LDAPConstraints constraints = connection.getConstraints();
+    if (constraints == null) {
+      constraints = new LDAPConstraints();
+    }
     if (request.getControls() != null) {
       constraints.setControls(
         config.getControlProcessor().processRequestControls(
           request.getControls()));
     }
+    constraints.setReferralFollowing(request.getFollowReferrals());
     return constraints;
+  }
+
+
+  /**
+   * Creates an operation response with the supplied response data.
+   *
+   * @param  <T>  type of response
+   * @param  request  containing controls
+   * @param  result  of the operation
+   * @param  ldapResponse  provider response
+   *
+   * @return  operation response
+   */
+  protected <T> Response<T> createResponse(
+    final Request request,
+    final T result,
+    final LDAPResponse ldapResponse)
+  {
+    return new Response<T>(
+      result,
+      ResultCode.valueOf(ldapResponse.getResultCode()),
+      ldapResponse.getErrorMessage(),
+      ldapResponse.getMatchedDN(),
+      config.getControlProcessor().processResponseControls(
+        request.getControls(), ldapResponse.getControls()),
+      ldapResponse.getReferrals());
+  }
+
+
+  /**
+   * Determines if the supplied ldap exception should result in an operation
+   * retry.
+   *
+   * @param  e  that was produced
+   *
+   * @throws  LdapException  wrapping the ldap exception
+   */
+  protected void processLDAPException(final LDAPException e)
+    throws LdapException
+  {
+    ProviderUtils.throwOperationException(
+      config.getOperationRetryResultCodes(),
+      e,
+      e.getResultCode(),
+      e.getMatchedDN(),
+      null,
+      null,
+      true);
   }
 
 
@@ -502,5 +491,294 @@ public class JLdapConnection implements Connection
         }
       }
     }
+  }
+
+
+  /**
+   * Search iterator for JLdap search results.
+   */
+  public class JLdapSearchIterator implements SearchIterator
+  {
+
+    /** Search request. */
+    private final SearchRequest request;
+
+    /** Response data. */
+    private Response<Void> response;
+
+    /** Response result code. */
+    private ResultCode responseResultCode;
+
+    /** Referral URLs. */
+    private String[] referralUrls;
+
+    /** Ldap search results. */
+    private LDAPSearchResults results;
+
+
+    /**
+     * Creates a new jldap search iterator.
+     *
+     * @param  sr  search request
+     */
+    public JLdapSearchIterator(final SearchRequest sr)
+    {
+      request = sr;
+    }
+
+
+    /**
+     * Initializes this jldap search iterator.
+     *
+     * @param  conn  to search with
+     *
+     * @throws  LdapException  if an error occurs
+     */
+    public void initialize(final LDAPConnection conn)
+      throws LdapException
+    {
+      connection = conn;
+      try {
+        results = search(connection, request);
+      } catch (LDAPException e) {
+        processLDAPException(e);
+      }
+    }
+
+
+    /**
+     * Executes an ldap search.
+     *
+     * @param  conn  to search with
+     * @param  sr  to read properties from
+     *
+     * @return  ldap search results
+     *
+     * @throws  LDAPException  if an error occurs
+     */
+    protected LDAPSearchResults search(
+      final LDAPConnection conn,
+      final SearchRequest sr)
+      throws LDAPException
+    {
+      final LDAPSearchConstraints constraints = getLDAPSearchConstraints(sr);
+      final LDAPControl[] lc =
+        config.getControlProcessor().processRequestControls(sr.getControls());
+      if (lc != null) {
+        constraints.setControls(lc);
+      }
+      return
+        conn.search(
+          sr.getBaseDn(),
+          getSearchScope(sr.getSearchScope()),
+          sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
+          getReturnAttributes(sr),
+          sr.getTypesOnly(),
+          constraints);
+    }
+
+
+    /**
+     * Returns the jldap integer constant for the supplied search scope.
+     *
+     * @param  ss  search scope
+     *
+     * @return  integer constant
+     */
+    protected int getSearchScope(final SearchScope ss)
+    {
+      int scope = -1;
+      if (ss == SearchScope.OBJECT) {
+        scope = LDAPConnection.SCOPE_BASE;
+      } else if (ss == SearchScope.ONELEVEL) {
+        scope = LDAPConnection.SCOPE_ONE;
+      } else if (ss == SearchScope.SUBTREE) {
+        scope = LDAPConnection.SCOPE_SUB;
+      }
+      return scope;
+    }
+
+
+    /**
+     * Returns an array of attribute names expected from the search request.
+     * Uses the '1.1' special attribute name if no attributes are requested.
+     *
+     * @param  sr  containing return attributes
+     *
+     * @return  attribute names for JLDAP
+     */
+    protected String[] getReturnAttributes(final SearchRequest sr)
+    {
+      String[] returnAttrs = null;
+      if (sr.getReturnAttributes() != null) {
+        if (sr.getReturnAttributes().length == 0) {
+          returnAttrs = new String[] {"1.1"};
+        } else {
+          returnAttrs = sr.getReturnAttributes();
+        }
+      }
+      return returnAttrs;
+    }
+
+
+    /**
+     * Returns an ldap search constraints object configured with the supplied
+     * search request.
+     *
+     * @param  sr  search request containing configuration to create search
+     * constraints
+     *
+     * @return  ldap search constraints
+     */
+    protected LDAPSearchConstraints getLDAPSearchConstraints(
+      final SearchRequest sr)
+    {
+      LDAPSearchConstraints constraints = connection.getSearchConstraints();
+      if (constraints == null) {
+        constraints = new LDAPSearchConstraints();
+      }
+      constraints.setServerTimeLimit(
+        Long.valueOf(sr.getTimeLimit()).intValue());
+      constraints.setMaxResults(Long.valueOf(sr.getSizeLimit()).intValue());
+      if (sr.getDerefAliases() != null) {
+        if (sr.getDerefAliases() == DerefAliases.ALWAYS) {
+          constraints.setDereference(LDAPSearchConstraints.DEREF_ALWAYS);
+        } else if (sr.getDerefAliases() == DerefAliases.FINDING) {
+          constraints.setDereference(LDAPSearchConstraints.DEREF_FINDING);
+        } else if (sr.getDerefAliases() == DerefAliases.NEVER) {
+          constraints.setDereference(LDAPSearchConstraints.DEREF_NEVER);
+        } else if (sr.getDerefAliases() == DerefAliases.SEARCHING) {
+          constraints.setDereference(LDAPSearchConstraints.DEREF_SEARCHING);
+        }
+      }
+      constraints.setReferralFollowing(sr.getFollowReferrals());
+      return constraints;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasNext()
+      throws LdapException
+    {
+      if (results == null || response != null) {
+        return false;
+      }
+
+      boolean more = false;
+      try {
+        more = results.hasMore();
+        if (!more) {
+          final ResponseControl[] respControls =
+            config.getControlProcessor().processResponseControls(
+              request.getControls(),
+              results.getResponseControls());
+          final boolean searchAgain = ControlProcessor.searchAgain(
+            respControls);
+          if (searchAgain) {
+            results = search(connection, request);
+            more = results.hasMore();
+          }
+          if (!more) {
+            response = new Response<Void>(
+              null,
+              responseResultCode != null ? responseResultCode
+                : ResultCode.SUCCESS,
+              null,
+              null,
+              respControls,
+              referralUrls);
+          }
+        }
+      } catch (LDAPReferralException e) {
+        referralUrls = LdapUtils.concatArrays(e.getReferrals(), referralUrls);
+        responseResultCode = ResultCode.valueOf(e.getResultCode());
+      } catch (LDAPException e) {
+        final ResultCode rc = ignoreSearchException(
+          config.getSearchIgnoreResultCodes(), e);
+        if (rc == null) {
+          processLDAPException(e);
+        }
+        response = new Response<Void>(
+          null,
+          rc,
+          e.getLDAPErrorMessage(),
+          null,
+          config.getControlProcessor().processResponseControls(
+            request.getControls(), results.getResponseControls()),
+          referralUrls);
+      }
+      return more;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public LdapEntry next()
+      throws LdapException
+    {
+      final JLdapUtils bu = new JLdapUtils(request.getSortBehavior());
+      bu.setBinaryAttributes(request.getBinaryAttributes());
+
+      LdapEntry le = null;
+      try {
+        final LDAPEntry entry = results.next();
+        logger.trace("reading search entry: {}", entry);
+        le = bu.toLdapEntry(entry);
+      } catch (LDAPReferralException e) {
+        logger.trace(
+          "reading search reference: {}", Arrays.toString(e.getReferrals()));
+        referralUrls = LdapUtils.concatArrays(e.getReferrals(), referralUrls);
+        responseResultCode = ResultCode.valueOf(e.getResultCode());
+      } catch (LDAPException e) {
+        final ResultCode rc = ignoreSearchException(
+          config.getSearchIgnoreResultCodes(), e);
+        if (rc == null) {
+          processLDAPException(e);
+        }
+        responseResultCode = rc;
+      }
+      return le;
+    }
+
+
+    /**
+     * Determines whether the supplied ldap exception should be ignored.
+     *
+     * @param  ignoreResultCodes  to match against the exception
+     * @param  e  ldap exception to match
+     *
+     * @return  result code that should be ignored or null
+     */
+    protected ResultCode ignoreSearchException(
+      final ResultCode[] ignoreResultCodes,
+      final LDAPException e)
+    {
+      ResultCode ignore = null;
+      if (ignoreResultCodes != null && ignoreResultCodes.length > 0) {
+        for (ResultCode rc : ignoreResultCodes) {
+          if (e.getResultCode() == rc.value()) {
+            logger.debug("Ignoring ldap exception", e);
+            ignore = rc;
+            break;
+          }
+        }
+      }
+      return ignore;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Response<Void> getResponse()
+    {
+      return response;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void close()
+      throws LdapException {}
   }
 }

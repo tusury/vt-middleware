@@ -14,6 +14,7 @@
 package org.ldaptive.provider.jldap;
 
 import com.novell.ldap.LDAPConnection;
+import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
@@ -32,6 +33,9 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
   extends AbstractConnectionFactory<JLdapProviderConfig>
 {
 
+  /** JLdap connection constraints. */
+  private final LDAPConstraints ldapConstraints;
+
   /** Amount of time in milliseconds that operations will wait. */
   private final int socketTimeOut;
 
@@ -40,13 +44,18 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
    * Creates a new abstract jldap connection factory.
    *
    * @param  url  of the ldap to connect to
-   * @param  config  provider connfiguration
+   * @param  config  provider configuration
+   * @param  constraints  connection constraints
    * @param  timeOut  time in milliseconds that operations will wait
    */
   public AbstractJLdapConnectionFactory(
-    final String url, final JLdapProviderConfig config, final int timeOut)
+    final String url,
+    final JLdapProviderConfig config,
+    final LDAPConstraints constraints,
+    final int timeOut)
   {
     super(url, config);
+    ldapConstraints = constraints;
     socketTimeOut = timeOut;
   }
 
@@ -62,6 +71,9 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
     boolean closeConn = false;
     try {
       conn = createLDAPConnection();
+      if (ldapConstraints != null) {
+        conn.setConstraints(ldapConstraints);
+      }
       if (socketTimeOut > 0) {
         conn.setSocketTimeOut(socketTimeOut);
       }
