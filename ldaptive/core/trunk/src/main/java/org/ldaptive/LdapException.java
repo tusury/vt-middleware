@@ -13,6 +13,7 @@
 */
 package org.ldaptive;
 
+import java.util.Arrays;
 import org.ldaptive.control.ResponseControl;
 
 /**
@@ -31,8 +32,14 @@ public class LdapException extends Exception implements Message<ResponseControl>
   /** ldap result code. */
   private final ResultCode resultCode;
 
+  /** response matched DN. */
+  private final String matchedDn;
+
   /** response controls. */
-  private final ResponseControl[] controls;
+  private final ResponseControl[] responseControls;
+
+  /** referral URLs. */
+  private final String[] referralURLs;
 
 
   /**
@@ -44,7 +51,9 @@ public class LdapException extends Exception implements Message<ResponseControl>
   {
     super(msg);
     resultCode = null;
-    controls = null;
+    matchedDn = null;
+    responseControls = null;
+    referralURLs = null;
   }
 
 
@@ -58,7 +67,9 @@ public class LdapException extends Exception implements Message<ResponseControl>
   {
     super(msg);
     resultCode = code;
-    controls = null;
+    matchedDn = null;
+    responseControls = null;
+    referralURLs = null;
   }
 
 
@@ -67,16 +78,64 @@ public class LdapException extends Exception implements Message<ResponseControl>
    *
    * @param  msg  describing this exception
    * @param  code  result code
+   * @param  dn  matched dn
+   */
+  public LdapException(
+    final String msg,
+    final ResultCode code,
+    final String dn)
+  {
+    super(msg);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = null;
+    referralURLs = null;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  msg  describing this exception
+   * @param  code  result code
+   * @param  dn  matched dn
    * @param  c  response controls
    */
   public LdapException(
     final String msg,
     final ResultCode code,
+    final String dn,
     final ResponseControl[] c)
   {
     super(msg);
     resultCode = code;
-    controls = c;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = null;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  msg  describing this exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   */
+  public LdapException(
+    final String msg,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls)
+  {
+    super(msg);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = urls;
   }
 
 
@@ -89,7 +148,9 @@ public class LdapException extends Exception implements Message<ResponseControl>
   {
     super(e);
     resultCode = null;
-    controls = null;
+    matchedDn = null;
+    responseControls = null;
+    referralURLs = null;
   }
 
 
@@ -103,7 +164,9 @@ public class LdapException extends Exception implements Message<ResponseControl>
   {
     super(e);
     resultCode = code;
-    controls = null;
+    matchedDn = null;
+    responseControls = null;
+    referralURLs = null;
   }
 
 
@@ -112,16 +175,64 @@ public class LdapException extends Exception implements Message<ResponseControl>
    *
    * @param  e  provider specific exception
    * @param  code  result code
+   * @param  dn  matched dn
+   */
+  public LdapException(
+    final Exception e,
+    final ResultCode code,
+    final String dn)
+  {
+    super(e);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = null;
+    referralURLs = null;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
    * @param  c  response controls
    */
   public LdapException(
     final Exception e,
     final ResultCode code,
+    final String dn,
     final ResponseControl[] c)
   {
     super(e);
     resultCode = code;
-    controls = c;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = null;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   */
+  public LdapException(
+    final Exception e,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls)
+  {
+    super(e);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = urls;
   }
 
 
@@ -135,7 +246,9 @@ public class LdapException extends Exception implements Message<ResponseControl>
   {
     super(msg, e);
     resultCode = null;
-    controls = null;
+    matchedDn = null;
+    responseControls = null;
+    referralURLs = null;
   }
 
 
@@ -153,7 +266,9 @@ public class LdapException extends Exception implements Message<ResponseControl>
   {
     super(msg, e);
     resultCode = code;
-    controls = null;
+    matchedDn = null;
+    responseControls = null;
+    referralURLs = null;
   }
 
 
@@ -163,17 +278,69 @@ public class LdapException extends Exception implements Message<ResponseControl>
    * @param  msg  describing this exception
    * @param  e  provider specific exception
    * @param  code  result code
+   * @param  dn  matched dn
+   */
+  public LdapException(
+    final String msg,
+    final Exception e,
+    final ResultCode code,
+    final String dn)
+  {
+    super(msg, e);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = null;
+    referralURLs = null;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  msg  describing this exception
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
    * @param  c  response controls
    */
   public LdapException(
     final String msg,
     final Exception e,
     final ResultCode code,
+    final String dn,
     final ResponseControl[] c)
   {
     super(msg, e);
     resultCode = code;
-    controls = c;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = null;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  msg  describing this exception
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   */
+  public LdapException(
+    final String msg,
+    final Exception e,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls)
+  {
+    super(msg, e);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = urls;
   }
 
 
@@ -189,10 +356,50 @@ public class LdapException extends Exception implements Message<ResponseControl>
   }
 
 
+  /**
+   * Returns the matched DN produced by the ldap operation.
+   *
+   * @return  matched DN
+   */
+  public String getMatchedDn()
+  {
+    return matchedDn;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public ResponseControl[] getControls()
   {
-    return controls;
+    return responseControls;
+  }
+
+
+  /**
+   * Returns the referral URLs produced by the ldap operation.
+   *
+   * @return  referral urls
+   */
+  public String[] getReferralURLs()
+  {
+    return referralURLs;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::resultCode=%s, matchedDn=%s, responseControls=%s, " +
+        "referralURLs=%s, providerException=%s]",
+        getClass().getName(),
+        hashCode(),
+        resultCode,
+        matchedDn,
+        Arrays.toString(responseControls),
+        Arrays.toString(referralURLs),
+        getCause());
   }
 }

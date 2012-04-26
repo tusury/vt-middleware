@@ -40,7 +40,9 @@ public final class ProviderUtils
    * @param  operationRetryResultCodes  to compare result code against
    * @param  e  provider exception to wrap
    * @param  resultCode  provider result code
+   * @param  matchedDn  response matched dn
    * @param  respControls  response controls
+   * @param  referralUrls  response referral urls
    * @param  throwLdapException  throw an ldap exception if an operation
    * exception is not thrown
    *
@@ -51,7 +53,9 @@ public final class ProviderUtils
     final ResultCode[] operationRetryResultCodes,
     final Exception e,
     final int resultCode,
+    final String matchedDn,
     final ResponseControl[] respControls,
+    final String[] referralUrls,
     final boolean throwLdapException)
     throws LdapException
   {
@@ -60,12 +64,18 @@ public final class ProviderUtils
         operationRetryResultCodes.length > 0) {
       for (ResultCode rc : operationRetryResultCodes) {
         if (rc.value() == resultCode) {
-          throw new OperationException(e, rc, respControls);
+          throw new OperationException(
+            e, rc, matchedDn, respControls, referralUrls);
         }
       }
     }
     if (throwLdapException) {
-      throw new LdapException(e, ResultCode.valueOf(resultCode), respControls);
+      throw new LdapException(
+        e,
+        ResultCode.valueOf(resultCode),
+        matchedDn,
+        respControls,
+        referralUrls);
     }
   }
 
@@ -78,7 +88,9 @@ public final class ProviderUtils
    * @param  operationRetryResultCodes  to compare result code against
    * @param  msg  provider message
    * @param  resultCode  provider result code
+   * @param  matchedDn  response matched dn
    * @param  respControls  response controls
+   * @param  referralUrls  response referral urls
    * @param  throwLdapException  throw an ldap exception if an operation
    * exception is not thrown
    *
@@ -89,7 +101,9 @@ public final class ProviderUtils
     final ResultCode[] operationRetryResultCodes,
     final String msg,
     final int resultCode,
+    final String matchedDn,
     final ResponseControl[] respControls,
+    final String[] referralUrls,
     final boolean throwLdapException)
     throws LdapException
   {
@@ -98,13 +112,18 @@ public final class ProviderUtils
         operationRetryResultCodes.length > 0) {
       for (ResultCode rc : operationRetryResultCodes) {
         if (rc.value() == resultCode) {
-          throw new OperationException(msg, rc, respControls);
+          throw new OperationException(
+            msg, rc, matchedDn, respControls, referralUrls);
         }
       }
     }
     if (throwLdapException) {
       throw new LdapException(
-        msg, ResultCode.valueOf(resultCode), respControls);
+        msg,
+        ResultCode.valueOf(resultCode),
+        matchedDn,
+        respControls,
+        referralUrls);
     }
   }
 }

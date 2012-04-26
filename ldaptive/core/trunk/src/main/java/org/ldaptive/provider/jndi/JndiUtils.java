@@ -30,15 +30,10 @@ import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SortBehavior;
-import org.ldaptive.control.RequestControl;
-import org.ldaptive.control.ResponseControl;
 import org.ldaptive.control.SortKey;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides methods for converting between JNDI specific objects and ldaptive
@@ -344,36 +339,5 @@ public class JndiUtils
         "Unknown SASL authentication mechanism: " + m);
     }
     return s;
-  }
-
-
-  /**
-   * Retrieves the response controls from the supplied context and processes
-   * them with the supplied control processor. Logs a warning if controls cannot
-   * be retrieved.
-   *
-   * @param  processor  control processor
-   * @param  requestControls  that produced this response
-   * @param  ctx  to get controls from
-   *
-   * @return  response controls
-   */
-  public static ResponseControl[] processResponseControls(
-    final ControlProcessor<javax.naming.ldap.Control> processor,
-    final RequestControl[] requestControls,
-    final LdapContext ctx)
-  {
-    ResponseControl[] ctls = null;
-    if (ctx != null) {
-      try {
-        ctls = processor.processResponseControls(
-          requestControls,
-          ctx.getResponseControls());
-      } catch (NamingException e) {
-        final Logger l = LoggerFactory.getLogger(JndiUtils.class);
-        l.warn("Error retrieving response controls.", e);
-      }
-    }
-    return ctls;
   }
 }

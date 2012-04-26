@@ -100,7 +100,7 @@ public class PooledBindAuthenticationHandler
         ResultCode.SUCCESS == bindResponse.getResultCode(),
         bindResponse.getResultCode(),
         c,
-        null,
+        bindResponse.getMessage(),
         bindResponse.getControls());
     } catch (LdapException e) {
       if (ResultCode.INVALID_CREDENTIALS == e.getResultCode()) {

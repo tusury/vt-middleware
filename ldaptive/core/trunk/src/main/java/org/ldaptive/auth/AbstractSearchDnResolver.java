@@ -20,7 +20,6 @@ import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapResult;
-import org.ldaptive.ReferralBehavior;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -58,8 +57,8 @@ public abstract class AbstractSearchDnResolver implements DnResolver
   /** How to handle aliases. */
   private DerefAliases derefAliases;
 
-  /** How to handle referrals. */
-  private ReferralBehavior referralBehavior;
+  /** Whether to follow referrals. */
+  private boolean followReferrals;
 
 
   /**
@@ -206,25 +205,25 @@ public abstract class AbstractSearchDnResolver implements DnResolver
 
 
   /**
-   * Returns how to handle referrals.
+   * Returns whether to follow referrals.
    *
-   * @return  how to handle referrals
+   * @return  whether to follow referrals
    */
-  public ReferralBehavior getReferralBehavior()
+  public boolean getFollowReferrals()
   {
-    return referralBehavior;
+    return followReferrals;
   }
 
 
   /**
-   * Sets how to handle referrals.
+   * Sets whether to follow referrals.
    *
-   * @param  rb  how to handle referrals
+   * @param  b  whether to follow referrals
    */
-  public void setReferralBehavior(final ReferralBehavior rb)
+  public void setFollowReferrals(final boolean b)
   {
-    logger.trace("setting referralBehavior: {}", rb);
-    referralBehavior = rb;
+    logger.trace("setting followReferrals: {}", b);
+    followReferrals = b;
   }
 
 
@@ -331,7 +330,7 @@ public abstract class AbstractSearchDnResolver implements DnResolver
       request.setSearchScope(SearchScope.ONELEVEL);
     }
     request.setDerefAliases(derefAliases);
-    request.setReferralBehavior(referralBehavior);
+    request.setFollowReferrals(followReferrals);
     return request;
   }
 

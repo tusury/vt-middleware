@@ -31,9 +31,6 @@ public class AuthenticationResponse extends Response<Boolean>
   /** Ldap entry of authenticated user. */
   private final LdapEntry ldapEntry;
 
-  /** Authentication message. */
-  private final String message;
-
   /** Account state. */
   private AccountState accountState;
 
@@ -52,7 +49,6 @@ public class AuthenticationResponse extends Response<Boolean>
   {
     super(success, rc);
     ldapEntry = entry;
-    message = null;
   }
 
 
@@ -70,9 +66,8 @@ public class AuthenticationResponse extends Response<Boolean>
     final LdapEntry entry,
     final String msg)
   {
-    super(success, rc);
+    super(success, rc, msg, null, null, null);
     ldapEntry = entry;
-    message = msg;
   }
 
 
@@ -92,9 +87,8 @@ public class AuthenticationResponse extends Response<Boolean>
     final String msg,
     final ResponseControl[] controls)
   {
-    super(success, rc, controls);
+    super(success, rc, msg, null, controls, null);
     ldapEntry = entry;
-    message = msg;
   }
 
 
@@ -106,17 +100,6 @@ public class AuthenticationResponse extends Response<Boolean>
   public LdapEntry getLdapEntry()
   {
     return ldapEntry;
-  }
-
-
-  /**
-   * Returns any message associated with the authentication of a user.
-   *
-   * @return  message
-   */
-  public String getMessage()
-  {
-    return message;
   }
 
 
@@ -148,15 +131,15 @@ public class AuthenticationResponse extends Response<Boolean>
   {
     return
       String.format(
-        "[%s@%d::ldapEntry=%s, message=%s, accountState=%s, result=%s, " +
-        "resultCode=%s, controls=%s]",
+        "[%s@%d::ldapEntry=%s, accountState=%s, result=%s, resultCode=%s, " +
+        "message=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
         ldapEntry,
-        message,
         accountState,
         getResult(),
         getResultCode(),
+        getMessage(),
         Arrays.toString(getControls()));
   }
 }

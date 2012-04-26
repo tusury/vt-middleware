@@ -49,9 +49,6 @@ public class SearchRequest extends AbstractRequest
   /** How to handle aliases. */
   private DerefAliases derefAliases;
 
-  /** How to handle referrals. */
-  private ReferralBehavior referralBehavior;
-
   /** Whether to return only attribute types. */
   private boolean typesOnly;
 
@@ -286,28 +283,6 @@ public class SearchRequest extends AbstractRequest
 
 
   /**
-   * Returns how to handle referrals.
-   *
-   * @return  how to handle referrals
-   */
-  public ReferralBehavior getReferralBehavior()
-  {
-    return referralBehavior;
-  }
-
-
-  /**
-   * Sets how to handle referrals.
-   *
-   * @param  rb  how to handle referrals
-   */
-  public void setReferralBehavior(final ReferralBehavior rb)
-  {
-    referralBehavior = rb;
-  }
-
-
-  /**
    * Returns whether to return only attribute types.
    *
    * @return  whether to return only attribute types
@@ -469,7 +444,7 @@ public class SearchRequest extends AbstractRequest
     sr.setBinaryAttributes(request.getBinaryAttributes());
     sr.setDerefAliases(request.getDerefAliases());
     sr.setLdapEntryHandlers(request.getLdapEntryHandlers());
-    sr.setReferralBehavior(request.getReferralBehavior());
+    sr.setFollowReferrals(request.getFollowReferrals());
     sr.setReturnAttributes(request.getReturnAttributes());
     sr.setSearchFilter(request.getSearchFilter());
     sr.setSearchScope(request.getSearchScope());
@@ -500,7 +475,6 @@ public class SearchRequest extends AbstractRequest
         baseDn,
         binaryAttrs,
         derefAliases,
-        referralBehavior,
         entryHandlers,
         retAttrs,
         searchFilter,
@@ -509,7 +483,8 @@ public class SearchRequest extends AbstractRequest
         sortBehavior,
         timeLimit,
         typesOnly,
-        getControls());
+        getControls(),
+        getFollowReferrals());
   }
 
 
@@ -521,8 +496,8 @@ public class SearchRequest extends AbstractRequest
       String.format(
         "[%s@%d::baseDn=%s, searchFilter=%s, returnAttributes=%s, " +
         "searchScope=%s, timeLimit=%s, sizeLimit=%s, derefAliases=%s, " +
-        "referralBehavior=%s, typesOnly=%s, binaryAttributes=%s, " +
-        "sortBehavior=%s, ldapEntryHandlers=%s, controls=%s]",
+        "typesOnly=%s, binaryAttributes=%s, sortBehavior=%s, " +
+        "ldapEntryHandlers=%s, controls=%s, followReferrals=%s]",
         getClass().getName(),
         hashCode(),
         baseDn,
@@ -532,11 +507,11 @@ public class SearchRequest extends AbstractRequest
         timeLimit,
         sizeLimit,
         derefAliases,
-        referralBehavior,
         typesOnly,
         Arrays.toString(binaryAttrs),
         sortBehavior,
         Arrays.toString(entryHandlers),
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getFollowReferrals());
   }
 }

@@ -91,7 +91,7 @@ public class SearchDnResolver extends AbstractSearchDnResolver
       String.format(
         "[%s@%d::factory=%s, baseDn=%s, userFilter=%s, " +
         "userFilterParameters=%s, allowMultipleDns=%s, subtreeSearch=%s, " +
-        "derefAliases=%s, referralBehavior=%s]",
+        "derefAliases=%s, followReferrals=%s]",
         getClass().getName(),
         hashCode(),
         factory,
@@ -101,6 +101,6 @@ public class SearchDnResolver extends AbstractSearchDnResolver
         getAllowMultipleDns(),
         getSubtreeSearch(),
         getDerefAliases(),
-        getReferralBehavior());
+        getFollowReferrals());
   }
 }

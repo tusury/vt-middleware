@@ -31,9 +31,6 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
   /** Connection that authentication occurred on. */
   private final Connection connection;
 
-  /** Authentication message. */
-  private final String message;
-
 
   /**
    * Creates a new authentication response.
@@ -49,7 +46,6 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
   {
     super(success, rc);
     connection = conn;
-    message = null;
   }
 
 
@@ -67,9 +63,8 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
     final Connection conn,
     final String msg)
   {
-    super(success, rc);
+    super(success, rc, msg, null, null, null);
     connection = conn;
-    message = msg;
   }
 
 
@@ -89,9 +84,8 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
     final String msg,
     final ResponseControl[] controls)
   {
-    super(success, rc, controls);
+    super(success, rc, msg, null, controls, null);
     connection = conn;
-    message = msg;
   }
 
 
@@ -106,31 +100,20 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
   }
 
 
-  /**
-   * Returns the authentication message.
-   *
-   * @return  message
-   */
-  public String getMessage()
-  {
-    return message;
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public String toString()
   {
     return
       String.format(
-        "[%s@%d::connection=%s, message=%s, result=%s, resultCode=%s, " +
+        "[%s@%d::connection=%s, result=%s, resultCode=%s, message=%s, " +
         "controls=%s]",
         getClass().getName(),
         hashCode(),
         connection,
-        message,
         getResult(),
         getResultCode(),
+        getMessage(),
         Arrays.toString(getControls()));
   }
 }

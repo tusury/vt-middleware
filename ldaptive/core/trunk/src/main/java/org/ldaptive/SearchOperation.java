@@ -81,6 +81,9 @@ public class SearchOperation extends AbstractSearchOperation<SearchRequest>
       new Response<LdapResult>(
         lr,
         response.getResultCode(),
-        response.getControls());
+        response.getMessage(),
+        response.getMatchedDn(),
+        response.getControls(),
+        response.getReferralURLs());
   }
 }
