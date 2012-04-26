@@ -45,7 +45,7 @@ public final class TestUtils
 
   /**
    * @param  path  to read properties from, if null use default properties
-   * @return  authenticator config
+   * @return  connection config
    */
   public static ConnectionConfig readConnectionConfig(
     final String path)

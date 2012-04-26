@@ -130,12 +130,12 @@ public class ConnectionTest
       Response<Void> response = modifyDn.execute(
         new ModifyDnRequest(
           testLdapEntry.getDn(),
-          "cn=James Buchanan\\, Jr.," +
+          "cn=James Buchanan Jr.," +
             DnParser.substring(testLdapEntry.getDn(), 1)));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       response = modifyDn.execute(
         new ModifyDnRequest(
-          "cn=James Buchanan\\, Jr.," +
+          "cn=James Buchanan Jr.," +
             DnParser.substring(testLdapEntry.getDn(), 1),
           testLdapEntry.getDn()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
