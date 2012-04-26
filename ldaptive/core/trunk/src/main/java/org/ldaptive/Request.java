@@ -21,4 +21,14 @@ import org.ldaptive.control.RequestControl;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface Request extends Message<RequestControl> {}
+public interface Request extends Message<RequestControl>
+{
+
+
+  /**
+   * Returns whether to follow referrals.
+   *
+   * @return  whether to follow referrals
+   */
+  boolean getFollowReferrals();
+}

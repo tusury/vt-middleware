@@ -27,6 +27,9 @@ public abstract class AbstractRequest implements Request
   /** request controls. */
   private RequestControl[] controls;
 
+  /** Whether to follow referrals. */
+  private boolean followReferrals;
+
 
   /** {@inheritDoc} */
   @Override
@@ -44,5 +47,24 @@ public abstract class AbstractRequest implements Request
   public void setControls(final RequestControl... c)
   {
     controls = c;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public boolean getFollowReferrals()
+  {
+    return followReferrals;
+  }
+
+
+  /**
+   * Sets whether to follow referrals.
+   *
+   * @param  b  whether to follow referrals
+   */
+  public void setFollowReferrals(final boolean b)
+  {
+    followReferrals = b;
   }
 }

@@ -31,10 +31,19 @@ public class Response<T> implements Message<ResponseControl>
   private final T result;
 
   /** Operation result code. */
-  private final ResultCode code;
+  private final ResultCode resultCode;
+
+  /** Response message. */
+  private final String message;
+
+  /** Response matched DN. */
+  private final String matchedDn;
 
   /** Response controls. */
-  private final ResponseControl[] controls;
+  private final ResponseControl[] responseControls;
+
+  /** Referral URLs. */
+  private final String[] referralURLs;
 
 
   /**
@@ -46,8 +55,11 @@ public class Response<T> implements Message<ResponseControl>
   public Response(final T t, final ResultCode rc)
   {
     result = t;
-    code = rc;
-    controls = null;
+    resultCode = rc;
+    message = null;
+    matchedDn = null;
+    responseControls = null;
+    referralURLs = null;
   }
 
 
@@ -56,13 +68,25 @@ public class Response<T> implements Message<ResponseControl>
    *
    * @param  t  response type
    * @param  rc  result code
+   * @param  msg  result message
+   * @param  dn  matched dn
    * @param  c  response controls
+   * @param  urls  referral urls
    */
-  public Response(final T t, final ResultCode rc, final ResponseControl[] c)
+  public Response(
+    final T t,
+    final ResultCode rc,
+    final String msg,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls)
   {
     result = t;
-    code = rc;
-    controls = c;
+    resultCode = rc;
+    message = msg;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = urls;
   }
 
 
@@ -84,7 +108,29 @@ public class Response<T> implements Message<ResponseControl>
    */
   public ResultCode getResultCode()
   {
-    return code;
+    return resultCode;
+  }
+
+
+  /**
+   * Returns any error or diagnostic message produced by the ldap operation.
+   *
+   * @return  message
+   */
+  public String getMessage()
+  {
+    return message;
+  }
+
+
+  /**
+   * Returns the matched DN produced by the ldap operation.
+   *
+   * @return  matched DN
+   */
+  public String getMatchedDn()
+  {
+    return matchedDn;
   }
 
 
@@ -92,7 +138,18 @@ public class Response<T> implements Message<ResponseControl>
   @Override
   public ResponseControl[] getControls()
   {
-    return controls;
+    return responseControls;
+  }
+
+
+  /**
+   * Returns the referral URLs produced by the ldap operation.
+   *
+   * @return  referral urls
+   */
+  public String[] getReferralURLs()
+  {
+    return referralURLs;
   }
 
 
@@ -102,11 +159,15 @@ public class Response<T> implements Message<ResponseControl>
   {
     return
       String.format(
-        "[%s@%d::result=%s, resultCode=%s, controls=%s]",
+        "[%s@%d::result=%s, resultCode=%s, message=%s, matchedDn=%s, " +
+        "responseControls=%s, referralURLs=%s]",
         getClass().getName(),
         hashCode(),
         result,
-        code,
-        Arrays.toString(controls));
+        resultCode,
+        message,
+        matchedDn,
+        Arrays.toString(responseControls),
+        Arrays.toString(referralURLs));
   }
 }

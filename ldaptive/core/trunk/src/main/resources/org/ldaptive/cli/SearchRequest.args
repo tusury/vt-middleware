@@ -2,8 +2,8 @@ baseDn:base dn
 binaryAttributes:comma delimited list of binary attributes
 controls:fully qualified class name(s) that implements org.ldaptive.control.Control
 derefAliases:how to handle aliases (NEVER|SEARCHING|FINDING|ALWAYS)
+followReferrals:how to handle referrals (true|false)
 ldapEntryHandlers:LDAP handlers for post processing result entries
-referralBehavior:how to handle referrals (FOLLOW|THROW|IGNORE)
 returnAttributes:attributes to return from the search
 searchFilter:LDAP filter to execute
 searchScope:scope of the search (OBJECT|ONELEVEL|SUBTREE)

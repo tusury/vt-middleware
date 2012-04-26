@@ -92,7 +92,7 @@ public abstract class AbstractCompareAuthenticationHandler
         compareResponse.getResult(),
         compareResponse.getResultCode(),
         c,
-        null,
+        compareResponse.getMessage(),
         compareResponse.getControls());
   }
 

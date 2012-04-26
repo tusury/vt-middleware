@@ -58,14 +58,50 @@ public class ConnectionException extends LdapException
    *
    * @param  msg  describing this exception
    * @param  code  result code
+   * @param  dn  matched dn
+   */
+  public ConnectionException(
+    final String msg, final ResultCode code, final String dn)
+  {
+    super(msg, code, dn);
+  }
+
+
+  /**
+   * Creates a new connection exception.
+   *
+   * @param  msg  describing this exception
+   * @param  code  result code
+   * @param  dn  matched dn
    * @param  c  response controls
    */
   public ConnectionException(
     final String msg,
     final ResultCode code,
+    final String dn,
     final ResponseControl[] c)
   {
-    super(msg, code, c);
+    super(msg, code, dn, c);
+  }
+
+
+  /**
+   * Creates a new connection exception.
+   *
+   * @param  msg  describing this exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   */
+  public ConnectionException(
+    final String msg,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls)
+  {
+    super(msg, code, dn, c, urls);
   }
 
 
@@ -97,14 +133,50 @@ public class ConnectionException extends LdapException
    *
    * @param  e  provider specific exception
    * @param  code  result code
+   * @param  dn  matched dn
+   */
+  public ConnectionException(
+    final Exception e, final ResultCode code, final String dn)
+  {
+    super(e, code, dn);
+  }
+
+
+  /**
+   * Creates a new connection exception.
+   *
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
    * @param  c  response controls
    */
   public ConnectionException(
     final Exception e,
     final ResultCode code,
+    final String dn,
     final ResponseControl[] c)
   {
-    super(e, code, c);
+    super(e, code, dn, c);
+  }
+
+
+  /**
+   * Creates a new connection exception.
+   *
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   */
+  public ConnectionException(
+    final Exception e,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls)
+  {
+    super(e, code, dn, c, urls);
   }
 
 
@@ -142,14 +214,56 @@ public class ConnectionException extends LdapException
    * @param  msg  describing this exception
    * @param  e  provider specific exception
    * @param  code  result code
+   * @param  dn  matched dn
+   */
+  public ConnectionException(
+    final String msg,
+    final Exception e,
+    final ResultCode code,
+    final String dn)
+  {
+    super(msg, e, code, dn);
+  }
+
+
+  /**
+   * Creates a new connection exception.
+   *
+   * @param  msg  describing this exception
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
    * @param  c  response controls
    */
   public ConnectionException(
     final String msg,
     final Exception e,
     final ResultCode code,
+    final String dn,
     final ResponseControl[] c)
   {
-    super(msg, e, code, c);
+    super(msg, e, code, dn, c);
+  }
+
+
+  /**
+   * Creates a new connection exception.
+   *
+   * @param  msg  describing this exception
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   */
+  public ConnectionException(
+    final String msg,
+    final Exception e,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls)
+  {
+    super(msg, e, code, dn, c, urls);
   }
 }
