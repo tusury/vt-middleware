@@ -128,12 +128,12 @@ public class JLdapUtils
       isBinary = true;
     }
 
-    if (!isBinary) {
+    if (!isBinary && a.getStringValue() != null) {
       // check if first value needs to be encoded
       isBinary = !Base64.isLDIFSafe(a.getStringValue());
     }
 
-    LdapAttribute la = null;
+    LdapAttribute la;
     if (isBinary) {
       la = new LdapAttribute(sortBehavior, true);
       la.setName(a.getName());

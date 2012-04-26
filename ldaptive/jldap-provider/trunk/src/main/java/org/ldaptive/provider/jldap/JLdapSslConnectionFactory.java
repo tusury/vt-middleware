@@ -15,6 +15,7 @@ package org.ldaptive.provider.jldap;
 
 import javax.net.ssl.SSLSocketFactory;
 import com.novell.ldap.LDAPConnection;
+import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPJSSESecureSocketFactory;
 
@@ -37,16 +38,18 @@ public class JLdapSslConnectionFactory
    *
    * @param  url  of the ldap to connect to
    * @param  config  provider configuration
+   * @param  constraints  connection constraints
    * @param  timeOut  time in milliseconds that operations will wait
    * @param  factory  SSL socket factory
    */
   public JLdapSslConnectionFactory(
     final String url,
     final JLdapProviderConfig config,
+    final LDAPConstraints constraints,
     final int timeOut,
     final SSLSocketFactory factory)
   {
-    super(url, config, timeOut);
+    super(url, config, constraints, timeOut);
     sslSocketFactory = factory;
   }
 

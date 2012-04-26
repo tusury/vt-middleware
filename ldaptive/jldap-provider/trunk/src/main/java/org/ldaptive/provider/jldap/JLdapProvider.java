@@ -15,6 +15,7 @@ package org.ldaptive.provider.jldap;
 
 import java.security.Security;
 import javax.net.ssl.SSLSocketFactory;
+import com.novell.ldap.LDAPConstraints;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
@@ -48,10 +49,15 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JLdapProviderConfig> cf;
+    LDAPConstraints constraints = config.getLDAPConstraints();
+    if (constraints == null) {
+      constraints = getDefaultLDAPConstraints(cc);
+    }
     if (cc.getUseStartTLS()) {
       cf = new JLdapTlsConnectionFactory(
         cc.getLdapUrl(),
         config,
+        constraints,
         (int) cc.getResponseTimeout(),
         config.getSslSocketFactory() != null ?
           config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
@@ -59,12 +65,13 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
       cf = new JLdapSslConnectionFactory(
         cc.getLdapUrl(),
         config,
+        constraints,
         (int) cc.getResponseTimeout(),
         config.getSslSocketFactory() != null ?
           config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
     } else {
       cf = new JLdapConnectionFactory(
-        cc.getLdapUrl(), config, (int) cc.getResponseTimeout());
+        cc.getLdapUrl(), config, constraints, (int) cc.getResponseTimeout());
     }
     return cf;
   }
@@ -85,6 +92,20 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
     return TLSSocketFactory.getHostnameVerifierFactory(
       cc.getSslConfig(), ldapUrl.getEntriesAsString());
+  }
+
+
+  /**
+   * Returns the default connection constraints for this provider.
+   *
+   * @param  cc  to configure options with
+   *
+   * @return  ldap connection constraints
+   */
+  protected LDAPConstraints getDefaultLDAPConstraints(
+    final ConnectionConfig cc)
+  {
+    return new LDAPConstraints();
   }
 
 

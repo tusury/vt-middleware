@@ -14,6 +14,7 @@
 package org.ldaptive.provider.jldap;
 
 import com.novell.ldap.LDAPConnection;
+import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
 
 /**
@@ -32,12 +33,16 @@ public class JLdapConnectionFactory
    *
    * @param  url  of the ldap to connect to
    * @param  config  provider configuration
+   * @param  constraints  connection constraints
    * @param  timeOut  time in milliseconds that operations will wait
    */
   public JLdapConnectionFactory(
-    final String url, final JLdapProviderConfig config, final int timeOut)
+    final String url,
+    final JLdapProviderConfig config,
+    final LDAPConstraints constraints,
+    final int timeOut)
   {
-    super(url, config, timeOut);
+    super(url, config, constraints, timeOut);
   }
 
 
