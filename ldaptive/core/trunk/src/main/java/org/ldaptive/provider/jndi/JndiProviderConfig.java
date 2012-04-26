@@ -15,6 +15,7 @@ package org.ldaptive.provider.jndi;
 
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Map;
 import javax.naming.ldap.Control;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
@@ -30,6 +31,9 @@ import org.ldaptive.provider.ProviderConfig;
  */
 public class JndiProviderConfig extends ProviderConfig
 {
+
+  /** Context environment. */
+  private Map<String, Object> environment;
 
   /** Stream to print LDAP ASN.1 BER packets. */
   private OutputStream tracePackets;
@@ -65,6 +69,30 @@ public class JndiProviderConfig extends ProviderConfig
       ResultCode.PARTIAL_RESULTS,
     };
     controlProcessor = new ControlProcessor<Control>(new JndiControlHandler());
+  }
+
+
+  /**
+   * Returns the context environment.
+   *
+   * @return ldap context environment
+   */
+  public Map<String, Object> getEnvironment()
+  {
+    return environment;
+  }
+
+
+  /**
+   * Sets the context environment.
+   *
+   * @param  env  ldap context environment
+   */
+  public void setEnvironment(final Map<String, Object> env)
+  {
+    checkImmutable();
+    logger.trace("setting environment: {}", env);
+    environment = env;
   }
 
 
@@ -221,14 +249,15 @@ public class JndiProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, tracePackets=%s, removeDnUrls=%s, " +
-        "searchIgnoreResultCodes=%s, sslSocketFactory=%s, " +
+        "connectionStrategy=%s, environment=%s, tracePackets=%s, " +
+        "removeDnUrls=%s, searchIgnoreResultCodes=%s, sslSocketFactory=%s, " +
         "hostnameVerifier=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationRetryResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        environment,
         tracePackets,
         removeDnUrls,
         Arrays.toString(searchIgnoreResultCodes),

@@ -102,6 +102,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JndiProviderConfig> cf;
+    final Map<String, Object> env = config.getEnvironment();
     if (cc.getUseStartTLS()) {
       // hostname verification always occurs for startTLS after the handshake
       SSLSocketFactory factory = config.getSslSocketFactory();
@@ -119,7 +120,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       cf = new JndiStartTLSConnectionFactory(
         cc.getLdapUrl(),
         config,
-        createEnvironment(cc, null),
+        env != null ? env : getDefaultEnvironment(cc, null),
         factory,
         config.getHostnameVerifier());
     } else {
@@ -136,7 +137,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       cf = new JndiConnectionFactory(
         cc.getLdapUrl(),
         config,
-        createEnvironment(
+        env != null ? env : getDefaultEnvironment(
           cc, factory != null ? factory.getClass().getName() : null));
     }
     return cf;
@@ -176,7 +177,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
    *
    * @return  JNDI ldap context environment
    */
-  protected Map<String, Object> createEnvironment(
+  protected Map<String, Object> getDefaultEnvironment(
     final ConnectionConfig cc, final String factory)
   {
     final Map<String, Object> env = new HashMap<String, Object>();
