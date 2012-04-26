@@ -28,7 +28,7 @@ public class SaslConfig extends AbstractConfig
   private Mechanism mechanism;
 
   /** sasl authorization id. */
-  private String authorizationId;
+  private String authorizationId = "";
 
   /** perform mutual authentication. */
   private Boolean mutualAuthentication;
