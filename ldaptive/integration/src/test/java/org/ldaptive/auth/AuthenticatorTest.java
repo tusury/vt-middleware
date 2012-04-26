@@ -26,7 +26,6 @@ import org.ldaptive.LdapException;
 import org.ldaptive.LdapResult;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.ReferralBehavior;
 import org.ldaptive.ResultCode;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
@@ -298,7 +297,6 @@ public class AuthenticatorTest extends AbstractTest
 
     // test subtree searching
     resolver.setSubtreeSearch(true);
-    resolver.setReferralBehavior(ReferralBehavior.IGNORE);
     final String baseDn = resolver.getBaseDn();
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
     AssertJUnit.assertEquals(
@@ -548,7 +546,6 @@ public class AuthenticatorTest extends AbstractTest
       new AuthenticationRequest(user, new Credential(credential)));
     AssertJUnit.assertTrue(response.getResult());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertNull(response.getMessage());
 
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
@@ -559,7 +556,6 @@ public class AuthenticatorTest extends AbstractTest
         returnAttrs.split("\\|")));
     AssertJUnit.assertTrue(response.getResult());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertNull(response.getMessage());
     AssertJUnit.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new LdapResult(response.getLdapEntry()));
@@ -767,8 +763,6 @@ public class AuthenticatorTest extends AbstractTest
     // test with rewrite
     ((SearchDnResolver) auth.getDnResolver()).setBaseDn("dc=blah");
     ((SearchDnResolver) auth.getDnResolver()).setSubtreeSearch(true);
-    ((SearchDnResolver) auth.getDnResolver()).setReferralBehavior(
-      ReferralBehavior.IGNORE);
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
     AssertJUnit.assertFalse(response.getResult());

@@ -153,7 +153,7 @@
   <parameter name="rangeHandlerResults"
              value="/org/ldaptive/rangeHandlerResults.ldif"/>
 
-    <parameter name="specialCharSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="specialCharSearchDn" value="${ldapBaseDn}"/>
   <parameter name="specialCharSearchFilter" value="(&amp;(uid=17893)(sn={0}))"/>
   <parameter name="specialCharSearchFilterParameters" value="(Us\er)*"/>
   <parameter name="specialCharBinarySearchFilter" value="(&amp;(uid=17893)(givenName={0}))"/>
@@ -171,8 +171,14 @@
   <parameter name="searchExceededFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4))"/>
   <parameter name="searchExceededResultsSize" value="3"/>
 
-  <parameter name="searchReferralDn" value="dc=vt,dc=edu"/>
+  <parameter name="searchReferralDn" value="${ldapBaseDn}"/>
   <parameter name="searchReferralFilter" value="(objectClass=*)"/>
+
+  <parameter name="searchReferenceDn" value="${ldapBaseDn}"/>
+  <parameter name="searchReferenceFilter" value="(objectClass=*)"/>
+
+  <parameter name="searchActiveDirectoryDn" value="${ldapBaseDn}"/>
+  <parameter name="searchActiveDirectoryFilter" value="(objectClass=*)"/>
 
   <parameter name="searchRetryDn" value="ou=dne,${ldapBaseDn}"/>
   <parameter name="searchRetryResultCode" value="NO_SUCH_OBJECT"/>
@@ -202,6 +208,10 @@
   <parameter name="compareDn" value="cn=Thomas Jefferson,${ldapBaseDn}"/>
   <parameter name="compareAttrName" value="departmentNumber"/>
   <parameter name="compareAttrValue" value="0823"/>
+
+  <parameter name="compareReferralDn" value="${ldapBaseDn}"/>
+  <parameter name="compareReferralAttrName" value="objectClass"/>
+  <parameter name="compareReferralAttrValue" value="organizationalUnit"/>
 
   <parameter name="addAttributeDn" value="cn=James Madison,${ldapBaseDn}"/>
   <parameter name="addAttributeAttribute"
@@ -356,6 +366,7 @@
         <include name="bean" />
         <include name="props" />
         <include name="search" />
+        <include name="search-with-retry" />
         <include name="compare" />
         <include name="modify" />
         <include name="modifyDn" />

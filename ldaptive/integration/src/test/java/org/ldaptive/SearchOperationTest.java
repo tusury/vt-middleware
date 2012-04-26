@@ -921,20 +921,25 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(
-      createLdapConnection(false));
+    final Connection conn = createLdapConnection(true);
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final LdapResult specialCharsResult = TestUtils.convertLdifToResult(
       expected);
     specialCharsResult.getEntry().setDn(
       specialCharsResult.getEntry().getDn().replaceAll("\\\\", ""));
 
-    // test special character searching
-    final SearchRequest request = new SearchRequest(
-      dn, new SearchFilter(filter));
-    request.setReferralBehavior(ReferralBehavior.IGNORE);
-    final LdapResult result = search.execute(request).getResult();
-    AssertJUnit.assertEquals(specialCharsResult, result);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+
+      // test special character searching
+      final SearchRequest request = new SearchRequest(
+        dn, new SearchFilter(filter));
+      final LdapResult result = search.execute(request).getResult();
+      AssertJUnit.assertEquals(specialCharsResult, result);
+    } finally {
+      conn.close();
+    }
   }
 
 
@@ -1000,42 +1005,58 @@ public class SearchOperationTest extends AbstractTest
   public void searchReferral(final String dn, final String filter)
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    Connection conn = createLdapConnection(true);
+
+    // expects a referral on the dn ou=referrals
+    final String referralDn = "ou=referrals," + DnParser.substring(dn, 1);
+    final SearchRequest request = new SearchRequest();
+    request.setBaseDn(referralDn);
+    request.setSearchScope(SearchScope.ONELEVEL);
+    request.setReturnAttributes(new String[0]);
+    request.setSearchFilter(new SearchFilter(filter));
+
+    request.setFollowReferrals(false);
     try {
       conn.open();
-
-      // expects a referral on dc=vt,dc=edu that points to
-      // ou=people,dc=vt,dc=edu
       final SearchOperation search = new SearchOperation(conn);
-      final SearchRequest request = new SearchRequest();
-      request.setBaseDn(dn);
-      request.setSearchScope(SearchScope.ONELEVEL);
-      request.setReturnAttributes(new String[0]);
-      request.setSearchFilter(new SearchFilter(filter));
-
-      Response<LdapResult> response = null;
-      request.setReferralBehavior(ReferralBehavior.FOLLOW);
       try {
-        response = search.execute(request);
+        Response<LdapResult> response = search.execute(request);
+        AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
+        AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
+        for (String s : response.getReferralURLs()) {
+          AssertJUnit.assertTrue(
+            response.getReferralURLs()[0].startsWith(
+              conn.getConnectionConfig().getLdapUrl()));
+        }
+      } catch (LdapException e) {
+        AssertJUnit.assertEquals(ResultCode.REFERRAL, e.getResultCode());
+        AssertJUnit.assertTrue(e.getReferralURLs().length > 0);
+        for (String s : e.getReferralURLs()) {
+          AssertJUnit.assertTrue(
+            e.getReferralURLs()[0].startsWith(
+              conn.getConnectionConfig().getLdapUrl()));
+        }
+      }
+    } finally {
+      conn.close();
+    }
+
+    request.setFollowReferrals(true);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      try {
+        Response<LdapResult> response = search.execute(request);
         AssertJUnit.assertTrue(response.getResult().size() > 0);
         AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+        AssertJUnit.assertNull(response.getReferralURLs());
       } catch (UnsupportedOperationException e) {
         // ignore this test if not supported
         AssertJUnit.assertNotNull(e);
-      }
-
-      request.setReferralBehavior(ReferralBehavior.IGNORE);
-      response = search.execute(request);
-      AssertJUnit.assertTrue(response.getResult().size() > 0);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-
-      request.setReferralBehavior(ReferralBehavior.THROW);
-      try {
-        response = search.execute(request);
-        AssertJUnit.fail(
-          "Should have thrown LdapException, returned " + response);
-      } catch (LdapException e) {
-        AssertJUnit.assertEquals(ResultCode.REFERRAL, e.getResultCode());
       }
     } finally {
       conn.close();
@@ -1045,17 +1066,157 @@ public class SearchOperationTest extends AbstractTest
 
   /**
    * @param  dn  to search on.
-   * @param  resultCode  to retry operations on.
+   * @param  filter  to search with.
    *
    * @throws  Exception  On test failure.
    */
+  @Parameters(
+    {
+      "searchReferenceDn",
+      "searchReferenceFilter"
+    }
+  )
+  @Test(groups = {"search"})
+  public void searchReference(final String dn, final String filter)
+    throws Exception
+  {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    Connection conn = createLdapConnection(true);
+
+    // expects a referral on the root dn
+    final String referralDn = DnParser.substring(dn, 1);
+    final SearchRequest request = new SearchRequest();
+    request.setBaseDn(referralDn);
+    request.setSearchScope(SearchScope.ONELEVEL);
+    request.setReturnAttributes(new String[0]);
+    request.setSearchFilter(new SearchFilter(filter));
+
+    request.setFollowReferrals(false);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      Response<LdapResult> response = search.execute(request);
+      AssertJUnit.assertTrue(response.getResult().size() > 0);
+      AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
+      // providers may return either result code
+      if (response.getResultCode() != ResultCode.SUCCESS &&
+          response.getResultCode() != ResultCode.REFERRAL) {
+        AssertJUnit.fail("Invalid result code: " + response);
+      }
+    } finally {
+      conn.close();
+    }
+
+    request.setFollowReferrals(true);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      try {
+        Response<LdapResult> response = search.execute(request);
+        AssertJUnit.assertTrue(response.getResult().size() > 0);
+        AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+        AssertJUnit.assertNull(response.getReferralURLs());
+      } catch (UnsupportedOperationException e) {
+        // ignore this test if not supported
+        AssertJUnit.assertNotNull(e);
+      }
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "searchActiveDirectoryDn",
+      "searchActiveDirectoryFilter"
+    }
+  )
+  @Test(groups = {"search"})
+  public void searchActiveDirectory(
+    final String dn, final String filter)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    Connection conn = createLdapConnection(true);
+
+    // expects a referral on the root dn
+    final String referralDn = DnParser.substring(dn, 1);
+    final SearchRequest request = new SearchRequest();
+    request.setBaseDn(referralDn);
+    request.setSearchScope(SearchScope.ONELEVEL);
+    request.setReturnAttributes(new String[0]);
+    request.setSearchFilter(new SearchFilter(filter));
+
+    request.setFollowReferrals(false);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      Response<LdapResult> response = search.execute(request);
+      AssertJUnit.assertTrue(response.getResult().size() > 0);
+      AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
+      // providers may return either result code
+      if (response.getResultCode() != ResultCode.SUCCESS &&
+          response.getResultCode() != ResultCode.REFERRAL) {
+        AssertJUnit.fail("Invalid result code: " + response);
+      }
+    } finally {
+      conn.close();
+    }
+
+    request.setFollowReferrals(true);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      try {
+        Response<LdapResult> response = search.execute(request);
+        AssertJUnit.assertTrue(response.getResult().size() > 0);
+        AssertJUnit.assertNull(response.getReferralURLs());
+        // AD referrals cannot be followed
+        // providers may return either result code
+        if (response.getResultCode() != ResultCode.SUCCESS &&
+            response.getResultCode() != ResultCode.PARTIAL_RESULTS) {
+          AssertJUnit.fail("Invalid result code: " + response);
+        }
+      } catch (LdapException e) {
+        // some providers throw referral exception here
+        AssertJUnit.assertEquals(
+          ResultCode.REFERRAL, e.getResultCode());
+      } catch (UnsupportedOperationException e) {
+        // ignore this test if referrals not supported
+        AssertJUnit.assertNotNull(e);
+      }
+    } finally {
+      conn.close();
+    }
+  }
+
+
+   /**
+    * @param  dn  to search on.
+    * @param  resultCode  to retry operations on.
+    *
+    * @throws  Exception  On test failure.
+    */
   @Parameters(
     {
       "searchRetryDn",
       "searchRetryResultCode"
     }
   )
-  @Test(groups = {"search"})
+  @Test(groups = {"search-with-retry"}, dependsOnGroups = {"search"})
   public void searchWithRetry(final String dn, final String resultCode)
     throws Exception
   {
