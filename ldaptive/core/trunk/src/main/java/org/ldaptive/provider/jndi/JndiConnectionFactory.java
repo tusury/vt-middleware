@@ -83,9 +83,11 @@ public class JndiConnectionFactory
   {
     return
       String.format(
-        "[%s@%d::config=%s]",
+        "[%s@%d::connectionCount=%s, environment=%s, providerConfig=%s]",
         getClass().getName(),
         hashCode(),
+        getConnectionCount(),
+        environment,
         getProviderConfig());
   }
 }

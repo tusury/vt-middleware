@@ -204,7 +204,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
   {
     return
       String.format(
-        "[%s@%d::ldapUrl=%s, config=%s, connectionCount=%s]",
+        "[%s@%d::ldapUrl=%s, providerConfig=%s, connectionCount=%s]",
         getClass().getName(),
         hashCode(),
         ldapUrl,
