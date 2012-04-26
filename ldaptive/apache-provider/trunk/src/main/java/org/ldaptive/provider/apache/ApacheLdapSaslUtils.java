@@ -61,7 +61,8 @@ public final class ApacheLdapSaslUtils
     if (credential != null) {
       request.setCredentials(credential.getBytes());
     }
-    if (config.getAuthorizationId() != null) {
+    if (config.getAuthorizationId() != null &&
+        !"".equals(config.getAuthorizationId())) {
       request.setAuthorizationId(config.getAuthorizationId());
     }
     if (config.getMutualAuthentication() != null) {
@@ -106,7 +107,8 @@ public final class ApacheLdapSaslUtils
     if (credential != null) {
       request.setCredentials(credential.getBytes());
     }
-    if (config.getAuthorizationId() != null) {
+    if (config.getAuthorizationId() != null &&
+        !"".equals(config.getAuthorizationId())) {
       request.setAuthorizationId(config.getAuthorizationId());
     }
     if (config.getMutualAuthentication() != null) {
