@@ -35,6 +35,9 @@ public class NetscapeConnectionFactory
   /** LDAP protocol version. */
   public static final int LDAP_VERSION = 3;
 
+  /** Netscape connection constraints. */
+  private final LDAPConstraints ldapConstraints;
+
   /** Socket factory to use for LDAP and LDAPS. */
   private final LDAPSocketFactory socketFactory;
 
@@ -50,6 +53,7 @@ public class NetscapeConnectionFactory
    *
    * @param  url  of the ldap to connect to
    * @param  config  provider configuration
+   * @param  constraints  connection constraints
    * @param  factory  ldap socket factory
    * @param  cTimeout  connection timeout
    * @param  rTimeout  response timeout
@@ -57,11 +61,13 @@ public class NetscapeConnectionFactory
   public NetscapeConnectionFactory(
     final String url,
     final NetscapeProviderConfig config,
+    final LDAPConstraints constraints,
     final LDAPSocketFactory factory,
     final int cTimeout,
     final int rTimeout)
   {
     super(url, config);
+    ldapConstraints = constraints;
     socketFactory = factory;
     connectTimeout = cTimeout;
     timeLimit = rTimeout;
@@ -96,7 +102,7 @@ public class NetscapeConnectionFactory
         ldapUrl.getLastEntry().getPort(),
         null,
         null,
-        new LDAPConstraints());
+        ldapConstraints);
     } catch (LDAPException e) {
       closeConn = true;
       throw new ConnectionException(
