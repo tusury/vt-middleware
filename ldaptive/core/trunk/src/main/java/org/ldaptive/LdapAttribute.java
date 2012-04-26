@@ -714,7 +714,7 @@ public class LdapAttribute extends AbstractLdapBean
           String.format(
             "Attribute %s does not support values of type %s",
             attributeName,
-            type));
+            o.getClass()));
       }
     }
 
