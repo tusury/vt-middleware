@@ -378,7 +378,7 @@ public class NetscapeConnection implements Connection
     throws LdapException
   {
     final NetscapeSearchIterator i = new NetscapeSearchIterator(request);
-    i.initialize(connection);
+    i.initialize();
     return i;
   }
 
@@ -485,7 +485,7 @@ public class NetscapeConnection implements Connection
   /**
    * Search iterator for netscape search results.
    */
-  public class NetscapeSearchIterator implements SearchIterator
+  protected class NetscapeSearchIterator implements SearchIterator
   {
 
     /** Search request. */
@@ -518,14 +518,11 @@ public class NetscapeConnection implements Connection
     /**
      * Initializes this netscape search iterator.
      *
-     * @param  conn  to search with
-     *
      * @throws  LdapException  if an error occurs
      */
-    public void initialize(final LDAPConnection conn)
+    public void initialize()
       throws LdapException
     {
-      connection = conn;
       try {
         results = search(connection, request);
       } catch (LDAPException e) {
