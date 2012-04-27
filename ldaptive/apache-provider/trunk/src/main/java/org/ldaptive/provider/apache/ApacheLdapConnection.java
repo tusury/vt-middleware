@@ -482,7 +482,7 @@ public class ApacheLdapConnection implements Connection
     throws LdapException
   {
     final ApacheLdapSearchIterator i = new ApacheLdapSearchIterator(request);
-    i.initialize(connection);
+    i.initialize();
     return i;
   }
 
@@ -609,7 +609,7 @@ public class ApacheLdapConnection implements Connection
   /**
    * Search iterator for apache ldap search results.
    */
-  public class ApacheLdapSearchIterator implements SearchIterator
+  protected class ApacheLdapSearchIterator implements SearchIterator
   {
 
     /** Search request. */
@@ -639,16 +639,14 @@ public class ApacheLdapConnection implements Connection
     /**
      * Initializes this apache ldap search iterator.
      *
-     * @param  conn  to search with
-     *
      * @throws  org.ldaptive.LdapException  if an error occurs
      */
-    public void initialize(final LdapConnection conn)
+    public void initialize()
       throws org.ldaptive.LdapException
     {
       boolean closeCursor = false;
       try {
-        cursor = search(conn, request);
+        cursor = search(connection, request);
       } catch (LdapOperationException e) {
         closeCursor = true;
         processLdapOperationException(e);
