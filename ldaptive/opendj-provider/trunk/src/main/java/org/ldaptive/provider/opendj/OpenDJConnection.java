@@ -24,8 +24,10 @@ import org.forgerock.opendj.ldap.Modification;
 import org.forgerock.opendj.ldap.SearchResultHandler;
 import org.forgerock.opendj.ldap.SearchScope;
 import org.forgerock.opendj.ldap.controls.Control;
+import org.forgerock.opendj.ldap.requests.ExternalSASLBindRequest;
 import org.forgerock.opendj.ldap.requests.GSSAPISASLBindRequest;
 import org.forgerock.opendj.ldap.requests.Requests;
+import org.forgerock.opendj.ldap.requests.SASLBindRequest;
 import org.forgerock.opendj.ldap.requests.SearchRequest;
 import org.forgerock.opendj.ldap.requests.SimpleBindRequest;
 import org.forgerock.opendj.ldap.responses.BindResult;
@@ -206,33 +208,25 @@ public class OpenDJConnection implements org.ldaptive.provider.Connection
   protected Response<Void> saslBind(final BindRequest request)
     throws LdapException
   {
-    /*
     Response<Void> response = null;
     SASLBindRequest sbr = null;
-    final ByteStringBuilder builder = new ByteStringBuilder();
-    */
     final SaslConfig sc = request.getSaslConfig();
     switch (sc.getMechanism()) {
 
     case EXTERNAL:
-      throw new UnsupportedOperationException("SASL External not supported");
-      /*
       sbr = Requests.newExternalSASLBindRequest();
       ((ExternalSASLBindRequest) sbr).setAuthorizationID(
         sc.getAuthorizationId());
       break;
-      */
 
     case DIGEST_MD5:
       throw new UnsupportedOperationException("DIGEST-MD5 not supported");
       // returns a result code 82 (Local Error) when the server returns 49
       /*
-      builder.append(
-        request.getCredential() != null ?
-          request.getCredential().getBytes(): new byte[0]);
       sbr = Requests.newDigestMD5SASLBindRequest(
         request.getDn() != null ? request.getDn() : "",
-        builder.toByteString());
+        request.getCredential() != null ?
+          request.getCredential().getBytes() : null);
       String digestMd5Realm = sc instanceof DigestMd5Config
         ? ((DigestMd5Config) sc).getRealm() : null;
       if (digestMd5Realm == null && request.getDn().contains("@")) {
@@ -254,19 +248,17 @@ public class OpenDJConnection implements org.ldaptive.provider.Connection
           request.getCredential().getBytes(): new byte[0]);
       sbr = Requests.newCRAMMD5SASLBindRequest(
         request.getDn() != null ? request.getDn() : "",
-        builder.toByteString());
+        request.getCredential().getBytes());
       break;
       */
 
     case GSSAPI:
       throw new UnsupportedOperationException("GSSAPI not supported");
       /*
-      builder.append(
-        request.getCredential() != null ?
-          request.getCredential().getBytes() : new byte[0]);
       sbr = Requests.newGSSAPISASLBindRequest(
         request.getDn() != null ? request.getDn() : "",
-        builder.toByteString());
+        request.getCredential() != null ?
+          request.getCredential().getBytes() : null);
       ((GSSAPISASLBindRequest) sbr).setAuthorizationID(
         sc.getAuthorizationId());
       final String gssApiRealm = sc instanceof GssApiConfig
@@ -286,7 +278,6 @@ public class OpenDJConnection implements org.ldaptive.provider.Connection
         "Unknown SASL authentication mechanism: " + sc.getMechanism());
     }
 
-    /*
     if (request.getControls() != null) {
       for (Control c :
            config.getControlProcessor().processRequestControls(
@@ -297,26 +288,11 @@ public class OpenDJConnection implements org.ldaptive.provider.Connection
 
     try {
       final BindResult result = connection.bind(sbr);
-      response = new Response<Void>(
-        null,
-        ResultCode.valueOf(result.getResultCode().intValue()),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          result.getControls().toArray(new Control[0])));
+      response = createResponse(request, null, result);
     } catch (ErrorResultException e) {
-      ProviderUtils.throwOperationException(
-        config.getOperationRetryResultCodes(),
-        e,
-        e.getResult().getResultCode().intValue(),
-        config.getControlProcessor().processResponseControls(
-          request.getControls(),
-          e.getResult().getControls().toArray(new Control[0])),
-        true);
-    } catch (InterruptedException e) {
-      throw new LdapException(e);
+      processErrorResultException(request, e);
     }
     return response;
-    */
   }
 
 
