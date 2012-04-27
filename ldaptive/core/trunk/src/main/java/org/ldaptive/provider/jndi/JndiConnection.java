@@ -507,7 +507,7 @@ public class JndiConnection implements Connection
     throws LdapException
   {
     final JndiSearchIterator i = new JndiSearchIterator(request);
-    i.initialize(context);
+    i.initialize();
     return i;
   }
 
@@ -719,7 +719,7 @@ public class JndiConnection implements Connection
   /**
    * Search iterator for JNDI naming enumeration.
    */
-  public class JndiSearchIterator implements SearchIterator
+  protected class JndiSearchIterator implements SearchIterator
   {
 
     /** Search request. */
@@ -735,7 +735,7 @@ public class JndiConnection implements Connection
     private String[] referralUrls;
 
     /** Ldap context to search with. */
-    private LdapContext context;
+    private LdapContext searchContext;
 
     /** Results read from the search operation. */
     private NamingEnumeration<SearchResult> results;
@@ -755,32 +755,29 @@ public class JndiConnection implements Connection
     /**
      * Initializes this jndi search iterator.
      *
-     * @param  ctx  to call
-     * {@link LdapContext#newInstance(javax.naming.ldap.Control[])} on
-     *
      * @throws  LdapException  if an error occurs
      */
-    public void initialize(final LdapContext ctx)
+    public void initialize()
       throws LdapException
     {
       boolean closeContext = false;
       try {
-        context = ctx.newInstance(
+        searchContext = context.newInstance(
           config.getControlProcessor().processRequestControls(
             request.getControls()));
-        initializeSearchContext(context, request);
-        results = search(context, request);
+        initializeSearchContext(searchContext, request);
+        results = search(searchContext, request);
       } catch (LdapReferralException e) {
         closeContext = true;
-        processNamingException(request, e, readReferralUrls(e), context);
+        processNamingException(request, e, readReferralUrls(e), searchContext);
       } catch (NamingException e) {
         closeContext = true;
-        processNamingException(request, e, null, context);
+        processNamingException(request, e, null, searchContext);
       } finally {
         if (closeContext) {
           try {
-            if (context != null) {
-              context.close();
+            if (searchContext != null) {
+              searchContext.close();
             }
           } catch (NamingException e) {
             logger.debug("Problem closing context", e);
@@ -925,14 +922,16 @@ public class JndiConnection implements Connection
         if (!more) {
           final ResponseControl[] respControls =
             processResponseControls(
-              config.getControlProcessor(), request.getControls(), context);
+              config.getControlProcessor(),
+              request.getControls(),
+              searchContext);
           final boolean searchAgain = ControlProcessor.searchAgain(
             respControls);
           if (searchAgain) {
-            context.setRequestControls(
+            searchContext.setRequestControls(
               config.getControlProcessor().processRequestControls(
                 request.getControls()));
-            results = search(context, request);
+            results = search(searchContext, request);
             more = results.hasMore();
           }
           if (!more) {
@@ -952,14 +951,14 @@ public class JndiConnection implements Connection
           null,
           ResultCode.SUCCESS,
           readReferralUrls(e),
-          context);
+          searchContext);
       } catch (NamingException e) {
         final ResultCode ignoreRc = ignoreSearchException(
           config.getSearchIgnoreResultCodes(), e);
         if (ignoreRc == null) {
-          processNamingException(request, e, null, context);
+          processNamingException(request, e, null, searchContext);
         }
-        response = createResponse(request, null, ignoreRc, null, context);
+        response = createResponse(request, null, ignoreRc, null, searchContext);
       }
       return more;
     }
@@ -975,7 +974,7 @@ public class JndiConnection implements Connection
       try {
         final SearchResult result = results.next();
         logger.trace("reading search result: {}", result);
-        result.setName(formatDn(result, getSearchDn(context, request)));
+        result.setName(formatDn(result, getSearchDn(searchContext, request)));
         le = bu.toLdapEntry(result);
       } catch (LdapReferralException e) {
         referralUrls = readReferralUrls(e);
@@ -983,7 +982,7 @@ public class JndiConnection implements Connection
         final ResultCode ignoreRc = ignoreSearchException(
           config.getSearchIgnoreResultCodes(), e);
         if (ignoreRc == null) {
-          processNamingException(request, e, null, context);
+          processNamingException(request, e, null, searchContext);
         }
         responseResultCode = ignoreRc;
       }
@@ -1034,7 +1033,7 @@ public class JndiConnection implements Connection
       while (loopEx.skipReferral()) {
         try {
           final LdapContext ctx = (LdapContext) loopEx.getReferralContext(
-            context.getEnvironment(),
+            searchContext.getEnvironment(),
             config.getControlProcessor().processRequestControls(
               request.getControls()));
           search(ctx, request);
@@ -1172,8 +1171,8 @@ public class JndiConnection implements Connection
         logger.error("Error closing naming enumeration", e);
       }
       try {
-        if (context != null) {
-          context.close();
+        if (searchContext != null) {
+          searchContext.close();
         }
       } catch (NamingException e) {
         logger.error("Error closing ldap context", e);

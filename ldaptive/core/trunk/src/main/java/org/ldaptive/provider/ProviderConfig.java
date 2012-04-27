@@ -59,7 +59,7 @@ public class ProviderConfig extends AbstractConfig
    *
    * @param  codes  ldap result codes
    */
-  public void setOperationRetryResultCodes(final ResultCode[] codes)
+  public void setOperationRetryResultCodes(final ResultCode... codes)
   {
     checkImmutable();
     logger.trace(
