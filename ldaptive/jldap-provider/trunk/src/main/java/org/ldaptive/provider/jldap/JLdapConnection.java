@@ -368,7 +368,7 @@ public class JLdapConnection implements Connection
     throws LdapException
   {
     final JLdapSearchIterator i = new JLdapSearchIterator(request);
-    i.initialize(connection);
+    i.initialize();
     return i;
   }
 
@@ -497,7 +497,7 @@ public class JLdapConnection implements Connection
   /**
    * Search iterator for JLdap search results.
    */
-  public class JLdapSearchIterator implements SearchIterator
+  protected class JLdapSearchIterator implements SearchIterator
   {
 
     /** Search request. */
@@ -530,14 +530,11 @@ public class JLdapConnection implements Connection
     /**
      * Initializes this jldap search iterator.
      *
-     * @param  conn  to search with
-     *
      * @throws  LdapException  if an error occurs
      */
-    public void initialize(final LDAPConnection conn)
+    public void initialize()
       throws LdapException
     {
-      connection = conn;
       try {
         results = search(connection, request);
       } catch (LDAPException e) {
