@@ -162,7 +162,7 @@ public class JndiProviderConfig extends ProviderConfig
    *
    * @param  codes  to ignore
    */
-  public void setSearchIgnoreResultCodes(final ResultCode[] codes)
+  public void setSearchIgnoreResultCodes(final ResultCode... codes)
   {
     checkImmutable();
     logger.trace("setting searchIgnoreResultCodes: {}", Arrays.toString(codes));
