@@ -524,7 +524,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     throws LdapException
   {
     final OpenDSSearchIterator i = new OpenDSSearchIterator(request);
-    i.initialize(connection);
+    i.initialize();
     return i;
   }
 
@@ -588,7 +588,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   /**
    * Search iterator for opends search results.
    */
-  public class OpenDSSearchIterator implements SearchIterator
+  protected class OpenDSSearchIterator implements SearchIterator
   {
 
     /** Search request. */
@@ -615,14 +615,11 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     /**
      * Initializes this opends search iterator.
      *
-     * @param  conn  to search with
-     *
      * @throws  LdapException  if an error occurs
      */
-    public void initialize(final Connection conn)
+    public void initialize()
       throws LdapException
     {
-      connection = conn;
       resultIterator = search(connection, request);
     }
 
