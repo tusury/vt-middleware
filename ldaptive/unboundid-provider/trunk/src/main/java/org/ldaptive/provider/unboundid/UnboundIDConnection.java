@@ -436,7 +436,7 @@ public class UnboundIDConnection implements Connection
     throws LdapException
   {
     final UnboundIDSearchIterator i = new UnboundIDSearchIterator(request);
-    i.initialize(connection);
+    i.initialize();
     return i;
   }
 
@@ -495,7 +495,7 @@ public class UnboundIDConnection implements Connection
   /**
    * Search iterator for unbound id search results.
    */
-  public class UnboundIDSearchIterator implements SearchIterator
+  protected class UnboundIDSearchIterator implements SearchIterator
   {
 
     /** Search request. */
@@ -522,14 +522,11 @@ public class UnboundIDConnection implements Connection
     /**
      * Initializes this unbound id search iterator.
      *
-     * @param  conn  to search with
-     *
      * @throws  org.ldaptive.LdapException  if an error occurs
      */
-    public void initialize(final LDAPConnection conn)
+    public void initialize()
       throws org.ldaptive.LdapException
     {
-      connection = conn;
       resultIterator = search(connection, request);
     }
 
