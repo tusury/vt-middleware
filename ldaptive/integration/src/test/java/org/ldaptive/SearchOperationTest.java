@@ -339,6 +339,7 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
+   * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -346,12 +347,14 @@ public class SearchOperationTest extends AbstractTest
   @Parameters({
       "pagedSearchDn",
       "pagedSearchFilter",
+      "pagedSearchReturnAttrs",
       "pagedSearchResults"
     })
   @Test(groups = {"search"})
   public void pagedSearch(
     final String dn,
     final String filter,
+    final String returnAttrs,
     final String ldifFile)
     throws Exception
   {
@@ -364,11 +367,15 @@ public class SearchOperationTest extends AbstractTest
 
       // test searching
       final SearchRequest request = new SearchRequest(
-        dn, new SearchFilter(filter));
+        dn, new SearchFilter(filter), returnAttrs.split("\\|"));
       request.setControls(prc);
       final LdapResult result = search.execute(request).getResult();
+      // ignore the case of member and contactPerson;
+      // some directories return those in mixed case
       AssertJUnit.assertEquals(
-        TestUtils.convertLdifToResult(expected), result);
+        0,
+        (new LdapResultIgnoreCaseComparator("member", "contactPerson")).compare(
+          TestUtils.convertLdifToResult(expected), result));
     } finally {
       conn.close();
     }

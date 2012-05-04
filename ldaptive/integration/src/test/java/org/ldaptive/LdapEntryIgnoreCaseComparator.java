@@ -61,7 +61,8 @@ public class LdapEntryIgnoreCaseComparator implements Comparator<LdapEntry>
    */
   public int compare(final LdapEntry a, final LdapEntry b)
   {
-    return lowerCaseEntry(a).hashCode() - lowerCaseEntry(b).hashCode();
+    return lowerCaseEntry(a, attributeNames).hashCode() -
+           lowerCaseEntry(b, attributeNames).hashCode();
   }
 
 
@@ -70,19 +71,21 @@ public class LdapEntryIgnoreCaseComparator implements Comparator<LdapEntry>
    * configured.
    *
    * @param  le  entry to copy values from
+   * @param  names  of attributes whose case should be ignored
    *
    * @return  ldap entry with lower cased attribute values
    *
    * @throws  IllegalArgumentException  if a binary attribute is lower cased
    */
-  protected LdapEntry lowerCaseEntry(final LdapEntry le)
+  public static LdapEntry lowerCaseEntry(
+    final LdapEntry le, final String... names)
   {
     final LdapEntry lowerCase = new LdapEntry(le.getSortBehavior());
     lowerCase.setDn(le.getDn());
     for (LdapAttribute la : le.getAttributes()) {
-      if (attributeNames != null) {
+      if (names != null) {
         boolean setAttr = false;
-        for (String name : attributeNames) {
+        for (String name : names) {
           if (name.equalsIgnoreCase(la.getName())) {
             lowerCase.addAttribute(
               LdapAttributeIgnoreCaseComparator.lowerCaseAttribute(la));
