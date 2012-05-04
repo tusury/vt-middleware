@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.4</version>
+      <version>6.5.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -248,6 +248,25 @@
       </dependencies>
       <properties>
         <ldapTestProvider>org.ldaptive.provider.opends.OpenDSProvider</ldapTestProvider>
+      </properties>
+    </profile>
+    <profile>
+      <id>opendj</id>
+      <activation>
+        <property>
+          <name>opendj.version</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.ldaptive</groupId>
+          <artifactId>ldaptive-opendj</artifactId>
+          <version>${opendj.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <properties>
+        <ldapTestProvider>org.ldaptive.provider.opendj.OpenDJProvider</ldapTestProvider>
       </properties>
     </profile>
   </profiles>
