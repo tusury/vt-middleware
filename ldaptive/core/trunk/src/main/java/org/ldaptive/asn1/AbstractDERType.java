@@ -24,8 +24,8 @@ import java.nio.ByteBuffer;
 public abstract class AbstractDERType
 {
 
-  /** Maximum supported length. */
-  private static final int MAX_LENGTH = 127;
+  /** Length of short form integers. */
+  private static final int SHORT_FORM_INT_LENGTH = 127;
 
 
   /**
@@ -43,14 +43,30 @@ public abstract class AbstractDERType
     for (byte[] b : items) {
       itemLength += b.length;
     }
-    if (itemLength > MAX_LENGTH) {
-      throw new IllegalArgumentException("Long form is not supported");
+
+    byte[] lengthBytes;
+    if (itemLength <= SHORT_FORM_INT_LENGTH) {
+      lengthBytes = new byte[] {(byte) itemLength};
+    } else {
+      // use 4 bytes for all long form integers
+      // CheckStyle:MagicNumber OFF
+      lengthBytes = new byte[]{
+        (byte) 0x84,
+        (byte) (itemLength >>> 24),
+        (byte) (itemLength >>> 16),
+        (byte) (itemLength >>> 8),
+        (byte) itemLength,
+      };
+      // CheckStyle:MagicNumber ON
     }
 
-    // add 1 for the type tag and 1 for the asn length
-    final ByteBuffer encodedItem = ByteBuffer.allocate(itemLength + 2);
+    // add 1 for the type tag, 1 or 5 for the length
+    final ByteBuffer encodedItem = ByteBuffer.allocate(
+      itemLength + 1 + lengthBytes.length);
     encodedItem.put((byte) tag);
-    encodedItem.put((byte) itemLength);
+    for (byte b : lengthBytes) {
+      encodedItem.put(b);
+    }
     for (byte[] b : items) {
       encodedItem.put(b);
     }
