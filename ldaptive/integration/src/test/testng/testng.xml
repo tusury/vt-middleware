@@ -195,6 +195,7 @@
 
   <parameter name="pagedSearchDn" value="${ldapBaseDn}"/>
   <parameter name="pagedSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
+  <parameter name="pagedSearchReturnAttrs" value="cn|contactPerson|creationDate|objectClass|member|uid|uugid"/>
   <parameter name="pagedSearchResults"
              value="/org/ldaptive/pagedResults.ldif"/>
 
