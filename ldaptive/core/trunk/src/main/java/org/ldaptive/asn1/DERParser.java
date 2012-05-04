@@ -184,19 +184,20 @@ public class DERParser
    */
   public int readLength(final ByteBuffer encoded)
   {
+    int length = 0;
     final byte b = encoded.get();
     // CheckStyle:MagicNumber OFF
-    if (b < 0x7F) {
-      return b;
-    } else {
+    if ((b & 0x80) == 0x80) {
       final int len = b & 0x7F;
-      if (len > 0 && len < 0x7F) {
+      if (len > 0) {
         encoded.limit(encoded.position() + len);
-        return IntegerType.decode(encoded).intValue();
-      } else {
-        throw new IllegalArgumentException("Invalid length");
+        length = IntegerType.decode(encoded).intValue();
+        encoded.limit(encoded.capacity());
       }
+    } else {
+      length = b;
     }
+    return length;
     // CheckStyle:MagicNumber ON
   }
 
