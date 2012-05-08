@@ -188,7 +188,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
     final int size = Integer.parseInt(line.getOptionValue(OPT_GENKEYPAIR));
     System.err.println("Generating " + alg + " key pair of " + size + " bits");
 
-    final KeyPair keyPair = alg.generateKeys(size);
+    final KeyPair keyPair = PublicKeyUtils.generate(alg.getAlgorithm(), size);
     final File pubKeyFile = new File(line.getOptionValue(OPT_OUTFILE));
     final File privKeyFile = new File(line.getOptionValue(OPT_PRIVKEYPATH));
     CryptWriter.writeEncodedKey(keyPair.getPublic(), pubKeyFile);

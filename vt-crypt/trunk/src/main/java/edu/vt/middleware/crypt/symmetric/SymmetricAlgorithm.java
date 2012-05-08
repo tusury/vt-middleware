@@ -14,16 +14,13 @@
 package edu.vt.middleware.crypt.symmetric;
 
 import java.lang.reflect.Constructor;
-import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
+
 import javax.crypto.spec.IvParameterSpec;
+
 import edu.vt.middleware.crypt.AbstractEncryptionAlgorithm;
-import edu.vt.middleware.crypt.CryptException;
-import edu.vt.middleware.crypt.CryptProvider;
 
 /**
  * Provides symmetric encryption and decryption operations using a secret key.
@@ -191,78 +188,6 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
 
 
   /**
-   * Generates a new secret key for encryption/decryption operations on a cipher
-   * of the given algorithm name.
-   *
-   * @param  algorithm  Name of cipher algorithm for which a suitable key will
-   * be generated.
-   * @param  bitLength  Bit length required in generated key. Valid key lengths
-   * are commonly a function of the cipher algorithm.
-   * @param  random  Source of random data for key generation operation.
-   *
-   * @return  New secret key for use with cipher of given algorithm name.
-   *
-   * @throws  CryptException  if the private key cannot be generated
-   */
-  public static SecretKey generateKey(
-    final String algorithm,
-    final int bitLength,
-    final SecureRandom random)
-    throws CryptException
-  {
-    if (random == null) {
-      throw new CryptException("Source of random data cannot be null.");
-    }
-
-    final KeyGenerator keyGen = CryptProvider.getKeyGenerator(algorithm);
-    keyGen.init(bitLength, random);
-    try {
-      return keyGen.generateKey();
-    } catch (Exception ex) {
-      throw new CryptException("Error generating key for " + algorithm, ex);
-    }
-  }
-
-
-  /**
-   * Generates a secret key of the default key size for encryption and
-   * decryption operations with this instance and others that use the same
-   * algorithm.
-   *
-   * @return  New secret key whose algorithm matches that of this instance.
-   *
-   * @throws  CryptException  On key generation errors.
-   */
-  public SecretKey generateKey()
-    throws CryptException
-  {
-    return generateKey(getDefaultKeyLength());
-  }
-
-
-  /**
-   * Generates a secret key of the given size for encryption and decryption
-   * operations with this instance and others that use the same algorithm.
-   *
-   * @param  bitLength  Bit length required in generated key. Valid key lengths
-   * are commonly a function of the cipher algorithm.
-   *
-   * @return  New secret key whose algorithm matches that of this instance.
-   *
-   * @throws  CryptException  On key generation errors.
-   */
-  public SecretKey generateKey(final int bitLength)
-    throws CryptException
-  {
-    if (randomProvider != null) {
-      return generateKey(algorithm, bitLength, randomProvider);
-    } else {
-      return generateKey(algorithm, bitLength, new SecureRandom());
-    }
-  }
-
-
-  /**
    * Sets the encryption initialization vector. A unique IV should be specified
    * for each encryption operation using the same key for good security. Use the
    * {@link #getRandomIV()} method to obtain random initialization data of the
@@ -332,17 +257,6 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
   {
     throw new UnsupportedOperationException(
       "Available key lengths are not known.");
-  }
-
-
-  /**
-   * Gets the default key length for this algorithm.
-   *
-   * @return  Default key length in bits.
-   */
-  public int getDefaultKeyLength()
-  {
-    throw new UnsupportedOperationException("Default key length is not known.");
   }
 
 

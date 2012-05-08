@@ -76,33 +76,31 @@ public class SymmetricAlgorithmTest
     final Twofish twofish = new Twofish();
     return
       new Object[][] {
-        {aes, aes.generateKey()},
-        {aes, aes.generateKey(aes.getMinKeyLength())},
-        {aes, aes.generateKey(aes.getMinKeyLength())},
-        {blowfish, blowfish.generateKey()},
-        {blowfish, blowfish.generateKey(blowfish.getMinKeyLength())},
-        {cast5, cast5.generateKey()},
-        {cast5, cast5.generateKey(cast5.getMinKeyLength())},
-        {cast6, cast6.generateKey(cast6.getMinKeyLength())},
-        {des, des.generateKey()},
-        {desede, desede.generateKey()},
-        {rc2, rc2.generateKey()},
-        {rc2, rc2.generateKey(rc2.getMinKeyLength())},
-        {rc4, rc4.generateKey(rc4.getMaxKeyLength())},
-        {rc4, rc4.generateKey()},
-        {rc4, rc4.generateKey(rc4.getMinKeyLength())},
-        {rc5, rc5.generateKey(rc5.getMaxKeyLength())},
-        {rc5, rc5.generateKey()},
-        {rc5, rc5.generateKey(rc5.getMinKeyLength())},
-        {rc6, rc6.generateKey()},
-        {rc6, rc6.generateKey(rc6.getMinKeyLength())},
-        {rijndael, rijndael.generateKey()},
-        {rijndael, rijndael.generateKey(rijndael.getMinKeyLength())},
-        {serpent, serpent.generateKey()},
-        {serpent, serpent.generateKey(serpent.getMinKeyLength())},
-        {skipjack, skipjack.generateKey()},
-        {twofish, twofish.generateKey()},
-        {twofish, twofish.generateKey(twofish.getMinKeyLength())},
+        {aes, SecretKeyUtils.generate("AES", aes.getMinKeyLength())},
+        {aes, SecretKeyUtils.generate("AES", aes.getMaxKeyLength())},
+        {blowfish, SecretKeyUtils.generate("Blowfish", blowfish.getMinKeyLength())},
+        {blowfish, SecretKeyUtils.generate("Blowfish", blowfish.getMaxKeyLength())},
+        {cast5, SecretKeyUtils.generate("CAST5", cast5.getMinKeyLength())},
+        {cast5, SecretKeyUtils.generate("CAST5", cast5.getMaxKeyLength())},
+        {cast6, SecretKeyUtils.generate("CAST6", cast6.getMinKeyLength())},
+        {cast5, SecretKeyUtils.generate("CAST6", cast6.getMaxKeyLength())},
+        {des, SecretKeyUtils.generate("DES", des.getMinKeyLength())},
+        {desede, SecretKeyUtils.generate("DESede", desede.getMinKeyLength())},
+        {rc2, SecretKeyUtils.generate("RC2", rc2.getMinKeyLength())},
+        {rc2, SecretKeyUtils.generate("RC2", rc2.getMaxKeyLength())},
+        {rc4, SecretKeyUtils.generate("RC4", rc4.getMinKeyLength())},
+        {rc4, SecretKeyUtils.generate("RC4", rc4.getMaxKeyLength())},
+        {rc5, SecretKeyUtils.generate("RC5", rc5.getMinKeyLength())},
+        {rc5, SecretKeyUtils.generate("RC5", rc5.getMaxKeyLength())},
+        {rc6, SecretKeyUtils.generate("RC6", rc6.getMinKeyLength())},
+        {rc6, SecretKeyUtils.generate("RC6", rc6.getMaxKeyLength())},
+        {rijndael, SecretKeyUtils.generate("Rijndael", rijndael.getMinKeyLength())},
+        {rijndael, SecretKeyUtils.generate("Rijndael", rijndael.getMaxKeyLength())},
+        {serpent, SecretKeyUtils.generate("Serpent", serpent.getMinKeyLength())},
+        {serpent, SecretKeyUtils.generate("Serpent", serpent.getMaxKeyLength())},
+        {skipjack, SecretKeyUtils.generate("Skipjack", skipjack.getMinKeyLength())},
+        {twofish, SecretKeyUtils.generate("Twofish", twofish.getMinKeyLength())},
+        {twofish, SecretKeyUtils.generate("Twofish", twofish.getMaxKeyLength())},
       };
   }
 
@@ -215,7 +213,8 @@ public class SymmetricAlgorithmTest
         symmetric,
         converter);
 
-    symmetric.setKey(symmetric.generateKey());
+    symmetric.setKey(SecretKeyUtils.generate(
+        symmetric.getAlgorithm(), symmetric.getMinKeyLength()));
     symmetric.setIV(symmetric.getRandomIV());
     symmetric.initEncrypt();
 
@@ -372,7 +371,8 @@ public class SymmetricAlgorithmTest
     throws Exception
   {
     try {
-      symmetric.setKey(symmetric.generateKey(symmetric.getMinKeyLength()));
+      symmetric.setKey(SecretKeyUtils.generate(
+          symmetric.getAlgorithm(), symmetric.getMinKeyLength()));
       if (
         !RC4.ALGORITHM.equals(symmetric.getAlgorithm()) &&
           !"ECB".equals(symmetric.getMode())) {

@@ -32,9 +32,6 @@ public class Blowfish extends SymmetricAlgorithm
   /** Maximum key length in bits. */
   public static final int MAX_KEY_LENGTH = 448;
 
-  /** Default key size for this algorithm in bits. */
-  public static final int DEFAULT_KEY_LENGTH = 128;
-
   /** Available key lengths in bits. */
   public static final int[] KEY_LENGTHS = new int[] {
     448,
@@ -70,17 +67,6 @@ public class Blowfish extends SymmetricAlgorithm
   public Blowfish(final String mode, final String padding)
   {
     super(ALGORITHM, mode, padding);
-  }
-
-
-  /**
-   * Gets the default key length for this algorithm.
-   *
-   * @return  Default key length in bits.
-   */
-  public int getDefaultKeyLength()
-  {
-    return DEFAULT_KEY_LENGTH;
   }
 
 

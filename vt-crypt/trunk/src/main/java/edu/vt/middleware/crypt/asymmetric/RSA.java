@@ -28,9 +28,6 @@ public class RSA extends AsymmetricAlgorithm
   /** Algorithm name. */
   public static final String ALGORITHM = "RSA";
 
-  /** Default key size for this algorithm in bits. */
-  public static final int DEFAULT_KEY_LENGTH = 2048;
-
 
   /**
    * Creates a default RSA asymmetric encryption algorithm that uses OAEP
@@ -41,14 +38,4 @@ public class RSA extends AsymmetricAlgorithm
     super(ALGORITHM);
   }
 
-
-  /**
-   * Gets the default key length for this algorithm.
-   *
-   * @return  Default key length in bits.
-   */
-  public int getDefaultKeyLength()
-  {
-    return DEFAULT_KEY_LENGTH;
-  }
 }

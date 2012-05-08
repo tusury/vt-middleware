@@ -46,6 +46,7 @@ public class SignatureAlgorithm extends AbstractAlgorithm
    */
   static {
     NAME_CLASS_MAP.put("DSA", DSASignature.class);
+    NAME_CLASS_MAP.put("ECDSA", ECDSASignature.class);
     NAME_CLASS_MAP.put("RSA", RSASignature.class);
   }
 

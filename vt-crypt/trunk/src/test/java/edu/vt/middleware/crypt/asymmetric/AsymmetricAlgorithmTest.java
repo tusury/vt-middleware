@@ -51,11 +51,11 @@ public class AsymmetricAlgorithmTest
       new Object[][] {
         {
           rsa,
-          rsa.generateKeys(),
+          PublicKeyUtils.generate("RSA", 1024),
         },
         {
           rsa,
-          rsa.generateKeys(rsa.getDefaultKeyLength() * 2),
+          PublicKeyUtils.generate("RSA", 2048),
         },
       };
   }
