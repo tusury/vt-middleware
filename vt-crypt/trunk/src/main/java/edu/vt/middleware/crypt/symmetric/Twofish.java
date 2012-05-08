@@ -26,9 +26,6 @@ public class Twofish extends SymmetricAlgorithm
   /** Algorithm name. */
   public static final String ALGORITHM = "Twofish";
 
-  /** Default key size for this algorithm in bits. */
-  public static final int DEFAULT_KEY_LENGTH = 256;
-
   /** Available key lengths in bits. */
   public static final int[] KEY_LENGTHS = new int[] {
     256,
@@ -57,13 +54,6 @@ public class Twofish extends SymmetricAlgorithm
   public Twofish(final String mode, final String padding)
   {
     super(ALGORITHM, mode, padding);
-  }
-
-
-  /** {@inheritDoc} */
-  public int getDefaultKeyLength()
-  {
-    return DEFAULT_KEY_LENGTH;
   }
 
 

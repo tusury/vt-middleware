@@ -167,6 +167,13 @@ public class SymmetricCli extends AbstractEncryptionCli
     salt.setArgName("count");
     salt.setOptionalArg(false);
 
+    final Option genKey = new Option(
+        OPT_GENKEY,
+        true,
+        "generate key of given size written to path specified by -out option");
+    genKey.setArgName("bitsize");
+    genKey.setOptionalArg(false);
+
     options.addOption(mode);
     options.addOption(padding);
     options.addOption(key);
@@ -177,7 +184,7 @@ public class SymmetricCli extends AbstractEncryptionCli
     options.addOption(pbeDigest);
     options.addOption(salt);
     options.addOption(iterations);
-    options.addOption(new Option(OPT_GENKEY, "generate new encryption key"));
+    options.addOption(genKey);
     options.addOption(new Option(OPT_ENCRYPT, "perform encryption"));
     options.addOption(new Option(OPT_DECRYPT, "perform decryption"));
   }
@@ -334,14 +341,9 @@ public class SymmetricCli extends AbstractEncryptionCli
     if (line.hasOption(OPT_PBE)) {
       key = generatePBEKey(alg, line);
     } else {
-      if (line.hasOption(OPT_KEYSIZE)) {
-        final int size = Integer.parseInt(line.getOptionValue(OPT_KEYSIZE));
-        System.err.println("Generating key of size " + size);
-        key = alg.generateKey(size);
-      } else {
-        System.err.println("Generating key of default size for " + alg);
-        key = alg.generateKey();
-      }
+      final int size = Integer.parseInt(line.getOptionValue(OPT_GENKEY));
+      System.err.println("Generating key of size " + size);
+      key = SecretKeyUtils.generate(alg.getAlgorithm(), size);
     }
     CryptWriter.writeEncodedKey(key, getOutputStream(line));
     if (line.hasOption(OPT_OUTFILE)) {

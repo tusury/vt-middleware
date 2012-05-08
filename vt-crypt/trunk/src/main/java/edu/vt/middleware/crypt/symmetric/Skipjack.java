@@ -26,9 +26,6 @@ public class Skipjack extends SymmetricAlgorithm
   /** Algorithm name. */
   public static final String ALGORITHM = "Skipjack";
 
-  /** Default key size for this algorithm in bits. */
-  public static final int DEFAULT_KEY_LENGTH = 80;
-
   /** Available key lengths in bits. */
   public static final int[] KEY_LENGTHS = new int[] {80};
 
@@ -53,13 +50,6 @@ public class Skipjack extends SymmetricAlgorithm
   public Skipjack(final String mode, final String padding)
   {
     super(ALGORITHM, mode, padding);
-  }
-
-
-  /** {@inheritDoc} */
-  public int getDefaultKeyLength()
-  {
-    return DEFAULT_KEY_LENGTH;
   }
 
 

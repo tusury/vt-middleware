@@ -26,9 +26,6 @@ public class CAST5 extends SymmetricAlgorithm
   /** Algorithm name. */
   public static final String ALGORITHM = "CAST5";
 
-  /** Default key size for this algorithm in bits. */
-  public static final int DEFAULT_KEY_LENGTH = 128;
-
   /** Available key lengths in bits. */
   public static final int[] KEY_LENGTHS = new int[] {
     128,
@@ -66,17 +63,6 @@ public class CAST5 extends SymmetricAlgorithm
   public CAST5(final String mode, final String padding)
   {
     super(ALGORITHM, mode, padding);
-  }
-
-
-  /**
-   * Gets the default key length for this algorithm.
-   *
-   * @return  Default key length in bits.
-   */
-  public int getDefaultKeyLength()
-  {
-    return DEFAULT_KEY_LENGTH;
   }
 
 

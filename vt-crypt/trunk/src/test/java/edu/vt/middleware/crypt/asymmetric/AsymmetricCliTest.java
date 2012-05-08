@@ -32,18 +32,18 @@ public class AsymmetricCliTest
 {
 
   /** Small key length. */
-  private static final int SMALL_KEY_LENGTH = 1024;
+  private static final int SMALL_KEY_LENGTH = 1536;
 
   /** Medium key length. */
-  private static final int MEDIUM_KEY_LENGTH = 1536;
+  private static final int MEDIUM_KEY_LENGTH = 2048;
 
   /** Large key length. */
-  private static final int LARGE_KEY_LENGTH = 2048;
+  private static final int LARGE_KEY_LENGTH = 3072;
 
   /**
    * Classpath location of large plaintext data file. Must ensure we choose keys
-   * of 1024 or larger to meet requirement for RSA key size to be larger than
-   * plaintext data.
+   * of 1536 or larger to meet requirement for RSA key size to be larger than
+   * plaintext data in bytes.
    */
   private static final String TEST_PLAINTEXT =
     "src/test/resources/edu/vt/middleware/crypt/plaintext-127.txt";
@@ -81,6 +81,7 @@ public class AsymmetricCliTest
         },
       };
   }
+
 
   /**
    * @param  cipherName  Asymmetric cipher name.

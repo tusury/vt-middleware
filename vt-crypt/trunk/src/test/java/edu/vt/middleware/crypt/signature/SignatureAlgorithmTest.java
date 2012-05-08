@@ -15,10 +15,11 @@ package edu.vt.middleware.crypt.signature;
 
 import java.io.InputStream;
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 
+import edu.vt.middleware.crypt.asymmetric.PublicKeyUtils;
 import edu.vt.middleware.crypt.digest.MD5;
+import edu.vt.middleware.crypt.digest.SHA256;
 import edu.vt.middleware.crypt.digest.SHA512;
 import edu.vt.middleware.crypt.digest.Tiger;
 import edu.vt.middleware.crypt.digest.Whirlpool;
@@ -61,52 +62,56 @@ public class SignatureAlgorithmTest
   public Object[][] createTestData()
     throws Exception
   {
-    final KeyPairGenerator rsaKeyGen = KeyPairGenerator.getInstance("RSA");
-    final KeyPair rsaKeys = rsaKeyGen.generateKeyPair();
-
-    final KeyPairGenerator dsaKeyGen = KeyPairGenerator.getInstance("DSA");
-    final KeyPair dsaKeys = dsaKeyGen.generateKeyPair();
-
     return
       new Object[][] {
         {
           new DSASignature(),
-          dsaKeys,
+          PublicKeyUtils.generate("DSA", 1024),
           null,
         },
         {
           new DSASignature(),
-          dsaKeys,
+          PublicKeyUtils.generate("DSA", 512),
           new Base64Converter(),
         },
         {
           new DSASignature(new SHA512()),
-          dsaKeys,
+          PublicKeyUtils.generate("DSA", 1024),
           new HexConverter(),
         },
         {
           new DSASignature(new Tiger()),
-          dsaKeys,
+          PublicKeyUtils.generate("DSA", 1024),
           new HexConverter(),
         },
         {
           new RSASignature(),
-          rsaKeys,
+          PublicKeyUtils.generate("RSA", 1024),
           null,
         },
         {
           new RSASignature(),
-          rsaKeys,
+          PublicKeyUtils.generate("RSA", 512),
           new Base64Converter(),
         },
         {
           new RSASignature(new MD5()),
-          rsaKeys,
+          PublicKeyUtils.generate("RSA", 1048),
           new HexConverter(),
         },
         {
           new RSASignature(new Whirlpool()),
-          rsaKeys,
+          PublicKeyUtils.generate("RSA", 1048),
+          new HexConverter(),
+        },
+        {
+          new ECDSASignature(),
+          PublicKeyUtils.generate("EC", 256),
+          null,
+        },
+        {
+          new ECDSASignature(new SHA256()),
+          PublicKeyUtils.generate("EC", 384),
           new HexConverter(),
         },
       };

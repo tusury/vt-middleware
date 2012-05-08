@@ -19,13 +19,13 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.digest.SHA1;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.CryptoException;
 import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.params.ParametersWithRandom;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.crypto.signers.RSADigestSigner;
@@ -45,7 +45,7 @@ public class RSASignature extends SignatureAlgorithm
   private static final String ALGORITHM = "RSA";
 
   /** Implements the RSA signature operation. */
-  private Signer signer;
+  private RSADigestSigner signer;
 
 
   /**
@@ -101,11 +101,10 @@ public class RSASignature extends SignatureAlgorithm
     }
 
     final RSAPrivateKey privKey = (RSAPrivateKey) signKey;
-    final RSAKeyParameters bcParams = new RSAKeyParameters(
-      true,
-      privKey.getModulus(),
-      privKey.getPrivateExponent());
-    init(true, bcParams);
+    init(true, new RSAKeyParameters(
+        true,
+        privKey.getModulus(),
+        privKey.getPrivateExponent()));
   }
 
 
@@ -118,11 +117,10 @@ public class RSASignature extends SignatureAlgorithm
     }
 
     final RSAPublicKey pubKey = (RSAPublicKey) verifyKey;
-    final RSAKeyParameters bcParams = new RSAKeyParameters(
+    init(false, new RSAKeyParameters(
       false,
       pubKey.getModulus(),
-      pubKey.getPublicExponent());
-    init(false, bcParams);
+      pubKey.getPublicExponent()));
   }
 
 

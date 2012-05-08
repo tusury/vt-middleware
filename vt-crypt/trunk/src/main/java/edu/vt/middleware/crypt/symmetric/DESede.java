@@ -27,9 +27,6 @@ public class DESede extends SymmetricAlgorithm
   /** Algorithm name. */
   public static final String ALGORITHM = "DESede";
 
-  /** Default key size for this algorithm in bits. */
-  public static final int DEFAULT_KEY_LENGTH = 168;
-
   /** Available key lengths in bits. */
   public static final int[] KEY_LENGTHS = new int[] {168};
 
@@ -54,17 +51,6 @@ public class DESede extends SymmetricAlgorithm
   public DESede(final String mode, final String padding)
   {
     super(ALGORITHM, mode, padding);
-  }
-
-
-  /**
-   * Gets the default key length for this algorithm.
-   *
-   * @return  Default key length in bits.
-   */
-  public int getDefaultKeyLength()
-  {
-    return DEFAULT_KEY_LENGTH;
   }
 
 
