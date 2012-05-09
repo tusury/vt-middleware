@@ -49,31 +49,84 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JLdapProviderConfig> cf;
-    LDAPConstraints constraints = config.getLDAPConstraints();
-    if (constraints == null) {
-      constraints = getDefaultLDAPConstraints(cc);
-    }
     if (cc.getUseStartTLS()) {
-      cf = new JLdapTlsConnectionFactory(
-        cc.getLdapUrl(),
-        config,
-        constraints,
-        (int) cc.getResponseTimeout(),
-        config.getSslSocketFactory() != null ?
-          config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
+      cf = getJLdapStartTLSConnectionFactory(cc, config.getLDAPConstraints());
     } else if (cc.getUseSSL()) {
-      cf = new JLdapSslConnectionFactory(
-        cc.getLdapUrl(),
-        config,
-        constraints,
-        (int) cc.getResponseTimeout(),
-        config.getSslSocketFactory() != null ?
-          config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
+      cf = getJLdapSSLConnectionFactory(cc, config.getLDAPConstraints());
     } else {
-      cf = new JLdapConnectionFactory(
-        cc.getLdapUrl(), config, constraints, (int) cc.getResponseTimeout());
+      cf = getJLdapConnectionFactory(cc, config.getLDAPConstraints());
     }
     return cf;
+  }
+
+
+  /**
+   * Returns a jldap startTLS connection factory using the properties found in
+   * the supplied connection config. If the supplied constraints is null, the
+   * environment is retrieved from {@link
+   * #getDefaultLDAPConstraints(ConnectionConfig)}.
+   *
+   * @param  cc  connection config
+   * @param  constraints  connection constraints or null to use the default
+   *
+   * @return  jndi startTLS connection factory
+   */
+  protected JLdapStartTLSConnectionFactory getJLdapStartTLSConnectionFactory(
+    final ConnectionConfig cc, final LDAPConstraints constraints)
+  {
+    return new JLdapStartTLSConnectionFactory(
+      cc.getLdapUrl(),
+      config,
+      constraints != null ? constraints : getDefaultLDAPConstraints(cc),
+      (int) cc.getResponseTimeout(),
+      config.getSslSocketFactory() != null ?
+        config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
+  }
+
+
+  /**
+   * Returns a jldap SSL connection factory using the properties found in
+   * the supplied connection config. If the supplied constraints is null, the
+   * environment is retrieved from {@link
+   * #getDefaultLDAPConstraints(ConnectionConfig)}.
+   *
+   * @param  cc  connection config
+   * @param  constraints  connection constraints or null to use the default
+   *
+   * @return  jndi SSL connection factory
+   */
+  protected JLdapSSLConnectionFactory getJLdapSSLConnectionFactory(
+    final ConnectionConfig cc, final LDAPConstraints constraints)
+  {
+    return new JLdapSSLConnectionFactory(
+      cc.getLdapUrl(),
+      config,
+      constraints != null ? constraints : getDefaultLDAPConstraints(cc),
+      (int) cc.getResponseTimeout(),
+      config.getSslSocketFactory() != null ?
+        config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
+  }
+
+
+  /**
+   * Returns a jldap connection factory using the properties found in the
+   * supplied connection config. If the supplied constraints is null, the
+   * environment is retrieved from {@link
+   * #getDefaultLDAPConstraints(ConnectionConfig)}.
+   *
+   * @param  cc  connection config
+   * @param  constraints  connection constraints or null to use the default
+   *
+   * @return  jndi connection factory
+   */
+  protected JLdapConnectionFactory getJLdapConnectionFactory(
+    final ConnectionConfig cc, final LDAPConstraints constraints)
+  {
+    return new JLdapConnectionFactory(
+      cc.getLdapUrl(),
+      config,
+      constraints != null ? constraints : getDefaultLDAPConstraints(cc),
+      (int) cc.getResponseTimeout());
   }
 
 

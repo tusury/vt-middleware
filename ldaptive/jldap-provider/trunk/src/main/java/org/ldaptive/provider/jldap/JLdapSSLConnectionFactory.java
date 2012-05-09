@@ -25,8 +25,8 @@ import com.novell.ldap.LDAPJSSESecureSocketFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class JLdapSslConnectionFactory
-  extends AbstractJLdapConnectionFactory<JLdapSslConnection>
+public class JLdapSSLConnectionFactory
+  extends AbstractJLdapConnectionFactory<JLdapSSLConnection>
 {
 
   /** SSL socket factory to use for SSL. */
@@ -42,7 +42,7 @@ public class JLdapSslConnectionFactory
    * @param  timeOut  time in milliseconds that operations will wait
    * @param  factory  SSL socket factory
    */
-  public JLdapSslConnectionFactory(
+  public JLdapSSLConnectionFactory(
     final String url,
     final JLdapProviderConfig config,
     final LDAPConstraints constraints,
@@ -72,9 +72,9 @@ public class JLdapSslConnectionFactory
 
   /** {@inheritDoc} */
   @Override
-  protected JLdapSslConnection createJLdapConnection(
+  protected JLdapSSLConnection createJLdapConnection(
     final LDAPConnection conn, final JLdapProviderConfig config)
   {
-    return new JLdapSslConnection(conn, config);
+    return new JLdapSSLConnection(conn, config);
   }
 }
