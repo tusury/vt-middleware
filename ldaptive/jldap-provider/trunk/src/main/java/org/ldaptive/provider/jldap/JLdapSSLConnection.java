@@ -21,7 +21,7 @@ import com.novell.ldap.LDAPConnection;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class JLdapSslConnection extends JLdapConnection
+public class JLdapSSLConnection extends JLdapConnection
 {
 
 
@@ -31,7 +31,7 @@ public class JLdapSslConnection extends JLdapConnection
    * @param  conn  ldap connection
    * @param  pc  provider configuration
    */
-  public JLdapSslConnection(
+  public JLdapSSLConnection(
     final LDAPConnection conn, final JLdapProviderConfig pc)
   {
     super(conn, pc);

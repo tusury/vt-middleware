@@ -102,43 +102,10 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     final ConnectionConfig cc)
   {
     ConnectionFactory<JndiProviderConfig> cf;
-    final Map<String, Object> env = config.getEnvironment();
     if (cc.getUseStartTLS()) {
-      // hostname verification always occurs for startTLS after the handshake
-      SSLSocketFactory factory = config.getSslSocketFactory();
-      if (factory == null &&
-          cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
-        final TLSSocketFactory sf = new TLSSocketFactory();
-        sf.setSslConfig(cc.getSslConfig());
-        try {
-          sf.initialize();
-        } catch (GeneralSecurityException e) {
-          throw new IllegalArgumentException(e);
-        }
-        factory = sf;
-      }
-      cf = new JndiStartTLSConnectionFactory(
-        cc.getLdapUrl(),
-        config,
-        env != null ? env : getDefaultEnvironment(cc, null),
-        factory,
-        config.getHostnameVerifier());
+      cf = getJndiStartTLSConnectionFactory(cc, config.getEnvironment());
     } else {
-      SSLSocketFactory factory = config.getSslSocketFactory();
-      if (factory == null &&
-          (cc.getUseSSL() ||
-           cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
-        // LDAPS hostname verification does not occur by default
-        // set a default hostname verifier
-        final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-        factory = ThreadLocalTLSSocketFactory.getHostnameVerifierFactory(
-          cc.getSslConfig(), ldapUrl.getEntriesAsString());
-      }
-      cf = new JndiConnectionFactory(
-        cc.getLdapUrl(),
-        config,
-        env != null ? env : getDefaultEnvironment(
-          cc, factory != null ? factory.getClass().getName() : null));
+      cf = getJndiConnectionFactory(cc, config.getEnvironment());
     }
     return cf;
   }
@@ -165,6 +132,73 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   public JndiProvider newInstance()
   {
     return new JndiProvider();
+  }
+
+
+  /**
+   * Returns a jndi startTLS connection factory using the properties found in
+   * the supplied connection config. If the supplied env is null, the
+   * environment is retrieved from {@link
+   * #getDefaultEnvironment(ConnectionConfig, String)}.
+   *
+   * @param  cc  connection config
+   * @param  env  context environment or null to use the default
+   *
+   * @return  jndi startTLS connection factory
+   */
+  protected JndiStartTLSConnectionFactory getJndiStartTLSConnectionFactory(
+    final ConnectionConfig cc, final Map<String, Object> env)
+  {
+    // hostname verification always occurs for startTLS after the handshake
+    SSLSocketFactory factory = config.getSslSocketFactory();
+    if (factory == null &&
+      cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
+      final TLSSocketFactory sf = new TLSSocketFactory();
+      sf.setSslConfig(cc.getSslConfig());
+      try {
+        sf.initialize();
+      } catch (GeneralSecurityException e) {
+        throw new IllegalArgumentException(e);
+      }
+      factory = sf;
+    }
+    return new JndiStartTLSConnectionFactory(
+      cc.getLdapUrl(),
+      config,
+      env != null ? env : getDefaultEnvironment(cc, null),
+      factory,
+      config.getHostnameVerifier());
+  }
+
+
+  /**
+   * Returns a jndi connection factory using the properties found in the
+   * supplied connection config. If the supplied env is null, the environment is
+   * retrieved from {@link #getDefaultEnvironment(ConnectionConfig, String)}.
+   *
+   * @param  cc  connection config
+   * @param  env  context environment or null to use the default
+   *
+   * @return  jndi connection factory
+   */
+  protected JndiConnectionFactory getJndiConnectionFactory(
+    final ConnectionConfig cc, final Map<String, Object> env)
+  {
+    SSLSocketFactory factory = config.getSslSocketFactory();
+    if (factory == null &&
+      (cc.getUseSSL() ||
+        cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+      // LDAPS hostname verification does not occur by default
+      // set a default hostname verifier
+      final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+      factory = ThreadLocalTLSSocketFactory.getHostnameVerifierFactory(
+        cc.getSslConfig(), ldapUrl.getEntriesAsString());
+    }
+    return new JndiConnectionFactory(
+      cc.getLdapUrl(),
+      config,
+      env != null ? env : getDefaultEnvironment(
+        cc, factory != null ? factory.getClass().getName() : null));
   }
 
 

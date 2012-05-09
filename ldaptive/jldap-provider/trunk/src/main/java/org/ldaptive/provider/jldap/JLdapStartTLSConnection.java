@@ -23,7 +23,7 @@ import org.ldaptive.LdapException;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class JLdapTlsConnection extends JLdapConnection
+public class JLdapStartTLSConnection extends JLdapConnection
 {
 
   /**
@@ -39,7 +39,7 @@ public class JLdapTlsConnection extends JLdapConnection
    * @param  conn  ldap connection
    * @param  pc  provider configuration
    */
-  public JLdapTlsConnection(
+  public JLdapStartTLSConnection(
     final LDAPConnection conn, final JLdapProviderConfig pc)
   {
     super(conn, pc);

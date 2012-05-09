@@ -26,8 +26,8 @@ import com.novell.ldap.LDAPJSSEStartTLSFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class JLdapTlsConnectionFactory
-  extends AbstractJLdapConnectionFactory<JLdapTlsConnection>
+public class JLdapStartTLSConnectionFactory
+  extends AbstractJLdapConnectionFactory<JLdapStartTLSConnection>
 {
 
   /** SSL socket factory to use for startTLS. */
@@ -43,7 +43,7 @@ public class JLdapTlsConnectionFactory
    * @param  timeOut  time in milliseconds that operations will wait
    * @param  factory  SSL socket factory
    */
-  public JLdapTlsConnectionFactory(
+  public JLdapStartTLSConnectionFactory(
     final String url,
     final JLdapProviderConfig config,
     final LDAPConstraints constraints,
@@ -81,9 +81,9 @@ public class JLdapTlsConnectionFactory
 
   /** {@inheritDoc} */
   @Override
-  protected JLdapTlsConnection createJLdapConnection(
+  protected JLdapStartTLSConnection createJLdapConnection(
     final LDAPConnection conn, final JLdapProviderConfig config)
   {
-    return new JLdapTlsConnection(conn, config);
+    return new JLdapStartTLSConnection(conn, config);
   }
 }

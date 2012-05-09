@@ -13,6 +13,7 @@
 */
 package org.ldaptive.provider.jndi;
 
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 import javax.naming.NamingException;
@@ -48,7 +49,19 @@ public class JndiConnectionFactory
     final Map<String, Object> env)
   {
     super(url, config);
-    environment = env;
+    environment = Collections.unmodifiableMap(env);
+  }
+
+
+  /**
+   * Returns the JNDI environment for this connection factory. This map cannot
+   * be modified.
+   *
+   * @return  jndi environment
+   */
+  protected Map<String, Object> getEnvironment()
+  {
+    return environment;
   }
 
 
@@ -60,7 +73,7 @@ public class JndiConnectionFactory
     // CheckStyle:IllegalType OFF
     // the JNDI API requires the Hashtable type
     final Hashtable<String, Object> env = new Hashtable<String, Object>(
-      environment);
+      getEnvironment());
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
 
