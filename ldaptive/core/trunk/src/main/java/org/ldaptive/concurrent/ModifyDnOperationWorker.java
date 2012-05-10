@@ -46,7 +46,8 @@ public class ModifyDnOperationWorker
    * @param  es  executor service
    */
   public ModifyDnOperationWorker(
-    final ModifyDnOperation op, final ExecutorService es)
+    final ModifyDnOperation op,
+    final ExecutorService es)
   {
     super(op, es);
   }

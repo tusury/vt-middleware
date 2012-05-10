@@ -38,9 +38,7 @@ public class ParallelSearchExecutor
   extends AbstractParallelSearchExecutor<ConnectionFactory>
 {
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public ParallelSearchExecutor()
   {
     this(Executors.newCachedThreadPool());
@@ -71,10 +69,13 @@ public class ParallelSearchExecutor
     final Connection conn = factory.getConnection();
     try {
       conn.open();
+
       final SearchOperation op = new SearchOperation(conn);
       op.setOperationResponseHandlers(getSearchResponseHandlers());
+
       final SearchOperationWorker worker = new SearchOperationWorker(
-        op, getExecutorService());
+        op,
+        getExecutorService());
       final SearchRequest[] sr = new SearchRequest[filters.length];
       for (int i = 0; i < filters.length; i++) {
         sr[i] = newSearchRequest(this);

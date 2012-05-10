@@ -80,10 +80,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public LdapException(
-    final String msg,
-    final ResultCode code,
-    final String dn)
+  public LdapException(final String msg, final ResultCode code, final String dn)
   {
     super(msg);
     resultCode = code;

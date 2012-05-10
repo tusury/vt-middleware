@@ -34,7 +34,8 @@ import org.ldaptive.io.LdifWriter;
  *   <li>outputFormat</li>
  * </ul>
  *
- * All other init params can be set from properties on:
+ * <p>All other init params can be set from properties on:</p>
+ *
  * <ul>
  *   <li>{@link org.ldaptive.SearchRequest}</li>
  *   <li>{@link org.ldaptive.ConnectionConfig}</li>

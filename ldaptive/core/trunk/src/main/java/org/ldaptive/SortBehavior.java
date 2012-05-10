@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Enum to define how ldap result, entries, and attribute data should be sorted.
- * Default sort behavior can be controlled with the
- * org.ldaptive.sortBehavior system property. This property must be
- * the fully qualified name of a sort behavior.
+ * Default sort behavior can be controlled with the org.ldaptive.sortBehavior
+ * system property. This property must be the fully qualified name of a sort
+ * behavior.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -37,8 +37,7 @@ public enum SortBehavior {
   SORTED;
 
   /** Sort behavior name. */
-  public static final String SORT_BEHAVIOR =
-    "org.ldaptive.sortBehavior";
+  public static final String SORT_BEHAVIOR = "org.ldaptive.sortBehavior";
 
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(

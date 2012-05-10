@@ -17,8 +17,7 @@ import org.ldaptive.control.RequestControl;
 import org.ldaptive.sasl.SaslConfig;
 
 /**
- * Handles properties for {@link
- * org.ldaptive.auth.BindAuthenticationHandler}.
+ * Handles properties for {@link org.ldaptive.auth.BindAuthenticationHandler}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

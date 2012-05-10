@@ -44,7 +44,8 @@ public class JndiStartTLSConnection extends JndiConnection
    * @param  pc  provider configuration
    */
   public JndiStartTLSConnection(
-    final LdapContext lc, final JndiProviderConfig pc)
+    final LdapContext lc,
+    final JndiProviderConfig pc)
   {
     super(lc, pc);
   }

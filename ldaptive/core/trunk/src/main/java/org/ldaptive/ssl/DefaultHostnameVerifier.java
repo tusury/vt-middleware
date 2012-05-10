@@ -32,11 +32,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Hostname verifier that provides an implementation similar to what occurs with
  * JNDI startTLS. Verification occurs in the following order:
+ *
  * <ul>
- *  <li>if hostname is IP, then cert must have exact match IP subjAltName</li>
- *  <li>hostname must match any DNS subjAltName if any exist</li>
- *  <li>hostname must match the first CN</li>
- *  <li>if cert begins with a wildcard, domains are used for matching</li>
+ *   <li>if hostname is IP, then cert must have exact match IP subjAltName</li>
+ *   <li>hostname must match any DNS subjAltName if any exist</li>
+ *   <li>hostname must match the first CN</li>
+ *   <li>if cert begins with a wildcard, domains are used for matching</li>
  * </ul>
  *
  * @author  Middleware Services
@@ -46,12 +47,9 @@ public class DefaultHostnameVerifier
   implements HostnameVerifier, CertificateHostnameVerifier
 {
 
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
-
   /** Enum for subject alt name types. */
-  private enum SubjectAltNameType
-  {
+  private enum SubjectAltNameType {
+
     /** other name (0). */
     OTHER_NAME,
 
@@ -80,6 +78,9 @@ public class DefaultHostnameVerifier
     REGISTERED_ID
   }
 
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+
 
   /** {@inheritDoc} */
   @Override
@@ -105,10 +106,10 @@ public class DefaultHostnameVerifier
 
 
   /**
-   * Verify if the hostname is an IP address using
-   * {@link LdapUtils#isIPAddress(String)}. Delegates to
-   * {@link #verifyIP(String, X509Certificate)} and
-   * {@link #verifyDNS(String, X509Certificate)} accordingly.
+   * Verify if the hostname is an IP address using {@link
+   * LdapUtils#isIPAddress(String)}. Delegates to {@link #verifyIP(String,
+   * X509Certificate)} and {@link #verifyDNS(String, X509Certificate)}
+   * accordingly.
    *
    * @param  hostname  to verify
    * @param  cert  to verify hostname against
@@ -122,6 +123,7 @@ public class DefaultHostnameVerifier
       "verifying hostname={} against cert={}",
       hostname,
       cert.getSubjectX500Principal().toString());
+
     boolean b;
     if (LdapUtils.isIPAddress(hostname)) {
       b = verifyIP(hostname, cert);
@@ -135,22 +137,23 @@ public class DefaultHostnameVerifier
   /**
    * Verify the certificate allows use of the supplied IP address.
    *
-   * From RFC2818:
-   * In some cases, the URI is specified as an IP address rather than a
-   * hostname. In this case, the iPAddress subjectAltName must be present
-   * in the certificate and must exactly match the IP in the URI.
+   * <p>From RFC2818: In some cases, the URI is specified as an IP address
+   * rather than a hostname. In this case, the iPAddress subjectAltName must be
+   * present in the certificate and must exactly match the IP in the URI.</p>
    *
    * @param  ip  address to match in the certificate
-   * @param   cert  to inspect for the IP address
+   * @param  cert  to inspect for the IP address
    *
    * @return  whether the ip matched a subject alt name
    */
   protected boolean verifyIP(final String ip, final X509Certificate cert)
   {
     final String[] subjAltNames = getSubjectAltNames(
-      cert, SubjectAltNameType.IP_ADDRESS);
+      cert,
+      SubjectAltNameType.IP_ADDRESS);
     logger.debug(
-      "verifyIP using subjectAltNames={}", Arrays.toString(subjAltNames));
+      "verifyIP using subjectAltNames={}",
+      Arrays.toString(subjAltNames));
     for (String name : subjAltNames) {
       if (ip.equalsIgnoreCase(name)) {
         logger.debug("verifyIP found hostname match: {}", name);
@@ -165,17 +168,16 @@ public class DefaultHostnameVerifier
    * Verify the certificate allows use of the supplied DNS name. Note that only
    * the first CN is used.
    *
-   * From RFC2818:
-   * If a subjectAltName extension of type dNSName is present, that MUST
-   * be used as the identity. Otherwise, the (most specific) Common Name
-   * field in the Subject field of the certificate MUST be used. Although
+   * <p>From RFC2818: If a subjectAltName extension of type dNSName is present,
+   * that MUST be used as the identity. Otherwise, the (most specific) Common
+   * Name field in the Subject field of the certificate MUST be used. Although
    * the use of the Common Name is existing practice, it is deprecated and
-   * Certification Authorities are encouraged to use the dNSName instead.
+   * Certification Authorities are encouraged to use the dNSName instead.</p>
    *
-   * Matching is performed using the matching rules specified by
-   * [RFC2459].  If more than one identity of a given type is present in
-   * the certificate (e.g., more than one dNSName name, a match in any one
-   * of the set is considered acceptable.)
+   * <p>Matching is performed using the matching rules specified by [RFC2459].
+   * If more than one identity of a given type is present in the certificate
+   * (e.g., more than one dNSName name, a match in any one of the set is
+   * considered acceptable.)</p>
    *
    * @param  hostname  to match in the certificate
    * @param  cert  to inspect for the hostname
@@ -186,9 +188,11 @@ public class DefaultHostnameVerifier
   {
     boolean verified = false;
     final String[] subjAltNames = getSubjectAltNames(
-      cert, SubjectAltNameType.DNS_NAME);
+      cert,
+      SubjectAltNameType.DNS_NAME);
     logger.debug(
-      "verifyDNS using subjectAltNames={}", Arrays.toString(subjAltNames));
+      "verifyDNS using subjectAltNames={}",
+      Arrays.toString(subjAltNames));
     if (subjAltNames.length > 0) {
       // if subject alt names exist, one must match
       for (String name : subjAltNames) {
@@ -222,7 +226,8 @@ public class DefaultHostnameVerifier
    * @return  subject alt names
    */
   private String[] getSubjectAltNames(
-    final X509Certificate cert, final SubjectAltNameType type)
+    final X509Certificate cert,
+    final SubjectAltNameType type)
   {
     final List<String> names = new ArrayList<String>();
     try {
@@ -281,8 +286,7 @@ public class DefaultHostnameVerifier
   private boolean isMatch(final String hostname, final String certName)
   {
     // must start with '*' and contain two domain components
-    final boolean isWildcard =
-      certName.startsWith("*.") &&
+    final boolean isWildcard = certName.startsWith("*.") &&
       certName.indexOf('.') < certName.lastIndexOf('.');
     logger.trace(
       "matching for hostname={}, certName={}, isWildcard={}",
@@ -292,8 +296,8 @@ public class DefaultHostnameVerifier
     if (isWildcard) {
       final String certNameDomain = certName.substring(certName.indexOf("."));
 
-      final int hostnameIdx = hostname.contains(".") ?
-        hostname.indexOf(".") : hostname.length();
+      final int hostnameIdx = hostname.contains(".") ? hostname.indexOf(".")
+                                                     : hostname.length();
       final String hostnameDomain = hostname.substring(hostnameIdx);
 
       match = certNameDomain.equalsIgnoreCase(hostnameDomain);
@@ -303,22 +307,19 @@ public class DefaultHostnameVerifier
     } else {
       match = certName.equalsIgnoreCase(hostname);
       logger.trace(
-        "match={} for {} == {}", new Object[] {match, certName, hostname});
+        "match={} for {} == {}",
+        new Object[] {match, certName, hostname});
     }
     return match;
   }
 
 
-  /**
-   * Socket factory that uses {@link DefaultHostnameVerifier}.
-   */
+  /** Socket factory that uses {@link DefaultHostnameVerifier}. */
   public static class SSLSocketFactory extends TLSSocketFactory
   {
 
 
-    /**
-     * Creates a new socket factory that uses this hostname verifier.
-     */
+    /** Creates a new socket factory that uses this hostname verifier. */
     public SSLSocketFactory()
     {
       setHostnameVerifier(new DefaultHostnameVerifier());

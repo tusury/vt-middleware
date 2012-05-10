@@ -26,17 +26,16 @@ import org.ldaptive.LdapUtils;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class CertificateValueTranscoder
-  implements ValueTranscoder<Certificate>
+public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
 {
 
   /** PEM cert header. */
-  private static final String BEGIN_CERT =
-    "-----BEGIN CERTIFICATE-----" + System.getProperty("line.separator");
+  private static final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----" +
+    System.getProperty("line.separator");
 
   /** PEM cert footer. */
-  private static final String END_CERT =
-    System.getProperty("line.separator") + "-----END CERTIFICATE-----";
+  private static final String END_CERT = System.getProperty("line.separator") +
+    "-----END CERTIFICATE-----";
 
 
   /** {@inheritDoc} */
@@ -56,7 +55,8 @@ public class CertificateValueTranscoder
       return cf.generateCertificate(new ByteArrayInputStream(value));
     } catch (CertificateException e) {
       throw new IllegalArgumentException(
-        "Attribute value could not be decoded as a certificate", e);
+        "Attribute value could not be decoded as a certificate",
+        e);
     }
   }
 

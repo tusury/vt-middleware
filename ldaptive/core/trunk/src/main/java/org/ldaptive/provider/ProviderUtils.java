@@ -65,7 +65,11 @@ public final class ProviderUtils
       for (ResultCode rc : operationRetryResultCodes) {
         if (rc.value() == resultCode) {
           throw new OperationException(
-            e, rc, matchedDn, respControls, referralUrls);
+            e,
+            rc,
+            matchedDn,
+            respControls,
+            referralUrls);
         }
       }
     }
@@ -113,7 +117,11 @@ public final class ProviderUtils
       for (ResultCode rc : operationRetryResultCodes) {
         if (rc.value() == resultCode) {
           throw new OperationException(
-            msg, rc, matchedDn, respControls, referralUrls);
+            msg,
+            rc,
+            matchedDn,
+            respControls,
+            referralUrls);
         }
       }
     }

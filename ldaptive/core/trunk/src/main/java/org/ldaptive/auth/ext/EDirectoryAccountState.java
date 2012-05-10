@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 public class EDirectoryAccountState extends AccountState
 {
 
+
   /**
    * Enum to define edirectory errors. See
    * http://support.novell.com/docs/Tids/Solutions/10067240.html and

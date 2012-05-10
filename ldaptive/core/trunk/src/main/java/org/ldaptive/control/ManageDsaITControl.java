@@ -54,8 +54,8 @@ public class ManageDsaITControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(
-      HASH_CODE_SEED, getOID(), getCriticality());
+    return
+      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 

@@ -116,7 +116,9 @@ public final class ConnectionConfigPropertySource
       sc = new SslConfig();
 
       final SslConfigPropertySource scSource = new SslConfigPropertySource(
-        sc, propertiesDomain, properties);
+        sc,
+        propertiesDomain,
+        properties);
       scSource.initialize();
       object.setSslConfig(sc);
     } else {

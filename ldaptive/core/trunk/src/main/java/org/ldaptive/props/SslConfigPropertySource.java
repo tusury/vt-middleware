@@ -51,8 +51,7 @@ public final class SslConfigPropertySource
    * @param  config  ssl config to invoke properties on
    * @param  paths  to read properties from
    */
-  public SslConfigPropertySource(
-    final SslConfig config, final String... paths)
+  public SslConfigPropertySource(final SslConfig config, final String... paths)
   {
     this(config, loadProperties(paths));
   }
@@ -65,7 +64,8 @@ public final class SslConfigPropertySource
    * @param  readers  to read properties from
    */
   public SslConfigPropertySource(
-    final SslConfig config, final Reader... readers)
+    final SslConfig config,
+    final Reader... readers)
   {
     this(config, loadProperties(readers));
   }

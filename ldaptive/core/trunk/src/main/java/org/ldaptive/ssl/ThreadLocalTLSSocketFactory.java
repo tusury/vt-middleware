@@ -64,7 +64,8 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
       sf.initialize();
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException(
-        "Error initializing socket factory", e);
+        "Error initializing socket factory",
+        e);
     }
     return sf;
   }
@@ -73,8 +74,8 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
   /**
    * Returns an instance of this socket factory configured with a hostname
    * verifying trust manager. If the supplied ssl config does not contain a
-   * trust managers, {@link HostnameVerifyingTrustManager} with
-   * {@link DefaultHostnameVerifier} is set.
+   * trust managers, {@link HostnameVerifyingTrustManager} with {@link
+   * DefaultHostnameVerifier} is set.
    *
    * @param  config  to set on the socket factory
    * @param  names  to use for hostname verification
@@ -82,7 +83,8 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
    * @return  socket factory
    */
   public static SSLSocketFactory getHostnameVerifierFactory(
-    final SslConfig config, final String[] names)
+    final SslConfig config,
+    final String[] names)
   {
     final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
     if (config != null && !config.isEmpty()) {
@@ -90,13 +92,15 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
       if (sf.getSslConfig().getTrustManagers() == null) {
         sf.getSslConfig().setTrustManagers(
           new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), names));
+            new DefaultHostnameVerifier(),
+            names));
       }
     } else {
       sf.setSslConfig(
         new SslConfig(
           new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), names)));
+            new DefaultHostnameVerifier(),
+            names)));
     }
     try {
       sf.initialize();
@@ -121,8 +125,6 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
   }
 
 
-  /**
-   * Thread local class for {@link SslConfig}.
-   */
+  /** Thread local class for {@link SslConfig}. */
   private static class ThreadLocalSslConfig extends ThreadLocal<SslConfig> {}
 }

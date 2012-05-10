@@ -237,7 +237,11 @@ public class JndiConnection implements Connection
         config.getControlProcessor().processRequestControls(
           request.getControls()));
       response = createResponse(
-        request, null, ResultCode.SUCCESS, null, context);
+        request,
+        null,
+        ResultCode.SUCCESS,
+        null,
+        context);
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
@@ -270,7 +274,11 @@ public class JndiConnection implements Connection
         config.getControlProcessor().processRequestControls(
           request.getControls()));
       response = createResponse(
-        request, null, ResultCode.SUCCESS, null, context);
+        request,
+        null,
+        ResultCode.SUCCESS,
+        null,
+        context);
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
@@ -316,7 +324,11 @@ public class JndiConnection implements Connection
         config.getControlProcessor().processRequestControls(
           request.getControls()));
       response = createResponse(
-        request, null, ResultCode.SUCCESS, null, context);
+        request,
+        null,
+        ResultCode.SUCCESS,
+        null,
+        context);
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
@@ -343,8 +355,7 @@ public class JndiConnection implements Connection
         ctx.createSubcontext(
           new LdapName(request.getDn()),
           bu.fromLdapAttributes(request.getLdapAttributes())).close();
-        response = createResponse(
-          request, null, ResultCode.SUCCESS, null, ctx);
+        response = createResponse(request, null, ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {
           ctx.close();
@@ -417,8 +428,7 @@ public class JndiConnection implements Connection
       try {
         ctx = initializeContext(request);
         ctx.destroySubcontext(new LdapName(request.getDn()));
-        response = createResponse(
-          request, null, ResultCode.SUCCESS, null, ctx);
+        response = createResponse(request, null, ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {
           ctx.close();
@@ -445,12 +455,12 @@ public class JndiConnection implements Connection
     try {
       try {
         ctx = initializeContext(request);
+
         final JndiUtils bu = new JndiUtils();
         ctx.modifyAttributes(
           new LdapName(request.getDn()),
           bu.fromAttributeModification(request.getAttributeModifications()));
-        response = createResponse(
-          request, null, ResultCode.SUCCESS, null, ctx);
+        response = createResponse(request, null, ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {
           ctx.close();
@@ -483,8 +493,7 @@ public class JndiConnection implements Connection
         ctx.rename(
           new LdapName(request.getDn()),
           new LdapName(request.getNewDn()));
-        response = createResponse(
-          request, null, ResultCode.SUCCESS, null, ctx);
+        response = createResponse(request, null, ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {
           ctx.close();
@@ -528,10 +537,9 @@ public class JndiConnection implements Connection
 
 
   /**
-   * Creates a new ldap context using
-   * {@link LdapContext#newInstance(Control[])}.
-   * Adds any additional environment properties found in the supplied request
-   * to the context.
+   * Creates a new ldap context using {@link
+   * LdapContext#newInstance(Control[])}. Adds any additional environment
+   * properties found in the supplied request to the context.
    *
    * @param  request  to read properties from
    *
@@ -576,14 +584,17 @@ public class JndiConnection implements Connection
     final String[] urls,
     final LdapContext ctx)
   {
-    return new Response<T>(
-      result,
-      code,
-      null,
-      null,
-      processResponseControls(
-        config.getControlProcessor(), request.getControls(), ctx),
-      urls);
+    return
+      new Response<T>(
+        result,
+        code,
+        null,
+        null,
+        processResponseControls(
+          config.getControlProcessor(),
+          request.getControls(),
+          ctx),
+        urls);
   }
 
 
@@ -606,14 +617,17 @@ public class JndiConnection implements Connection
     final String[] urls,
     final LdapContext ctx)
   {
-    return new Response<T>(
-      result,
-      NamingExceptionUtils.getResultCode(e.getClass()),
-      e.getMessage(),
-      null,
-      processResponseControls(
-        config.getControlProcessor(), request.getControls(), ctx),
-      urls);
+    return
+      new Response<T>(
+        result,
+        NamingExceptionUtils.getResultCode(e.getClass()),
+        e.getMessage(),
+        null,
+        processResponseControls(
+          config.getControlProcessor(),
+          request.getControls(),
+          ctx),
+        urls);
   }
 
 
@@ -642,7 +656,9 @@ public class JndiConnection implements Connection
       rc != null ? rc.value() : -1,
       null,
       processResponseControls(
-        config.getControlProcessor(), request.getControls(), ctx),
+        config.getControlProcessor(),
+        request.getControls(),
+        ctx),
       urls,
       true);
   }
@@ -690,7 +706,8 @@ public class JndiConnection implements Connection
     final SaslConfig config)
   {
     final Map<String, Object> env = new HashMap<String, Object>();
-    if (config.getAuthorizationId() != null &&
+    if (
+      config.getAuthorizationId() != null &&
         !"".equals(config.getAuthorizationId())) {
       env.put(SASL_AUTHZ_ID, config.getAuthorizationId());
     }
@@ -716,9 +733,7 @@ public class JndiConnection implements Connection
   }
 
 
-  /**
-   * Search iterator for JNDI naming enumeration.
-   */
+  /** Search iterator for JNDI naming enumeration. */
   protected class JndiSearchIterator implements SearchIterator
   {
 
@@ -851,8 +866,8 @@ public class JndiConnection implements Connection
       return
         ctx.search(
           sr.getBaseDn(),
-          sr.getSearchFilter() != null ?
-            request.getSearchFilter().format() : null,
+          sr.getSearchFilter() != null ? request.getSearchFilter().format()
+                                       : null,
           getSearchControls(sr));
     }
 
@@ -920,11 +935,10 @@ public class JndiConnection implements Connection
       try {
         more = results.hasMore();
         if (!more) {
-          final ResponseControl[] respControls =
-            processResponseControls(
-              config.getControlProcessor(),
-              request.getControls(),
-              searchContext);
+          final ResponseControl[] respControls = processResponseControls(
+            config.getControlProcessor(),
+            request.getControls(),
+            searchContext);
           final boolean searchAgain = ControlProcessor.searchAgain(
             respControls);
           if (searchAgain) {
@@ -938,7 +952,7 @@ public class JndiConnection implements Connection
             response = new Response<Void>(
               null,
               responseResultCode != null ? responseResultCode
-                : ResultCode.SUCCESS,
+                                         : ResultCode.SUCCESS,
               null,
               null,
               respControls,
@@ -954,7 +968,8 @@ public class JndiConnection implements Connection
           searchContext);
       } catch (NamingException e) {
         final ResultCode ignoreRc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
+          config.getSearchIgnoreResultCodes(),
+          e);
         if (ignoreRc == null) {
           processNamingException(request, e, null, searchContext);
         }
@@ -980,7 +995,8 @@ public class JndiConnection implements Connection
         referralUrls = readReferralUrls(e);
       } catch (NamingException e) {
         final ResultCode ignoreRc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
+          config.getSearchIgnoreResultCodes(),
+          e);
         if (ignoreRc == null) {
           processNamingException(request, e, null, searchContext);
         }
@@ -1038,7 +1054,8 @@ public class JndiConnection implements Connection
               request.getControls()));
           search(ctx, request);
         } catch (LdapReferralException e) {
-          if (loopEx.getReferralInfo() != null &&
+          if (
+            loopEx.getReferralInfo() != null &&
               loopEx.getReferralInfo() instanceof String) {
             urls.add((String) loopEx.getReferralInfo());
           }
@@ -1140,7 +1157,7 @@ public class JndiConnection implements Connection
      *
      * @return  ldap name
      *
-     * @throws InvalidNameException  if the supplied string is not a valid
+     * @throws  InvalidNameException  if the supplied string is not a valid
      * composite name
      */
     protected String readCompositeName(final String s)

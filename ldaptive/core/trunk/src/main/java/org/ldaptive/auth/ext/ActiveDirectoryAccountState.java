@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class ActiveDirectoryAccountState extends AccountState
 {
 
+
   /**
    * Enum to define active directory errors. See
    * http://ldapwiki.willeke.com/wiki/

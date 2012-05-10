@@ -50,7 +50,7 @@ public abstract class AbstractDERType
     } else {
       // use 4 bytes for all long form integers
       // CheckStyle:MagicNumber OFF
-      lengthBytes = new byte[]{
+      lengthBytes = new byte[] {
         (byte) 0x84,
         (byte) (itemLength >>> 24),
         (byte) (itemLength >>> 16),

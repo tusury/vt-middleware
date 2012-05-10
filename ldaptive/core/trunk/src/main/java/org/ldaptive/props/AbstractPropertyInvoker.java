@@ -65,8 +65,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             method.getName().startsWith("set") &&
               method.getParameterTypes().length == 1) {
             final String mName = method.getName().substring(3);
-            final String pName =
-              mName.substring(0, 1).toLowerCase() +
+            final String pName = mName.substring(0, 1).toLowerCase() +
               mName.substring(1, mName.length());
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
@@ -79,8 +78,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             method.getName().startsWith("get") &&
               method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(3);
-            final String pName =
-              mName.substring(0, 1).toLowerCase() +
+            final String pName = mName.substring(0, 1).toLowerCase() +
               mName.substring(1, mName.length());
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);

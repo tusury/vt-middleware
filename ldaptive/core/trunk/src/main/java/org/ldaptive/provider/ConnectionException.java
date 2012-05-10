@@ -61,7 +61,9 @@ public class ConnectionException extends LdapException
    * @param  dn  matched dn
    */
   public ConnectionException(
-    final String msg, final ResultCode code, final String dn)
+    final String msg,
+    final ResultCode code,
+    final String dn)
   {
     super(msg, code, dn);
   }
@@ -136,7 +138,9 @@ public class ConnectionException extends LdapException
    * @param  dn  matched dn
    */
   public ConnectionException(
-    final Exception e, final ResultCode code, final String dn)
+    final Exception e,
+    final ResultCode code,
+    final String dn)
   {
     super(e, code, dn);
   }

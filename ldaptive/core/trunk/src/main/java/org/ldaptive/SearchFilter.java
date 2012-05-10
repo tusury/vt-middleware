@@ -125,8 +125,8 @@ public class SearchFilter
 
 
   /**
-   * Returns this filter with it's parameters encoded and replaced. See
-   * {@link #encode(Object)}.
+   * Returns this filter with it's parameters encoded and replaced. See {@link
+   * #encode(Object)}.
    *
    * @return  formated and encoded filter
    */
@@ -237,8 +237,7 @@ public class SearchFilter
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, searchFilter, parameters);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, searchFilter, parameters);
   }
 
 

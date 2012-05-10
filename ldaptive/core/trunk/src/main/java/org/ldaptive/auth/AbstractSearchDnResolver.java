@@ -126,7 +126,8 @@ public abstract class AbstractSearchDnResolver implements DnResolver
   public void setUserFilterParameters(final Object[] filterParams)
   {
     logger.trace(
-      "setting userFilterParameters: {}", Arrays.toString(filterParams));
+      "setting userFilterParameters: {}",
+      Arrays.toString(filterParams));
     userFilterParameters = filterParams;
   }
 

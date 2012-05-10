@@ -215,7 +215,8 @@ public abstract class AbstractOperation<Q extends Request, S>
       }
     }
     // execute response handlers
-    if (getOperationResponseHandlers() != null &&
+    if (
+      getOperationResponseHandlers() != null &&
         getOperationResponseHandlers().length > 0) {
       for (OperationResponseHandler<S> h : getOperationResponseHandlers()) {
         h.process(response);

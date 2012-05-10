@@ -45,8 +45,7 @@ public abstract class AbstractLoginModule implements LoginModule
   public static final String LOGIN_NAME = "javax.security.auth.login.name";
 
   /** Constant for entryDn stored in shared state. */
-  public static final String LOGIN_DN =
-    "org.ldaptive.jaas.login.entryDn";
+  public static final String LOGIN_DN = "org.ldaptive.jaas.login.entryDn";
 
   /** Constant for login password stored in shared state. */
   public static final String LOGIN_PASSWORD =

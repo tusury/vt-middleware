@@ -109,8 +109,8 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
 
 
   /**
-   * Immediately shuts down the executor service. See
-   * {@link ExecutorService#shutdownNow()}.
+   * Immediately shuts down the executor service. See {@link
+   * ExecutorService#shutdownNow()}.
    *
    * @return  list of tasks that never executed
    */
@@ -131,7 +131,8 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<LdapResult>> search(
-    final T factory, final String... filters)
+    final T factory,
+    final String... filters)
     throws LdapException
   {
     final SearchFilter[] sf = new SearchFilter[filters.length];
@@ -153,7 +154,8 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<LdapResult>> search(
-    final T factory, final SearchFilter[] filters)
+    final T factory,
+    final SearchFilter[] filters)
     throws LdapException
   {
     return search(factory, filters, (String[]) null, (LdapEntryHandler[]) null);
@@ -172,7 +174,9 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<LdapResult>> search(
-    final T factory, final String[] filters, final String... attrs)
+    final T factory,
+    final String[] filters,
+    final String... attrs)
     throws LdapException
   {
     final SearchFilter[] sf = new SearchFilter[filters.length];
@@ -195,7 +199,9 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<LdapResult>> search(
-    final T factory, final SearchFilter[] filters, final String... attrs)
+    final T factory,
+    final SearchFilter[] filters,
+    final String... attrs)
     throws LdapException
   {
     return search(factory, filters, attrs, (LdapEntryHandler[]) null);

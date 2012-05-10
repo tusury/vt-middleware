@@ -46,7 +46,8 @@ public class DeleteOperationWorker
    * @param  es  executor service
    */
   public DeleteOperationWorker(
-    final DeleteOperation op, final ExecutorService es)
+    final DeleteOperation op,
+    final ExecutorService es)
   {
     super(op, es);
   }

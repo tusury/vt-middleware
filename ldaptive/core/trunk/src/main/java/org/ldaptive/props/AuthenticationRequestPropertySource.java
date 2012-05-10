@@ -19,9 +19,8 @@ import java.util.Set;
 import org.ldaptive.auth.AuthenticationRequest;
 
 /**
- * Reads properties specific to {@link
- * org.ldaptive.auth.AuthenticationRequest} and returns an initialized
- * object of that type.
+ * Reads properties specific to {@link org.ldaptive.auth.AuthenticationRequest}
+ * and returns an initialized object of that type.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

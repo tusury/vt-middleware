@@ -65,7 +65,8 @@ public class SslConfigPropertyInvoker extends AbstractPropertyInvoker
         newValue = createTypeFromPropertyValue(HostnameVerifier.class, value);
       } else if (HandshakeCompletedListener[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(
-          HandshakeCompletedListener.class, value);
+          HandshakeCompletedListener.class,
+          value);
       } else {
         newValue = convertSimpleType(type, value);
       }

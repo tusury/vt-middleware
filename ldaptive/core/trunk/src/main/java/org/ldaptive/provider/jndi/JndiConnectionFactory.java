@@ -80,7 +80,8 @@ public class JndiConnectionFactory
     JndiConnection conn;
     try {
       conn = new JndiConnection(
-        new InitialLdapContext(env, null), getProviderConfig());
+        new InitialLdapContext(env, null),
+        getProviderConfig());
     } catch (NamingException e) {
       throw new ConnectionException(
         e,
