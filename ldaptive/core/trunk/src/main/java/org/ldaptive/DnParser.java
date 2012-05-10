@@ -26,8 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parses DNs following the rules in
- * <a href="http://www.ietf.org/rfc/rfc4514.txt">RFC 4514</a>. Attempts to be as
+ * Parses DNs following the rules in <a
+ * href="http://www.ietf.org/rfc/rfc4514.txt">RFC 4514</a>. Attempts to be as
  * generous as possible in the format of allowed DNs.
  *
  * @author  Middleware Services
@@ -55,8 +55,7 @@ public final class DnParser
    *
    * @return  DN attribute values
    */
-  public static Collection<String> getValues(
-    final String dn, final String name)
+  public static Collection<String> getValues(final String dn, final String name)
   {
     final Collection<String> values = new ArrayList<String>();
     for (LdapAttribute la : convertDnToAttributes(dn)) {
@@ -96,25 +95,27 @@ public final class DnParser
    *
    * @return  DN from the supplied index
    *
-   * @throws  IndexOutOfBoundsException  if index is less than 0 or greater
-   * than the number of RDNs
+   * @throws  IndexOutOfBoundsException  if index is less than 0 or greater than
+   * the number of RDNs
    */
   public static String substring(final String dn, final int index)
   {
     if (index < 0) {
       throw new IndexOutOfBoundsException("index cannot be negative");
     }
+
     final List<LdapAttribute> attrs = convertDnToAttributes(dn);
     if (index >= attrs.size()) {
       throw new IndexOutOfBoundsException(
         "index cannot be larger than the number of RDNs");
     }
+
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < attrs.size(); i++) {
       if (i >= index) {
         final LdapAttribute la = attrs.get(i);
-        sb.append(
-          la.getName()).append("=").append(la.getStringValue()).append(",");
+        sb.append(la.getName()).append("=").append(la.getStringValue()).append(
+          ",");
       }
     }
     if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
@@ -134,6 +135,7 @@ public final class DnParser
   protected static List<LdapAttribute> convertDnToAttributes(final String dn)
   {
     LOGGER.debug("parsing DN: {}", dn);
+
     final List<LdapAttribute> attributes = new ArrayList<LdapAttribute>();
     if (dn.isEmpty()) {
       return attributes;
@@ -149,6 +151,7 @@ public final class DnParser
       if (pos >= dn.length() || dn.charAt(pos++) != '=') {
         throw new IllegalArgumentException("Invalid DN: " + dn);
       }
+
       final int endAttrValuePos = readToChar(dn, new char[] {'+', ','}, pos);
       String attrValue = dn.substring(pos, endAttrValuePos);
       LOGGER.trace("read attribute value: [{}]", attrValue);
@@ -161,6 +164,7 @@ public final class DnParser
         final DERParser parser = new DERParser();
         final OctetStringHandler handler = new OctetStringHandler();
         parser.registerHandler("/OCTSTR", handler);
+
         final String hexData = attrValue.substring(1, attrValue.length());
         parser.parse(ByteBuffer.wrap(decodeHexValue(hexData.toCharArray())));
         attributes.add(
@@ -193,16 +197,18 @@ public final class DnParser
       return Hex.decodeHex(value);
     } catch (DecoderException e) {
       throw new IllegalArgumentException(
-        "Invalid HEX value: " + String.valueOf(value), e);
+        "Invalid HEX value: " + String.valueOf(value),
+        e);
     }
   }
 
 
   /**
-   * Decodes the supplied string attribute value.  Unescapes escaped characters.
+   * Decodes the supplied string attribute value. Unescapes escaped characters.
    * If escaped character is a hex value, it is decoded.
    *
    * @param  value  to decode
+   *
    * @return  decoded string
    */
   protected static String decodeStringValue(final String value)
@@ -215,6 +221,7 @@ public final class DnParser
       boolean appendHex = false;
       boolean appendValue = false;
       switch (c) {
+
       case '\\':
         if (pos + 1 < value.length()) {
           c = value.charAt(++pos);
@@ -234,6 +241,7 @@ public final class DnParser
           }
         }
         break;
+
       default:
         appendHex = hexValue.length() > 0;
         appendValue = true;
@@ -267,7 +275,9 @@ public final class DnParser
    * string
    */
   private static int readToChar(
-    final String s, final char[] chars, final int pos)
+    final String s,
+    final char[] chars,
+    final int pos)
   {
     int i = pos;
     while (i < s.length()) {
@@ -292,9 +302,7 @@ public final class DnParser
   }
 
 
-  /**
-   * Parse handler for decoding octet strings.
-   */
+  /** Parse handler for decoding octet strings. */
   private static class OctetStringHandler implements ParseHandler
   {
 

@@ -195,8 +195,7 @@ public class AuthenticatorCli extends AbstractCli
         writer.write(new LdapResult(entry));
       }
     } else {
-      System.out.println(
-        String.format("Authentication failed for %s", entry));
+      System.out.println(String.format("Authentication failed for %s", entry));
     }
   }
 

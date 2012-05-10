@@ -86,10 +86,11 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
       tmf.init(trustKeystore);
       tm = tmf.getTrustManagers();
     }
+
     TrustManager[] aggregate;
     if (tm == null) {
-      aggregate = super.getTrustManagers() != null ?
-        aggregateTrustManagers(super.getTrustManagers()) : null;
+      aggregate = super.getTrustManagers() != null
+        ? aggregateTrustManagers(super.getTrustManagers()) : null;
     } else {
       aggregate = aggregateTrustManagers(
         LdapUtils.concatArrays(tm, super.getTrustManagers()));

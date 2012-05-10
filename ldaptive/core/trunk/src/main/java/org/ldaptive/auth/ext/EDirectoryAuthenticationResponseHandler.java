@@ -23,10 +23,9 @@ import org.ldaptive.auth.AuthenticationResponseHandler;
 
 /**
  * Attempts to parse the authentication response and set the account state using
- * data associated with eDirectory. The {@link
- * org.ldaptive.auth.Authenticator} should be configured to return
- * 'passwordExpirationTime' and 'loginGraceRemaining' attributes so they can be
- * consumed by this handler.
+ * data associated with eDirectory. The {@link org.ldaptive.auth.Authenticator}
+ * should be configured to return 'passwordExpirationTime' and
+ * 'loginGraceRemaining' attributes so they can be consumed by this handler.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

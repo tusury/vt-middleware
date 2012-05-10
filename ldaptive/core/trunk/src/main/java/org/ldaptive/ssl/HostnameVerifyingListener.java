@@ -28,8 +28,7 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class HostnameVerifyingListener
-  implements HandshakeCompletedListener
+public class HostnameVerifyingListener implements HandshakeCompletedListener
 {
 
   /** Logger for this class. */
@@ -67,7 +66,8 @@ public class HostnameVerifyingListener
    * @param  name  hostname to verify
    */
   public HostnameVerifyingListener(
-    final HostnameVerifier verifier, final String name)
+    final HostnameVerifier verifier,
+    final String name)
   {
     hostnameVerifier = verifier;
     hostname = name;
@@ -111,7 +111,8 @@ public class HostnameVerifyingListener
       throw new SSLPeerUnverifiedException(
         String.format(
           "Hostname '%s' does not match the hostname in the server's " +
-          "certificate", hostname));
+          "certificate",
+          hostname));
     }
   }
 }

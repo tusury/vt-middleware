@@ -75,8 +75,9 @@ public class AccountState
    */
   public AccountState.Warning getWarning()
   {
-    return accountWarnings != null && accountWarnings.length > 0 ?
-      accountWarnings[0] : null;
+    return
+      accountWarnings != null && accountWarnings.length > 0 ? accountWarnings[0]
+                                                            : null;
   }
 
 
@@ -98,8 +99,9 @@ public class AccountState
    */
   public AccountState.Error getError()
   {
-    return accountErrors != null && accountErrors.length > 0 ?
-      accountErrors[0] : null;
+    return
+      accountErrors != null && accountErrors.length > 0 ? accountErrors[0]
+                                                        : null;
   }
 
 
@@ -134,9 +136,7 @@ public class AccountState
   }
 
 
-  /**
-   * Contains warning information for an account state.
-   */
+  /** Contains warning information for an account state. */
   public interface Warning
   {
 
@@ -158,9 +158,7 @@ public class AccountState
   }
 
 
-  /**
-   * Default warning implementation.
-   */
+  /** Default warning implementation. */
   public static class DefaultWarning implements Warning
   {
 

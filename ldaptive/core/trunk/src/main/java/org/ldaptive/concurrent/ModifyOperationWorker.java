@@ -46,7 +46,8 @@ public class ModifyOperationWorker
    * @param  es  executor service
    */
   public ModifyOperationWorker(
-    final ModifyOperation op, final ExecutorService es)
+    final ModifyOperation op,
+    final ExecutorService es)
   {
     super(op, es);
   }

@@ -62,15 +62,18 @@ public abstract class AbstractServlet extends HttpServlet
     super.init(config);
 
     searchExecutor = new SearchExecutor();
+
     final SearchRequestPropertySource srSource =
       new SearchRequestPropertySource(searchExecutor, createProperties(config));
     srSource.initialize();
     logger.debug("searchExecutor = {}", searchExecutor);
 
     connectionFactory = new PooledConnectionFactory();
+
     final PooledConnectionFactoryPropertySource cfPropSource =
       new PooledConnectionFactoryPropertySource(
-        connectionFactory, createProperties(config));
+        connectionFactory,
+        createProperties(config));
     cfPropSource.setPoolType(
       ConnectionPoolType.valueOf(getInitParameter(POOL_TYPE)));
     cfPropSource.initialize();

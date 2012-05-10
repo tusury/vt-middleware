@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for worker operations. If no {@link ExecutorService} is provided
- * a cached thread pool is used by default.
+ * Base class for worker operations. If no {@link ExecutorService} is provided a
+ * cached thread pool is used by default.
  *
  * @param  <Q>  type of ldap request
  * @param  <S>  type of ldap response
@@ -72,7 +72,8 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    * @param  es  executor service
    */
   public AbstractOperationWorker(
-    final Operation<Q, S> op, final ExecutorService es)
+    final Operation<Q, S> op,
+    final ExecutorService es)
   {
     operation = op;
     service = es;
@@ -154,9 +155,11 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    * @return  callable for the supplied operation and request
    */
   public static <Q extends Request, S> Callable<Response<S>> createCallable(
-    final Operation<Q, S> operation, final Q request)
+    final Operation<Q, S> operation,
+    final Q request)
   {
-    return new Callable<Response<S>>() {
+    return
+      new Callable<Response<S>>() {
       @Override
       public Response<S> call()
         throws LdapException

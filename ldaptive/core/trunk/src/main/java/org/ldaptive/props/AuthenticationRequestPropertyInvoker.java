@@ -16,8 +16,7 @@ package org.ldaptive.props;
 import org.ldaptive.Credential;
 
 /**
- * Handles properties for {@link
- * org.ldaptive.auth.AuthenticationRequest}.
+ * Handles properties for {@link org.ldaptive.auth.AuthenticationRequest}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

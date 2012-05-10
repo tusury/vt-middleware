@@ -35,7 +35,8 @@ import org.ldaptive.LdapResult;
  *   <li>poolType</li>
  * </ul>
  *
- * All other init params can be set from properties on:
+ * <p>All other init params can be set from properties on:</p>
+ *
  * <ul>
  *   <li>{@link org.ldaptive.SearchRequest}</li>
  *   <li>{@link org.ldaptive.ConnectionConfig}</li>

@@ -75,7 +75,7 @@ public class JndiProviderConfig extends ProviderConfig
   /**
    * Returns the context environment.
    *
-   * @return ldap context environment
+   * @return  ldap context environment
    */
   public Map<String, Object> getEnvironment()
   {

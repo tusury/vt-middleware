@@ -16,8 +16,7 @@ package org.ldaptive.props;
 import org.ldaptive.provider.Provider;
 
 /**
- * Handles properties for {@link
- * org.ldaptive.DefaultConnectionFactory}.
+ * Handles properties for {@link org.ldaptive.DefaultConnectionFactory}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

@@ -47,9 +47,7 @@ public class ParallelPooledSearchExecutor
 {
 
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public ParallelPooledSearchExecutor()
   {
     this(Executors.newCachedThreadPool());
@@ -91,6 +89,7 @@ public class ParallelPooledSearchExecutor
       if (handlers != null) {
         sr.setLdapEntryHandlers(handlers);
       }
+
       final Connection conn = factory.getConnection();
       final SearchOperation op = new SearchOperation(conn);
       op.setOperationResponseHandlers(getSearchResponseHandlers());
@@ -116,16 +115,19 @@ public class ParallelPooledSearchExecutor
    *
    * @param  <Q>  type of ldap request
    * @param  <S>  type of ldap response
-   * @param  conn  connection  that the operation will execute on
+   * @param  conn  connection that the operation will execute on
    * @param  operation  to execute
    * @param  request  to pass to the operation
    *
    * @return  callable for the supplied operation and request
    */
   protected static <Q extends Request, S> Callable<Response<S>> createCallable(
-    final Connection conn, final Operation<Q, S> operation, final Q request)
+    final Connection conn,
+    final Operation<Q, S> operation,
+    final Q request)
   {
-    return new Callable<Response<S>>() {
+    return
+      new Callable<Response<S>>() {
       @Override
       public Response<S> call()
         throws LdapException

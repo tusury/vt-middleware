@@ -21,9 +21,8 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.provider.ProviderConfig;
 
 /**
- * Reads properties specific to {@link
- * org.ldaptive.DefaultConnectionFactory} and returns an initialized
- * object of that type.
+ * Reads properties specific to {@link org.ldaptive.DefaultConnectionFactory}
+ * and returns an initialized object of that type.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

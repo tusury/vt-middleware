@@ -157,9 +157,7 @@ public class LdapURL
   }
 
 
-  /**
-   * Represents a single LDAP URL entry.
-   */
+  /** Represents a single LDAP URL entry. */
   public static class Entry
   {
 

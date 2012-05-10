@@ -52,6 +52,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
       } else {
         contextInitializer = new DefaultSSLContextInitializer();
       }
+
       final TrustManager[] managers = sslConfig.getTrustManagers();
       if (managers != null) {
         contextInitializer.setTrustManagers(managers);
@@ -59,6 +60,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
     } else {
       contextInitializer = new DefaultSSLContextInitializer();
     }
+
     final SSLContext ctx = contextInitializer.initSSLContext(DEFAULT_PROTOCOL);
     factory = ctx.getSocketFactory();
   }
@@ -76,7 +78,8 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
       sf.initialize();
     } catch (GeneralSecurityException e) {
       throw new IllegalArgumentException(
-        "Error initializing socket factory", e);
+        "Error initializing socket factory",
+        e);
     }
     return sf;
   }
@@ -85,8 +88,8 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   /**
    * Returns an instance of this socket factory configured with a hostname
    * verifying trust manager. If the supplied ssl config does not contain a
-   * trust managers, {@link HostnameVerifyingTrustManager} with
-   * {@link DefaultHostnameVerifier} is set.
+   * trust managers, {@link HostnameVerifyingTrustManager} with {@link
+   * DefaultHostnameVerifier} is set.
    *
    * @param  config  to set on the socket factory
    * @param  names  to use for hostname verification
@@ -95,7 +98,8 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
    */
   @SuppressWarnings("RedundantArrayCreation")
   public static SSLSocketFactory getHostnameVerifierFactory(
-    final SslConfig config, final String[] names)
+    final SslConfig config,
+    final String[] names)
   {
     final TLSSocketFactory sf = new TLSSocketFactory();
     if (config != null && !config.isEmpty()) {
@@ -103,13 +107,15 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
       if (sf.getSslConfig().getTrustManagers() == null) {
         sf.getSslConfig().setTrustManagers(
           new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), names));
+            new DefaultHostnameVerifier(),
+            names));
       }
     } else {
       sf.setSslConfig(
         new SslConfig(
           new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), names)));
+            new DefaultHostnameVerifier(),
+            names)));
     }
     try {
       sf.initialize();

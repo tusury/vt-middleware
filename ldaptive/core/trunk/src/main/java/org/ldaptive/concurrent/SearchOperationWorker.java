@@ -47,7 +47,8 @@ public class SearchOperationWorker
    * @param  es  executor service
    */
   public SearchOperationWorker(
-    final SearchOperation op, final ExecutorService es)
+    final SearchOperation op,
+    final ExecutorService es)
   {
     super(op, es);
   }

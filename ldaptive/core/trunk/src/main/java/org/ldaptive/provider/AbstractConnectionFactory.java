@@ -48,8 +48,8 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
 
   /**
    * Creates a new abstract connection factory. Once invoked the supplied
-   * provider config is made immutable. See
-   * {@link ProviderConfig#makeImmutable()}.
+   * provider config is made immutable. See {@link
+   * ProviderConfig#makeImmutable()}.
    *
    * @param  url  of the ldap to connect to
    * @param  config  provider configuration
@@ -102,7 +102,8 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
   {
     LdapException lastThrown = null;
     final String[] urls = parseLdapUrl(
-      ldapUrl, providerConfig.getConnectionStrategy());
+      ldapUrl,
+      providerConfig.getConnectionStrategy());
     Connection conn = null;
     for (String url : urls) {
       try {

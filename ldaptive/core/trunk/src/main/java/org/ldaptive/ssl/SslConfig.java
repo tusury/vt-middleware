@@ -29,8 +29,8 @@ public class SslConfig extends AbstractConfig
 {
 
   /**
-   * Configuration for the trust and authentication material to use for SSL
-   * and startTLS.
+   * Configuration for the trust and authentication material to use for SSL and
+   * startTLS.
    */
   private CredentialConfig credentialConfig;
 
@@ -80,7 +80,8 @@ public class SslConfig extends AbstractConfig
    * @param  managers  trust managers
    */
   public SslConfig(
-    final CredentialConfig config, final TrustManager... managers)
+    final CredentialConfig config,
+    final TrustManager... managers)
   {
     credentialConfig = config;
     trustManagers = managers;
@@ -94,9 +95,10 @@ public class SslConfig extends AbstractConfig
    */
   public boolean isEmpty()
   {
-    return credentialConfig == null && trustManagers == null &&
-           enabledCipherSuites == null && enabledProtocols == null &&
-           handshakeCompletedListeners == null;
+    return
+      credentialConfig == null && trustManagers == null &&
+      enabledCipherSuites == null && enabledProtocols == null &&
+      handshakeCompletedListeners == null;
   }
 
 
@@ -213,7 +215,7 @@ public class SslConfig extends AbstractConfig
    * @param  listeners  for SSL handshake events
    */
   public void setHandshakeCompletedListeners(
-    final HandshakeCompletedListener ... listeners)
+    final HandshakeCompletedListener... listeners)
   {
     checkImmutable();
     logger.trace(

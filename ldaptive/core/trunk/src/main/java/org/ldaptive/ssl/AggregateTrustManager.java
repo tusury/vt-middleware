@@ -41,7 +41,7 @@ public class AggregateTrustManager implements X509TrustManager
   /**
    * Creates a new aggregate trust manager.
    *
-   * @param managers  to aggregate
+   * @param  managers  to aggregate
    */
   public AggregateTrustManager(final X509TrustManager... managers)
   {
@@ -52,7 +52,8 @@ public class AggregateTrustManager implements X509TrustManager
   /** {@inheritDoc} */
   @Override
   public void checkClientTrusted(
-    final X509Certificate[] chain, final String authType)
+    final X509Certificate[] chain,
+    final String authType)
     throws CertificateException
   {
     if (trustManagers != null) {
@@ -67,7 +68,8 @@ public class AggregateTrustManager implements X509TrustManager
   /** {@inheritDoc} */
   @Override
   public void checkServerTrusted(
-    final X509Certificate[] chain, final String authType)
+    final X509Certificate[] chain,
+    final String authType)
     throws CertificateException
   {
     if (trustManagers != null) {

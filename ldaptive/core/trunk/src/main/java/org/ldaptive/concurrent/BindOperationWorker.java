@@ -45,8 +45,7 @@ public class BindOperationWorker
    * @param  op  bind operation to execute
    * @param  es  executor service
    */
-  public BindOperationWorker(
-    final BindOperation op, final ExecutorService es)
+  public BindOperationWorker(final BindOperation op, final ExecutorService es)
   {
     super(op, es);
   }

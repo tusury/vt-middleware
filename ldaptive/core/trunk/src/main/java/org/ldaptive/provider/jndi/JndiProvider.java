@@ -147,12 +147,15 @@ public class JndiProvider implements Provider<JndiProviderConfig>
    * @return  jndi startTLS connection factory
    */
   protected JndiStartTLSConnectionFactory getJndiStartTLSConnectionFactory(
-    final ConnectionConfig cc, final Map<String, Object> env)
+    final ConnectionConfig cc,
+    final Map<String, Object> env)
   {
     // hostname verification always occurs for startTLS after the handshake
     SSLSocketFactory factory = config.getSslSocketFactory();
-    if (factory == null &&
-      cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
+    if (
+      factory == null &&
+        cc.getSslConfig() != null &&
+        !cc.getSslConfig().isEmpty()) {
       final TLSSocketFactory sf = new TLSSocketFactory();
       sf.setSslConfig(cc.getSslConfig());
       try {
@@ -162,12 +165,13 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       }
       factory = sf;
     }
-    return new JndiStartTLSConnectionFactory(
-      cc.getLdapUrl(),
-      config,
-      env != null ? env : getDefaultEnvironment(cc, null),
-      factory,
-      config.getHostnameVerifier());
+    return
+      new JndiStartTLSConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        env != null ? env : getDefaultEnvironment(cc, null),
+        factory,
+        config.getHostnameVerifier());
   }
 
 
@@ -182,23 +186,30 @@ public class JndiProvider implements Provider<JndiProviderConfig>
    * @return  jndi connection factory
    */
   protected JndiConnectionFactory getJndiConnectionFactory(
-    final ConnectionConfig cc, final Map<String, Object> env)
+    final ConnectionConfig cc,
+    final Map<String, Object> env)
   {
     SSLSocketFactory factory = config.getSslSocketFactory();
-    if (factory == null &&
-      (cc.getUseSSL() ||
-        cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+    if (
+      factory == null &&
+        (cc.getUseSSL() ||
+          cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
       // LDAPS hostname verification does not occur by default
       // set a default hostname verifier
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       factory = ThreadLocalTLSSocketFactory.getHostnameVerifierFactory(
-        cc.getSslConfig(), ldapUrl.getEntriesAsString());
+        cc.getSslConfig(),
+        ldapUrl.getEntriesAsString());
     }
-    return new JndiConnectionFactory(
-      cc.getLdapUrl(),
-      config,
-      env != null ? env : getDefaultEnvironment(
-        cc, factory != null ? factory.getClass().getName() : null));
+    return
+      new JndiConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        env != null
+          ? env
+          : getDefaultEnvironment(
+            cc,
+            factory != null ? factory.getClass().getName() : null));
   }
 
 
@@ -212,7 +223,8 @@ public class JndiProvider implements Provider<JndiProviderConfig>
    * @return  JNDI ldap context environment
    */
   protected Map<String, Object> getDefaultEnvironment(
-    final ConnectionConfig cc, final String factory)
+    final ConnectionConfig cc,
+    final String factory)
   {
     final Map<String, Object> env = new HashMap<String, Object>();
     env.put(CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
@@ -220,9 +232,10 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     if (cc.getUseSSL()) {
       env.put(PROTOCOL, "ssl");
     }
-    if (factory != null &&
+    if (
+      factory != null &&
         (cc.getUseSSL() ||
-         cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
+          cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
       env.put(JndiProvider.SOCKET_FACTORY, factory);
     }
     if (cc.getConnectTimeout() > 0) {

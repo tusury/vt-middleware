@@ -46,7 +46,8 @@ public class CompareOperationWorker
    * @param  es  executor service
    */
   public CompareOperationWorker(
-    final CompareOperation op, final ExecutorService es)
+    final CompareOperation op,
+    final ExecutorService es)
   {
     super(op, es);
   }

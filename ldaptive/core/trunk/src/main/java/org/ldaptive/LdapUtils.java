@@ -44,20 +44,18 @@ public final class LdapUtils
   private static final int HASH_CODE_PRIME = 113;
 
   /** Pattern to match ipv4 addresses. */
-  private static final Pattern IPV4_PATTERN =
-    Pattern.compile(
-      "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)" +
-      "(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
+  private static final Pattern IPV4_PATTERN = Pattern.compile(
+    "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)" +
+    "(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
 
   /** Pattern to match ipv6 addresses. */
-  private static final Pattern IPV6_STD_PATTERN =
-    Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+  private static final Pattern IPV6_STD_PATTERN = Pattern.compile(
+    "^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
 
   /** Pattern to match ipv6 hex compressed addresses. */
-  private static final Pattern IPV6_HEX_COMPRESSED_PATTERN =
-    Pattern.compile(
-      "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::" +
-      "((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
+  private static final Pattern IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile(
+    "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::" +
+    "((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
 
   /** Prefix used to indicate a classpath resource. */
   private static final String CLASSPATH_PREFIX = "classpath:";
@@ -301,22 +299,23 @@ public final class LdapUtils
    */
   public static boolean isIPAddress(final String s)
   {
-    return s != null &&
+    return
+      s != null &&
       (IPV4_PATTERN.matcher(s).matches() ||
-       IPV6_STD_PATTERN.matcher(s).matches() ||
-       IPV6_HEX_COMPRESSED_PATTERN.matcher(s).matches());
+        IPV6_STD_PATTERN.matcher(s).matches() ||
+        IPV6_HEX_COMPRESSED_PATTERN.matcher(s).matches());
   }
 
 
   /**
-   * Parses the supplied path and returns an input stream based on the prefix
-   * in the path. If a path is prefixed with the string "classpath:" it is
+   * Parses the supplied path and returns an input stream based on the prefix in
+   * the path. If a path is prefixed with the string "classpath:" it is
    * interpreted as a classpath specification. If a path is prefixed with the
    * string "file:" it is interpreted as a file path.
    *
    * @param  path  that designates a resource
    *
-   * @return  input stream  to read the resource
+   * @return  input stream to read the resource
    *
    * @throws  IOException  if the resource cannot be read
    * @throws  IllegalArgumentException  if path is not prefixed with either

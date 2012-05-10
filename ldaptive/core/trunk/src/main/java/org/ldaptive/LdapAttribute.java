@@ -159,8 +159,9 @@ public class LdapAttribute extends AbstractLdapBean
       return attributeName;
     } else {
       final int optionIndex = attributeName.indexOf(";");
-      return optionIndex > 0 ?
-        attributeName.substring(0, optionIndex) : attributeName;
+      return
+        optionIndex > 0 ? attributeName.substring(0, optionIndex)
+                        : attributeName;
     }
   }
 
@@ -180,7 +181,7 @@ public class LdapAttribute extends AbstractLdapBean
    * Returns the options for this attribute. Returns an empty array if attribute
    * contains no options.
    *
-   * @return  options  parsed from the attribute name
+   * @return  options parsed from the attribute name
    */
   public String[] getOptions()
   {
@@ -376,7 +377,8 @@ public class LdapAttribute extends AbstractLdapBean
    * @throws  NullPointerException  if value is null
    */
   public <T> void addValue(
-    final ValueTranscoder<T> transcoder, final T... value)
+    final ValueTranscoder<T> transcoder,
+    final T... value)
   {
     for (T t : value) {
       if (isBinary()) {
@@ -390,8 +392,8 @@ public class LdapAttribute extends AbstractLdapBean
 
   /**
    * Adds all the values in the supplied collection for this attribute by
-   * encoding them with the supplied transcoder. See
-   * {@link #addValue(ValueTranscoder, Object...)}.
+   * encoding them with the supplied transcoder. See {@link
+   * #addValue(ValueTranscoder, Object...)}.
    *
    * @param  <T>  type attribute to encode
    * @param  transcoder  to encode value with
@@ -399,7 +401,8 @@ public class LdapAttribute extends AbstractLdapBean
    */
   @SuppressWarnings("unchecked")
   public <T> void addValues(
-    final ValueTranscoder<T> transcoder, final Collection<T> values)
+    final ValueTranscoder<T> transcoder,
+    final Collection<T> values)
   {
     for (T value : values) {
       addValue(transcoder, value);
@@ -502,8 +505,8 @@ public class LdapAttribute extends AbstractLdapBean
   /**
    * Returns an implementation of collection for the sort behavior of this bean.
    * This implementation returns HashSet for {@link SortBehavior#UNORDERED},
-   * LinkedHashSet for {@link SortBehavior#ORDERED}, and TreeSet for
-   * {@link SortBehavior#SORTED}.
+   * LinkedHashSet for {@link SortBehavior#ORDERED}, and TreeSet for {@link
+   * SortBehavior#SORTED}.
    *
    * @param  <E>  contained in the collection
    * @param  c  type contained in the collection
@@ -629,8 +632,8 @@ public class LdapAttribute extends AbstractLdapBean
     /**
      * Returns the values in string format. If the type of this values is
      * String, values are returned as is. If the type of this values is byte[],
-     * values are base64 encoded. See
-     * {@link #convertValuesToString(Collection)}.
+     * values are base64 encoded. See {@link
+     * #convertValuesToString(Collection)}.
      *
      * @return  unmodifiable collection
      */
@@ -649,8 +652,8 @@ public class LdapAttribute extends AbstractLdapBean
     /**
      * Returns the values in binary format. If the type of this values is
      * byte[], values are returned as is. If the type of this values is String,
-     * values are UTF-8 encoded. See
-     * {@link #convertValuesToByteArray(Collection)}.
+     * values are UTF-8 encoded. See {@link
+     * #convertValuesToByteArray(Collection)}.
      *
      * @return  unmodifiable collection
      */
@@ -763,8 +766,7 @@ public class LdapAttribute extends AbstractLdapBean
     protected Collection<String> convertValuesToString(
       final Collection<byte[]> v)
     {
-      final Collection<String> c = createSortBehaviorCollection(
-        String.class);
+      final Collection<String> c = createSortBehaviorCollection(String.class);
       for (byte[] value : v) {
         c.add(LdapUtils.base64Encode(value));
       }
@@ -782,8 +784,7 @@ public class LdapAttribute extends AbstractLdapBean
     protected Collection<byte[]> convertValuesToByteArray(
       final Collection<String> v)
     {
-      final Collection<byte[]> c = createSortBehaviorCollection(
-        byte[].class);
+      final Collection<byte[]> c = createSortBehaviorCollection(byte[].class);
       for (String value : v) {
         c.add(LdapUtils.utf8Encode(value));
       }

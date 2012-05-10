@@ -87,7 +87,8 @@ public class JndiStartTLSConnectionFactory
     boolean closeConn = false;
     try {
       conn = new JndiStartTLSConnection(
-        new InitialLdapContext(env, null), getProviderConfig());
+        new InitialLdapContext(env, null),
+        getProviderConfig());
       conn.setStartTlsResponse(startTLS(conn.getLdapContext()));
     } catch (NamingException e) {
       closeConn = true;

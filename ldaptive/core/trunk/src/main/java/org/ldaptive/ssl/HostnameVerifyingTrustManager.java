@@ -53,7 +53,8 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
   /** {@inheritDoc} */
   @Override
   public void checkClientTrusted(
-    final X509Certificate[] chain, final String authType)
+    final X509Certificate[] chain,
+    final String authType)
     throws CertificateException
   {
     checkCertificateTrusted(chain[0]);
@@ -63,7 +64,8 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
   /** {@inheritDoc} */
   @Override
   public void checkServerTrusted(
-    final X509Certificate[] chain, final String authType)
+    final X509Certificate[] chain,
+    final String authType)
     throws CertificateException
   {
     checkCertificateTrusted(chain[0]);
@@ -89,7 +91,8 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
     throw new CertificateException(
       String.format(
         "Hostname '%s' does not match the hostname in the server's " +
-        "certificate", Arrays.toString(hostnames)));
+        "certificate",
+        Arrays.toString(hostnames)));
   }
 
 

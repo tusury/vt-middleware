@@ -148,7 +148,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
         throw new SSLPeerUnverifiedException(
           String.format(
             "Hostname '%s' does not match the hostname in the server's " +
-            "certificate", hostname));
+            "certificate",
+            hostname));
       }
     }
     return socket;
@@ -176,8 +177,9 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     final boolean autoClose)
     throws IOException
   {
-    return initSSLSocket(
-      (SSLSocket) factory.createSocket(socket, host, port, autoClose));
+    return
+      initSSLSocket(
+        (SSLSocket) factory.createSocket(socket, host, port, autoClose));
   }
 
 
@@ -237,8 +239,13 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     final int localPort)
     throws IOException
   {
-    return initSSLSocket(
-      (SSLSocket) factory.createSocket(address, port, localAddress, localPort));
+    return
+      initSSLSocket(
+        (SSLSocket) factory.createSocket(
+          address,
+          port,
+          localAddress,
+          localPort));
   }
 
 
@@ -283,8 +290,9 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     final int localPort)
     throws IOException
   {
-    return initSSLSocket(
-      (SSLSocket) factory.createSocket(host, port, localHost, localPort));
+    return
+      initSSLSocket(
+        (SSLSocket) factory.createSocket(host, port, localHost, localPort));
   }
 
 

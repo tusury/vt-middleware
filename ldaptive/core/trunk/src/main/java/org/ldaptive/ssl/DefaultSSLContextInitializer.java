@@ -42,11 +42,12 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
     final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
       TrustManagerFactory.getDefaultAlgorithm());
     tmf.init((KeyStore) null);
+
     final TrustManager[] tm = tmf.getTrustManagers();
     TrustManager[] aggregate;
     if (tm == null) {
-      aggregate = super.getTrustManagers() != null ?
-        aggregateTrustManagers(super.getTrustManagers()) : null;
+      aggregate = super.getTrustManagers() != null
+        ? aggregateTrustManagers(super.getTrustManagers()) : null;
     } else {
       aggregate = aggregateTrustManagers(
         LdapUtils.concatArrays(tm, super.getTrustManagers()));

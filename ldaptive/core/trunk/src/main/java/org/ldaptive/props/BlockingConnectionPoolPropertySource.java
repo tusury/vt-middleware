@@ -118,7 +118,9 @@ public final class BlockingConnectionPoolPropertySource
 
       final DefaultConnectionFactoryPropertySource cfPropSource =
         new DefaultConnectionFactoryPropertySource(
-          cf, propertiesDomain, properties);
+          cf,
+          propertiesDomain,
+          properties);
       cfPropSource.initialize();
       object.setConnectionFactory(cf);
     }
