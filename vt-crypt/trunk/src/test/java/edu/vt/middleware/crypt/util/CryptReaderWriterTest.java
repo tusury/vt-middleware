@@ -13,16 +13,6 @@
 */
 package edu.vt.middleware.crypt.util;
 
-import java.io.File;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-
-import javax.crypto.SecretKey;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.MD2;
 import org.slf4j.Logger;
@@ -30,6 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import javax.crypto.SecretKey;
+import java.io.File;
+import java.security.*;
 
 /**
  * Unit test for {@link CryptReader} and {@link CryptWriter} classes.
@@ -60,13 +54,13 @@ public class CryptReaderWriterTest
   @DataProvider(name = "pubkeydata")
   public Object[][] createPubKeyTestData() throws Exception
   {
-    final KeyPairGenerator rsaKeyGen = KeyPairGenerator.getInstance("RSA");
-    final KeyPair rsaKeys = rsaKeyGen.generateKeyPair();
-    final KeyPairGenerator dsaKeyGen = KeyPairGenerator.getInstance("DSA");
-    final KeyPair dsaKeys = dsaKeyGen.generateKeyPair();
+    final KeyPair rsaKeys = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+    final KeyPair ecKeys = KeyPairGenerator.getInstance("EC").generateKeyPair();
+    final KeyPair dsaKeys = KeyPairGenerator.getInstance("DSA").generateKeyPair();
 
     return new Object[][] {
       {rsaKeys.getPublic()},
+      {ecKeys.getPublic()},
       {dsaKeys.getPublic()},
     };
   }
@@ -80,15 +74,16 @@ public class CryptReaderWriterTest
   @DataProvider(name = "privkeydata")
   public Object[][] createPrivKeyTestData() throws Exception
   {
-    final KeyPairGenerator rsaKeyGen = KeyPairGenerator.getInstance("RSA");
-    final KeyPair rsaKeys = rsaKeyGen.generateKeyPair();
-    final KeyPairGenerator dsaKeyGen = KeyPairGenerator.getInstance("DSA");
-    final KeyPair dsaKeys = dsaKeyGen.generateKeyPair();
+    final KeyPair rsaKeys = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+    final KeyPair ecKeys = KeyPairGenerator.getInstance("EC").generateKeyPair();
+    final KeyPair dsaKeys = KeyPairGenerator.getInstance("DSA").generateKeyPair();
     return
       new Object[][] {
         {rsaKeys.getPrivate(), "S33Kr1t!"},
+        {ecKeys.getPrivate(), "S33Kr1t!"},
         {dsaKeys.getPrivate(), "S33Kr1t!"},
         {rsaKeys.getPrivate(), null},
+        {ecKeys.getPrivate(), null},
         {dsaKeys.getPrivate(), null},
       };
   }
@@ -109,6 +104,19 @@ public class CryptReaderWriterTest
         {"dsa-openssl-priv-des3.pem", "vtcrypt"},
         {"dsa-pkcs8-priv-nopass.pem", null},
         {"dsa-pkcs8-priv-nopass.der", null},
+        {"ec-openssl-secp224k1-explicit-nopass.der", null},
+        {"ec-openssl-secp224k1-explicit-nopass.pem", null},
+        {"ec-openssl-secp224k1-explicit-des.pem", "vtcrypt"},
+        {"ec-openssl-sect571r1-explicit-nopass.der", null},
+        {"ec-openssl-sect571r1-explicit-nopass.pem", null},
+        {"ec-openssl-sect571r1-explicit-des.pem", "vtcrypt"},
+        {"ec-openssl-sect571r1-named-nopass.der", null},
+        {"ec-pkcs8-secp224k1-explicit-nopass.der", null},
+        {"ec-pkcs8-secp224k1-explicit-nopass.pem", null},
+        {"ec-pkcs8-secp224k1-explicit-v1-sha1-rc2-64.der", "vtcrypt"},
+        {"ec-pkcs8-secp224k1-explicit-v2-des3.pem", "vtcrypt"},
+        {"ec-pkcs8-sect571r1-explicit-v2-aes128.pem", "vtcrypt"},
+        {"ec-pkcs8-sect571r1-named-v1-sha1-rc2-64.der", "vtcrypt"},
         {"dsa-pkcs8-priv-v2-des3.der", "vtcrypt"},
         {"dsa-pkcs8-priv-v2-des3.pem", "vtcrypt"},
         {"rsa-openssl-priv-nopass.der", null},

@@ -13,16 +13,6 @@
 */
 package edu.vt.middleware.crypt.io;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.PrivateKey;
-import java.security.spec.DSAPrivateKeySpec;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPrivateCrtKeySpec;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 import edu.vt.middleware.crypt.pbe.EncryptionScheme;
@@ -34,6 +24,7 @@ import edu.vt.middleware.crypt.pkcs.PBES1Algorithm;
 import edu.vt.middleware.crypt.pkcs.PBES2CipherGenerator;
 import edu.vt.middleware.crypt.pkcs.PBKDF2Parameters;
 import edu.vt.middleware.crypt.util.Convert;
+import edu.vt.middleware.crypt.util.ECUtils;
 import edu.vt.middleware.crypt.util.PemHelper;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.DERInteger;
@@ -42,6 +33,13 @@ import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.spec.*;
 
 /**
  * Reads encoded private keys in PKCS#8 or OpenSSL "traditional" format. Both
@@ -121,6 +119,8 @@ public class PrivateKeyCredentialReader
       final String algOid = pi.getAlgorithmId().getObjectId().getId();
       if (RSA_ID.equals(pi.getAlgorithmId().getObjectId())) {
         algorithm = "RSA";
+      } else if (EC_ID.equals(pi.getAlgorithmId().getObjectId())) {
+        algorithm = "EC";
       } else if (DSA_ID.equals(pi.getAlgorithmId().getObjectId())) {
         algorithm = "DSA";
       } else {
@@ -134,9 +134,10 @@ public class PrivateKeyCredentialReader
     } else {
       // OpenSSL "traditional" format is an ASN.1 sequence of key parameters
 
-      // Detect key type based on number of parameters:
+      // Detect key type based on number and types of parameters:
       // RSA -> {version, mod, pubExp, privExp, prime1, prime2, exp1, exp2, c}
       // DSA -> {version, p, q, g, pubExp, privExp}
+      // EC ->  {version, privateKey, parameters, publicKey}
       final DERSequence sequence = (DERSequence) o;
       if (sequence.size() == 9) {
         if (logger.isDebugEnabled()) {
@@ -163,16 +164,21 @@ public class PrivateKeyCredentialReader
         algorithm = "DSA";
         try {
           spec = new DSAPrivateKeySpec(
-            DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
-            DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
-            DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
-            DERInteger.getInstance(sequence.getObjectAt(3)).getValue());
+              DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
+              DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
+              DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
+              DERInteger.getInstance(sequence.getObjectAt(3)).getValue());
         } catch (Exception e) {
           throw new CryptException("Invalid DSA key.", e);
         }
+      } else if (sequence.size() == 4) {
+        if (logger.isDebugEnabled()) {
+          logger.debug("Reading OpenSSL format EC private key.");
+        }
+        algorithm = "EC";
+        spec = ECUtils.readEncodedPrivateKey(sequence);
       } else {
-        throw new CryptException(
-          "Invalid OpenSSL traditional private key format.");
+        throw new CryptException("Invalid OpenSSL traditional private key format.");
       }
     }
     try {
@@ -199,8 +205,7 @@ public class PrivateKeyCredentialReader
     throws IOException, CryptException
   {
     if (password == null || password.length == 0) {
-      throw new IllegalArgumentException(
-        "Password is required for decrypting an encrypted private key.");
+      throw new IllegalArgumentException("Password is required for decrypting an encrypted private key.");
     }
 
     byte[] bytes = encrypted;
@@ -266,8 +271,7 @@ public class PrivateKeyCredentialReader
   {
     final EncryptionScheme scheme;
     try {
-      final EncryptedPrivateKeyInfo ki = EncryptedPrivateKeyInfo.getInstance(
-        ASN1Object.fromByteArray(encrypted));
+      final EncryptedPrivateKeyInfo ki = EncryptedPrivateKeyInfo.getInstance(ASN1Object.fromByteArray(encrypted));
       final AlgorithmIdentifier alg = ki.getEncryptionAlgorithm();
       if (PKCSObjectIdentifiers.id_PBES2.equals(alg.getObjectId())) {
         // PBES2 has following parameters:
