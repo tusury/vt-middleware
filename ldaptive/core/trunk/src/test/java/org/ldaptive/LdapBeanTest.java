@@ -108,6 +108,31 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(1, lr.size());
     lr.clear();
     AssertJUnit.assertEquals(0, lr.size());
+
+    // test sub results
+    lr = new LdapResult(SortBehavior.SORTED);
+    lr.addEntry(entry2, entry1);
+    AssertJUnit.assertEquals(0, lr.subResult(2, 2).size());
+    AssertJUnit.assertEquals(1, lr.subResult(1, 2).size());
+    AssertJUnit.assertEquals(2, lr.subResult(0, 2).size());
+    try {
+      lr.subResult(-1, 1);
+      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
+    }
+    try {
+      lr.subResult(0, 3);
+      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
+    }
+    try {
+      lr.subResult(1, 0);
+      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
+    }
   }
 
 
