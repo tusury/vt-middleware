@@ -151,6 +151,8 @@ public class CryptReaderWriterTest
         {"rsa-pub.pem"},
         {"dsa-pub.der"},
         {"dsa-pub.pem"},
+        {"ec-secp224k1-explicit-pub.der"},
+        {"ec-secp224k1-explicit-pub.pem"},
       };
   }
 
