@@ -209,6 +209,41 @@ public class LdapResult extends AbstractLdapBean
 
 
   /**
+   * Returns a portion of this result between the specified fromIndex,
+   * inclusive, and toIndex, exclusive. If fromIndex and toIndex are equal, the
+   * return result is empty. The result of this method is undefined for
+   * unordered results.
+   *
+   * @param  fromIndex  low endpoint of the ldap result (inclusive)
+   * @param  toIndex  high endpoint of the ldap result (exclusive)
+   *
+   * @return  portion of this ldap result
+   *
+   * @throws  IndexOutOfBoundsException  for illegal index values
+   */
+  public LdapResult subResult(final int fromIndex, final int toIndex)
+  {
+    if (fromIndex < 0 ||
+        toIndex > resultEntries.size() ||
+        fromIndex > toIndex) {
+      throw new IndexOutOfBoundsException("Illegal index value");
+    }
+    final LdapResult lr = new LdapResult(getSortBehavior());
+    if (resultEntries.isEmpty() || fromIndex == toIndex) {
+      return lr;
+    }
+    int i = 0;
+    for (Map.Entry<String, LdapEntry> e : resultEntries.entrySet()) {
+      if (i >= fromIndex && i < toIndex) {
+        lr.addEntry(e.getValue());
+      }
+      i++;
+    }
+    return lr;
+  }
+
+
+  /**
    * Returns the number of entries in this ldap result.
    *
    * @return  number of entries in this ldap result
