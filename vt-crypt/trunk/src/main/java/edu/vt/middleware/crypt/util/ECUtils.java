@@ -13,12 +13,10 @@
 */
 package edu.vt.middleware.crypt.util;
 
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERInteger;
-import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.jce.provider.asymmetric.ec.EC5Util;
+import org.bouncycastle.jce.provider.asymmetric.ec.ECUtil;
 
 import java.math.BigInteger;
 import java.security.spec.ECParameterSpec;
@@ -63,17 +61,42 @@ public final class ECUtils
    *
    * @return  Constructed EC domain parameter specification.
    */
-  public static final ECParameterSpec readEncodedParams(final ASN1Sequence seq)
+  public static ECParameterSpec readEncodedParams(final ASN1Sequence seq)
   {
-    final X9ECParameters params = new X9ECParameters(seq);
+    return convertParams(new X9ECParameters(seq));
+  }
+
+
+  /**
+   * Gets an elliptic curve domain parameter specification from a named curve OID.
+   *
+   * @param  curveOid  Named elliptic curve object identifier.
+   *
+   * @return  Domain parameters for named curve.
+   */
+  public static ECParameterSpec fromNamedCurve(final DERObjectIdentifier curveOid)
+  {
+    return convertParams(ECUtil.getNamedCurveByOid(curveOid));
+  }
+
+
+  /**
+   * Converts a BC elliptic curve domain parameter type into JCE type.
+   *
+   * @param  params  BC elliptic curve domain parameters.
+   *
+   * @return  Equivalent JCE elliptic curve domain parameters.
+   */
+  private static ECParameterSpec convertParams(final X9ECParameters params)
+  {
     final EllipticCurve curve = EC5Util.convertCurve(params.getCurve(), params.getSeed());
     final org.bouncycastle.jce.spec.ECParameterSpec spec =
-        new org.bouncycastle.jce.spec.ECParameterSpec(
-            params.getCurve(),
-            params.getG(),
-            params.getN(),
-            params.getH(),
-            params.getSeed());
+      new org.bouncycastle.jce.spec.ECParameterSpec(
+        params.getCurve(),
+        params.getG(),
+        params.getN(),
+        params.getH(),
+        params.getSeed());
     return EC5Util.convertSpec(curve, spec);
   }
 }
