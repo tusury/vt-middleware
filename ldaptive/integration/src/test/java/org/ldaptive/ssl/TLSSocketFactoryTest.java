@@ -303,4 +303,38 @@ public class TLSSocketFactoryTest
       s.close();
     }
   }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "ldapSslTestHost" })
+  @Test(groups = {"ssl"})
+  public void setSocketConfig(final String url)
+    throws Exception
+  {
+    final SocketConfig sc = new SocketConfig();
+    sc.setKeepAlive(true);
+    sc.setReuseAddress(true);
+    sc.setTcpNoDelay(true);
+    sc.setReceiveBufferSize(256);
+    sc.setSendBufferSize(256);
+    sc.setSoLinger(100);
+    sc.setSoTimeout(500);
+    sc.setTrafficClass(0x10);
+    final LdapURL ldapUrl = new LdapURL(url);
+    final TLSSocketFactory sf = new TLSSocketFactory();
+    sf.setSocketConfig(sc);
+    sf.initialize();
+
+    Socket s = null;
+    try {
+      s = sf.createSocket(
+        ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
+    } finally {
+      s.close();
+    }
+  }
 }
