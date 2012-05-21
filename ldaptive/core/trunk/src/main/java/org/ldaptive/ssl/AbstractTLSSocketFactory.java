@@ -44,6 +44,9 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   /** Hostname verifier. */
   private HostnameVerifier hostnameVerifier;
 
+  /** Socket configuration options. */
+  private SocketConfig socketConfig;
+
 
   /**
    * Prepares this socket factory for use. Must be called before factory can be
@@ -79,8 +82,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Sets the SSL configuration used by this socket factory. A copy of the
-   * supplied object is created by this method.
+   * Sets the SSL configuration used by this socket factory.
    *
    * @param  config  ssl config
    */
@@ -113,6 +115,28 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
+   * Returns the socket configuration used by this socket factory.
+   *
+   * @return  socket config
+   */
+  public SocketConfig getSocketConfig()
+  {
+    return socketConfig;
+  }
+
+
+  /**
+   * Sets the socket configuration used by this socket factory.
+   *
+   * @param  config  socket config
+   */
+  public void setSocketConfig(final SocketConfig config)
+  {
+    socketConfig = config;
+  }
+
+
+  /**
    * Initializes the supplied socket for use.
    *
    * @param  socket  SSL socket to initialize
@@ -124,17 +148,21 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   protected SSLSocket initSSLSocket(final SSLSocket socket)
     throws IOException
   {
-    final SslConfig sc = getSslConfig();
-    if (sc != null) {
-      if (sc.getEnabledCipherSuites() != null) {
-        socket.setEnabledCipherSuites(sc.getEnabledCipherSuites());
+    final SocketConfig socketC = getSocketConfig();
+    if (socketC != null) {
+      socketC.configureSocket(socket);
+    }
+    final SslConfig sslC = getSslConfig();
+    if (sslC != null) {
+      if (sslC.getEnabledCipherSuites() != null) {
+        socket.setEnabledCipherSuites(sslC.getEnabledCipherSuites());
       }
-      if (sc.getEnabledProtocols() != null) {
-        socket.setEnabledProtocols(sc.getEnabledProtocols());
+      if (sslC.getEnabledProtocols() != null) {
+        socket.setEnabledProtocols(sslC.getEnabledProtocols());
       }
-      if (sc.getHandshakeCompletedListeners() != null) {
+      if (sslC.getHandshakeCompletedListeners() != null) {
         for (HandshakeCompletedListener listener :
-             sc.getHandshakeCompletedListeners()) {
+             sslC.getHandshakeCompletedListeners()) {
           socket.addHandshakeCompletedListener(listener);
         }
       }
