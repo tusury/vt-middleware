@@ -13,14 +13,10 @@
 */
 package edu.vt.middleware.crypt.util;
 
+import org.bouncycastle.asn1.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.DEREncodable;
-import org.bouncycastle.asn1.DERInteger;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.DEROctetString;
 
 /**
  * Utility class with methods to facilitate common operations on BouncyCastle
@@ -96,5 +92,23 @@ public final class DERHelper
     } finally {
       in.close();
     }
+  }
+
+
+  /**
+   * Creates a DER SEQUENCE type from the given DER encodable objects in the
+   * order they are listed.
+   *
+   * @param  items  One or more DER encodable items.
+   *
+   * @return  DER SEQUENCE over given items.
+   */
+  public static DERSequence sequence(final DEREncodable ... items)
+  {
+    final ASN1EncodableVector v = new ASN1EncodableVector();
+    for (DEREncodable item : items) {
+      v.add(item);
+    }
+    return new DERSequence(v);
   }
 }

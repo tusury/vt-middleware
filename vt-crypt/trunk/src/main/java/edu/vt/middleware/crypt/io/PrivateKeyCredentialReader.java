@@ -26,9 +26,7 @@ import edu.vt.middleware.crypt.pkcs.PBKDF2Parameters;
 import edu.vt.middleware.crypt.util.Convert;
 import edu.vt.middleware.crypt.util.ECUtils;
 import edu.vt.middleware.crypt.util.PemHelper;
-import org.bouncycastle.asn1.ASN1Object;
-import org.bouncycastle.asn1.DERInteger;
-import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -130,6 +128,26 @@ public class PrivateKeyCredentialReader
         spec = new PKCS8EncodedKeySpec(encoded);
       } catch (Exception e) {
         throw new CryptException("Invalid PKCS#8 private key format.", e);
+      }
+    } else if (o instanceof DERObjectIdentifier) {
+      // Indicates we have an EC key in the default OpenSSL format emitted by
+      //
+      //   openssl ecparam -name xxxx -genkey
+      //
+      // which is the concatenation of the named curve OID and a sequence of 1
+      // containing the private point
+      algorithm = "EC";
+      final DERObjectIdentifier oid = (DERObjectIdentifier) o;
+      final int len = encoded[1];
+      final byte[] privatePart = new byte[encoded.length - len - 2];
+      System.arraycopy(encoded, len + 2, privatePart, 0, privatePart.length);
+      try {
+        final ASN1Sequence seq = (ASN1Sequence) ASN1Sequence.fromByteArray(privatePart);
+        spec = new ECPrivateKeySpec(
+          DERInteger.getInstance(seq.getObjectAt(0)).getValue(),
+          ECUtils.fromNamedCurve(oid));
+      } catch (IOException e) {
+        throw new CryptException("Error reading elliptic curve key data.", e);
       }
     } else {
       // OpenSSL "traditional" format is an ASN.1 sequence of key parameters
