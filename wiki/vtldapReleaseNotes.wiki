@@ -2,6 +2,9 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 3.3.6 =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=133 vtldap-133] - Non default connection strategies broken for LDAPS
+
 = Version 3.3.5 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=130 vtldap-130] - Pool checkout may hang if creation fails
   * [http://code.google.com/p/vt-middleware/issues/detail?id=129 vtldap-129] - LDAPS certificate hostname verification
