@@ -14,7 +14,6 @@
 package org.ldaptive;
 
 import org.ldaptive.cache.Cache;
-import org.ldaptive.handler.ExtendedLdapEntryHandler;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.LdapEntryHandler;
 
@@ -68,36 +67,6 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
   public void setCache(final Cache<Q> c)
   {
     cache = c;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initializeRequest(final Q request, final ConnectionConfig cc)
-  {
-    initializeLdapEntryHandlers(request, getConnection());
-  }
-
-
-  /**
-   * Initializes those ldap entry handlers that require access to the ldap
-   * connection.
-   *
-   * @param  request  to read entry handlers from
-   * @param  c  to provide to entry handlers
-   */
-  protected void initializeLdapEntryHandlers(
-    final Q request,
-    final Connection c)
-  {
-    final LdapEntryHandler[] handlers = request.getLdapEntryHandlers();
-    if (handlers != null && handlers.length > 0) {
-      for (LdapEntryHandler h : handlers) {
-        if (ExtendedLdapEntryHandler.class.isInstance(h)) {
-          ((ExtendedLdapEntryHandler) h).setResultConnection(c);
-        }
-      }
-    }
   }
 
 
@@ -165,7 +134,8 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
     if (handlers != null && handlers.length > 0) {
       for (LdapEntryHandler handler : handlers) {
         if (handler != null) {
-          final HandlerResult hr = handler.process(request, processedEntry);
+          final HandlerResult hr = handler.process(
+            getConnection(), request, processedEntry);
           if (hr.getAbortSearch()) {
             abort = true;
           }

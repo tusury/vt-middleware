@@ -41,11 +41,4 @@ public class CompareOperation extends AbstractOperation<CompareRequest, Boolean>
   {
     return getConnection().getProviderConnection().compare(request);
   }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initializeRequest(
-    final CompareRequest request,
-    final ConnectionConfig cc) {}
 }

@@ -13,6 +13,7 @@
 */
 package org.ldaptive.handler;
 
+import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -93,6 +94,7 @@ public class DnAttributeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected void processAttributes(
+    final Connection conn,
     final SearchRequest request,
     final LdapEntry entry)
     throws LdapException

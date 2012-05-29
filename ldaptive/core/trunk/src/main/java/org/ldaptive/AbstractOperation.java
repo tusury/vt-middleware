@@ -185,18 +185,6 @@ public abstract class AbstractOperation<Q extends Request, S>
     throws LdapException;
 
 
-  /**
-   * Performs any initialization on the supplied request to prepare it for use
-   * in this operation.
-   *
-   * @param  request  to initialize
-   * @param  cc  connection configuration to initialize request with
-   */
-  protected abstract void initializeRequest(
-    final Q request,
-    final ConnectionConfig cc);
-
-
   /** {@inheritDoc} */
   @Override
   public Response<S> execute(final Q request)
@@ -205,7 +193,6 @@ public abstract class AbstractOperation<Q extends Request, S>
     logger.debug("execute request={} with connection={}", request, connection);
 
     Response<S> response = null;
-    initializeRequest(request, connection.getConnectionConfig());
     for (int i = 0; i <= operationRetry || operationRetry == -1; i++) {
       try {
         response = invoke(request);

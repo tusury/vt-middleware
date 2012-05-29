@@ -41,11 +41,4 @@ public class ModifyOperation extends AbstractOperation<ModifyRequest, Void>
   {
     return getConnection().getProviderConnection().modify(request);
   }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initializeRequest(
-    final ModifyRequest request,
-    final ConnectionConfig cc) {}
 }

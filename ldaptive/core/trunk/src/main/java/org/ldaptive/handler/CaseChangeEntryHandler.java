@@ -13,6 +13,7 @@
 */
 package org.ldaptive.handler;
 
+import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
@@ -143,7 +144,8 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  protected String processDn(final SearchRequest request, final LdapEntry entry)
+  protected String processDn(
+    final Connection conn, final SearchRequest request, final LdapEntry entry)
   {
     return CaseChange.perform(dnCaseChange, entry.getDn());
   }
@@ -152,6 +154,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected String processAttributeName(
+    final Connection conn,
     final SearchRequest request,
     final String name)
   {
@@ -162,6 +165,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected String processAttributeValue(
+    final Connection conn,
     final SearchRequest request,
     final String value)
   {
@@ -172,6 +176,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected byte[] processAttributeValue(
+    final Connection conn,
     final SearchRequest request,
     final byte[] value)
   {

@@ -26,7 +26,6 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.handler.AbstractLdapEntryHandler;
-import org.ldaptive.handler.ExtendedLdapEntryHandler;
 
 /**
  * Rewrites attributes returned from Active Directory to include all values by
@@ -46,7 +45,6 @@ import org.ldaptive.handler.ExtendedLdapEntryHandler;
  * @version  $Revision$ $Date$
  */
 public class RangeEntryHandler extends AbstractLdapEntryHandler
-  implements ExtendedLdapEntryHandler
 {
 
   /** hash code seed. */
@@ -67,29 +65,11 @@ public class RangeEntryHandler extends AbstractLdapEntryHandler
     RANGE_PATTERN_STRING,
     Pattern.CASE_INSENSITIVE);
 
-  /** Connection to use for searching. */
-  private Connection connection;
-
-
-  /** {@inheritDoc} */
-  @Override
-  public Connection getResultConnection()
-  {
-    return connection;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public void setResultConnection(final Connection c)
-  {
-    connection = c;
-  }
-
 
   /** {@inheritDoc} */
   @Override
   protected void processAttributes(
+    final Connection conn,
     final SearchRequest request,
     final LdapEntry entry)
     throws LdapException
@@ -159,7 +139,7 @@ public class RangeEntryHandler extends AbstractLdapEntryHandler
         // Search for next increment of values
         logger.debug("Searching for '{}' to increment {}", nextAttrID, msg);
 
-        final SearchOperation search = new SearchOperation(connection);
+        final SearchOperation search = new SearchOperation(conn);
         final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(
           entry.getDn(),
           new String[] {nextAttrID});
@@ -169,7 +149,7 @@ public class RangeEntryHandler extends AbstractLdapEntryHandler
         entry.addAttributes(result.getEntry().getAttributes());
 
         // Iterate
-        processAttributes(request, entry);
+        processAttributes(conn, request, entry);
       }
     }
   }

@@ -58,14 +58,10 @@ import org.ldaptive.SearchRequest;
  * @version  $Revision$ $Date$
  */
 public class RecursiveEntryHandler extends AbstractLdapEntryHandler
-  implements ExtendedLdapEntryHandler
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 829;
-
-  /** Connection to use for searching. */
-  private Connection connection;
 
   /** Attribute to recursively search on. */
   private String searchAttribute;
@@ -91,42 +87,9 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
     final String searchAttr,
     final String... mergeAttrs)
   {
-    this(null, searchAttr, mergeAttrs);
-  }
-
-
-  /**
-   * Creates a new recursive entry handler.
-   *
-   * @param  c  connection
-   * @param  searchAttr  attribute to search on
-   * @param  mergeAttrs  attribute names to merge
-   */
-  public RecursiveEntryHandler(
-    final Connection c,
-    final String searchAttr,
-    final String... mergeAttrs)
-  {
-    connection = c;
     searchAttribute = searchAttr;
     mergeAttributes = mergeAttrs;
     initalizeReturnAttributes();
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public Connection getResultConnection()
-  {
-    return connection;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public void setResultConnection(final Connection c)
-  {
-    connection = c;
   }
 
 
@@ -194,6 +157,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   public HandlerResult process(
+    final Connection conn,
     final SearchRequest request,
     final LdapEntry entry)
     throws LdapException
@@ -203,9 +167,9 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
     final List<String> searchedDns = new ArrayList<String>();
     if (entry.getAttribute(searchAttribute) != null) {
       searchedDns.add(entry.getDn());
-      readSearchAttribute(entry, searchedDns);
+      readSearchAttribute(conn, entry, searchedDns);
     } else {
-      recursiveSearch(entry.getDn(), entry, searchedDns);
+      recursiveSearch(conn, entry.getDn(), entry, searchedDns);
     }
     return new HandlerResult(entry);
   }
@@ -215,12 +179,14 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
    * Reads the values of {@link #searchAttribute} from the supplied attributes
    * and calls {@link #recursiveSearch} for each.
    *
+   * @param  conn  to perform search operation on
    * @param  entry  to read
    * @param  searchedDns  list of DNs whose attributes have been read
    *
    * @throws  LdapException  if a search error occurs
    */
   private void readSearchAttribute(
+    final Connection conn,
     final LdapEntry entry,
     final List<String> searchedDns)
     throws LdapException
@@ -229,7 +195,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
       final LdapAttribute attr = entry.getAttribute(searchAttribute);
       if (attr != null && !attr.isBinary()) {
         for (String s : attr.getStringValues()) {
-          recursiveSearch(s, entry, searchedDns);
+          recursiveSearch(conn, s, entry, searchedDns);
         }
       }
     }
@@ -240,6 +206,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
    * Recursively gets the attribute(s) {@link #mergeAttributes} for the supplied
    * dn and adds the values to the supplied attributes.
    *
+   * @param  conn  to perform search operation on
    * @param  dn  to get attribute(s) for
    * @param  entry  to merge with
    * @param  searchedDns  list of DNs that have been searched for
@@ -247,6 +214,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
    * @throws  LdapException  if a search error occurs
    */
   private void recursiveSearch(
+    final Connection conn,
     final String dn,
     final LdapEntry entry,
     final List<String> searchedDns)
@@ -256,7 +224,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
 
       LdapEntry newEntry = null;
       try {
-        final SearchOperation search = new SearchOperation(connection);
+        final SearchOperation search = new SearchOperation(conn);
         final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(
           dn,
           retAttrs);
@@ -272,7 +240,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
 
       if (newEntry != null) {
         // recursively search new attributes
-        readSearchAttribute(newEntry, searchedDns);
+        readSearchAttribute(conn, newEntry, searchedDns);
 
         // merge new attribute values
         for (String s : mergeAttributes) {

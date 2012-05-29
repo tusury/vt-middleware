@@ -15,6 +15,7 @@ package org.ldaptive.handler;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -39,13 +40,14 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
   /** {@inheritDoc} */
   @Override
   public HandlerResult process(
+    final Connection conn,
     final SearchRequest request,
     final LdapEntry entry)
     throws LdapException
   {
     if (entry != null) {
-      entry.setDn(processDn(request, entry));
-      processAttributes(request, entry);
+      entry.setDn(processDn(conn, request, entry));
+      processAttributes(conn, request, entry);
     }
     return new HandlerResult(entry);
   }
@@ -54,12 +56,14 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
   /**
    * Process the dn of an ldap entry.
    *
+   * @param  conn  the search was performed on
    * @param  request  used to find the ldap entry
    * @param  entry  ldap entry to extract the dn from
    *
    * @return  processed dn
    */
-  protected String processDn(final SearchRequest request, final LdapEntry entry)
+  protected String processDn(
+    final Connection conn, final SearchRequest request, final LdapEntry entry)
   {
     return entry.getDn();
   }
@@ -68,18 +72,20 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
   /**
    * Process the attributes of an ldap entry.
    *
+   * @param  conn  the search was performed on
    * @param  request  used to find the ldap entry
    * @param  entry  ldap entry to extract the attributes from
    *
    * @throws  LdapException  if the LDAP returns an error
    */
   protected void processAttributes(
+    final Connection conn,
     final SearchRequest request,
     final LdapEntry entry)
     throws LdapException
   {
     for (LdapAttribute la : entry.getAttributes()) {
-      processAttribute(request, la);
+      processAttribute(conn, request, la);
     }
   }
 
@@ -87,29 +93,31 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
   /**
    * Process a single attribute.
    *
+   * @param  conn  the search was performed on
    * @param  request  used to find the ldap entry
    * @param  attr  to process
    *
    * @throws  LdapException  if the LDAP returns an error
    */
   protected void processAttribute(
+    final Connection conn,
     final SearchRequest request,
     final LdapAttribute attr)
     throws LdapException
   {
     if (attr != null) {
-      attr.setName(processAttributeName(request, attr.getName()));
+      attr.setName(processAttributeName(conn, request, attr.getName()));
       if (attr.isBinary()) {
         final Set<byte[]> newValues = new HashSet<byte[]>(attr.size());
         for (byte[] b : attr.getBinaryValues()) {
-          newValues.add(processAttributeValue(request, b));
+          newValues.add(processAttributeValue(conn, request, b));
         }
         attr.clear();
         attr.addBinaryValues(newValues);
       } else {
         final Set<String> newValues = new HashSet<String>(attr.size());
         for (String s : attr.getStringValues()) {
-          newValues.add(processAttributeValue(request, s));
+          newValues.add(processAttributeValue(conn, request, s));
         }
         attr.clear();
         attr.addStringValues(newValues);
@@ -121,12 +129,14 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
   /**
    * Returns the supplied attribute name unaltered.
    *
+   * @param  conn  the search was performed on
    * @param  request  used to find the ldap entry
    * @param  name  to process
    *
    * @return  processed name
    */
   protected String processAttributeName(
+    final Connection conn,
     final SearchRequest request,
     final String name)
   {
@@ -137,12 +147,14 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
   /**
    * Returns the supplied attribute value unaltered.
    *
+   * @param  conn  the search was performed on
    * @param  request  used to find the ldap entry
    * @param  value  to process
    *
    * @return  processed value
    */
   protected String processAttributeValue(
+    final Connection conn,
     final SearchRequest request,
     final String value)
   {
@@ -153,12 +165,14 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
   /**
    * Returns the supplied attribute value unaltered.
    *
+   * @param  conn  the search was performed on
    * @param  request  used to find the ldap entry
    * @param  value  to process
    *
    * @return  processed value
    */
   protected byte[] processAttributeValue(
+    final Connection conn,
     final SearchRequest request,
     final byte[] value)
   {
