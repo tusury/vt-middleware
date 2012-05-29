@@ -41,11 +41,4 @@ public class DeleteOperation extends AbstractOperation<DeleteRequest, Void>
   {
     return getConnection().getProviderConnection().delete(request);
   }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initializeRequest(
-    final DeleteRequest request,
-    final ConnectionConfig cc) {}
 }

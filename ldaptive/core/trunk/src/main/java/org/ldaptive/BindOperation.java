@@ -41,11 +41,4 @@ public class BindOperation extends AbstractOperation<BindRequest, Void>
   {
     return getConnection().getProviderConnection().bind(request);
   }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initializeRequest(
-    final BindRequest request,
-    final ConnectionConfig cc) {}
 }

@@ -41,11 +41,4 @@ public class AddOperation extends AbstractOperation<AddRequest, Void>
   {
     return getConnection().getProviderConnection().add(request);
   }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initializeRequest(
-    final AddRequest request,
-    final ConnectionConfig cc) {}
 }

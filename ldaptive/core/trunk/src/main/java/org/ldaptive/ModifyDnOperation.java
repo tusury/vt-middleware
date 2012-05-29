@@ -41,11 +41,4 @@ public class ModifyDnOperation extends AbstractOperation<ModifyDnRequest, Void>
   {
     return getConnection().getProviderConnection().modifyDn(request);
   }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void initializeRequest(
-    final ModifyDnRequest request,
-    final ConnectionConfig cc) {}
 }

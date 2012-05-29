@@ -13,6 +13,7 @@
 */
 package org.ldaptive.handler;
 
+import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
@@ -30,6 +31,7 @@ public interface LdapEntryHandler
   /**
    * Process an entry from an ldap search.
    *
+   * @param  conn  the search was performed on
    * @param  request  used to perform the search
    * @param  entry  search result
    *
@@ -37,6 +39,6 @@ public interface LdapEntryHandler
    *
    * @throws  LdapException  if the LDAP returns an error
    */
-  HandlerResult process(SearchRequest request, LdapEntry entry)
+  HandlerResult process(Connection conn, SearchRequest request, LdapEntry entry)
     throws LdapException;
 }
