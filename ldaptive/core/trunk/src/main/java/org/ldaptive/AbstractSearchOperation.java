@@ -34,7 +34,7 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
 
 
   /**
-   * Creates a new abstract search connection.
+   * Creates a new abstract search operation.
    *
    * @param  conn  to use for this operation
    * @param  c  cache
