@@ -51,7 +51,7 @@ public abstract class AbstractOperation<Q extends Request, S>
 
 
   /**
-   * Creates a new abstract connection.
+   * Creates a new abstract operation.
    *
    * @param  conn  to use for this operation
    */
