@@ -14,11 +14,11 @@
 package org.ldaptive;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.TreeSet;
 import org.ldaptive.io.ValueTranscoder;
 
@@ -545,8 +545,8 @@ public class LdapAttribute extends AbstractLdapBean
     final String name,
     final Collection<Object> values)
   {
-    final Collection<String> stringValues = new LinkedList<String>();
-    final Collection<byte[]> binaryValues = new LinkedList<byte[]>();
+    final Collection<String> stringValues = new ArrayList<String>();
+    final Collection<byte[]> binaryValues = new ArrayList<byte[]>();
     for (Object value : values) {
       if (value instanceof byte[]) {
         binaryValues.add((byte[]) value);

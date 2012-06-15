@@ -13,8 +13,8 @@
 */
 package org.ldaptive.concurrent;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -105,7 +105,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   public Collection<Future<Response<S>>> execute(final Q... requests)
   {
     final List<Future<Response<S>>> results =
-      new LinkedList<Future<Response<S>>>();
+      new ArrayList<Future<Response<S>>>(requests.length);
     for (Q request : requests) {
       results.add(service.submit(createCallable(operation, request)));
     }
@@ -126,7 +126,8 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   {
     final CompletionService<Response<S>> cs =
       new ExecutorCompletionService<Response<S>>(service);
-    final List<Response<S>> results = new LinkedList<Response<S>>();
+    final List<Response<S>> results = new ArrayList<Response<S>>(
+      requests.length);
     for (Q request : requests) {
       cs.submit(createCallable(operation, request));
     }
