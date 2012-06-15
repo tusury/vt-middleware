@@ -30,11 +30,15 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
+import org.opends.sdk.ByteString;
 import org.opends.sdk.Connection;
 import org.opends.sdk.DereferenceAliasesPolicy;
 import org.opends.sdk.ErrorResultException;
@@ -43,11 +47,13 @@ import org.opends.sdk.SearchResultHandler;
 import org.opends.sdk.SearchScope;
 import org.opends.sdk.controls.Control;
 import org.opends.sdk.requests.GSSAPISASLBindRequest;
+import org.opends.sdk.requests.GenericExtendedRequest;
 import org.opends.sdk.requests.Requests;
 import org.opends.sdk.requests.SearchRequest;
 import org.opends.sdk.requests.SimpleBindRequest;
 import org.opends.sdk.responses.BindResult;
 import org.opends.sdk.responses.CompareResult;
+import org.opends.sdk.responses.GenericExtendedResult;
 import org.opends.sdk.responses.Result;
 import org.opends.sdk.responses.SearchResultEntry;
 import org.opends.sdk.responses.SearchResultReference;
@@ -496,7 +502,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     Response<Void> response = null;
     try {
       final org.opends.sdk.requests.ModifyDNRequest mdr =
-          Requests.newModifyDNRequest(request.getDn(), request.getNewDn());
+        Requests.newModifyDNRequest(request.getDn(), request.getNewDn());
       mdr.setDeleteOldRDN(request.getDeleteOldRDn());
       if (request.getControls() != null) {
         for (Control c :
@@ -526,6 +532,47 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     final OpenDSSearchIterator i = new OpenDSSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Response<ExtendedResponse> extendedOperation(
+    final ExtendedRequest request)
+    throws LdapException
+  {
+    Response<ExtendedResponse> response = null;
+    try {
+      GenericExtendedRequest er;
+      final byte[] requestBerValue = request.encode();
+      if (requestBerValue == null) {
+        er = Requests.newGenericExtendedRequest(request.getOID());
+      } else {
+        er = Requests.newGenericExtendedRequest(
+          request.getOID(), ByteString.wrap(requestBerValue));
+      }
+      if (request.getControls() != null) {
+        for (Control c :
+          config.getControlProcessor().processRequestControls(
+            request.getControls())) {
+          er.addControl(c);
+        }
+      }
+
+      final GenericExtendedResult result = connection.extendedRequest(er);
+      final byte[] responseBerValue =
+        result.getValue() != null ? result.getValue().toByteArray() : null;
+      response = createResponse(
+        request,
+        ExtendedResponseFactory.createExtendedResponse(
+          request.getOID(), result.getOID(), responseBerValue),
+        result);
+    } catch (ErrorResultException e) {
+      processErrorResultException(request, e);
+    } catch (InterruptedException e) {
+      throw new LdapException(e);
+    }
+    return response;
   }
 
 

@@ -39,7 +39,7 @@ public class NetscapeProviderConfig extends ProviderConfig
   /** Socket factory used for SSL. */
   private LDAPSocketFactory ldapSocketFactory;
 
-  /** Netscape specific control handler. */
+  /** Netscape specific control processor. */
   private ControlProcessor<LDAPControl> controlProcessor;
 
 
@@ -47,7 +47,7 @@ public class NetscapeProviderConfig extends ProviderConfig
   public NetscapeProviderConfig()
   {
     setOperationRetryResultCodes(
-      new ResultCode[] {ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR, });
+      ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,

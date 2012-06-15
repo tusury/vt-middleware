@@ -34,6 +34,7 @@ import org.apache.directory.shared.ldap.model.message.CompareResponse;
 import org.apache.directory.shared.ldap.model.message.Control;
 import org.apache.directory.shared.ldap.model.message.DeleteRequestImpl;
 import org.apache.directory.shared.ldap.model.message.DeleteResponse;
+import org.apache.directory.shared.ldap.model.message.ExtendedResponse;
 import org.apache.directory.shared.ldap.model.message.LdapResult;
 import org.apache.directory.shared.ldap.model.message.Message;
 import org.apache.directory.shared.ldap.model.message.ModifyDnRequestImpl;
@@ -61,6 +62,8 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
@@ -484,6 +487,36 @@ public class ApacheLdapConnection implements Connection
     final ApacheLdapSearchIterator i = new ApacheLdapSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Response<org.ldaptive.extended.ExtendedResponse> extendedOperation(
+    final ExtendedRequest request)
+    throws LdapException
+  {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
+    Response<org.ldaptive.extended.ExtendedResponse> response = null;
+    try {
+      final ExtendedResponse er = connection.extended(
+        request.getOID(), request.encode());
+      throwOperationException(request, er);
+      // only supports response without any value
+      response = createResponse(
+        request,
+        ExtendedResponseFactory.createExtendedResponse(
+          request.getOID(), er.getResponseName(), null),
+        er);
+    } catch (LdapOperationException e) {
+      processLdapOperationException(e);
+    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+      throw new LdapException(e);
+    }
+    return response;
   }
 
 

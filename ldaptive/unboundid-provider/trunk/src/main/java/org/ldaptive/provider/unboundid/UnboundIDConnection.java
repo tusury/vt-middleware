@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.BindResult;
 import com.unboundid.ldap.sdk.CRAMMD5BindRequest;
 import com.unboundid.ldap.sdk.CompareResult;
@@ -26,6 +27,7 @@ import com.unboundid.ldap.sdk.DIGESTMD5BindRequest;
 import com.unboundid.ldap.sdk.DN;
 import com.unboundid.ldap.sdk.DereferencePolicy;
 import com.unboundid.ldap.sdk.EXTERNALBindRequest;
+import com.unboundid.ldap.sdk.ExtendedResult;
 import com.unboundid.ldap.sdk.GSSAPIBindRequest;
 import com.unboundid.ldap.sdk.GSSAPIBindRequestProperties;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -53,6 +55,9 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
@@ -438,6 +443,45 @@ public class UnboundIDConnection implements Connection
     final UnboundIDSearchIterator i = new UnboundIDSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Response<ExtendedResponse> extendedOperation(
+    final ExtendedRequest request)
+    throws LdapException
+  {
+    Response<ExtendedResponse> response = null;
+    try {
+      com.unboundid.ldap.sdk.ExtendedRequest er;
+      final byte[] requestBerValue = request.encode();
+      if (requestBerValue == null) {
+        er = new com.unboundid.ldap.sdk.ExtendedRequest(
+          request.getOID(),
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
+      } else {
+        er = new com.unboundid.ldap.sdk.ExtendedRequest(
+          request.getOID(),
+          new ASN1OctetString(requestBerValue),
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
+      }
+      er.setFollowReferrals(request.getFollowReferrals());
+
+      final ExtendedResult result = connection.processExtendedOperation(er);
+      final byte[] responseBerValue =
+        result.getValue() != null ? result.getValue().getValue() : null;
+      response = createResponse(
+        request,
+        ExtendedResponseFactory.createExtendedResponse(
+          request.getOID(), result.getOID(), responseBerValue),
+        result);
+    } catch (LDAPException e) {
+      processLDAPException(request, e);
+    }
+    return response;
   }
 
 

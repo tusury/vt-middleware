@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import org.forgerock.opendj.ldap.ByteString;
 import org.forgerock.opendj.ldap.Connection;
 import org.forgerock.opendj.ldap.DereferenceAliasesPolicy;
 import org.forgerock.opendj.ldap.ErrorResultException;
@@ -26,12 +27,14 @@ import org.forgerock.opendj.ldap.SearchScope;
 import org.forgerock.opendj.ldap.controls.Control;
 import org.forgerock.opendj.ldap.requests.ExternalSASLBindRequest;
 import org.forgerock.opendj.ldap.requests.GSSAPISASLBindRequest;
+import org.forgerock.opendj.ldap.requests.GenericExtendedRequest;
 import org.forgerock.opendj.ldap.requests.Requests;
 import org.forgerock.opendj.ldap.requests.SASLBindRequest;
 import org.forgerock.opendj.ldap.requests.SearchRequest;
 import org.forgerock.opendj.ldap.requests.SimpleBindRequest;
 import org.forgerock.opendj.ldap.responses.BindResult;
 import org.forgerock.opendj.ldap.responses.CompareResult;
+import org.forgerock.opendj.ldap.responses.GenericExtendedResult;
 import org.forgerock.opendj.ldap.responses.Result;
 import org.forgerock.opendj.ldap.responses.SearchResultEntry;
 import org.forgerock.opendj.ldap.responses.SearchResultReference;
@@ -48,6 +51,9 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchIterator;
@@ -209,7 +215,7 @@ public class OpenDJConnection implements org.ldaptive.provider.Connection
     throws LdapException
   {
     Response<Void> response = null;
-    SASLBindRequest sbr = null;
+    SASLBindRequest sbr;
     final SaslConfig sc = request.getSaslConfig();
     switch (sc.getMechanism()) {
 
@@ -488,6 +494,45 @@ public class OpenDJConnection implements org.ldaptive.provider.Connection
     final OpenDJSearchIterator i = new OpenDJSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Response<ExtendedResponse> extendedOperation(
+    final ExtendedRequest request)
+    throws LdapException
+  {
+    Response<ExtendedResponse> response = null;
+    try {
+      GenericExtendedRequest er;
+      final byte[] requestBerValue = request.encode();
+      if (requestBerValue == null) {
+        er = Requests.newGenericExtendedRequest(request.getOID());
+      } else {
+        er = Requests.newGenericExtendedRequest(
+          request.getOID(), ByteString.wrap(requestBerValue));
+      }
+      if (request.getControls() != null) {
+        for (Control c :
+          config.getControlProcessor().processRequestControls(
+            request.getControls())) {
+          er.addControl(c);
+        }
+      }
+
+      final GenericExtendedResult result = connection.extendedRequest(er);
+      final byte[] responseBerValue =
+        result.getValue() != null ? result.getValue().toByteArray() : null;
+      response = createResponse(
+        request,
+        ExtendedResponseFactory.createExtendedResponse(
+          request.getOID(), result.getOID(), responseBerValue),
+        result);
+    } catch (ErrorResultException e) {
+      processErrorResultException(request, e);
+    }
+    return response;
   }
 
 

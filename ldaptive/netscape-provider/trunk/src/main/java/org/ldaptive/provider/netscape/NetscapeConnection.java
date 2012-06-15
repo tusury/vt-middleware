@@ -21,6 +21,7 @@ import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPConstraints;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
+import netscape.ldap.LDAPExtendedOperation;
 import netscape.ldap.LDAPRebind;
 import netscape.ldap.LDAPRebindAuth;
 import netscape.ldap.LDAPReferralException;
@@ -46,6 +47,9 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
@@ -380,6 +384,28 @@ public class NetscapeConnection implements Connection
     final NetscapeSearchIterator i = new NetscapeSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Response<ExtendedResponse> extendedOperation(
+    final ExtendedRequest request)
+    throws LdapException
+  {
+    Response<ExtendedResponse> response = null;
+    try {
+      final LDAPExtendedOperation op = connection.extendedOperation(
+        new LDAPExtendedOperation(request.getOID(), request.encode()),
+        getLDAPConstraints(request));
+      response = new Response<ExtendedResponse>(
+        ExtendedResponseFactory.createExtendedResponse(
+          request.getOID(), op.getID(), op.getValue()),
+        ResultCode.SUCCESS);
+    } catch (LDAPException e) {
+      processLDAPException(e);
+    }
+    return response;
   }
 
 
