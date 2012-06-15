@@ -13,8 +13,8 @@
 */
 package org.ldaptive.concurrent;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -75,7 +75,7 @@ public class ParallelPooledSearchExecutor
     throws LdapException
   {
     final List<Response<LdapResult>> response =
-      new LinkedList<Response<LdapResult>>();
+      new ArrayList<Response<LdapResult>>(filters.length);
     final CompletionService<Response<LdapResult>> searches =
       new ExecutorCompletionService<Response<LdapResult>>(getExecutorService());
     for (SearchFilter filter : filters) {
