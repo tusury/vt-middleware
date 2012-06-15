@@ -44,6 +44,9 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
@@ -518,6 +521,43 @@ public class JndiConnection implements Connection
     final JndiSearchIterator i = new JndiSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Response<ExtendedResponse> extendedOperation(
+    final ExtendedRequest request)
+    throws LdapException
+  {
+    Response<ExtendedResponse> response = null;
+    LdapContext ctx = null;
+    try {
+      try {
+        ctx = initializeContext(request);
+        final JndiExtendedResponse extRes =
+          (JndiExtendedResponse) ctx.extendedOperation(
+            new JndiExtendedRequest(request.getOID(), request.encode()));
+        response = createResponse(
+          request,
+          ExtendedResponseFactory.createExtendedResponse(
+            request.getOID(), extRes.getID(), extRes.getEncodedValue()),
+          ResultCode.SUCCESS,
+          null,
+          ctx);
+      } finally {
+        if (ctx != null) {
+          ctx.close();
+        }
+      }
+    } catch (ReferralException e) {
+      final String[] refUrls = e.getReferralInfo() != null ?
+        new String[] {(String) e.getReferralInfo()} : null;
+      processNamingException(request, e, refUrls, ctx);
+    } catch (NamingException e) {
+      processNamingException(request, e, null, ctx);
+    }
+    return response;
   }
 
 
@@ -1194,6 +1234,112 @@ public class JndiConnection implements Connection
       } catch (NamingException e) {
         logger.error("Error closing ldap context", e);
       }
+    }
+  }
+
+
+  /**
+   * Class for exposing extended request properties.
+   */
+  protected static class JndiExtendedRequest
+    implements javax.naming.ldap.ExtendedRequest
+  {
+
+    /** OID of the extended request. */
+    private final String oid;
+
+    /** BER encoded request data. */
+    private final byte[] encoded;
+
+
+    /**
+     * Creates a new jndi extended request.
+     *
+     * @param  id  request oid
+     * @param  berValue  BER encoded request
+     */
+    public JndiExtendedRequest(final String id, final byte[] berValue)
+    {
+      oid = id;
+      encoded = berValue;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getID()
+    {
+      return oid;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public byte[] getEncodedValue()
+    {
+      return encoded;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public javax.naming.ldap.ExtendedResponse createExtendedResponse(
+      final String id,
+      final byte[] berValue,
+      final int offset,
+      final int length)
+      throws NamingException
+    {
+      byte[] b = null;
+      if (berValue != null) {
+        b = new byte[length];
+        System.arraycopy(berValue, offset, b, 0, length);
+      }
+      return new JndiExtendedResponse(id, b);
+    }
+  }
+
+
+  /**
+   * Class for exposing extended response properties.
+   */
+  protected static class JndiExtendedResponse
+    implements javax.naming.ldap.ExtendedResponse
+  {
+
+    /** OID of the extended response. */
+    private final String oid;
+
+    /** BER encoded response data. */
+    private final byte[] encoded;
+
+
+    /**
+     * Creates a new jndi extended response.
+     *
+     * @param  id  response oid
+     * @param  berValue  BER encoded response
+     */
+    public JndiExtendedResponse(final String id, final byte[] berValue)
+    {
+      oid = id;
+      encoded = berValue;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getID()
+    {
+      return oid;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public byte[] getEncodedValue()
+    {
+      return encoded;
     }
   }
 }

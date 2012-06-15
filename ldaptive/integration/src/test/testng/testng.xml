@@ -39,6 +39,8 @@
              value="/org/ldaptive/createLdapEntry-14.ldif"/>
   <parameter name="createEntry15"
              value="/org/ldaptive/createLdapEntry-15.ldif"/>
+  <parameter name="createEntry16"
+             value="/org/ldaptive/createLdapEntry-16.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -302,6 +304,10 @@
   <parameter name="cramMd5User" value="test3"/>
   <parameter name="cramMd5Credential" value="password"/>
 
+  <parameter name="passwordModifyDn" value="cn=Abraham Lincoln,${ldapBaseDn}"/>
+  <parameter name="passwordModifyOldPass" value="password16"/>
+  <parameter name="passwordModifyNewPass" value="emancipator"/>
+
   <parameter name="toSearchResultsDn" value="${ldapBaseDn}"/>
   <parameter name="toSearchResultsFilter" value="(uid=7)"/>
   <parameter name="toSearchResultsAttrs" value="departmentNumber|givenName|sn"/>
@@ -371,6 +377,7 @@
         <include name="compare" />
         <include name="modify" />
         <include name="modifyDn" />
+        <include name="extended" />
         <include name="spring" />
         <include name="auth" />
         <include name="jaas" />

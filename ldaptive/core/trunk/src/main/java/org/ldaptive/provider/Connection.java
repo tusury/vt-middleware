@@ -22,6 +22,8 @@ import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
 
 /**
  * Interface for a provider specific implementation of ldap operations.
@@ -121,6 +123,20 @@ public interface Connection
    * @throws  LdapException  if an error occurs
    */
   SearchIterator search(SearchRequest request)
+    throws LdapException;
+
+
+  /**
+   * Perform an extended operation in the ldap.
+   *
+   * @param  request  containing the data necessary to perform the operation
+   *
+   * @return  response associated with the extended operation
+   *
+   * @throws  LdapException  if an error occurs
+   */
+  Response<? extends ExtendedResponse> extendedOperation(
+    ExtendedRequest request)
     throws LdapException;
 
 

@@ -25,6 +25,8 @@ import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPControl;
 import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPException;
+import com.novell.ldap.LDAPExtendedOperation;
+import com.novell.ldap.LDAPExtendedResponse;
 import com.novell.ldap.LDAPReferralException;
 import com.novell.ldap.LDAPResponse;
 import com.novell.ldap.LDAPResponseQueue;
@@ -48,6 +50,9 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ResponseControl;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
@@ -370,6 +375,29 @@ public class JLdapConnection implements Connection
     final JLdapSearchIterator i = new JLdapSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Response<ExtendedResponse> extendedOperation(
+    final ExtendedRequest request)
+    throws LdapException
+  {
+    Response<ExtendedResponse> response = null;
+    try {
+      final LDAPExtendedResponse extRes = connection.extendedOperation(
+        new LDAPExtendedOperation(request.getOID(), request.encode()),
+        getLDAPConstraints(request));
+      response = createResponse(
+        request,
+        ExtendedResponseFactory.createExtendedResponse(
+          request.getOID(), extRes.getID(), extRes.getValue()),
+        extRes);
+    } catch (LDAPException e) {
+      processLDAPException(e);
+    }
+    return response;
   }
 
 

@@ -50,7 +50,7 @@ public class JndiProviderConfig extends ProviderConfig
   /** hostname verifier for startTLS connections. */
   private HostnameVerifier hostnameVerifier;
 
-  /** JNDI specific control handler. */
+  /** JNDI specific control processor. */
   private ControlProcessor<Control> controlProcessor;
 
 
@@ -58,11 +58,7 @@ public class JndiProviderConfig extends ProviderConfig
   public JndiProviderConfig()
   {
     setOperationRetryResultCodes(
-      new ResultCode[] {
-        ResultCode.PROTOCOL_ERROR,
-        ResultCode.BUSY,
-        ResultCode.UNAVAILABLE,
-      });
+      ResultCode.PROTOCOL_ERROR, ResultCode.BUSY, ResultCode.UNAVAILABLE);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
