@@ -20,27 +20,27 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Simple bean representing an ldap result. Contains a map of entry DN to ldap
- * entry.
+ * Simple bean representing an ldap search result. Contains a map of entry DN to
+ * ldap entry.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LdapResult extends AbstractLdapBean
+public class SearchResult extends AbstractLdapBean
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 337;
 
   /** serial version uid. */
-  private static final long serialVersionUID = 8716095444363430453L;
+  private static final long serialVersionUID = -4686725717997623766L;
 
   /** Entries contained in this result. */
   private final Map<String, LdapEntry> resultEntries;
 
 
   /** Default constructor. */
-  public LdapResult()
+  public SearchResult()
   {
     this(SortBehavior.getDefaultSortBehavior());
   }
@@ -51,7 +51,7 @@ public class LdapResult extends AbstractLdapBean
    *
    * @param  sb  sort behavior of the results
    */
-  public LdapResult(final SortBehavior sb)
+  public SearchResult(final SortBehavior sb)
   {
     super(sb);
     if (SortBehavior.UNORDERED == sb) {
@@ -72,7 +72,7 @@ public class LdapResult extends AbstractLdapBean
    *
    * @param  entry  ldap entry
    */
-  public LdapResult(final LdapEntry... entry)
+  public SearchResult(final LdapEntry... entry)
   {
     this();
     for (LdapEntry e : entry) {
@@ -86,7 +86,7 @@ public class LdapResult extends AbstractLdapBean
    *
    * @param  entries  collection of ldap entries
    */
-  public LdapResult(final Collection<LdapEntry> entries)
+  public SearchResult(final Collection<LdapEntry> entries)
   {
     this();
     addEntries(entries);
@@ -221,25 +221,25 @@ public class LdapResult extends AbstractLdapBean
    *
    * @throws  IndexOutOfBoundsException  for illegal index values
    */
-  public LdapResult subResult(final int fromIndex, final int toIndex)
+  public SearchResult subResult(final int fromIndex, final int toIndex)
   {
     if (fromIndex < 0 ||
         toIndex > resultEntries.size() ||
         fromIndex > toIndex) {
       throw new IndexOutOfBoundsException("Illegal index value");
     }
-    final LdapResult lr = new LdapResult(getSortBehavior());
+    final SearchResult result = new SearchResult(getSortBehavior());
     if (resultEntries.isEmpty() || fromIndex == toIndex) {
-      return lr;
+      return result;
     }
     int i = 0;
     for (Map.Entry<String, LdapEntry> e : resultEntries.entrySet()) {
       if (i >= fromIndex && i < toIndex) {
-        lr.addEntry(e.getValue());
+        result.addEntry(e.getValue());
       }
       i++;
     }
-    return lr;
+    return result;
   }
 
 
@@ -285,7 +285,7 @@ public class LdapResult extends AbstractLdapBean
    *
    * @return  ldap result containing a single merged entry
    */
-  public static LdapResult mergeEntries(final LdapResult result)
+  public static SearchResult mergeEntries(final SearchResult result)
   {
     LdapEntry mergedEntry = null;
     if (result != null) {
@@ -309,6 +309,7 @@ public class LdapResult extends AbstractLdapBean
         }
       }
     }
-    return mergedEntry != null ? new LdapResult(mergedEntry) : new LdapResult();
+    return mergedEntry != null ?
+      new SearchResult(mergedEntry) : new SearchResult();
   }
 }

@@ -22,8 +22,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SortBehavior;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Reads DSML version 1 from a {@link Reader} and supplies an {@link
- * LdapResult}.
+ * SearchResult}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -95,7 +95,7 @@ public class Dsmlv1Reader implements LdapResultReader
    * @throws  IOException  if an error occurs using the reader
    */
   @Override
-  public LdapResult read()
+  public SearchResult read()
     throws IOException
   {
     try {
@@ -117,9 +117,9 @@ public class Dsmlv1Reader implements LdapResultReader
    *
    * @return  ldap result
    */
-  protected LdapResult createLdapResult(final Document doc)
+  protected SearchResult createLdapResult(final Document doc)
   {
-    final LdapResult result = new LdapResult(sortBehavior);
+    final SearchResult result = new SearchResult(sortBehavior);
 
     if (doc != null && doc.hasChildNodes()) {
       final NodeList nodes = doc.getElementsByTagName("dsml:entry");

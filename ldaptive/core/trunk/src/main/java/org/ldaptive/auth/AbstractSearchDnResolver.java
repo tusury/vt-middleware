@@ -19,10 +19,10 @@ import org.ldaptive.Connection;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -252,7 +252,7 @@ public abstract class AbstractSearchDnResolver implements DnResolver
       final SearchFilter filter = createSearchFilter(user);
 
       if (filter.getFilter() != null) {
-        final LdapResult result = performLdapSearch(filter);
+        final SearchResult result = performLdapSearch(filter);
         final Iterator<LdapEntry> answer = result.getEntries().iterator();
 
         // return first match, otherwise user doesn't exist
@@ -345,7 +345,7 @@ public abstract class AbstractSearchDnResolver implements DnResolver
    *
    * @throws  LdapException  if an error occurs
    */
-  protected LdapResult performLdapSearch(final SearchFilter filter)
+  protected SearchResult performLdapSearch(final SearchFilter filter)
     throws LdapException
   {
     final SearchRequest request = createSearchRequest(filter);

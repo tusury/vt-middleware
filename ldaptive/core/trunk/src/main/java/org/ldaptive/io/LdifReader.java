@@ -19,12 +19,12 @@ import java.io.Reader;
 import java.net.URL;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SortBehavior;
 
 /**
- * Reads an LDIF from a {@link Reader} and supplies an {@link LdapResult}.
+ * Reads an LDIF from a {@link Reader} and supplies an {@link SearchResult}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -74,10 +74,10 @@ public class LdifReader implements LdapResultReader
    * @throws  IOException  if an error occurs using the reader
    */
   @Override
-  public LdapResult read()
+  public SearchResult read()
     throws IOException
   {
-    final LdapResult ldapResult = new LdapResult(sortBehavior);
+    final SearchResult ldapResult = new SearchResult(sortBehavior);
     final BufferedReader br = new BufferedReader(ldifReader);
     String line;
     int lineCount = 0;

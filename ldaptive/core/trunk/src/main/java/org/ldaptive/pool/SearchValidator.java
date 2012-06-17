@@ -14,10 +14,10 @@
 package org.ldaptive.pool;
 
 import org.ldaptive.Connection;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,8 +93,8 @@ public class SearchValidator implements Validator<Connection>
     if (c != null) {
       try {
         final SearchOperation search = new SearchOperation(c);
-        final LdapResult lr = search.execute(searchRequest).getResult();
-        success = lr.size() > 0;
+        final SearchResult result = search.execute(searchRequest).getResult();
+        success = result.size() > 0;
       } catch (Exception e) {
         logger.debug(
           "validation failed for search request {}",

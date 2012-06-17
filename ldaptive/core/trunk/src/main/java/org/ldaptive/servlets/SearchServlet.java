@@ -20,7 +20,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.io.Dsmlv1Writer;
 import org.ldaptive.io.LdapResultWriter;
 import org.ldaptive.io.LdifWriter;
@@ -116,7 +116,7 @@ public final class SearchServlet extends AbstractServlet
       request.getParameter("query"),
       request.getParameter("attrs"));
     try {
-      final LdapResult result = search(
+      final SearchResult result = search(
         request.getParameter("query"),
         request.getParameterValues("attrs"));
       LdapResultWriter writer;

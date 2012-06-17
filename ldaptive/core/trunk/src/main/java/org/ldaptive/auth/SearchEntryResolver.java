@@ -17,9 +17,9 @@ import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,7 @@ public class SearchEntryResolver implements EntryResolver
                                : Arrays.toString(returnAttributes));
 
     final SearchOperation search = new SearchOperation(conn);
-    final LdapResult result = search.execute(
+    final SearchResult result = search.execute(
       SearchRequest.newObjectScopeSearchRequest(
         ac.getDn(), returnAttributes)).getResult();
     logger.debug(

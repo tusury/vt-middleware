@@ -21,10 +21,10 @@ import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.handler.AbstractLdapEntryHandler;
 
 /**
@@ -143,7 +143,7 @@ public class RangeEntryHandler extends AbstractLdapEntryHandler
         final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(
           entry.getDn(),
           new String[] {nextAttrID});
-        final LdapResult result = search.execute(sr).getResult();
+        final SearchResult result = search.execute(sr).getResult();
 
         // Add all attributes to the search result
         entry.addAttributes(result.getEntry().getAttributes());

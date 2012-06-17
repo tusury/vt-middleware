@@ -14,8 +14,8 @@
 package org.ldaptive.cache;
 
 import net.sf.ehcache.Element;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 
 /**
  * Ehcache implementation.
@@ -54,21 +54,21 @@ public class Ehcache<Q extends SearchRequest> implements Cache<Q>
 
   /** {@inheritDoc} */
   @Override
-  public LdapResult get(final Q request)
+  public SearchResult get(final Q request)
   {
     final Element e = cache.get(request);
     if (e == null) {
       return null;
     }
-    return (LdapResult) e.getObjectValue();
+    return (SearchResult) e.getObjectValue();
   }
 
 
   /** {@inheritDoc} */
   @Override
-  public void put(final Q request, final LdapResult lr)
+  public void put(final Q request, final SearchResult result)
   {
-    cache.put(new Element(request, lr));
+    cache.put(new Element(request, result));
   }
 
 

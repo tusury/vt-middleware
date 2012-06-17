@@ -26,7 +26,7 @@ import org.ldaptive.handler.LdapEntryHandler;
  * @version  $Revision$ $Date$
  */
 public abstract class AbstractSearchOperation<Q extends SearchRequest>
-  extends AbstractOperation<Q, LdapResult>
+  extends AbstractOperation<Q, SearchResult>
 {
 
   /** Cache to use when performing searches. */
@@ -79,27 +79,27 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
    *
    * @throws  LdapException  if an error occurs
    */
-  protected abstract Response<LdapResult> executeSearch(final Q request)
+  protected abstract Response<SearchResult> executeSearch(final Q request)
     throws LdapException;
 
 
   /** {@inheritDoc} */
   @Override
-  protected Response<LdapResult> invoke(final Q request)
+  protected Response<SearchResult> invoke(final Q request)
     throws LdapException
   {
     logger.debug("invoke request={}", request);
 
-    Response<LdapResult> response;
+    Response<SearchResult> response;
     if (cache != null) {
-      final LdapResult lr = cache.get(request);
-      if (lr == null) {
+      final SearchResult sr = cache.get(request);
+      if (sr == null) {
         response = executeSearch(request);
         cache.put(request, response.getResult());
         logger.debug("invoke stored result={} in cache", response.getResult());
       } else {
-        logger.debug("invoke found result={} in cache", lr);
-        response = new Response<LdapResult>(lr, null);
+        logger.debug("invoke found result={} in cache", sr);
+        response = new Response<SearchResult>(sr, null);
       }
     } else {
       response = executeSearch(request);

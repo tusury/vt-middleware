@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 
 /**
  * Queries an LDAP and returns the value of a single attribute. Example:
@@ -74,7 +74,7 @@ public final class AttributeServlet extends AbstractServlet
     }
 
     try {
-      final LdapResult result = search(
+      final SearchResult result = search(
         request.getParameter("query"),
         request.getParameterValues("attrs"));
       final LdapEntry e = result.getEntry();

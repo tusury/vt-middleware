@@ -20,10 +20,10 @@ import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 
 /**
  * This recursively searches based on a supplied attribute and merges those
@@ -228,7 +228,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
         final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(
           dn,
           retAttrs);
-        final LdapResult result = search.execute(sr).getResult();
+        final SearchResult result = search.execute(sr).getResult();
         newEntry = result.getEntry(dn);
       } catch (LdapException e) {
         logger.warn(

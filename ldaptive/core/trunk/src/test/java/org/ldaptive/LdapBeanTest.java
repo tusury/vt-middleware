@@ -20,7 +20,7 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link LdapResult}, {@link LdapEntry}, and
+ * Unit test for {@link SearchResult}, {@link LdapEntry}, and
  * {@link LdapAttribute}.
  *
  * @author  Middleware Services
@@ -43,92 +43,92 @@ public class LdapBeanTest
     final LdapEntry entry2 = new LdapEntry("uid=2");
 
     // test default sort behavior
-    LdapResult lr = new LdapResult();
+    SearchResult sr = new SearchResult();
     AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(), lr.getSortBehavior());
-    AssertJUnit.assertEquals(0, lr.size());
-    AssertJUnit.assertNull(lr.getEntry());
-    lr.clear();
-    AssertJUnit.assertEquals(0, lr.size());
+      SortBehavior.getDefaultSortBehavior(), sr.getSortBehavior());
+    AssertJUnit.assertEquals(0, sr.size());
+    AssertJUnit.assertNull(sr.getEntry());
+    sr.clear();
+    AssertJUnit.assertEquals(0, sr.size());
 
     // test ordered
-    lr = new LdapResult(SortBehavior.ORDERED);
-    AssertJUnit.assertEquals(SortBehavior.ORDERED, lr.getSortBehavior());
-    lr.addEntry(entry2, entry1);
-    LdapEntry[] entries = lr.getEntries().toArray(new LdapEntry[2]);
+    sr = new SearchResult(SortBehavior.ORDERED);
+    AssertJUnit.assertEquals(SortBehavior.ORDERED, sr.getSortBehavior());
+    sr.addEntry(entry2, entry1);
+    LdapEntry[] entries = sr.getEntries().toArray(new LdapEntry[2]);
     AssertJUnit.assertEquals(entry2, entries[0]);
     AssertJUnit.assertEquals(entry1, entries[1]);
-    lr.clear();
-    AssertJUnit.assertEquals(0, lr.size());
+    sr.clear();
+    AssertJUnit.assertEquals(0, sr.size());
 
     // test sorted
-    lr = new LdapResult(SortBehavior.SORTED);
-    AssertJUnit.assertEquals(SortBehavior.SORTED, lr.getSortBehavior());
-    lr.addEntry(entry2, entry1);
-    entries = lr.getEntries().toArray(new LdapEntry[2]);
+    sr = new SearchResult(SortBehavior.SORTED);
+    AssertJUnit.assertEquals(SortBehavior.SORTED, sr.getSortBehavior());
+    sr.addEntry(entry2, entry1);
+    entries = sr.getEntries().toArray(new LdapEntry[2]);
     AssertJUnit.assertEquals(entry1, entries[0]);
     AssertJUnit.assertEquals(entry2, entries[1]);
-    lr.clear();
-    AssertJUnit.assertEquals(0, lr.size());
+    sr.clear();
+    AssertJUnit.assertEquals(0, sr.size());
 
     // test create with one entry
-    lr = new LdapResult(entry1);
-    AssertJUnit.assertEquals(entry1, lr.getEntry());
-    AssertJUnit.assertEquals(entry1, lr.getEntry("uid=1"));
-    AssertJUnit.assertEquals(entry1, lr.getEntry("UID=1"));
-    AssertJUnit.assertEquals("uid=1", lr.getEntryDns()[0]);
-    AssertJUnit.assertEquals(1, lr.size());
-    AssertJUnit.assertEquals(lr, new LdapResult(entry1));
-    lr.clear();
-    AssertJUnit.assertEquals(0, lr.size());
+    sr = new SearchResult(entry1);
+    AssertJUnit.assertEquals(entry1, sr.getEntry());
+    AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
+    AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
+    AssertJUnit.assertEquals("uid=1", sr.getEntryDns()[0]);
+    AssertJUnit.assertEquals(1, sr.size());
+    AssertJUnit.assertEquals(sr, new SearchResult(entry1));
+    sr.clear();
+    AssertJUnit.assertEquals(0, sr.size());
 
     // test create with two entries
-    lr = new LdapResult(entry2, entry1);
-    AssertJUnit.assertEquals(entry1, lr.getEntry("uid=1"));
-    AssertJUnit.assertEquals(entry2, lr.getEntry("UID=2"));
-    AssertJUnit.assertEquals(2, lr.getEntryDns().length);
-    AssertJUnit.assertEquals(2, lr.size());
-    AssertJUnit.assertEquals(lr, new LdapResult(entry1, entry2));
-    lr.removeEntry(entry2);
-    AssertJUnit.assertEquals(1, lr.size());
-    lr.clear();
-    AssertJUnit.assertEquals(0, lr.size());
+    sr = new SearchResult(entry2, entry1);
+    AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
+    AssertJUnit.assertEquals(entry2, sr.getEntry("UID=2"));
+    AssertJUnit.assertEquals(2, sr.getEntryDns().length);
+    AssertJUnit.assertEquals(2, sr.size());
+    AssertJUnit.assertEquals(sr, new SearchResult(entry1, entry2));
+    sr.removeEntry(entry2);
+    AssertJUnit.assertEquals(1, sr.size());
+    sr.clear();
+    AssertJUnit.assertEquals(0, sr.size());
 
     // test create with collection
     final Set<LdapEntry> s = new HashSet<LdapEntry>();
     s.add(entry1);
-    lr = new LdapResult(s);
-    lr.addEntry(entry2);
-    AssertJUnit.assertEquals(entry1, lr.getEntry("UID=1"));
-    AssertJUnit.assertEquals(entry2, lr.getEntry("uid=2"));
-    AssertJUnit.assertEquals(2, lr.getEntryDns().length);
-    AssertJUnit.assertEquals(2, lr.size());
-    AssertJUnit.assertEquals(lr, new LdapResult(entry1, entry2));
-    lr.removeEntry("UID=1");
-    AssertJUnit.assertEquals(1, lr.size());
-    lr.clear();
-    AssertJUnit.assertEquals(0, lr.size());
+    sr = new SearchResult(s);
+    sr.addEntry(entry2);
+    AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
+    AssertJUnit.assertEquals(entry2, sr.getEntry("uid=2"));
+    AssertJUnit.assertEquals(2, sr.getEntryDns().length);
+    AssertJUnit.assertEquals(2, sr.size());
+    AssertJUnit.assertEquals(sr, new SearchResult(entry1, entry2));
+    sr.removeEntry("UID=1");
+    AssertJUnit.assertEquals(1, sr.size());
+    sr.clear();
+    AssertJUnit.assertEquals(0, sr.size());
 
     // test sub results
-    lr = new LdapResult(SortBehavior.SORTED);
-    lr.addEntry(entry2, entry1);
-    AssertJUnit.assertEquals(0, lr.subResult(2, 2).size());
-    AssertJUnit.assertEquals(1, lr.subResult(1, 2).size());
-    AssertJUnit.assertEquals(2, lr.subResult(0, 2).size());
+    sr = new SearchResult(SortBehavior.SORTED);
+    sr.addEntry(entry2, entry1);
+    AssertJUnit.assertEquals(0, sr.subResult(2, 2).size());
+    AssertJUnit.assertEquals(1, sr.subResult(1, 2).size());
+    AssertJUnit.assertEquals(2, sr.subResult(0, 2).size());
     try {
-      lr.subResult(-1, 1);
+      sr.subResult(-1, 1);
       AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
     }
     try {
-      lr.subResult(0, 3);
+      sr.subResult(0, 3);
       AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
     }
     try {
-      lr.subResult(1, 0);
+      sr.subResult(1, 0);
       AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());

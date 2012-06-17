@@ -29,13 +29,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Writes DSML version 1 to a {@link Writer} using an {@link LdapResult}.
+ * Writes DSML version 1 to a {@link Writer} using an {@link SearchResult}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -82,7 +82,7 @@ public class Dsmlv1Writer implements LdapResultWriter
    * @throws  IOException  if an error occurs using the writer
    */
   @Override
-  public void write(final LdapResult result)
+  public void write(final SearchResult result)
     throws IOException
   {
     try {
@@ -114,7 +114,7 @@ public class Dsmlv1Writer implements LdapResultWriter
    * @throws  ParserConfigurationException  if a document builder cannot be
    * created
    */
-  protected Document createDsml(final LdapResult result)
+  protected Document createDsml(final SearchResult result)
     throws ParserConfigurationException
   {
     final DocumentBuilder db = DOC_BUILDER_FACTORY.newDocumentBuilder();

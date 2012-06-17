@@ -19,11 +19,11 @@ import java.util.concurrent.Executors;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.handler.LdapEntryHandler;
 
 /**
@@ -58,14 +58,14 @@ public class ParallelSearchExecutor
 
   /** {@inheritDoc} */
   @Override
-  public Collection<Response<LdapResult>> search(
+  public Collection<Response<SearchResult>> search(
     final ConnectionFactory factory,
     final SearchFilter[] filters,
     final String[] attrs,
     final LdapEntryHandler... handlers)
     throws LdapException
   {
-    Collection<Response<LdapResult>> response = null;
+    Collection<Response<SearchResult>> response = null;
     final Connection conn = factory.getConnection();
     try {
       conn.open();

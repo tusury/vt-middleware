@@ -13,8 +13,8 @@
 */
 package org.ldaptive.cache;
 
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 
 /**
  * Interface for cache implementations.
@@ -35,14 +35,14 @@ public interface Cache<Q extends SearchRequest>
    *
    * @return  ldap result
    */
-  LdapResult get(Q request);
+  SearchResult get(Q request);
 
 
   /**
    * Stores the ldap result for the supplied request.
    *
    * @param  request  used to find ldap result
-   * @param  lr  found with request
+   * @param  result  found with request
    */
-  void put(Q request, LdapResult lr);
+  void put(Q request, SearchResult result);
 }

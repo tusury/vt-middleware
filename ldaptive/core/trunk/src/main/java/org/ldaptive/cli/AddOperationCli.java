@@ -23,7 +23,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 
@@ -96,8 +96,8 @@ public class AddOperationCli extends AbstractCli
     conn.open();
 
     final LdifReader reader = new LdifReader(new FileReader(file));
-    final LdapResult lr = reader.read();
-    for (LdapEntry le : lr.getEntries()) {
+    final SearchResult sr = reader.read();
+    for (LdapEntry le : sr.getEntries()) {
       final AddOperation op = new AddOperation(conn);
       op.execute(new AddRequest(le.getDn(), le.getAttributes()));
       System.out.println(String.format("Added entry: %s", le));

@@ -14,7 +14,7 @@
 package org.ldaptive.io;
 
 import java.io.IOException;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 
 /**
  * Interface for writing ldap results.
@@ -33,6 +33,6 @@ public interface LdapResultWriter
    *
    * @throws  IOException  if an error occurs using the writer
    */
-  void write(final LdapResult result)
+  void write(final SearchResult result)
     throws IOException;
 }
