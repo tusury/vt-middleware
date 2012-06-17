@@ -51,7 +51,7 @@ public class SerializableTest
       "binary-name", new byte[]{0x00, 0x01, }, new byte[]{0x02, 0x03, });
     final LdapEntry entry1 = new LdapEntry("entry-dn1", attr1, attr2);
     final LdapEntry entry2 = new LdapEntry("entry-dn2", attr1, attr2);
-    final LdapResult result = new LdapResult(entry1, entry2);
+    final SearchResult result = new SearchResult(entry1, entry2);
 
     final LdapPrincipal prin = new LdapPrincipal("principal-name", entry1);
     final LdapDnPrincipal dnPrin = new LdapDnPrincipal(

@@ -21,9 +21,9 @@ import org.apache.commons.cli.Option;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.io.Dsmlv1Writer;
 import org.ldaptive.io.LdapResultWriter;
 import org.ldaptive.io.LdifWriter;
@@ -128,7 +128,7 @@ public class SearchOperationCli extends AbstractCli
     conn.open();
 
     final SearchOperation op = new SearchOperation(conn);
-    final LdapResult result = op.execute(request).getResult();
+    final SearchResult result = op.execute(request).getResult();
     LdapResultWriter writer;
     if (outputDsmlv1) {
       writer = new Dsmlv1Writer(

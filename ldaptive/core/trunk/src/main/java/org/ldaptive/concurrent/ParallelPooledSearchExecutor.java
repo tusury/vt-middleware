@@ -24,13 +24,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.Operation;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.pool.PooledConnectionFactory;
 
@@ -67,17 +67,18 @@ public class ParallelPooledSearchExecutor
 
   /** {@inheritDoc} */
   @Override
-  public Collection<Response<LdapResult>> search(
+  public Collection<Response<SearchResult>> search(
     final PooledConnectionFactory factory,
     final SearchFilter[] filters,
     final String[] attrs,
     final LdapEntryHandler... handlers)
     throws LdapException
   {
-    final List<Response<LdapResult>> response =
-      new ArrayList<Response<LdapResult>>(filters.length);
-    final CompletionService<Response<LdapResult>> searches =
-      new ExecutorCompletionService<Response<LdapResult>>(getExecutorService());
+    final List<Response<SearchResult>> response =
+      new ArrayList<Response<SearchResult>>(filters.length);
+    final CompletionService<Response<SearchResult>> searches =
+      new ExecutorCompletionService<Response<SearchResult>>(
+        getExecutorService());
     for (SearchFilter filter : filters) {
       final SearchRequest sr = newSearchRequest(this);
       if (filter != null) {

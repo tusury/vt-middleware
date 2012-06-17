@@ -19,8 +19,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchResult;
 import org.ldaptive.pool.ConnectionPoolType;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.props.PooledConnectionFactoryPropertySource;
@@ -118,10 +118,10 @@ public abstract class AbstractServlet extends HttpServlet
    *
    * @throws  LdapException  if an error occurs
    */
-  protected LdapResult search(final String query, final String[] attrs)
+  protected SearchResult search(final String query, final String[] attrs)
     throws LdapException
   {
-    LdapResult result = null;
+    SearchResult result = null;
     if (query != null) {
       result = searchExecutor.search(
         connectionFactory, query, attrs).getResult();

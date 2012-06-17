@@ -30,7 +30,7 @@ public class SearchExecutor extends SearchRequest
 {
 
   /** Handlers to process search responses. */
-  private OperationResponseHandler<LdapResult>[] searchResponseHandlers;
+  private OperationResponseHandler<SearchResult>[] searchResponseHandlers;
 
 
   /**
@@ -38,7 +38,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @return  search response handlers
    */
-  public OperationResponseHandler<LdapResult>[] getSearchResponseHandlers()
+  public OperationResponseHandler<SearchResult>[] getSearchResponseHandlers()
   {
     return searchResponseHandlers;
   }
@@ -50,7 +50,7 @@ public class SearchExecutor extends SearchRequest
    * @param  handlers  search response handlers
    */
   public void setSearchResponseHandlers(
-    final OperationResponseHandler<LdapResult>... handlers)
+    final OperationResponseHandler<SearchResult>... handlers)
   {
     searchResponseHandlers = handlers;
   }
@@ -65,7 +65,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<LdapResult> search(final ConnectionFactory factory)
+  public Response<SearchResult> search(final ConnectionFactory factory)
     throws LdapException
   {
     return search(factory, null, (String[]) null, (LdapEntryHandler[]) null);
@@ -82,7 +82,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<LdapResult> search(
+  public Response<SearchResult> search(
     final ConnectionFactory factory,
     final String filter)
     throws LdapException
@@ -106,7 +106,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<LdapResult> search(
+  public Response<SearchResult> search(
     final ConnectionFactory factory,
     final SearchFilter filter)
     throws LdapException
@@ -126,7 +126,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<LdapResult> search(
+  public Response<SearchResult> search(
     final ConnectionFactory factory,
     final String filter,
     final String... attrs)
@@ -152,7 +152,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<LdapResult> search(
+  public Response<SearchResult> search(
     final ConnectionFactory factory,
     final SearchFilter filter,
     final String... attrs)
@@ -174,14 +174,14 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<LdapResult> search(
+  public Response<SearchResult> search(
     final ConnectionFactory factory,
     final SearchFilter filter,
     final String[] attrs,
     final LdapEntryHandler... handlers)
     throws LdapException
   {
-    Response<LdapResult> response = null;
+    Response<SearchResult> response = null;
     final Connection conn = factory.getConnection();
     try {
       conn.open();

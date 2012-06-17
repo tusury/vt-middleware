@@ -21,7 +21,7 @@ import org.apache.commons.cli.Option;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
@@ -192,7 +192,7 @@ public class AuthenticatorCli extends AbstractCli
           writer = new LdifWriter(
             new BufferedWriter(new OutputStreamWriter(System.out)));
         }
-        writer.write(new LdapResult(entry));
+        writer.write(new SearchResult(entry));
       }
     } else {
       System.out.println(String.format("Authentication failed for %s", entry));

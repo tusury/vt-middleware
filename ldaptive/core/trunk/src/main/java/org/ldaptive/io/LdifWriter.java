@@ -17,11 +17,11 @@ import java.io.IOException;
 import java.io.Writer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchResult;
 
 /**
- * Writes an LDIF to a {@link Writer} using an {@link LdapResult}.
+ * Writes an LDIF to a {@link Writer} using an {@link SearchResult}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -77,7 +77,7 @@ public class LdifWriter implements LdapResultWriter
    * @throws  IOException  if an error occurs using the writer
    */
   @Override
-  public void write(final LdapResult result)
+  public void write(final SearchResult result)
     throws IOException
   {
     ldifWriter.write(createLdif(result));
@@ -92,7 +92,7 @@ public class LdifWriter implements LdapResultWriter
    *
    * @return  LDIF
    */
-  protected String createLdif(final LdapResult result)
+  protected String createLdif(final SearchResult result)
   {
     // build string from results
     final StringBuilder ldif = new StringBuilder();

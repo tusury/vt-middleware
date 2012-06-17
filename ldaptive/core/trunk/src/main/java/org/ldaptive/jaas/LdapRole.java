@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.Set;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchResult;
 
 /**
  * Provides a custom implementation for adding LDAP principals to a subject that
@@ -103,7 +103,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
    *
    * @return  ldap roles
    */
-  public static Set<LdapRole> toRoles(final LdapResult result)
+  public static Set<LdapRole> toRoles(final SearchResult result)
   {
     final Set<LdapRole> r = new HashSet<LdapRole>();
     for (LdapEntry le : result.getEntries()) {

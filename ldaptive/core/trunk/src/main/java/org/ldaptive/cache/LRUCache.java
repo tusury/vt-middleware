@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 
 /**
  * Least-Recently-Used cache implementation. Leverages a {@link LinkedHashMap}.
@@ -111,7 +111,7 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
 
   /** {@inheritDoc} */
   @Override
-  public LdapResult get(final Q request)
+  public SearchResult get(final Q request)
   {
     synchronized (cache) {
       if (cache.containsKey(request)) {
@@ -125,10 +125,10 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
 
   /** {@inheritDoc} */
   @Override
-  public void put(final Q request, final LdapResult lr)
+  public void put(final Q request, final SearchResult result)
   {
     synchronized (cache) {
-      cache.put(request, new Item(lr));
+      cache.put(request, new Item(result));
     }
   }
 
@@ -159,7 +159,7 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
   {
 
     /** Ldap result. */
-    private final LdapResult result;
+    private final SearchResult result;
 
     /** Timestamp when this item is created. */
     private final long creationTime;
@@ -168,11 +168,11 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
     /**
      * Creates a new item.
      *
-     * @param  lr  ldap result
+     * @param  sr  search result
      */
-    public Item(final LdapResult lr)
+    public Item(final SearchResult sr)
     {
-      result = lr;
+      result = sr;
       creationTime = System.currentTimeMillis();
     }
   }

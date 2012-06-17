@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.OperationResponseHandler;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
   private final ExecutorService service;
 
   /** Handlers to process search responses. */
-  private OperationResponseHandler<LdapResult>[] searchResponseHandlers;
+  private OperationResponseHandler<SearchResult>[] searchResponseHandlers;
 
 
   /**
@@ -81,7 +81,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @return  search response handlers
    */
-  public OperationResponseHandler<LdapResult>[] getSearchResponseHandlers()
+  public OperationResponseHandler<SearchResult>[] getSearchResponseHandlers()
   {
     return searchResponseHandlers;
   }
@@ -93,7 +93,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @param  handlers  search response handlers
    */
   public void setSearchResponseHandlers(
-    final OperationResponseHandler<LdapResult>... handlers)
+    final OperationResponseHandler<SearchResult>... handlers)
   {
     searchResponseHandlers = handlers;
   }
@@ -130,7 +130,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<LdapResult>> search(
+  public Collection<Response<SearchResult>> search(
     final T factory,
     final String... filters)
     throws LdapException
@@ -153,7 +153,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<LdapResult>> search(
+  public Collection<Response<SearchResult>> search(
     final T factory,
     final SearchFilter[] filters)
     throws LdapException
@@ -173,7 +173,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<LdapResult>> search(
+  public Collection<Response<SearchResult>> search(
     final T factory,
     final String[] filters,
     final String... attrs)
@@ -198,7 +198,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<LdapResult>> search(
+  public Collection<Response<SearchResult>> search(
     final T factory,
     final SearchFilter[] filters,
     final String... attrs)
@@ -220,7 +220,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public abstract Collection<Response<LdapResult>> search(
+  public abstract Collection<Response<SearchResult>> search(
     final T factory,
     final SearchFilter[] filters,
     final String[] attrs,

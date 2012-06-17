@@ -52,10 +52,10 @@ public class SearchOperation extends AbstractSearchOperation<SearchRequest>
 
   /** {@inheritDoc} */
   @Override
-  protected Response<LdapResult> executeSearch(final SearchRequest request)
+  protected Response<SearchResult> executeSearch(final SearchRequest request)
     throws LdapException
   {
-    final LdapResult lr = new LdapResult(request.getSortBehavior());
+    final SearchResult result = new SearchResult(request.getSortBehavior());
     final SearchIterator si = getConnection().getProviderConnection().search(
       request);
     try {
@@ -64,7 +64,7 @@ public class SearchOperation extends AbstractSearchOperation<SearchRequest>
         if (le != null) {
           final HandlerResult hr = executeLdapEntryHandlers(request, le);
           if (hr.getLdapEntry() != null) {
-            lr.addEntry(hr.getLdapEntry());
+            result.addEntry(hr.getLdapEntry());
           }
           if (hr.getAbortSearch()) {
             logger.debug("Aborting search on entry=%s", le);
@@ -78,8 +78,8 @@ public class SearchOperation extends AbstractSearchOperation<SearchRequest>
 
     final Response<Void> response = si.getResponse();
     return
-      new Response<LdapResult>(
-        lr,
+      new Response<SearchResult>(
+        result,
         response.getResultCode(),
         response.getMessage(),
         response.getMatchedDn(),
