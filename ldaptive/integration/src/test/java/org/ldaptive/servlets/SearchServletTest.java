@@ -22,7 +22,7 @@ import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.TestUtils;
 import org.ldaptive.io.Dsmlv1Writer;
 import org.testng.AssertJUnit;
@@ -113,7 +113,7 @@ public class SearchServletTest extends AbstractTest
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/plain", response.getContentType());
 
-    final LdapResult result = TestUtils.convertLdifToResult(response.getText());
+    final SearchResult result = TestUtils.convertLdifToResult(response.getText());
     AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
 
@@ -140,7 +140,7 @@ public class SearchServletTest extends AbstractTest
     throws Exception
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
-    final LdapResult result = TestUtils.convertLdifToResult(ldif);
+    final SearchResult result = TestUtils.convertLdifToResult(ldif);
     // convert ldif into dsmlv1
     final StringWriter s1w = new StringWriter();
     final Dsmlv1Writer d1w = new Dsmlv1Writer(s1w);

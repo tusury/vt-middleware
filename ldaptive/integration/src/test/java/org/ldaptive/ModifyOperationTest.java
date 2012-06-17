@@ -80,7 +80,7 @@ public class ModifyOperationTest extends AbstractTest
             AttributeModificationType.ADD, expected.getAttribute())));
 
       final SearchOperation search = new SearchOperation(conn);
-      final LdapResult result = search.execute(
+      final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, new String[] {expected.getAttribute().getName()})).getResult();
       AssertJUnit.assertEquals(
@@ -117,7 +117,7 @@ public class ModifyOperationTest extends AbstractTest
       modify.execute(new ModifyRequest(dn, mods));
 
       final SearchOperation search = new SearchOperation(conn);
-      final LdapResult result = search.execute(
+      final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, expected.getAttributeNames())).getResult();
       AssertJUnit.assertEquals(expected, result.getEntry());
@@ -152,7 +152,7 @@ public class ModifyOperationTest extends AbstractTest
           AttributeModificationType.REPLACE, expected.getAttribute())));
 
       final SearchOperation search = new SearchOperation(conn);
-      final LdapResult result = search.execute(
+      final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, new String[] {expected.getAttribute().getName()})).getResult();
       AssertJUnit.assertEquals(expected, result.getEntry());
@@ -192,7 +192,7 @@ public class ModifyOperationTest extends AbstractTest
       modify.execute(new ModifyRequest(dn, mods));
 
       final SearchOperation search = new SearchOperation(conn);
-      final LdapResult result = search.execute(
+      final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, expected.getAttributeNames())).getResult();
       AssertJUnit.assertEquals(expected, result.getEntry());
@@ -228,7 +228,7 @@ public class ModifyOperationTest extends AbstractTest
           AttributeModificationType.REMOVE, expected.getAttribute())));
 
       final SearchOperation search = new SearchOperation(conn);
-      final LdapResult result = search.execute(
+      final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, new String[] {expected.getAttribute().getName()})).getResult();
       AssertJUnit.assertEquals(0, result.getEntry().getAttributes().size());
@@ -273,7 +273,7 @@ public class ModifyOperationTest extends AbstractTest
       modify.execute(new ModifyRequest(dn, mods));
 
       final SearchOperation search = new SearchOperation(conn);
-      final LdapResult result = search.execute(
+      final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, expected.getAttributeNames())).getResult();
       AssertJUnit.assertEquals(expected, result.getEntry());

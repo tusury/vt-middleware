@@ -21,7 +21,7 @@ import java.util.Comparator;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LdapResultIgnoreCaseComparator implements Comparator<LdapResult>
+public class SearchResultIgnoreCaseComparator implements Comparator<SearchResult>
 {
 
   /** names of attributes to ignore the case of. */
@@ -32,7 +32,7 @@ public class LdapResultIgnoreCaseComparator implements Comparator<LdapResult>
    * Creates a new ldap result ignore case comparator that will ignore the
    * case of all attribute values.
    */
-  public LdapResultIgnoreCaseComparator()
+  public SearchResultIgnoreCaseComparator()
   {
     this((String[]) null);
   }
@@ -44,7 +44,7 @@ public class LdapResultIgnoreCaseComparator implements Comparator<LdapResult>
    *
    * @param  names  of attributes whose case should be ignored
    */
-  public LdapResultIgnoreCaseComparator(final String... names)
+  public SearchResultIgnoreCaseComparator(final String... names)
   {
     attributeNames = names;
   }
@@ -59,7 +59,7 @@ public class LdapResultIgnoreCaseComparator implements Comparator<LdapResult>
    * @return  a negative integer, zero, or a positive integer as the first
    * argument is less than, equal to, or greater than the second.
    */
-  public int compare(final LdapResult a, final LdapResult b)
+  public int compare(final SearchResult a, final SearchResult b)
   {
     return lowerCaseResult(a, attributeNames).hashCode() -
            lowerCaseResult(b, attributeNames).hashCode();
@@ -77,10 +77,10 @@ public class LdapResultIgnoreCaseComparator implements Comparator<LdapResult>
    *
    * @throws  IllegalArgumentException  if a binary attribute is lower cased
    */
-  public static LdapResult lowerCaseResult(
-    final LdapResult lr, final String... names)
+  public static SearchResult lowerCaseResult(
+    final SearchResult lr, final String... names)
   {
-    final LdapResult lowerCase = new LdapResult(lr.getSortBehavior());
+    final SearchResult lowerCase = new SearchResult(lr.getSortBehavior());
     for (LdapEntry le : lr.getEntries()) {
       lowerCase.addEntry(
         LdapEntryIgnoreCaseComparator.lowerCaseEntry(le, names));

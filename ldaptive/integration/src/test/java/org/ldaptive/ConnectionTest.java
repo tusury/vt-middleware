@@ -154,7 +154,7 @@ public class ConnectionTest
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
-      final LdapResult lr = search.execute(
+      final SearchResult lr = search.execute(
         new SearchRequest(
           DnParser.substring(testLdapEntry.getDn(), 1),
           new SearchFilter("(uid=15)"))).getResult();
