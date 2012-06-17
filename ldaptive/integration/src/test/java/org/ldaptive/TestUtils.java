@@ -307,7 +307,7 @@ public final class TestUtils
    *
    * @throws  Exception  if ldif cannot be read
    */
-  public static LdapResult convertLdifToResult(final String ldif)
+  public static SearchResult convertLdifToResult(final String ldif)
     throws Exception
   {
     final LdifReader reader = new LdifReader(new StringReader(ldif));

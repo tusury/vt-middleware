@@ -21,7 +21,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -753,7 +753,7 @@ public class ConnectionPoolTest extends AbstractTest
   {
     final long startTime = System.currentTimeMillis();
     Connection conn = null;
-    LdapResult result = null;
+    SearchResult result = null;
     try {
       logger.trace("waiting for pool checkout");
       conn = pool.getConnection();

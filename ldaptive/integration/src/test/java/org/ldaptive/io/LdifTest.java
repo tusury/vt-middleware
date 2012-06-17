@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -93,7 +93,7 @@ public class LdifTest extends AbstractTest
       if (TestControl.isActiveDirectory()) {
         request.setBinaryAttributes("objectSid", "objectGUID");
       }
-      final LdapResult result1 = search.execute(request).getResult();
+      final SearchResult result1 = search.execute(request).getResult();
 
       final StringWriter writer = new StringWriter();
       final LdifWriter ldifWriter = new LdifWriter(writer);
@@ -101,7 +101,7 @@ public class LdifTest extends AbstractTest
 
       final StringReader reader = new StringReader(writer.toString());
       final LdifReader ldifReader = new LdifReader(reader);
-      final LdapResult result2 = ldifReader.read();
+      final SearchResult result2 = ldifReader.read();
 
       AssertJUnit.assertEquals(result1, result2);
     } finally {
@@ -130,7 +130,7 @@ public class LdifTest extends AbstractTest
     final LdifReader ldifReader = new LdifReader(
       new StringReader(TestUtils.readFileIntoString(ldifFile)),
       SortBehavior.SORTED);
-    final LdapResult result = ldifReader.read();
+    final SearchResult result = ldifReader.read();
 
     final StringWriter writer = new StringWriter();
     final LdifWriter ldifWriter = new LdifWriter(writer);
@@ -158,11 +158,11 @@ public class LdifTest extends AbstractTest
   {
     final String ldifStringIn = TestUtils.readFileIntoString(ldifFileIn);
     LdifReader ldifReader = new LdifReader(new StringReader(ldifStringIn));
-    final LdapResult result1 = ldifReader.read();
+    final SearchResult result1 = ldifReader.read();
 
     final String ldifStringOut = TestUtils.readFileIntoString(ldifFileOut);
     ldifReader = new LdifReader(new StringReader(ldifStringOut));
-    final LdapResult result2 = ldifReader.read();
+    final SearchResult result2 = ldifReader.read();
 
     AssertJUnit.assertEquals(result1, result2);
   }

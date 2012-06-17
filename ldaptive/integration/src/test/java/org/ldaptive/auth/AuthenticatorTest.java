@@ -23,7 +23,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
@@ -350,7 +350,7 @@ public class AuthenticatorTest extends AbstractTest
         dn, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
       TestUtils.convertLdifToResult(expected),
-      new LdapResult(response.getLdapEntry()));
+      new SearchResult(response.getLdapEntry()));
   }
 
 
@@ -400,7 +400,7 @@ public class AuthenticatorTest extends AbstractTest
         dn, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
       TestUtils.convertLdifToResult(expected),
-      new LdapResult(response.getLdapEntry()));
+      new SearchResult(response.getLdapEntry()));
   }
 
 
@@ -558,7 +558,7 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     AssertJUnit.assertEquals(
       TestUtils.convertLdifToResult(expected),
-      new LdapResult(response.getLdapEntry()));
+      new SearchResult(response.getLdapEntry()));
   }
 
 
@@ -611,7 +611,7 @@ public class AuthenticatorTest extends AbstractTest
         returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
       TestUtils.convertLdifToResult(expected),
-      new LdapResult(response.getLdapEntry()));
+      new SearchResult(response.getLdapEntry()));
   }
 
 
@@ -665,7 +665,7 @@ public class AuthenticatorTest extends AbstractTest
         returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(
       TestUtils.convertLdifToResult(expected),
-      new LdapResult(response.getLdapEntry()));
+      new SearchResult(response.getLdapEntry()));
   }
 
 

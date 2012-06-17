@@ -20,12 +20,12 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link LdapResult}.
+ * Unit test for {@link SearchResult}.
  *
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class LdapResultTest extends AbstractTest
+public class SearchResultTest extends AbstractTest
 {
 
   /** Entry created for tests. */
@@ -86,7 +86,7 @@ public class LdapResultTest extends AbstractTest
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
 
-      final LdapResult result = search.execute(
+      final SearchResult result = search.execute(
         new SearchRequest(
           dn, new SearchFilter(filter), returnAttrs.split("\\|"))).getResult();
       final String expected = TestUtils.readFileIntoString(ldifFile);

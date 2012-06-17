@@ -91,7 +91,7 @@ public class ModifyDnOperationTest extends AbstractTest
           newDn)).getResult().getEntry();
       AssertJUnit.assertNotNull(modifyDnLdapEntry);
       try {
-        final Response<LdapResult> r = search.execute(
+        final Response<SearchResult> r = search.execute(
           SearchRequest.newObjectScopeSearchRequest(oldDn));
         AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
       } catch (LdapException e) {
@@ -106,7 +106,7 @@ public class ModifyDnOperationTest extends AbstractTest
           SearchRequest.newObjectScopeSearchRequest(
             oldDn)).getResult().size() > 0);
       try {
-        final Response<LdapResult> r = search.execute(
+        final Response<SearchResult> r = search.execute(
           SearchRequest.newObjectScopeSearchRequest(newDn));
         AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
       } catch (LdapException e) {

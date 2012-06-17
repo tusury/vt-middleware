@@ -18,7 +18,7 @@ import java.io.StringWriter;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -94,7 +94,7 @@ public class DsmlTest extends AbstractTest
       if (TestControl.isActiveDirectory()) {
         request.setBinaryAttributes("objectSid", "objectGUID");
       }
-      final LdapResult result1 = search.execute(request).getResult();
+      final SearchResult result1 = search.execute(request).getResult();
 
       final StringWriter writer = new StringWriter();
       final Dsmlv1Writer dsmlWriter = new Dsmlv1Writer(writer);
@@ -102,7 +102,7 @@ public class DsmlTest extends AbstractTest
 
       final StringReader reader = new StringReader(writer.toString());
       final Dsmlv1Reader dsmlReader = new Dsmlv1Reader(reader);
-      final LdapResult result2 = dsmlReader.read();
+      final SearchResult result2 = dsmlReader.read();
 
       AssertJUnit.assertEquals(result1, result2);
     } finally {
@@ -131,7 +131,7 @@ public class DsmlTest extends AbstractTest
     final Dsmlv1Reader dsmlReader = new Dsmlv1Reader(
       new StringReader(TestUtils.readFileIntoString(dsmlFile)),
       SortBehavior.SORTED);
-    final LdapResult result = dsmlReader.read();
+    final SearchResult result = dsmlReader.read();
 
     final StringWriter writer = new StringWriter();
     final Dsmlv1Writer dsmlWriter = new Dsmlv1Writer(writer);
