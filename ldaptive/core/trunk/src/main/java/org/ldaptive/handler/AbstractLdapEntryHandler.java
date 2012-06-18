@@ -63,7 +63,9 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
    * @return  processed dn
    */
   protected String processDn(
-    final Connection conn, final SearchRequest request, final LdapEntry entry)
+    final Connection conn,
+    final SearchRequest request,
+    final LdapEntry entry)
   {
     return entry.getDn();
   }

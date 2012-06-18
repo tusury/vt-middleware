@@ -223,15 +223,18 @@ public class SearchResult extends AbstractLdapBean
    */
   public SearchResult subResult(final int fromIndex, final int toIndex)
   {
-    if (fromIndex < 0 ||
+    if (
+      fromIndex < 0 ||
         toIndex > resultEntries.size() ||
         fromIndex > toIndex) {
       throw new IndexOutOfBoundsException("Illegal index value");
     }
+
     final SearchResult result = new SearchResult(getSortBehavior());
     if (resultEntries.isEmpty() || fromIndex == toIndex) {
       return result;
     }
+
     int i = 0;
     for (Map.Entry<String, LdapEntry> e : resultEntries.entrySet()) {
       if (i >= fromIndex && i < toIndex) {
@@ -309,7 +312,7 @@ public class SearchResult extends AbstractLdapBean
         }
       }
     }
-    return mergedEntry != null ?
-      new SearchResult(mergedEntry) : new SearchResult();
+    return
+      mergedEntry != null ? new SearchResult(mergedEntry) : new SearchResult();
   }
 }

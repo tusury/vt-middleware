@@ -35,7 +35,6 @@ public class WhoAmIResponse extends AbstractExtendedResponse<String>
   }
 
 
-
   /** {@inheritDoc} */
   @Override
   public void decode(final byte[] encoded)
@@ -48,10 +47,6 @@ public class WhoAmIResponse extends AbstractExtendedResponse<String>
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d]",
-        getClass().getName(),
-        hashCode());
+    return String.format("[%s@%d]", getClass().getName(), hashCode());
   }
 }

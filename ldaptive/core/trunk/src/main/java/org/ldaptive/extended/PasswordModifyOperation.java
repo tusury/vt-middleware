@@ -25,8 +25,8 @@ import org.ldaptive.Response;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class PasswordModifyOperation extends
-  AbstractOperation<PasswordModifyRequest, Credential>
+public class PasswordModifyOperation
+  extends AbstractOperation<PasswordModifyRequest, Credential>
 {
 
 

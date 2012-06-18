@@ -135,7 +135,9 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
       for (LdapEntryHandler handler : handlers) {
         if (handler != null) {
           final HandlerResult hr = handler.process(
-            getConnection(), request, processedEntry);
+            getConnection(),
+            request,
+            processedEntry);
           if (hr.getAbortSearch()) {
             abort = true;
           }
