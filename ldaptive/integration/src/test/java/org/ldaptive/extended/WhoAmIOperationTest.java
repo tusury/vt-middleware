@@ -41,10 +41,9 @@ public class WhoAmIOperationTest extends AbstractTest
     try {
       conn.open();
       final WhoAmIOperation whoami = new WhoAmIOperation(conn);
-      final Response<WhoAmIResponse> res = whoami.execute(new WhoAmIRequest());
+      final Response<String> res = whoami.execute(new WhoAmIRequest());
       AssertJUnit.assertEquals(
-        "dn:" + conn.getConnectionConfig().getBindDn(),
-        res.getResult().getAuthzId());
+        "dn:" + conn.getConnectionConfig().getBindDn(), res.getResult());
     } finally {
       conn.close();
     }

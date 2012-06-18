@@ -492,25 +492,23 @@ public class ApacheLdapConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<org.ldaptive.extended.ExtendedResponse> extendedOperation(
-    final ExtendedRequest request)
+  public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
     if (request.getFollowReferrals()) {
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
-    Response<org.ldaptive.extended.ExtendedResponse> response = null;
+    Response<?> response = null;
     try {
-      final ExtendedResponse er = connection.extended(
+      final ExtendedResponse apacheExtRes = connection.extended(
         request.getOID(), request.encode());
-      throwOperationException(request, er);
-      // only supports response without any value
-      response = createResponse(
-        request,
+      throwOperationException(request, apacheExtRes);
+      final org.ldaptive.extended.ExtendedResponse<?> extRes =
         ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), er.getResponseName(), null),
-        er);
+          request.getOID(), apacheExtRes.getResponseName(), null);
+        // only supports response without any value
+      response = createResponse(request, extRes.getValue(), apacheExtRes);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {

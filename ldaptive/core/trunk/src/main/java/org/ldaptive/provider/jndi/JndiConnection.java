@@ -526,22 +526,23 @@ public class JndiConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<ExtendedResponse> extendedOperation(
-    final ExtendedRequest request)
+  public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
-    Response<ExtendedResponse> response = null;
+    Response<?> response = null;
     LdapContext ctx = null;
     try {
       try {
         ctx = initializeContext(request);
-        final JndiExtendedResponse extRes =
+        final JndiExtendedResponse jndiExtRes =
           (JndiExtendedResponse) ctx.extendedOperation(
             new JndiExtendedRequest(request.getOID(), request.encode()));
+        final ExtendedResponse<?> extRes =
+          ExtendedResponseFactory.createExtendedResponse(
+            request.getOID(), jndiExtRes.getID(), jndiExtRes.getEncodedValue());
         response = createResponse(
           request,
-          ExtendedResponseFactory.createExtendedResponse(
-            request.getOID(), extRes.getID(), extRes.getEncodedValue()),
+          extRes.getValue(),
           ResultCode.SUCCESS,
           null,
           ctx);

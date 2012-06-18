@@ -389,19 +389,18 @@ public class NetscapeConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<ExtendedResponse> extendedOperation(
-    final ExtendedRequest request)
+  public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
-    Response<ExtendedResponse> response = null;
+    Response<?> response = null;
     try {
       final LDAPExtendedOperation op = connection.extendedOperation(
         new LDAPExtendedOperation(request.getOID(), request.encode()),
         getLDAPConstraints(request));
-      response = new Response<ExtendedResponse>(
+      final ExtendedResponse<?> extRes =
         ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), op.getID(), op.getValue()),
-        ResultCode.SUCCESS);
+          request.getOID(), op.getID(), op.getValue());
+      response = new Response<Object>(extRes.getValue(), ResultCode.SUCCESS);
     } catch (LDAPException e) {
       processLDAPException(e);
     }

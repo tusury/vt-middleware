@@ -22,49 +22,8 @@ import org.ldaptive.asn1.OctetStringType;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class WhoAmIResponse implements ExtendedResponse
+public class WhoAmIResponse extends AbstractExtendedResponse<String>
 {
-
-  /** Authorization identity. */
-  private String authzId;
-
-
-  /** Default constructor. */
-  public WhoAmIResponse() {}
-
-
-  /**
-   * Creates a new who am i response.
-   *
-   * @param  id  authorization id
-   */
-  public WhoAmIResponse(final String id)
-  {
-    authzId = id;
-  }
-
-
-  /**
-   * Returns the authorization identity or null if no authorization identity was
-   * returned by this operation.
-   *
-   * @return  authorization identity
-   */
-  public String getAuthzId()
-  {
-    return authzId;
-  }
-
-
-  /**
-   * Sets the authorization identity.
-   *
-   * @param  id  returned from a who am i request
-   */
-  public void setAuthzId(final String id)
-  {
-    authzId = id;
-  }
 
 
   /** {@inheritDoc} */
@@ -81,7 +40,7 @@ public class WhoAmIResponse implements ExtendedResponse
   @Override
   public void decode(final byte[] encoded)
   {
-    setAuthzId(OctetStringType.decode(ByteBuffer.wrap(encoded)));
+    setValue(OctetStringType.decode(ByteBuffer.wrap(encoded)));
   }
 
 

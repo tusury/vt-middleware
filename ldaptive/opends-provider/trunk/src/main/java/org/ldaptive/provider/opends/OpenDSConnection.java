@@ -537,11 +537,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<ExtendedResponse> extendedOperation(
-    final ExtendedRequest request)
+  public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
-    Response<ExtendedResponse> response = null;
+    Response<?> response = null;
     try {
       GenericExtendedRequest er;
       final byte[] requestBerValue = request.encode();
@@ -562,11 +561,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       final GenericExtendedResult result = connection.extendedRequest(er);
       final byte[] responseBerValue =
         result.getValue() != null ? result.getValue().toByteArray() : null;
-      response = createResponse(
-        request,
+      final ExtendedResponse<?> extRes =
         ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), result.getOID(), responseBerValue),
-        result);
+          request.getOID(), result.getOID(), responseBerValue);
+      response = createResponse(request, extRes.getValue(), result);
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     } catch (InterruptedException e) {

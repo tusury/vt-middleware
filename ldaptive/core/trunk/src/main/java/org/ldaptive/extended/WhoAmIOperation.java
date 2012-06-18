@@ -24,8 +24,7 @@ import org.ldaptive.Response;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class WhoAmIOperation extends
-  AbstractOperation<WhoAmIRequest, WhoAmIResponse>
+public class WhoAmIOperation extends AbstractOperation<WhoAmIRequest, String>
 {
 
 
@@ -43,10 +42,10 @@ public class WhoAmIOperation extends
   /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
-  protected Response<WhoAmIResponse> invoke(final WhoAmIRequest request)
+  protected Response<String> invoke(final WhoAmIRequest request)
     throws LdapException
   {
-    return (Response<WhoAmIResponse>)
+    return (Response<String>)
       getConnection().getProviderConnection().extendedOperation(request);
   }
 }

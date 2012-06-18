@@ -23,7 +23,6 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.extended.ExtendedRequest;
-import org.ldaptive.extended.ExtendedResponse;
 
 /**
  * Interface for a provider specific implementation of ldap operations.
@@ -135,8 +134,7 @@ public interface Connection
    *
    * @throws  LdapException  if an error occurs
    */
-  Response<? extends ExtendedResponse> extendedOperation(
-    ExtendedRequest request)
+  Response<?> extendedOperation(ExtendedRequest request)
     throws LdapException;
 
 

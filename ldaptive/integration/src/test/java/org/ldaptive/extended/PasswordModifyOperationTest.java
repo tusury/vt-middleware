@@ -103,7 +103,7 @@ public class PasswordModifyOperationTest extends AbstractTest
       final PasswordModifyOperation modify = new PasswordModifyOperation(conn);
       // invalid password
       try {
-        final Response<PasswordModifyResponse> res = modify.execute(
+        final Response<Credential> res = modify.execute(
           new PasswordModifyRequest(
             dn, new Credential(INVALID_PASSWD), new Credential(newPass)));
         AssertJUnit.assertEquals(
@@ -111,13 +111,11 @@ public class PasswordModifyOperationTest extends AbstractTest
       } catch (LdapException e) {}
 
       // change password
-      Response<PasswordModifyResponse> res = modify.execute(
+      Response<Credential> modifyResponse = modify.execute(
         new PasswordModifyRequest(
           dn, new Credential(oldPass), new Credential(newPass)));
-      PasswordModifyResponse modifyResponse = res.getResult();
       AssertJUnit.assertNotNull(modifyResponse);
-      AssertJUnit.assertNull(modifyResponse.getOID());
-      AssertJUnit.assertNull(modifyResponse.getGeneratedPassword());
+      AssertJUnit.assertNull(modifyResponse.getResult());
       response = auth.authenticate(
         new AuthenticationRequest(dn, new Credential(oldPass)));
       AssertJUnit.assertFalse(response.getResult());
@@ -126,16 +124,14 @@ public class PasswordModifyOperationTest extends AbstractTest
       AssertJUnit.assertTrue(response.getResult());
 
       // generate password
-      res = modify.execute(new PasswordModifyRequest(dn));
-      modifyResponse = res.getResult();
+      modifyResponse = modify.execute(new PasswordModifyRequest(dn));
       AssertJUnit.assertNotNull(modifyResponse);
-      AssertJUnit.assertNull(modifyResponse.getOID());
-      AssertJUnit.assertNotNull(modifyResponse.getGeneratedPassword());
+      AssertJUnit.assertNotNull(modifyResponse.getResult());
       response = auth.authenticate(
         new AuthenticationRequest(dn, new Credential(newPass)));
       AssertJUnit.assertFalse(response.getResult());
       response = auth.authenticate(
-        new AuthenticationRequest(dn, modifyResponse.getGeneratedPassword()));
+        new AuthenticationRequest(dn, modifyResponse.getResult()));
       AssertJUnit.assertTrue(response.getResult());
     } finally {
       conn.close();

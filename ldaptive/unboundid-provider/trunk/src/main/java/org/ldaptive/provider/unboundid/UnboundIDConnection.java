@@ -448,11 +448,10 @@ public class UnboundIDConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<ExtendedResponse> extendedOperation(
-    final ExtendedRequest request)
+  public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
-    Response<ExtendedResponse> response = null;
+    Response<?> response = null;
     try {
       com.unboundid.ldap.sdk.ExtendedRequest er;
       final byte[] requestBerValue = request.encode();
@@ -473,11 +472,10 @@ public class UnboundIDConnection implements Connection
       final ExtendedResult result = connection.processExtendedOperation(er);
       final byte[] responseBerValue =
         result.getValue() != null ? result.getValue().getValue() : null;
-      response = createResponse(
-        request,
+      final ExtendedResponse<?> extRes =
         ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), result.getOID(), responseBerValue),
-        result);
+          request.getOID(), result.getOID(), responseBerValue);
+      response = createResponse(request, extRes.getValue(), result);
     } catch (LDAPException e) {
       processLDAPException(request, e);
     }
