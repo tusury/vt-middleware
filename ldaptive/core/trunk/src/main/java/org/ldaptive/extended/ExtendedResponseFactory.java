@@ -36,10 +36,10 @@ public final class ExtendedResponseFactory
    *
    * @return  extended response
    */
-  public static ExtendedResponse createExtendedResponse(
+  public static ExtendedResponse<?> createExtendedResponse(
     final String requestOID, final String responseOID, final byte[] encoded)
   {
-    ExtendedResponse res;
+    ExtendedResponse<?> res;
     if (PasswordModifyRequest.OID.equals(requestOID)) {
       res = new PasswordModifyResponse();
       if (encoded != null) {

@@ -380,20 +380,18 @@ public class JLdapConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public Response<ExtendedResponse> extendedOperation(
-    final ExtendedRequest request)
+  public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
-    Response<ExtendedResponse> response = null;
+    Response<?> response = null;
     try {
-      final LDAPExtendedResponse extRes = connection.extendedOperation(
+      final LDAPExtendedResponse ldapExtRes = connection.extendedOperation(
         new LDAPExtendedOperation(request.getOID(), request.encode()),
         getLDAPConstraints(request));
-      response = createResponse(
-        request,
+      final ExtendedResponse<?> extRes =
         ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), extRes.getID(), extRes.getValue()),
-        extRes);
+          request.getOID(), ldapExtRes.getID(), ldapExtRes.getValue());
+      response = createResponse(request, extRes.getValue(), ldapExtRes);
     } catch (LDAPException e) {
       processLDAPException(e);
     }

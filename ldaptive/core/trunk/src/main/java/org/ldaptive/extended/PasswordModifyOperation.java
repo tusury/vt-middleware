@@ -15,6 +15,7 @@ package org.ldaptive.extended;
 
 import org.ldaptive.AbstractOperation;
 import org.ldaptive.Connection;
+import org.ldaptive.Credential;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 
@@ -25,7 +26,7 @@ import org.ldaptive.Response;
  * @version  $Revision$ $Date$
  */
 public class PasswordModifyOperation extends
-  AbstractOperation<PasswordModifyRequest, PasswordModifyResponse>
+  AbstractOperation<PasswordModifyRequest, Credential>
 {
 
 
@@ -43,11 +44,10 @@ public class PasswordModifyOperation extends
   /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
-  protected Response<PasswordModifyResponse> invoke(
-    final PasswordModifyRequest request)
+  protected Response<Credential> invoke(final PasswordModifyRequest request)
     throws LdapException
   {
-    return (Response<PasswordModifyResponse>)
+    return (Response<Credential>)
       getConnection().getProviderConnection().extendedOperation(request);
   }
 }
