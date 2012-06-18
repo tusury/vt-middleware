@@ -152,6 +152,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     if (socketC != null) {
       socketC.configureSocket(socket);
     }
+
     final SslConfig sslC = getSslConfig();
     if (sslC != null) {
       if (sslC.getEnabledCipherSuites() != null) {

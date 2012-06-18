@@ -27,17 +27,17 @@ import org.ldaptive.asn1.SequenceEncoder;
  * RFC 3062. Request is defined as:
  *
  * <pre>
- * PasswdModifyRequestValue ::= SEQUENCE {
- *   userIdentity    [0]  OCTET STRING OPTIONAL
- *   oldPasswd       [1]  OCTET STRING OPTIONAL
- *   newPasswd       [2]  OCTET STRING OPTIONAL }
+   PasswdModifyRequestValue ::= SEQUENCE {
+     userIdentity    [0]  OCTET STRING OPTIONAL
+     oldPasswd       [1]  OCTET STRING OPTIONAL
+     newPasswd       [2]  OCTET STRING OPTIONAL }
  * </pre>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class PasswordModifyRequest
-  extends AbstractRequest implements ExtendedRequest
+public class PasswordModifyRequest extends AbstractRequest
+  implements ExtendedRequest
 {
 
   /** OID of this extended request. */
@@ -76,7 +76,9 @@ public class PasswordModifyRequest
    * @param  newPass  desired password for the dn
    */
   public PasswordModifyRequest(
-    final String dn, final Credential oldPass, final Credential newPass)
+    final String dn,
+    final Credential oldPass,
+    final Credential newPass)
   {
     setDn(dn);
     setOldPassword(oldPass);
@@ -164,6 +166,7 @@ public class PasswordModifyRequest
     if (getNewPassword() != null) {
       l.add(new ContextType(2, getNewPassword().getString()));
     }
+
     final SequenceEncoder se = new SequenceEncoder(
       l.toArray(new DEREncoder[l.size()]));
     return se.encode();

@@ -145,7 +145,9 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   /** {@inheritDoc} */
   @Override
   protected String processDn(
-    final Connection conn, final SearchRequest request, final LdapEntry entry)
+    final Connection conn,
+    final SearchRequest request,
+    final LdapEntry entry)
   {
     return CaseChange.perform(dnCaseChange, entry.getDn());
   }

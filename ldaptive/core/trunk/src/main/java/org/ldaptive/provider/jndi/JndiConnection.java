@@ -1239,9 +1239,7 @@ public class JndiConnection implements Connection
   }
 
 
-  /**
-   * Class for exposing extended request properties.
-   */
+  /** Class for exposing extended request properties. */
   protected static class JndiExtendedRequest
     implements javax.naming.ldap.ExtendedRequest
   {
@@ -1301,9 +1299,7 @@ public class JndiConnection implements Connection
   }
 
 
-  /**
-   * Class for exposing extended response properties.
-   */
+  /** Class for exposing extended response properties. */
   protected static class JndiExtendedResponse
     implements javax.naming.ldap.ExtendedResponse
   {

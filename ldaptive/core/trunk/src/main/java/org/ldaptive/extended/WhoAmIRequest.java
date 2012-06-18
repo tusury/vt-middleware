@@ -17,8 +17,8 @@ import java.util.Arrays;
 import org.ldaptive.AbstractRequest;
 
 /**
- * Contains the data required to perform an ldap who am i operation. See
- * RFC 4532.
+ * Contains the data required to perform an ldap who am i operation. See RFC
+ * 4532.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

@@ -25,8 +25,8 @@ import org.ldaptive.asn1.ParseHandler;
  * Response is defined as:
  *
  * <pre>
- * PasswdModifyResponseValue ::= SEQUENCE {
- *   genPasswd       [0]     OCTET STRING OPTIONAL }
+   PasswdModifyResponseValue ::= SEQUENCE {
+     genPasswd       [0]     OCTET STRING OPTIONAL }
  * </pre>
  *
  * @author  Middleware Services
@@ -45,7 +45,6 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
   }
 
 
-
   /** {@inheritDoc} */
   @Override
   public void decode(final byte[] encoded)
@@ -53,8 +52,7 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
     final PasswordModifyResponseHandler handler =
       new PasswordModifyResponseHandler(this);
     final DERParser parser = new DERParser();
-    parser.registerHandler(
-      PasswordModifyResponseHandler.SEQ_PATH, handler);
+    parser.registerHandler(PasswordModifyResponseHandler.SEQ_PATH, handler);
     parser.parse(ByteBuffer.wrap(encoded));
   }
 
@@ -63,11 +61,7 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d]",
-        getClass().getName(),
-        hashCode());
+    return String.format("[%s@%d]", getClass().getName(), hashCode());
   }
 
 
