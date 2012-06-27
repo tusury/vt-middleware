@@ -41,33 +41,47 @@ public class PasswordPolicyControlTest
     final PasswordPolicyControl p2 = new PasswordPolicyControl();
     p2.setGraceAuthNsRemaining(4);
     final PasswordPolicyControl p3 = new PasswordPolicyControl();
-    p3.setError(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
+    p3.setTimeBeforeExpiration(2513067);
+    p3.setGraceAuthNsRemaining(4);
     final PasswordPolicyControl p4 = new PasswordPolicyControl();
+    p4.setError(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
+    final PasswordPolicyControl p5 = new PasswordPolicyControl();
     p4.setError(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
     return new Object[][] {
       // Test case #1
       // only timeBeforeExpiration is set
+      // BER: 30:07:A0:05:80:03:26:58:AB
       new Object[] {
         LdapUtils.base64Decode("MAegBYADJlir"),
         p1,
       },
       // Test case #2
       // only graceAuthNsRemaining is set
+      // BER: 30:05:A0:03:81:01:04
       new Object[] {
         LdapUtils.base64Decode("MAWgA4EBBA=="),
         p2,
       },
       // Test case #3
-      // error=passwordExpired
+      // only timeBeforeExpiration and graceAuthNsRemaining is set
+      // BER: 30:0A:A0:08:80:03:26:58:AB:81:01:04
       new Object[] {
-        LdapUtils.base64Decode("MAOBAQA="),
+        LdapUtils.base64Decode("MAqgCIADJlirgQEE"),
         p3,
       },
       // Test case #4
+      // error=passwordExpired
+      // BER: 30:03:81:01:00
+      new Object[] {
+        LdapUtils.base64Decode("MAOBAQA="),
+        p4,
+      },
+      // Test case #5
       // error=accountLocked
+      // BER: 30:03:81:01:01
       new Object[] {
         LdapUtils.base64Decode("MAOBAQE="),
-        p4,
+        p5,
       },
     };
   }
