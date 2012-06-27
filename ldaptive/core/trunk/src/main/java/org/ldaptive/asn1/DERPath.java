@@ -23,21 +23,47 @@ import org.ldaptive.LdapUtils;
  * Describes paths to individual elements of an encoded DER object that may be
  * addressed during parsing to associate a parsed element with a handler to
  * process that element. Consider the following production rule for a complex
- * type that may be DER encoded: <code>BankAccountSet ::= SET OF { account
- * BankAccount } BankAccount ::= SEQUENCE OF { accountNumber OCTET STRING,
- * accountName OCTET STRING, accountType AccountType, balance REAL } AccountType
- * ::= ENUM { checking (0), savings (0 }</code>
+ * type that may be DER encoded:
+ *
+ * <pre>
+ *
+ *   BankAccountSet ::= SET OF {
+ *     account BankAccount
+ *   }
+ *
+ *   BankAccount ::= SEQUENCE OF {
+ *     accountNumber OCTET STRING,
+ *     accountName OCTET STRING,
+ *     accountType AccountType,
+ *     balance REAL
+ *   }
+ *
+ *   AccountType ::= ENUM {
+ *     checking (0),
+ *     savings (1)
+ *   }
+ *
+ * </pre>
  *
  * <p>Given a BankAccountSet type with two elements, the path to the balance of
  * the second account is given by the following canonical path (using tag names
- * from {@link UniversalDERTag}): <code>/SET[1]/SEQ/REAL</code></p>
+ * from {@link UniversalDERTag}):</p>
  *
- * <p>The index of the first element in a set or sequence is optional and
- * omitted in the canonical path, which is produced by the {@link #toString()}
- * method.</p>
+ * <pre>/SET[1]/SEQ/REAL</pre>
+ *
+ * <p>The index of the first element in a collection type
+ * (e.g. <code>SET</code>) is optional.  Moreover the canonical path given by
+ * {@link #toString()} does not print the index to the first item in a
+ * collection.</p>
+ *
+ * <p>Context-specific and application-specific tags are handled in a general
+ * manner via the use of tags of the form <code>CTX(n)</code> and
+ * <code>APP(n)</code> where <code>n</code> is the tag
+ * number.</p>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
+ * @see DERParser
  */
 public class DERPath
 {
