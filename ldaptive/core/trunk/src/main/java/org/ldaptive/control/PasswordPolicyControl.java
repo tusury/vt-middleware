@@ -14,18 +14,16 @@
 package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
-
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
-
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
-import org.ldaptive.asn1.ParseHandler;
 import org.ldaptive.auth.AccountState;
 
 /**
@@ -321,42 +319,33 @@ public class PasswordPolicyControl extends AbstractControl
   @Override
   public void decode(final byte[] encoded)
   {
-    final PasswordPolicyHandler handler = new PasswordPolicyHandler(this);
     final DERParser parser = new DERParser();
-    parser.registerHandler(PasswordPolicyHandler.WARNING_PATH, handler);
-    parser.registerHandler(PasswordPolicyHandler.ERROR_PATH, handler);
+    parser.registerHandler(
+      TimeBeforeExpirationHandler.PATH, new TimeBeforeExpirationHandler(this));
+    parser.registerHandler(
+      GraceAuthnsRemainingHandler.PATH, new GraceAuthnsRemainingHandler(this));
+    parser.registerHandler(ErrorHandler.PATH, new ErrorHandler(this));
     parser.parse(ByteBuffer.wrap(encoded));
   }
 
 
-  /** Parse handler implementation for the password policy control. */
-  private static class PasswordPolicyHandler implements ParseHandler
+  /** Parse handler implementation for the time before expiration. */
+  private static class TimeBeforeExpirationHandler
+    extends AbstractParseHandler<PasswordPolicyControl>
   {
 
-    /** DER path to warnings. */
-    public static final DERPath WARNING_PATH = new DERPath("/SEQ/CTX(0)");
-
-    /** DER path to errors. */
-    public static final DERPath ERROR_PATH = new DERPath("/SEQ/CTX(1)");
-
-    /** Choice time before expiration constant. */
-    private static final byte CHOICE_TIME_BEFORE_EXPIRATION = (byte) 0x80;
-
-    /** Choice grace auths remaining constant. */
-    private static final byte CHOICE_GRACE_AUTHNS_REMAINING = (byte) 0x81;
-
-    /** Password policy control to configure with this handler. */
-    private final PasswordPolicyControl passwordPolicy;
+    /** DER path to warning. */
+    public static final DERPath PATH = new DERPath("/SEQ/CTX(0)/CTX(0)");
 
 
     /**
-     * Creates a new password policy handler.
+     * Creates a new time before expiration handler.
      *
      * @param  control  to configure
      */
-    public PasswordPolicyHandler(final PasswordPolicyControl control)
+    public TimeBeforeExpirationHandler(final PasswordPolicyControl control)
     {
-      passwordPolicy = control;
+      super(control);
     }
 
 
@@ -364,43 +353,65 @@ public class PasswordPolicyControl extends AbstractControl
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
-      if (WARNING_PATH.equals(parser.getCurrentPath())) {
-        handleWarning(parser, encoded);
-      } else if (ERROR_PATH.equals(parser.getCurrentPath())) {
-        handleError(parser, encoded);
-      }
+      getObject().setTimeBeforeExpiration(
+        IntegerType.decode(encoded).intValue());
     }
+  }
+
+
+  /** Parse handler implementation for the grace authns remaining. */
+  private static class GraceAuthnsRemainingHandler
+    extends AbstractParseHandler<PasswordPolicyControl>
+  {
+
+    /** DER path to warning. */
+    public static final DERPath PATH = new DERPath("/SEQ/CTX(0)/CTX(1)");
 
 
     /**
-     * Decode password policy warnings.
+     * Creates a new grace authns remaining handler.
      *
-     * @param  parser  to parse byte buffer
-     * @param  encoded  containing ppolicy value
+     * @param  control  to configure
      */
-    private void handleWarning(final DERParser parser, final ByteBuffer encoded)
+    public GraceAuthnsRemainingHandler(final PasswordPolicyControl control)
     {
-      final byte tag = encoded.get();
-      encoded.limit(parser.readLength(encoded) + encoded.position());
-      if (tag == CHOICE_TIME_BEFORE_EXPIRATION) {
-        passwordPolicy.setTimeBeforeExpiration(
-          IntegerType.decode(encoded).intValue());
-      } else if (tag == CHOICE_GRACE_AUTHNS_REMAINING) {
-        passwordPolicy.setGraceAuthNsRemaining(
-          IntegerType.decode(encoded).intValue());
-      } else {
-        throw new IllegalArgumentException("Unknown warning tag " + tag);
-      }
+      super(control);
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public void handle(final DERParser parser, final ByteBuffer encoded)
+    {
+      getObject().setGraceAuthNsRemaining(
+        IntegerType.decode(encoded).intValue());
+    }
+  }
+
+
+  /** Parse handler implementation for the error. */
+  private static class ErrorHandler
+    extends AbstractParseHandler<PasswordPolicyControl>
+  {
+
+    /** DER path to error. */
+    public static final DERPath PATH = new DERPath("/SEQ/CTX(1)");
+
+
     /**
-     * Decode password policy errors.
+     * Creates a new error handler.
      *
-     * @param  parser  to parse byte buffer
-     * @param  encoded  containing ppolicy value
+     * @param  control  to configure
      */
-    private void handleError(final DERParser parser, final ByteBuffer encoded)
+    public ErrorHandler(final PasswordPolicyControl control)
+    {
+      super(control);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handle(final DERParser parser, final ByteBuffer encoded)
     {
       final int errValue = IntegerType.decode(encoded).intValue();
       final PasswordPolicyControl.Error e = PasswordPolicyControl.Error.valueOf(
@@ -408,7 +419,7 @@ public class PasswordPolicyControl extends AbstractControl
       if (e == null) {
         throw new IllegalArgumentException("Unknown error code " + errValue);
       }
-      passwordPolicy.setError(e);
+      getObject().setError(e);
     }
   }
 }

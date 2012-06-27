@@ -16,11 +16,11 @@ package org.ldaptive.control;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
-import org.ldaptive.asn1.ParseHandler;
 import org.ldaptive.asn1.SequenceEncoder;
 
 /**
@@ -218,36 +218,30 @@ public class PagedResultsControl extends AbstractControl
   @Override
   public void decode(final byte[] berValue)
   {
-    final PagedResultsHandler handler = new PagedResultsHandler(this);
     final DERParser parser = new DERParser();
-    parser.registerHandler(PagedResultsHandler.SIZE_PATH, handler);
-    parser.registerHandler(PagedResultsHandler.COOKIE_PATH, handler);
+    parser.registerHandler(SizeHandler.PATH, new SizeHandler(this));
+    parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
-  /** Parse handler implementation for the paged results control. */
-  private static class PagedResultsHandler implements ParseHandler
+  /** Parse handler implementation for the size. */
+  private static class SizeHandler
+    extends AbstractParseHandler<PagedResultsControl>
   {
 
     /** DER path to result size. */
-    public static final DERPath SIZE_PATH = new DERPath("/SEQ/INT[0]");
-
-    /** DER path to cookie value. */
-    public static final DERPath COOKIE_PATH = new DERPath("/SEQ/OCTSTR[1]");
-
-    /** Paged results control to configure with this handler. */
-    private final PagedResultsControl pagedResults;
+    public static final DERPath PATH = new DERPath("/SEQ/INT[0]");
 
 
     /**
-     * Creates a new paged results handler.
+     * Creates a new size handler.
      *
      * @param  control  to configure
      */
-    public PagedResultsHandler(final PagedResultsControl control)
+    public SizeHandler(final PagedResultsControl control)
     {
-      pagedResults = control;
+      super(control);
     }
 
 
@@ -255,13 +249,38 @@ public class PagedResultsControl extends AbstractControl
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
-      if (SIZE_PATH.equals(parser.getCurrentPath())) {
-        pagedResults.setSize(IntegerType.decode(encoded).intValue());
-      } else if (COOKIE_PATH.equals(parser.getCurrentPath())) {
-        final byte[] cookie = OctetStringType.readBuffer(encoded);
-        if (cookie != null && cookie.length > 0) {
-          pagedResults.setCookie(cookie);
-        }
+      getObject().setSize(IntegerType.decode(encoded).intValue());
+    }
+  }
+
+
+  /** Parse handler implementation for the cookie. */
+  private static class CookieHandler
+    extends AbstractParseHandler<PagedResultsControl>
+  {
+
+    /** DER path to cookie value. */
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[1]");
+
+
+    /**
+     * Creates a new cookie handler.
+     *
+     * @param  control  to configure
+     */
+    public CookieHandler(final PagedResultsControl control)
+    {
+      super(control);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handle(final DERParser parser, final ByteBuffer encoded)
+    {
+      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      if (cookie != null && cookie.length > 0) {
+        getObject().setCookie(cookie);
       }
     }
   }
