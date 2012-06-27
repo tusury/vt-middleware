@@ -29,8 +29,8 @@ public abstract class AbstractDERType
 
 
   /**
-   * DER encode the supplied items with the supplied tag. Does not support
-   * encodings where the length is greater than 127 bytes long.
+   * DER encode the supplied items with the supplied tag. If the length is
+   * greater than 127 bytes the long form is always expressed using 4 bytes.
    *
    * @param  tag  for this DER type
    * @param  items  to encode
