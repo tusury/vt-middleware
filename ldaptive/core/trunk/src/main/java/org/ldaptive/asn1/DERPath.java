@@ -41,16 +41,18 @@ import org.ldaptive.LdapUtils;
  */
 public class DERPath
 {
-
   /** Separates nodes in a path specification. */
   public static final String PATH_SEPARATOR = "/";
 
   /** Pattern for matching nodes. */
   public static final Pattern NODE_PATTERN = Pattern.compile(
-    "([A-Za-z]+)(\\[(\\d+)\\])*");
+      String.format(
+          "(([A-Za-z]+)|(((%s)|(%s))\\(\\d+\\)))(\\[(\\d+)\\])?",
+          ApplicationDERTag.TAG_NAME,
+          ContextDERTag.TAG_NAME));
 
   /** Pattern group index for matching the child index. */
-  private static final int CHILD_INDEX_PATTERN_GROUP = 3;
+  private static final int CHILD_INDEX_PATTERN_GROUP = 8;
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 601;
@@ -95,11 +97,12 @@ public class DERPath
         throw new IllegalArgumentException("Invalid node name " + node);
       }
 
+      final String tagName = matcher.group(1);
       int childIndex = 0;
       if (matcher.group(CHILD_INDEX_PATTERN_GROUP) != null) {
         childIndex = Integer.parseInt(matcher.group(CHILD_INDEX_PATTERN_GROUP));
       }
-      pushChild(matcher.group(1), childIndex);
+      pushChild(tagName, childIndex);
     }
   }
 

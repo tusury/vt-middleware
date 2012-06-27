@@ -14,47 +14,32 @@
 package org.ldaptive.asn1;
 
 /**
- * Describe the tag of an arbitrary application-specific or private DER type.
+ * Describes the tag of an application-specific, context-specific, or private
+ * DER type where the tag name may be specified for clarity in application code.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class SimpleDERTag implements DERTag
+public class CustomDERTag extends AbstractDERTag
 {
-
-  /** Tag number. */
-  private final int tagNo;
-
   /** Tag name. */
   private final String tagName;
 
-  /** Flag indicating whether value is primitive or constructed. */
-  private final boolean constructed;
-
 
   /**
-   * Creates a new simple DER tag.
+   * Creates a new custom DER tag.
    *
    * @param  number  of the tag
    * @param  name  of the tag
    * @param  isConstructed  whether this tag is primitive or constructed
    */
-  public SimpleDERTag(
-    final int number,
-    final String name,
-    final boolean isConstructed)
+  public CustomDERTag(
+      final int number,
+      final String name,
+      final boolean isConstructed)
   {
-    tagNo = number;
+    super(number, isConstructed);
     tagName = name;
-    constructed = isConstructed;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public int getTagNo()
-  {
-    return tagNo;
   }
 
 
@@ -68,16 +53,8 @@ public class SimpleDERTag implements DERTag
 
   /** {@inheritDoc} */
   @Override
-  public boolean isConstructed()
-  {
-    return constructed;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
   public String toString()
   {
-    return String.format("%s(%s)", tagName, tagNo);
+    return String.format("%s(%s)", name(), getTagNo());
   }
 }

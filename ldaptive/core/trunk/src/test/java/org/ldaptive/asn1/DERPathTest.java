@@ -67,6 +67,14 @@ public class DERPathTest
         "/SET[0]/SEQ[0]/INT[0]",
         "/SET/SEQ/INT",
       },
+      new Object[] {
+        "/SET[1]/CTX(0)[1]/INT",
+        "/SET[1]/CTX(0)[1]/INT",
+      },
+      new Object[] {
+        "/SET[0]/APP(0)[0]/APP(1)",
+        "/SET/APP(0)/APP(1)",
+      },
     };
   }
 
