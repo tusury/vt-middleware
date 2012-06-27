@@ -46,7 +46,7 @@ public class PasswordPolicyControlTest
     final PasswordPolicyControl p4 = new PasswordPolicyControl();
     p4.setError(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
     final PasswordPolicyControl p5 = new PasswordPolicyControl();
-    p4.setError(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
+    p5.setError(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
     return new Object[][] {
       // Test case #1
       // only timeBeforeExpiration is set

@@ -16,11 +16,11 @@ package org.ldaptive.control;
 import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
+import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
-import org.ldaptive.asn1.ParseHandler;
 
 /**
  * Response control for server side sorting. See RFC 2891. Control is defined
@@ -202,36 +202,31 @@ public class SortResponseControl extends AbstractControl
   @Override
   public void decode(final byte[] berValue)
   {
-    final SortResponseHandler handler = new SortResponseHandler(this);
     final DERParser parser = new DERParser();
-    parser.registerHandler(SortResponseHandler.RESULT_PATH, handler);
-    parser.registerHandler(SortResponseHandler.ATTR_PATH, handler);
+    parser.registerHandler(SortResultHandler.PATH, new SortResultHandler(this));
+    parser.registerHandler(
+      AttributeTypeHandler.PATH, new AttributeTypeHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
-  /** Parse handler implementation for the sort response control. */
-  private static class SortResponseHandler implements ParseHandler
+  /** Parse handler implementation for the sort result. */
+  private static class SortResultHandler
+    extends AbstractParseHandler<SortResponseControl>
   {
 
     /** DER path to result code. */
-    public static final DERPath RESULT_PATH = new DERPath("/SEQ/ENUM");
-
-    /** DER path to attr value. */
-    public static final DERPath ATTR_PATH = new DERPath("/SEQ/CTX[1]");
-
-    /** Sort response control to configure with this handler. */
-    private final SortResponseControl sortResponse;
+    public static final DERPath PATH = new DERPath("/SEQ/ENUM");
 
 
     /**
-     * Creates a new sort response handler.
+     * Creates a new sort result handler.
      *
      * @param  control  to configure
      */
-    public SortResponseHandler(final SortResponseControl control)
+    public SortResultHandler(final SortResponseControl control)
     {
-      sortResponse = control;
+      super(control);
     }
 
 
@@ -239,17 +234,42 @@ public class SortResponseControl extends AbstractControl
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
-      if (RESULT_PATH.equals(parser.getCurrentPath())) {
-        final int resultValue = IntegerType.decode(encoded).intValue();
-        final ResultCode rc = ResultCode.valueOf(resultValue);
-        if (rc == null) {
-          throw new IllegalArgumentException(
-            "Unknown result code " + resultValue);
-        }
-        sortResponse.setSortResult(rc);
-      } else if (ATTR_PATH.equals(parser.getCurrentPath())) {
-        sortResponse.setAttributeName(OctetStringType.decode(encoded));
+      final int resultValue = IntegerType.decode(encoded).intValue();
+      final ResultCode rc = ResultCode.valueOf(resultValue);
+      if (rc == null) {
+        throw new IllegalArgumentException(
+          "Unknown result code " + resultValue);
       }
+      getObject().setSortResult(rc);
+    }
+  }
+
+
+  /** Parse handler implementation for the attribute type. */
+  private static class AttributeTypeHandler
+    extends AbstractParseHandler<SortResponseControl>
+  {
+
+    /** DER path to attr value. */
+    public static final DERPath PATH = new DERPath("/SEQ/CTX[1]");
+
+
+    /**
+     * Creates a new attribute type handler.
+     *
+     * @param  control  to configure
+     */
+    public AttributeTypeHandler(final SortResponseControl control)
+    {
+      super(control);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handle(final DERParser parser, final ByteBuffer encoded)
+    {
+      getObject().setAttributeName(OctetStringType.decode(encoded));
     }
   }
 }
