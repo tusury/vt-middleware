@@ -23,7 +23,8 @@ import org.slf4j.LoggerFactory;
 /**
  * This class provides a SAX-like parsing facility for DER-encoded data where
  * elements of interest in the parse tree may be registered to handlers via the
- * {@link #registerHandler} methods.
+ * {@link #registerHandler} methods.  {@link DERPath} strings are used to map
+ * handlers to elements of interest.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
