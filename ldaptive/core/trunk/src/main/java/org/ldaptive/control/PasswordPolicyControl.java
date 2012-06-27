@@ -14,17 +14,18 @@
 package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
+
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
+
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.ParseHandler;
-import org.ldaptive.asn1.SimpleDERTag;
 import org.ldaptive.auth.AccountState;
 
 /**
@@ -321,9 +322,7 @@ public class PasswordPolicyControl extends AbstractControl
   public void decode(final byte[] encoded)
   {
     final PasswordPolicyHandler handler = new PasswordPolicyHandler(this);
-    final DERParser parser = new DERParser(
-      new SimpleDERTag(0, "CHOICE", true),
-      new SimpleDERTag(1, "ENUM", true));
+    final DERParser parser = new DERParser();
     parser.registerHandler(PasswordPolicyHandler.WARNING_PATH, handler);
     parser.registerHandler(PasswordPolicyHandler.ERROR_PATH, handler);
     parser.parse(ByteBuffer.wrap(encoded));
@@ -335,10 +334,10 @@ public class PasswordPolicyControl extends AbstractControl
   {
 
     /** DER path to warnings. */
-    public static final DERPath WARNING_PATH = new DERPath("/SEQ/CHOICE");
+    public static final DERPath WARNING_PATH = new DERPath("/SEQ/CTX(0)");
 
     /** DER path to errors. */
-    public static final DERPath ERROR_PATH = new DERPath("/SEQ/ENUM");
+    public static final DERPath ERROR_PATH = new DERPath("/SEQ/CTX(1)");
 
     /** Choice time before expiration constant. */
     private static final byte CHOICE_TIME_BEFORE_EXPIRATION = (byte) 0x80;

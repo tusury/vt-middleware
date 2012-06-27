@@ -14,12 +14,9 @@
 package org.ldaptive.asn1;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,48 +35,12 @@ public class DERParser
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** DER application tags. */
-  private final Set<DERTag> applicationTags;
-
   /** Handlers for DER paths. */
   private final Map<DERPath, ParseHandler> handlerMap =
     new HashMap<DERPath, ParseHandler>();
 
   /** Current path location. */
   private DERPath currentPath;
-
-
-  /** Default constructor. */
-  public DERParser()
-  {
-    this(Collections.<DERTag>emptySet());
-  }
-
-
-  /**
-   * See {@link #DERParser(Set)}.
-   *
-   * @param  applicationSpecificTags  list of application specific tags.
-   */
-  public DERParser(final DERTag... applicationSpecificTags)
-  {
-    this(new LinkedHashSet<DERTag>(Arrays.asList(applicationSpecificTags)));
-  }
-
-
-  /**
-   * Creates a new parser that uses the given application-specific tags to
-   * supplement universal tags during parsing. The order of tags is preserved in
-   * the underlying collection, which is helpful for cases where different
-   * contextual tags share the same tag number. In that case tags should be
-   * provided in the order they are expected during parsing.
-   *
-   * @param  applicationSpecificTags  set of application specific tags.
-   */
-  public DERParser(final Set<DERTag> applicationSpecificTags)
-  {
-    applicationTags = applicationSpecificTags;
-  }
 
 
   /**
@@ -153,13 +114,23 @@ public class DERParser
     final byte b = encoded.get();
     // CheckStyle:MagicNumber OFF
     final int tagNo = b & 0x1F;
-    if (b >> 6 == 0) {
+    // Read class from first two high-order bits
+    switch ((b & 0xC0) >> 6) {
+    case 0:
+      // Universal tag (class 00b)
       tag = UniversalDERTag.fromTagNo(tagNo);
-    } else {
-      tag = lookupApplicationTag(tagNo);
-      if (tag == null) {
-        logger.debug("Unknown application tag " + tagNo);
-      }
+      break;
+    case 1:
+      // Application tag (class 01b)
+      tag = new ApplicationDERTag(tagNo, false);
+      break;
+    case 2:
+      // Context-specific tag (class 10b)
+      tag = new ContextDERTag(tagNo, false);
+      break;
+    default:
+      // Private class (class 11b)
+      throw new IllegalArgumentException("Private classes not supported.");
     }
     // CheckStyle:MagicNumber ON
     return tag;
@@ -242,23 +213,5 @@ public class DERParser
     }
     encoded.position(nextPos);
     encoded.limit(encoded.capacity());
-  }
-
-
-  /**
-   * Returns the application tag that matches the supplied tag number.
-   *
-   * @param  tagNo  to search for
-   *
-   * @return  application tag
-   */
-  private DERTag lookupApplicationTag(final int tagNo)
-  {
-    for (DERTag tag : applicationTags) {
-      if (tagNo == tag.getTagNo()) {
-        return tag;
-      }
-    }
-    return null;
   }
 }
