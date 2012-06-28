@@ -49,25 +49,34 @@ public enum UniversalDERTag implements DERTag {
   SET(17, true);
 
 
-  /** Maps tag values to tags. */
-  private static final Map<Integer, UniversalDERTag> TAG_MAP =
+  /** Universal tag class is 00b in first two high-order bytes. */
+  public static final int TAG_CLASS = 0;
+
+  /** Maps tag numbers to tags. */
+  private static final Map<Integer, UniversalDERTag> TAGNO_MAP =
     new HashMap<Integer, UniversalDERTag>();
 
-
-  /**
-   * Initializes tag mapping.
-   */
-  static {
-    for (UniversalDERTag tag : UniversalDERTag.values()) {
-      TAG_MAP.put(tag.getTagNo(), tag);
-    }
-  }
+  /** Maps tag names to tags. */
+  private static final Map<String, UniversalDERTag> TAGNAME_MAP =
+      new HashMap<String, UniversalDERTag>();
 
   /** Tag number. */
   private final int tagNo;
 
   /** Flag indicating whether value is primitive or constructed. */
   private final boolean constructed;
+
+
+  /**
+   * Initializes tag mapping.
+   */
+  static
+  {
+    for (UniversalDERTag tag : UniversalDERTag.values()) {
+      TAGNO_MAP.put(tag.getTagNo(), tag);
+      TAGNAME_MAP.put(tag.name(), tag);
+    }
+  }
 
 
   /**
@@ -108,20 +117,35 @@ public enum UniversalDERTag implements DERTag {
 
 
   /**
-   * Looks up a tag object from a tag number.
+   * Looks up a universal tag from a tag number.
    *
-   * @param  tag  tag number.
+   * @param  number  tag number.
    *
-   * @return  tag object corresponding to given tag.
+   * @return  tag object corresponding to given number.
    *
    * @throws  IllegalArgumentException  if tag is unknown
    */
-  public static UniversalDERTag fromTagNo(final int tag)
+  public static UniversalDERTag fromTagNo(final int number)
   {
-    final UniversalDERTag derTag = TAG_MAP.get(tag);
+    final UniversalDERTag derTag = TAGNO_MAP.get(number);
     if (derTag == null) {
-      throw new IllegalArgumentException("Unknown tag " + tag);
+      throw new IllegalArgumentException("Unknown tag number: " + number);
     }
     return derTag;
+  }
+
+
+  /**
+   * Looks up a universal tag from a tag name.  This method differs from
+   * {@link #valueOf(String)} in that it does not throw for unknown names.
+   *
+   * @param  name tag name.
+   *
+   * @return  tag object corresponding to given name or null if no tag of the
+   * given name is found.
+   */
+  public static UniversalDERTag fromTagName(final String name)
+  {
+    return TAGNAME_MAP.get(name);
   }
 }

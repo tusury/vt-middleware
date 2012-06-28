@@ -21,8 +21,11 @@ package org.ldaptive.asn1;
  */
 public class ApplicationDERTag extends AbstractDERTag
 {
-  /** Generic tag name for a application-specific type. */
+  /** Generic tag name "APP" for a application-specific type. */
   public static final String TAG_NAME = "APP";
+
+  /** Application class is 01b in first two high-order bits. */
+  public static final int TAG_CLASS = 0x40;
 
 
   /**

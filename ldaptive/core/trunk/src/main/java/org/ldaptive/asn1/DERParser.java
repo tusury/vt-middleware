@@ -16,6 +16,7 @@ package org.ldaptive.asn1;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,19 +115,17 @@ public class DERParser
     final byte b = encoded.get();
     // CheckStyle:MagicNumber OFF
     final int tagNo = b & 0x1F;
+    final boolean constructed = (b & 0x20) == 0x20 ? true : false;
     // Read class from first two high-order bits
-    switch ((b & 0xC0) >> 6) {
-    case 0:
-      // Universal tag (class 00b)
+    switch (b & 0xC0) {
+    case UniversalDERTag.TAG_CLASS:
       tag = UniversalDERTag.fromTagNo(tagNo);
       break;
-    case 1:
-      // Application tag (class 01b)
-      tag = new ApplicationDERTag(tagNo, false);
+    case ApplicationDERTag.TAG_CLASS:
+      tag = new ApplicationDERTag(tagNo, constructed);
       break;
-    case 2:
-      // Context-specific tag (class 10b)
-      tag = new ContextDERTag(tagNo, false);
+    case ContextDERTag.TAG_CLASS:
+      tag = new ContextDERTag(tagNo, constructed);
       break;
     default:
       // Private class (class 11b)
@@ -181,13 +180,12 @@ public class DERParser
    */
   private void parseTags(final ByteBuffer encoded)
   {
-    int index = 0;
     while (encoded.position() < encoded.limit()) {
       final DERTag tag = readTag(encoded);
       if (tag != null) {
-        currentPath.pushChild(tag.name(), index++);
+        currentPath.pushNode(tag.name());
         parseTag(tag, encoded);
-        currentPath.popChild();
+        currentPath.popNode();
       }
     }
   }
