@@ -16,6 +16,7 @@ package org.ldaptive.asn1;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.ldaptive.LdapUtils;
 
@@ -68,6 +69,14 @@ public class DERPath
   /** Separates nodes in a path specification. */
   public static final String PATH_SEPARATOR = "/";
 
+  /** Pattern for nodes describing an application tag. */
+  private static final Pattern APP_PATTERN = Pattern.compile(
+      String.format("%s\\(\\d+\\)", ApplicationDERTag.TAG_NAME));
+
+  /** Pattern for nodes describing a context-specific tag. */
+  private static final Pattern CTX_PATTERN = Pattern.compile(
+      String.format("%s\\(\\d+\\)", ContextDERTag.TAG_NAME));
+
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 601;
 
@@ -105,7 +114,9 @@ public class DERPath
       if ("".equals(node)) {
         continue;
       }
-      validateNode(node.toUpperCase());
+      // Normalize node names to upper case
+      node = node.toUpperCase();
+      validateNode(node);
       pushNode(node);
     }
   }
@@ -150,7 +161,8 @@ public class DERPath
    *
    * @return  Immutable list of path nodes.
    */
-  public List<String> getNodes() {
+  public List<String> getNodes()
+  {
     return Collections.unmodifiableList(nodeList);
   }
 
@@ -160,7 +172,8 @@ public class DERPath
    *
    * @return  node count.
    */
-  public int getSize() {
+  public int getSize()
+  {
     return nodeList.size();
   }
 
@@ -196,18 +209,18 @@ public class DERPath
   /**
    * Determines whether a given canonical (uppercase) node name is valid.
    *
-   * @param  canonicalNodeName  Canonical node name.
+   * @param  canonicalName  Canonical node name.
    *
    * @throws  IllegalArgumentException  for an invalid node name.
    */
-  private void validateNode(final String canonicalNodeName) {
+  private void validateNode(final String canonicalName)
+  {
     final boolean isValid =
-        UniversalDERTag.fromTagName(canonicalNodeName) != null ||
-        canonicalNodeName.startsWith(ApplicationDERTag.TAG_NAME) ||
-        canonicalNodeName.startsWith(ContextDERTag.TAG_NAME);
+        UniversalDERTag.fromTagName(canonicalName) != null ||
+        APP_PATTERN.matcher(canonicalName).matches() ||
+        CTX_PATTERN.matcher(canonicalName).matches();
     if (!isValid) {
-      throw new IllegalArgumentException(
-          "Invalid node name: " + canonicalNodeName);
+      throw new IllegalArgumentException("Invalid node name: " + canonicalName);
     }
   }
 }

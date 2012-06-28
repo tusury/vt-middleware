@@ -251,7 +251,7 @@ public class SortResponseControl extends AbstractControl
   {
 
     /** DER path to attr value. */
-    public static final DERPath PATH = new DERPath("/SEQ/CTX[1]");
+    public static final DERPath PATH = new DERPath("/SEQ/CTX(1)");
 
 
     /**
