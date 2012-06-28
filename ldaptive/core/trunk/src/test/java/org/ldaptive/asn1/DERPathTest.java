@@ -26,17 +26,15 @@ import org.testng.annotations.Test;
 public class DERPathTest
 {
 
-
   /**
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"asn1"})
-  public void testPushChild()
-    throws Exception
+  public void testPushChild() throws Exception
   {
-    final DERPath path = new DERPath("/SEQ/INT");
-    path.pushChild("CHOICE", 1);
-    Assert.assertEquals(path.toString(), "/SEQ/INT/CHOICE[1]");
+    final DERPath path = new DERPath("/SEQ");
+    path.pushNode("OCTSTR");
+    Assert.assertEquals(path.toString(), "/SEQ/OCTSTR");
   }
 
 
@@ -44,12 +42,11 @@ public class DERPathTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"asn1"})
-  public void testPopChild()
-    throws Exception
+  public void testPopChild() throws Exception
   {
-    final DERPath path = new DERPath("/SEQ/SET[1]/CHOICE");
-    path.popChild();
-    Assert.assertEquals(path.toString(), "/SEQ/SET[1]");
+    final DERPath path = new DERPath("/SEQ/SET/INT");
+    path.popNode();
+    Assert.assertEquals(path.toString(), "/SEQ/SET");
 
   }
 
@@ -64,16 +61,16 @@ public class DERPathTest
   {
     return new Object[][] {
       new Object[] {
-        "/SET[0]/SEQ[0]/INT[0]",
+        "/SET/SEQ/INT",
         "/SET/SEQ/INT",
       },
       new Object[] {
-        "/SET[1]/CTX(0)[1]/INT",
-        "/SET[1]/CTX(0)[1]/INT",
+        "/SET/CTX(0)/INT",
+        "/SET/CTX(0)/INT",
       },
       new Object[] {
-        "/SET[0]/APP(0)[0]/APP(1)",
-        "/SET/APP(0)/APP(1)",
+        "/SET/APP(0)/CTX(1)",
+        "/SET/APP(0)/CTX(1)",
       },
     };
   }

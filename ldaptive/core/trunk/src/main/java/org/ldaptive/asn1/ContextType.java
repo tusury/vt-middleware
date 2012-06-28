@@ -23,7 +23,6 @@ import java.math.BigInteger;
  */
 public class ContextType extends AbstractDERType implements DEREncoder
 {
-
   /** ASN tag. */
   private final int derTag;
 
@@ -39,7 +38,7 @@ public class ContextType extends AbstractDERType implements DEREncoder
    */
   public ContextType(final int index, final byte[] item)
   {
-    derTag = UniversalDERTag.CTX.getTagNo() | index;
+    derTag = ContextDERTag.TAG_CLASS | index;
     derItem = item;
   }
 

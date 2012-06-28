@@ -21,8 +21,11 @@ package org.ldaptive.asn1;
  */
 public class ContextDERTag extends AbstractDERTag
 {
-  /** Generic tag name for a context-specific type. */
+  /** Generic tag name "CTX" for a context-specific type. */
   public static final String TAG_NAME = "CTX";
+
+  /** Context-specific class is 10b in first two high-order bits. */
+  public static final int TAG_CLASS = 0x80;
 
 
   /**

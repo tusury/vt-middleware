@@ -14,9 +14,9 @@
 package org.ldaptive.asn1;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import org.ldaptive.LdapUtils;
 
 /**
@@ -45,21 +45,19 @@ import org.ldaptive.LdapUtils;
  *
  * </pre>
  *
- * <p>Given a BankAccountSet type with two elements, the path to the balance of
- * the second account is given by the following canonical path (using tag names
- * from {@link UniversalDERTag}):</p>
+ * <p>Given an instance of BankAccountSet with two elements, the path to the
+ * balance of each bank account in the set is given by the following
+ * expression:</p>
  *
- * <pre>/SET[1]/SEQ/REAL</pre>
+ * <pre>/SET/SEQ/REAL</pre>
  *
- * <p>The index of the first element in a collection type
- * (e.g. <code>SET</code>) is optional.  Moreover the canonical path given by
- * {@link #toString()} does not print the index to the first item in a
- * collection.</p>
+ * <p>Node names in DER paths are constrained to the following:</p>
  *
- * <p>Context-specific and application-specific tags are handled in a general
- * manner via the use of tags of the form <code>CTX(n)</code> and
- * <code>APP(n)</code> where <code>n</code> is the tag
- * number.</p>
+ * <ul>
+ *   <li>{@link UniversalDERTag} tag names</li>
+ *   <li>{@link ApplicationDERTag#TAG_NAME}</li>
+ *   <li>{@link ContextDERTag#TAG_NAME}</li>
+ * </ul>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -70,21 +68,11 @@ public class DERPath
   /** Separates nodes in a path specification. */
   public static final String PATH_SEPARATOR = "/";
 
-  /** Pattern for matching nodes. */
-  public static final Pattern NODE_PATTERN = Pattern.compile(
-      String.format(
-          "(([A-Za-z]+)|(((%s)|(%s))\\(\\d+\\)))(\\[(\\d+)\\])?",
-          ApplicationDERTag.TAG_NAME,
-          ContextDERTag.TAG_NAME));
-
-  /** Pattern group index for matching the child index. */
-  private static final int CHILD_INDEX_PATTERN_GROUP = 8;
-
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 601;
 
-  /** Path nodes in this DER path. */
-  private final List<Node> nodeList = new ArrayList<Node>();
+  /** Describes the path as a FIFO set of nodes. */
+  private final List<String> nodeList = new ArrayList<String>();
 
 
   /** Creates an empty path specification. */
@@ -117,18 +105,8 @@ public class DERPath
       if ("".equals(node)) {
         continue;
       }
-
-      final Matcher matcher = NODE_PATTERN.matcher(node);
-      if (!matcher.matches()) {
-        throw new IllegalArgumentException("Invalid node name " + node);
-      }
-
-      final String tagName = matcher.group(1);
-      int childIndex = 0;
-      if (matcher.group(CHILD_INDEX_PATTERN_GROUP) != null) {
-        childIndex = Integer.parseInt(matcher.group(CHILD_INDEX_PATTERN_GROUP));
-      }
-      pushChild(tagName, childIndex);
+      validateNode(node.toUpperCase());
+      pushNode(node);
     }
   }
 
@@ -138,24 +116,20 @@ public class DERPath
    *
    * @param  name  of the path to add
    */
-  public void pushChild(final String name)
+  public void pushNode(final String name)
   {
-    pushChild(name, 0);
+    nodeList.add(name);
   }
 
 
   /**
-   * Adds a node with the supplied name at the supplied path index.
+   * Examines the last node in the path without removing it.
    *
-   * @param  name  of the path to add
-   * @param  index  location in the path
+   * @return  last node in the path
    */
-  public void pushChild(final String name, final int index)
+  public String peekNode()
   {
-    if (index < 0) {
-      throw new IllegalArgumentException("Child index must be non-negative.");
-    }
-    nodeList.add(new Node(name, index));
+    return nodeList.get(nodeList.size() - 1);
   }
 
 
@@ -164,9 +138,30 @@ public class DERPath
    *
    * @return  last node in the path
    */
-  public Node popChild()
+  public String popNode()
   {
     return nodeList.remove(nodeList.size() - 1);
+  }
+
+
+  /**
+   * Gets an immutable list of nodes in this path where the left-most node is
+   * the first element and the right-most node is last.
+   *
+   * @return  Immutable list of path nodes.
+   */
+  public List<String> getNodes() {
+    return Collections.unmodifiableList(nodeList);
+  }
+
+
+  /**
+   * Gets the number of nodes in the path.
+   *
+   * @return  node count.
+   */
+  public int getSize() {
+    return nodeList.size();
   }
 
 
@@ -191,91 +186,28 @@ public class DERPath
   public String toString()
   {
     final StringBuilder sb = new StringBuilder(nodeList.size() * 10);
-    for (Node n : nodeList) {
-      sb.append(PATH_SEPARATOR).append(n.getName());
-      if (n.childIndex > 0) {
-        sb.append('[').append(n.getChildIndex()).append(']');
-      }
+    for (String n : nodeList) {
+      sb.append(PATH_SEPARATOR).append(n);
     }
     return sb.toString();
   }
 
 
   /**
-   * Node which encapsulates the path name and it's location in the path.
+   * Determines whether a given canonical (uppercase) node name is valid.
    *
-   * @author  Middleware Services
-   * @version  $Revision$ $Date$
+   * @param  canonicalNodeName  Canonical node name.
+   *
+   * @throws  IllegalArgumentException  for an invalid node name.
    */
-  private class Node
-  {
-
-    /** hash code seed. */
-    private static final int HASH_CODE_SEED = 607;
-
-    /** Name of this node. */
-    private final String name;
-
-    /** Index of this node. */
-    private final int childIndex;
-
-
-    /**
-     * Creates a new node.
-     *
-     * @param  n  name of this node
-     * @param  i  child index location of this node in the path
-     */
-    public Node(final String n, final int i)
-    {
-      name = n;
-      childIndex = i;
-    }
-
-
-    /**
-     * Returns the name.
-     *
-     * @return  name
-     */
-    public String getName()
-    {
-      return name;
-    }
-
-
-    /**
-     * Returns the child index.
-     *
-     * @return  child index
-     */
-    public int getChildIndex()
-    {
-      return childIndex;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(final Object o)
-    {
-      return LdapUtils.areEqual(this, o);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode()
-    {
-      return LdapUtils.computeHashCode(HASH_CODE_SEED, name, childIndex);
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-      return String.format("%s[%s]", name, childIndex);
+  private void validateNode(final String canonicalNodeName) {
+    final boolean isValid =
+        UniversalDERTag.fromTagName(canonicalNodeName) != null ||
+        canonicalNodeName.startsWith(ApplicationDERTag.TAG_NAME) ||
+        canonicalNodeName.startsWith(ContextDERTag.TAG_NAME);
+    if (!isValid) {
+      throw new IllegalArgumentException(
+          "Invalid node name: " + canonicalNodeName);
     }
   }
 }
