@@ -21,6 +21,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapURL;
+import org.ldaptive.provider.Provider;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -231,6 +232,15 @@ public class TLSSocketFactoryTest
   public void setEnabledProtocols(final String url)
     throws Exception
   {
+    final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
+    if (p.getClass().getName().equals(
+      "org.ldaptive.provider.opends.OpenDSProvider")) {
+      throw new UnsupportedOperationException("Test causes hang");
+    }
+    if (p.getClass().getName().equals(
+      "org.ldaptive.provider.opendj.OpenDJProvider")) {
+      throw new UnsupportedOperationException("Test causes hang");
+    }
     final ConnectionConfig cc = createTLSConnectionConfig(url);
     final TLSSocketFactory sf = new TLSSocketFactory();
     sf.setSslConfig(cc.getSslConfig());
