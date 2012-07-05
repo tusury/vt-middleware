@@ -120,6 +120,12 @@ public enum ResultCode {
   /** loop detect. */
   LOOP_DETECT(54),
 
+  /** sort control missing, See draft-ietf-ldapext-ldapv3-vlv. */
+  SORT_CONTROL_MISSING(60),
+
+  /** offset range error, See draft-ietf-ldapext-ldapv3-vlv. */
+  OFFSET_RANGE_ERROR(61),
+
   /** naming violation. */
   NAMING_VIOLATION(64),
 
@@ -140,6 +146,9 @@ public enum ResultCode {
 
   /** affected multiple dsas. */
   AFFECTS_MULTIPLE_DSAS(71),
+
+  /** virtual list view error, See draft-ietf-ldapext-ldapv3-vlv. */
+  VIRTUAL_LIST_VIEW_ERROR(76),
 
   /** other. */
   OTHER(80),
@@ -202,7 +211,25 @@ public enum ResultCode {
   AMBIGUOUS_RESPONSE(101),
 
   /** tls not supported. */
-  TLS_NOT_SUPPORTED(112);
+  TLS_NOT_SUPPORTED(112),
+
+  /** operation canceled, See RFC 3909. */
+  CANCELED(118),
+
+  /** no such operation, See RFC 3909. */
+  NO_SUCH_OPERATION(119),
+
+  /** too late, See RFC 3909. */
+  TOO_LATE(120),
+
+  /** cannot cancel, See RFC 3909. */
+  CANNOT_CANCEL(121),
+
+  /** assertion failed, See RFC 4528. */
+  ASSERTION_FAILED(122),
+
+  /** authorization denied, See RFC 4370. */
+  AUTHORIZATION_DENIED(123);
 
   /** underlying error code. */
   private final int code;
