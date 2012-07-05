@@ -25,10 +25,10 @@ public class BooleanType extends AbstractDERType implements DEREncoder
 {
 
   /** Boolean true byte representation. */
-  private static final int TRUE_BYTE = 0xff;
+  private static final byte TRUE_BYTE = (byte) 0xff;
 
   /** Boolean false byte representation. */
-  private static final int FALSE_BYTE = 0x00;
+  private static final byte FALSE_BYTE = (byte) 0x00;
 
   /** Boolean to encode. */
   private final byte[] derItem;
