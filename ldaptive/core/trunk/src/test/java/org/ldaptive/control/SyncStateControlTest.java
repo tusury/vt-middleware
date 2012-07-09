@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 public class SyncStateControlTest
 {
 
+
   /**
    * Sync state control test data.
    *

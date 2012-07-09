@@ -25,6 +25,9 @@ import java.util.UUID;
 public class UuidType extends AbstractDERType implements DEREncoder
 {
 
+  /** Number of bytes in a uuid. */
+  private static final int UUID_LENGTH = 16;
+
   /** UUID to encode. */
   private final byte[] derItem;
 
@@ -61,8 +64,8 @@ public class UuidType extends AbstractDERType implements DEREncoder
   public static UUID decode(final ByteBuffer encoded)
   {
     final ByteBuffer buffer = ByteBuffer.wrap(readBuffer(encoded));
-    final long leastSig = buffer.getLong();
     final long mostSig = buffer.getLong();
+    final long leastSig = buffer.getLong();
     return new UUID(mostSig, leastSig);
   }
 
@@ -76,9 +79,9 @@ public class UuidType extends AbstractDERType implements DEREncoder
    */
   public static byte[] toBytes(final UUID uuid)
   {
-    final ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
-    buffer.putLong(uuid.getLeastSignificantBits());
+    final ByteBuffer buffer = ByteBuffer.wrap(new byte[UUID_LENGTH]);
     buffer.putLong(uuid.getMostSignificantBits());
+    buffer.putLong(uuid.getLeastSignificantBits());
     return buffer.array();
   }
 }
