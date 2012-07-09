@@ -51,6 +51,12 @@ public final class ControlFactory
     } else if (PasswordPolicyControl.OID.equals(oid)) {
       ctl = new PasswordPolicyControl(critical);
       ctl.decode(encoded);
+    } else if (SyncStateControl.OID.equals(oid)) {
+      ctl = new SyncStateControl(critical);
+      ctl.decode(encoded);
+    } else if (SyncDoneControl.OID.equals(oid)) {
+      ctl = new SyncDoneControl(critical);
+      ctl.decode(encoded);
     } else {
       throw new IllegalArgumentException("Unknown OID: " + oid);
     }
