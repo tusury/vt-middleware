@@ -13,9 +13,9 @@
 */
 package org.ldaptive.asn1;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ldaptive.LdapUtils;
@@ -52,6 +52,12 @@ import org.ldaptive.LdapUtils;
  *
  * <pre>/SET/SEQ/REAL</pre>
  *
+ * <p>Individual child elements can be accessed by explicitly mentioning the
+ * index of the item relative to its parent.  For example, the second bank
+ * account in the set can be accessed as follows:</p>
+ *
+ * <pre>/SET/SEQ[1]</pre>
+ *
  * <p>Node names in DER paths are constrained to the following:</p>
  *
  * <ul>
@@ -69,19 +75,28 @@ public class DERPath
   /** Separates nodes in a path specification. */
   public static final String PATH_SEPARATOR = "/";
 
-  /** Pattern for nodes describing an application tag. */
-  private static final Pattern APP_PATTERN = Pattern.compile(
-      String.format("%s\\(\\d+\\)", ApplicationDERTag.TAG_NAME));
-
-  /** Pattern for nodes describing a context-specific tag. */
-  private static final Pattern CTX_PATTERN = Pattern.compile(
-      String.format("%s\\(\\d+\\)", ContextDERTag.TAG_NAME));
+  /** General pattern for DER path nodes. */
+  private static final Pattern NODE_PATTERN;
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 601;
 
   /** Describes the path as a FIFO set of nodes. */
-  private final List<String> nodeList = new ArrayList<String>();
+  private final Deque<Node> nodeStack = new ArrayDeque<Node>();
+
+
+  /** Class initializer. */
+  static
+  {
+    final StringBuilder validNames = new StringBuilder();
+    validNames.append(ApplicationDERTag.TAG_NAME).append("\\(\\d+\\)|");
+    validNames.append(ContextDERTag.TAG_NAME).append("\\(\\d+\\)|");
+    for (UniversalDERTag tag : UniversalDERTag.values()) {
+      validNames.append('|').append(tag.name());
+    }
+    NODE_PATTERN = Pattern.compile(
+        String.format("(%s)(\\[(\\d+)\\])?", validNames.toString()));
+  }
 
 
   /** Creates an empty path specification. */
@@ -98,7 +113,7 @@ public class DERPath
    */
   public DERPath(final DERPath path)
   {
-    nodeList.addAll(path.nodeList);
+    nodeStack.addAll(path.nodeStack);
   }
 
 
@@ -115,55 +130,62 @@ public class DERPath
         continue;
       }
       // Normalize node names to upper case
-      node = node.toUpperCase();
-      validateNode(node);
-      pushNode(node);
+      nodeStack.add(toNode(node.toUpperCase()));
     }
   }
 
 
   /**
-   * Adds a node with the supplied name at beginning of the path.
+   * Appends a node to the path.
    *
-   * @param  name  of the path to add
+   * @param  name  of the path element to add
+   *
+   * @return  This instance with new node appended.
    */
-  public void pushNode(final String name)
+  public DERPath pushNode(final String name)
   {
-    nodeList.add(name);
+    nodeStack.addLast(new Node(name));
+    return this;
+  }
+
+
+  /**
+   * Appends a node to the path with the given child index.
+   *
+   * @param  name  of the path element to add
+   * @param  index  child index
+   *
+   * @return  This instance with new node appended.
+   */
+  public DERPath pushNode(final String name, final int index)
+  {
+    nodeStack.addLast(new Node(name, index));
+    return this;
   }
 
 
   /**
    * Examines the last node in the path without removing it.
    *
-   * @return  last node in the path
+   * @return  last node in the path or null if no nodes remain
    */
   public String peekNode()
   {
-    return nodeList.get(nodeList.size() - 1);
+    return nodeStack.peek().toString();
   }
 
 
   /**
    * Removes the last node in the path.
    *
-   * @return  last node in the path
+   * @return  last node in the path or null if no more nodes remain.
    */
   public String popNode()
   {
-    return nodeList.remove(nodeList.size() - 1);
-  }
-
-
-  /**
-   * Gets an immutable list of nodes in this path where the left-most node is
-   * the first element and the right-most node is last.
-   *
-   * @return  Immutable list of path nodes.
-   */
-  public List<String> getNodes()
-  {
-    return Collections.unmodifiableList(nodeList);
+    if (nodeStack.isEmpty()) {
+      return null;
+    }
+    return nodeStack.removeLast().toString();
   }
 
 
@@ -174,7 +196,18 @@ public class DERPath
    */
   public int getSize()
   {
-    return nodeList.size();
+    return nodeStack.size();
+  }
+
+
+  /**
+   * Determines whether the path contains any nodes.
+   *
+   * @return  True if path contains 0 nodes, false otherwise.
+   */
+  public boolean isEmpty()
+  {
+    return nodeStack.isEmpty();
   }
 
 
@@ -190,7 +223,7 @@ public class DERPath
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, nodeList);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, nodeStack);
   }
 
 
@@ -198,29 +231,149 @@ public class DERPath
   @Override
   public String toString()
   {
-    final StringBuilder sb = new StringBuilder(nodeList.size() * 10);
-    for (String n : nodeList) {
-      sb.append(PATH_SEPARATOR).append(n);
+    final StringBuilder sb = new StringBuilder(nodeStack.size() * 10);
+    for (Node node : nodeStack) {
+      sb.append(PATH_SEPARATOR);
+      node.toString(sb);
     }
     return sb.toString();
   }
 
 
   /**
-   * Determines whether a given canonical (uppercase) node name is valid.
+   * Converts a string representation of a node into a {@link Node} object.
    *
-   * @param  canonicalName  Canonical node name.
+   * @param  node  String representation of node.
+   *
+   * @return  Node corresponding to given string representation.
    *
    * @throws  IllegalArgumentException  for an invalid node name.
    */
-  private void validateNode(final String canonicalName)
+  static Node toNode(final String node)
   {
-    final boolean isValid =
-        UniversalDERTag.fromTagName(canonicalName) != null ||
-        APP_PATTERN.matcher(canonicalName).matches() ||
-        CTX_PATTERN.matcher(canonicalName).matches();
-    if (!isValid) {
-      throw new IllegalArgumentException("Invalid node name: " + canonicalName);
+    final Matcher matcher = NODE_PATTERN.matcher(node);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException("Invalid node: " + node);
+    }
+    final String name = matcher.group(1);
+    final String index = matcher.group(3);
+    if (index != null) {
+      return new Node(name, Integer.parseInt(index));
+    }
+    return new Node(name);
+  }
+
+
+  /**
+   * DER path node encapsulates the path name and its location among other
+   * children that share a common parent.
+   *
+   * @author  Middleware Services
+   * @version  $Revision$ $Date$
+   */
+  static class Node
+  {
+    /** hash code seed. */
+    private static final int HASH_CODE_SEED = 607;
+
+    /** Name of this node. */
+    private final String name;
+
+    /** Index of this node. */
+    private final int childIndex;
+
+
+    /**
+     * Creates a new node with an indeterminate index.
+     *
+     * @param  n  name of this node
+     */
+    public Node(final String n)
+    {
+      name = n;
+      childIndex = -1;
+    }
+
+
+    /**
+     * Creates a new node with the given index.
+     *
+     * @param  n  name of this node
+     * @param  i  child index location of this node in the path
+     */
+    public Node(final String n, final int i)
+    {
+      if (i < 0) {
+        throw new IllegalArgumentException("Child index cannot be negative.");
+      }
+      name = n;
+      childIndex = i;
+    }
+
+
+    /**
+     * Returns the name.
+     *
+     * @return  name
+     */
+    public String getName()
+    {
+      return name;
+    }
+
+
+    /**
+     * Returns the child index.
+     *
+     * @return  child index
+     */
+    public int getChildIndex()
+    {
+      return childIndex;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object o)
+    {
+      return LdapUtils.areEqual(this, o);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode()
+    {
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, name, childIndex);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+      // CheckStyle:MagicNumber OFF
+      final StringBuilder sb = new StringBuilder(name.length() + 4);
+      // CheckStyle:MagicNumber ON
+      toString(sb);
+      return sb.toString();
+    }
+
+
+    /**
+     * Appends the string representation of this instance to the given string
+     * builder.
+     *
+     * @param  builder  Builder to hold string representation of this instance.
+     */
+    public void toString(final StringBuilder builder)
+    {
+      builder.append(name);
+      if (childIndex < 0) {
+        return;
+      }
+      builder.append('[').append(childIndex).append(']');
     }
   }
 }

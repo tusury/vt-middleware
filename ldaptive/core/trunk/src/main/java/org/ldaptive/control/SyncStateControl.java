@@ -354,7 +354,7 @@ public class SyncStateControl extends AbstractControl
   {
 
     /** DER path to the uuid. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[0]");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[1]");
 
 
     /**
@@ -383,7 +383,7 @@ public class SyncStateControl extends AbstractControl
   {
 
     /** DER path to cookie value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[1]");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[2]");
 
 
     /**

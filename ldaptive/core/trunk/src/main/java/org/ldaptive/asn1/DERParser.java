@@ -14,8 +14,11 @@
 package org.ldaptive.asn1;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +43,8 @@ public class DERParser
   private final Map<DERPath, ParseHandler> handlerMap =
     new HashMap<DERPath, ParseHandler>();
 
-  /** Current path location. */
-  private DERPath currentPath;
+  /** Permutations of the current path. */
+  private final Queue<DERPath> permutations = new ArrayDeque<DERPath>();
 
 
   /**
@@ -77,21 +80,7 @@ public class DERParser
    */
   public void parse(final ByteBuffer encoded)
   {
-    currentPath = new DERPath();
     parseTags(encoded);
-  }
-
-
-  /**
-   * Gets the current state of the parser in terms of the path that describes
-   * the position in the parse tree currently visited by the parser.
-   *
-   * @return  current path in parse tree. Changes to the returned object do not
-   * affect parser position.
-   */
-  public DERPath getCurrentPath()
-  {
-    return new DERPath(currentPath);
   }
 
 
@@ -180,12 +169,13 @@ public class DERParser
    */
   private void parseTags(final ByteBuffer encoded)
   {
+    int index = 0;
     while (encoded.position() < encoded.limit()) {
       final DERTag tag = readTag(encoded);
       if (tag != null) {
-        currentPath.pushNode(tag.name());
+        addTag(tag, index++);
         parseTag(tag, encoded);
-        currentPath.popNode();
+        removeTag();
       }
     }
   }
@@ -200,16 +190,73 @@ public class DERParser
    */
   private void parseTag(final DERTag tag, final ByteBuffer encoded)
   {
-    final int nextPos = readLength(encoded) + encoded.position();
-    final ParseHandler handler = handlerMap.get(currentPath);
-    if (handler != null) {
-      encoded.limit(nextPos);
-      handler.handle(this, encoded);
+    final int end = readLength(encoded) + encoded.position();
+    final int start = encoded.position();
+
+    // Invoke handlers for all permutations of current path
+    ParseHandler handler;
+    for (DERPath p : permutations) {
+      handler = handlerMap.get(p);
+      if (handler != null) {
+        encoded.position(start).limit(end);
+        handler.handle(this, encoded);
+      }
     }
+
     if (tag.isConstructed()) {
       parseTags(encoded);
     }
-    encoded.position(nextPos);
-    encoded.limit(encoded.capacity());
+    encoded.position(end).limit(encoded.capacity());
   }
+
+
+  /**
+   * Add the given tag at the specified index to all permutations of the current
+   * parser path and increases the number of permutations as necessary to
+   * satisfy the following relation:
+   *
+   * <pre>size = 2^n</pre>
+   *
+   * where n is the path length.
+   *
+   * @param  tag  to add to path.
+   * @param  index  of tag relative to parent.
+   */
+  private void addTag(final DERTag tag, final int index)
+  {
+    if (permutations.isEmpty()) {
+      permutations.add(new DERPath().pushNode(tag.name()));
+      permutations.add(new DERPath().pushNode(tag.name(), index));
+    } else {
+      final Collection<DERPath> generation =
+          new ArrayDeque<DERPath>(permutations.size());
+      for (DERPath p : permutations) {
+        generation.add(new DERPath(p).pushNode(tag.name()));
+        p.pushNode(tag.name(), index);
+      }
+      permutations.addAll(generation);
+    }
+  }
+
+
+  /**
+   * Removes the tag at the leaf position of all permutations of the current
+   * parser path, and reduces the number of permutations as necessary to
+   * satisfy the following relation:
+   *
+   * <pre>size = 2^n</pre>
+   *
+   * where n is the path length.
+   */
+  private void removeTag()
+  {
+    final int half = permutations.size() / 2;
+    while (permutations.size() > half) {
+      permutations.remove();
+    }
+    for (DERPath p : permutations) {
+      p.popNode();
+    }
+  }
+
 }

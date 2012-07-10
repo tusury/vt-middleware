@@ -30,11 +30,18 @@ public class DERPathTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"asn1"})
-  public void testPushChild() throws Exception
+  public void testPushPop() throws Exception
   {
     final DERPath path = new DERPath("/SEQ");
     path.pushNode("OCTSTR");
     Assert.assertEquals(path.toString(), "/SEQ/OCTSTR");
+    Assert.assertEquals(path.popNode(), "OCTSTR");
+    path.pushNode("INT", 1);
+    Assert.assertEquals(path.toString(), "/SEQ/INT[1]");
+    Assert.assertEquals(path.popNode(), "INT[1]");
+    Assert.assertEquals(path.popNode(), "SEQ");
+    Assert.assertNull(path.popNode());
+    Assert.assertNull(path.popNode());
   }
 
 
@@ -42,14 +49,36 @@ public class DERPathTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"asn1"})
-  public void testPopChild() throws Exception
+  public void testEquals() throws Exception
   {
-    final DERPath path = new DERPath("/SEQ/SET/INT");
-    path.popNode();
-    Assert.assertEquals(path.toString(), "/SEQ/SET");
-
+    Assert.assertTrue(
+        new DERPath("/SEQ[0]/OCTSTR[1]").equals(
+            new DERPath("/SEQ[0]/OCTSTR[1]")));
+    Assert.assertFalse(
+        new DERPath("/SEQ[0]/OCTSTR[1]").equals(
+            new DERPath("/SEQ[0]/OCTSTR[2]")));
+    Assert.assertFalse(
+        new DERPath("/SEQ[0]/OCTSTR[1]").equals(
+            new DERPath("/SEQ/OCTSTR[2]")));
   }
 
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"asn1"})
+  public void testHashcode() throws Exception
+  {
+    Assert.assertEquals(
+        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode(),
+        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode());
+    Assert.assertFalse(
+        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
+        new DERPath("/SEQ[0]/OCTSTR[2]").hashCode());
+    Assert.assertFalse(
+        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
+        new DERPath("/SEQ/OCTSTR[2]").hashCode());
+  }
 
   /**
    * DER path test data.
@@ -61,16 +90,16 @@ public class DERPathTest
   {
     return new Object[][] {
       new Object[] {
-        "/SET/SEQ/INT",
-        "/SET/SEQ/INT",
+        "/SET/SEQ/INT[1]",
+        "/SET/SEQ/INT[1]",
       },
       new Object[] {
         "/SET/CTX(0)/INT",
         "/SET/CTX(0)/INT",
       },
       new Object[] {
-        "/SET/APP(0)/CTX(1)",
-        "/SET/APP(0)/CTX(1)",
+        "/SET/APP(0)[1]/CTX(1)",
+        "/SET/APP(0)[1]/CTX(1)",
       },
     };
   }
