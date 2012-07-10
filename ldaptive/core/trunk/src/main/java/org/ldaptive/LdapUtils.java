@@ -22,7 +22,10 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Queue;
 import java.util.regex.Pattern;
+
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -253,7 +256,12 @@ public final class LdapUtils
     for (Object object : objects) {
       hc = HASH_CODE_PRIME * hc;
       if (object != null) {
-        if (object instanceof Collection<?>) {
+        if (object instanceof List<?> || object instanceof Queue<?>) {
+          int index = 1;
+          for (Object o : (Collection<?>) object) {
+            hc += computeHashCode(o) * index++;
+          }
+        } else if (object instanceof Collection<?>) {
           for (Object o : (Collection<?>) object) {
             hc += computeHashCode(o);
           }
