@@ -97,7 +97,8 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
         connResponse.getResultCode(),
         c,
         connResponse.getMessage(),
-        connResponse.getControls());
+        connResponse.getControls(),
+        connResponse.getMessageId());
     } catch (LdapException e) {
       if (ResultCode.INVALID_CREDENTIALS == e.getResultCode()) {
         response = new AuthenticationHandlerResponse(
@@ -105,7 +106,8 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
           e.getResultCode(),
           c,
           e.getMessage(),
-          e.getControls());
+          e.getControls(),
+          e.getMessageId());
       } else {
         throw e;
       }

@@ -23,7 +23,7 @@ import org.ldaptive.control.ResponseControl;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LdapException extends Exception implements Message<ResponseControl>
+public class LdapException extends Exception implements ResponseMessage
 {
 
   /** serialVersionUID. */
@@ -41,6 +41,9 @@ public class LdapException extends Exception implements Message<ResponseControl>
   /** referral URLs. */
   private final String[] referralURLs;
 
+  /** Message ID. */
+  private final int messageId;
+
 
   /**
    * Creates a new ldap exception.
@@ -54,6 +57,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = null;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -70,6 +74,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = null;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -87,6 +92,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -109,6 +115,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = c;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -133,6 +140,34 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = c;
     referralURLs = urls;
+    messageId = -1;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  msg  describing this exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   * @param  id  message id
+   */
+  public LdapException(
+    final String msg,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls,
+    final int id)
+  {
+    super(msg);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = urls;
+    messageId = id;
   }
 
 
@@ -148,6 +183,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = null;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -164,6 +200,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = null;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -184,6 +221,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -206,6 +244,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = c;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -230,6 +269,34 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = c;
     referralURLs = urls;
+    messageId = -1;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   * @param  id  message id
+   */
+  public LdapException(
+    final Exception e,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls,
+    final int id)
+  {
+    super(e);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = urls;
+    messageId = id;
   }
 
 
@@ -246,6 +313,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = null;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -266,6 +334,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = null;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -288,6 +357,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -312,6 +382,7 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = c;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -338,6 +409,36 @@ public class LdapException extends Exception implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = c;
     referralURLs = urls;
+    messageId = -1;
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  msg  describing this exception
+   * @param  e  provider specific exception
+   * @param  code  result code
+   * @param  dn  matched dn
+   * @param  c  response controls
+   * @param  urls  referral urls
+   * @param  id  message id
+   */
+  public LdapException(
+    final String msg,
+    final Exception e,
+    final ResultCode code,
+    final String dn,
+    final ResponseControl[] c,
+    final String[] urls,
+    final int id)
+  {
+    super(msg, e);
+    resultCode = code;
+    matchedDn = dn;
+    responseControls = c;
+    referralURLs = urls;
+    messageId = id;
   }
 
 
@@ -385,18 +486,27 @@ public class LdapException extends Exception implements Message<ResponseControl>
 
   /** {@inheritDoc} */
   @Override
+  public int getMessageId()
+  {
+    return messageId;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public String toString()
   {
     return
       String.format(
         "[%s@%d::resultCode=%s, matchedDn=%s, responseControls=%s, " +
-        "referralURLs=%s, providerException=%s]",
+        "referralURLs=%s, messageId=%s, providerException=%s]",
         getClass().getName(),
         hashCode(),
         resultCode,
         matchedDn,
         Arrays.toString(responseControls),
         Arrays.toString(referralURLs),
+        messageId,
         getCause());
   }
 }

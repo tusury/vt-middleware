@@ -254,7 +254,8 @@ public class Authenticator
       response.getResultCode(),
       entry,
       response.getMessage(),
-      response.getControls());
+      response.getControls(),
+      response.getMessageId());
 
     // execute authentication response handlers
     if (

@@ -101,7 +101,8 @@ public class PooledBindAuthenticationHandler
         bindResponse.getResultCode(),
         c,
         bindResponse.getMessage(),
-        bindResponse.getControls());
+        bindResponse.getControls(),
+        bindResponse.getMessageId());
     } catch (LdapException e) {
       if (ResultCode.INVALID_CREDENTIALS == e.getResultCode()) {
         response = new AuthenticationHandlerResponse(
@@ -109,7 +110,8 @@ public class PooledBindAuthenticationHandler
           e.getResultCode(),
           c,
           e.getMessage(),
-          e.getControls());
+          e.getControls(),
+          e.getMessageId());
       } else {
         throw e;
       }
