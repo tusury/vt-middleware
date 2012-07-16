@@ -52,6 +52,8 @@ public final class ExtendedResponseFactory
       if (encoded != null) {
         res.decode(encoded);
       }
+    } else if (CancelRequest.OID.equals(requestOID)) {
+      res = new CancelResponse();
     } else {
       throw new IllegalArgumentException("Unknown OID: " + responseOID);
     }
