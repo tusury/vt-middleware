@@ -24,7 +24,7 @@ import org.ldaptive.control.ResponseControl;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class Response<T> implements Message<ResponseControl>
+public class Response<T> implements ResponseMessage
 {
 
   /** Operation response. */
@@ -45,6 +45,9 @@ public class Response<T> implements Message<ResponseControl>
   /** Referral URLs. */
   private final String[] referralURLs;
 
+  /** Message ID. */
+  private final int messageId;
+
 
   /**
    * Creates a new ldap response.
@@ -60,6 +63,7 @@ public class Response<T> implements Message<ResponseControl>
     matchedDn = null;
     responseControls = null;
     referralURLs = null;
+    messageId = -1;
   }
 
 
@@ -72,6 +76,7 @@ public class Response<T> implements Message<ResponseControl>
    * @param  dn  matched dn
    * @param  c  response controls
    * @param  urls  referral urls
+   * @param  id  message id
    */
   public Response(
     final T t,
@@ -79,7 +84,8 @@ public class Response<T> implements Message<ResponseControl>
     final String msg,
     final String dn,
     final ResponseControl[] c,
-    final String[] urls)
+    final String[] urls,
+    final int id)
   {
     result = t;
     resultCode = rc;
@@ -87,6 +93,7 @@ public class Response<T> implements Message<ResponseControl>
     matchedDn = dn;
     responseControls = c;
     referralURLs = urls;
+    messageId = id;
   }
 
 
@@ -155,12 +162,20 @@ public class Response<T> implements Message<ResponseControl>
 
   /** {@inheritDoc} */
   @Override
+  public int getMessageId()
+  {
+    return messageId;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public String toString()
   {
     return
       String.format(
         "[%s@%d::result=%s, resultCode=%s, message=%s, matchedDn=%s, " +
-        "responseControls=%s, referralURLs=%s]",
+        "responseControls=%s, referralURLs=%s, messageId=%s]",
         getClass().getName(),
         hashCode(),
         result,
@@ -168,6 +183,7 @@ public class Response<T> implements Message<ResponseControl>
         message,
         matchedDn,
         Arrays.toString(responseControls),
-        Arrays.toString(referralURLs));
+        Arrays.toString(referralURLs),
+        messageId);
   }
 }
