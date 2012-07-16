@@ -15,9 +15,12 @@ package org.ldaptive;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Simple bean representing an ldap search result. Contains a map of entry DN to
@@ -38,6 +41,9 @@ public class SearchResult extends AbstractLdapBean
   /** Entries contained in this result. */
   private final Map<String, LdapEntry> resultEntries;
 
+  /** References contained in this result. */
+  private final Collection<SearchReference> searchReferences;
+
 
   /** Default constructor. */
   public SearchResult()
@@ -47,7 +53,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Creates a new ldap result.
+   * Creates a new search result.
    *
    * @param  sb  sort behavior of the results
    */
@@ -56,11 +62,14 @@ public class SearchResult extends AbstractLdapBean
     super(sb);
     if (SortBehavior.UNORDERED == sb) {
       resultEntries = new HashMap<String, LdapEntry>();
+      searchReferences = new HashSet<SearchReference>();
     } else if (SortBehavior.ORDERED == sb) {
       resultEntries = new LinkedHashMap<String, LdapEntry>();
+      searchReferences = new LinkedHashSet<SearchReference>();
     } else if (SortBehavior.SORTED == sb) {
       resultEntries = new TreeMap<String, LdapEntry>(
         String.CASE_INSENSITIVE_ORDER);
+      searchReferences = new TreeSet<SearchReference>();
     } else {
       throw new IllegalArgumentException("Unknown sort behavior: " + sb);
     }
@@ -68,7 +77,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Creates a new ldap result.
+   * Creates a new search result.
    *
    * @param  entry  ldap entry
    */
@@ -82,7 +91,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Creates a new ldap result.
+   * Creates a new search result.
    *
    * @param  entries  collection of ldap entries
    */
@@ -146,7 +155,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Adds an entry to this ldap result.
+   * Adds an entry to this search result.
    *
    * @param  entry  entry to add
    */
@@ -159,7 +168,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Adds entry(s) to this ldap result.
+   * Adds entry(s) to this search result.
    *
    * @param  entries  collection of entries to add
    */
@@ -172,7 +181,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Removes an entry from this ldap result.
+   * Removes an entry from this search result.
    *
    * @param  entry  entry to remove
    */
@@ -185,7 +194,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Removes the entry with the supplied dn from this ldap result.
+   * Removes the entry with the supplied dn from this search result.
    *
    * @param  dn  of entry to remove
    */
@@ -196,7 +205,7 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Removes the entry(s) from this ldap result.
+   * Removes the entry(s) from this search result.
    *
    * @param  entries  collection of ldap entries to remove
    */
@@ -209,15 +218,94 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
+   * Returns a collection of ldap entry.
+   *
+   * @return  collection of ldap entry
+   */
+  public Collection<SearchReference> getReferences()
+  {
+    return searchReferences;
+  }
+
+
+  /**
+   * Returns a single search reference of this result. If multiple references
+   * exist the first references returned by the underlying iterator is used. If
+   * no references exist null is returned.
+   *
+   * @return  single search references
+   */
+  public SearchReference getReference()
+  {
+    if (searchReferences.isEmpty()) {
+      return null;
+    }
+    return searchReferences.iterator().next();
+  }
+
+
+  /**
+   * Adds a reference to this search result.
+   *
+   * @param  reference  reference to add
+   */
+  public void addReference(final SearchReference... reference)
+  {
+    for (SearchReference r : reference) {
+      searchReferences.add(r);
+    }
+  }
+
+
+  /**
+   * Adds references(s) to this search result.
+   *
+   * @param  references  collection of references to add
+   */
+  public void addReferences(final Collection<SearchReference> references)
+  {
+    for (SearchReference r : references) {
+      addReference(r);
+    }
+  }
+
+
+  /**
+   * Removes a reference from this search result.
+   *
+   * @param  reference  reference to remove
+   */
+  public void removeReference(final SearchReference... reference)
+  {
+    for (SearchReference r : reference) {
+      resultEntries.remove(r);
+    }
+  }
+
+
+  /**
+   * Removes the references(s) from this search result.
+   *
+   * @param  references  collection of search references to remove
+   */
+  public void removeReferences(final Collection<SearchReference> references)
+  {
+    for (SearchReference r : references) {
+      removeReference(r);
+    }
+  }
+
+
+  /**
    * Returns a portion of this result between the specified fromIndex,
    * inclusive, and toIndex, exclusive. If fromIndex and toIndex are equal, the
    * return result is empty. The result of this method is undefined for
    * unordered results.
    *
-   * @param  fromIndex  low endpoint of the ldap result (inclusive)
-   * @param  toIndex  high endpoint of the ldap result (exclusive)
+   * @param  fromIndex  low endpoint of the search result (inclusive)
+   * @param  toIndex  high endpoint of the search result (exclusive)
    *
-   * @return  portion of this ldap result
+   * @return  portion of this search result
    *
    * @throws  IndexOutOfBoundsException  for illegal index values
    */
@@ -247,9 +335,9 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Returns the number of entries in this ldap result.
+   * Returns the number of entries in this search result.
    *
-   * @return  number of entries in this ldap result
+   * @return  number of entries in this search result
    */
   public int size()
   {
@@ -257,7 +345,7 @@ public class SearchResult extends AbstractLdapBean
   }
 
 
-  /** Removes all the entries in this ldap result. */
+  /** Removes all the entries in this search result. */
   public void clear()
   {
     resultEntries.clear();
@@ -268,7 +356,8 @@ public class SearchResult extends AbstractLdapBean
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, resultEntries.values());
+    return LdapUtils.computeHashCode(
+      HASH_CODE_SEED, resultEntries.values(), searchReferences);
   }
 
 
@@ -282,11 +371,11 @@ public class SearchResult extends AbstractLdapBean
 
   /**
    * Merges the entries in the supplied result into a single entry. This method
-   * always returns a ldap result of size zero or one.
+   * always returns a search result of size zero or one.
    *
-   * @param  result  ldap result containing entries to merge
+   * @param  result  search result containing entries to merge
    *
-   * @return  ldap result containing a single merged entry
+   * @return  search result containing a single merged entry
    */
   public static SearchResult mergeEntries(final SearchResult result)
   {
