@@ -229,7 +229,10 @@ public enum ResultCode {
   ASSERTION_FAILED(122),
 
   /** authorization denied, See RFC 4370. */
-  AUTHORIZATION_DENIED(123);
+  AUTHORIZATION_DENIED(123),
+
+  /** e-syncRefreshRequired, See RFC 4533. */
+  E_SYNC_REFRESH_REQUIRED(4096);
 
   /** underlying error code. */
   private final int code;
