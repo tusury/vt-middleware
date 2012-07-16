@@ -21,6 +21,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
@@ -57,7 +58,7 @@ import org.ldaptive.SearchResult;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class RecursiveEntryHandler extends AbstractLdapEntryHandler
+public class RecursiveEntryHandler extends AbstractSearchEntryHandler
 {
 
   /** hash code seed. */
@@ -156,10 +157,10 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  public HandlerResult process(
+  public HandlerResult<SearchEntry> process(
     final Connection conn,
     final SearchRequest request,
-    final LdapEntry entry)
+    final SearchEntry entry)
     throws LdapException
   {
     // Recursively searches a list of attributes and merges those results with
@@ -171,7 +172,7 @@ public class RecursiveEntryHandler extends AbstractLdapEntryHandler
     } else {
       recursiveSearch(conn, entry.getDn(), entry, searchedDns);
     }
-    return new HandlerResult(entry);
+    return new HandlerResult<SearchEntry>(entry);
   }
 
 

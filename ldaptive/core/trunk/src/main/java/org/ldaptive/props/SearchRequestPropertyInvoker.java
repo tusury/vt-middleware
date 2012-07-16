@@ -15,7 +15,9 @@ package org.ldaptive.props;
 
 import org.ldaptive.SearchFilter;
 import org.ldaptive.control.RequestControl;
-import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.IntermediateResponseHandler;
+import org.ldaptive.handler.SearchEntryHandler;
+import org.ldaptive.handler.SearchReferenceHandler;
 
 /**
  * Handles properties for {@link org.ldaptive.SearchRequest}.
@@ -50,9 +52,17 @@ public class SearchRequestPropertyInvoker extends AbstractPropertyInvoker
         newValue = createArrayTypeFromPropertyValue(
           RequestControl.class,
           value);
-      } else if (LdapEntryHandler[].class.isAssignableFrom(type)) {
+      } else if (SearchEntryHandler[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(
-          LdapEntryHandler.class,
+          SearchEntryHandler.class,
+          value);
+      } else if (SearchReferenceHandler[].class.isAssignableFrom(type)) {
+        newValue = createArrayTypeFromPropertyValue(
+          SearchReferenceHandler.class,
+          value);
+      } else if (IntermediateResponseHandler[].class.isAssignableFrom(type)) {
+        newValue = createArrayTypeFromPropertyValue(
+          IntermediateResponseHandler.class,
           value);
       } else {
         newValue = convertSimpleType(type, value);

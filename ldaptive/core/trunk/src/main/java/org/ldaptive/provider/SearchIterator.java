@@ -13,7 +13,6 @@
 */
 package org.ldaptive.provider;
 
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 
@@ -45,7 +44,7 @@ public interface SearchIterator
    *
    * @throws  LdapException  if an error occurs
    */
-  LdapEntry next()
+  SearchItem next()
     throws LdapException;
 
 

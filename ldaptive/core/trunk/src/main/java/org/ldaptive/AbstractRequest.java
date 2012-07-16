@@ -14,6 +14,7 @@
 package org.ldaptive;
 
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.handler.IntermediateResponseHandler;
 
 /**
  * Contains the data common to all request objects.
@@ -29,6 +30,9 @@ public abstract class AbstractRequest implements Request
 
   /** Whether to follow referrals. */
   private boolean followReferrals;
+
+  /** Intermediate response handlers. */
+  private IntermediateResponseHandler[] intermediateResponseHandlers;
 
 
   /** {@inheritDoc} */
@@ -66,5 +70,25 @@ public abstract class AbstractRequest implements Request
   public void setFollowReferrals(final boolean b)
   {
     followReferrals = b;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public IntermediateResponseHandler[] getIntermediateResponseHandlers()
+  {
+    return intermediateResponseHandlers;
+  }
+
+
+  /**
+   * Sets the intermediate response handlers.
+   *
+   * @param  handlers  intermediate response handlers
+   */
+  public void setIntermediateResponseHandlers(
+    final IntermediateResponseHandler... handlers)
+  {
+    intermediateResponseHandlers = handlers;
   }
 }

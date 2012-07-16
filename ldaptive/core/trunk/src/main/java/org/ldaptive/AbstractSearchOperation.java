@@ -15,7 +15,9 @@ package org.ldaptive;
 
 import org.ldaptive.cache.Cache;
 import org.ldaptive.handler.HandlerResult;
-import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.intermediate.IntermediateResponse;
+import org.ldaptive.provider.SearchItem;
+import org.ldaptive.provider.SearchIterator;
 
 /**
  * Provides common implementation for search operations.
@@ -75,7 +77,7 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
    *
    * @param  request  to invoke search with
    *
-   * @return  ldap result
+   * @return  ldap response
    *
    * @throws  LdapException  if an error occurs
    */
@@ -110,41 +112,64 @@ public abstract class AbstractSearchOperation<Q extends SearchRequest>
 
 
   /**
-   * Processes each ldap entry handler after a search has been performed.
-   * Returns a handler result containing an ldap entry processed by all
-   * handlers. If any handler indicates that the search should be aborted, that
-   * flag is returned to the search operation after all handlers have been
-   * invoked.
+   * Invokes the provider search operation and iterates over the results.
+   * Invokes handlers as necessary for each result type.
    *
-   * @param  request  the search was performed with
-   * @param  entry  from a search
+   * @param  request  used to create the search iterator
+   * @param  si  search iterator
    *
-   * @return  handler result
+   * @return  search result
    *
-   * @throws  LdapException  if an error occurs processing a handler
+   * @throws  LdapException  if an error occurs
    */
-  protected HandlerResult executeLdapEntryHandlers(
-    final SearchRequest request,
-    final LdapEntry entry)
+  protected SearchResult readResult(final Q request, final SearchIterator si)
     throws LdapException
   {
-    LdapEntry processedEntry = entry;
-    boolean abort = false;
-    final LdapEntryHandler[] handlers = request.getLdapEntryHandlers();
-    if (handlers != null && handlers.length > 0) {
-      for (LdapEntryHandler handler : handlers) {
-        if (handler != null) {
-          final HandlerResult hr = handler.process(
-            getConnection(),
-            request,
-            processedEntry);
-          if (hr.getAbortSearch()) {
-            abort = true;
+    final SearchResult result = new SearchResult(request.getSortBehavior());
+    try {
+      while (si.hasNext()) {
+        final SearchItem item = si.next();
+        if (item.isSearchEntry()) {
+          final SearchEntry se = item.getSearchEntry();
+          if (se != null) {
+            final HandlerResult<SearchEntry> hr = executeHandlers(
+              request.getSearchEntryHandlers(), request, se);
+            if (hr.getResult() != null) {
+              result.addEntry(hr.getResult());
+            }
+            if (hr.getAbort()) {
+              logger.debug("Aborting search on entry=%s", se);
+              break;
+            }
           }
-          processedEntry = hr.getLdapEntry();
+        } else if (item.isSearchReference()) {
+          final SearchReference sr = item.getSearchReference();
+          if (sr != null) {
+            final HandlerResult<SearchReference> hr = executeHandlers(
+              request.getSearchReferenceHandlers(), request, sr);
+            if (hr.getResult() != null) {
+              result.addReference(hr.getResult());
+            }
+            if (hr.getAbort()) {
+              logger.debug("Aborting search on reference=%s", sr);
+              break;
+            }
+          }
+        } else if (item.isIntermediateResponse()) {
+          final IntermediateResponse ir = item.getIntermediateResponse();
+          if (ir != null) {
+            final HandlerResult<IntermediateResponse> hr = executeHandlers(
+              request.getIntermediateResponseHandlers(), request, ir);
+            if (hr.getAbort()) {
+              logger.debug("Aborting search on intermediate response=%s", ir);
+              break;
+            }
+          }
         }
       }
+    } finally {
+      si.close();
     }
-    return new HandlerResult(processedEntry, abort);
+    return result;
   }
 }

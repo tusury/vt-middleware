@@ -31,7 +31,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.PooledConnectionFactory;
 
 /**
@@ -71,7 +71,7 @@ public class ParallelPooledSearchExecutor
     final PooledConnectionFactory factory,
     final SearchFilter[] filters,
     final String[] attrs,
-    final LdapEntryHandler... handlers)
+    final SearchEntryHandler... handlers)
     throws LdapException
   {
     final List<Response<SearchResult>> response =
@@ -88,7 +88,7 @@ public class ParallelPooledSearchExecutor
         sr.setReturnAttributes(attrs);
       }
       if (handlers != null) {
-        sr.setLdapEntryHandlers(handlers);
+        sr.setSearchEntryHandlers(handlers);
       }
 
       final Connection conn = factory.getConnection();
