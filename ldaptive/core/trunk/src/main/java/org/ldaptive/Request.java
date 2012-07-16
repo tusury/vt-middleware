@@ -14,6 +14,7 @@
 package org.ldaptive;
 
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.handler.IntermediateResponseHandler;
 
 /**
  * Marker interface for all ldap requests.
@@ -31,4 +32,12 @@ public interface Request extends Message<RequestControl>
    * @return  whether to follow referrals
    */
   boolean getFollowReferrals();
+
+
+  /**
+   * Returns the intermediate response handlers.
+   *
+   * @return  intermediate response handlers
+   */
+  IntermediateResponseHandler[] getIntermediateResponseHandlers();
 }

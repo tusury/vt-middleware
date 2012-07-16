@@ -13,67 +13,67 @@
 */
 package org.ldaptive.handler;
 
-import org.ldaptive.LdapEntry;
-
 /**
  * Handler result data.
+ *
+ * @param  <T>  type of result
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class HandlerResult
+public class HandlerResult<T>
 {
 
-  /** Ldap entry produced by a handler. */
-  private final LdapEntry ldapEntry;
+  /** Result produced by a handler. */
+  private final T result;
 
-  /** Whether the search operation should be aborted. */
-  private final boolean abortSearch;
-
-
-  /**
-   * Creates a new handler result.
-   *
-   * @param  entry  produced by a handler
-   */
-  public HandlerResult(final LdapEntry entry)
-  {
-    ldapEntry = entry;
-    abortSearch = false;
-  }
+  /** Whether the operation should be aborted. */
+  private final boolean abort;
 
 
   /**
    * Creates a new handler result.
    *
-   * @param  entry  produced by a handler
-   * @param  abort  whether the search operation should be aborted
+   * @param  t  produced by a handler
    */
-  public HandlerResult(final LdapEntry entry, final boolean abort)
+  public HandlerResult(final T t)
   {
-    ldapEntry = entry;
-    abortSearch = abort;
+    result = t;
+    abort = false;
   }
 
 
   /**
-   * Returns the ldap entry produced by a handler.
+   * Creates a new handler result.
    *
-   * @return  ldap entry
+   * @param  t  produced by a handler
+   * @param  b  whether the operation should be aborted
    */
-  public LdapEntry getLdapEntry()
+  public HandlerResult(final T t, final boolean b)
   {
-    return ldapEntry;
+    result = t;
+    abort = b;
   }
 
 
   /**
-   * Returns whether the search operation should be aborted.
+   * Returns the result produced by a handler.
    *
-   * @return  whether the search operation should be aborted
+   * @return  result
    */
-  public boolean getAbortSearch()
+  public T getResult()
   {
-    return abortSearch;
+    return result;
+  }
+
+
+  /**
+   * Returns whether the operation should be aborted.
+   *
+   * @return  whether the operation should be aborted
+   */
+  public boolean getAbort()
+  {
+    return abort;
   }
 }

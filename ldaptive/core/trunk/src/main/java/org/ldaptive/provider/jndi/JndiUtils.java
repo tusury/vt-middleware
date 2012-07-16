@@ -28,7 +28,7 @@ import javax.naming.ldap.LdapContext;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.sasl.Mechanism;
@@ -135,13 +135,13 @@ public class JndiUtils
 
 
   /**
-   * Returns a jndi search result that represents the supplied ldap entry.
+   * Returns a jndi search result that represents the supplied search entry.
    *
-   * @param  entry  ldap entry
+   * @param  entry  search entry
    *
    * @return  jndi search result
    */
-  public SearchResult fromLdapEntry(final LdapEntry entry)
+  public SearchResult fromSearchEntry(final SearchEntry entry)
   {
     return
       new SearchResult(
@@ -152,26 +152,26 @@ public class JndiUtils
 
 
   /**
-   * Returns an ldap entry using the supplied jndi search result.
+   * Returns a search entry using the supplied jndi search result.
    *
    * @param  result  jndi search result
    *
-   * @return  ldap entry
+   * @return  search entry
    *
    * @throws  NamingException  if the search result cannot be read
    */
-  public LdapEntry toLdapEntry(final SearchResult result)
+  public SearchEntry toSearchEntry(final SearchResult result)
     throws NamingException
   {
-    final LdapEntry le = new LdapEntry(sortBehavior);
-    le.setDn(result.getName());
+    final SearchEntry se = new SearchEntry(-1, null, sortBehavior);
+    se.setDn(result.getName());
 
     final Attributes a = result.getAttributes();
     final NamingEnumeration<? extends Attribute> ne = a.getAll();
     while (ne.hasMore()) {
-      le.addAttribute(toLdapAttribute(ne.next()));
+      se.addAttribute(toLdapAttribute(ne.next()));
     }
-    return le;
+    return se;
   }
 
 

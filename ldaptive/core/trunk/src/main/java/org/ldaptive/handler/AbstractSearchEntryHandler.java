@@ -17,9 +17,9 @@ import java.util.HashSet;
 import java.util.Set;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
+public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
 {
 
   /** Log for this class. */
@@ -39,51 +39,51 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  public HandlerResult process(
+  public HandlerResult<SearchEntry> process(
     final Connection conn,
     final SearchRequest request,
-    final LdapEntry entry)
+    final SearchEntry entry)
     throws LdapException
   {
     if (entry != null) {
       entry.setDn(processDn(conn, request, entry));
       processAttributes(conn, request, entry);
     }
-    return new HandlerResult(entry);
+    return new HandlerResult<SearchEntry>(entry);
   }
 
 
   /**
-   * Process the dn of an ldap entry.
+   * Process the dn of a search entry.
    *
    * @param  conn  the search was performed on
-   * @param  request  used to find the ldap entry
-   * @param  entry  ldap entry to extract the dn from
+   * @param  request  used to find the search entry
+   * @param  entry  search entry to extract the dn from
    *
    * @return  processed dn
    */
   protected String processDn(
     final Connection conn,
     final SearchRequest request,
-    final LdapEntry entry)
+    final SearchEntry entry)
   {
     return entry.getDn();
   }
 
 
   /**
-   * Process the attributes of an ldap entry.
+   * Process the attributes of a search entry.
    *
    * @param  conn  the search was performed on
-   * @param  request  used to find the ldap entry
-   * @param  entry  ldap entry to extract the attributes from
+   * @param  request  used to find the search entry
+   * @param  entry  search entry to extract the attributes from
    *
    * @throws  LdapException  if the LDAP returns an error
    */
   protected void processAttributes(
     final Connection conn,
     final SearchRequest request,
-    final LdapEntry entry)
+    final SearchEntry entry)
     throws LdapException
   {
     for (LdapAttribute la : entry.getAttributes()) {
@@ -96,7 +96,7 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
    * Process a single attribute.
    *
    * @param  conn  the search was performed on
-   * @param  request  used to find the ldap entry
+   * @param  request  used to find the search entry
    * @param  attr  to process
    *
    * @throws  LdapException  if the LDAP returns an error
@@ -132,7 +132,7 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
    * Returns the supplied attribute name unaltered.
    *
    * @param  conn  the search was performed on
-   * @param  request  used to find the ldap entry
+   * @param  request  used to find the search entry
    * @param  name  to process
    *
    * @return  processed name
@@ -150,7 +150,7 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
    * Returns the supplied attribute value unaltered.
    *
    * @param  conn  the search was performed on
-   * @param  request  used to find the ldap entry
+   * @param  request  used to find the search entry
    * @param  value  to process
    *
    * @return  processed value
@@ -168,7 +168,7 @@ public abstract class AbstractLdapEntryHandler implements LdapEntryHandler
    * Returns the supplied attribute value unaltered.
    *
    * @param  conn  the search was performed on
-   * @param  request  used to find the ldap entry
+   * @param  request  used to find the search entry
    * @param  value  to process
    *
    * @return  processed value

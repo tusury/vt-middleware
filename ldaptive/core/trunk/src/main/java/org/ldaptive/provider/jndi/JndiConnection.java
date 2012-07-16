@@ -33,13 +33,14 @@ import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.DeleteRequest;
-import org.ldaptive.LdapEntry;
+import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.RequestControl;
@@ -50,6 +51,7 @@ import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
+import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.SaslConfig;
@@ -635,7 +637,8 @@ public class JndiConnection implements Connection
           config.getControlProcessor(),
           request.getControls(),
           ctx),
-        urls);
+        urls,
+        -1);
   }
 
 
@@ -668,7 +671,8 @@ public class JndiConnection implements Connection
           config.getControlProcessor(),
           request.getControls(),
           ctx),
-        urls);
+        urls,
+        -1);
   }
 
 
@@ -787,9 +791,6 @@ public class JndiConnection implements Connection
     /** Response result code. */
     private ResultCode responseResultCode;
 
-    /** Referral URLs. */
-    private String[] referralUrls;
-
     /** Ldap context to search with. */
     private LdapContext searchContext;
 
@@ -864,10 +865,15 @@ public class JndiConnection implements Connection
       } else {
         ctx.addToEnvironment(REFERRAL, "throw");
       }
+      // by default set dereferencing aliases to never, jndi default is always
       if (sr.getDerefAliases() != null) {
         ctx.addToEnvironment(
           DEREF_ALIASES,
           sr.getDerefAliases().name().toLowerCase());
+      } else {
+        ctx.addToEnvironment(
+          DEREF_ALIASES,
+          DerefAliases.NEVER.name().toLowerCase());
       }
       if (sr.getBinaryAttributes() != null) {
         final String[] a = sr.getBinaryAttributes();
@@ -997,7 +1003,8 @@ public class JndiConnection implements Connection
               null,
               null,
               respControls,
-              referralUrls);
+              null,
+              -1);
           }
         }
       } catch (LdapReferralException e) {
@@ -1022,18 +1029,19 @@ public class JndiConnection implements Connection
 
     /** {@inheritDoc} */
     @Override
-    public LdapEntry next()
+    public SearchItem next()
       throws LdapException
     {
       final JndiUtils bu = new JndiUtils(request.getSortBehavior());
-      LdapEntry le = null;
+      SearchItem item = null;
       try {
         final SearchResult result = results.next();
         logger.trace("reading search result: {}", result);
         result.setName(formatDn(result, getSearchDn(searchContext, request)));
-        le = bu.toLdapEntry(result);
+        item = new SearchItem(bu.toSearchEntry(result));
       } catch (LdapReferralException e) {
-        referralUrls = readReferralUrls(e);
+        item = new SearchItem(
+          new SearchReference(-1, null, readReferralUrls(e)));
       } catch (NamingException e) {
         final ResultCode ignoreRc = ignoreSearchException(
           config.getSearchIgnoreResultCodes(),
@@ -1043,7 +1051,7 @@ public class JndiConnection implements Connection
         }
         responseResultCode = ignoreRc;
       }
-      return le;
+      return item;
     }
 
 

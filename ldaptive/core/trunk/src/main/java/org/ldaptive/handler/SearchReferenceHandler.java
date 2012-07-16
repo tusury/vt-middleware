@@ -14,31 +14,33 @@
 package org.ldaptive.handler;
 
 import org.ldaptive.Connection;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 
 /**
- * Provides post search processing of an ldap entry.
+ * Provides post search processing of a search reference.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface LdapEntryHandler
+public interface SearchReferenceHandler
+  extends Handler<SearchRequest, SearchReference>
 {
 
 
   /**
-   * Process an entry from an ldap search.
+   * Process a search reference from an ldap search.
    *
    * @param  conn  the search was performed on
    * @param  request  used to perform the search
-   * @param  entry  search result
+   * @param  reference  from a search result
    *
    * @return  handler result
    *
    * @throws  LdapException  if the LDAP returns an error
    */
-  HandlerResult process(Connection conn, SearchRequest request, LdapEntry entry)
+  HandlerResult<SearchReference> process(
+    Connection conn, SearchRequest request, SearchReference reference)
     throws LdapException;
 }

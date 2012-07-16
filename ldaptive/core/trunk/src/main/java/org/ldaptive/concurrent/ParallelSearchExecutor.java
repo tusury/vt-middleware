@@ -24,7 +24,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.SearchEntryHandler;
 
 /**
  * Executes a list of search filters in parallel. This implementation executes
@@ -62,7 +62,7 @@ public class ParallelSearchExecutor
     final ConnectionFactory factory,
     final SearchFilter[] filters,
     final String[] attrs,
-    final LdapEntryHandler... handlers)
+    final SearchEntryHandler... handlers)
     throws LdapException
   {
     Collection<Response<SearchResult>> response = null;
@@ -86,7 +86,7 @@ public class ParallelSearchExecutor
           sr[i].setReturnAttributes(attrs);
         }
         if (handlers != null) {
-          sr[i].setLdapEntryHandlers(handlers);
+          sr[i].setSearchEntryHandlers(handlers);
         }
       }
       response = worker.executeToCompletion(sr);

@@ -19,13 +19,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.handler.AbstractLdapEntryHandler;
+import org.ldaptive.handler.AbstractSearchEntryHandler;
 
 /**
  * Rewrites attributes returned from Active Directory to include all values by
@@ -44,7 +44,7 @@ import org.ldaptive.handler.AbstractLdapEntryHandler;
  * @author  Tom Zeller
  * @version  $Revision$ $Date$
  */
-public class RangeEntryHandler extends AbstractLdapEntryHandler
+public class RangeEntryHandler extends AbstractSearchEntryHandler
 {
 
   /** hash code seed. */
@@ -71,7 +71,7 @@ public class RangeEntryHandler extends AbstractLdapEntryHandler
   protected void processAttributes(
     final Connection conn,
     final SearchRequest request,
-    final LdapEntry entry)
+    final SearchEntry entry)
     throws LdapException
   {
     final Map<LdapAttribute, Matcher> matchingAttrs =

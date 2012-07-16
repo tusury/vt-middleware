@@ -14,18 +14,18 @@
 package org.ldaptive.handler;
 
 import org.ldaptive.Connection;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 
 /**
- * Provides the ability to modify the case of ldap entry DNs, attribute names,
+ * Provides the ability to modify the case of search entry DNs, attribute names,
  * and attribute values.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
+public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 {
 
   /** hash code seed. */
@@ -147,7 +147,7 @@ public class CaseChangeEntryHandler extends AbstractLdapEntryHandler
   protected String processDn(
     final Connection conn,
     final SearchRequest request,
-    final LdapEntry entry)
+    final SearchEntry entry)
   {
     return CaseChange.perform(dnCaseChange, entry.getDn());
   }

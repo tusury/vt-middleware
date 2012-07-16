@@ -14,6 +14,8 @@
 package org.ldaptive;
 
 import java.util.Arrays;
+import org.ldaptive.handler.Handler;
+import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.OperationResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ public abstract class AbstractOperation<Q extends Request, S>
   private int operationRetryBackoff;
 
   /** Handlers to process operation responses. */
-  private OperationResponseHandler<S>[] operationResponseHandlers;
+  private OperationResponseHandler<Q, S>[] operationResponseHandlers;
 
 
   /**
@@ -154,7 +156,7 @@ public abstract class AbstractOperation<Q extends Request, S>
    *
    * @return  operation response handlers
    */
-  public OperationResponseHandler<S>[] getOperationResponseHandlers()
+  public OperationResponseHandler<Q, S>[] getOperationResponseHandlers()
   {
     return operationResponseHandlers;
   }
@@ -166,7 +168,7 @@ public abstract class AbstractOperation<Q extends Request, S>
    * @param  handlers  operation response handlers
    */
   public void setOperationResponseHandlers(
-    final OperationResponseHandler<S>... handlers)
+    final OperationResponseHandler<Q, S>... handlers)
   {
     operationResponseHandlers = handlers;
   }
@@ -202,18 +204,13 @@ public abstract class AbstractOperation<Q extends Request, S>
       }
     }
     // execute response handlers
-    if (
-      getOperationResponseHandlers() != null &&
-        getOperationResponseHandlers().length > 0) {
-      for (OperationResponseHandler<S> h : getOperationResponseHandlers()) {
-        h.process(response);
-      }
-    }
+    final HandlerResult<Response<S>> hr = executeHandlers(
+      getOperationResponseHandlers(), request, response);
 
     logger.debug(
       "execute response={} for request={} with connection={}",
-      new Object[] {response, request, connection});
-    return response;
+      new Object[] {hr.getResult(), request, connection});
+    return hr.getResult();
   }
 
 
@@ -252,6 +249,55 @@ public abstract class AbstractOperation<Q extends Request, S>
     } else {
       throw e;
     }
+  }
+
+
+  /**
+   * Processes each handler and returns a handler result containing a result
+   * processed by all handlers. If any handler indicates that the operation
+   * should be aborted, that flag is returned to the operation after all
+   * handlers have been invoked.
+   *
+   * @param  <Q>  type of request
+   * @param  <S>  type of response
+   *
+   * @param  handlers  to invoke
+   * @param  request  the operation was performed with
+   * @param  result  from the operation
+   *
+   * @return  handler result
+   *
+   * @throws  LdapException  if an error occurs processing a handler
+   */
+  protected <Q extends Request, S> HandlerResult<S> executeHandlers(
+    final Handler<Q, S>[] handlers,
+    final Q request,
+    final S result)
+    throws LdapException
+  {
+    S processed = result;
+    boolean abort = false;
+    if (handlers != null && handlers.length > 0) {
+      for (Handler<Q, S> handler : handlers) {
+        if (handler != null) {
+          try {
+            final HandlerResult<S> hr = handler.process(
+              getConnection(),
+              request,
+              processed);
+            if (hr != null) {
+              if (hr.getAbort()) {
+                abort = true;
+              }
+              processed = hr.getResult();
+            }
+          } catch (Exception e) {
+            logger.warn("{} threw unexpected exception", handler, e);
+          }
+        }
+      }
+    }
+    return new HandlerResult<S>(processed, abort);
   }
 
 

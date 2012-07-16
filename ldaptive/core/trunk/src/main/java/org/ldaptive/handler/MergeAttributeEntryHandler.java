@@ -15,9 +15,9 @@ package org.ldaptive.handler;
 
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 
 /**
@@ -28,7 +28,7 @@ import org.ldaptive.SearchRequest;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class MergeAttributeEntryHandler extends AbstractLdapEntryHandler
+public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
 {
 
   /** hash code seed. */
@@ -90,7 +90,7 @@ public class MergeAttributeEntryHandler extends AbstractLdapEntryHandler
   protected void processAttributes(
     final Connection conn,
     final SearchRequest request,
-    final LdapEntry entry)
+    final SearchEntry entry)
     throws LdapException
   {
     boolean newAttribute = false;

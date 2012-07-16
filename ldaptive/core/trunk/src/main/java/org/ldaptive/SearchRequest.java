@@ -14,7 +14,8 @@
 package org.ldaptive;
 
 import java.util.Arrays;
-import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.SearchEntryHandler;
+import org.ldaptive.handler.SearchReferenceHandler;
 
 /**
  * Contains the data required to perform an ldap search operation.
@@ -59,7 +60,10 @@ public class SearchRequest extends AbstractRequest
   private SortBehavior sortBehavior = SortBehavior.getDefaultSortBehavior();
 
   /** Ldap entry handlers. */
-  private LdapEntryHandler[] entryHandlers;
+  private SearchEntryHandler[] entryHandlers;
+
+  /** Search reference handlers. */
+  private SearchReferenceHandler[] referenceHandlers;
 
 
   /** Default constructor. */
@@ -349,24 +353,47 @@ public class SearchRequest extends AbstractRequest
 
 
   /**
-   * Returns the ldap entry handlers.
+   * Returns the search entry handlers.
    *
-   * @return  ldap entry handlers
+   * @return  search entry handlers
    */
-  public LdapEntryHandler[] getLdapEntryHandlers()
+  public SearchEntryHandler[] getSearchEntryHandlers()
   {
     return entryHandlers;
   }
 
 
   /**
-   * Sets the ldap entry handlers.
+   * Sets the search entry handlers.
    *
-   * @param  handlers  ldap entry handlers
+   * @param  handlers  search entry handlers
    */
-  public void setLdapEntryHandlers(final LdapEntryHandler... handlers)
+  public void setSearchEntryHandlers(final SearchEntryHandler... handlers)
   {
     entryHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the search reference handlers.
+   *
+   * @return  search reference handlers
+   */
+  public SearchReferenceHandler[] getSearchReferenceHandlers()
+  {
+    return referenceHandlers;
+  }
+
+
+  /**
+   * Sets the search reference handlers.
+   *
+   * @param  handlers  search reference handlers
+   */
+  public void setSearchReferenceHandlers(
+    final SearchReferenceHandler... handlers)
+  {
+    referenceHandlers = handlers;
   }
 
 
@@ -443,7 +470,8 @@ public class SearchRequest extends AbstractRequest
     sr.setBaseDn(request.getBaseDn());
     sr.setBinaryAttributes(request.getBinaryAttributes());
     sr.setDerefAliases(request.getDerefAliases());
-    sr.setLdapEntryHandlers(request.getLdapEntryHandlers());
+    sr.setSearchEntryHandlers(request.getSearchEntryHandlers());
+    sr.setSearchReferenceHandlers(request.getSearchReferenceHandlers());
     sr.setFollowReferrals(request.getFollowReferrals());
     sr.setReturnAttributes(request.getReturnAttributes());
     sr.setSearchFilter(request.getSearchFilter());
@@ -476,6 +504,7 @@ public class SearchRequest extends AbstractRequest
         binaryAttrs,
         derefAliases,
         entryHandlers,
+        referenceHandlers,
         retAttrs,
         searchFilter,
         searchScope,
@@ -497,7 +526,8 @@ public class SearchRequest extends AbstractRequest
         "[%s@%d::baseDn=%s, searchFilter=%s, returnAttributes=%s, " +
         "searchScope=%s, timeLimit=%s, sizeLimit=%s, derefAliases=%s, " +
         "typesOnly=%s, binaryAttributes=%s, sortBehavior=%s, " +
-        "ldapEntryHandlers=%s, controls=%s, followReferrals=%s]",
+        "searchEntryHandlers=%s, searchReferenceHandlers=%s, controls=%s, " +
+        "followReferrals=%s, intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         baseDn,
@@ -511,7 +541,9 @@ public class SearchRequest extends AbstractRequest
         Arrays.toString(binaryAttrs),
         sortBehavior,
         Arrays.toString(entryHandlers),
+        Arrays.toString(referenceHandlers),
         Arrays.toString(getControls()),
-        getFollowReferrals());
+        getFollowReferrals(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

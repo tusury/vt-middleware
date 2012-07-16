@@ -13,8 +13,8 @@
 */
 package org.ldaptive;
 
-import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.OperationResponseHandler;
+import org.ldaptive.handler.SearchEntryHandler;
 
 /**
  * Helper class which encapsulates the try, finally idiom used to execute a
@@ -30,7 +30,8 @@ public class SearchExecutor extends SearchRequest
 {
 
   /** Handlers to process search responses. */
-  private OperationResponseHandler<SearchResult>[] searchResponseHandlers;
+  private OperationResponseHandler<SearchRequest, SearchResult>[]
+  searchResponseHandlers;
 
 
   /**
@@ -38,7 +39,8 @@ public class SearchExecutor extends SearchRequest
    *
    * @return  search response handlers
    */
-  public OperationResponseHandler<SearchResult>[] getSearchResponseHandlers()
+  public OperationResponseHandler<SearchRequest, SearchResult>[]
+  getSearchResponseHandlers()
   {
     return searchResponseHandlers;
   }
@@ -50,7 +52,7 @@ public class SearchExecutor extends SearchRequest
    * @param  handlers  search response handlers
    */
   public void setSearchResponseHandlers(
-    final OperationResponseHandler<SearchResult>... handlers)
+    final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
   {
     searchResponseHandlers = handlers;
   }
@@ -68,7 +70,7 @@ public class SearchExecutor extends SearchRequest
   public Response<SearchResult> search(final ConnectionFactory factory)
     throws LdapException
   {
-    return search(factory, null, (String[]) null, (LdapEntryHandler[]) null);
+    return search(factory, null, (String[]) null, (SearchEntryHandler[]) null);
   }
 
 
@@ -92,7 +94,7 @@ public class SearchExecutor extends SearchRequest
         factory,
         new SearchFilter(filter),
         (String[]) null,
-        (LdapEntryHandler[]) null);
+        (SearchEntryHandler[]) null);
   }
 
 
@@ -111,7 +113,8 @@ public class SearchExecutor extends SearchRequest
     final SearchFilter filter)
     throws LdapException
   {
-    return search(factory, filter, (String[]) null, (LdapEntryHandler[]) null);
+    return search(
+      factory, filter, (String[]) null, (SearchEntryHandler[]) null);
   }
 
 
@@ -137,7 +140,7 @@ public class SearchExecutor extends SearchRequest
         factory,
         new SearchFilter(filter),
         attrs,
-        (LdapEntryHandler[]) null);
+        (SearchEntryHandler[]) null);
   }
 
 
@@ -158,7 +161,7 @@ public class SearchExecutor extends SearchRequest
     final String... attrs)
     throws LdapException
   {
-    return search(factory, filter, attrs, (LdapEntryHandler[]) null);
+    return search(factory, filter, attrs, (SearchEntryHandler[]) null);
   }
 
 
@@ -178,7 +181,7 @@ public class SearchExecutor extends SearchRequest
     final ConnectionFactory factory,
     final SearchFilter filter,
     final String[] attrs,
-    final LdapEntryHandler... handlers)
+    final SearchEntryHandler... handlers)
     throws LdapException
   {
     Response<SearchResult> response = null;
@@ -197,7 +200,7 @@ public class SearchExecutor extends SearchRequest
         sr.setReturnAttributes(attrs);
       }
       if (handlers != null) {
-        sr.setLdapEntryHandlers(handlers);
+        sr.setSearchEntryHandlers(handlers);
       }
       response = op.execute(sr);
     } finally {

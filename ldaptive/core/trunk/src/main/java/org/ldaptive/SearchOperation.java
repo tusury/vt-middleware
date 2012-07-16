@@ -14,7 +14,6 @@
 package org.ldaptive;
 
 import org.ldaptive.cache.Cache;
-import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.provider.SearchIterator;
 
 /**
@@ -55,27 +54,9 @@ public class SearchOperation extends AbstractSearchOperation<SearchRequest>
   protected Response<SearchResult> executeSearch(final SearchRequest request)
     throws LdapException
   {
-    final SearchResult result = new SearchResult(request.getSortBehavior());
     final SearchIterator si = getConnection().getProviderConnection().search(
       request);
-    try {
-      while (si.hasNext()) {
-        final LdapEntry le = si.next();
-        if (le != null) {
-          final HandlerResult hr = executeLdapEntryHandlers(request, le);
-          if (hr.getLdapEntry() != null) {
-            result.addEntry(hr.getLdapEntry());
-          }
-          if (hr.getAbortSearch()) {
-            logger.debug("Aborting search on entry=%s", le);
-            break;
-          }
-        }
-      }
-    } finally {
-      si.close();
-    }
-
+    final SearchResult result = readResult(request, si);
     final Response<Void> response = si.getResponse();
     return
       new Response<SearchResult>(
@@ -84,6 +65,7 @@ public class SearchOperation extends AbstractSearchOperation<SearchRequest>
         response.getMessage(),
         response.getMatchedDn(),
         response.getControls(),
-        response.getReferralURLs());
+        response.getReferralURLs(),
+        response.getMessageId());
   }
 }
