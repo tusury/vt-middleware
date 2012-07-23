@@ -528,6 +528,16 @@ public class JndiConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
+  public SearchIterator searchAsync(final SearchRequest request)
+    throws LdapException
+  {
+    throw new UnsupportedOperationException(
+      "Asynchronous searches not supported");
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {

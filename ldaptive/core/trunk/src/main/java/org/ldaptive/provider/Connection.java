@@ -126,6 +126,19 @@ public interface Connection
 
 
   /**
+   * Search the ldap asynchronously.
+   *
+   * @param  request  containing the data necessary to perform the operation
+   *
+   * @return  search iterator
+   *
+   * @throws  LdapException  if an error occurs
+   */
+  SearchIterator searchAsync(SearchRequest request)
+    throws LdapException;
+
+
+  /**
    * Perform an extended operation in the ldap.
    *
    * @param  request  containing the data necessary to perform the operation
