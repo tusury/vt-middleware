@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.regex.Pattern;
-
 import org.apache.commons.codec.binary.Base64;
 
 /**
