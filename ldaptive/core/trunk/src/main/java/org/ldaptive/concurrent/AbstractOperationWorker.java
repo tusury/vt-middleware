@@ -137,7 +137,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
       } catch (ExecutionException e) {
         logger.debug("ExecutionException thrown, ignoring", e);
       } catch (InterruptedException e) {
-        logger.warn("InterrupedException thrown, ignoring", e);
+        logger.warn("InterruptedException thrown, ignoring", e);
       }
     }
     return results;
