@@ -66,7 +66,7 @@ public class ControlProcessor<T>
     if (requestControls == null) {
       return null;
     }
-    logger.debug("processing request controls: {}", requestControls);
+    logger.trace("processing request controls: {}", requestControls);
 
     final List<T> providerCtls = new ArrayList<T>(requestControls.length);
     for (RequestControl c : requestControls) {
@@ -75,7 +75,7 @@ public class ControlProcessor<T>
         providerCtls.add(providerCtl);
       }
     }
-    logger.debug("produced provider request controls: {}", providerCtls);
+    logger.trace("produced provider request controls: {}", providerCtls);
     return
       !providerCtls.isEmpty()
       ? providerCtls.toArray(
@@ -123,7 +123,7 @@ public class ControlProcessor<T>
     if (responseControls == null) {
       return null;
     }
-    logger.debug("processing provider response controls: {}", responseControls);
+    logger.trace("processing provider response controls: {}", responseControls);
 
     final List<ResponseControl> ctls = new ArrayList<ResponseControl>(
       responseControls.length);
@@ -133,7 +133,7 @@ public class ControlProcessor<T>
         ctls.add(ctl);
       }
     }
-    logger.debug("produced response controls: {}", ctls);
+    logger.trace("produced response controls: {}", ctls);
     return ctls.toArray(new ResponseControl[ctls.size()]);
   }
 
