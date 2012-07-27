@@ -43,6 +43,7 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
+import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
@@ -536,6 +537,15 @@ public class JndiConnection implements Connection
   {
     throw new UnsupportedOperationException(
       "Asynchronous searches not supported");
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void abandon(final AbandonRequest request)
+    throws LdapException
+  {
+    throw new UnsupportedOperationException("Abandons not supported");
   }
 
 
