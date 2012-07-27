@@ -18,12 +18,12 @@ import java.util.Map;
 import org.apache.directory.ldap.client.api.CramMd5Request;
 import org.apache.directory.ldap.client.api.DigestMd5Request;
 import org.apache.directory.ldap.client.api.GssApiRequest;
-import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.apache.directory.shared.ldap.model.cursor.SearchCursor;
 import org.apache.directory.shared.ldap.model.entry.Entry;
 import org.apache.directory.shared.ldap.model.entry.Modification;
 import org.apache.directory.shared.ldap.model.exception.LdapOperationException;
+import org.apache.directory.shared.ldap.model.message.AbandonRequestImpl;
 import org.apache.directory.shared.ldap.model.message.AddRequestImpl;
 import org.apache.directory.shared.ldap.model.message.AddResponse;
 import org.apache.directory.shared.ldap.model.message.AliasDerefMode;
@@ -35,6 +35,7 @@ import org.apache.directory.shared.ldap.model.message.Control;
 import org.apache.directory.shared.ldap.model.message.DeleteRequestImpl;
 import org.apache.directory.shared.ldap.model.message.DeleteResponse;
 import org.apache.directory.shared.ldap.model.message.ExtendedResponse;
+import org.apache.directory.shared.ldap.model.message.IntermediateResponse;
 import org.apache.directory.shared.ldap.model.message.LdapResult;
 import org.apache.directory.shared.ldap.model.message.Message;
 import org.apache.directory.shared.ldap.model.message.ModifyDnRequestImpl;
@@ -46,6 +47,8 @@ import org.apache.directory.shared.ldap.model.message.ResultResponse;
 import org.apache.directory.shared.ldap.model.message.SearchRequest;
 import org.apache.directory.shared.ldap.model.message.SearchRequestImpl;
 import org.apache.directory.shared.ldap.model.message.SearchResultDone;
+import org.apache.directory.shared.ldap.model.message.SearchResultEntry;
+import org.apache.directory.shared.ldap.model.message.SearchResultReference;
 import org.apache.directory.shared.ldap.model.message.SearchScope;
 import org.apache.directory.shared.ldap.model.name.Dn;
 import org.ldaptive.AddRequest;
@@ -55,19 +58,25 @@ import org.ldaptive.DeleteRequest;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtils;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchEntry;
+import org.ldaptive.SearchReference;
+import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponseFactory;
+import org.ldaptive.intermediate.IntermediateResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
+import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
+import org.ldaptive.provider.SearchListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -484,9 +493,45 @@ public class ApacheLdapConnection implements Connection
     final org.ldaptive.SearchRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     final ApacheLdapSearchIterator i = new ApacheLdapSearchIterator(request);
     i.initialize();
     return i;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void searchAsync(
+    final org.ldaptive.SearchRequest request, final SearchListener listener)
+    throws LdapException
+  {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
+    final ApacheLdapSearchListener l = new ApacheLdapSearchListener(
+      request, listener);
+    l.initialize();
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void abandon(final AbandonRequest request)
+    throws LdapException
+  {
+    final AbandonRequestImpl ari = new AbandonRequestImpl();
+    if (request.getControls() != null) {
+      ari.addAllControls(
+        config.getControlProcessor().processRequestControls(
+          request.getControls()));
+    }
+    ari.setAbandoned(request.getMessageId());
+    connection.abandon(ari);
   }
 
 
@@ -571,7 +616,8 @@ public class ApacheLdapConnection implements Connection
       processResponseControls(
         config.getControlProcessor(), request.getControls(), resultResponse),
       ref != null ?
-        ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null);
+        ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null,
+      resultResponse.getMessageId());
   }
 
 
@@ -640,17 +686,12 @@ public class ApacheLdapConnection implements Connection
   /**
    * Search iterator for apache ldap search results.
    */
-  protected class ApacheLdapSearchIterator implements SearchIterator
+  protected class ApacheLdapSearchIterator
+    extends AbstractApacheLdapSearch implements SearchIterator
   {
-
-    /** Search request. */
-    private final org.ldaptive.SearchRequest request;
 
     /** Response data. */
     private org.ldaptive.Response<Void> response;
-
-    /** Referral URLs. */
-    private String[] referralUrls;
 
     /** Ldap search cursor. */
     private SearchCursor cursor;
@@ -663,7 +704,7 @@ public class ApacheLdapConnection implements Connection
      */
     public ApacheLdapSearchIterator(final org.ldaptive.SearchRequest sr)
     {
-      request = sr;
+      super(sr);
     }
 
 
@@ -701,6 +742,213 @@ public class ApacheLdapConnection implements Connection
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasNext()
+      throws org.ldaptive.LdapException
+    {
+      if (cursor == null || response != null) {
+        return false;
+      }
+
+      boolean more = false;
+      try {
+        more = cursor.next();
+        if (!more) {
+          final SearchResultDone done = cursor.getSearchResultDone();
+          final org.ldaptive.control.ResponseControl[] respControls =
+            processResponseControls(
+              config.getControlProcessor(), request.getControls(), done);
+          final boolean searchAgain = ControlProcessor.searchAgain(
+            respControls);
+          if (searchAgain) {
+            cursor = search(connection, request);
+            more = cursor.next();
+          }
+          if (!more) {
+            throwOperationException(request, done);
+            final LdapResult ldapResult = done.getLdapResult();
+            final Referral ref = ldapResult.getReferral();
+            if (ref != null && request.getFollowReferrals()) {
+              throw new UnsupportedOperationException(
+                "Referral following not supported");
+            }
+            response = new Response<Void>(
+              null,
+              ResultCode.valueOf(ldapResult.getResultCode().getValue()),
+              ldapResult.getDiagnosticMessage(),
+              ldapResult.getMatchedDn().getName(),
+              respControls,
+              ref != null ?
+                ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) :
+                null,
+              done.getMessageId());
+          }
+        }
+      } catch (LdapOperationException e) {
+        processLdapOperationException(e);
+      } catch (org.ldaptive.LdapException e) {
+        throw e;
+      } catch (RuntimeException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new org.ldaptive.LdapException(e);
+      }
+      return more;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchItem next()
+      throws org.ldaptive.LdapException
+    {
+      SearchItem si = null;
+      try {
+        final org.apache.directory.shared.ldap.model.message.Response curRes =
+          cursor.get();
+        if (curRes instanceof SearchResultEntry) {
+          si = processSearchResultEntry((SearchResultEntry) curRes);
+        } else if (curRes instanceof SearchResultReference) {
+          if (request.getFollowReferrals()) {
+            throw new UnsupportedOperationException(
+              "Referral following not supported");
+          }
+          si = processSearchResultReference((SearchResultReference) curRes);
+        } else if (curRes instanceof IntermediateResponse) {
+          si = processIntermediateResponse((IntermediateResponse) curRes);
+        }
+      } catch (LdapOperationException e) {
+        processLdapOperationException(e);
+      } catch (RuntimeException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new org.ldaptive.LdapException(e);
+      }
+      return si;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public org.ldaptive.Response<Void> getResponse()
+    {
+      return response;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void close()
+      throws org.ldaptive.LdapException {}
+  }
+
+
+  /**
+   * Search listener for apache ldap search results.
+   */
+  protected class ApacheLdapSearchListener extends AbstractApacheLdapSearch
+  {
+
+    /** Search result listener. */
+    private final SearchListener listener;
+
+
+    /**
+     * Creates a new apache ldap search listener.
+     *
+     * @param  sr  search request
+     * @param  sl  search listener
+     */
+    public ApacheLdapSearchListener(
+      final org.ldaptive.SearchRequest sr, final SearchListener sl)
+    {
+      super(sr);
+      listener = sl;
+    }
+
+
+    /**
+     * Initializes this apache ldap search listener.
+     *
+     * @throws  org.ldaptive.LdapException  if an error occurs
+     */
+    public void initialize()
+      throws org.ldaptive.LdapException
+    {
+      boolean closeCursor = false;
+      SearchCursor cursor = null;
+      try {
+        cursor = search(connection, request);
+        while (cursor.next()) {
+          final org.apache.directory.shared.ldap.model.message.Response curRes =
+            cursor.get();
+          if (curRes instanceof SearchResultEntry) {
+            listener.searchItemReceived(
+              processSearchResultEntry((SearchResultEntry) curRes));
+          } else if (curRes instanceof SearchResultReference) {
+            listener.searchItemReceived(
+              processSearchResultReference((SearchResultReference) curRes));
+          } else if (curRes instanceof IntermediateResponse) {
+            listener.searchItemReceived(
+              processIntermediateResponse((IntermediateResponse) curRes));
+          }
+        }
+        final SearchResultDone done = cursor.getSearchResultDone();
+        final Response<Void> response = createResponse(request, null, done);
+        listener.searchResponseReceived(response);
+      } catch (LdapOperationException e) {
+        closeCursor = true;
+        processLdapOperationException(e);
+      } catch (org.ldaptive.LdapException e) {
+        throw e;
+      } catch (RuntimeException e) {
+        closeCursor = true;
+        throw e;
+      } catch (Exception e) {
+        closeCursor = true;
+        throw new org.ldaptive.LdapException(e);
+      } finally {
+        if (closeCursor) {
+          try {
+            if (cursor != null) {
+              cursor.close();
+            }
+          } catch (Exception e) {
+            logger.debug("Error closing search cursor", e);
+          }
+        }
+      }
+    }
+  }
+
+
+  /**
+   * Common search functionality for apache ldap iterators and listeners.
+   */
+  protected abstract class AbstractApacheLdapSearch
+  {
+
+    /** Search request. */
+    protected final org.ldaptive.SearchRequest request;
+
+    /** Utility class. */
+    protected final ApacheLdapUtils util;
+
+
+    /**
+     * Creates a new abstract apache ldap search.
+     *
+     * @param  sr  search request
+     */
+    public AbstractApacheLdapSearch(final org.ldaptive.SearchRequest sr)
+    {
+      request = sr;
+      util = new ApacheLdapUtils(sr.getSortBehavior());
+      util.setBinaryAttributes(sr.getBinaryAttributes());
+    }
+
+
     /**
      * Executes an ldap search.
      *
@@ -713,7 +961,7 @@ public class ApacheLdapConnection implements Connection
      * if an error occurs
      */
     protected SearchCursor search(
-      final LdapConnection conn,
+      final LdapNetworkConnection conn,
       final org.ldaptive.SearchRequest sr)
       throws org.apache.directory.shared.ldap.model.exception.LdapException
     {
@@ -754,8 +1002,11 @@ public class ApacheLdapConnection implements Connection
       apacheSr.setBase(new Dn(sr.getBaseDn()));
 
       final AliasDerefMode deref = getAliasDerefMode(sr.getDerefAliases());
+      // by default set dereferencing aliases to never, apache default is always
       if (deref != null) {
         apacheSr.setDerefAliases(deref);
+      } else {
+        apacheSr.setDerefAliases(AliasDerefMode.NEVER_DEREF_ALIASES);
       }
       if (sr.getSearchFilter() != null) {
         apacheSr.setFilter(sr.getSearchFilter().format());
@@ -817,111 +1068,80 @@ public class ApacheLdapConnection implements Connection
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasNext()
-      throws org.ldaptive.LdapException
+    /**
+     * Processes the response controls on the supplied entry and returns a
+     * corresponding search item.
+     *
+     * @param  entry  to process
+     *
+     * @return  search item
+     */
+    protected SearchItem processSearchResultEntry(
+      final SearchResultEntry entry)
     {
-      if (cursor == null || response != null) {
-        return false;
+      logger.trace("reading search entry: {}", entry);
+      final Entry e = entry.getEntry();
+      ResponseControl[] respControls = null;
+      if (entry.getControls() != null && entry.getControls().size() > 0) {
+        respControls =
+          processResponseControls(
+            config.getControlProcessor(), request.getControls(), entry);
       }
-
-      boolean more = false;
-      try {
-        more = cursor.next();
-        if (!more) {
-          final SearchResultDone done = cursor.getSearchResultDone();
-          final org.ldaptive.control.ResponseControl[] respControls =
-            processResponseControls(
-              config.getControlProcessor(), request.getControls(), done);
-          final boolean searchAgain = ControlProcessor.searchAgain(
-            respControls);
-          if (searchAgain) {
-            cursor = search(connection, request);
-            more = cursor.next();
-          }
-          if (!more) {
-            throwOperationException(request, done);
-            final LdapResult ldapResult = done.getLdapResult();
-            final Referral ref = ldapResult.getReferral();
-            if (ref != null) {
-              if (request.getFollowReferrals()) {
-                throw new UnsupportedOperationException(
-                  "Referral following not supported");
-              }
-              referralUrls = LdapUtils.concatArrays(ref.getLdapUrls().toArray(
-                new String[ref.getReferralLength()]), referralUrls);
-            }
-            response = new Response<Void>(
-              null,
-              ResultCode.valueOf(ldapResult.getResultCode().getValue()),
-              ldapResult.getDiagnosticMessage(),
-              ldapResult.getMatchedDn().getName(),
-              respControls,
-              referralUrls);
-          }
-        }
-      } catch (LdapOperationException e) {
-        processLdapOperationException(e);
-      } catch (org.ldaptive.LdapException e) {
-        throw e;
-      } catch (RuntimeException e) {
-        throw e;
-      } catch (Exception e) {
-        throw new org.ldaptive.LdapException(e);
-      }
-      return more;
+      final SearchEntry se = util.toSearchEntry(
+        e, respControls, entry.getMessageId());
+      return new SearchItem(se);
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public LdapEntry next()
-      throws org.ldaptive.LdapException
+    /**
+     * Processes the response controls on the supplied reference and returns a
+     * corresponding search item.
+     *
+     * @param  ref  to process
+     *
+     * @return  search item
+     */
+    protected SearchItem processSearchResultReference(
+      final SearchResultReference ref)
     {
-      final ApacheLdapUtils bu = new ApacheLdapUtils(request.getSortBehavior());
-      bu.setBinaryAttributes(request.getBinaryAttributes());
-
-      LdapEntry le = null;
-      try {
-        if (cursor.isEntry()) {
-          final Entry entry = cursor.getEntry();
-          logger.trace("reading search entry: {}", entry);
-          le = bu.toLdapEntry(entry);
-        } else if (cursor.isReferral()) {
-          if (request.getFollowReferrals()) {
-            throw new UnsupportedOperationException(
-              "Referral following not supported");
-          }
-          final Referral ref = cursor.getReferral();
-          logger.trace("reading search reference: {}", ref);
-          referralUrls = LdapUtils.concatArrays(ref.getLdapUrls().toArray(
-            new String[ref.getReferralLength()]), referralUrls);
-        } else if (cursor.isIntermediate()) {
-          throw new UnsupportedOperationException("Intermediate response");
-        }
-      } catch (LdapOperationException e) {
-        processLdapOperationException(e);
-      } catch (RuntimeException e) {
-        throw e;
-      } catch (Exception e) {
-        throw new org.ldaptive.LdapException(e);
+      logger.trace("reading search reference: {}", ref);
+      final Referral r = ref.getReferral();
+      ResponseControl[] respControls = null;
+      if (ref.getControls() != null && ref.getControls().size() > 0) {
+        respControls =
+          processResponseControls(
+            config.getControlProcessor(), request.getControls(), ref);
       }
-      return le;
+      final SearchReference sr = new SearchReference(
+        ref.getMessageId(), respControls, r.getLdapUrls());
+      return new SearchItem(sr);
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public org.ldaptive.Response<Void> getResponse()
+    /**
+     * Processes the response controls on the supplied response and returns a
+     * corresponding search item.
+     *
+     * @param  res  to process
+     *
+     * @return  search item
+     */
+    protected SearchItem processIntermediateResponse(
+      final IntermediateResponse res)
     {
-      return response;
+      logger.trace("reading intermediate response: {}", res);
+      ResponseControl[] respControls = null;
+      if (res.getControls() != null && res.getControls().size() > 0) {
+        respControls = processResponseControls(
+          config.getControlProcessor(), request.getControls(), res);
+      }
+      final org.ldaptive.intermediate.IntermediateResponse ir =
+        IntermediateResponseFactory.createIntermediateResponse(
+          res.getResponseName(),
+          res.getResponseValue(),
+          respControls,
+          res.getMessageId());
+      return new SearchItem(ir);
     }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public void close()
-      throws org.ldaptive.LdapException {}
   }
 }

@@ -31,7 +31,9 @@ import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SortBehavior;
+import org.ldaptive.control.ResponseControl;
 
 /**
  * Provides methods for converting between OpenDJ specific objects and
@@ -271,20 +273,23 @@ public class OpenDJUtils
 
 
   /**
-   * Returns an ldap entry using the supplied opendj entry.
+   * Returns a search entry using the supplied opendj entry.
    *
    * @param  e  opendj entry
+   * @param  c  response controls
+   * @param  id  message id
    *
-   * @return  ldap entry
+   * @return  search entry
    */
-  public LdapEntry toLdapEntry(final Entry e)
+  public SearchEntry toSearchEntry(
+    final Entry e, final ResponseControl[] c, final int id)
   {
-    final LdapEntry le = new LdapEntry(sortBehavior);
-    le.setDn(e.getName().toString());
+    final SearchEntry se = new SearchEntry(id, c, sortBehavior);
+    se.setDn(e.getName().toString());
     for (Attribute a : e.getAllAttributes()) {
-      le.addAttribute(toLdapAttribute(a));
+      se.addAttribute(toLdapAttribute(a));
     }
-    return le;
+    return se;
   }
 
 

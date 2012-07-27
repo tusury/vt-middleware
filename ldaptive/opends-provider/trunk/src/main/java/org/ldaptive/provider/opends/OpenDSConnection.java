@@ -13,10 +13,9 @@
 */
 package org.ldaptive.provider.opends;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
@@ -29,19 +28,26 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchEntry;
+import org.ldaptive.SearchReference;
+import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
+import org.ldaptive.intermediate.IntermediateResponseFactory;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
+import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
+import org.ldaptive.provider.SearchListener;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.opends.sdk.ByteString;
 import org.opends.sdk.Connection;
 import org.opends.sdk.DereferenceAliasesPolicy;
 import org.opends.sdk.ErrorResultException;
+import org.opends.sdk.IntermediateResponseHandler;
 import org.opends.sdk.Modification;
 import org.opends.sdk.SearchResultHandler;
 import org.opends.sdk.SearchScope;
@@ -54,6 +60,7 @@ import org.opends.sdk.requests.SimpleBindRequest;
 import org.opends.sdk.responses.BindResult;
 import org.opends.sdk.responses.CompareResult;
 import org.opends.sdk.responses.GenericExtendedResult;
+import org.opends.sdk.responses.IntermediateResponse;
 import org.opends.sdk.responses.Result;
 import org.opends.sdk.responses.SearchResultEntry;
 import org.opends.sdk.responses.SearchResultReference;
@@ -123,6 +130,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
@@ -367,6 +378,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   public Response<Void> add(final AddRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     Response<Void> response = null;
     try {
       final OpenDSUtils util = new OpenDSUtils();
@@ -398,6 +413,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   public Response<Boolean> compare(final CompareRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     Response<Boolean> response = null;
     try {
       final OpenDSUtils util = new OpenDSUtils();
@@ -437,6 +456,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   public Response<Void> delete(final DeleteRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     Response<Void> response = null;
     try {
       final org.opends.sdk.requests.DeleteRequest dr =
@@ -465,6 +488,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   public Response<Void> modify(final ModifyRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     Response<Void> response = null;
     try {
       final OpenDSUtils util = new OpenDSUtils();
@@ -499,6 +526,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     Response<Void> response = null;
     try {
       final org.opends.sdk.requests.ModifyDNRequest mdr =
@@ -529,6 +560,10 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     final org.ldaptive.SearchRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     final OpenDSSearchIterator i = new OpenDSSearchIterator(request);
     i.initialize();
     return i;
@@ -537,9 +572,49 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
 
   /** {@inheritDoc} */
   @Override
+  public void searchAsync(
+    final org.ldaptive.SearchRequest request,
+    final SearchListener listener)
+    throws LdapException
+  {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
+    final OpenDSAsyncSearchListener l = new OpenDSAsyncSearchListener(
+      request, listener);
+    l.initialize();
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void abandon(final AbandonRequest request)
+    throws LdapException
+  {
+    final org.opends.sdk.requests.AbandonRequest ar =
+      Requests.newAbandonRequest(request.getMessageId());
+    if (request.getControls() != null) {
+      for (Control c :
+        config.getControlProcessor().processRequestControls(
+          request.getControls())) {
+        ar.addControl(c);
+      }
+    }
+
+    connection.getAsynchronousConnection().abandon(ar);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
+    if (request.getFollowReferrals()) {
+      throw new UnsupportedOperationException(
+        "Referral following not supported");
+    }
     Response<?> response = null;
     try {
       GenericExtendedRequest er;
@@ -598,7 +673,8 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
       ldapResult.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
         request.getControls(), ctls.toArray(new Control[ctls.size()])),
-      urls.toArray(new String[urls.size()]));
+      urls.toArray(new String[urls.size()]),
+      -1);
   }
 
 
@@ -633,11 +709,9 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
   /**
    * Search iterator for opends search results.
    */
-  protected class OpenDSSearchIterator implements SearchIterator
+  protected class OpenDSSearchIterator
+    extends AbstractOpenDSSearch implements SearchIterator
   {
-
-    /** Search request. */
-    private final org.ldaptive.SearchRequest request;
 
     /** Response data. */
     private org.ldaptive.Response<Void> response;
@@ -653,7 +727,7 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
      */
     public OpenDSSearchIterator(final org.ldaptive.SearchRequest sr)
     {
-      request = sr;
+      super(sr);
     }
 
 
@@ -704,6 +778,285 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
         throw new LdapException(e);
       }
       return i;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasNext()
+      throws LdapException
+    {
+      if (resultIterator == null || response != null) {
+        return false;
+      }
+
+      boolean more = resultIterator.hasNext();
+      if (!more) {
+        final Result result = resultIterator.getResult();
+        final List<Control> ctls = result.getControls();
+        final ResponseControl[] respControls =
+          config.getControlProcessor().processResponseControls(
+            request.getControls(), ctls.toArray(new Control[ctls.size()]));
+        final boolean searchAgain = ControlProcessor.searchAgain(respControls);
+        if (searchAgain) {
+          resultIterator = search(connection, request);
+          more = resultIterator.hasNext();
+        }
+        if (!more) {
+          final List<String> urls = result.getReferralURIs();
+          response = new org.ldaptive.Response<Void>(
+            null,
+            ResultCode.valueOf(result.getResultCode().intValue()),
+            result.getDiagnosticMessage(),
+            result.getMatchedDN(),
+            respControls,
+            urls.toArray(new String[urls.size()]),
+            -1);
+        }
+      }
+      return more;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchItem next()
+      throws LdapException
+    {
+      return resultIterator.next();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public org.ldaptive.Response<Void> getResponse()
+    {
+      return response;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void close() throws LdapException {}
+
+
+    /**
+     * Search results handler for storing entries returned by the search
+     * operation.
+     */
+    private class SearchResultIterator implements SearchResultHandler
+    {
+
+      /** Search items. */
+      protected final Queue<SearchItem> queue = new ArrayDeque<SearchItem>();
+
+      /** Search result. */
+      private Result result;
+
+
+      /**
+       * Returns the next search item from the queue.
+       *
+       * @return  search item
+       */
+      public SearchItem next()
+      {
+        return queue.poll();
+      }
+
+
+      /**
+       * Returns the result of the search.
+       *
+       * @return  search result
+       */
+      public Result getResult()
+      {
+        return result;
+      }
+
+
+      /**
+       * Whether the queue is empty.
+       *
+       * @return  whether the queue is empty
+       */
+      public boolean hasNext()
+      {
+        return !queue.isEmpty();
+      }
+
+
+      /** {@inheritDoc} */
+      @Override
+      public void handleErrorResult(final ErrorResultException e)
+      {
+        logger.trace("reading error result: {}", e);
+        result = e.getResult();
+      }
+
+
+      /** {@inheritDoc} */
+      @Override
+      public void handleResult(final Result r)
+      {
+        logger.trace("reading result: {}", r);
+        result = r;
+      }
+
+
+      /** {@inheritDoc} */
+      @Override
+      public boolean handleEntry(final SearchResultEntry entry)
+      {
+        return queue.add(processSearchResultEntry(entry));
+      }
+
+
+      /** {@inheritDoc} */
+      @Override
+      public boolean handleReference(final SearchResultReference ref)
+      {
+        return queue.add(processSearchResultReference(ref));
+      }
+    }
+  }
+
+
+  /**
+   * Search listener for opends id async search results.
+   */
+  protected class OpenDSAsyncSearchListener
+    extends AbstractOpenDSSearch
+    implements SearchResultHandler, IntermediateResponseHandler
+  {
+
+    /** Search result listener. */
+    private final SearchListener listener;
+
+
+    /**
+     * Creates a new opends async search listener.
+     *
+     * @param  sr  search request
+     * @param  sl  search listener
+     */
+    public OpenDSAsyncSearchListener(
+      final org.ldaptive.SearchRequest sr, final SearchListener sl)
+    {
+      super(sr);
+      listener = sl;
+    }
+
+
+    /**
+     * Initializes this opends async search listener.
+     *
+     * @throws  LdapException  if an error occurs
+     */
+    public void initialize()
+      throws LdapException
+    {
+      search(connection, request);
+    }
+
+
+    /**
+     * Executes an ldap search.
+     *
+     * @param  conn  to search with
+     * @param  sr  to read properties from
+     *
+     * @throws  LdapException  if an error occurs
+     */
+    protected void search(
+      final Connection conn, final org.ldaptive.SearchRequest sr)
+      throws LdapException
+    {
+      final SearchRequest opendsSr = getSearchRequest(sr);
+      if (sr.getControls() != null) {
+        for (Control c :
+          config.getControlProcessor().processRequestControls(
+            sr.getControls())) {
+          opendsSr.addControl(c);
+        }
+      }
+      conn.getAsynchronousConnection().search(opendsSr, this, this);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleErrorResult(final ErrorResultException e)
+    {
+      logger.trace("reading error result: {}", e);
+      final org.ldaptive.Response<Void> response = createResponse(
+        request, null, e.getResult());
+      listener.searchResponseReceived(response);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleResult(final Result r)
+    {
+      logger.trace("reading result: {}", r);
+      final org.ldaptive.Response<Void> response = createResponse(
+        request, null, r);
+      listener.searchResponseReceived(response);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean handleEntry(final SearchResultEntry entry)
+    {
+      listener.searchItemReceived(processSearchResultEntry(entry));
+      return true;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean handleReference(final SearchResultReference ref)
+    {
+      listener.searchItemReceived(processSearchResultReference(ref));
+      return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean handleIntermediateResponse(final IntermediateResponse res)
+    {
+      listener.searchItemReceived(processIntermediateResponse(res));
+      return true;
+    }
+  }
+
+
+  /**
+   * Common search functionality for opends iterators and listeners.
+   */
+  protected abstract class AbstractOpenDSSearch
+  {
+
+    /** Search request. */
+    protected final org.ldaptive.SearchRequest request;
+
+    /** Utility class. */
+    protected final OpenDSUtils util;
+
+
+    /**
+     * Creates a new abstract opends search.
+     *
+     * @param  sr  search request
+     */
+    public AbstractOpenDSSearch(final org.ldaptive.SearchRequest sr)
+    {
+      request = sr;
+      util = new OpenDSUtils(request.getSortBehavior());
+      util.setBinaryAttributes(request.getBinaryAttributes());
     }
 
 
@@ -786,53 +1139,6 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasNext()
-      throws LdapException
-    {
-      if (resultIterator == null || response != null) {
-        return false;
-      }
-
-      boolean more = resultIterator.hasNext();
-      if (!more) {
-        final Result result = resultIterator.getResult();
-        final List<Control> ctls = result.getControls();
-        final ResponseControl[] respControls =
-          config.getControlProcessor().processResponseControls(
-            request.getControls(), ctls.toArray(new Control[ctls.size()]));
-        final boolean searchAgain = ControlProcessor.searchAgain(respControls);
-        if (searchAgain) {
-          resultIterator = search(connection, request);
-          more = resultIterator.hasNext();
-        }
-        if (!more) {
-          response = new org.ldaptive.Response<Void>(
-            null,
-            ResultCode.valueOf(result.getResultCode().intValue()),
-            result.getDiagnosticMessage(),
-            result.getMatchedDN(),
-            respControls,
-            resultIterator.getReferralURLs());
-        }
-      }
-      return more;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public LdapEntry next()
-      throws LdapException
-    {
-      final OpenDSUtils util = new OpenDSUtils(request.getSortBehavior());
-      util.setBinaryAttributes(request.getBinaryAttributes());
-      final SearchResultEntry entry = resultIterator.getSearchResultEntry();
-      return util.toLdapEntry(entry);
-    }
-
-
     /**
      * Determines whether the supplied ldap exception should be ignored.
      *
@@ -859,122 +1165,85 @@ public class OpenDSConnection implements org.ldaptive.provider.Connection
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public org.ldaptive.Response<Void> getResponse()
+    /**
+     * Processes the response controls on the supplied entry and returns a
+     * corresponding search item.
+     *
+     * @param  entry  to process
+     *
+     * @return  search item
+     */
+    protected SearchItem processSearchResultEntry(
+      final SearchResultEntry entry)
     {
-      return response;
+      logger.trace("reading search entry: {}", entry);
+      ResponseControl[] respControls = null;
+      if (entry.getControls() != null && entry.getControls().size() > 0) {
+        final List<Control> ctls = entry.getControls();
+        respControls =
+          config.getControlProcessor().processResponseControls(
+            request.getControls(), ctls.toArray(new Control[ctls.size()]));
+      }
+      final SearchEntry se =  util.toSearchEntry(entry, respControls, -1);
+      return new SearchItem(se);
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void close() throws LdapException {}
+    /**
+     * Processes the response controls on the supplied reference and returns a
+     * corresponding search item.
+     *
+     * @param  ref  to process
+     *
+     * @return  search item
+     */
+    protected SearchItem processSearchResultReference(
+      final SearchResultReference ref)
+    {
+      logger.trace("reading search reference: {}", ref);
+      if (request.getFollowReferrals()) {
+        throw new UnsupportedOperationException(
+          "Referral following not supported");
+      }
+      ResponseControl[] respControls = null;
+      if (ref.getControls() != null && ref.getControls().size() > 0) {
+        final List<Control> ctls = ref.getControls();
+        respControls =
+          config.getControlProcessor().processResponseControls(
+            request.getControls(), ctls.toArray(new Control[ctls.size()]));
+      }
+      final SearchReference sr = new SearchReference(
+        -1, respControls, ref.getURIs());
+      return new SearchItem(sr);
+    }
 
 
     /**
-     * Search results handler for storing entries returned by the search
-     * operation.
+     * Processes the response controls on the supplied response and returns a
+     * corresponding search item.
+     *
+     * @param  res  to process
+     *
+     * @return  search item
      */
-    private class SearchResultIterator implements SearchResultHandler
+    protected SearchItem processIntermediateResponse(
+      final IntermediateResponse res)
     {
-
-      /** Search results. */
-      private final Queue<SearchResultEntry> responseQueue =
-        new ConcurrentLinkedQueue<SearchResultEntry>();
-
-      /** Search result. */
-      private Result result;
-
-      /** Referral URLs. */
-      private final List<String> referralUrls = new ArrayList<String>();
-
-
-      /**
-       * Returns the next search result entry from the queue.
-       *
-       * @return  search result entry
-       */
-      public SearchResultEntry getSearchResultEntry()
-      {
-        return responseQueue.poll();
+      logger.trace("reading intermediate response: {}", res);
+      ResponseControl[] respControls = null;
+      if (res.getControls() != null && res.getControls().size() > 0) {
+        final List<Control> ctls = res.getControls();
+        respControls =
+          config.getControlProcessor().processResponseControls(
+            request.getControls(), ctls.toArray(new Control[ctls.size()]));
       }
-
-
-      /**
-       * Returns the result of the search.
-       *
-       * @return  search result
-       */
-      public Result getResult()
-      {
-        return result;
-      }
-
-
-      /**
-       * Returns any referral URLs received from search references.
-       *
-       * @return  referral urls
-       */
-      public String[] getReferralURLs()
-      {
-        return referralUrls.isEmpty() ? null :
-          referralUrls.toArray(new String[referralUrls.size()]);
-      }
-
-
-      /**
-       * Whether the response queue is empty.
-       *
-       * @return  whether the response queue is empty
-       */
-      public boolean hasNext()
-      {
-        return !responseQueue.isEmpty();
-      }
-
-
-      /** {@inheritDoc} */
-      @Override
-      public void handleErrorResult(final ErrorResultException e)
-      {
-        result = e.getResult();
-      }
-
-
-      /** {@inheritDoc} */
-      @Override
-      public void handleResult(final Result r)
-      {
-        result = r;
-      }
-
-
-      /** {@inheritDoc} */
-      @Override
-      public boolean handleEntry(final SearchResultEntry entry)
-      {
-        logger.trace("reading search entry: {}", entry);
-        responseQueue.add(entry);
-        return true;
-      }
-
-
-      /** {@inheritDoc} */
-      @Override
-      public boolean handleReference(final SearchResultReference ref)
-      {
-        logger.trace("reading search reference: {}", ref);
-        if (request.getFollowReferrals()) {
-          throw new UnsupportedOperationException(
-            "Referral following not supported");
-        }
-        for (String s : ref.getURIs()) {
-          referralUrls.add(s);
-        }
-        return true;
-      }
+      final org.ldaptive.intermediate.IntermediateResponse ir =
+        IntermediateResponseFactory.createIntermediateResponse(
+          res.getOID(),
+          res.getValue().toByteArray(),
+          respControls,
+          -1);
+      return new SearchItem(ir);
     }
   }
 }
