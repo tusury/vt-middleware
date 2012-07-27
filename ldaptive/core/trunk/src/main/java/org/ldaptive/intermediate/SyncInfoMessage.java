@@ -69,7 +69,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
     REFRESH_PRESENT,
 
     /** sync id set. */
-    SYNC_ID_SET;
+    SYNC_ID_SET
   }
 
 

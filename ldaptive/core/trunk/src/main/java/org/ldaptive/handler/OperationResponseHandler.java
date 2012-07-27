@@ -32,18 +32,8 @@ public interface OperationResponseHandler<Q extends Request, T>
 {
 
 
-  /**
-   * Process the response from an ldap operation.
-   *
-   * @param  conn  the operation was performed on
-   * @param  request  used to perform the operation
-   * @param  response  produced from an operation
-   *
-   * @return  handler result
-   *
-   * @throws  LdapException  if an error occurs processing the operation
-   * response
-   */
+  /** {@inheritDoc} */
+  @Override
   HandlerResult<Response<T>> process(
     Connection conn, Q request, Response<T> response)
     throws LdapException;

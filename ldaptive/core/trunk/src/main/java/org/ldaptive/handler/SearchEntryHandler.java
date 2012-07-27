@@ -28,17 +28,8 @@ public interface SearchEntryHandler extends Handler<SearchRequest, SearchEntry>
 {
 
 
-  /**
-   * Process an entry from an ldap search.
-   *
-   * @param  conn  the search was performed on
-   * @param  request  used to perform the search
-   * @param  entry  from a search result
-   *
-   * @return  handler result
-   *
-   * @throws  LdapException  if the LDAP returns an error
-   */
+  /** {@inheritDoc} */
+  @Override
   HandlerResult<SearchEntry> process(
     Connection conn, SearchRequest request, SearchEntry entry)
     throws LdapException;
