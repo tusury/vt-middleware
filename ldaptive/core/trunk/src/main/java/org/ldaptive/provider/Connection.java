@@ -22,6 +22,7 @@ import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.extended.ExtendedRequest;
 
 /**
@@ -134,6 +135,17 @@ public interface Connection
    * @throws  LdapException  if an error occurs
    */
   void searchAsync(SearchRequest request, SearchListener listener)
+    throws LdapException;
+
+
+  /**
+   * Abandon an operation.
+   *
+   * @param  request  containing the data necessary to perform the operation
+   *
+   * @throws  LdapException  if an error occurs
+   */
+  void abandon(AbandonRequest request)
     throws LdapException;
 
 
