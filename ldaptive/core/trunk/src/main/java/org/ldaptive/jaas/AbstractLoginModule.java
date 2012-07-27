@@ -54,6 +54,9 @@ public abstract class AbstractLoginModule implements LoginModule
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Default roles. */
+  protected final List<LdapRole> defaultRole = new ArrayList<LdapRole>();
+
   /** Initialized subject. */
   protected Subject subject;
 
@@ -86,9 +89,6 @@ public abstract class AbstractLoginModule implements LoginModule
 
   /** Whether ldap credential data should be set. */
   protected boolean setLdapCredential;
-
-  /** Default roles. */
-  protected List<LdapRole> defaultRole = new ArrayList<LdapRole>();
 
   /** Name of group to add all principals to. */
   protected String principalGroupName;

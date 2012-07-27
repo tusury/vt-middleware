@@ -31,7 +31,7 @@ public interface Handler<Q extends Request, S>
 
 
   /**
-   * Execute this ldap operation.
+   * Process the supplied result for this handler.
    *
    * @param  conn  connection the operation was executed on
    * @param  request  executed by the operation

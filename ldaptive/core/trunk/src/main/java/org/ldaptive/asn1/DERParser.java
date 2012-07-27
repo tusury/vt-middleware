@@ -104,7 +104,7 @@ public class DERParser
     final byte b = encoded.get();
     // CheckStyle:MagicNumber OFF
     final int tagNo = b & 0x1F;
-    final boolean constructed = (b & 0x20) == 0x20 ? true : false;
+    final boolean constructed = (b & 0x20) == 0x20;
     // Read class from first two high-order bits
     switch (b & 0xC0) {
     case UniversalDERTag.TAG_CLASS:

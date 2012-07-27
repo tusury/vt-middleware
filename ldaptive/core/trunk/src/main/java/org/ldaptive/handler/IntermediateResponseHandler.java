@@ -29,17 +29,8 @@ public interface IntermediateResponseHandler
 {
 
 
-  /**
-   * Process an intermediate response from an ldap operation.
-   *
-   * @param  conn  the operation was performed on
-   * @param  request  used to perform the search
-   * @param  response  operation response
-   *
-   * @return  handler result
-   *
-   * @throws  LdapException  if the LDAP returns an error
-   */
+  /** {@inheritDoc} */
+  @Override
   HandlerResult<IntermediateResponse> process(
     Connection conn, Request request, IntermediateResponse response)
     throws LdapException;

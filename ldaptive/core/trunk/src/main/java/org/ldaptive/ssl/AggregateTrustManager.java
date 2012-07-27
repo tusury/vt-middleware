@@ -17,6 +17,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
@@ -89,9 +90,7 @@ public class AggregateTrustManager implements X509TrustManager
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
         logger.debug("invoking getAcceptedIssuers invoked for {}", tm);
-        for (X509Certificate cert : tm.getAcceptedIssuers()) {
-          issuers.add(cert);
-        }
+        Collections.addAll(issuers, tm.getAcceptedIssuers());
       }
     }
     return issuers.toArray(new X509Certificate[issuers.size()]);

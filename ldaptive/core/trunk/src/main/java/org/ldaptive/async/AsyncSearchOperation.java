@@ -126,7 +126,7 @@ public class AsyncSearchOperation
     @Override
     public void searchItemReceived(final SearchItem item)
     {
-      final Future<Void> future = executorService.submit(
+      executorService.submit(
         new Callable<Void>() {
           @Override
           public Void call()

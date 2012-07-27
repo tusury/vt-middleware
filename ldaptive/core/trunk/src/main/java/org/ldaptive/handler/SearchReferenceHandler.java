@@ -29,17 +29,8 @@ public interface SearchReferenceHandler
 {
 
 
-  /**
-   * Process a search reference from an ldap search.
-   *
-   * @param  conn  the search was performed on
-   * @param  request  used to perform the search
-   * @param  reference  from a search result
-   *
-   * @return  handler result
-   *
-   * @throws  LdapException  if the LDAP returns an error
-   */
+  /** {@inheritDoc} */
+  @Override
   HandlerResult<SearchReference> process(
     Connection conn, SearchRequest request, SearchReference reference)
     throws LdapException;

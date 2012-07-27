@@ -14,6 +14,7 @@
 package org.ldaptive;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -251,9 +252,7 @@ public class SearchResult extends AbstractLdapBean
    */
   public void addReference(final SearchReference... reference)
   {
-    for (SearchReference r : reference) {
-      searchReferences.add(r);
-    }
+    Collections.addAll(searchReferences, reference);
   }
 
 
@@ -278,7 +277,7 @@ public class SearchResult extends AbstractLdapBean
   public void removeReference(final SearchReference... reference)
   {
     for (SearchReference r : reference) {
-      resultEntries.remove(r);
+      searchReferences.remove(r);
     }
   }
 
