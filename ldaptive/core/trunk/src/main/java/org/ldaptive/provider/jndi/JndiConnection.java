@@ -53,6 +53,7 @@ import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
+import org.ldaptive.provider.SearchListener;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
@@ -528,7 +529,9 @@ public class JndiConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
-  public SearchIterator searchAsync(final SearchRequest request)
+  public void searchAsync(
+    final SearchRequest request,
+    final SearchListener listener)
     throws LdapException
   {
     throw new UnsupportedOperationException(
