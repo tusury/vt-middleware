@@ -129,12 +129,11 @@ public interface Connection
    * Search the ldap asynchronously.
    *
    * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  search iterator
+   * @param  listener  to be notified as results arrive
    *
    * @throws  LdapException  if an error occurs
    */
-  SearchIterator searchAsync(SearchRequest request)
+  void searchAsync(SearchRequest request, SearchListener listener)
     throws LdapException;
 
 
