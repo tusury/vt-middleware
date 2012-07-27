@@ -27,7 +27,9 @@ import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SortBehavior;
+import org.ldaptive.control.ResponseControl;
 import org.ldaptive.control.SortKey;
 
 /**
@@ -166,23 +168,26 @@ public class NetscapeUtils
 
 
   /**
-   * Returns an ldap entry using the supplied netscape entry.
+   * Returns a search entry using the supplied netscape entry.
    *
    * @param  e  netscape entry
+   * @param  c  response controls
+   * @param  id  message id
    *
-   * @return  ldap entry
+   * @return  search entry
    */
   @SuppressWarnings("unchecked")
-  public LdapEntry toLdapEntry(final LDAPEntry e)
+  public SearchEntry toSearchEntry(
+    final LDAPEntry e, final ResponseControl[] c, final int id)
   {
-    final LdapEntry le = new LdapEntry(sortBehavior);
-    le.setDn(e.getDN() != null ? e.getDN() : "");
+    final SearchEntry se = new SearchEntry(id, c, sortBehavior);
+    se.setDn(e.getDN() != null ? e.getDN() : "");
 
     final Enumeration<LDAPAttribute> en = e.getAttributeSet().getAttributes();
     while (en.hasMoreElements()) {
-      le.addAttribute(toLdapAttribute(en.nextElement()));
+      se.addAttribute(toLdapAttribute(en.nextElement()));
     }
-    return le;
+    return se;
   }
 
 

@@ -32,7 +32,9 @@ import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SortBehavior;
+import org.ldaptive.control.ResponseControl;
 
 /**
  * Provides methods for converting between Apache Ldap specific objects and
@@ -212,20 +214,23 @@ public class ApacheLdapUtils
 
 
   /**
-   * Returns an ldap entry using the supplied apache ldap entry.
+   * Returns a search entry using the supplied apache ldap entry.
    *
    * @param  e  apache ldap entry
+   * @param  c  response controls
+   * @param  id  message id
    *
-   * @return  ldap entry
+   * @return  search entry
    */
-  public LdapEntry toLdapEntry(final Entry e)
+  public SearchEntry toSearchEntry(
+    final Entry e, final ResponseControl[] c, final int id)
   {
-    final LdapEntry le = new LdapEntry(sortBehavior);
-    le.setDn(e.getDn().getName());
+    final SearchEntry se = new SearchEntry(id, c, sortBehavior);
+    se.setDn(e.getDn().getName());
     for (Attribute a : e) {
-      le.addAttribute(toLdapAttribute(a));
+      se.addAttribute(toLdapAttribute(a));
     }
-    return le;
+    return se;
   }
 
 

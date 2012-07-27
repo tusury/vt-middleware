@@ -25,8 +25,9 @@ import com.unboundid.ldap.sdk.controls.SortKey;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
+import org.ldaptive.SearchEntry;
 import org.ldaptive.SortBehavior;
+import org.ldaptive.control.ResponseControl;
 
 /**
  * Provides methods for converting between Unbound ID specific objects and
@@ -150,20 +151,23 @@ public class UnboundIDUtils
 
 
   /**
-   * Returns an ldap entry using the supplied unbound id entry.
+   * Returns a search entry using the supplied unbound id entry.
    *
    * @param  e  unbound id entry
+   * @param  c  response controls
+   * @param  id  message id
    *
-   * @return  ldap entry
+   * @return  search entry
    */
-  public LdapEntry toLdapEntry(final Entry e)
+  public SearchEntry toSearchEntry(
+    final Entry e, final ResponseControl[] c, final int id)
   {
-    final LdapEntry le = new LdapEntry(sortBehavior);
-    le.setDn(e.getDN());
+    final SearchEntry se = new SearchEntry(id, c, sortBehavior);
+    se.setDn(e.getDN());
     for (Attribute a : e.getAttributes()) {
-      le.addAttribute(toLdapAttribute(a));
+      se.addAttribute(toLdapAttribute(a));
     }
-    return le;
+    return se;
   }
 
 

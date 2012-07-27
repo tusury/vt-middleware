@@ -13,39 +13,39 @@
 */
 package org.ldaptive.provider.netscape;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.security.auth.callback.CallbackHandler;
 import netscape.ldap.LDAPConnection;
 import netscape.ldap.LDAPConstraints;
 import netscape.ldap.LDAPEntry;
 import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPExtendedOperation;
+import netscape.ldap.LDAPMessage;
 import netscape.ldap.LDAPRebind;
 import netscape.ldap.LDAPRebindAuth;
 import netscape.ldap.LDAPReferralException;
 import netscape.ldap.LDAPResponse;
 import netscape.ldap.LDAPResponseListener;
 import netscape.ldap.LDAPSearchConstraints;
-import netscape.ldap.LDAPSearchResults;
-import netscape.ldap.LDAPUrl;
+import netscape.ldap.LDAPSearchListener;
+import netscape.ldap.LDAPSearchResult;
+import netscape.ldap.LDAPSearchResultReference;
 import netscape.ldap.LDAPv2;
 import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DerefAliases;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtils;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchEntry;
+import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
+import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
@@ -53,7 +53,9 @@ import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
+import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
+import org.ldaptive.provider.SearchListener;
 import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -389,6 +391,32 @@ public class NetscapeConnection implements Connection
 
   /** {@inheritDoc} */
   @Override
+  public void searchAsync(
+    final org.ldaptive.SearchRequest request,
+    final SearchListener listener)
+    throws LdapException
+  {
+    final NetscapeAsyncSearchListener l = new NetscapeAsyncSearchListener(
+      request, listener);
+    l.initialize();
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void abandon(final AbandonRequest request)
+    throws LdapException
+  {
+    try {
+      connection.abandon(request.getMessageId());
+    } catch (LDAPException e) {
+      processLDAPException(e);
+    }
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
@@ -459,6 +487,31 @@ public class NetscapeConnection implements Connection
 
 
   /**
+   * Determines if the supplied response should result in an operation retry.
+   *
+   * @param  request  that produced the exception
+   * @param  ldapResponse  provider response
+   *
+   * @throws  LdapException  wrapping the ldap exception
+   */
+  protected void throwOperationException(
+    final Request request, final LDAPResponse ldapResponse)
+    throws LdapException
+  {
+    ProviderUtils.throwOperationException(
+      config.getOperationRetryResultCodes(),
+      String.format(
+        "Ldap returned result code: %s", ldapResponse.getResultCode()),
+      ldapResponse.getResultCode(),
+      ldapResponse.getMatchedDN(),
+      config.getControlProcessor().processResponseControls(
+        request.getControls(), ldapResponse.getControls()),
+      ldapResponse.getReferrals(),
+      false);
+  }
+
+
+  /**
    * Creates an operation response with the supplied response data.
    *
    * @param  <T>  type of response
@@ -480,7 +533,8 @@ public class NetscapeConnection implements Connection
       ldapResponse.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
         request.getControls(), ldapResponse.getControls()),
-      ldapResponse.getReferrals());
+      ldapResponse.getReferrals(),
+      ldapResponse.getMessageID());
   }
 
 
@@ -510,23 +564,15 @@ public class NetscapeConnection implements Connection
   /**
    * Search iterator for netscape search results.
    */
-  protected class NetscapeSearchIterator implements SearchIterator
+  protected class NetscapeSearchIterator
+    extends AbstractNetscapeSearch implements SearchIterator
   {
-
-    /** Search request. */
-    private final SearchRequest request;
 
     /** Response data. */
     private Response<Void> response;
 
-    /** Response result code. */
-    private ResultCode responseResultCode;
-
-    /** Referral URLs. */
-    private String[] referralUrls;
-
-    /** Ldap search results. */
-    private LDAPSearchResults results;
+    /** Ldap search result iterator. */
+    private SearchResultIterator resultIterator;
 
 
     /**
@@ -536,7 +582,7 @@ public class NetscapeConnection implements Connection
      */
     public NetscapeSearchIterator(final SearchRequest sr)
     {
-      request = sr;
+      super(sr);
     }
 
 
@@ -549,10 +595,199 @@ public class NetscapeConnection implements Connection
       throws LdapException
     {
       try {
-        results = search(connection, request);
+        resultIterator = new SearchResultIterator(search(connection, request));
       } catch (LDAPException e) {
         processLDAPException(e);
       }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasNext()
+      throws LdapException
+    {
+      if (resultIterator == null || response != null) {
+        return false;
+      }
+
+      boolean more = false;
+      try {
+        more = resultIterator.hasNext();
+        if (!more) {
+          final LDAPResponse res = resultIterator.getResponse();
+          logger.trace("reading search response: {}", response);
+          final ResponseControl[] respControls =
+            config.getControlProcessor().processResponseControls(
+              request.getControls(), res.getControls());
+          final boolean searchAgain = ControlProcessor.searchAgain(
+            respControls);
+          if (searchAgain) {
+            resultIterator = new SearchResultIterator(
+              search(connection, request));
+            more = resultIterator.hasNext();
+          }
+          if (!more) {
+            throwOperationException(request, res);
+            response = new Response<Void>(
+              null,
+              ResultCode.valueOf(res.getResultCode()),
+              res.getErrorMessage(),
+              res.getMatchedDN(),
+              respControls,
+              res.getReferrals(),
+              res.getMessageID());
+          }
+        }
+      } catch (LDAPException e) {
+        final ResultCode rc = ignoreSearchException(
+          config.getSearchIgnoreResultCodes(), e);
+        if (rc == null) {
+          processLDAPException(e);
+        }
+        response = new Response<Void>(
+          null, rc, e.getLDAPErrorMessage(), e.getMatchedDN(), null, null, -1);
+      }
+      return more;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public SearchItem next()
+      throws LdapException
+    {
+      SearchItem si;
+      final LDAPMessage message = resultIterator.next();
+      if (message instanceof LDAPSearchResult) {
+        si = processLDAPSearchResult((LDAPSearchResult) message);
+      } else if (message instanceof LDAPSearchResultReference) {
+        si = processLDAPSearchResultReference(
+          (LDAPSearchResultReference) message);
+      } else {
+        throw new IllegalStateException("Unknown message: " + message);
+      }
+      return si;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Response<Void> getResponse()
+    {
+      return response;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void close()
+      throws LdapException {}
+  }
+
+
+  /**
+   * Async search listener for Netscape search results.
+   */
+  protected class NetscapeAsyncSearchListener extends AbstractNetscapeSearch
+  {
+
+    /** Search result listener. */
+    private final SearchListener listener;
+
+
+    /**
+     * Creates a new netscape async search listener.
+     *
+     * @param  sr  search request
+     * @param  sl  search listener
+     */
+    public NetscapeAsyncSearchListener(
+      final SearchRequest sr,
+      final SearchListener sl)
+    {
+      super(sr);
+      listener = sl;
+    }
+
+
+    /**
+     * Initializes this netscape search listener.
+     *
+     * @throws  LdapException  if an error occurs
+     */
+    public void initialize()
+      throws LdapException
+    {
+      try {
+        search(connection, request);
+      } catch (LDAPException e) {
+        processLDAPException(e);
+      }
+    }
+
+
+    /**
+     * Executes an ldap search.
+     *
+     * @param  conn  to search with
+     * @param  sr  to read properties from
+     *
+     * @return  ldap search listener
+     *
+     * @throws  LDAPException  if an error occurs
+     */
+    protected LDAPSearchListener search(
+      final LDAPConnection conn,
+      final SearchRequest sr)
+      throws LDAPException
+    {
+      final SearchResultIterator i = new SearchResultIterator(
+        super.search(conn, sr));
+      while (i.hasNext()) {
+        final LDAPMessage message = i.next();
+        if (message instanceof LDAPSearchResult) {
+          listener.searchItemReceived(
+            processLDAPSearchResult((LDAPSearchResult) message));
+        } else if (message instanceof LDAPSearchResultReference) {
+          listener.searchItemReceived(
+            processLDAPSearchResultReference(
+              (LDAPSearchResultReference) message));
+        } else {
+          throw new IllegalStateException("Unknown message: " + message);
+        }
+      }
+      final Response<Void> response = createResponse(
+        request, null, i.getResponse());
+      listener.searchResponseReceived(response);
+      return null;
+    }
+  }
+
+
+  /**
+   * Common search functionality for netscape iterators and listeners.
+   */
+  protected abstract class AbstractNetscapeSearch
+  {
+
+    /** Search request. */
+    protected final SearchRequest request;
+
+    /** Utility class. */
+    protected final NetscapeUtils util;
+
+
+    /**
+     * Creates a new abstract netscape search.
+     *
+     * @param  sr  search request
+     */
+    public AbstractNetscapeSearch(final SearchRequest sr)
+    {
+      request = sr;
+      util = new NetscapeUtils(request.getSortBehavior());
+      util.setBinaryAttributes(request.getBinaryAttributes());
     }
 
 
@@ -566,7 +801,7 @@ public class NetscapeConnection implements Connection
      *
      * @throws  LDAPException  if an error occurs
      */
-    protected LDAPSearchResults search(
+    protected LDAPSearchListener search(
       final LDAPConnection conn,
       final SearchRequest sr)
       throws LDAPException
@@ -583,6 +818,7 @@ public class NetscapeConnection implements Connection
             sr.getSearchFilter().format() : null,
           retAttrs,
           sr.getTypesOnly(),
+          (LDAPSearchListener) null,
           getLDAPSearchConstraints(request));
     }
 
@@ -655,98 +891,6 @@ public class NetscapeConnection implements Connection
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean hasNext()
-      throws LdapException
-    {
-      if (results == null || response != null) {
-        return false;
-      }
-
-      boolean more = false;
-      try {
-        more = results.hasMoreElements();
-        if (!more) {
-          final ResponseControl[] respControls =
-            config.getControlProcessor().processResponseControls(
-              request.getControls(),
-              results.getResponseControls());
-          final boolean searchAgain = ControlProcessor.searchAgain(
-            respControls);
-          if (searchAgain) {
-            results = search(connection, request);
-            more = results.hasMoreElements();
-          }
-          if (!more) {
-            response = new Response<Void>(
-              null,
-              responseResultCode != null ? responseResultCode
-                : ResultCode.SUCCESS,
-              null,
-              null,
-              respControls,
-              referralUrls);
-          }
-        }
-      } catch (LDAPException e) {
-        final ResponseControl[] respControls =
-          config.getControlProcessor().processResponseControls(
-            request.getControls(), results.getResponseControls());
-        final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
-        if (rc == null) {
-          processLDAPException(e);
-        }
-        response = new Response<Void>(
-          null, rc, null, null, respControls, referralUrls);
-      }
-      return more;
-    }
-
-
-    /** {@inheritDoc} */
-    @Override
-    public LdapEntry next()
-      throws LdapException
-    {
-      final NetscapeUtils bu = new NetscapeUtils(request.getSortBehavior());
-      bu.setBinaryAttributes(request.getBinaryAttributes());
-
-      LdapEntry le = null;
-      try {
-        final LDAPEntry entry = results.next();
-        logger.trace("reading search entry: {}", entry);
-        le = bu.toLdapEntry(entry);
-      } catch (LDAPReferralException e) {
-        logger.trace(
-          "reading search reference: {}", Arrays.toString(e.getURLs()));
-        final List<String> urls = new ArrayList<String>();
-        for (LDAPUrl url : e.getURLs()) {
-          urls.add(url.getUrl());
-        }
-        referralUrls = LdapUtils.concatArrays(
-          urls.toArray(new String[urls.size()]), referralUrls);
-        responseResultCode = ResultCode.valueOf(e.getLDAPResultCode());
-      } catch (LDAPException e) {
-        final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
-        if (rc == null) {
-          processLDAPException(e);
-        }
-        response = new Response<Void>(
-          null,
-          rc,
-          null,
-          null,
-          config.getControlProcessor().processResponseControls(
-            request.getControls(), results.getResponseControls()),
-          referralUrls);
-      }
-      return le;
-    }
-
-
     /**
      * Determines whether the supplied ldap exception should be ignored.
      *
@@ -773,17 +917,128 @@ public class NetscapeConnection implements Connection
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public Response<Void> getResponse()
+    /**
+     * Processes the response controls on the supplied result and returns a
+     * corresponding search item.
+     *
+     * @param  res  to process
+     *
+     * @return  search item
+     */
+    protected SearchItem processLDAPSearchResult(
+      final LDAPSearchResult res)
     {
-      return response;
+      logger.trace("reading search result: {}", res);
+      ResponseControl[] respControls = null;
+      if (res.getControls() != null && res.getControls().length > 0) {
+        respControls = config.getControlProcessor().processResponseControls(
+          request.getControls(), res.getControls());
+      }
+      final SearchEntry se = util.toSearchEntry(
+        res.getEntry(), respControls, res.getMessageID());
+      return new SearchItem(se);
     }
 
 
-    /** {@inheritDoc} */
-    @Override
-    public void close()
-      throws LdapException {}
+    /**
+     * Processes the response controls on the supplied reference and returns a
+     * corresponding search item.
+     *
+     * @param  ref  to process
+     *
+     * @return  search item
+     */
+    protected SearchItem processLDAPSearchResultReference(
+      final LDAPSearchResultReference ref)
+    {
+      logger.trace("reading search reference: {}", ref);
+      ResponseControl[] respControls = null;
+      if (ref.getControls() != null && ref.getControls().length > 0) {
+        respControls = config.getControlProcessor().processResponseControls(
+          request.getControls(), ref.getControls());
+      }
+      final SearchReference sr = new SearchReference(
+        ref.getMessageID(), respControls, ref.getUrls());
+      return new SearchItem(sr);
+    }
+  }
+
+
+  /**
+   * Iterates over an ldap search listener.
+   */
+  protected static class SearchResultIterator
+  {
+
+    /** Listener to iterate over. */
+    private final LDAPSearchListener listener;
+
+    /** Last response message received from the listener. */
+    private LDAPMessage message;
+
+    /** Response available after all messages have been received. */
+    private LDAPResponse response;
+
+
+    /**
+     * Create a new ldap search listener iterator.
+     *
+     * @param  l  ldap search listener
+     */
+    public SearchResultIterator(final LDAPSearchListener l)
+    {
+      listener = l;
+    }
+
+
+    /**
+     * Returns whether the listener has another message to read.
+     *
+     * @return  whether the listener has another message to read
+     *
+     * @throws  LDAPException  if an error occurs reading the response
+     */
+    public boolean hasNext()
+      throws LDAPException
+    {
+      if (response != null) {
+        return false;
+      }
+      boolean more = false;
+      message = listener.getResponse();
+      if (message != null) {
+        if (message instanceof LDAPSearchResult) {
+          more = true;
+        } else if (message instanceof LDAPSearchResultReference) {
+          more = true;
+        } else {
+          response = (LDAPResponse) message;
+        }
+      }
+      return more;
+    }
+
+
+    /**
+     * Returns the next message in the listener.
+     *
+     * @return  ldap message
+     */
+    public LDAPMessage next()
+    {
+      return message;
+    }
+
+
+    /**
+     * Returns the search response. Available after all messages have been read
+     * from the listener.
+     *
+     * @return  ldap search response
+     */
+    public LDAPResponse getResponse()
+    {
+      return response;
+    }
   }
 }

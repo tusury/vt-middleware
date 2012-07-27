@@ -21,6 +21,10 @@ import org.apache.directory.shared.ldap.codec.controls.manageDsaIT.ManageDsaITFa
 import org.apache.directory.shared.ldap.codec.controls.search.pagedSearch.PagedResultsFactory;
 import org.apache.directory.shared.ldap.codec.standalone.StandaloneLdapApiService;
 import org.apache.directory.shared.ldap.extras.controls.ppolicy_impl.PasswordPolicyFactory;
+import org.apache.directory.shared.ldap.extras.controls.syncrepl_impl.SyncDoneValueFactory;
+import org.apache.directory.shared.ldap.extras.controls.syncrepl_impl.SyncInfoValueFactory;
+import org.apache.directory.shared.ldap.extras.controls.syncrepl_impl.SyncRequestValueFactory;
+import org.apache.directory.shared.ldap.extras.controls.syncrepl_impl.SyncStateValueFactory;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.ConnectionFactory;
@@ -45,6 +49,10 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     ManageDsaITFactory.class.getName(),
     PagedResultsFactory.class.getName(),
     PasswordPolicyFactory.class.getName(),
+    SyncDoneValueFactory.class.getName(),
+    SyncInfoValueFactory.class.getName(),
+    SyncRequestValueFactory.class.getName(),
+    SyncStateValueFactory.class.getName(),
   };
 
   /**

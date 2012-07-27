@@ -13,6 +13,11 @@
 */
 package org.ldaptive.provider.apache;
 
+import java.nio.ByteBuffer;
+import org.apache.directory.shared.ldap.extras.controls.SyncDoneValue;
+import org.apache.directory.shared.ldap.extras.controls.SyncRequestValueImpl;
+import org.apache.directory.shared.ldap.extras.controls.SyncStateValue;
+import org.apache.directory.shared.ldap.extras.controls.SynchronizationModeEnum;
 import org.apache.directory.shared.ldap.extras.controls.ppolicy.PasswordPolicy;
 import org.apache.directory.shared.ldap.extras.controls.ppolicy.PasswordPolicyErrorEnum;
 import org.apache.directory.shared.ldap.extras.controls.ppolicy.PasswordPolicyImpl;
@@ -21,9 +26,13 @@ import org.apache.directory.shared.ldap.model.message.Control;
 import org.apache.directory.shared.ldap.model.message.controls.ManageDsaITImpl;
 import org.apache.directory.shared.ldap.model.message.controls.PagedResults;
 import org.apache.directory.shared.ldap.model.message.controls.PagedResultsImpl;
+import org.ldaptive.asn1.UuidType;
 import org.ldaptive.control.ManageDsaITControl;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.control.SyncDoneControl;
+import org.ldaptive.control.SyncRequestControl;
+import org.ldaptive.control.SyncStateControl;
 import org.ldaptive.provider.ControlHandler;
 
 /**
@@ -62,6 +71,14 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       final PasswordPolicyControl c = (PasswordPolicyControl) requestControl;
       ctl = new PasswordPolicyImpl();
       ctl.setCritical(c.getCriticality());
+    } else if (SyncRequestControl.OID.equals(requestControl.getOID())) {
+      final SyncRequestControl c = (SyncRequestControl) requestControl;
+      ctl = new SyncRequestValueImpl();
+      ((SyncRequestValueImpl) ctl).setCookie(c.getCookie());
+      ((SyncRequestValueImpl) ctl).setReloadHint(c.getReloadHint());
+      ((SyncRequestValueImpl) ctl).setMode(
+        SynchronizationModeEnum.getSyncMode(c.getRequestMode().value()));
+      ctl.setCritical(c.getCriticality());
     }
     return ctl;
   }
@@ -93,6 +110,17 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
             PasswordPolicyControl.Error.valueOf(error.getValue()));
         }
       }
+    } else if (SyncStateControl.OID.equals(responseControl.getOid())) {
+      final SyncStateValue c = (SyncStateValue) responseControl;
+      ctl = new SyncStateControl(
+        SyncStateControl.State.valueOf(c.getSyncStateType().getValue()),
+        UuidType.decode(ByteBuffer.wrap(c.getEntryUUID())),
+        c.getCookie(),
+        c.isCritical());
+    } else if (SyncDoneControl.OID.equals(responseControl.getOid())) {
+      final SyncDoneValue c = (SyncDoneValue) responseControl;
+      ctl = new SyncDoneControl(
+        c.getCookie(), c.isRefreshDeletes(), c.isCritical());
     }
     return ctl;
   }
