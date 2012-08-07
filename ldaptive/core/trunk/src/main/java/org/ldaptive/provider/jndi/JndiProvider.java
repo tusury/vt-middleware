@@ -19,8 +19,8 @@ import java.util.Map;
 import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.ssl.TLSSocketFactory;
 import org.ldaptive.ssl.ThreadLocalTLSSocketFactory;
 import org.slf4j.Logger;
@@ -98,10 +98,10 @@ public class JndiProvider implements Provider<JndiProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public ConnectionFactory<JndiProviderConfig> getConnectionFactory(
+  public ProviderConnectionFactory<JndiProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    ConnectionFactory<JndiProviderConfig> cf;
+    ProviderConnectionFactory<JndiProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = getJndiStartTLSConnectionFactory(cc, config.getEnvironment());
     } else {

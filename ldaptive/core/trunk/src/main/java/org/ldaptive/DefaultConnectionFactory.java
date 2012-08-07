@@ -14,6 +14,8 @@
 package org.ldaptive;
 
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.ProviderConnection;
+import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.provider.jndi.JndiProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,11 +236,10 @@ public class DefaultConnectionFactory implements ConnectionFactory
     private final ConnectionConfig config;
 
     /** Connection factory. */
-    private final org.ldaptive.provider.ConnectionFactory<?>
-    providerConnectionFactory;
+    private final ProviderConnectionFactory<?> providerConnectionFactory;
 
     /** Provider connection. */
-    private org.ldaptive.provider.Connection providerConnection;
+    private ProviderConnection providerConnection;
 
 
     /**
@@ -249,7 +250,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      */
     public DefaultConnection(
       final ConnectionConfig cc,
-      final org.ldaptive.provider.ConnectionFactory<?> cf)
+      final ProviderConnectionFactory<?> cf)
     {
       config = cc;
       providerConnectionFactory = cf;
@@ -277,7 +278,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      * @throws  IllegalStateException  if the connection is not open
      */
     @Override
-    public org.ldaptive.provider.Connection getProviderConnection()
+    public ProviderConnection getProviderConnection()
     {
       if (!isOpen()) {
         throw new IllegalStateException("Connection is not open");

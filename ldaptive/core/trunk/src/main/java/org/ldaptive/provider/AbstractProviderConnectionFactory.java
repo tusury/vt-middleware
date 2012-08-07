@@ -29,8 +29,9 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractConnectionFactory<T extends ProviderConfig>
-  implements ConnectionFactory<T>
+public abstract class
+AbstractProviderConnectionFactory<T extends ProviderConfig>
+  implements ProviderConnectionFactory<T>
 {
 
   /** Logger for this class. */
@@ -54,7 +55,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
    * @param  url  of the ldap to connect to
    * @param  config  provider configuration
    */
-  public AbstractConnectionFactory(final String url, final T config)
+  public AbstractProviderConnectionFactory(final String url, final T config)
   {
     if (url == null) {
       throw new IllegalArgumentException("LDAP URL cannot be null");
@@ -97,14 +98,14 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public Connection create()
+  public ProviderConnection create()
     throws LdapException
   {
     LdapException lastThrown = null;
     final String[] urls = parseLdapUrl(
       ldapUrl,
       providerConfig.getConnectionStrategy());
-    Connection conn = null;
+    ProviderConnection conn = null;
     for (String url : urls) {
       try {
         logger.trace(
@@ -139,7 +140,7 @@ public abstract class AbstractConnectionFactory<T extends ProviderConfig>
    *
    * @throws  LdapException  if a connection cannot be established
    */
-  protected abstract Connection createInternal(final String url)
+  protected abstract ProviderConnection createInternal(final String url)
     throws LdapException;
 
 

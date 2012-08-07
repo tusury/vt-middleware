@@ -50,7 +50,7 @@ public interface Provider<T extends ProviderConfig>
    *
    * @return  connection factory
    */
-  ConnectionFactory<T> getConnectionFactory(ConnectionConfig cc);
+  ProviderConnectionFactory<T> getConnectionFactory(ConnectionConfig cc);
 
 
   /**

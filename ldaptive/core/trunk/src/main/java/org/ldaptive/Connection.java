@@ -13,6 +13,8 @@
 */
 package org.ldaptive;
 
+import org.ldaptive.provider.ProviderConnection;
+
 /**
  * Interface for ldap connection implementations.
  *
@@ -75,7 +77,7 @@ public interface Connection
    *
    * @return  provider connection
    */
-  org.ldaptive.provider.Connection getProviderConnection();
+  ProviderConnection getProviderConnection();
 
 
   /** This will close the connection to the LDAP. */
