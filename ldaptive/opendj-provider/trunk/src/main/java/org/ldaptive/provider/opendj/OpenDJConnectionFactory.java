@@ -19,7 +19,7 @@ import org.forgerock.opendj.ldap.LDAPConnectionFactory;
 import org.forgerock.opendj.ldap.LDAPOptions;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -29,7 +29,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public class OpenDJConnectionFactory
-  extends AbstractConnectionFactory<OpenDJProviderConfig>
+  extends AbstractProviderConnectionFactory<OpenDJProviderConfig>
 {
 
   /** Ldap connection options. */

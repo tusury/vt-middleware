@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.DefaultSSLContextInitializer;
@@ -43,7 +43,7 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public ConnectionFactory<OpenDSProviderConfig> getConnectionFactory(
+  public ProviderConnectionFactory<OpenDSProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
     LDAPOptions options = config.getOptions();

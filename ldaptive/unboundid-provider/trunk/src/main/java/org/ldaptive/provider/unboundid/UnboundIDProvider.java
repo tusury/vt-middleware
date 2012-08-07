@@ -19,8 +19,8 @@ import javax.net.ssl.SSLContext;
 import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.DefaultSSLContextInitializer;
@@ -44,7 +44,8 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public ConnectionFactory<UnboundIDProviderConfig> getConnectionFactory(
+  public ProviderConnectionFactory<UnboundIDProviderConfig>
+  getConnectionFactory(
     final ConnectionConfig cc)
   {
     SocketFactory factory = config.getSocketFactory();
@@ -70,7 +71,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
     if (options == null) {
       options = getDefaultLDAPConnectionOptions(cc);
     }
-    ConnectionFactory<UnboundIDProviderConfig> cf;
+    ProviderConnectionFactory<UnboundIDProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = new UnboundIDStartTLSConnectionFactory(
         cc.getLdapUrl(), config, factory, sslContext, options);

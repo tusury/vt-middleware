@@ -27,8 +27,8 @@ import org.apache.directory.shared.ldap.extras.controls.syncrepl_impl.SyncReques
 import org.apache.directory.shared.ldap.extras.controls.syncrepl_impl.SyncStateValueFactory;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.DefaultSSLContextInitializer;
@@ -79,8 +79,8 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public ConnectionFactory<ApacheLdapProviderConfig> getConnectionFactory(
-    final ConnectionConfig cc)
+  public ProviderConnectionFactory<ApacheLdapProviderConfig>
+  getConnectionFactory(final ConnectionConfig cc)
   {
     LdapConnectionConfig lcc = config.getLdapConnectionConfig();
     if (lcc == null) {

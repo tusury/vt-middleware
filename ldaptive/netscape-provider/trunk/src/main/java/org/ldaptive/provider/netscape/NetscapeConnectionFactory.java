@@ -19,7 +19,7 @@ import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSocketFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -29,7 +29,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public class NetscapeConnectionFactory
-  extends AbstractConnectionFactory<NetscapeProviderConfig>
+  extends AbstractProviderConnectionFactory<NetscapeProviderConfig>
 {
 
   /** LDAP protocol version. */

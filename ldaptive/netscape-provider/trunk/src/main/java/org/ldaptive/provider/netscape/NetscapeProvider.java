@@ -21,8 +21,8 @@ import netscape.ldap.LDAPException;
 import netscape.ldap.LDAPSocketFactory;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
@@ -41,7 +41,7 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public ConnectionFactory<NetscapeProviderConfig> getConnectionFactory(
+  public ProviderConnectionFactory<NetscapeProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
     if (cc.getUseStartTLS()) {

@@ -23,7 +23,7 @@ import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -34,7 +34,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public class UnboundIDStartTLSConnectionFactory
-  extends AbstractConnectionFactory<UnboundIDProviderConfig>
+  extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
 {
 
   /** Socket factory to use for connections. */
