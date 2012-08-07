@@ -120,7 +120,7 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, expected.getAttributeNames())).getResult();
-      AssertJUnit.assertEquals(expected, result.getEntry());
+      TestUtils.assertEquals(expected, result.getEntry());
     } finally {
       conn.close();
     }
@@ -155,7 +155,7 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, new String[] {expected.getAttribute().getName()})).getResult();
-      AssertJUnit.assertEquals(expected, result.getEntry());
+      TestUtils.assertEquals(expected, result.getEntry());
     } finally {
       conn.close();
     }
@@ -195,7 +195,7 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, expected.getAttributeNames())).getResult();
-      AssertJUnit.assertEquals(expected, result.getEntry());
+      TestUtils.assertEquals(expected, result.getEntry());
     } finally {
       conn.close();
     }
@@ -276,7 +276,7 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(
           dn, expected.getAttributeNames())).getResult();
-      AssertJUnit.assertEquals(expected, result.getEntry());
+      TestUtils.assertEquals(expected, result.getEntry());
     } finally {
       conn.close();
     }

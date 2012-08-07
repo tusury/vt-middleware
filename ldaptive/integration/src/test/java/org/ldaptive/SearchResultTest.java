@@ -90,7 +90,7 @@ public class SearchResultTest extends AbstractTest
         new SearchRequest(
           dn, new SearchFilter(filter), returnAttrs.split("\\|"))).getResult();
       final String expected = TestUtils.readFileIntoString(ldifFile);
-      AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } finally {
       conn.close();
     }

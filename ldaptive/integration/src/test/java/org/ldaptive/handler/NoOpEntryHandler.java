@@ -21,7 +21,7 @@ import org.ldaptive.LdapUtils;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class NoOpEntryHandler extends AbstractLdapEntryHandler
+public class NoOpEntryHandler extends AbstractSearchEntryHandler
 {
 
   /** hash code seed. */

@@ -162,9 +162,13 @@ public class CompareOperationTest extends AbstractTest
           referralDn, new LdapAttribute(attrName, attrValue));
         request.setFollowReferrals(true);
         Response<Boolean> response = compare.execute(request);
-        AssertJUnit.assertTrue(response.getResult());
-        AssertJUnit.assertEquals(
-          ResultCode.COMPARE_TRUE, response.getResultCode());
+        if (response.getResultCode() == ResultCode.COMPARE_TRUE) {
+          AssertJUnit.assertTrue(response.getResult());
+        } else {
+          // some providers don't support authenticated referrals
+          AssertJUnit.assertEquals(
+            ResultCode.REFERRAL, response.getResultCode());
+        }
       } catch (UnsupportedOperationException e) {
         // ignore this test if not supported
         AssertJUnit.assertNotNull(e);

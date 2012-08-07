@@ -103,7 +103,7 @@ public class LdifTest extends AbstractTest
       final LdifReader ldifReader = new LdifReader(reader);
       final SearchResult result2 = ldifReader.read();
 
-      AssertJUnit.assertEquals(result1, result2);
+      TestUtils.assertEquals(result2, result1);
     } finally {
       conn.close();
     }

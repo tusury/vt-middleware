@@ -348,7 +348,7 @@ public class AuthenticatorTest extends AbstractTest
     response = auth.authenticate(
       new AuthenticationRequest(
         dn, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertEquals(
+    TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new SearchResult(response.getLdapEntry()));
   }
@@ -398,7 +398,7 @@ public class AuthenticatorTest extends AbstractTest
     response = auth.authenticate(
       new AuthenticationRequest(
         dn, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertEquals(
+    TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new SearchResult(response.getLdapEntry()));
   }
@@ -556,7 +556,7 @@ public class AuthenticatorTest extends AbstractTest
         returnAttrs.split("\\|")));
     AssertJUnit.assertTrue(response.getResult());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertEquals(
+    TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new SearchResult(response.getLdapEntry()));
   }
@@ -609,7 +609,7 @@ public class AuthenticatorTest extends AbstractTest
         user,
         new Credential(credential),
         returnAttrs.split("\\|")));
-    AssertJUnit.assertEquals(
+    TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new SearchResult(response.getLdapEntry()));
   }
@@ -663,7 +663,7 @@ public class AuthenticatorTest extends AbstractTest
         user,
         new Credential(credential),
         returnAttrs.split("\\|")));
-    AssertJUnit.assertEquals(
+    TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new SearchResult(response.getLdapEntry()));
   }
@@ -841,16 +841,20 @@ public class AuthenticatorTest extends AbstractTest
             new AttributeModification(
               AttributeModificationType.REMOVE,
               new LdapAttribute("pwdAccountLockedTime")), }));
+
+      response = auth.authenticate(
+        new AuthenticationRequest(user, new Credential(credential)));
+      ppcResponse = (PasswordPolicyControl) response.getControls()[0];
+      AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
+      AssertJUnit.assertNotNull(
+        response.getAccountState().getWarning().getExpiration());
+
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported
+      AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
     }
-
-    response = auth.authenticate(
-      new AuthenticationRequest(user, new Credential(credential)));
-    ppcResponse = (PasswordPolicyControl) response.getControls()[0];
-    AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
-    AssertJUnit.assertNotNull(
-      response.getAccountState().getWarning().getExpiration());
   }
 
 

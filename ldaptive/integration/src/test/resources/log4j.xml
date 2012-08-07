@@ -43,7 +43,7 @@
   </category>
 
   <category name="org.ldaptive.provider"
-            additivity="true">
+            additivity="false">
     <priority value="INFO"/>
     <appender-ref ref="CONSOLE"/>
   </category>

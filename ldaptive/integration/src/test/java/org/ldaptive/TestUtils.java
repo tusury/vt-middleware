@@ -24,6 +24,7 @@ import org.ldaptive.auth.NoOpDnResolver;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
+import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 
 /**
@@ -339,6 +340,40 @@ public final class TestUtils
       }
     }
     return le;
+  }
+
+
+  /**
+   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting
+   * the entries in actual from SearchEntry to LdapEntry.
+   *
+   * @param  expected  value
+   * @param  actual  value
+   */
+  public static void assertEquals(
+    final SearchResult expected, final SearchResult actual)
+  {
+    final SearchResult newResult = new SearchResult();
+    for (LdapEntry e : actual.getEntries()) {
+      newResult.addEntry(new LdapEntry(e.getDn(), e.getAttributes()));
+    }
+    AssertJUnit.assertEquals(expected, newResult);
+  }
+
+
+  /**
+   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting
+   * the actual entry to an LdapEntry.
+   *
+   * @param  expected  value
+   * @param  actual  value
+   */
+  public static void assertEquals(
+    final LdapEntry expected, final LdapEntry actual)
+  {
+    final LdapEntry newEntry = new LdapEntry(
+      actual.getDn(), actual.getAttributes());
+    AssertJUnit.assertEquals(expected, newEntry);
   }
 
 
