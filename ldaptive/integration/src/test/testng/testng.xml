@@ -41,6 +41,8 @@
              value="/org/ldaptive/createLdapEntry-15.ldif"/>
   <parameter name="createEntry16"
              value="/org/ldaptive/createLdapEntry-16.ldif"/>
+  <parameter name="createEntry17"
+             value="/org/ldaptive/createLdapEntry-17.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -198,11 +200,19 @@
   <parameter name="pagedSearchDn" value="${ldapBaseDn}"/>
   <parameter name="pagedSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
   <parameter name="pagedSearchReturnAttrs" value="cn|contactPerson|creationDate|objectClass|member|uid|uugid"/>
-  <parameter name="pagedSearchResults"
-             value="/org/ldaptive/pagedResults.ldif"/>
+  <parameter name="pagedSearchResults" value="/org/ldaptive/pagedResults.ldif"/>
 
   <parameter name="sortSearchDn" value="${ldapBaseDn}"/>
   <parameter name="sortSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
+
+  <parameter name="searchAsyncDn" value="${ldapBaseDn}"/>
+  <parameter name="searchAsyncFilter" value="(uid=17)"/>
+  <parameter name="searchAsyncReturnAttrs" value="departmentNumber|givenName|sn"/>
+  <parameter name="searchAsyncResults" value="/org/ldaptive/searchResults-17.ldif"/>
+
+  <parameter name="syncReplSearchDn" value="cn=Andrew Johnson,${ldapBaseDn}"/>
+  <parameter name="syncReplSearchReturnAttrs" value="cn|employeeType|mail|objectClass|sn|uid"/>
+  <parameter name="syncReplSearchResults" value="/org/ldaptive/syncReplResults.ldif"/>
 
   <parameter name="getSchemaDn" value="${ldapBaseDn}"/>
   <parameter name="getSchemaResults"
@@ -308,6 +318,8 @@
   <parameter name="passwordModifyOldPass" value="password16"/>
   <parameter name="passwordModifyNewPass" value="emancipator"/>
 
+  <parameter name="cancelDn" value="${ldapBaseDn}"/>
+
   <parameter name="toSearchResultsDn" value="${ldapBaseDn}"/>
   <parameter name="toSearchResultsFilter" value="(uid=7)"/>
   <parameter name="toSearchResultsAttrs" value="departmentNumber|givenName|sn"/>
@@ -378,6 +390,7 @@
         <include name="modify" />
         <include name="modifyDn" />
         <include name="extended" />
+        <include name="async" />
         <include name="spring" />
         <include name="auth" />
         <include name="jaas" />

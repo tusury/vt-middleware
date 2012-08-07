@@ -22,9 +22,9 @@ import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.handler.DnAttributeEntryHandler;
-import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
+import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.jaas.RoleResolver;
 import org.ldaptive.jaas.TestCallbackHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
@@ -80,7 +80,7 @@ public class PropertiesTest
         sr, "classpath:/org/ldaptive/ldap.null.properties");
     srSource.initialize();
 
-    AssertJUnit.assertNull(sr.getLdapEntryHandlers());
+    AssertJUnit.assertNull(sr.getSearchEntryHandlers());
   }
 
 
@@ -137,7 +137,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(
       5, ((PagedResultsControl) sr.getControls()[0]).getSize());
 
-    for (LdapEntryHandler rh : sr.getLdapEntryHandlers()) {
+    for (SearchEntryHandler rh : sr.getSearchEntryHandlers()) {
       if (RecursiveEntryHandler.class.isInstance(rh)) {
         final RecursiveEntryHandler h = (RecursiveEntryHandler) rh;
         AssertJUnit.assertEquals("member", h.getSearchAttribute());
@@ -259,7 +259,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(
       "jpegPhoto", searchRequest.getBinaryAttributes()[0]);
 
-    for (LdapEntryHandler srh : searchRequest.getLdapEntryHandlers()) {
+    for (SearchEntryHandler srh : searchRequest.getSearchEntryHandlers()) {
       if (RecursiveEntryHandler.class.isInstance(srh)) {
         final RecursiveEntryHandler h = (RecursiveEntryHandler)
           srh;
@@ -335,6 +335,6 @@ public class PropertiesTest
 
     AssertJUnit.assertEquals(SearchScope.SUBTREE, sr.getSearchScope());
     AssertJUnit.assertNotNull(sr.getControls());
-    AssertJUnit.assertNull(sr.getLdapEntryHandlers());
+    AssertJUnit.assertNull(sr.getSearchEntryHandlers());
   }
 }

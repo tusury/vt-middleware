@@ -104,7 +104,7 @@ public class DsmlTest extends AbstractTest
       final Dsmlv1Reader dsmlReader = new Dsmlv1Reader(reader);
       final SearchResult result2 = dsmlReader.read();
 
-      AssertJUnit.assertEquals(result1, result2);
+      TestUtils.assertEquals(result2, result1);
     } finally {
       conn.close();
     }
