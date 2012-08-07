@@ -19,7 +19,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import org.ldaptive.LdapException;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -29,7 +29,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public class JndiConnectionFactory
-  extends AbstractConnectionFactory<JndiProviderConfig>
+  extends AbstractProviderConnectionFactory<JndiProviderConfig>
 {
 
   /** Environment properties. */

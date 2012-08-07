@@ -23,7 +23,7 @@ import org.ldaptive.LdapException;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface ConnectionFactory<T extends ProviderConfig>
+public interface ProviderConnectionFactory<T extends ProviderConfig>
 {
 
 
@@ -42,6 +42,6 @@ public interface ConnectionFactory<T extends ProviderConfig>
    *
    * @throws  LdapException  if an LDAP error occurs
    */
-  Connection create()
+  ProviderConnection create()
     throws LdapException;
 }

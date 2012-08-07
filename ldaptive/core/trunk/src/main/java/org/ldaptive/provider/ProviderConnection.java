@@ -31,7 +31,7 @@ import org.ldaptive.extended.ExtendedRequest;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface Connection
+public interface ProviderConnection
 {
 
 

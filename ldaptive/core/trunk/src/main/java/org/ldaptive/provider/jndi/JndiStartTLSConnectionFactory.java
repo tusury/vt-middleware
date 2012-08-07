@@ -24,7 +24,7 @@ import javax.naming.ldap.StartTlsResponse;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -35,7 +35,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public class JndiStartTLSConnectionFactory
-  extends AbstractConnectionFactory<JndiProviderConfig>
+  extends AbstractProviderConnectionFactory<JndiProviderConfig>
 {
 
   /** Environment properties. */
