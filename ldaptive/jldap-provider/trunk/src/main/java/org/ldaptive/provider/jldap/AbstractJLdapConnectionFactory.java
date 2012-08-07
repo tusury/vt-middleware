@@ -18,7 +18,7 @@ import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -30,7 +30,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
-  extends AbstractConnectionFactory<JLdapProviderConfig>
+  extends AbstractProviderConnectionFactory<JLdapProviderConfig>
 {
 
   /** JLdap connection constraints. */

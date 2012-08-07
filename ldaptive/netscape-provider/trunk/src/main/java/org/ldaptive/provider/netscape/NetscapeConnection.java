@@ -50,8 +50,8 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
-import org.ldaptive.provider.Connection;
 import org.ldaptive.provider.ControlProcessor;
+import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class NetscapeConnection implements Connection
+public class NetscapeConnection implements ProviderConnection
 {
 
   /** Logger for this class. */

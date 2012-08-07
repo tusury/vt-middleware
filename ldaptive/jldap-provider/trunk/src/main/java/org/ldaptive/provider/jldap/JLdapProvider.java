@@ -18,8 +18,8 @@ import javax.net.ssl.SSLSocketFactory;
 import com.novell.ldap.LDAPConstraints;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.ConnectionFactory;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
@@ -45,10 +45,10 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public ConnectionFactory<JLdapProviderConfig> getConnectionFactory(
+  public ProviderConnectionFactory<JLdapProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
   {
-    ConnectionFactory<JLdapProviderConfig> cf;
+    ProviderConnectionFactory<JLdapProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = getJLdapStartTLSConnectionFactory(cc, config.getLDAPConstraints());
     } else if (cc.getUseSSL()) {

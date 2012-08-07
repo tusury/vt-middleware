@@ -20,7 +20,7 @@ import org.apache.directory.shared.ldap.model.exception.LdapOperationException;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.ResultCode;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -30,7 +30,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public class ApacheLdapConnectionFactory
-  extends AbstractConnectionFactory<ApacheLdapProviderConfig>
+  extends AbstractProviderConnectionFactory<ApacheLdapProviderConfig>
 {
 
   /** Connection configuration. */

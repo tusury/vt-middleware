@@ -19,7 +19,7 @@ import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import com.unboundid.ldap.sdk.LDAPException;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
@@ -29,7 +29,7 @@ import org.ldaptive.provider.ConnectionException;
  * @version  $Revision$ $Date$
  */
 public class UnboundIDConnectionFactory
-  extends AbstractConnectionFactory<UnboundIDProviderConfig>
+  extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
 {
 
   /** Socket factory to use for LDAP and LDAPS connections. */

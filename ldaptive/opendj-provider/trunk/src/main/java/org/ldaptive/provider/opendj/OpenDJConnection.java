@@ -75,7 +75,8 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class OpenDJConnection implements org.ldaptive.provider.Connection
+public class OpenDJConnection
+  implements org.ldaptive.provider.ProviderConnection
 {
 
   /** Logger for this class. */

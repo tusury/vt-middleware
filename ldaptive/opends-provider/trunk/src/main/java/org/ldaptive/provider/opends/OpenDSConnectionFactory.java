@@ -15,7 +15,7 @@ package org.ldaptive.provider.opends;
 
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.provider.AbstractConnectionFactory;
+import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 import org.opends.sdk.Connection;
 import org.opends.sdk.ErrorResultException;
@@ -29,7 +29,7 @@ import org.opends.sdk.LDAPOptions;
  * @version  $Revision$ $Date$
  */
 public class OpenDSConnectionFactory
-  extends AbstractConnectionFactory<OpenDSProviderConfig>
+  extends AbstractProviderConnectionFactory<OpenDSProviderConfig>
 {
 
   /** Ldap connection options. */
