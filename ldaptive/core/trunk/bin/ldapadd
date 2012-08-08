@@ -3,7 +3,7 @@
 JAVA=java
 
 # sample options for kerberos
-#KRB5_OPTS="-Djava.security.auth.login.config=krb5_jaas.config -Djavax.security.auth.useSubjectCredsOnly=false -Djava.security.krb5.realm=VT.EDU -Djava.security.krb5.kdc=directory.vt.edu"
+#KRB5_OPTS="-Djava.security.auth.login.config=krb5_jaas.config -Djavax.security.auth.useSubjectCredsOnly=false -Djava.security.krb5.realm=VT.EDU -Djava.security.krb5.kdc=directory.ldaptive.org"
 
 #KEYSTORE_OPTS="-Djavax.net.ssl.keyStore= -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=BKS"
 
