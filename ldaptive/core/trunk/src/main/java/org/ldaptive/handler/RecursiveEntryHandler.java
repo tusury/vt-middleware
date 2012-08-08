@@ -31,11 +31,11 @@ import org.ldaptive.SearchResult;
  * results into the original entry. For the following LDIF:
  *
  * <pre>
-   dn: uugid=group1,ou=groups,dc=vt,dc=edu
+   dn: uugid=group1,ou=groups,dc=ldaptive,dc=org
    uugid: group1
-   member: uugid=group2,ou=groups,dc=vt,dc=edu
+   member: uugid=group2,ou=groups,dc=ldaptive,dc=org
 
-   dn: uugid=group2,ou=groups,dc=vt,dc=edu
+   dn: uugid=group2,ou=groups,dc=ldaptive,dc=org
    uugid: group2
  * </pre>
  *
@@ -49,10 +49,10 @@ import org.ldaptive.SearchResult;
  * <p>Will produce this result for the query (uugid=group1):</p>
  *
  * <pre>
-   dn: uugid=group1,ou=groups,dc=vt,dc=edu
+   dn: uugid=group1,ou=groups,dc=ldaptive,dc=org
    uugid: group1
    uugid: group2
-   member: uugid=group2,ou=groups,dc=vt,dc=edu
+   member: uugid=group2,ou=groups,dc=ldaptive,dc=org
  * </pre>
  *
  * @author  Middleware Services
