@@ -1,0 +1,236 @@
+/*
+  $Id$
+
+  Copyright (C) 2003-2012 Virginia Tech.
+  All rights reserved.
+
+  SEE LICENSE FOR MORE INFORMATION
+
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
+  Version: $Revision$
+  Updated: $Date$
+*/
+package org.ldaptive.async;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
+import org.ldaptive.AbstractOperation;
+import org.ldaptive.Connection;
+import org.ldaptive.LdapException;
+import org.ldaptive.Response;
+import org.ldaptive.SearchEntry;
+import org.ldaptive.SearchReference;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
+import org.ldaptive.handler.HandlerResult;
+import org.ldaptive.intermediate.IntermediateResponse;
+import org.ldaptive.provider.SearchItem;
+import org.ldaptive.provider.SearchListener;
+
+/**
+ * Executes an asynchronous ldap search operation.
+ *
+ * @author  Middleware Services
+ * @version  $Revision$ $Date$
+ */
+public class AsyncSearchOperation
+  extends AbstractOperation<SearchRequest, SearchResult>
+{
+
+  /** Single thread executor to submit async operations to. */
+  private final ExecutorService executorService =
+    Executors.newCachedThreadPool();
+
+
+  /**
+   * Creates a new async search operation.
+   *
+   * @param  conn  connection
+   */
+  public AsyncSearchOperation(final Connection conn)
+  {
+    super(conn);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public FutureResponse<SearchResult> execute(final SearchRequest request)
+    throws LdapException
+  {
+    final Future<Response<SearchResult>> future = executorService.submit(
+      new Callable<Response<SearchResult>>() {
+        @Override
+        public Response<SearchResult> call()
+          throws LdapException
+        {
+          return AsyncSearchOperation.super.execute(request);
+        }
+      });
+    return new FutureResponse<SearchResult>(future);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  protected Response<SearchResult> invoke(final SearchRequest request)
+    throws LdapException
+  {
+    final AsyncSearchListener listener = new AsyncSearchListener(request);
+    getConnection().getProviderConnection().searchAsync(request, listener);
+    try {
+      return listener.getResponse();
+    } catch (InterruptedException e) {
+      throw new LdapException("Asynchronous search interrupted", e);
+    }
+  }
+
+
+  /**
+   * Async search listener used to build a search result and invoke search
+   * request handlers.
+   */
+  protected class AsyncSearchListener implements SearchListener
+  {
+
+    /** Containing request handlers. */
+    private final SearchRequest searchRequest;
+
+    /** To build as results arrive. */
+    private final SearchResult searchResult;
+
+    /** Wait for the response to arrive. */
+    private final Semaphore lock = new Semaphore(0);
+
+    /** To return when a response is received or the operation is aborted. */
+    private Response<SearchResult> searchResponse;
+
+
+    /**
+     * Creates a new async search listener.
+     *
+     * @param  request  ldap search request
+     */
+    public AsyncSearchListener(final SearchRequest request)
+    {
+      searchRequest = request;
+      searchResult = new SearchResult(searchRequest.getSortBehavior());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void searchItemReceived(final SearchItem item)
+    {
+      executorService.submit(
+        new Callable<Void>() {
+          @Override
+          public Void call()
+            throws LdapException
+          {
+            try {
+              processSearchItem(item);
+            } catch (LdapException e) {
+              logger.warn("Handler exception ignored", e);
+            }
+            return null;
+          }
+        });
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void searchResponseReceived(final Response<Void> response)
+    {
+      searchResponse = new Response<SearchResult>(
+        searchResult,
+        response.getResultCode(),
+        response.getMessage(),
+        response.getMatchedDn(),
+        response.getControls(),
+        response.getReferralURLs(),
+        response.getMessageId());
+      lock.release();
+    }
+
+
+    /**
+     * Returns the response data associated with this search ,blocking until a
+     * response is available.
+     *
+     * @return  response data
+     *
+     * @throws  InterruptedException  if this thread is interrupted before a
+     * response is received
+     */
+    public Response<SearchResult> getResponse()
+      throws InterruptedException
+    {
+      lock.acquire();
+      return searchResponse;
+    }
+
+
+    /**
+     * Invokes the handlers for the supplied search item. Calls {@link
+     * #searchResponseReceived(Response)} if a handler aborts the operation.
+     *
+     * @param  item  to process
+     *
+     * @throws  LdapException  if a handler throws
+     */
+    protected void processSearchItem(final SearchItem item)
+      throws LdapException
+    {
+      logger.trace("Received search item={}", item);
+      if (item.isSearchEntry()) {
+        final SearchEntry se = item.getSearchEntry();
+        if (se != null) {
+          final HandlerResult<SearchEntry> hr = executeHandlers(
+            searchRequest.getSearchEntryHandlers(),
+            searchRequest,
+            se);
+          if (hr.getResult() != null) {
+            searchResult.addEntry(hr.getResult());
+          }
+          if (hr.getAbort()) {
+            logger.debug("Aborting search on entry=%s", se);
+            searchResponseReceived(new Response<Void>(null, null));
+          }
+        }
+      } else if (item.isSearchReference()) {
+        final SearchReference sr = item.getSearchReference();
+        if (sr != null) {
+          final HandlerResult<SearchReference> hr = executeHandlers(
+            searchRequest.getSearchReferenceHandlers(),
+            searchRequest,
+            sr);
+          if (hr.getResult() != null) {
+            searchResult.addReference(hr.getResult());
+          }
+          if (hr.getAbort()) {
+            logger.debug("Aborting search on reference=%s", sr);
+            searchResponseReceived(new Response<Void>(null, null));
+          }
+        }
+      } else if (item.isIntermediateResponse()) {
+        final IntermediateResponse ir = item.getIntermediateResponse();
+        if (ir != null) {
+          final HandlerResult<IntermediateResponse> hr = executeHandlers(
+            searchRequest.getIntermediateResponseHandlers(),
+            searchRequest,
+            ir);
+          if (hr.getAbort()) {
+            logger.debug("Aborting search on intermediate response=%s", ir);
+            searchResponseReceived(new Response<Void>(null, null));
+          }
+        }
+      }
+    }
+  }
+}

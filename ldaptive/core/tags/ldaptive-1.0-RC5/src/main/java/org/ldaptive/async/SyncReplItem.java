@@ -1,0 +1,325 @@
+/*
+  $Id$
+
+  Copyright (C) 2003-2012 Virginia Tech.
+  All rights reserved.
+
+  SEE LICENSE FOR MORE INFORMATION
+
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
+  Version: $Revision$
+  Updated: $Date$
+*/
+package org.ldaptive.async;
+
+import org.ldaptive.SearchEntry;
+import org.ldaptive.SearchResult;
+import org.ldaptive.control.ResponseControl;
+import org.ldaptive.control.SyncDoneControl;
+import org.ldaptive.control.SyncStateControl;
+import org.ldaptive.intermediate.SyncInfoMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Contains data returned when using the sync repl search control.
+ *
+ * @author  Middleware Services
+ * @version  $Revision$ $Date$
+ */
+public class SyncReplItem
+{
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+  /** Entry contained in this sync repl item. */
+  private final Entry syncReplEntry;
+
+  /** Message contained in this sync repl item. */
+  private final SyncInfoMessage syncInfoMessage;
+
+  /** Response contained in this sync repl item. */
+  private final Response syncReplResponse;
+
+
+  /**
+   * Creates a new sync repl item.
+   *
+   * @param  entry  that represents this item
+   */
+  public SyncReplItem(final Entry entry)
+  {
+    syncReplEntry = entry;
+    syncInfoMessage = null;
+    syncReplResponse = null;
+  }
+
+
+  /**
+   * Creates a new sync repl item.
+   *
+   * @param  message  that represents this item
+   */
+  public SyncReplItem(final SyncInfoMessage message)
+  {
+    syncReplEntry = null;
+    syncInfoMessage = message;
+    syncReplResponse = null;
+  }
+
+
+  /**
+   * Creates a new sync repl item.
+   *
+   * @param  response  that represents this item
+   */
+  public SyncReplItem(final Response response)
+  {
+    syncReplEntry = null;
+    syncInfoMessage = null;
+    syncReplResponse = response;
+  }
+
+
+  /**
+   * Returns whether this item represents a search entry.
+   *
+   * @return  whether this item represents a search entry
+   */
+  public boolean isEntry()
+  {
+    return syncReplEntry != null;
+  }
+
+
+  /**
+   * Returns the entry contained in this item or null if this item does not
+   * contain an entry.
+   *
+   * @return  sync repl entry
+   */
+  public Entry getEntry()
+  {
+    return syncReplEntry;
+  }
+
+
+  /**
+   * Returns whether this item represents an intermediate message.
+   *
+   * @return  whether this item represents an intermediate message
+   */
+  public boolean isMessage()
+  {
+    return syncInfoMessage != null;
+  }
+
+
+  /**
+   * Returns the intermediate message contained in this item or null if this
+   * item does not contain a message.
+   *
+   * @return  sync info message
+   */
+  public SyncInfoMessage getMessage()
+  {
+    return syncInfoMessage;
+  }
+
+
+  /**
+   * Returns whether this item represents a response.
+   *
+   * @return  whether this item represents a response
+   */
+  public boolean isResponse()
+  {
+    return syncReplResponse != null;
+  }
+
+
+  /**
+   * Returns the response contained in this item or null if this item does not
+   * contain a response.
+   *
+   * @return  response
+   */
+  public Response getResponse()
+  {
+    return syncReplResponse;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    String s;
+    if (isEntry()) {
+      s = String.format(
+        "[%s@%d::syncReplEntry=%s]",
+        getClass().getName(),
+        hashCode(),
+        syncReplEntry);
+    } else if (isMessage()) {
+      s = String.format(
+        "[%s@%d::syncInfoMessage=%s]",
+        getClass().getName(),
+        hashCode(),
+        syncInfoMessage);
+    } else if (isResponse()) {
+      s = String.format(
+        "[%s@%d::syncReplResponse=%s]",
+        getClass().getName(),
+        hashCode(),
+        syncReplResponse);
+    } else {
+      s = String.format("[%s@%d]", getClass().getName(), hashCode());
+    }
+    return s;
+  }
+
+
+  /**
+   * Wrapper class that provides easy access to the {@link SyncStateControl}
+   * contained in a search entry.
+   */
+  public static class Entry
+  {
+
+    /** Search entry that this class wraps. */
+    private final SearchEntry searchEntry;
+
+    /** Control to search the entry for. */
+    private SyncStateControl syncStateControl;
+
+
+    /**
+     * Creates a new entry. If the supplied search entry contains a {@link
+     * SyncStateControl} it is made available via {@link
+     * #getSyncStateControl()}.
+     *
+     * @param  entry  to search for sync state control in
+     */
+    public Entry(final SearchEntry entry)
+    {
+      searchEntry = entry;
+      if (entry.getControls() != null) {
+        for (ResponseControl c : entry.getControls()) {
+          if (SyncStateControl.OID.equals(c.getOID())) {
+            syncStateControl = (SyncStateControl) c;
+            break;
+          }
+        }
+      }
+    }
+
+
+    /**
+     * Returns the underlying search entry.
+     *
+     * @return  underlying search entry
+     */
+    public SearchEntry getSearchEntry()
+    {
+      return searchEntry;
+    }
+
+
+    /**
+     * Returns the sync state control or null if no such control exists in the
+     * search entry.
+     *
+     * @return  sync state control
+     */
+    public SyncStateControl getSyncStateControl()
+    {
+      return syncStateControl;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+      return
+        String.format(
+          "[%s@%d::searchEntry=%s]",
+          getClass().getName(),
+          hashCode(),
+          searchEntry);
+    }
+  }
+
+
+  /**
+   * Wrapper class that provides easy access to the {@link SyncDoneControl}
+   * contained in a response.
+   */
+  public static class Response
+  {
+
+    /** Response that this class wraps. */
+    private final org.ldaptive.Response<SearchResult> response;
+
+    /** Control to search the response for. */
+    private SyncDoneControl syncDoneControl;
+
+
+    /**
+     * Creates a new response. If the supplied response contains a {@link
+     * SyncDoneControl} it is made available via {@link #getSyncDoneControl()}.
+     *
+     * @param  res  to search for sync done control in
+     */
+    public Response(final org.ldaptive.Response<SearchResult> res)
+    {
+      response = res;
+      if (response.getControls() != null) {
+        for (ResponseControl c : response.getControls()) {
+          if (SyncDoneControl.OID.equals(c.getOID())) {
+            syncDoneControl = (SyncDoneControl) c;
+          }
+        }
+      }
+    }
+
+
+    /**
+     * Returns the underlying response.
+     *
+     * @return  underlying response
+     */
+    public org.ldaptive.Response<SearchResult> getResponse()
+    {
+      return response;
+    }
+
+
+    /**
+     * Returns the sync done control or null if no such control exists in the
+     * response.
+     *
+     * @return  sync done control
+     */
+    public SyncDoneControl getSyncDoneControl()
+    {
+      return syncDoneControl;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+      return
+        String.format(
+          "[%s@%d::response=%s]",
+          getClass().getName(),
+          hashCode(),
+          response);
+    }
+  }
+}
