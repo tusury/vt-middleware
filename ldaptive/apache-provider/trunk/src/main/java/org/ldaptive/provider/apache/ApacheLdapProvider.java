@@ -86,12 +86,13 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     if (lcc == null) {
       lcc = getDefaultLdapConnectionConfig(cc);
     }
-    return new ApacheLdapConnectionFactory(
-      cc.getLdapUrl(),
-      config,
-      lcc,
-      cc.getUseStartTLS(),
-      cc.getResponseTimeout());
+    return
+      new ApacheLdapConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        lcc,
+        cc.getUseStartTLS(),
+        cc.getResponseTimeout());
   }
 
 
@@ -127,7 +128,8 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
         new HostnameVerifyingTrustManager(
-          new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()));
+          new DefaultHostnameVerifier(),
+          ldapUrl.getEntriesAsString()));
     }
     return contextInit;
   }
@@ -161,8 +163,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
       lcc.setKeyManagers(keyManagers);
       if (cc.getSslConfig() != null &&
           cc.getSslConfig().getEnabledCipherSuites() != null) {
-        lcc.setEnabledCipherSuites(
-          cc.getSslConfig().getEnabledCipherSuites());
+        lcc.setEnabledCipherSuites(cc.getSslConfig().getEnabledCipherSuites());
       }
       if (cc.getSslConfig() != null &&
           cc.getSslConfig().getEnabledProtocols() != null) {

@@ -120,7 +120,9 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
     } else if (SyncDoneControl.OID.equals(responseControl.getOid())) {
       final SyncDoneValue c = (SyncDoneValue) responseControl;
       ctl = new SyncDoneControl(
-        c.getCookie(), c.isRefreshDeletes(), c.isCritical());
+        c.getCookie(),
+        c.isRefreshDeletes(),
+        c.isCritical());
     }
     return ctl;
   }
