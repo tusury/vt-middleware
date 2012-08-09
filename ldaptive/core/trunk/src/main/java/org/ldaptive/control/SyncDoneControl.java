@@ -27,17 +27,16 @@ import org.ldaptive.asn1.OctetStringType;
  * defined as:
  *
  * <pre>
- *  syncDoneValue ::= SEQUENCE {
- *      cookie          syncCookie OPTIONAL,
- *      refreshDeletes  BOOLEAN DEFAULT FALSE
- *  }
+    syncDoneValue ::= SEQUENCE {
+        cookie          syncCookie OPTIONAL,
+        refreshDeletes  BOOLEAN DEFAULT FALSE
+    }
  * </pre>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class SyncDoneControl extends AbstractControl
-  implements ResponseControl
+public class SyncDoneControl extends AbstractControl implements ResponseControl
 {
 
   /** OID of this control. */
@@ -194,7 +193,8 @@ public class SyncDoneControl extends AbstractControl
     final DERParser parser = new DERParser();
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.registerHandler(
-      RefreshDeletesHandler.PATH, new RefreshDeletesHandler(this));
+      RefreshDeletesHandler.PATH,
+      new RefreshDeletesHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 

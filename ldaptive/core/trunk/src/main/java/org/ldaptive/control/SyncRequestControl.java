@@ -25,16 +25,16 @@ import org.ldaptive.asn1.SequenceEncoder;
  * defined as:
  *
  * <pre>
- *  syncRequestValue ::= SEQUENCE {
- *      mode ENUMERATED {
- *          -- 0 unused
- *          refreshOnly       (1),
- *          -- 2 reserved
- *          refreshAndPersist (3)
- *      },
- *      cookie     syncCookie OPTIONAL,
- *      reloadHint BOOLEAN DEFAULT FALSE
- *  }
+    syncRequestValue ::= SEQUENCE {
+        mode ENUMERATED {
+            -- 0 unused
+            refreshOnly       (1),
+            -- 2 reserved
+            refreshAndPersist (3)
+        },
+        cookie     syncCookie OPTIONAL,
+        reloadHint BOOLEAN DEFAULT FALSE
+    }
  * </pre>
  *
  * @author  Middleware Services
@@ -43,6 +43,12 @@ import org.ldaptive.asn1.SequenceEncoder;
 public class SyncRequestControl extends AbstractControl
   implements RequestControl
 {
+
+  /** OID of this control. */
+  public static final String OID = "1.3.6.1.4.1.4203.1.9.1.1";
+
+  /** hash value seed. */
+  private static final int HASH_CODE_SEED = 743;
 
   /** Types of request modes. */
   public enum Mode {
@@ -96,12 +102,6 @@ public class SyncRequestControl extends AbstractControl
       return null;
     }
   }
-
-  /** OID of this control. */
-  public static final String OID = "1.3.6.1.4.1.4203.1.9.1.1";
-
-  /** hash value seed. */
-  private static final int HASH_CODE_SEED = 743;
 
   /** request mode. */
   private Mode requestMode = Mode.REFRESH_ONLY;

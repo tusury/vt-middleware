@@ -1,26 +1,27 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.asn1;
 
 /**
  * Generic context-specific tag.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision: $
  */
 public class ContextDERTag extends AbstractDERTag
 {
+
   /** Generic tag name "CTX" for a context-specific type. */
   public static final String TAG_NAME = "CTX";
 
@@ -31,8 +32,8 @@ public class ContextDERTag extends AbstractDERTag
   /**
    * Creates a new context-specific tag with given tag number.
    *
-   * @param number        Tag number.
-   * @param isConstructed True for constructed tag, false otherwise.
+   * @param  number  Tag number.
+   * @param  isConstructed  True for constructed tag, false otherwise.
    */
   public ContextDERTag(final int number, final boolean isConstructed)
   {

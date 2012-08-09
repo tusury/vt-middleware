@@ -1,26 +1,27 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.asn1;
 
 /**
  * Generic application-specific tag.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision: $
  */
 public class ApplicationDERTag extends AbstractDERTag
 {
+
   /** Generic tag name "APP" for a application-specific type. */
   public static final String TAG_NAME = "APP";
 
@@ -31,8 +32,8 @@ public class ApplicationDERTag extends AbstractDERTag
   /**
    * Creates a new application-specific tag with given tag number.
    *
-   * @param number        Tag number.
-   * @param isConstructed True for constructed tag, false otherwise.
+   * @param  number  Tag number.
+   * @param  isConstructed  True for constructed tag, false otherwise.
    */
   public ApplicationDERTag(final int number, final boolean isConstructed)
   {

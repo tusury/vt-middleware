@@ -201,7 +201,8 @@ public class SortResponseControl extends AbstractControl
     final DERParser parser = new DERParser();
     parser.registerHandler(SortResultHandler.PATH, new SortResultHandler(this));
     parser.registerHandler(
-      AttributeTypeHandler.PATH, new AttributeTypeHandler(this));
+      AttributeTypeHandler.PATH,
+      new AttributeTypeHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 

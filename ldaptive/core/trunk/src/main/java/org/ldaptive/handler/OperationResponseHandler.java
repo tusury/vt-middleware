@@ -35,6 +35,8 @@ public interface OperationResponseHandler<Q extends Request, T>
   /** {@inheritDoc} */
   @Override
   HandlerResult<Response<T>> process(
-    Connection conn, Q request, Response<T> response)
+    Connection conn,
+    Q request,
+    Response<T> response)
     throws LdapException;
 }

@@ -32,6 +32,8 @@ public interface SearchReferenceHandler
   /** {@inheritDoc} */
   @Override
   HandlerResult<SearchReference> process(
-    Connection conn, SearchRequest request, SearchReference reference)
+    Connection conn,
+    SearchRequest request,
+    SearchReference reference)
     throws LdapException;
 }

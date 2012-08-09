@@ -31,6 +31,8 @@ public interface SearchEntryHandler extends Handler<SearchRequest, SearchEntry>
   /** {@inheritDoc} */
   @Override
   HandlerResult<SearchEntry> process(
-    Connection conn, SearchRequest request, SearchEntry entry)
+    Connection conn,
+    SearchRequest request,
+    SearchEntry entry)
     throws LdapException;
 }

@@ -100,11 +100,12 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
   @Override
   public String toString()
   {
-    return String.format(
-      "[dn=%s%s, responseControls=%s, messageId=%s]",
-      getDn(),
-      getAttributes(),
-      Arrays.toString(responseControls),
-      messageId);
+    return
+      String.format(
+        "[dn=%s%s, responseControls=%s, messageId=%s]",
+        getDn(),
+        getAttributes(),
+        Arrays.toString(responseControls),
+        messageId);
   }
 }

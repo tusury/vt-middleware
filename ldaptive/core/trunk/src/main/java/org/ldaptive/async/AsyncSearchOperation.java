@@ -177,9 +177,8 @@ public class AsyncSearchOperation
 
 
     /**
-     * Invokes the handlers for the supplied search item. Calls
-     * {@link #searchResponseReceived(Response)} if a handler aborts the
-     * operation.
+     * Invokes the handlers for the supplied search item. Calls {@link
+     * #searchResponseReceived(Response)} if a handler aborts the operation.
      *
      * @param  item  to process
      *
@@ -193,7 +192,9 @@ public class AsyncSearchOperation
         final SearchEntry se = item.getSearchEntry();
         if (se != null) {
           final HandlerResult<SearchEntry> hr = executeHandlers(
-            searchRequest.getSearchEntryHandlers(), searchRequest, se);
+            searchRequest.getSearchEntryHandlers(),
+            searchRequest,
+            se);
           if (hr.getResult() != null) {
             searchResult.addEntry(hr.getResult());
           }
@@ -206,7 +207,9 @@ public class AsyncSearchOperation
         final SearchReference sr = item.getSearchReference();
         if (sr != null) {
           final HandlerResult<SearchReference> hr = executeHandlers(
-            searchRequest.getSearchReferenceHandlers(), searchRequest, sr);
+            searchRequest.getSearchReferenceHandlers(),
+            searchRequest,
+            sr);
           if (hr.getResult() != null) {
             searchResult.addReference(hr.getResult());
           }

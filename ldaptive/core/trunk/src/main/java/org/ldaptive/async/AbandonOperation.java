@@ -50,7 +50,7 @@ public class AbandonOperation
    *
    * @param  request  containing the data required by this operation
    *
-   * @throws LdapException  if the operation fails
+   * @throws  LdapException  if the operation fails
    */
   public void execute(final AbandonRequest request)
     throws LdapException
