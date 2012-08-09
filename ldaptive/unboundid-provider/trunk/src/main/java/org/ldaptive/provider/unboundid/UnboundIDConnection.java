@@ -100,7 +100,8 @@ public class UnboundIDConnection implements ProviderConnection
    * @param  pc  provider configuration
    */
   public UnboundIDConnection(
-    final LDAPConnection lc, final UnboundIDProviderConfig pc)
+    final LDAPConnection lc,
+    final UnboundIDProviderConfig pc)
   {
     connection = lc;
     config = pc;
@@ -282,8 +283,7 @@ public class UnboundIDConnection implements ProviderConnection
               .getBytes() : null);
         props.setAuthorizationID(sc.getAuthorizationId());
         props.setRealm(
-          sc instanceof GssApiConfig ? ((GssApiConfig) sc).getRealm()
-                                         : null);
+          sc instanceof GssApiConfig ? ((GssApiConfig) sc).getRealm() : null);
         sbr = new GSSAPIBindRequest(
           props,
           config.getControlProcessor().processRequestControls(
@@ -296,6 +296,7 @@ public class UnboundIDConnection implements ProviderConnection
       }
 
       sbr.setFollowReferrals(request.getFollowReferrals());
+
       final BindResult result = connection.bind(sbr);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
@@ -442,8 +443,7 @@ public class UnboundIDConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public SearchIterator search(
-    final org.ldaptive.SearchRequest request)
+  public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
   {
     final UnboundIDSearchIterator i = new UnboundIDSearchIterator(request);
@@ -455,11 +455,13 @@ public class UnboundIDConnection implements ProviderConnection
   /** {@inheritDoc} */
   @Override
   public void searchAsync(
-    final org.ldaptive.SearchRequest request, final SearchListener listener)
+    final org.ldaptive.SearchRequest request,
+    final SearchListener listener)
     throws LdapException
   {
     final UnboundIDAsyncSearchListener l = new UnboundIDAsyncSearchListener(
-      request, listener);
+      request,
+      listener);
     l.initialize();
   }
 
@@ -497,11 +499,13 @@ public class UnboundIDConnection implements ProviderConnection
       er.setFollowReferrals(request.getFollowReferrals());
 
       final ExtendedResult result = connection.processExtendedOperation(er);
-      final byte[] responseBerValue =
-        result.getValue() != null ? result.getValue().getValue() : null;
+      final byte[] responseBerValue = result.getValue() != null
+        ? result.getValue().getValue() : null;
       final ExtendedResponse<?> extRes =
         ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), result.getOID(), responseBerValue);
+          request.getOID(),
+          result.getOID(),
+          responseBerValue);
       response = createResponse(request, extRes.getValue(), result);
     } catch (LDAPException e) {
       processLDAPException(request, e);
@@ -525,15 +529,17 @@ public class UnboundIDConnection implements ProviderConnection
     final T result,
     final LDAPResult ldapResult)
   {
-    return new Response<T>(
-      result,
-      ResultCode.valueOf(ldapResult.getResultCode().intValue()),
-      ldapResult.getDiagnosticMessage(),
-      ldapResult.getMatchedDN(),
-      config.getControlProcessor().processResponseControls(
-        request.getControls(), ldapResult.getResponseControls()),
-      ldapResult.getReferralURLs(),
-      ldapResult.getMessageID());
+    return
+      new Response<T>(
+        result,
+        ResultCode.valueOf(ldapResult.getResultCode().intValue()),
+        ldapResult.getDiagnosticMessage(),
+        ldapResult.getMatchedDN(),
+        config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          ldapResult.getResponseControls()),
+        ldapResult.getReferralURLs(),
+        ldapResult.getMessageID());
   }
 
 
@@ -547,7 +553,8 @@ public class UnboundIDConnection implements ProviderConnection
    * @throws  LdapException  wrapping the ldap exception
    */
   protected void processLDAPException(
-    final Request request, final LDAPException e)
+    final Request request,
+    final LDAPException e)
     throws LdapException
   {
     ProviderUtils.throwOperationException(
@@ -556,17 +563,16 @@ public class UnboundIDConnection implements ProviderConnection
       e.getResultCode().intValue(),
       e.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(), e.getResponseControls()),
+        request.getControls(),
+        e.getResponseControls()),
       e.getReferralURLs(),
       true);
   }
 
 
-  /**
-   * Search iterator for unbound id search results.
-   */
-  protected class UnboundIDSearchIterator
-    extends AbstractUnboundIDSearch implements SearchIterator
+  /** Search iterator for unbound id search results. */
+  protected class UnboundIDSearchIterator extends AbstractUnboundIDSearch
+    implements SearchIterator
   {
 
     /** Response data. */
@@ -621,12 +627,14 @@ public class UnboundIDConnection implements ProviderConnection
           sr.getControls());
         unboundIdSr.addControls(c);
         logger.debug("performing search: {}", unboundIdSr);
+
         final SearchResult result = conn.search(unboundIdSr);
         response = createResponse(request, null, result);
         logger.debug("created response: {}", response);
       } catch (LDAPSearchException e) {
         final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
+          config.getSearchIgnoreResultCodes(),
+          e);
         if (rc == null) {
           processLDAPException(sr, e);
         }
@@ -658,9 +666,11 @@ public class UnboundIDConnection implements ProviderConnection
       if (resultIterator == null) {
         return false;
       }
+
       boolean more = resultIterator.hasNext();
       if (!more) {
         logger.debug("no more entries for response: {}", response);
+
         final boolean searchAgain = ControlProcessor.searchAgain(
           response.getControls());
         if (searchAgain) {
@@ -691,7 +701,8 @@ public class UnboundIDConnection implements ProviderConnection
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws LdapException {}
+    public void close()
+      throws LdapException {}
 
 
     /**
@@ -754,11 +765,8 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /**
-   * Search listener for unbound id async search results.
-   */
-  protected class UnboundIDAsyncSearchListener
-    extends AbstractUnboundIDSearch
+  /** Search listener for unbound id async search results. */
+  protected class UnboundIDAsyncSearchListener extends AbstractUnboundIDSearch
     implements AsyncSearchResultListener, IntermediateResponseListener
   {
 
@@ -776,7 +784,8 @@ public class UnboundIDConnection implements ProviderConnection
      * @param  sl  search listener
      */
     public UnboundIDAsyncSearchListener(
-      final org.ldaptive.SearchRequest sr, final SearchListener sl)
+      final org.ldaptive.SearchRequest sr,
+      final SearchListener sl)
     {
       super(sr);
       listener = sl;
@@ -828,7 +837,8 @@ public class UnboundIDConnection implements ProviderConnection
         requestID = conn.asyncSearch(unboundIdSr);
       } catch (LDAPSearchException e) {
         final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
+          config.getSearchIgnoreResultCodes(),
+          e);
         if (rc == null) {
           processLDAPException(sr, e);
         }
@@ -869,16 +879,17 @@ public class UnboundIDConnection implements ProviderConnection
       final SearchResult res)
     {
       logger.trace("reading result: {}", res);
+
       final org.ldaptive.Response<Void> response = createResponse(
-        request, null, res);
+        request,
+        null,
+        res);
       listener.searchResponseReceived(response);
     }
   }
 
 
-  /**
-   * Common search functionality for unbound id iterators and listeners.
-   */
+  /** Common search functionality for unbound id iterators and listeners. */
   protected abstract class AbstractUnboundIDSearch
   {
 
@@ -935,8 +946,7 @@ public class UnboundIDConnection implements ProviderConnection
           (int) sr.getSizeLimit(),
           (int) sr.getTimeLimit(),
           sr.getTypesOnly(),
-          sr.getSearchFilter() != null ?
-            sr.getSearchFilter().format() : null,
+          sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
           retAttrs);
         req.setFollowReferrals(sr.getFollowReferrals());
         if (irListener != null) {
@@ -1028,18 +1038,21 @@ public class UnboundIDConnection implements ProviderConnection
      *
      * @return  search item
      */
-    protected SearchItem processSearchResultEntry(
-      final SearchResultEntry entry)
+    protected SearchItem processSearchResultEntry(final SearchResultEntry entry)
     {
       logger.trace("reading search entry: {}", entry);
+
       ResponseControl[] respControls = null;
       if (entry.getControls() != null && entry.getControls().length > 0) {
-        respControls =
-          config.getControlProcessor().processResponseControls(
-            request.getControls(), entry.getControls());
+        respControls = config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          entry.getControls());
       }
-      final SearchEntry se =  util.toSearchEntry(
-        entry, respControls, entry.getMessageID());
+
+      final SearchEntry se = util.toSearchEntry(
+        entry,
+        respControls,
+        entry.getMessageID());
       return new SearchItem(se);
     }
 
@@ -1056,14 +1069,18 @@ public class UnboundIDConnection implements ProviderConnection
       final SearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
+
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().length > 0) {
-        respControls =
-          config.getControlProcessor().processResponseControls(
-            request.getControls(), ref.getControls());
+        respControls = config.getControlProcessor().processResponseControls(
+          request.getControls(),
+          ref.getControls());
       }
+
       final SearchReference sr = new SearchReference(
-        ref.getMessageID(), respControls, ref.getReferralURLs());
+        ref.getMessageID(),
+        respControls,
+        ref.getReferralURLs());
       return new SearchItem(sr);
     }
 
@@ -1080,11 +1097,14 @@ public class UnboundIDConnection implements ProviderConnection
       final IntermediateResponse res)
     {
       logger.trace("reading intermediate response: {}", res);
+
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(), res.getControls());
+          request.getControls(),
+          res.getControls());
       }
+
       final org.ldaptive.intermediate.IntermediateResponse ir =
         IntermediateResponseFactory.createIntermediateResponse(
           res.getOID(),

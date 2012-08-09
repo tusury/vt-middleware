@@ -45,8 +45,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
   /** {@inheritDoc} */
   @Override
   public ProviderConnectionFactory<UnboundIDProviderConfig>
-  getConnectionFactory(
-    final ConnectionConfig cc)
+  getConnectionFactory(final ConnectionConfig cc)
   {
     SocketFactory factory = config.getSocketFactory();
     SSLContext sslContext = null;
@@ -67,17 +66,26 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
       throw new UnsupportedOperationException(
         "UnboundID provider does not support the protocols property");
     }
+
     LDAPConnectionOptions options = config.getConnectionOptions();
     if (options == null) {
       options = getDefaultLDAPConnectionOptions(cc);
     }
+
     ProviderConnectionFactory<UnboundIDProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = new UnboundIDStartTLSConnectionFactory(
-        cc.getLdapUrl(), config, factory, sslContext, options);
+        cc.getLdapUrl(),
+        config,
+        factory,
+        sslContext,
+        options);
     } else {
       cf = new UnboundIDConnectionFactory(
-        cc.getLdapUrl(), config, factory, options);
+        cc.getLdapUrl(),
+        config,
+        factory,
+        options);
     }
     return cf;
   }
@@ -114,7 +122,8 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
         new HostnameVerifyingTrustManager(
-          new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()));
+          new DefaultHostnameVerifier(),
+          ldapUrl.getEntriesAsString()));
     }
     try {
       sslContext = contextInit.initSSLContext("TLS");
@@ -136,8 +145,10 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
     final ConnectionConfig cc)
   {
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-    return TLSSocketFactory.getHostnameVerifierFactory(
-      cc.getSslConfig(), ldapUrl.getEntriesAsString());
+    return
+      TLSSocketFactory.getHostnameVerifierFactory(
+        cc.getSslConfig(),
+        ldapUrl.getEntriesAsString());
   }
 
 
