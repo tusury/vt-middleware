@@ -223,7 +223,9 @@ public class ApacheLdapUtils
    * @return  search entry
    */
   public SearchEntry toSearchEntry(
-    final Entry e, final ResponseControl[] c, final int id)
+    final Entry e,
+    final ResponseControl[] c,
+    final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(e.getDn().getName());

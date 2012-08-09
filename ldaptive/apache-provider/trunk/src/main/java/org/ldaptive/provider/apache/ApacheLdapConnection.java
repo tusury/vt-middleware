@@ -106,7 +106,8 @@ public class ApacheLdapConnection implements ProviderConnection
    * @param  pc  provider configuration
    */
   public ApacheLdapConnection(
-    final LdapNetworkConnection lc, final ApacheLdapProviderConfig pc)
+    final LdapNetworkConnection lc,
+    final ApacheLdapProviderConfig pc)
   {
     connection = lc;
     config = pc;
@@ -158,6 +159,7 @@ public class ApacheLdapConnection implements ProviderConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
@@ -321,6 +323,7 @@ public class ApacheLdapConnection implements ProviderConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final ApacheLdapUtils bu = new ApacheLdapUtils();
@@ -355,6 +358,7 @@ public class ApacheLdapConnection implements ProviderConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Boolean> response = null;
     try {
       final CompareRequestImpl cri = new CompareRequestImpl();
@@ -392,6 +396,7 @@ public class ApacheLdapConnection implements ProviderConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final DeleteRequestImpl dri = new DeleteRequestImpl();
@@ -423,6 +428,7 @@ public class ApacheLdapConnection implements ProviderConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final ApacheLdapUtils bu = new ApacheLdapUtils();
@@ -460,6 +466,7 @@ public class ApacheLdapConnection implements ProviderConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final Dn dn = new Dn(request.getDn());
@@ -489,14 +496,14 @@ public class ApacheLdapConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public SearchIterator search(
-    final org.ldaptive.SearchRequest request)
+  public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
   {
     if (request.getFollowReferrals()) {
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     final ApacheLdapSearchIterator i = new ApacheLdapSearchIterator(request);
     i.initialize();
     return i;
@@ -506,15 +513,18 @@ public class ApacheLdapConnection implements ProviderConnection
   /** {@inheritDoc} */
   @Override
   public void searchAsync(
-    final org.ldaptive.SearchRequest request, final SearchListener listener)
+    final org.ldaptive.SearchRequest request,
+    final SearchListener listener)
     throws LdapException
   {
     if (request.getFollowReferrals()) {
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     final ApacheLdapSearchListener l = new ApacheLdapSearchListener(
-      request, listener);
+      request,
+      listener);
     l.initialize();
   }
 
@@ -544,15 +554,20 @@ public class ApacheLdapConnection implements ProviderConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<?> response = null;
     try {
       final ExtendedResponse apacheExtRes = connection.extended(
-        request.getOID(), request.encode());
+        request.getOID(),
+        request.encode());
       throwOperationException(request, apacheExtRes);
+
+      // only supports response without any value
       final org.ldaptive.extended.ExtendedResponse<?> extRes =
         ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), apacheExtRes.getResponseName(), null);
-        // only supports response without any value
+          request.getOID(),
+          apacheExtRes.getResponseName(),
+          null);
       response = createResponse(request, extRes.getValue(), apacheExtRes);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
@@ -572,7 +587,8 @@ public class ApacheLdapConnection implements ProviderConnection
    * @throws  LdapException  wrapping the ldap exception
    */
   protected void throwOperationException(
-    final Request request, final ResultResponse resultResponse)
+    final Request request,
+    final ResultResponse resultResponse)
     throws LdapException
   {
     final LdapResult ldapResult = resultResponse.getLdapResult();
@@ -580,13 +596,16 @@ public class ApacheLdapConnection implements ProviderConnection
     ProviderUtils.throwOperationException(
       config.getOperationRetryResultCodes(),
       String.format(
-        "Ldap returned result code: %s", ldapResult.getResultCode()),
+        "Ldap returned result code: %s",
+        ldapResult.getResultCode()),
       ldapResult.getResultCode().getResultCode(),
       ldapResult.getMatchedDn().getName(),
       processResponseControls(
-        config.getControlProcessor(), request.getControls(), resultResponse),
-      ref != null ?
-        ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null,
+        config.getControlProcessor(),
+        request.getControls(),
+        resultResponse),
+      ref != null
+        ? ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null,
       false);
   }
 
@@ -608,16 +627,20 @@ public class ApacheLdapConnection implements ProviderConnection
   {
     final LdapResult ldapResult = resultResponse.getLdapResult();
     final Referral ref = ldapResult.getReferral();
-    return new Response<T>(
-      result,
-      ResultCode.valueOf(ldapResult.getResultCode().getValue()),
-      ldapResult.getDiagnosticMessage(),
-      ldapResult.getMatchedDn().getName(),
-      processResponseControls(
-        config.getControlProcessor(), request.getControls(), resultResponse),
-      ref != null ?
-        ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null,
-      resultResponse.getMessageId());
+    return
+      new Response<T>(
+        result,
+        ResultCode.valueOf(ldapResult.getResultCode().getValue()),
+        ldapResult.getDiagnosticMessage(),
+        ldapResult.getMatchedDn().getName(),
+        processResponseControls(
+          config.getControlProcessor(),
+          request.getControls(),
+          resultResponse),
+        ref != null
+          ? ref.getLdapUrls().toArray(new String[ref.getReferralLength()])
+          : null,
+        resultResponse.getMessageId());
   }
 
 
@@ -683,11 +706,9 @@ public class ApacheLdapConnection implements ProviderConnection
   }
 
 
-  /**
-   * Search iterator for apache ldap search results.
-   */
-  protected class ApacheLdapSearchIterator
-    extends AbstractApacheLdapSearch implements SearchIterator
+  /** Search iterator for apache ldap search results. */
+  protected class ApacheLdapSearchIterator extends AbstractApacheLdapSearch
+    implements SearchIterator
   {
 
     /** Response data. */
@@ -758,7 +779,9 @@ public class ApacheLdapConnection implements ProviderConnection
           final SearchResultDone done = cursor.getSearchResultDone();
           final org.ldaptive.control.ResponseControl[] respControls =
             processResponseControls(
-              config.getControlProcessor(), request.getControls(), done);
+              config.getControlProcessor(),
+              request.getControls(),
+              done);
           final boolean searchAgain = ControlProcessor.searchAgain(
             respControls);
           if (searchAgain) {
@@ -767,6 +790,7 @@ public class ApacheLdapConnection implements ProviderConnection
           }
           if (!more) {
             throwOperationException(request, done);
+
             final LdapResult ldapResult = done.getLdapResult();
             final Referral ref = ldapResult.getReferral();
             if (ref != null && request.getFollowReferrals()) {
@@ -779,9 +803,9 @@ public class ApacheLdapConnection implements ProviderConnection
               ldapResult.getDiagnosticMessage(),
               ldapResult.getMatchedDn().getName(),
               respControls,
-              ref != null ?
-                ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) :
-                null,
+              ref != null
+                ? ref.getLdapUrls().toArray(
+                  new String[ref.getReferralLength()]) : null,
               done.getMessageId());
           }
         }
@@ -844,9 +868,7 @@ public class ApacheLdapConnection implements ProviderConnection
   }
 
 
-  /**
-   * Search listener for apache ldap search results.
-   */
+  /** Search listener for apache ldap search results. */
   protected class ApacheLdapSearchListener extends AbstractApacheLdapSearch
   {
 
@@ -861,7 +883,8 @@ public class ApacheLdapConnection implements ProviderConnection
      * @param  sl  search listener
      */
     public ApacheLdapSearchListener(
-      final org.ldaptive.SearchRequest sr, final SearchListener sl)
+      final org.ldaptive.SearchRequest sr,
+      final SearchListener sl)
     {
       super(sr);
       listener = sl;
@@ -894,6 +917,7 @@ public class ApacheLdapConnection implements ProviderConnection
               processIntermediateResponse((IntermediateResponse) curRes));
           }
         }
+
         final SearchResultDone done = cursor.getSearchResultDone();
         final Response<Void> response = createResponse(request, null, done);
         listener.searchResponseReceived(response);
@@ -923,9 +947,7 @@ public class ApacheLdapConnection implements ProviderConnection
   }
 
 
-  /**
-   * Common search functionality for apache ldap iterators and listeners.
-   */
+  /** Common search functionality for apache ldap iterators and listeners. */
   protected abstract class AbstractApacheLdapSearch
   {
 
@@ -957,7 +979,7 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  ldap search results
      *
-     * @throws org.apache.directory.shared.ldap.model.exception.LdapException
+     * @throws  org.apache.directory.shared.ldap.model.exception.LdapException
      * if an error occurs
      */
     protected SearchCursor search(
@@ -1030,8 +1052,7 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  apache ldap search scope
      */
-    protected SearchScope getSearchScope(
-      final org.ldaptive.SearchScope ss)
+    protected SearchScope getSearchScope(final org.ldaptive.SearchScope ss)
     {
       SearchScope scope = null;
       if (ss == org.ldaptive.SearchScope.OBJECT) {
@@ -1076,19 +1097,23 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  search item
      */
-    protected SearchItem processSearchResultEntry(
-      final SearchResultEntry entry)
+    protected SearchItem processSearchResultEntry(final SearchResultEntry entry)
     {
       logger.trace("reading search entry: {}", entry);
+
       final Entry e = entry.getEntry();
       ResponseControl[] respControls = null;
       if (entry.getControls() != null && entry.getControls().size() > 0) {
-        respControls =
-          processResponseControls(
-            config.getControlProcessor(), request.getControls(), entry);
+        respControls = processResponseControls(
+          config.getControlProcessor(),
+          request.getControls(),
+          entry);
       }
+
       final SearchEntry se = util.toSearchEntry(
-        e, respControls, entry.getMessageId());
+        e,
+        respControls,
+        entry.getMessageId());
       return new SearchItem(se);
     }
 
@@ -1105,15 +1130,20 @@ public class ApacheLdapConnection implements ProviderConnection
       final SearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
+
       final Referral r = ref.getReferral();
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().size() > 0) {
-        respControls =
-          processResponseControls(
-            config.getControlProcessor(), request.getControls(), ref);
+        respControls = processResponseControls(
+          config.getControlProcessor(),
+          request.getControls(),
+          ref);
       }
+
       final SearchReference sr = new SearchReference(
-        ref.getMessageId(), respControls, r.getLdapUrls());
+        ref.getMessageId(),
+        respControls,
+        r.getLdapUrls());
       return new SearchItem(sr);
     }
 
@@ -1130,11 +1160,15 @@ public class ApacheLdapConnection implements ProviderConnection
       final IntermediateResponse res)
     {
       logger.trace("reading intermediate response: {}", res);
+
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().size() > 0) {
         respControls = processResponseControls(
-          config.getControlProcessor(), request.getControls(), res);
+          config.getControlProcessor(),
+          request.getControls(),
+          res);
       }
+
       final org.ldaptive.intermediate.IntermediateResponse ir =
         IntermediateResponseFactory.createIntermediateResponse(
           res.getResponseName(),
