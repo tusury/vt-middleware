@@ -321,9 +321,11 @@ public class PasswordPolicyControl extends AbstractControl
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(
-      TimeBeforeExpirationHandler.PATH, new TimeBeforeExpirationHandler(this));
+      TimeBeforeExpirationHandler.PATH,
+      new TimeBeforeExpirationHandler(this));
     parser.registerHandler(
-      GraceAuthnsRemainingHandler.PATH, new GraceAuthnsRemainingHandler(this));
+      GraceAuthnsRemainingHandler.PATH,
+      new GraceAuthnsRemainingHandler(this));
     parser.registerHandler(ErrorHandler.PATH, new ErrorHandler(this));
     parser.parse(ByteBuffer.wrap(encoded));
   }

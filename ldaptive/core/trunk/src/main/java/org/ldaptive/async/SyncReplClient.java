@@ -77,22 +77,24 @@ public class SyncReplClient
   /**
    * Performs an async search operation with the {@link SyncRequestControl}. The
    * supplied request is modified in the following way:
+   *
    * <ul>
    *   <li>{@link SearchRequest#setControls(
-   *   org.ldaptive.control.RequestControl...)} is invoked with
-   *   {@link SyncRequestControl}</li>
+   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
+   *     SyncRequestControl}</li>
    *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)}
-   *   is invoked with a custom handler that places sync repl data in a blocking
-   *   queue.</li>
+   *     is invoked with a custom handler that places sync repl data in a
+   *     blocking queue.</li>
    *   <li>{@link SearchRequest#setIntermediateResponseHandlers(
-   *   IntermediateResponseHandler...)} is invoked with a custom handler that
-   *   places sync repl data in a blocking queue.</li>
+   *     IntermediateResponseHandler...)} is invoked with a custom handler that
+   *     places sync repl data in a blocking queue.</li>
    *   <li>{@link AsyncSearchOperation#setOperationResponseHandlers(
-   *   OperationResponseHandler[])} is invoked with a custom handler that places
-   *   the sync repl response in a blocking queue.</li>
+   *     OperationResponseHandler[])} is invoked with a custom handler that
+   *     places the sync repl response in a blocking queue.</li>
    * </ul>
-   * The search request object should not be reused for any other search
-   * operations.
+   *
+   * <p>The search request object should not be reused for any other search
+   * operations.</p>
    *
    * @param  request  search request to execute
    *
@@ -125,13 +127,12 @@ public class SyncReplClient
           }
           return new HandlerResult<Response<SearchResult>>(response);
         }
-      }
-    );
+      });
 
     request.setControls(
       new SyncRequestControl(
-        refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST :
-          SyncRequestControl.Mode.REFRESH_ONLY,
+        refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST
+                          : SyncRequestControl.Mode.REFRESH_ONLY,
         syncCookie,
         true));
     request.setSearchEntryHandlers(
@@ -145,15 +146,13 @@ public class SyncReplClient
         {
           try {
             logger.debug("received {}", entry);
-            queue.put(
-              new SyncReplItem(new SyncReplItem.Entry(entry)));
+            queue.put(new SyncReplItem(new SyncReplItem.Entry(entry)));
           } catch (Exception e) {
             logger.warn("Unable to enqueue entry {}", entry);
           }
           return new HandlerResult<SearchEntry>(null);
         }
-      }
-    );
+      });
     request.setIntermediateResponseHandlers(
       new IntermediateResponseHandler() {
         @Override
@@ -174,8 +173,7 @@ public class SyncReplClient
           }
           return new HandlerResult<IntermediateResponse>(null);
         }
-      }
-    );
+      });
     search.execute(request);
     return queue;
   }

@@ -113,8 +113,8 @@ public class SearchExecutor extends SearchRequest
     final SearchFilter filter)
     throws LdapException
   {
-    return search(
-      factory, filter, (String[]) null, (SearchEntryHandler[]) null);
+    return
+      search(factory, filter, (String[]) null, (SearchEntryHandler[]) null);
   }
 
 

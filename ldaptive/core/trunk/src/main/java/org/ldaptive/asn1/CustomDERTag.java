@@ -22,6 +22,7 @@ package org.ldaptive.asn1;
  */
 public class CustomDERTag extends AbstractDERTag
 {
+
   /** Tag name. */
   private final String tagName;
 
@@ -34,9 +35,9 @@ public class CustomDERTag extends AbstractDERTag
    * @param  isConstructed  whether this tag is primitive or constructed
    */
   public CustomDERTag(
-      final int number,
-      final String name,
-      final boolean isConstructed)
+    final int number,
+    final String name,
+    final boolean isConstructed)
   {
     super(number, isConstructed);
     tagName = name;

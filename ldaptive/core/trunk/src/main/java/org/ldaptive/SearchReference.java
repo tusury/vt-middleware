@@ -108,7 +108,10 @@ public class SearchReference implements ResponseMessage
   {
     return
       LdapUtils.computeHashCode(
-        HASH_CODE_SEED, referralUrls, responseControls, messageId);
+        HASH_CODE_SEED,
+        referralUrls,
+        responseControls,
+        messageId);
   }
 
 

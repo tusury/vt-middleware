@@ -203,9 +203,12 @@ public abstract class AbstractOperation<Q extends Request, S>
         operationRetry(e, i);
       }
     }
+
     // execute response handlers
     final HandlerResult<Response<S>> hr = executeHandlers(
-      getOperationResponseHandlers(), request, response);
+      getOperationResponseHandlers(),
+      request,
+      response);
 
     logger.debug(
       "execute response={} for request={} with connection={}",
@@ -260,7 +263,6 @@ public abstract class AbstractOperation<Q extends Request, S>
    *
    * @param  <Q>  type of request
    * @param  <S>  type of response
-   *
    * @param  handlers  to invoke
    * @param  request  the operation was performed with
    * @param  result  from the operation

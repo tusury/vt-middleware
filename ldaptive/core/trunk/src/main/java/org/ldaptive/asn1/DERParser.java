@@ -19,14 +19,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This class provides a SAX-like parsing facility for DER-encoded data where
  * elements of interest in the parse tree may be registered to handlers via the
- * {@link #registerHandler} methods.  {@link DERPath} strings are used to map
+ * {@link #registerHandler} methods. {@link DERPath} strings are used to map
  * handlers to elements of interest.
  *
  * @author  Middleware Services
@@ -107,15 +106,19 @@ public class DERParser
     final boolean constructed = (b & 0x20) == 0x20;
     // Read class from first two high-order bits
     switch (b & 0xC0) {
+
     case UniversalDERTag.TAG_CLASS:
       tag = UniversalDERTag.fromTagNo(tagNo);
       break;
+
     case ApplicationDERTag.TAG_CLASS:
       tag = new ApplicationDERTag(tagNo, constructed);
       break;
+
     case ContextDERTag.TAG_CLASS:
       tag = new ContextDERTag(tagNo, constructed);
       break;
+
     default:
       // Private class (class 11b)
       throw new IllegalArgumentException("Private classes not supported.");
@@ -217,7 +220,7 @@ public class DERParser
    *
    * <pre>size = 2^n</pre>
    *
-   * where n is the path length.
+   * <p>where n is the path length.</p>
    *
    * @param  tag  to add to path.
    * @param  index  of tag relative to parent.
@@ -228,8 +231,8 @@ public class DERParser
       permutations.add(new DERPath().pushNode(tag.name()));
       permutations.add(new DERPath().pushNode(tag.name(), index));
     } else {
-      final Collection<DERPath> generation =
-          new ArrayDeque<DERPath>(permutations.size());
+      final Collection<DERPath> generation = new ArrayDeque<DERPath>(
+        permutations.size());
       for (DERPath p : permutations) {
         generation.add(new DERPath(p).pushNode(tag.name()));
         p.pushNode(tag.name(), index);
@@ -241,12 +244,12 @@ public class DERParser
 
   /**
    * Removes the tag at the leaf position of all permutations of the current
-   * parser path, and reduces the number of permutations as necessary to
-   * satisfy the following relation:
+   * parser path, and reduces the number of permutations as necessary to satisfy
+   * the following relation:
    *
    * <pre>size = 2^n</pre>
    *
-   * where n is the path length.
+   * <p>where n is the path length.</p>
    */
   private void removeTag()
   {

@@ -197,9 +197,9 @@ public class SyncReplItem
 
 
     /**
-     * Creates a new entry. If the supplied search entry contains a
-     * {@link SyncStateControl} it is made available via
-     * {@link #getSyncStateControl()}.
+     * Creates a new entry. If the supplied search entry contains a {@link
+     * SyncStateControl} it is made available via {@link
+     * #getSyncStateControl()}.
      *
      * @param  entry  to search for sync state control in
      */
@@ -244,11 +244,12 @@ public class SyncReplItem
     @Override
     public String toString()
     {
-      return String.format(
-        "[%s@%d::searchEntry=%s]",
-        getClass().getName(),
-        hashCode(),
-        searchEntry);
+      return
+        String.format(
+          "[%s@%d::searchEntry=%s]",
+          getClass().getName(),
+          hashCode(),
+          searchEntry);
     }
   }
 
@@ -268,9 +269,8 @@ public class SyncReplItem
 
 
     /**
-     * Creates a new response. If the supplied response contains a
-     * {@link SyncDoneControl} it is made available via
-     * {@link #getSyncDoneControl()}.
+     * Creates a new response. If the supplied response contains a {@link
+     * SyncDoneControl} it is made available via {@link #getSyncDoneControl()}.
      *
      * @param  res  to search for sync done control in
      */
@@ -314,11 +314,12 @@ public class SyncReplItem
     @Override
     public String toString()
     {
-      return String.format(
-        "[%s@%d::response=%s]",
-        getClass().getName(),
-        hashCode(),
-        response);
+      return
+        String.format(
+          "[%s@%d::response=%s]",
+          getClass().getName(),
+          hashCode(),
+          response);
     }
   }
 }

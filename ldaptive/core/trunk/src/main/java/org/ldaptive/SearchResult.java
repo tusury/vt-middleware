@@ -355,8 +355,11 @@ public class SearchResult extends AbstractLdapBean
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(
-      HASH_CODE_SEED, resultEntries.values(), searchReferences);
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        resultEntries.values(),
+        searchReferences);
   }
 
 

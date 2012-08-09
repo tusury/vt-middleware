@@ -157,7 +157,9 @@ public class SearchOperation
           final SearchEntry se = item.getSearchEntry();
           if (se != null) {
             final HandlerResult<SearchEntry> hr = executeHandlers(
-              request.getSearchEntryHandlers(), request, se);
+              request.getSearchEntryHandlers(),
+              request,
+              se);
             if (hr.getResult() != null) {
               result.addEntry(hr.getResult());
             }
@@ -170,7 +172,9 @@ public class SearchOperation
           final SearchReference sr = item.getSearchReference();
           if (sr != null) {
             final HandlerResult<SearchReference> hr = executeHandlers(
-              request.getSearchReferenceHandlers(), request, sr);
+              request.getSearchReferenceHandlers(),
+              request,
+              sr);
             if (hr.getResult() != null) {
               result.addReference(hr.getResult());
             }
@@ -183,7 +187,9 @@ public class SearchOperation
           final IntermediateResponse ir = item.getIntermediateResponse();
           if (ir != null) {
             final HandlerResult<IntermediateResponse> hr = executeHandlers(
-              request.getIntermediateResponseHandlers(), request, ir);
+              request.getIntermediateResponseHandlers(),
+              request,
+              ir);
             if (hr.getAbort()) {
               logger.debug("Aborting search on intermediate response=%s", ir);
               break;

@@ -32,22 +32,22 @@ import org.ldaptive.control.ResponseControl;
  * Message is defined as:
  *
  * <pre>
- *   syncInfoValue ::= CHOICE {
- *       newcookie      [0] syncCookie,
- *       refreshDelete  [1] SEQUENCE {
- *           cookie         syncCookie OPTIONAL,
- *           refreshDone    BOOLEAN DEFAULT TRUE
- *       },
- *       refreshPresent [2] SEQUENCE {
- *           cookie         syncCookie OPTIONAL,
- *           refreshDone    BOOLEAN DEFAULT TRUE
- *       },
- *       syncIdSet      [3] SEQUENCE {
- *           cookie         syncCookie OPTIONAL,
- *           refreshDeletes BOOLEAN DEFAULT FALSE,
- *           syncUUIDs      SET OF syncUUID
- *       }
- *   }
+     syncInfoValue ::= CHOICE {
+         newcookie      [0] syncCookie,
+         refreshDelete  [1] SEQUENCE {
+             cookie         syncCookie OPTIONAL,
+             refreshDone    BOOLEAN DEFAULT TRUE
+         },
+         refreshPresent [2] SEQUENCE {
+             cookie         syncCookie OPTIONAL,
+             refreshDone    BOOLEAN DEFAULT TRUE
+         },
+         syncIdSet      [3] SEQUENCE {
+             cookie         syncCookie OPTIONAL,
+             refreshDeletes BOOLEAN DEFAULT FALSE,
+             syncUUIDs      SET OF syncUUID
+         }
+     }
  * </pre>
  *
  * @author  Middleware Services
@@ -55,6 +55,13 @@ import org.ldaptive.control.ResponseControl;
  */
 public class SyncInfoMessage extends AbstractIntermediateResponse
 {
+
+
+  /** OID of this response. */
+  public static final String OID = "1.3.6.1.4.1.4203.1.9.1.4";
+
+  /** hash value seed. */
+  private static final int HASH_CODE_SEED = 761;
 
   /** Types of request modes. */
   public enum Type {
@@ -71,13 +78,6 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
     /** sync id set. */
     SYNC_ID_SET
   }
-
-
-  /** OID of this response. */
-  public static final String OID = "1.3.6.1.4.1.4203.1.9.1.4";
-
-  /** hash value seed. */
-  private static final int HASH_CODE_SEED = 761;
 
   /** message type. */
   private Type messageType;
@@ -231,25 +231,33 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
     final DERParser parser = new DERParser();
     parser.registerHandler(NewCookieHandler.PATH, new NewCookieHandler(this));
     parser.registerHandler(
-      RefreshDeleteHandler.PATH, new RefreshDeleteHandler(this));
+      RefreshDeleteHandler.PATH,
+      new RefreshDeleteHandler(this));
     parser.registerHandler(
-      RefreshDeleteCookieHandler.PATH, new RefreshDeleteCookieHandler(this));
+      RefreshDeleteCookieHandler.PATH,
+      new RefreshDeleteCookieHandler(this));
     parser.registerHandler(
-      RefreshDeleteDoneHandler.PATH, new RefreshDeleteDoneHandler(this));
+      RefreshDeleteDoneHandler.PATH,
+      new RefreshDeleteDoneHandler(this));
     parser.registerHandler(
-      RefreshPresentHandler.PATH, new RefreshPresentHandler(this));
+      RefreshPresentHandler.PATH,
+      new RefreshPresentHandler(this));
     parser.registerHandler(
-      RefreshPresentCookieHandler.PATH, new RefreshPresentCookieHandler(this));
+      RefreshPresentCookieHandler.PATH,
+      new RefreshPresentCookieHandler(this));
     parser.registerHandler(
-      RefreshPresentDoneHandler.PATH, new RefreshPresentDoneHandler(this));
+      RefreshPresentDoneHandler.PATH,
+      new RefreshPresentDoneHandler(this));
+    parser.registerHandler(SyncIdSetHandler.PATH, new SyncIdSetHandler(this));
     parser.registerHandler(
-      SyncIdSetHandler.PATH, new SyncIdSetHandler(this));
+      SyncIdSetCookieHandler.PATH,
+      new SyncIdSetCookieHandler(this));
     parser.registerHandler(
-      SyncIdSetCookieHandler.PATH, new SyncIdSetCookieHandler(this));
+      SyncIdSetDeletesHandler.PATH,
+      new SyncIdSetDeletesHandler(this));
     parser.registerHandler(
-      SyncIdSetDeletesHandler.PATH, new SyncIdSetDeletesHandler(this));
-    parser.registerHandler(
-      SyncIdSetUuidsHandler.PATH, new SyncIdSetUuidsHandler(this));
+      SyncIdSetUuidsHandler.PATH,
+      new SyncIdSetUuidsHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
@@ -315,6 +323,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
       getObject().setMessageType(Type.NEW_COOKIE);
+
       final byte[] cookie = OctetStringType.readBuffer(encoded);
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);

@@ -17,7 +17,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.ldaptive.LdapUtils;
 
 /**
@@ -27,23 +26,23 @@ import org.ldaptive.LdapUtils;
  * type that may be DER encoded:
  *
  * <pre>
- *
- *   BankAccountSet ::= SET OF {
- *     account BankAccount
- *   }
- *
- *   BankAccount ::= SEQUENCE OF {
- *     accountNumber OCTET STRING,
- *     accountName OCTET STRING,
- *     accountType AccountType,
- *     balance REAL
- *   }
- *
- *   AccountType ::= ENUM {
- *     checking (0),
- *     savings (1)
- *   }
- *
+
+     BankAccountSet ::= SET OF {
+       account BankAccount
+     }
+
+     BankAccount ::= SEQUENCE OF {
+       accountNumber OCTET STRING,
+       accountName OCTET STRING,
+       accountType AccountType,
+       balance REAL
+     }
+
+     AccountType ::= ENUM {
+       checking (0),
+       savings (1)
+     }
+
  * </pre>
  *
  * <p>Given an instance of BankAccountSet with two elements, the path to the
@@ -53,7 +52,7 @@ import org.ldaptive.LdapUtils;
  * <pre>/SET/SEQ/REAL</pre>
  *
  * <p>Individual child elements can be accessed by explicitly mentioning the
- * index of the item relative to its parent.  For example, the second bank
+ * index of the item relative to its parent. For example, the second bank
  * account in the set can be accessed as follows:</p>
  *
  * <pre>/SET/SEQ[1]</pre>
@@ -68,10 +67,11 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
- * @see DERParser
+ * @see  DERParser
  */
 public class DERPath
 {
+
   /** Separates nodes in a path specification. */
   public static final String PATH_SEPARATOR = "/";
 
@@ -81,13 +81,11 @@ public class DERPath
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 601;
 
-  /** Describes the path as a FIFO set of nodes. */
-  private final Deque<Node> nodeStack = new ArrayDeque<Node>();
 
-
-  /** Class initializer. */
-  static
-  {
+  /**
+   * Class initializer.
+   */
+  static {
     final StringBuilder validNames = new StringBuilder();
     validNames.append(ApplicationDERTag.TAG_NAME).append("\\(\\d+\\)|");
     validNames.append(ContextDERTag.TAG_NAME).append("\\(\\d+\\)|");
@@ -95,8 +93,11 @@ public class DERPath
       validNames.append('|').append(tag.name());
     }
     NODE_PATTERN = Pattern.compile(
-        String.format("(%s)(\\[(\\d+)\\])?", validNames.toString()));
+      String.format("(%s)(\\[(\\d+)\\])?", validNames.toString()));
   }
+
+  /** Describes the path as a FIFO set of nodes. */
+  private final Deque<Node> nodeStack = new ArrayDeque<Node>();
 
 
   /** Creates an empty path specification. */
@@ -255,6 +256,7 @@ public class DERPath
     if (!matcher.matches()) {
       throw new IllegalArgumentException("Invalid node: " + node);
     }
+
     final String name = matcher.group(1);
     final String index = matcher.group(3);
     if (index != null) {
@@ -273,6 +275,7 @@ public class DERPath
    */
   static class Node
   {
+
     /** hash code seed. */
     private static final int HASH_CODE_SEED = 607;
 

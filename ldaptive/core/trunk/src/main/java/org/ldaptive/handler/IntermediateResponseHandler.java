@@ -32,6 +32,8 @@ public interface IntermediateResponseHandler
   /** {@inheritDoc} */
   @Override
   HandlerResult<IntermediateResponse> process(
-    Connection conn, Request request, IntermediateResponse response)
+    Connection conn,
+    Request request,
+    IntermediateResponse response)
     throws LdapException;
 }

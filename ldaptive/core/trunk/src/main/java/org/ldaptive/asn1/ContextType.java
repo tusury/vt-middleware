@@ -23,6 +23,7 @@ import java.math.BigInteger;
  */
 public class ContextType extends AbstractDERType implements DEREncoder
 {
+
   /** ASN tag. */
   private final int derTag;
 

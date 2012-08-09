@@ -1,26 +1,27 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2012 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.asn1;
 
 /**
  * Abstract base class for custom DER tag types.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision: $
  */
 public abstract class AbstractDERTag implements DERTag
 {
+
   /** Tag number. */
   private final int tagNo;
 

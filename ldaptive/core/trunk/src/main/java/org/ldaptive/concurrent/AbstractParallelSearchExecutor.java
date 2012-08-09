@@ -160,8 +160,8 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
     final SearchFilter[] filters)
     throws LdapException
   {
-    return search(
-      factory, filters, (String[]) null, (SearchEntryHandler[]) null);
+    return
+      search(factory, filters, (String[]) null, (SearchEntryHandler[]) null);
   }
 
 

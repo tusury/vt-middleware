@@ -29,24 +29,29 @@ import org.ldaptive.asn1.UuidType;
  * defined as:
  *
  * <pre>
- *   syncStateValue ::= SEQUENCE {
- *       state ENUMERATED {
- *           present (0),
- *           add (1),
- *           modify (2),
- *           delete (3)
- *       },
- *       entryUUID syncUUID,
- *       cookie    syncCookie OPTIONAL
- *   }
+     syncStateValue ::= SEQUENCE {
+         state ENUMERATED {
+             present (0),
+             add (1),
+             modify (2),
+             delete (3)
+         },
+         entryUUID syncUUID,
+         cookie    syncCookie OPTIONAL
+     }
  * </pre>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class SyncStateControl extends AbstractControl
-  implements ResponseControl
+public class SyncStateControl extends AbstractControl implements ResponseControl
 {
+
+  /** OID of this control. */
+  public static final String OID = "1.3.6.1.4.1.4203.1.9.1.2";
+
+  /** hash code seed. */
+  private static final int HASH_CODE_SEED = 751;
 
   /** Types of states. */
   public enum State {
@@ -106,12 +111,6 @@ public class SyncStateControl extends AbstractControl
       return null;
     }
   }
-
-  /** OID of this control. */
-  public static final String OID = "1.3.6.1.4.1.4203.1.9.1.2";
-
-  /** hash code seed. */
-  private static final int HASH_CODE_SEED = 751;
 
   /** sync state. */
   private State syncState;
