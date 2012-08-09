@@ -33,8 +33,8 @@ public class UnboundIDSyncProvider extends UnboundIDProvider
   protected LDAPConnectionOptions getDefaultLDAPConnectionOptions(
     final ConnectionConfig cc)
   {
-    final LDAPConnectionOptions options =
-      super.getDefaultLDAPConnectionOptions(cc);
+    final LDAPConnectionOptions options = super.getDefaultLDAPConnectionOptions(
+      cc);
     options.setUseSynchronousMode(true);
     return options;
   }

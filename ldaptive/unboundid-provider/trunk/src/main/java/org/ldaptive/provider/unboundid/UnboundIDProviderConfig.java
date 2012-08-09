@@ -47,10 +47,12 @@ public class UnboundIDProviderConfig extends ProviderConfig
   public UnboundIDProviderConfig()
   {
     setOperationRetryResultCodes(
-      ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR);
-    searchIgnoreResultCodes =
-      new ResultCode[] {
-        ResultCode.TIME_LIMIT_EXCEEDED, ResultCode.SIZE_LIMIT_EXCEEDED, };
+      ResultCode.LDAP_TIMEOUT,
+      ResultCode.CONNECT_ERROR);
+    searchIgnoreResultCodes = new ResultCode[] {
+      ResultCode.TIME_LIMIT_EXCEEDED,
+      ResultCode.SIZE_LIMIT_EXCEEDED,
+    };
     controlProcessor = new ControlProcessor<Control>(
       new UnboundIDControlHandler());
   }
@@ -59,7 +61,7 @@ public class UnboundIDProviderConfig extends ProviderConfig
   /**
    * Returns the connection options.
    *
-   * @return ldap connection options
+   * @return  ldap connection options
    */
   public LDAPConnectionOptions getConnectionOptions()
   {

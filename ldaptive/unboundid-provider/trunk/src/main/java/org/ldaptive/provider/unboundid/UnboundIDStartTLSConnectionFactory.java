@@ -82,7 +82,9 @@ public class UnboundIDStartTLSConnectionFactory
       final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
       conn = new UnboundIDConnection(lc, getProviderConfig());
       lc.connect(
-        ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
+        ldapUrl.getLastEntry().getHostname(),
+        ldapUrl.getLastEntry().getPort());
+
       final ExtendedResult result = lc.processExtendedOperation(
         new StartTLSExtendedRequest(sslContext));
       if (result.getResultCode() != ResultCode.SUCCESS) {
@@ -95,8 +97,7 @@ public class UnboundIDStartTLSConnectionFactory
       closeConn = true;
       throw new ConnectionException(
         e,
-        org.ldaptive.ResultCode.valueOf(
-          e.getResultCode().intValue()));
+        org.ldaptive.ResultCode.valueOf(e.getResultCode().intValue()));
     } finally {
       if (closeConn) {
         try {

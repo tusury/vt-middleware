@@ -71,13 +71,13 @@ public class UnboundIDConnectionFactory
       final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
       conn = new UnboundIDConnection(lc, getProviderConfig());
       lc.connect(
-        ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
+        ldapUrl.getLastEntry().getHostname(),
+        ldapUrl.getLastEntry().getPort());
     } catch (LDAPException e) {
       closeConn = true;
       throw new ConnectionException(
         e,
-        org.ldaptive.ResultCode.valueOf(
-          e.getResultCode().intValue()));
+        org.ldaptive.ResultCode.valueOf(e.getResultCode().intValue()));
     } finally {
       if (closeConn) {
         try {
