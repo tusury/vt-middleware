@@ -20,6 +20,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -92,6 +93,9 @@ public class PasswordModifyOperationTest extends AbstractTest
     final String newPass)
     throws Exception
   {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
     final Authenticator auth = TestUtils.createSSLDnAuthenticator();
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(dn, new Credential(oldPass)));

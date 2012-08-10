@@ -22,6 +22,7 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.control.SyncRequestControl;
@@ -52,6 +53,9 @@ public class CancelOperationTest extends AbstractTest
   public void cancel(final String dn)
     throws Exception
   {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
     final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
     if (p.getClass().getName().equals(
       "org.ldaptive.provider.jndi.JndiProvider")) {
