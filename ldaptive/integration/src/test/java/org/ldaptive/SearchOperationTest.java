@@ -441,8 +441,12 @@ public class SearchOperationTest extends AbstractTest
           String.valueOf(2000 + i), e.getAttribute("uid").getStringValue());
         i--;
       }
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported
+      // ignore this test if not supported by the provider
       AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
@@ -939,6 +943,10 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final Connection conn = createLdapConnection(true);
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final SearchResult specialCharsResult = TestUtils.convertLdifToResult(
@@ -1215,6 +1223,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     Connection conn = createLdapConnection(true);
+    final List<SearchReference> refs = new ArrayList<SearchReference>();
 
     // expects a referral on the root dn
     final String referralDn = DnParser.substring(dn, 1);
@@ -1223,6 +1232,18 @@ public class SearchOperationTest extends AbstractTest
     request.setSearchScope(SearchScope.ONELEVEL);
     request.setReturnAttributes(new String[0]);
     request.setSearchFilter(new SearchFilter(filter));
+    request.setSearchReferenceHandlers(new SearchReferenceHandler() {
+      @Override
+      public HandlerResult<SearchReference> process(
+        final Connection conn,
+        final SearchRequest request,
+        final SearchReference reference)
+        throws LdapException
+      {
+        refs.add(reference);
+        return new HandlerResult<SearchReference>(null);
+      }
+    });
 
     request.setFollowReferrals(false);
     try {
@@ -1230,7 +1251,23 @@ public class SearchOperationTest extends AbstractTest
       final SearchOperation search = new SearchOperation(conn);
       Response<SearchResult> response = search.execute(request);
       AssertJUnit.assertTrue(response.getResult().size() > 0);
-      AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
+      // some providers don't support search references
+      // in that case URLs are provided on the response
+      if (refs.size() > 0) {
+        AssertJUnit.assertTrue(refs.size() > 0);
+        for (SearchReference r : refs) {
+          AssertJUnit.assertNotNull(r.getReferralUrls());
+          for (String s : r.getReferralUrls()) {
+            AssertJUnit.assertNotNull(s);
+          }
+        }
+      } else {
+        AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
+        for (String s : response.getReferralURLs()) {
+          AssertJUnit.assertNotNull(s);
+        }
+      }
+      //AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
       // providers may return either result code
       if (response.getResultCode() != ResultCode.SUCCESS &&
           response.getResultCode() != ResultCode.REFERRAL) {
@@ -1240,6 +1277,7 @@ public class SearchOperationTest extends AbstractTest
       conn.close();
     }
 
+    refs.clear();
     request.setFollowReferrals(true);
     try {
       conn.open();
@@ -1247,7 +1285,7 @@ public class SearchOperationTest extends AbstractTest
       try {
         Response<SearchResult> response = search.execute(request);
         AssertJUnit.assertTrue(response.getResult().size() > 0);
-        AssertJUnit.assertNull(response.getReferralURLs());
+        //AssertJUnit.assertNull(response.getReferralURLs());
         // AD referrals cannot be followed
         // providers may return either result code
         if (response.getResultCode() != ResultCode.SUCCESS &&
@@ -1551,6 +1589,11 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    // ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final Connection conn = TestUtils.createDigestMd5Connection();
     try {
@@ -1609,8 +1652,12 @@ public class SearchOperationTest extends AbstractTest
           new SearchFilter(filter, filterParameters.split("\\|")),
           returnAttrs.split("\\|"))).getResult();
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.AUTH_METHOD_NOT_SUPPORTED, e.getResultCode());
     } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported
+      // ignore this test if not supported by the provider
       AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
@@ -1645,6 +1692,11 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    // ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final String expected = TestUtils.readFileIntoString(ldifFile);
     Connection conn = null;
     try {
@@ -1701,6 +1753,11 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    // ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final LdapURL ldapUrl = new LdapURL(krb5Kdc);
     System.setProperty(
       "java.security.auth.login.config",
