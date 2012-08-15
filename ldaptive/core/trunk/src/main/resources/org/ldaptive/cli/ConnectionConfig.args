@@ -3,16 +3,11 @@ bindCredential:password for the bindDn
 bindDn:fully qualified dn to bind as
 bindSaslConfig:SASL configuration data
 connectTimeout:milliseconds to wait for connections
-connectionStrategy:LDAP connection strategy for failover
-hostnameVerifier:fully qualified class name that implements javax.net.ssl.HostnameVerifier
 ldapUrl:URL that identifies the LDAP server to search
 operationRetry:number of times to retry LDAP operations on exception
 operationRetryBackoff:factor to multiply operationRetryWait by
 operationRetryWait:milliseconds to wait before retrying LDAP operations
 responseTimeout:milliseconds to wait for LDAP operation responses
-provider:fully qualified class name that implements org.ldaptive.provider.Provider
-providerProperties:LDAP provider specific properties
-sslSocketFactory:fully qualified class name that implements javax.net.ssl.SSLSocketFactory
-timeout: amount of time in milliseconds that connect operations will block
+sslConfig:SSL configuration data
 useSSL:whether to use SSL (true|false)
 useStartTLS:whether to use startTLS (true|false)

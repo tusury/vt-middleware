@@ -24,6 +24,8 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.props.ConnectionConfigPropertySource;
+import org.ldaptive.props.SslConfigPropertySource;
+import org.ldaptive.ssl.SslConfig;
 
 /**
  * Command line interface for {@link CompareOperation}.
@@ -66,8 +68,13 @@ public class CompareOperationCli extends AbstractCli
         true,
         "colon delimited name value pair (attr:value|attr::b64value)"));
 
-    final Map<String, String> desc = getArgDesc(ConnectionConfig.class);
+    final Map<String, String> desc = getArgDesc(
+      ConnectionConfig.class,
+      SslConfig.class);
     for (String s : ConnectionConfigPropertySource.getProperties()) {
+      options.addOption(new Option(s, true, desc.get(s)));
+    }
+    for (String s : SslConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
     super.initOptions();
