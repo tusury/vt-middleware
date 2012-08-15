@@ -30,6 +30,8 @@ import org.ldaptive.io.LdifWriter;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.ldaptive.props.PropertySource.PropertyDomain;
 import org.ldaptive.props.SearchRequestPropertySource;
+import org.ldaptive.props.SslConfigPropertySource;
+import org.ldaptive.ssl.SslConfig;
 
 /**
  * Command line interface for {@link SearchOperation}.
@@ -67,8 +69,12 @@ public class SearchOperationCli extends AbstractCli
 
     final Map<String, String> desc = getArgDesc(
       ConnectionConfig.class,
+      SslConfig.class,
       SearchRequest.class);
     for (String s : ConnectionConfigPropertySource.getProperties()) {
+      options.addOption(new Option(s, true, desc.get(s)));
+    }
+    for (String s : SslConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
     for (String s : SearchRequestPropertySource.getProperties()) {

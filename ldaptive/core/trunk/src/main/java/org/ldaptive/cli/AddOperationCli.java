@@ -26,6 +26,8 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResult;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.props.ConnectionConfigPropertySource;
+import org.ldaptive.props.SslConfigPropertySource;
+import org.ldaptive.ssl.SslConfig;
 
 /**
  * Command line interface for {@link AddOperation}.
@@ -60,8 +62,13 @@ public class AddOperationCli extends AbstractCli
   {
     options.addOption(new Option(OPT_FILE, true, "LDIF file"));
 
-    final Map<String, String> desc = getArgDesc(ConnectionConfig.class);
+    final Map<String, String> desc = getArgDesc(
+      ConnectionConfig.class,
+      SslConfig.class);
     for (String s : ConnectionConfigPropertySource.getProperties()) {
+      options.addOption(new Option(s, true, desc.get(s)));
+    }
+    for (String s : SslConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
     super.initOptions();
