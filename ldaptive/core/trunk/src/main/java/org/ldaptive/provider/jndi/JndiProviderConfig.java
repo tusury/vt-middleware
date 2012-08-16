@@ -22,6 +22,7 @@ import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.ResultCode;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConfig;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 
 /**
  * Contains configuration data for the JNDI provider.
@@ -31,6 +32,13 @@ import org.ldaptive.provider.ProviderConfig;
  */
 public class JndiProviderConfig extends ProviderConfig
 {
+
+  /**
+   * Boolean property that indicates whether hostname verification should be
+   * disabled for StartTLS connections. The value of this constant is {@value}.
+   */
+  protected static final String ALLOW_ANY_HOSTNAME =
+    "jndi.starttls.allowAnyHostname";
 
   /** Context environment. */
   private Map<String, Object> environment;
@@ -237,6 +245,20 @@ public class JndiProviderConfig extends ProviderConfig
     checkImmutable();
     logger.trace("setting controlProcessor: {}", processor);
     controlProcessor = processor;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void setProperties(final Map<String, Object> props)
+  {
+    checkImmutable();
+    final boolean allowAnyHostname = Boolean.valueOf(
+      (String) props.get(ALLOW_ANY_HOSTNAME));
+    if (allowAnyHostname) {
+      setHostnameVerifier(new AllowAnyHostnameVerifier());
+    }
+    super.setProperties(props);
   }
 
 
