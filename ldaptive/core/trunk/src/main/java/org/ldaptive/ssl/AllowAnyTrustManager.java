@@ -32,10 +32,7 @@ public class AllowAnyTrustManager implements X509TrustManager
   public void checkClientTrusted(
     final X509Certificate[] chain,
     final String authType)
-    throws CertificateException
-  {
-    return;
-  }
+    throws CertificateException {}
 
 
   /** {@inheritDoc} */
@@ -43,10 +40,7 @@ public class AllowAnyTrustManager implements X509TrustManager
   public void checkServerTrusted(
     final X509Certificate[] chain,
     final String authType)
-    throws CertificateException
-  {
-    return;
-  }
+    throws CertificateException {}
 
 
   /** {@inheritDoc} */
