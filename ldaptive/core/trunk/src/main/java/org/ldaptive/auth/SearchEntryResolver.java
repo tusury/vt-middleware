@@ -13,30 +13,29 @@
 */
 package org.ldaptive.auth;
 
-import java.util.Arrays;
 import org.ldaptive.Connection;
-import org.ldaptive.LdapEntry;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Looks up the LDAP entry associated with a user using an LDAP search.
+ * Looks up the LDAP entry associated with a user. If a connection factory is
+ * configured it will be used to perform the search for user. The connection
+ * will be opened and closed for each resolution. If no connection factory is
+ * configured the search will occur using the connection that the bind was
+ * attempted on.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class SearchEntryResolver implements EntryResolver
+public class SearchEntryResolver extends AbstractSearchEntryResolver
+  implements ConnectionFactoryManager
 {
 
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-  /** User attributes to return. */
-  private String[] returnAttributes;
+  /** Connection factory. */
+  private ConnectionFactory factory;
 
 
   /** Default constructor. */
@@ -55,52 +54,82 @@ public class SearchEntryResolver implements EntryResolver
 
 
   /**
-   * Returns the return attributes.
+   * Creates a new search entry resolver.
    *
-   * @return  attributes to return
+   * @param  cf  connection factory
    */
-  public String[] getReturnAttributes()
+  public SearchEntryResolver(final ConnectionFactory cf)
   {
-    return returnAttributes;
+    setConnectionFactory(cf);
   }
 
 
   /**
-   * Sets the return attributes.
+   * Creates a new search entry resolver.
    *
+   * @param  cf  connection factory
    * @param  attrs  to return
    */
-  public void setReturnAttributes(final String... attrs)
+  public SearchEntryResolver(final ConnectionFactory cf, final String... attrs)
   {
-    returnAttributes = attrs;
+    setConnectionFactory(cf);
+    setReturnAttributes(attrs);
   }
 
 
   /** {@inheritDoc} */
   @Override
-  public LdapEntry resolve(
-    final Connection conn,
-    final AuthenticationCriteria ac)
+  public ConnectionFactory getConnectionFactory()
+  {
+    return factory;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void setConnectionFactory(final ConnectionFactory cf)
+  {
+    factory = cf;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public SearchResult performLdapSearch(
+    final Connection conn, final AuthenticationCriteria ac)
     throws LdapException
   {
-    logger.debug(
-      "resolve criteria={} with attributes={}",
-      ac,
-      returnAttributes == null ? "<all attributes>"
-                               : Arrays.toString(returnAttributes));
+    if (factory == null) {
+      final SearchOperation search = new SearchOperation(conn);
+      return search.execute(
+        createSearchRequest(ac, getReturnAttributes())).getResult();
+    } else {
+      Connection factoryConn = null;
+      try {
+        factoryConn = factory.getConnection();
+        factoryConn.open();
+        final SearchOperation search = new SearchOperation(factoryConn);
+        return search.execute(
+          createSearchRequest(ac, getReturnAttributes())).getResult();
+      } finally {
+        if (factoryConn != null) {
+          factoryConn.close();
+        }
+      }
+    }
+  }
 
-    final SearchOperation search = new SearchOperation(conn);
-    final SearchResult result = search.execute(
-      SearchRequest.newObjectScopeSearchRequest(
-        ac.getDn(), returnAttributes)).getResult();
-    logger.debug(
-      "resolve entry={} for criteria={} with attributes={}",
-      new Object[] {
-        result.getEntry(),
-        ac,
-        returnAttributes == null ? "<all attributes>"
-                                 : Arrays.toString(returnAttributes),
-      });
-    return result.getEntry();
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::factory=%s, returnAttributes=%s]",
+        getClass().getName(),
+        hashCode(),
+        factory,
+        getReturnAttributes());
   }
 }
