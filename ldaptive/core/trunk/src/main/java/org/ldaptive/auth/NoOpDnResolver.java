@@ -40,4 +40,12 @@ public class NoOpDnResolver implements DnResolver
   {
     return user;
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return String.format("[%s@%d]", getClass().getName(), hashCode());
+  }
 }
