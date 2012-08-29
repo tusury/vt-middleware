@@ -257,7 +257,7 @@ public abstract class AbstractSearchDnResolver implements DnResolver
 
         // return first match, otherwise user doesn't exist
         if (answer != null && answer.hasNext()) {
-          dn = answer.next().getDn();
+          dn = resolveDn(answer.next());
           if (answer.hasNext()) {
             logger.debug(
               "multiple results found for user={} using filter={}",
@@ -279,8 +279,21 @@ public abstract class AbstractSearchDnResolver implements DnResolver
     } else {
       logger.warn("DN resolution cannot occur, user input was empty or null");
     }
-    logger.debug("resolve dn={} for user={}", dn, user);
+    logger.debug("resolved dn={} for user={}", dn, user);
     return dn;
+  }
+
+
+  /**
+   * Returns the DN for the supplied ldap entry.
+   *
+   * @param  entry  to retrieve the DN from
+   *
+   * @return  dn
+   */
+  protected String resolveDn(final LdapEntry entry)
+  {
+    return entry.getDn();
   }
 
 
