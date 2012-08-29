@@ -294,21 +294,26 @@ public class Authenticator
     final AuthenticationCriteria criteria)
     throws LdapException
   {
-    LdapEntry entry;
-    if (conn == null) {
-      entry = NOOP_RESOLVER.resolve(conn, criteria);
-    } else if (entryResolver != null) {
-      entry = entryResolver.resolve(conn, criteria);
+    LdapEntry entry = null;
+    EntryResolver er;
+    if (entryResolver != null) {
+      er = entryResolver;
+    } else if (request.getReturnAttributes() == null ||
+               request.getReturnAttributes().length > 0) {
+      er = new SearchEntryResolver(request.getReturnAttributes());
     } else {
-      if (
-        request.getReturnAttributes() == null ||
-          request.getReturnAttributes().length > 0) {
-        final EntryResolver er = new SearchEntryResolver(
-          request.getReturnAttributes());
-        entry = er.resolve(conn, criteria);
-      } else {
-        entry = NOOP_RESOLVER.resolve(conn, criteria);
-      }
+      er = NOOP_RESOLVER;
+    }
+    try {
+      entry = er.resolve(conn, criteria);
+      logger.trace("resolved entry={} with resolver={}", entry, er);
+    } catch (LdapException e) {
+      logger.debug("entry resolution failed for resolver={}", er, e);
+    }
+    if (entry == null) {
+      entry = NOOP_RESOLVER.resolve(conn, criteria);
+      logger.trace(
+        "resolved entry={} with resolver={}", entry, NOOP_RESOLVER);
     }
     return entry;
   }
