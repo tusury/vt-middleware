@@ -13,6 +13,7 @@
 */
 package org.ldaptive.auth;
 
+import java.util.Arrays;
 import org.ldaptive.LdapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,5 +137,19 @@ public class FormatDnResolver implements DnResolver
       logger.debug("User input was empty or null");
     }
     return dn;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::formatString=%s, formatArgs=%s]",
+        getClass().getName(),
+        hashCode(),
+        formatString,
+        Arrays.toString(formatArgs));
   }
 }

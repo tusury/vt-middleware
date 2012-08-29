@@ -36,4 +36,12 @@ public class NoOpEntryResolver implements EntryResolver
   {
     return new LdapEntry(ac.getDn());
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return String.format("[%s@%d]", getClass().getName(), hashCode());
+  }
 }

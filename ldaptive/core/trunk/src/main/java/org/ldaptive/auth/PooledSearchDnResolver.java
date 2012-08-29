@@ -48,11 +48,7 @@ public class PooledSearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /**
-   * Returns the connection factory.
-   *
-   * @return  connection factory
-   */
+  /** {@inheritDoc} */
   @Override
   public PooledConnectionFactory getConnectionFactory()
   {
@@ -60,11 +56,7 @@ public class PooledSearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /**
-   * Sets the connection factory.
-   *
-   * @param  cf  connection factory
-   */
+  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final PooledConnectionFactory cf)
   {
