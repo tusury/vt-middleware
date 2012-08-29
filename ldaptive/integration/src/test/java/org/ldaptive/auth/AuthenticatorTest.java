@@ -23,10 +23,10 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.SearchResult;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchResult;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -542,6 +542,16 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertEquals(
       ResultCode.INVALID_CREDENTIALS, response.getResultCode());
 
+    // test failed auth with return attributes
+    response = auth.authenticate(
+      new AuthenticationRequest(
+        user,
+        new Credential(INVALID_PASSWD),
+        returnAttrs.split("\\|")));
+    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertEquals(
+      ResultCode.INVALID_CREDENTIALS, response.getResultCode());
+
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential)));
     AssertJUnit.assertTrue(response.getResult());
@@ -884,19 +894,55 @@ public class AuthenticatorTest extends AbstractTest
       new ActiveDirectoryAuthenticationResponseHandler());
 
     // success, store the entry for modify operations
+    // setting null return attributes uses the search entry resolver
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), null));
     AssertJUnit.assertTrue(response.getResult());
     AssertJUnit.assertNull(response.getAccountState());
-    final LdapEntry entry = response.getLdapEntry();
+    LdapEntry entry = response.getLdapEntry();
+    AssertJUnit.assertNotNull(entry.getAttribute("pwdLastSet"));
+    AssertJUnit.assertNotNull(entry.getAttribute("userAccountControl"));
 
     // bad password
+    // setting null return attributes uses the search entry resolver
+    response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(INVALID_PASSWD), null));
+    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertEquals(
+      ActiveDirectoryAccountState.Error.LOGON_FAILURE,
+      response.getAccountState().getError());
+    entry = response.getLdapEntry();
+    AssertJUnit.assertNull(entry.getAttribute("pwdLastSet"));
+    AssertJUnit.assertNull(entry.getAttribute("userAccountControl"));
+
+    // bad password, no return attributes
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
     AssertJUnit.assertFalse(response.getResult());
     AssertJUnit.assertEquals(
       ActiveDirectoryAccountState.Error.LOGON_FAILURE,
       response.getAccountState().getError());
+    entry = response.getLdapEntry();
+    AssertJUnit.assertNull(entry.getAttribute("pwdLastSet"));
+    AssertJUnit.assertNull(entry.getAttribute("userAccountControl"));
+
+    // bad password, leverage an existing connection factory for entry
+    // resolution on a failed bind
+    BindAuthenticationHandler ah =
+      (BindAuthenticationHandler)
+        singleTLSAuth.getAuthenticationHandler();
+    auth.setEntryResolver(
+      new SearchEntryResolver(ah.getConnectionFactory()));
+    response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
+    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertEquals(
+      ActiveDirectoryAccountState.Error.LOGON_FAILURE,
+      response.getAccountState().getError());
+    entry = response.getLdapEntry();
+    AssertJUnit.assertNotNull(entry.getAttribute("pwdLastSet"));
+    AssertJUnit.assertNotNull(entry.getAttribute("userAccountControl"));
+    auth.setEntryResolver(null);
 
     final Connection conn = TestUtils.createSetupConnection();
     try {
