@@ -17,11 +17,12 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
-import org.ldaptive.asn1.SequenceEncoder;
+import org.ldaptive.asn1.UniversalDERTag;
 
 /**
  * Request/response control for PagedResults. See RFC 2696. Control is defined
@@ -207,7 +208,8 @@ public class PagedResultsControl extends AbstractControl
   @Override
   public byte[] encode()
   {
-    final SequenceEncoder se = new SequenceEncoder(
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(
+      UniversalDERTag.SEQ,
       new IntegerType(getSize()),
       new OctetStringType(getCookie() != null ? getCookie() : EMPTY_COOKIE));
     return se.encode();

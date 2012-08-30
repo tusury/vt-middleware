@@ -17,16 +17,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Encodes sequences to their DER format.
+ * Encodes constructed types to their DER format.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class SequenceEncoder extends AbstractDERType implements DEREncoder
+public class ConstructedDEREncoder extends AbstractDERType implements DEREncoder
 {
-
-  /** Constructed tags should have the 6th bit set. */
-  public static final int ASN_CONSTRUCTED = 0x20;
 
   /** Encoders in this sequence. */
   private final DEREncoder[] derEncoders;
@@ -35,10 +32,18 @@ public class SequenceEncoder extends AbstractDERType implements DEREncoder
   /**
    * Creates a new sequence encoder.
    *
+   * @param  tag  der tag associated with this type
    * @param  encoders  to encode in this sequence
    */
-  public SequenceEncoder(final DEREncoder... encoders)
+  public ConstructedDEREncoder(final DERTag tag, final DEREncoder... encoders)
   {
+    super(tag);
+    if (!tag.isConstructed()) {
+      throw new IllegalArgumentException("DER tag must be constructed");
+    }
+    if (encoders == null || encoders.length == 0) {
+      throw new IllegalArgumentException("Encoders cannot be null or empty");
+    }
     derEncoders = encoders;
   }
 
@@ -59,9 +64,6 @@ public class SequenceEncoder extends AbstractDERType implements DEREncoder
     } catch (IOException e) {
       throw new IllegalStateException("Encode failed", e);
     }
-    return
-      encode(
-        UniversalDERTag.SEQ.getTagNo() | ASN_CONSTRUCTED,
-        bytes.toByteArray());
+    return encode(bytes.toByteArray());
   }
 }

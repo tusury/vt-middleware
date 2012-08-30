@@ -36,6 +36,7 @@ public class IntegerType extends AbstractDERType implements DEREncoder
    */
   public IntegerType(final BigInteger item)
   {
+    super(UniversalDERTag.INT);
     derItem = item.toByteArray();
   }
 
@@ -47,6 +48,43 @@ public class IntegerType extends AbstractDERType implements DEREncoder
    */
   public IntegerType(final int item)
   {
+    super(UniversalDERTag.INT);
+    derItem = BigInteger.valueOf(item).toByteArray();
+  }
+
+
+  /**
+   * Creates a new integer type.
+   *
+   * @param  tag  der tag associated with this type
+   * @param  item  to DER encode
+   *
+   * @throws  IllegalArgumentException  if the der tag is constructed
+   */
+  public IntegerType(final DERTag tag, final BigInteger item)
+  {
+    super(tag);
+    if (tag.isConstructed()) {
+      throw new IllegalArgumentException("DER tag must not be constructed");
+    }
+    derItem = item.toByteArray();
+  }
+
+
+  /**
+   * Creates a new integer type.
+   *
+   * @param  tag  der tag associated with this type
+   * @param  item  to DER encode
+   *
+   * @throws  IllegalArgumentException  if the der tag is constructed
+   */
+  public IntegerType(final DERTag tag, final int item)
+  {
+    super(tag);
+    if (tag.isConstructed()) {
+      throw new IllegalArgumentException("DER tag must not be constructed");
+    }
     derItem = BigInteger.valueOf(item).toByteArray();
   }
 
@@ -55,7 +93,7 @@ public class IntegerType extends AbstractDERType implements DEREncoder
   @Override
   public byte[] encode()
   {
-    return encode(UniversalDERTag.INT.getTagNo(), derItem);
+    return encode(derItem);
   }
 
 

@@ -17,10 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextType;
 import org.ldaptive.asn1.DEREncoder;
 import org.ldaptive.asn1.OctetStringType;
-import org.ldaptive.asn1.SequenceEncoder;
+import org.ldaptive.asn1.UniversalDERTag;
 
 /**
  * Request control for server side sorting. See RFC 2891. Control is defined as:
@@ -144,10 +145,12 @@ public class SortRequestControl extends AbstractControl
       if (sortKeys[i].getReverseOrder()) {
         l.add(new ContextType(1, sortKeys[i].getReverseOrder()));
       }
-      keyEncoders[i] = new SequenceEncoder(l.toArray(new DEREncoder[l.size()]));
+      keyEncoders[i] = new ConstructedDEREncoder(
+        UniversalDERTag.SEQ, l.toArray(new DEREncoder[l.size()]));
     }
 
-    final SequenceEncoder se = new SequenceEncoder(keyEncoders);
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(
+      UniversalDERTag.SEQ, keyEncoders);
     return se.encode();
   }
 }

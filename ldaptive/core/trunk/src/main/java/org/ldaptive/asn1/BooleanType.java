@@ -41,6 +41,25 @@ public class BooleanType extends AbstractDERType implements DEREncoder
    */
   public BooleanType(final boolean item)
   {
+    super(UniversalDERTag.BOOL);
+    derItem = toBytes(item);
+  }
+
+
+  /**
+   * Creates a new boolean type.
+   *
+   * @param  tag  der tag associated with this type
+   * @param  item  to DER encode
+   *
+   * @throws  IllegalArgumentException  if the der tag is constructed
+   */
+  public BooleanType(final DERTag tag, final boolean item)
+  {
+    super(tag);
+    if (tag.isConstructed()) {
+      throw new IllegalArgumentException("DER tag must not be constructed");
+    }
     derItem = toBytes(item);
   }
 
@@ -49,7 +68,7 @@ public class BooleanType extends AbstractDERType implements DEREncoder
   @Override
   public byte[] encode()
   {
-    return encode(UniversalDERTag.BOOL.getTagNo(), derItem);
+    return encode(derItem);
   }
 
 

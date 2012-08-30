@@ -39,6 +39,25 @@ public class UuidType extends AbstractDERType implements DEREncoder
    */
   public UuidType(final UUID item)
   {
+    super(UniversalDERTag.OCTSTR);
+    derItem = toBytes(item);
+  }
+
+
+  /**
+   * Creates a new uuid type.
+   *
+   * @param  tag  der tag associated with this type
+   * @param  item  to DER encode
+   *
+   * @throws  IllegalArgumentException  if the der tag is constructed
+   */
+  public UuidType(final DERTag tag, final UUID item)
+  {
+    super(tag);
+    if (tag.isConstructed()) {
+      throw new IllegalArgumentException("DER tag must not be constructed");
+    }
     derItem = toBytes(item);
   }
 
@@ -47,7 +66,7 @@ public class UuidType extends AbstractDERType implements DEREncoder
   @Override
   public byte[] encode()
   {
-    return encode(UniversalDERTag.OCTSTR.getTagNo(), derItem);
+    return encode(derItem);
   }
 
 

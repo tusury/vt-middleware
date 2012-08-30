@@ -43,6 +43,14 @@ public class ContextDERTag extends AbstractDERTag
 
   /** {@inheritDoc} */
   @Override
+  public int getTagByte()
+  {
+    return super.getTagByte() | TAG_CLASS;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public String name()
   {
     return String.format("%s(%s)", TAG_NAME, getTagNo());

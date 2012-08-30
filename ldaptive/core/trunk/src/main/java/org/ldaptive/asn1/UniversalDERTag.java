@@ -115,6 +115,14 @@ public enum UniversalDERTag implements DERTag {
   }
 
 
+  /** {@inheritDoc} */
+  @Override
+  public int getTagByte()
+  {
+    return constructed ? tagNo | ASN_CONSTRUCTED : tagNo;
+  }
+
+
   /**
    * Looks up a universal tag from a tag number.
    *
