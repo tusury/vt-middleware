@@ -275,10 +275,10 @@ public class Authenticator
 
 
   /**
-   * Attempts to find the ldap entry for the supplied DN. If the supplied
-   * connection is null, a {@link NoOpEntryResolver} is used. If an entry
-   * resolver has been provided it is used, otherwise a {@link
-   * SearchEntryResolver} is used if return attributes have been requested.
+   * Attempts to find the ldap entry for the supplied DN. If an entry resolver
+   * has been configured it is used. A {@link SearchEntryResolver} is used if
+   * return attributes have been requested. If none of these criteria is met, a
+   * {@link NoOpDnResolver} is used.
    *
    * @param  request  authentication request
    * @param  conn  that authentication occurred on
