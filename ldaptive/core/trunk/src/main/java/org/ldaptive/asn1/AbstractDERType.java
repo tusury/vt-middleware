@@ -27,17 +27,31 @@ public abstract class AbstractDERType
   /** Length of short form integers. */
   private static final int SHORT_FORM_INT_LENGTH = 127;
 
+  /** Constructed tag. */
+  private final int derTag;
+
 
   /**
-   * DER encode the supplied items with the supplied tag. If the length is
-   * greater than 127 bytes the long form is always expressed using 4 bytes.
+   * Creates a new abstract der type.
    *
-   * @param  tag  for this DER type
+   * @param  tag  to encode for this type
+   */
+  public AbstractDERType(final DERTag tag)
+  {
+    derTag = tag.getTagByte();
+  }
+
+
+  /**
+   * DER encode the supplied items with the tag assoicated with this type. If
+   * the length is greater than 127 bytes the long form is always expressed
+   * using 4 bytes.
+   *
    * @param  items  to encode
    *
    * @return  DER encoded items
    */
-  protected static byte[] encode(final int tag, final byte[]... items)
+  protected byte[] encode(final byte[]... items)
   {
     int itemLength = 0;
     for (byte[] b : items) {
@@ -63,7 +77,7 @@ public abstract class AbstractDERType
     // add 1 for the type tag, 1 or 5 for the length
     final ByteBuffer encodedItem = ByteBuffer.allocate(
       itemLength + 1 + lengthBytes.length);
-    encodedItem.put((byte) tag);
+    encodedItem.put((byte) derTag);
     for (byte b : lengthBytes) {
       encodedItem.put(b);
     }

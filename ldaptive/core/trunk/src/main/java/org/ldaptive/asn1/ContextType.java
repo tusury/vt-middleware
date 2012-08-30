@@ -24,9 +24,6 @@ import java.math.BigInteger;
 public class ContextType extends AbstractDERType implements DEREncoder
 {
 
-  /** ASN tag. */
-  private final int derTag;
-
   /** Data to encode. */
   private final byte[] derItem;
 
@@ -39,7 +36,7 @@ public class ContextType extends AbstractDERType implements DEREncoder
    */
   public ContextType(final int index, final byte[] item)
   {
-    derTag = ContextDERTag.TAG_CLASS | index;
+    super(new ContextDERTag(index, false));
     derItem = item;
   }
 
@@ -84,6 +81,6 @@ public class ContextType extends AbstractDERType implements DEREncoder
   @Override
   public byte[] encode()
   {
-    return encode(derTag, derItem);
+    return encode(derItem);
   }
 }

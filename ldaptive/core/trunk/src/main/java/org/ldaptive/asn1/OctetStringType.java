@@ -36,7 +36,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public OctetStringType(final String item)
   {
-    derItem = item.getBytes(Charset.forName("UTF-8"));
+    this(item.getBytes(Charset.forName("UTF-8")));
   }
 
 
@@ -47,6 +47,39 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public OctetStringType(final byte[] item)
   {
+    super(UniversalDERTag.OCTSTR);
+    derItem = item;
+  }
+
+
+  /**
+   * Creates a new octet string type.
+   *
+   * @param  tag  der tag associated with this type
+   * @param  item  to DER encode
+   *
+   * @throws  IllegalArgumentException  if the der tag is constructed
+   */
+  public OctetStringType(final DERTag tag, final String item)
+  {
+    this(tag, item.getBytes(Charset.forName("UTF-8")));
+  }
+
+
+  /**
+   * Creates a new octet string type.
+   *
+   * @param  tag  der tag associated with this type
+   * @param  item  to DER encode
+   *
+   * @throws  IllegalArgumentException  if the der tag is constructed
+   */
+  public OctetStringType(final DERTag tag, final byte[] item)
+  {
+    super(tag);
+    if (tag.isConstructed()) {
+      throw new IllegalArgumentException("DER tag must not be constructed");
+    }
     derItem = item;
   }
 
@@ -55,7 +88,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
   @Override
   public byte[] encode()
   {
-    return encode(UniversalDERTag.OCTSTR.getTagNo(), derItem);
+    return encode(derItem);
   }
 
 

@@ -16,9 +16,10 @@ package org.ldaptive.control;
 import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.BooleanType;
+import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
-import org.ldaptive.asn1.SequenceEncoder;
+import org.ldaptive.asn1.UniversalDERTag;
 
 /**
  * Request control for ldap content synchronization. See RFC 4533. Control is
@@ -285,14 +286,16 @@ public class SyncRequestControl extends AbstractControl
   @Override
   public byte[] encode()
   {
-    SequenceEncoder se;
+    ConstructedDEREncoder se;
     if (getCookie() != null) {
-      se = new SequenceEncoder(
+      se = new ConstructedDEREncoder(
+        UniversalDERTag.SEQ,
         new IntegerType(getRequestMode().value()),
         new OctetStringType(getCookie()),
         new BooleanType(getReloadHint()));
     } else {
-      se = new SequenceEncoder(
+      se = new ConstructedDEREncoder(
+        UniversalDERTag.SEQ,
         new IntegerType(getRequestMode().value()),
         new BooleanType(getReloadHint()));
     }

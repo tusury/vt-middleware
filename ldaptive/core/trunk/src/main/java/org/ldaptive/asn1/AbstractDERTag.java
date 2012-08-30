@@ -60,6 +60,14 @@ public abstract class AbstractDERTag implements DERTag
 
   /** {@inheritDoc} */
   @Override
+  public int getTagByte()
+  {
+    return constructed ? tagNo | ASN_CONSTRUCTED : tagNo;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public String toString()
   {
     return String.format("%s(%s)", name(), tagNo);

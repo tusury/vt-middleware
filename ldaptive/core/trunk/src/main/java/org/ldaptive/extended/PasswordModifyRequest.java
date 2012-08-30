@@ -18,9 +18,10 @@ import java.util.Arrays;
 import java.util.List;
 import org.ldaptive.AbstractRequest;
 import org.ldaptive.Credential;
+import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextType;
 import org.ldaptive.asn1.DEREncoder;
-import org.ldaptive.asn1.SequenceEncoder;
+import org.ldaptive.asn1.UniversalDERTag;
 
 /**
  * Contains the data required to perform an ldap password modify operation. See
@@ -167,7 +168,8 @@ public class PasswordModifyRequest extends AbstractRequest
       l.add(new ContextType(2, getNewPassword().getString()));
     }
 
-    final SequenceEncoder se = new SequenceEncoder(
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(
+      UniversalDERTag.SEQ,
       l.toArray(new DEREncoder[l.size()]));
     return se.encode();
   }

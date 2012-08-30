@@ -15,8 +15,9 @@ package org.ldaptive.extended;
 
 import java.util.Arrays;
 import org.ldaptive.AbstractRequest;
+import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.IntegerType;
-import org.ldaptive.asn1.SequenceEncoder;
+import org.ldaptive.asn1.UniversalDERTag;
 
 /**
  * Contains the data required to perform an ldap cancel operation. See RFC 3909.
@@ -75,7 +76,8 @@ public class CancelRequest extends AbstractRequest implements ExtendedRequest
   @Override
   public byte[] encode()
   {
-    final SequenceEncoder se = new SequenceEncoder(
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(
+      UniversalDERTag.SEQ,
       new IntegerType(getMessageId()));
     return se.encode();
   }
