@@ -26,8 +26,8 @@ public abstract class AbstractIntermediateResponse
   implements IntermediateResponse
 {
 
-  /** control oid. */
-  private final String oid;
+  /** response oid. */
+  private final String responseOid;
 
   /** response controls. */
   private final ResponseControl[] responseControls;
@@ -39,16 +39,16 @@ public abstract class AbstractIntermediateResponse
   /**
    * Creates a new abstract intermediate response.
    *
-   * @param  id  OID of this message
+   * @param  oid  OID of this message
    * @param  c  response controls
    * @param  i  message id
    */
   public AbstractIntermediateResponse(
-    final String id,
+    final String oid,
     final ResponseControl[] c,
     final int i)
   {
-    oid = id;
+    responseOid = oid;
     responseControls = c;
     messageId = i;
   }
@@ -58,7 +58,7 @@ public abstract class AbstractIntermediateResponse
   @Override
   public String getOID()
   {
-    return oid;
+    return responseOid;
   }
 
 
@@ -67,6 +67,21 @@ public abstract class AbstractIntermediateResponse
   public ResponseControl[] getControls()
   {
     return responseControls;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public ResponseControl getControl(final String oid)
+  {
+    if (getControls() != null) {
+      for (ResponseControl c : getControls()) {
+        if (c.getOID().equals(oid)) {
+          return c;
+        }
+      }
+    }
+    return null;
   }
 
 
