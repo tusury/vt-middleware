@@ -76,6 +76,21 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
 
   /** {@inheritDoc} */
   @Override
+  public ResponseControl getControl(final String oid)
+  {
+    if (getControls() != null) {
+      for (ResponseControl c : getControls()) {
+        if (c.getOID().equals(oid)) {
+          return c;
+        }
+      }
+    }
+    return null;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
   public int getMessageId()
   {
     return messageId;
