@@ -15,7 +15,6 @@ package org.ldaptive.async;
 
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchResult;
-import org.ldaptive.control.ResponseControl;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncStateControl;
 import org.ldaptive.intermediate.SyncInfoMessage;
@@ -206,14 +205,8 @@ public class SyncReplItem
     public Entry(final SearchEntry entry)
     {
       searchEntry = entry;
-      if (entry.getControls() != null) {
-        for (ResponseControl c : entry.getControls()) {
-          if (SyncStateControl.OID.equals(c.getOID())) {
-            syncStateControl = (SyncStateControl) c;
-            break;
-          }
-        }
-      }
+      syncStateControl = (SyncStateControl) entry.getControl(
+        SyncStateControl.OID);
     }
 
 
@@ -277,13 +270,8 @@ public class SyncReplItem
     public Response(final org.ldaptive.Response<SearchResult> res)
     {
       response = res;
-      if (response.getControls() != null) {
-        for (ResponseControl c : response.getControls()) {
-          if (SyncDoneControl.OID.equals(c.getOID())) {
-            syncDoneControl = (SyncDoneControl) c;
-          }
-        }
-      }
+      syncDoneControl = (SyncDoneControl) response.getControl(
+        SyncDoneControl.OID);
     }
 
 

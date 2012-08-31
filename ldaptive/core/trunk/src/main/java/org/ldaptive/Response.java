@@ -149,6 +149,21 @@ public class Response<T> implements ResponseMessage
   }
 
 
+  /** {@inheritDoc} */
+  @Override
+  public ResponseControl getControl(final String oid)
+  {
+    if (getControls() != null) {
+      for (ResponseControl c : getControls()) {
+        if (c.getOID().equals(oid)) {
+          return c;
+        }
+      }
+    }
+    return null;
+  }
+
+
   /**
    * Returns the referral URLs produced by the ldap operation.
    *
