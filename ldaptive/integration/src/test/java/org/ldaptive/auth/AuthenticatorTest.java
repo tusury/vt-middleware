@@ -836,7 +836,8 @@ public class AuthenticatorTest extends AbstractTest
       response = auth.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
       AssertJUnit.assertFalse(response.getResult());
-      ppcResponse = (PasswordPolicyControl) response.getControls()[0];
+      ppcResponse = (PasswordPolicyControl) response.getControl(
+        PasswordPolicyControl.OID);
       AssertJUnit.assertEquals(
         PasswordPolicyControl.Error.ACCOUNT_LOCKED, ppcResponse.getError());
       AssertJUnit.assertEquals(
@@ -854,7 +855,8 @@ public class AuthenticatorTest extends AbstractTest
 
       response = auth.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
-      ppcResponse = (PasswordPolicyControl) response.getControls()[0];
+      ppcResponse = (PasswordPolicyControl) response.getControl(
+        PasswordPolicyControl.OID);
       AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
       AssertJUnit.assertNotNull(
         response.getAccountState().getWarning().getExpiration());
