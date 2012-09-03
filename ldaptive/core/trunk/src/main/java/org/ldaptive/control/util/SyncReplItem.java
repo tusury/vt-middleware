@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package org.ldaptive.async;
+package org.ldaptive.control.util;
 
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchResult;
