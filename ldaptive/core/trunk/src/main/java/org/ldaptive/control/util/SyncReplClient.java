@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package org.ldaptive.async;
+package org.ldaptive.control.util;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -22,6 +22,7 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.extended.CancelOperation;
 import org.ldaptive.extended.CancelRequest;
