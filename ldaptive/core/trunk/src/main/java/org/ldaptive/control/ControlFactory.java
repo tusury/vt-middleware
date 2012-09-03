@@ -48,6 +48,9 @@ public final class ControlFactory
     } else if (PagedResultsControl.OID.equals(oid)) {
       ctl = new PagedResultsControl(critical);
       ctl.decode(encoded);
+    } else if (VirtualListViewResponseControl.OID.equals(oid)) {
+      ctl = new VirtualListViewResponseControl(critical);
+      ctl.decode(encoded);
     } else if (PasswordPolicyControl.OID.equals(oid)) {
       ctl = new PasswordPolicyControl(critical);
       ctl.decode(encoded);
