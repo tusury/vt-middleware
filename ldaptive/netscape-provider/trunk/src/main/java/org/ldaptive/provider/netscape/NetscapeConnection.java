@@ -50,7 +50,6 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
@@ -505,7 +504,7 @@ public class NetscapeConnection implements ProviderConnection
       ldapResponse.getResultCode(),
       ldapResponse.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(), ldapResponse.getControls()),
+        ldapResponse.getControls()),
       ldapResponse.getReferrals(),
       false);
   }
@@ -532,7 +531,7 @@ public class NetscapeConnection implements ProviderConnection
       ldapResponse.getErrorMessage(),
       ldapResponse.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(), ldapResponse.getControls()),
+        ldapResponse.getControls()),
       ldapResponse.getReferrals(),
       ldapResponse.getMessageID());
   }
@@ -616,28 +615,9 @@ public class NetscapeConnection implements ProviderConnection
         more = resultIterator.hasNext();
         if (!more) {
           final LDAPResponse res = resultIterator.getResponse();
-          logger.trace("reading search response: {}", response);
-          final ResponseControl[] respControls =
-            config.getControlProcessor().processResponseControls(
-              request.getControls(), res.getControls());
-          final boolean searchAgain = ControlProcessor.searchAgain(
-            respControls);
-          if (searchAgain) {
-            resultIterator = new SearchResultIterator(
-              search(connection, request));
-            more = resultIterator.hasNext();
-          }
-          if (!more) {
-            throwOperationException(request, res);
-            response = new Response<Void>(
-              null,
-              ResultCode.valueOf(res.getResultCode()),
-              res.getErrorMessage(),
-              res.getMatchedDN(),
-              respControls,
-              res.getReferrals(),
-              res.getMessageID());
-          }
+          logger.trace("reading search response: {}", res);
+          throwOperationException(request, res);
+          response = createResponse(request, null, res);
         }
       } catch (LDAPException e) {
         final ResultCode rc = ignoreSearchException(
@@ -932,7 +912,7 @@ public class NetscapeConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(), res.getControls());
+          res.getControls());
       }
       final SearchEntry se = util.toSearchEntry(
         res.getEntry(), respControls, res.getMessageID());
@@ -955,7 +935,7 @@ public class NetscapeConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(), ref.getControls());
+          ref.getControls());
       }
       final SearchReference sr = new SearchReference(
         ref.getMessageID(), respControls, ref.getUrls());

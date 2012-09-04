@@ -681,10 +681,7 @@ public class ApacheLdapConnection implements ProviderConnection
     final RequestControl[] requestControls,
     final Message response)
   {
-    return
-      processor.processResponseControls(
-        requestControls,
-        getResponseControls(response));
+    return processor.processResponseControls(getResponseControls(response));
   }
 
 
@@ -777,37 +774,16 @@ public class ApacheLdapConnection implements ProviderConnection
         more = cursor.next();
         if (!more) {
           final SearchResultDone done = cursor.getSearchResultDone();
-          final org.ldaptive.control.ResponseControl[] respControls =
-            processResponseControls(
-              config.getControlProcessor(),
-              request.getControls(),
-              done);
-          final boolean searchAgain = ControlProcessor.searchAgain(
-            respControls);
-          if (searchAgain) {
-            cursor = search(connection, request);
-            more = cursor.next();
-          }
-          if (!more) {
-            throwOperationException(request, done);
+          logger.trace("reading search result done: {}", done);
+          throwOperationException(request, done);
 
-            final LdapResult ldapResult = done.getLdapResult();
-            final Referral ref = ldapResult.getReferral();
-            if (ref != null && request.getFollowReferrals()) {
-              throw new UnsupportedOperationException(
-                "Referral following not supported");
-            }
-            response = new Response<Void>(
-              null,
-              ResultCode.valueOf(ldapResult.getResultCode().getValue()),
-              ldapResult.getDiagnosticMessage(),
-              ldapResult.getMatchedDn().getName(),
-              respControls,
-              ref != null
-                ? ref.getLdapUrls().toArray(
-                  new String[ref.getReferralLength()]) : null,
-              done.getMessageId());
+          final LdapResult ldapResult = done.getLdapResult();
+          final Referral ref = ldapResult.getReferral();
+          if (ref != null && request.getFollowReferrals()) {
+            throw new UnsupportedOperationException(
+              "Referral following not supported");
           }
+          response = createResponse(request, null, done);
         }
       } catch (LdapOperationException e) {
         processLdapOperationException(e);

@@ -59,7 +59,6 @@ import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.intermediate.IntermediateResponseFactory;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
@@ -633,7 +632,7 @@ public class OpenDJConnection
       ldapResult.getDiagnosticMessage(),
       ldapResult.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(), ctls.toArray(new Control[ctls.size()])),
+        ctls.toArray(new Control[ctls.size()])),
       urls.toArray(new String[urls.size()]),
       -1);
   }
@@ -660,7 +659,6 @@ public class OpenDJConnection
       e.getResult().getResultCode().intValue(),
       e.getResult().getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(),
         ctls.toArray(new Control[ctls.size()])),
       urls.toArray(new String[urls.size()]),
       true);
@@ -752,26 +750,8 @@ public class OpenDJConnection
       boolean more = resultIterator.hasNext();
       if (!more) {
         final Result result = resultIterator.getResult();
-        final List<Control> ctls = result.getControls();
-        final ResponseControl[] respControls =
-          config.getControlProcessor().processResponseControls(
-            request.getControls(), ctls.toArray(new Control[ctls.size()]));
-        final boolean searchAgain = ControlProcessor.searchAgain(respControls);
-        if (searchAgain) {
-          resultIterator = search(connection, request);
-          more = resultIterator.hasNext();
-        }
-        if (!more) {
-          final List<String> urls = result.getReferralURIs();
-          response = new org.ldaptive.Response<Void>(
-            null,
-            ResultCode.valueOf(result.getResultCode().intValue()),
-            result.getDiagnosticMessage(),
-            result.getMatchedDN(),
-            respControls,
-            urls.toArray(new String[urls.size()]),
-            -1);
-        }
+        logger.trace("reading search result: {}", result);
+        response = createResponse(request, null, result);
       }
       return more;
     }
@@ -1142,7 +1122,7 @@ public class OpenDJConnection
         final List<Control> ctls = entry.getControls();
         respControls =
           config.getControlProcessor().processResponseControls(
-            request.getControls(), ctls.toArray(new Control[ctls.size()]));
+            ctls.toArray(new Control[ctls.size()]));
       }
       final SearchEntry se =  util.toSearchEntry(entry, respControls, -1);
       return new SearchItem(se);
@@ -1170,7 +1150,7 @@ public class OpenDJConnection
         final List<Control> ctls = ref.getControls();
         respControls =
           config.getControlProcessor().processResponseControls(
-            request.getControls(), ctls.toArray(new Control[ctls.size()]));
+            ctls.toArray(new Control[ctls.size()]));
       }
       final SearchReference sr = new SearchReference(
         -1, respControls, ref.getURIs());
@@ -1195,7 +1175,7 @@ public class OpenDJConnection
         final List<Control> ctls = res.getControls();
         respControls =
           config.getControlProcessor().processResponseControls(
-            request.getControls(), ctls.toArray(new Control[ctls.size()]));
+            ctls.toArray(new Control[ctls.size()]));
       }
       final org.ldaptive.intermediate.IntermediateResponse ir =
         IntermediateResponseFactory.createIntermediateResponse(

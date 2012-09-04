@@ -62,7 +62,6 @@ import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.intermediate.IntermediateResponseFactory;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
@@ -536,7 +535,6 @@ public class UnboundIDConnection implements ProviderConnection
         ldapResult.getDiagnosticMessage(),
         ldapResult.getMatchedDN(),
         config.getControlProcessor().processResponseControls(
-          request.getControls(),
           ldapResult.getResponseControls()),
         ldapResult.getReferralURLs(),
         ldapResult.getMessageID());
@@ -563,7 +561,6 @@ public class UnboundIDConnection implements ProviderConnection
       e.getResultCode().intValue(),
       e.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(),
         e.getResponseControls()),
       e.getReferralURLs(),
       true);
@@ -667,18 +664,7 @@ public class UnboundIDConnection implements ProviderConnection
         return false;
       }
 
-      boolean more = resultIterator.hasNext();
-      if (!more) {
-        logger.debug("no more entries for response: {}", response);
-
-        final boolean searchAgain = ControlProcessor.searchAgain(
-          response.getControls());
-        if (searchAgain) {
-          resultIterator = search(connection, request);
-          more = resultIterator.hasNext();
-        }
-      }
-      return more;
+      return resultIterator.hasNext();
     }
 
 
@@ -1045,7 +1031,6 @@ public class UnboundIDConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (entry.getControls() != null && entry.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(),
           entry.getControls());
       }
 
@@ -1073,7 +1058,6 @@ public class UnboundIDConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(),
           ref.getControls());
       }
 
@@ -1101,7 +1085,6 @@ public class UnboundIDConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(),
           res.getControls());
       }
 
