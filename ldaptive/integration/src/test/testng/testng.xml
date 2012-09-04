@@ -43,6 +43,20 @@
              value="/org/ldaptive/createLdapEntry-16.ldif"/>
   <parameter name="createEntry17"
              value="/org/ldaptive/createLdapEntry-17.ldif"/>
+  <parameter name="createEntry18"
+             value="/org/ldaptive/createLdapEntry-18.ldif"/>
+  <parameter name="createEntry19"
+             value="/org/ldaptive/createLdapEntry-19.ldif"/>
+  <parameter name="createEntry20"
+             value="/org/ldaptive/createLdapEntry-20.ldif"/>
+  <parameter name="createEntry21"
+             value="/org/ldaptive/createLdapEntry-21.ldif"/>
+  <parameter name="createEntry22"
+             value="/org/ldaptive/createLdapEntry-22.ldif"/>
+  <parameter name="createEntry23"
+             value="/org/ldaptive/createLdapEntry-23.ldif"/>
+  <parameter name="createEntry25"
+             value="/org/ldaptive/createLdapEntry-25.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -202,6 +216,11 @@
   <parameter name="pagedSearchReturnAttrs" value="cn|contactPerson|creationDate|objectClass|member|uid|uugid"/>
   <parameter name="pagedSearchResults" value="/org/ldaptive/pagedResults.ldif"/>
 
+  <parameter name="virtualListViewSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="virtualListViewSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
+  <parameter name="virtualListViewSearchReturnAttrs" value="cn|contactPerson|creationDate|objectClass|member|uid|uugid"/>
+  <parameter name="virtualListViewSearchResults" value="/org/ldaptive/virtualListViewResults.ldif"/>
+
   <parameter name="sortSearchDn" value="${ldapBaseDn}"/>
   <parameter name="sortSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
 
@@ -210,9 +229,15 @@
   <parameter name="searchAsyncReturnAttrs" value="departmentNumber|givenName|sn"/>
   <parameter name="searchAsyncResults" value="/org/ldaptive/searchResults-17.ldif"/>
 
-  <parameter name="syncReplSearchDn" value="cn=Andrew Johnson,${ldapBaseDn}"/>
+  <parameter name="syncReplSearchDn" value="cn=Ulysses Grant,${ldapBaseDn}"/>
   <parameter name="syncReplSearchReturnAttrs" value="cn|employeeType|mail|objectClass|sn|uid"/>
   <parameter name="syncReplSearchResults" value="/org/ldaptive/syncReplResults.ldif"/>
+
+  <parameter name="vlvSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="vlvSearchFilter" value="(|(uid=19)(uid=20)(uid=21))"/>
+
+  <parameter name="prSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="prSearchFilter" value="(|(uid=22)(uid=23)(uid=25))"/>
 
   <parameter name="getSchemaDn" value="${ldapBaseDn}"/>
   <parameter name="getSchemaResults"
@@ -287,7 +312,7 @@
   <parameter name="loadPropertiesBaseDn" value="${ldapBaseDn}"/>
 
   <parameter name="getDnCn" value="John Quincy Adams"/>
-  <parameter name="getDnUser" value="jqadams@vt.edu"/>
+  <parameter name="getDnUser" value="jqadams@ldaptive.org"/>
   <parameter name="getDnDuplicateFilter" value="(cn=*)"/>
 
   <parameter name="authenticateDn" value="cn=John Quincy Adams,${ldapBaseDn}"/>
@@ -298,7 +323,7 @@
   <parameter name="authenticateDnResults"
              value="/org/ldaptive/searchResults-6.ldif"/>
              
-  <parameter name="authenticateUser" value="jqadams@vt.edu"/>
+  <parameter name="authenticateUser" value="jqadams@ldaptive.org"/>
   <parameter name="authenticateCredential" value="password6"/>
   <parameter name="authenticateFilter" value="(departmentNumber=0826)"/>
   <parameter name="authenticateReturnAttrs" value="departmentNumber|givenName|sn"/>
@@ -329,7 +354,7 @@
   <parameter name="cliAddArgs"
              value="-ldapUrl|${ldapTestHost}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-file|target/test-classes/org/ldaptive/createLdapEntry-8.ldif"/>
   <parameter name="cliSearchArgs"
-             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-searchFilter|(mail=mvburen@vt.edu)|-returnAttributes|departmentNumber,givenName,jpegPhoto,sn"/>
+             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-searchFilter|(mail=mvburen@ldaptive.org)|-returnAttributes|departmentNumber,givenName,jpegPhoto,sn"/>
   <parameter name="cliSearchResults"
              value="/org/ldaptive/searchResults-8.ldif"/>
   <parameter name="cliCompareArgs"
@@ -338,14 +363,14 @@
              value="-ldapUrl|${ldapTestHost}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-dn|cn=Martin Van Buren,${ldapBaseDn}"/>
 
   <parameter name="cliAuthTLSArgs"
-             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-useStartTLS|true|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-useStartTLS|true|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-userFilter|(mail={user})|-user|whharrison@ldaptive.org|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthSSLArgs"
-             value="-ldapUrl|${ldapSslTestHost}|-baseDn|${ldapBaseDn}|-useSSL|true|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-userFilter|(mail={user})|-user|whharrison@vt.edu|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
+             value="-ldapUrl|${ldapSslTestHost}|-baseDn|${ldapBaseDn}|-useSSL|true|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-userFilter|(mail={user})|-user|whharrison@ldaptive.org|-credential|password9|-returnAttributes|departmentNumber,givenName,sn"/>
   <parameter name="cliAuthResults"
              value="/org/ldaptive/searchResults-9.ldif"/>
 
   <parameter name="jaasDn" value="cn=John Tyler,${ldapBaseDn}"/>
-  <parameter name="jaasUser" value="jtyler@vt.edu"/>
+  <parameter name="jaasUser" value="jtyler@ldaptive.org"/>
   <parameter name="jaasUserRole" value="0830"/>
   <parameter name="jaasUserRoleDefault" value="0830|test-role1|test-role2"/>
   <parameter name="jaasRole" value="John Tyler|John|Tyler"/>
@@ -355,7 +380,7 @@
 
   <parameter name="webXml" value="target/test-classes/web.xml"/>
 
-  <parameter name="ldifSearchServletQuery" value="(mail=jkpolk@vt.edu)"/>
+  <parameter name="ldifSearchServletQuery" value="(mail=jkpolk@ldaptive.org)"/>
   <parameter name="ldifSearchServletAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
   <parameter name="ldifSearchServletLdif" value="/org/ldaptive/searchResults-11.ldif"/>
 
@@ -391,6 +416,7 @@
         <include name="modifyDn" />
         <include name="extended" />
         <include name="async" />
+        <include name="control-util" />
         <include name="spring" />
         <include name="auth" />
         <include name="jaas" />
