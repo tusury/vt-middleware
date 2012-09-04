@@ -16,8 +16,6 @@ package org.ldaptive.provider;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import org.ldaptive.control.Control;
-import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.slf4j.Logger;
@@ -111,14 +109,11 @@ public class ControlProcessor<T>
    * Converts the supplied provider controls to a response controls. The
    * supplied request controls were used to produce the response.
    *
-   * @param  requestControls  that produced the response
    * @param  responseControls  to convert
    *
    * @return  controls
    */
-  public ResponseControl[] processResponseControls(
-    final RequestControl[] requestControls,
-    final T[] responseControls)
+  public ResponseControl[] processResponseControls(final T[] responseControls)
   {
     if (responseControls == null) {
       return null;
@@ -128,7 +123,7 @@ public class ControlProcessor<T>
     final List<ResponseControl> ctls = new ArrayList<ResponseControl>(
       responseControls.length);
     for (T c : responseControls) {
-      final ResponseControl ctl = processResponse(requestControls, c);
+      final ResponseControl ctl = processResponse(c);
       if (ctl != null) {
         ctls.add(ctl);
       }
@@ -141,14 +136,11 @@ public class ControlProcessor<T>
   /**
    * Converts the supplied provider control to a control.
    *
-   * @param  requestControls  that produced the response controls
    * @param  providerCtl  to convert
    *
    * @return  control
    */
-  protected ResponseControl processResponse(
-    final RequestControl[] requestControls,
-    final T providerCtl)
+  protected ResponseControl processResponse(final T providerCtl)
   {
     if (providerCtl == null) {
       return null;
@@ -159,79 +151,6 @@ public class ControlProcessor<T>
       throw new UnsupportedOperationException(
         "Response control not supported: " + providerCtl);
     }
-
-    final RequestControl rc = findControl(requestControls, ctl.getOID());
-    if (rc != null) {
-      updateRequestControl(ctl, rc);
-    }
     return ctl;
-  }
-
-
-  /**
-   * Some request controls need data injected from the response control.
-   *
-   * @param  responseControl  to inspect
-   * @param  requestControl  to update if necessary
-   */
-  protected void updateRequestControl(
-    final ResponseControl responseControl,
-    final RequestControl requestControl)
-  {
-    if (PagedResultsControl.OID.equals(responseControl.getOID())) {
-      ((PagedResultsControl) requestControl).setCookie(
-        ((PagedResultsControl) responseControl).getCookie());
-    }
-  }
-
-
-  /**
-   * Examines the supplied response controls and determines whether another
-   * search should be executed.
-   *
-   * @param  responseControls  to inspect
-   *
-   * @return  whether another search should be executed
-   */
-  public static boolean searchAgain(final ResponseControl[] responseControls)
-  {
-    boolean b = false;
-    final PagedResultsControl ctl = (PagedResultsControl) findControl(
-      responseControls,
-      PagedResultsControl.OID);
-    if (ctl != null) {
-      if (ctl.getCookie() != null && ctl.getCookie().length > 0) {
-        b = true;
-      }
-    }
-    return b;
-  }
-
-
-  /**
-   * Searches the supplied array for a control that matches the supplied OID.
-   *
-   * @param  <T>  type of control
-   * @param  controls  to search
-   * @param  oid  to search for
-   *
-   * @return  control that matches the oid
-   */
-  private static <T extends Control> T findControl(
-    final T[] controls,
-    final String oid)
-  {
-    if (controls == null || controls.length == 0) {
-      return null;
-    }
-
-    T match = null;
-    for (T c : controls) {
-      if (c.getOID().equals(oid)) {
-        match = c;
-        break;
-      }
-    }
-    return match;
   }
 }
