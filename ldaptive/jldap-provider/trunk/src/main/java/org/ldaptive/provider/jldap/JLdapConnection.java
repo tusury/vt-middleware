@@ -57,7 +57,6 @@ import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
 import org.ldaptive.intermediate.IntermediateResponseFactory;
-import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
@@ -473,7 +472,7 @@ public class JLdapConnection implements ProviderConnection
       ldapResponse.getResultCode(),
       ldapResponse.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(), ldapResponse.getControls()),
+        ldapResponse.getControls()),
       ldapResponse.getReferrals(),
       false);
   }
@@ -500,7 +499,7 @@ public class JLdapConnection implements ProviderConnection
       ldapResponse.getErrorMessage(),
       ldapResponse.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
-        request.getControls(), ldapResponse.getControls()),
+        ldapResponse.getControls()),
       ldapResponse.getReferrals(),
       ldapResponse.getMessageID());
   }
@@ -634,27 +633,9 @@ public class JLdapConnection implements ProviderConnection
         more = resultIterator.hasNext();
         if (!more) {
           final LDAPResponse res = resultIterator.getResponse();
-          final ResponseControl[] respControls =
-            config.getControlProcessor().processResponseControls(
-              request.getControls(), res.getControls());
-          final boolean searchAgain = ControlProcessor.searchAgain(
-            respControls);
-          if (searchAgain) {
-            resultIterator = new SearchResultIterator(
-              search(connection, request));
-            more = resultIterator.hasNext();
-          }
-          if (!more) {
-            throwOperationException(request, res);
-            response = new Response<Void>(
-              null,
-              ResultCode.valueOf(res.getResultCode()),
-              null,
-              null,
-              respControls,
-              res.getReferrals(),
-              res.getMessageID());
-          }
+          logger.trace("reading search response: {}", res);
+          throwOperationException(request, res);
+          response = createResponse(request, null, res);
         }
       } catch (LDAPException e) {
         final ResultCode rc = ignoreSearchException(
@@ -967,7 +948,7 @@ public class JLdapConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(), res.getControls());
+          res.getControls());
       }
       final SearchEntry se = util.toSearchEntry(
         res.getEntry(), respControls, res.getMessageID());
@@ -990,7 +971,7 @@ public class JLdapConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(), ref.getControls());
+          ref.getControls());
       }
       final SearchReference sr = new SearchReference(
         ref.getMessageID(), respControls, ref.getReferrals());
@@ -1013,7 +994,7 @@ public class JLdapConnection implements ProviderConnection
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
-          request.getControls(), res.getControls());
+          res.getControls());
       }
       final org.ldaptive.intermediate.IntermediateResponse ir =
         IntermediateResponseFactory.createIntermediateResponse(
