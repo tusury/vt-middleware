@@ -751,9 +751,7 @@ public class JndiConnection implements ProviderConnection
     ResponseControl[] ctls = null;
     if (ctx != null) {
       try {
-        ctls = processor.processResponseControls(
-          requestControls,
-          ctx.getResponseControls());
+        ctls = processor.processResponseControls(ctx.getResponseControls());
       } catch (NamingException e) {
         final Logger l = LoggerFactory.getLogger(JndiUtils.class);
         l.warn("Error retrieving response controls.", e);
@@ -1005,30 +1003,13 @@ public class JndiConnection implements ProviderConnection
       try {
         more = results.hasMore();
         if (!more) {
-          final ResponseControl[] respControls = processResponseControls(
-            config.getControlProcessor(),
-            request.getControls(),
+          response = createResponse(
+            request,
+            null,
+            responseResultCode != null ? responseResultCode
+                                       : ResultCode.SUCCESS,
+            null,
             searchContext);
-          final boolean searchAgain = ControlProcessor.searchAgain(
-            respControls);
-          if (searchAgain) {
-            searchContext.setRequestControls(
-              config.getControlProcessor().processRequestControls(
-                request.getControls()));
-            results = search(searchContext, request);
-            more = results.hasMore();
-          }
-          if (!more) {
-            response = new Response<Void>(
-              null,
-              responseResultCode != null ? responseResultCode
-                                         : ResultCode.SUCCESS,
-              null,
-              null,
-              respControls,
-              null,
-              -1);
-          }
         }
       } catch (LdapReferralException e) {
         response = createResponse(
