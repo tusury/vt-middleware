@@ -22,6 +22,8 @@ import java.util.Set;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.control.SortRequestControl;
+import org.ldaptive.control.VirtualListViewRequestControl;
+import org.ldaptive.control.VirtualListViewResponseControl;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.DnAttributeEntryHandler;
@@ -373,7 +375,89 @@ public class SearchOperationTest extends AbstractTest
       final SearchRequest request = new SearchRequest(
         dn, new SearchFilter(filter), returnAttrs.split("\\|"));
       request.setControls(prc);
-      final SearchResult result = search.execute(request).getResult();
+      SearchResult result = new SearchResult();
+      byte[] cookie = null;
+      do {
+        prc.setCookie(cookie);
+        Response<SearchResult> response = search.execute(request);
+        result.addEntries(response.getResult().getEntries());
+        cookie = null;
+        PagedResultsControl ctl = (PagedResultsControl) response.getControl(
+          PagedResultsControl.OID);
+        if (ctl != null) {
+          if (ctl.getCookie() != null && ctl.getCookie().length > 0) {
+            cookie = ctl.getCookie();
+          }
+        }
+      } while (cookie != null);
+      // ignore the case of member and contactPerson;
+      // some directories return those in mixed case
+      AssertJUnit.assertEquals(
+        0,
+        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
+          TestUtils.convertLdifToResult(expected), result));
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported
+      AssertJUnit.assertNotNull(e);
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "virtualListViewSearchDn",
+    "virtualListViewSearchFilter",
+    "virtualListViewSearchReturnAttrs",
+    "virtualListViewSearchResults"
+  })
+  @Test(groups = {"search"})
+  public void virtualListViewSearch(
+    final String dn,
+    final String filter,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final SortRequestControl src = new SortRequestControl(
+      new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
+    VirtualListViewRequestControl vlvrc =
+      new VirtualListViewRequestControl(3, 1, 1, true);
+    byte[] contextID = null;
+    final Connection conn = TestUtils.createConnection();
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      final String expected = TestUtils.readFileIntoString(ldifFile);
+
+      // test searching
+      final SearchRequest request = new SearchRequest(
+        dn, new SearchFilter(filter), returnAttrs.split("\\|"));
+      request.setControls(src, vlvrc);
+      Response<SearchResult> response = search.execute(request);
+      SearchResult result = response.getResult();
+      // ignore the case of member and contactPerson;
+      // some directories return those in mixed case
+      AssertJUnit.assertEquals(
+        0,
+        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
+          TestUtils.convertLdifToResult(expected), result));
+      contextID = ((VirtualListViewResponseControl) response.getControl(
+        VirtualListViewResponseControl.OID)).getContextID();
+
+      vlvrc = new VirtualListViewRequestControl(
+        "group4", 1, 1, contextID, true);
+      request.setControls(src, vlvrc);
+      response = search.execute(request);
+      result = response.getResult();
       // ignore the case of member and contactPerson;
       // some directories return those in mixed case
       AssertJUnit.assertEquals(

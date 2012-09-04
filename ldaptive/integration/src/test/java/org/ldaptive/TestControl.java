@@ -28,11 +28,11 @@ public class TestControl
 
   /** Attribute to block on. */
   public static final LdapAttribute ATTR_IDLE =
-    new LdapAttribute("mail", "test-idle@vt.edu");
+    new LdapAttribute("mail", "test-idle@ldaptive.org");
 
   /** Attribute to block on. */
   public static final LdapAttribute ATTR_RUNNING =
-    new LdapAttribute("mail", "test-running@vt.edu");
+    new LdapAttribute("mail", "test-running@ldaptive.org");
 
   /** Time to wait before checking if lock is available. */
   public static final int WAIT_TIME = 5000;
