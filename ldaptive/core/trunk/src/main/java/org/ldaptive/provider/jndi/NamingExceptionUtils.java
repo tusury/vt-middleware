@@ -13,9 +13,8 @@
 */
 package org.ldaptive.provider.jndi;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.naming.AuthenticationException;
 import javax.naming.AuthenticationNotSupportedException;
@@ -40,6 +39,8 @@ import javax.naming.directory.InvalidSearchFilterException;
 import javax.naming.directory.NoSuchAttributeException;
 import javax.naming.directory.SchemaViolationException;
 import org.ldaptive.ResultCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class that provides a bridge between JNDI naming exceptions and ldap
@@ -332,21 +333,27 @@ public final class NamingExceptionUtils
 
   /**
    * Returns the result code that map to the supplied naming exception. If the
-   * exception maps to multiple result codes, the first one is returned.
+   * exception maps to multiple result codes, null is returned.
    *
    * @param  clazz  naming exception
    *
-   * @return  ldap result code
+   * @return  ldap result code or null
    */
   public static ResultCode getResultCode(
     final Class<? extends NamingException> clazz)
   {
     final ResultCode[] codes = getResultCodes(clazz);
-    if (codes != null && codes.length > 0) {
-      return codes[0];
-    } else {
-      return null;
+    if (codes != null) {
+      if (codes.length == 1) {
+        return codes[0];
+      }
+      final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
+      l.debug(
+        "naming exception {} is ambiguous, maps to multiple result codes: {}",
+        clazz,
+        Arrays.toString(codes));
     }
+    return null;
   }
 
 
@@ -389,28 +396,5 @@ public final class NamingExceptionUtils
     final ResultCode code)
   {
     return RESULT_CODES_TO_EXCEPTION.get(code);
-  }
-
-
-  /**
-   * Returns the naming exception that maps to the supplied result code. If the
-   * result code does not map to an exception, null is returned
-   *
-   * @param  codes  ldap result codes
-   *
-   * @return  array of naming exception classes
-   */
-  public static Class<?>[] getNamingExceptions(final ResultCode[] codes)
-  {
-    final List<Class<?>> l = new ArrayList<Class<?>>();
-    if (codes != null) {
-      for (ResultCode rc : codes) {
-        final Class<?> c = getNamingException(rc);
-        if (c != null) {
-          l.add(c);
-        }
-      }
-    }
-    return l.toArray(new Class<?>[l.size()]);
   }
 }
