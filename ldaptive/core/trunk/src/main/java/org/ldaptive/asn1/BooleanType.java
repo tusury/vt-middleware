@@ -109,6 +109,6 @@ public class BooleanType extends AbstractDERType implements DEREncoder
    */
   public static byte[] toBytes(final boolean b)
   {
-    return new byte[] {(byte) (b ? TRUE_BYTE : FALSE_BYTE)};
+    return new byte[] {b ? TRUE_BYTE : FALSE_BYTE};
   }
 }

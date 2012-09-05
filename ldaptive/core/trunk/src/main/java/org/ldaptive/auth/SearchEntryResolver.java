@@ -13,6 +13,7 @@
 */
 package org.ldaptive.auth;
 
+import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
@@ -130,6 +131,6 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
         getClass().getName(),
         hashCode(),
         factory,
-        getReturnAttributes());
+        Arrays.toString(getReturnAttributes()));
   }
 }

@@ -13,6 +13,7 @@
 */
 package org.ldaptive.auth;
 
+import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
@@ -111,6 +112,6 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
         getClass().getName(),
         hashCode(),
         factory,
-        getReturnAttributes());
+        Arrays.toString(getReturnAttributes()));
   }
 }

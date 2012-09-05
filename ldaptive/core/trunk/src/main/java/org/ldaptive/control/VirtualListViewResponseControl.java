@@ -14,6 +14,7 @@
 package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.AbstractParseHandler;
@@ -271,7 +272,7 @@ public class VirtualListViewResponseControl extends AbstractControl
         targetPosition,
         contentCount,
         viewResult,
-        contextID);
+        Arrays.toString(contextID));
   }
 
 
