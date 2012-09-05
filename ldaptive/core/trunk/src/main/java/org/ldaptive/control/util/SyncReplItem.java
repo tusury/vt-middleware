@@ -192,7 +192,7 @@ public class SyncReplItem
     private final SearchEntry searchEntry;
 
     /** Control to search the entry for. */
-    private SyncStateControl syncStateControl;
+    private final SyncStateControl syncStateControl;
 
 
     /**
@@ -258,7 +258,7 @@ public class SyncReplItem
     private final org.ldaptive.Response<SearchResult> response;
 
     /** Control to search the response for. */
-    private SyncDoneControl syncDoneControl;
+    private final SyncDoneControl syncDoneControl;
 
 
     /**
