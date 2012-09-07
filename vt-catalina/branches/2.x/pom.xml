@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>edu.vt.middleware</groupId>
+  <artifactId>vt-catalina</artifactId>
+  <packaging>jar</packaging>
+  <version>2.0-SNAPSHOT</version>
+  <name>VT Catalina Components</name>
+  <description>Extension components for the Apache Tomcat servlet container.</description>
+  <url>http://code.google.com/p/vt-middleware/wiki/vtcatalina</url>
+  <issueManagement>
+    <system>Google Code</system>
+    <url>http://code.google.com/p/vt-middleware/issues/list</url>
+  </issueManagement>
+  <mailingLists>
+    <mailingList>
+      <name>vt-middleware-users</name>
+      <subscribe>vt-middleware-users+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>vt-middleware-users+unsubscribe@googlegroups.com</unsubscribe>
+      <post>vt-middleware-users@googlegroups.com</post>
+      <archive>http://groups.google.com/group/vt-middleware-users</archive>
+    </mailingList>
+    <mailingList>
+      <name>vt-middleware-dev</name>
+      <subscribe>vt-middleware-dev+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>vt-middleware-dev+unsubscribe@googlegroups.com</unsubscribe>      <post>vt-middleware-dev@googlegroups.com</post>
+      <archive>http://groups.google.com/group/vt-middleware-dev</archive>
+    </mailingList>
+  </mailingLists>
+  <licenses>
+    <license>
+      <name>Apache License version 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:https://vt-middleware.googlecode.com/svn/vt-catalina/trunk</connection>
+    <url>http://vt-middleware.googlecode.com/svn/vt-catalina/trunk</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>dfisher</id>
+      <name>Daniel Fisher</name>
+      <email>dfisher@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>marvin.addison</id>
+      <name>Marvin Addison</name>
+      <email>serac@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>7.0.30</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <fork>true</fork>
+          <debug>true</debug>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <compilerArgument>-Xlint:unchecked</compilerArgument>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <repositories>
+    <repository>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <distributionManagement>
+    <repository>
+      <id>vt-middleware.googlecode.com.repo</id>
+      <url>svn:https://vt-middleware.googlecode.com/svn/maven2</url>
+    </repository>
+  </distributionManagement>
+</project>
