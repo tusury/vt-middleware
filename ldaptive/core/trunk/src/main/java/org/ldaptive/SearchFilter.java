@@ -15,7 +15,6 @@ package org.ldaptive;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.codec.binary.Hex;
 
 /**
  * Simple bean for an ldap search filter and it's parameters.
@@ -161,7 +160,7 @@ public class SearchFilter
 
     String str;
     if (obj instanceof byte[]) {
-      final char[] c = Hex.encodeHex((byte[]) obj, false);
+      final char[] c = LdapUtils.hexEncode((byte[]) obj);
       final StringBuilder sb = new StringBuilder(c.length + c.length / 2);
       for (int i = 0; i < c.length; i += 2) {
         sb.append('\\');
