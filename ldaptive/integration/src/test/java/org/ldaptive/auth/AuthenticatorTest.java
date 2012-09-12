@@ -535,12 +535,15 @@ public class AuthenticatorTest extends AbstractTest
   {
     final Authenticator auth = createTLSAuthenticator(false);
 
-    // test plain auth
+    // test invalid user
     AuthenticationResponse response = auth.authenticate(
-      new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
+      new AuthenticationRequest("i-do-not-exist", new Credential(credential)));
     AssertJUnit.assertFalse(response.getResult());
     AssertJUnit.assertEquals(
-      ResultCode.INVALID_CREDENTIALS, response.getResultCode());
+      AuthenticationResultCode.DN_RESOLUTION_FAILURE,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertNull(response.getResultCode());
+    AssertJUnit.assertNotNull(response.getMessage());
 
     // test failed auth with return attributes
     response = auth.authenticate(
@@ -550,11 +553,17 @@ public class AuthenticatorTest extends AbstractTest
         returnAttrs.split("\\|")));
     AssertJUnit.assertFalse(response.getResult());
     AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(
       ResultCode.INVALID_CREDENTIALS, response.getResultCode());
 
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential)));
     AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
 
     // test auth with return attributes
@@ -565,6 +574,9 @@ public class AuthenticatorTest extends AbstractTest
         new Credential(credential),
         returnAttrs.split("\\|")));
     AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
@@ -694,7 +706,7 @@ public class AuthenticatorTest extends AbstractTest
     }
   )
   @Test(groups = {"auth"})
-  public void authenticateExceptions(
+  public void authenticateInvalidInput(
     final String user,
     final String credential,
     final String returnAttrs)
@@ -702,43 +714,49 @@ public class AuthenticatorTest extends AbstractTest
   {
     final Authenticator auth = createTLSAuthenticator(true);
 
-    try {
-      auth.authenticate(
-        new AuthenticationRequest(
-          user, null, returnAttrs.split("\\|")));
-      AssertJUnit.fail("Should have thrown IllegalArgumentException");
-    } catch (UnsupportedOperationException e) {
-      throw e;
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
-    }
+    AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest(user, null, returnAttrs.split("\\|")));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.INVALID_CREDENTIAL,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertNull(response.getResultCode());
+    AssertJUnit.assertNotNull(response.getMessage());
 
-    try {
-      auth.authenticate(
-        new AuthenticationRequest(
-          user, new Credential(""), returnAttrs.split("\\|")));
-      AssertJUnit.fail("Should have thrown IllegalArgumentException");
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
-    }
+    response = auth.authenticate(
+      new AuthenticationRequest(
+        user, new Credential(new byte[0]), returnAttrs.split("\\|")));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.INVALID_CREDENTIAL,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertNull(response.getResultCode());
+    AssertJUnit.assertNotNull(response.getMessage());
 
-    try {
-      auth.authenticate(
-        new AuthenticationRequest(
-          null, new Credential(credential), returnAttrs.split("\\|")));
-      AssertJUnit.fail("Should have thrown IllegalArgumentException");
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
-    }
+    response = auth.authenticate(
+      new AuthenticationRequest(
+        user, new Credential(""), returnAttrs.split("\\|")));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.INVALID_CREDENTIAL,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertNull(response.getResultCode());
+    AssertJUnit.assertNotNull(response.getMessage());
 
-    try {
-      auth.authenticate(
-        new AuthenticationRequest(
-          "", new Credential(credential), returnAttrs.split("\\|")));
-      AssertJUnit.fail("Should have thrown IllegalArgumentException");
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
-    }
+    response = auth.authenticate(
+      new AuthenticationRequest(
+        null, new Credential(credential), returnAttrs.split("\\|")));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.DN_RESOLUTION_FAILURE,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertNull(response.getResultCode());
+    AssertJUnit.assertNotNull(response.getMessage());
+
+    response = auth.authenticate(
+      new AuthenticationRequest(
+        "", new Credential(credential), returnAttrs.split("\\|")));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.DN_RESOLUTION_FAILURE,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertNull(response.getResultCode());
+    AssertJUnit.assertNotNull(response.getMessage());
   }
 
 
