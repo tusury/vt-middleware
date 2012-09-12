@@ -51,11 +51,9 @@ public class EhcacheTest
     final net.sf.ehcache.Cache ehcache = new net.sf.ehcache.Cache(
       new CacheConfiguration("test", 5)
         .memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.LRU)
-        .overflowToDisk(false)
         .eternal(false)
         .timeToLiveSeconds(0)
         .timeToIdleSeconds(0)
-        .diskPersistent(false)
         .diskExpiryThreadIntervalSeconds(3));
     manager.addCache(ehcache);
     cache = new Ehcache<SearchRequest>(ehcache);

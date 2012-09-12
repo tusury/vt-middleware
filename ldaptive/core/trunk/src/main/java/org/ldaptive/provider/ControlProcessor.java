@@ -64,7 +64,8 @@ public class ControlProcessor<T>
     if (requestControls == null) {
       return null;
     }
-    logger.trace("processing request controls: {}", requestControls);
+    logger.trace(
+      "processing request controls: {}", new Object[] {requestControls});
 
     final List<T> providerCtls = new ArrayList<T>(requestControls.length);
     for (RequestControl c : requestControls) {
