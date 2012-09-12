@@ -28,6 +28,9 @@ import org.ldaptive.control.ResponseControl;
 public class AuthenticationResponse extends Response<Boolean>
 {
 
+  /** Result of the authentication operation. */
+  private final AuthenticationResultCode authenticationResultCode;
+
   /** Ldap entry of authenticated user. */
   private final LdapEntry ldapEntry;
 
@@ -38,16 +41,18 @@ public class AuthenticationResponse extends Response<Boolean>
   /**
    * Creates a new authentication response.
    *
-   * @param  success  authentication result
+   * @param  authRc  authentication result code
    * @param  rc  result code from the underlying ldap operation
    * @param  entry  of the authenticated user
    */
   public AuthenticationResponse(
-    final boolean success,
+    final AuthenticationResultCode authRc,
     final ResultCode rc,
     final LdapEntry entry)
   {
-    super(success, rc);
+    super(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc);
+    authenticationResultCode = authRc;
     ldapEntry = entry;
   }
 
@@ -55,18 +60,26 @@ public class AuthenticationResponse extends Response<Boolean>
   /**
    * Creates a new authentication response.
    *
-   * @param  success  authentication result
+   * @param  authRc  authentication result code
    * @param  rc  result code from the underlying ldap operation
    * @param  entry  of the authenticated user
    * @param  msg  authentication message
    */
   public AuthenticationResponse(
-    final boolean success,
+    final AuthenticationResultCode authRc,
     final ResultCode rc,
     final LdapEntry entry,
     final String msg)
   {
-    super(success, rc, msg, null, null, null, -1);
+    super(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc,
+      rc,
+      msg,
+      null,
+      null,
+      null,
+      -1);
+    authenticationResultCode = authRc;
     ldapEntry = entry;
   }
 
@@ -74,7 +87,7 @@ public class AuthenticationResponse extends Response<Boolean>
   /**
    * Creates a new authentication response.
    *
-   * @param  success  authentication result
+   * @param  authRc  authentication result code
    * @param  rc  result code from the underlying ldap operation
    * @param  entry  of the authenticated user
    * @param  msg  authentication message
@@ -82,15 +95,34 @@ public class AuthenticationResponse extends Response<Boolean>
    * @param  msgId  message id from the underlying ldap operation
    */
   public AuthenticationResponse(
-    final boolean success,
+    final AuthenticationResultCode authRc,
     final ResultCode rc,
     final LdapEntry entry,
     final String msg,
     final ResponseControl[] controls,
     final int msgId)
   {
-    super(success, rc, msg, null, controls, null, msgId);
+    super(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc,
+      rc,
+      msg,
+      null,
+      controls,
+      null,
+      msgId);
+    authenticationResultCode = authRc;
     ldapEntry = entry;
+  }
+
+
+  /**
+   * Returns the result code associated with the authentication operation.
+   *
+   * @return  authentication result code
+   */
+  public AuthenticationResultCode getAuthenticationResultCode()
+  {
+    return authenticationResultCode;
   }
 
 
@@ -133,10 +165,11 @@ public class AuthenticationResponse extends Response<Boolean>
   {
     return
       String.format(
-        "[%s@%d::ldapEntry=%s, accountState=%s, result=%s, resultCode=%s, " +
-        "message=%s, controls=%s]",
+        "[%s@%d::authenticationResultCode=%s, ldapEntry=%s, accountState=%s, " +
+        "result=%s, resultCode=%s, message=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
+        authenticationResultCode,
         ldapEntry,
         accountState,
         getResult(),

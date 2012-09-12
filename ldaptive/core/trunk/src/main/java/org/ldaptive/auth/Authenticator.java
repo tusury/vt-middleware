@@ -210,21 +210,9 @@ public class Authenticator
   {
     logger.debug("authenticate dn={} with request={}", dn, request);
 
-    // check the credential
-    final Credential credential = request.getCredential();
-    if (credential == null || credential.getBytes() == null) {
-      throw new IllegalArgumentException(
-        "Cannot authenticate dn, credential cannot be null");
-    }
-    if (credential.getBytes().length == 0) {
-      throw new IllegalArgumentException(
-        "Cannot authenticate dn, credential cannot be empty");
-    }
-
-    // check the dn
-    if (dn == null || "".equals(dn)) {
-      throw new IllegalArgumentException(
-        "Cannot authenticate dn, dn cannot be empty or null");
+    final AuthenticationResponse invalidInput = validateInput(dn , request);
+    if (invalidInput != null) {
+      return invalidInput;
     }
 
     LdapEntry entry = null;
@@ -234,7 +222,7 @@ public class Authenticator
       final AuthenticationCriteria ac = new AuthenticationCriteria(dn);
       ac.setCredential(request.getCredential());
 
-      // attempt to bind as this dn
+      // attempt to authenticate as this dn
       response = getAuthenticationHandler().authenticate(ac);
       // resolve the entry
       entry = resolveEntry(request, response.getConnection(), ac);
@@ -250,7 +238,9 @@ public class Authenticator
       dn);
 
     final AuthenticationResponse authResponse = new AuthenticationResponse(
-      response.getResult(),
+      response.getResult() ?
+        AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS :
+        AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
       response.getResultCode(),
       entry,
       response.getMessage(),
@@ -269,8 +259,60 @@ public class Authenticator
 
     logger.debug(
       "authenticate response={} for dn={} with request={}",
-      new Object[] {response, dn, request});
+      response, dn, request);
     return authResponse;
+  }
+
+
+  /**
+   * Validates the authentication request and resolved DN. Returns an
+   * authentication response if validation failed.
+   *
+   * @param  dn  to validate
+   * @param  request  to validate
+   *
+   * @return  authentication response if validation failed, otherwise null
+   */
+  protected AuthenticationResponse validateInput(
+    final String dn,
+    final AuthenticationRequest request)
+  {
+    AuthenticationResponse response = null;
+    final Credential credential = request.getCredential();
+    if (credential == null || credential.getBytes() == null) {
+      response = new AuthenticationResponse(
+        AuthenticationResultCode.INVALID_CREDENTIAL,
+        null,
+        null,
+        "Credential cannot be null",
+        null,
+        -1);
+    } else if (credential.getBytes().length == 0) {
+      response = new AuthenticationResponse(
+        AuthenticationResultCode.INVALID_CREDENTIAL,
+        null,
+        null,
+        "Credential cannot be empty",
+        null,
+        -1);
+    } else if (dn == null) {
+      response = new AuthenticationResponse(
+        AuthenticationResultCode.DN_RESOLUTION_FAILURE,
+        null,
+        null,
+        "DN cannot be null",
+        null,
+        -1);
+    } else if (dn.length() == 0) {
+      response = new AuthenticationResponse(
+        AuthenticationResultCode.DN_RESOLUTION_FAILURE,
+        null,
+        null,
+        "DN cannot be empty",
+        null,
+        -1);
+    }
+    return response;
   }
 
 
