@@ -17,8 +17,6 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Hex;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.ParseHandler;
@@ -193,13 +191,7 @@ public final class DnParser
       throw new IllegalArgumentException(
         "Invalid HEX value: value cannot be null or empty");
     }
-    try {
-      return Hex.decodeHex(value);
-    } catch (DecoderException e) {
-      throw new IllegalArgumentException(
-        "Invalid HEX value: " + String.valueOf(value),
-        e);
-    }
+    return LdapUtils.hexDecode(value);
   }
 
 

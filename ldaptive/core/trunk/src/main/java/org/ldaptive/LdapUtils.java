@@ -25,7 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.regex.Pattern;
-import org.apache.commons.codec.binary.Base64;
+import org.ldaptive.io.Base64;
+import org.ldaptive.io.Hex;
 
 /**
  * Provides utility methods for this package.
@@ -72,7 +73,7 @@ public final class LdapUtils
 
   /**
    * This will convert the supplied value to a base64 encoded string. Returns
-   * null if the bytes cannot be encoded.
+   * null if the supplied byte array is null.
    *
    * @param  value  to base64 encode
    *
@@ -81,14 +82,15 @@ public final class LdapUtils
   public static String base64Encode(final byte[] value)
   {
     return
-      value != null ? new String(Base64.encodeBase64(value), UTF8_CHARSET)
+      value != null ? new String(
+                        Base64.encodeToByte(value, false), UTF8_CHARSET)
                     : null;
   }
 
 
   /**
    * This will convert the supplied value to a base64 encoded string. Returns
-   * null if the string cannot be encoded.
+   * null if the supplied string is null.
    *
    * @param  value  to base64 encode
    *
@@ -102,7 +104,7 @@ public final class LdapUtils
 
   /**
    * This will convert the supplied value to a UTF-8 encoded string. Returns
-   * null if the bytes cannot be encoded.
+   * null if the supplied byte array is null.
    *
    * @param  value  to UTF-8 encode
    *
@@ -116,7 +118,7 @@ public final class LdapUtils
 
   /**
    * This will convert the supplied value to a UTF-8 encoded byte array. Returns
-   * null if the string cannot be encoded.
+   * null if the supplied string is null.
    *
    * @param  value  to UTF-8 encode
    *
@@ -129,7 +131,22 @@ public final class LdapUtils
 
 
   /**
+   * This will convert the supplied value to a hex encoded string. Returns
+   * null if the supplied byte array is null.
+   *
+   * @param  value  to hex encode
+   *
+   * @return  hex encoded value
+   */
+  public static char[] hexEncode(final byte[] value)
+  {
+    return value != null ? Hex.encode(value) : null;
+  }
+
+
+  /**
    * This will decode the supplied value as a base64 encoded string to a byte[].
+   * Returns null if the supplied string is null.
    *
    * @param  value  to base64 decode
    *
@@ -137,7 +154,21 @@ public final class LdapUtils
    */
   public static byte[] base64Decode(final String value)
   {
-    return value != null ? Base64.decodeBase64(value.getBytes()) : null;
+    return value != null ? Base64.decode(value.getBytes()) : null;
+  }
+
+
+  /**
+   * This will decode the supplied value as a hex encoded string to a byte[].
+   * Returns null if the supplied character array is null.
+   *
+   * @param  value  to hex decode
+   *
+   * @return  hex decoded value
+   */
+  public static byte[] hexDecode(final char[] value)
+  {
+    return value != null ? Hex.decode(value) : null;
   }
 
 
