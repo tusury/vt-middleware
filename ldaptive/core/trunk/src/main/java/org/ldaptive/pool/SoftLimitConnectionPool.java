@@ -68,6 +68,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
   public Connection getConnection()
     throws PoolException
   {
+    isInitialized();
     PooledConnectionHandler pc = null;
     logger.trace(
       "waiting on pool lock for check out {}",

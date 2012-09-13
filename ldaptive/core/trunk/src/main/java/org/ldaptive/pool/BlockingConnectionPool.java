@@ -102,6 +102,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public Connection getConnection()
     throws PoolException
   {
+    isInitialized();
     PooledConnectionHandler pc = null;
     boolean create = false;
     logger.trace(
@@ -256,6 +257,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   @Override
   public void putConnection(final Connection c)
   {
+    isInitialized();
     final PooledConnectionHandler pc = retrieveInvocationHandler(c);
     final boolean valid = validateAndPassivateConnection(pc);
     logger.trace(
