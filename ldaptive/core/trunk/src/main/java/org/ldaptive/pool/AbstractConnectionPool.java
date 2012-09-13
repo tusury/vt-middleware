@@ -73,17 +73,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   private boolean connectOnCreate = true;
 
   /** Executor for scheduling pool tasks. */
-  private final ScheduledExecutorService poolExecutor =
-    Executors.newSingleThreadScheduledExecutor(
-      new ThreadFactory() {
-        @Override
-        public Thread newThread(final Runnable r)
-        {
-          final Thread t = new Thread(r);
-          t.setDaemon(true);
-          return t;
-        }
-      });
+  private ScheduledExecutorService poolExecutor;
+
+  /** Whether initialize has been invoked. */
+  private boolean initialized;
 
 
   /**
@@ -133,42 +126,80 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
+   * Used to determine whether {@link #initialize()} has been invoked for this
+   * pool.
+   *
+   * @throws  IllegalStateException  if this pool has not been initialized
+   */
+  protected void isInitialized()
+  {
+    if (!initialized) {
+      throw new IllegalStateException("Pool has not been initialized");
+    }
+  }
+
+
+  /**
    * Initialize this pool for use. Once invoked the pool config is made
    * immutable. See {@link PoolConfig#makeImmutable()}.
+   *
+   * @throws  IllegalStateException  if this pool has already been initialized
+   * or the pooling configuration is inconsistent
    */
   public void initialize()
   {
+    if (initialized) {
+      throw new IllegalStateException("Pool has already been initialized");
+    }
     logger.debug("beginning pool initialization");
+
+    // sanity check the configuration
+    if ((getPoolConfig().isValidatePeriodically() ||
+         getPoolConfig().isValidateOnCheckIn() ||
+         getPoolConfig().isValidateOnCheckOut()) && getValidator() == null) {
+      throw new IllegalStateException(
+        "Validation is enabled, but no validator has been configured");
+    }
 
     getPoolConfig().makeImmutable();
 
-    final Runnable prune = new Runnable() {
-      @Override
-      public void run()
-      {
-        logger.debug("Begin prune task for {}", this);
-        prune();
-        logger.debug("End prune task for {}", this);
-      }
-    };
+    poolExecutor =
+      Executors.newSingleThreadScheduledExecutor(
+        new ThreadFactory() {
+          @Override
+          public Thread newThread(final Runnable r)
+          {
+            final Thread t = new Thread(r);
+            t.setDaemon(true);
+            return t;
+          }
+        });
+
     poolExecutor.scheduleAtFixedRate(
-      prune,
+      new Runnable() {
+        @Override
+        public void run()
+        {
+          logger.debug("Begin prune task for {}", this);
+          prune();
+          logger.debug("End prune task for {}", this);
+        }
+      },
       getPoolConfig().getPrunePeriod(),
       getPoolConfig().getPrunePeriod(),
       TimeUnit.SECONDS);
     logger.debug("prune pool task scheduled");
 
-    final Runnable validate = new Runnable() {
-      @Override
-      public void run()
-      {
-        logger.debug("Begin validate task for {}", this);
-        validate();
-        logger.debug("End validate task for {}", this);
-      }
-    };
     poolExecutor.scheduleAtFixedRate(
-      validate,
+      new Runnable() {
+        @Override
+        public void run()
+        {
+          logger.debug("Begin validate task for {}", this);
+          validate();
+          logger.debug("End validate task for {}", this);
+        }
+      },
       getPoolConfig().getValidatePeriod(),
       getPoolConfig().getValidatePeriod(),
       TimeUnit.SECONDS);
@@ -177,6 +208,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     initializePool();
 
     logger.debug("pool initialized to size {}", available.size());
+    initialized = true;
   }
 
 
@@ -218,9 +250,14 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /** Empty this pool, freeing any resources. */
+  /**
+   * Empty this pool, freeing any resources.
+   *
+   * @throws  IllegalStateException  if this pool has not been initialized
+   */
   public void close()
   {
+    isInitialized();
     poolLock.lock();
     try {
       while (!available.isEmpty()) {
@@ -241,6 +278,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     logger.debug("shutting down executor");
     poolExecutor.shutdown();
     logger.debug("executor shutdown");
+    initialized = false;
   }
 
 
@@ -254,6 +292,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * time and it occurs
    * @throws  PoolInterruptedException  if this pool is configured with a block
    * time and the current thread is interrupted
+   * @throws  IllegalStateException  if this pool has not been initialized
    */
   public abstract Connection getConnection()
     throws PoolException;
@@ -263,6 +302,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * Returns a connection to the pool.
    *
    * @param  c  connection
+   *
+   * @throws  IllegalStateException  if this pool has not been initialized
    */
   public abstract void putConnection(final Connection c);
 
@@ -481,9 +522,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   /**
    * Attempts to reduce the size of the pool back to it's configured minimum.
    * {@link PoolConfig#setMinPoolSize(int)}.
+   *
+   * @throws  IllegalStateException  if this pool has not been initialized
    */
   public void prune()
   {
+    isInitialized();
     logger.trace(
       "waiting for pool lock to prune {}",
       poolLock.getQueueLength());
@@ -518,9 +562,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   /**
    * Attempts to validate all objects in the pool. {@link
    * PoolConfig#setValidatePeriodically(boolean)}.
+   *
+   * @throws  IllegalStateException  if this pool has not been initialized
    */
   public void validate()
   {
+    isInitialized();
     poolLock.lock();
     try {
       if (active.isEmpty()) {
