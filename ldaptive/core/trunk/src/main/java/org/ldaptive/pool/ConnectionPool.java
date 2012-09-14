@@ -92,6 +92,22 @@ public interface ConnectionPool
     throws PoolException;
 
 
+  /**
+   * Returns the number of connections available for use.
+   *
+   * @return  count
+   */
+  int availableCount();
+
+
+  /**
+   * Returns the number of connections in use.
+   *
+   * @return  count
+   */
+  int activeCount();
+
+
   /** Empty this pool, freeing any resources. */
   void close();
 }
