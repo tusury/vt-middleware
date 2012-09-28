@@ -10,7 +10,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
   <bean id="pool"
     class="org.ldaptive.pool.BlockingConnectionPool"
     init-method="initialize"
-    p:blockWaitTime="5000">
+    p:blockWaitTime="5000"
+    p:validator-ref="compareValidator">
     <constructor-arg index="0">
       <bean class="org.ldaptive.pool.PoolConfig"
         p:minPoolSize="5"
@@ -23,6 +24,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     </constructor-arg>
     <constructor-arg index="1" ref="connectionFactory"/>
   </bean>
+  
+  <bean id="compareValidator"
+    class="org.ldaptive.pool.CompareValidator"
+  />
   
   <bean id="connectionFactory"
     class="org.ldaptive.DefaultConnectionFactory"
