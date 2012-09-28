@@ -69,7 +69,7 @@ public class CompareValidatorTest extends AbstractTest
     try {
       c.open();
       AssertJUnit.assertTrue(cv.validate(c));
-      cv.getCompareRequest().setDn(compareDn);
+      cv.getCompareRequest().setDn("cn=does-not-exist");
       AssertJUnit.assertFalse(cv.validate(c));
     } finally {
       c.close();
