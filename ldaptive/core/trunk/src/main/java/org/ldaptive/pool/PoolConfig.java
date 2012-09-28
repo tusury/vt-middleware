@@ -87,93 +87,6 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the max pool size. Default value is {@link #DEFAULT_MAX_POOL_SIZE}.
-   * This value may or may not be strictly enforced depending on the pooling
-   * implementation.
-   *
-   * @return  max pool size
-   */
-  public int getMaxPoolSize()
-  {
-    return maxPoolSize;
-  }
-
-
-  /**
-   * Returns the validate on check in flag. Default value is {@link
-   * #DEFAULT_VALIDATE_ON_CHECKIN}.
-   *
-   * @return  validate on check in
-   */
-  public boolean isValidateOnCheckIn()
-  {
-    return validateOnCheckIn;
-  }
-
-
-  /**
-   * Returns the validate on check out flag. Default value is {@link
-   * #DEFAULT_VALIDATE_ON_CHECKOUT}.
-   *
-   * @return  validate on check in
-   */
-  public boolean isValidateOnCheckOut()
-  {
-    return validateOnCheckOut;
-  }
-
-
-  /**
-   * Returns the validate periodically flag. Default value is {@link
-   * #DEFAULT_VALIDATE_PERIODICALLY}.
-   *
-   * @return  validate periodically
-   */
-  public boolean isValidatePeriodically()
-  {
-    return validatePeriodically;
-  }
-
-
-  /**
-   * Returns the prune period. Default value is {@link #DEFAULT_PRUNE_PERIOD}.
-   *
-   * @return  prune period in seconds
-   */
-  public long getPrunePeriod()
-  {
-    return prunePeriod;
-  }
-
-
-  /**
-   * Returns the validate period. Default value is {@link
-   * #DEFAULT_VALIDATE_PERIOD}.
-   *
-   * @return  validate period in seconds
-   */
-  public long getValidatePeriod()
-  {
-    return validatePeriod;
-  }
-
-
-  /**
-   * Returns the expiration time. Default value is {@link
-   * #DEFAULT_EXPIRATION_TIME}. The expiration time represents the max time a
-   * connection should be available before it is considered stale. This value
-   * does not apply to connections in the pool if the pool has only the minimum
-   * number of connections available.
-   *
-   * @return  expiration time in seconds
-   */
-  public long getExpirationTime()
-  {
-    return expirationTime;
-  }
-
-
-  /**
    * Sets the min pool size.
    *
    * @param  size  min pool size
@@ -185,6 +98,19 @@ public class PoolConfig extends AbstractConfig
       logger.trace("setting minPoolSize: {}", size);
       minPoolSize = size;
     }
+  }
+
+
+  /**
+   * Returns the max pool size. Default value is {@link #DEFAULT_MAX_POOL_SIZE}.
+   * This value may or may not be strictly enforced depending on the pooling
+   * implementation.
+   *
+   * @return  max pool size
+   */
+  public int getMaxPoolSize()
+  {
+    return maxPoolSize;
   }
 
 
@@ -204,6 +130,18 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
+   * Returns the validate on check in flag. Default value is {@link
+   * #DEFAULT_VALIDATE_ON_CHECKIN}.
+   *
+   * @return  validate on check in
+   */
+  public boolean isValidateOnCheckIn()
+  {
+    return validateOnCheckIn;
+  }
+
+
+  /**
    * Sets the validate on check in flag.
    *
    * @param  b  validate on check in
@@ -213,6 +151,18 @@ public class PoolConfig extends AbstractConfig
     checkImmutable();
     logger.trace("setting validateOnCheckIn: {}", b);
     validateOnCheckIn = b;
+  }
+
+
+  /**
+   * Returns the validate on check out flag. Default value is {@link
+   * #DEFAULT_VALIDATE_ON_CHECKOUT}.
+   *
+   * @return  validate on check in
+   */
+  public boolean isValidateOnCheckOut()
+  {
+    return validateOnCheckOut;
   }
 
 
@@ -230,6 +180,18 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
+   * Returns the validate periodically flag. Default value is {@link
+   * #DEFAULT_VALIDATE_PERIODICALLY}.
+   *
+   * @return  validate periodically
+   */
+  public boolean isValidatePeriodically()
+  {
+    return validatePeriodically;
+  }
+
+
+  /**
    * Sets the validate periodically flag.
    *
    * @param  b  validate periodically
@@ -239,6 +201,17 @@ public class PoolConfig extends AbstractConfig
     checkImmutable();
     logger.trace("setting validatePeriodically: {}", b);
     validatePeriodically = b;
+  }
+
+
+  /**
+   * Returns the prune period. Default value is {@link #DEFAULT_PRUNE_PERIOD}.
+   *
+   * @return  prune period in seconds
+   */
+  public long getPrunePeriod()
+  {
+    return prunePeriod;
   }
 
 
@@ -258,6 +231,18 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
+   * Returns the validate period. Default value is {@link
+   * #DEFAULT_VALIDATE_PERIOD}.
+   *
+   * @return  validate period in seconds
+   */
+  public long getValidatePeriod()
+  {
+    return validatePeriod;
+  }
+
+
+  /**
    * Sets the period for which the pool will be validated.
    *
    * @param  time  in seconds
@@ -269,6 +254,21 @@ public class PoolConfig extends AbstractConfig
       logger.trace("setting validatePeriod: {}", time);
       validatePeriod = time;
     }
+  }
+
+
+  /**
+   * Returns the expiration time. Default value is {@link
+   * #DEFAULT_EXPIRATION_TIME}. The expiration time represents the max time a
+   * connection should be available before it is considered stale. This value
+   * does not apply to connections in the pool if the pool has only the minimum
+   * number of connections available.
+   *
+   * @return  expiration time in seconds
+   */
+  public long getExpirationTime()
+  {
+    return expirationTime;
   }
 
 
