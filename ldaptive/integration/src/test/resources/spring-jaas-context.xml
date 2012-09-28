@@ -59,7 +59,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     class="org.ldaptive.pool.PoolConfig"
     p:minPoolSize="5"
     p:maxPoolSize="20"
-    p:validatePeriodically="true"
     p:validatePeriod="30"
     p:expirationTime="600"
     p:prunePeriod="60"
