@@ -48,15 +48,6 @@ public class ConnectionConfig extends AbstractConfig
   /** Bind controls. */
   private RequestControl[] bindControls;
 
-  /** Number of times to retry ldap operations on exception. */
-  private int operationRetry = 1;
-
-  /** Amount of time in milliseconds to wait before retrying. */
-  private long operationRetryWait;
-
-  /** Factor to multiply operation retry wait by. */
-  private int operationRetryBackoff;
-
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
 
@@ -256,84 +247,6 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the number of times ldap operations will be retried if an operation
-   * exception occurs. If this value is 0, no retries will occur.
-   *
-   * @return  number of retries
-   */
-  public int getOperationRetry()
-  {
-    return operationRetry;
-  }
-
-
-  /**
-   * Sets the number of times that ldap operations will be retried if an
-   * operation exception occurs.
-   *
-   * @param  retry  number of retries
-   */
-  public void setOperationRetry(final int retry)
-  {
-    checkImmutable();
-    logger.trace("setting operationRetry: {}", retry);
-    operationRetry = retry;
-  }
-
-
-  /**
-   * Returns the operation retry wait time.
-   *
-   * @return  retry wait
-   */
-  public long getOperationRetryWait()
-  {
-    return operationRetryWait;
-  }
-
-
-  /**
-   * Sets the amount of time in milliseconds that operations should wait before
-   * retrying.
-   *
-   * @param  wait  time in milliseconds to wait
-   */
-  public void setOperationRetryWait(final long wait)
-  {
-    checkImmutable();
-    logger.trace("setting operationRetryWait: {}", wait);
-    operationRetryWait = wait;
-  }
-
-
-  /**
-   * Returns the factor by which to multiply the operation retry wait time. This
-   * allows clients to progressively delay each retry. The formula for backoff
-   * is (wait * backoff * attempt). So a wait time of 2s with a backoff of 3
-   * will delay by 6s, then 12s, then 18s, and so forth.
-   *
-   * @return  backoff factor
-   */
-  public int getOperationRetryBackoff()
-  {
-    return operationRetryBackoff;
-  }
-
-
-  /**
-   * Sets the factor by which to multiply the operation retry wait time.
-   *
-   * @param  backoff  factor to multiply wait time by
-   */
-  public void setOperationRetryBackoff(final int backoff)
-  {
-    checkImmutable();
-    logger.trace("setting operationRetryBackoff: {}", backoff);
-    operationRetryBackoff = backoff;
-  }
-
-
-  /**
    * Returns the ssl config.
    *
    * @return  ssl config
@@ -412,8 +325,7 @@ public class ConnectionConfig extends AbstractConfig
     return
       String.format(
         "[%s@%d::ldapUrl=%s, connectTimeout=%s, responseTimeout=%s, " +
-        "bindDn=%s, bindSaslConfig=%s, bindControls=%s, operationRetry=%s, " +
-        "operationRetryWait=%s, operationRetryBackoff=%s, sslConfig=%s, " +
+        "bindDn=%s, bindSaslConfig=%s, bindControls=%s, sslConfig=%s, " +
         "useSSL=%s, useStartTLS=%s]",
         getClass().getName(),
         hashCode(),
@@ -423,9 +335,6 @@ public class ConnectionConfig extends AbstractConfig
         bindDn,
         bindSaslConfig,
         Arrays.toString(bindControls),
-        operationRetry,
-        operationRetryWait,
-        operationRetryBackoff,
         sslConfig,
         useSSL,
         useStartTLS);

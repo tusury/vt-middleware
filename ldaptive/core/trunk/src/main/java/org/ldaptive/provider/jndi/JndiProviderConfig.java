@@ -65,7 +65,7 @@ public class JndiProviderConfig extends ProviderConfig
   /** Default constructor. */
   public JndiProviderConfig()
   {
-    setOperationRetryResultCodes(
+    setOperationExceptionResultCodes(
       ResultCode.PROTOCOL_ERROR,
       ResultCode.BUSY,
       ResultCode.UNAVAILABLE);
@@ -274,7 +274,7 @@ public class JndiProviderConfig extends ProviderConfig
         "hostnameVerifier=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
-        Arrays.toString(getOperationRetryResultCodes()),
+        Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         environment,

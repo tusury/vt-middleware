@@ -14,8 +14,10 @@
 package org.ldaptive;
 
 import java.util.Arrays;
+import org.ldaptive.handler.AbstractRetryOperationExceptionHandler;
 import org.ldaptive.handler.Handler;
 import org.ldaptive.handler.HandlerResult;
+import org.ldaptive.handler.OperationExceptionHandler;
 import org.ldaptive.handler.OperationResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +41,9 @@ public abstract class AbstractOperation<Q extends Request, S>
   /** Connection to perform operation. */
   private final Connection connection;
 
-  /** Number of times to retry ldap operations. */
-  private int operationRetry;
-
-  /** Amount of time in milliseconds to wait before retrying. */
-  private long operationRetryWait;
-
-  /** Factor to multiply operation retry wait by. */
-  private int operationRetryBackoff;
+  /** Handler to process operation exceptions. */
+  private OperationExceptionHandler<Q, S> operationExceptionHandler =
+    new ReopenOperationExceptionHandler();
 
   /** Handlers to process operation responses. */
   private OperationResponseHandler<Q, S>[] operationResponseHandlers;
@@ -60,11 +57,6 @@ public abstract class AbstractOperation<Q extends Request, S>
   public AbstractOperation(final Connection conn)
   {
     connection = conn;
-
-    final ConnectionConfig cc = conn.getConnectionConfig();
-    operationRetry = cc.getOperationRetry();
-    operationRetryWait = cc.getOperationRetryWait();
-    operationRetryBackoff = cc.getOperationRetryBackoff();
   }
 
 
@@ -80,74 +72,25 @@ public abstract class AbstractOperation<Q extends Request, S>
 
 
   /**
-   * Returns the operation retry. This is the number of times an operation will
-   * be retried when it throws OperationException. What constitutes an
-   * OperationException is configured per each provider implementation.
+   * Returns the operation exception handler.
    *
-   * @return  operation retry
+   * @return  operation exception handler
    */
-  public int getOperationRetry()
+  public OperationExceptionHandler<Q, S> getOperationExceptionHandler()
   {
-    return operationRetry;
+    return operationExceptionHandler;
   }
 
 
   /**
-   * Sets the operation retry.
+   * Sets the operation exception handler.
    *
-   * @param  retry  to set
+   * @param  handler  operation exception handler
    */
-  public void setOperationRetry(final int retry)
+  public void setOperationExceptionHandler(
+    final OperationExceptionHandler<Q, S> handler)
   {
-    operationRetry = retry;
-  }
-
-
-  /**
-   * Returns the operation retry wait. This is the amount of time in
-   * milliseconds that the executing thread will sleep before attempting the
-   * operation again.
-   *
-   * @return  operation retry wait
-   */
-  public long getOperationRetryWait()
-  {
-    return operationRetryWait;
-  }
-
-
-  /**
-   * Sets the operation retry wait.
-   *
-   * @param  wait  to set
-   */
-  public void setOperationRetryWait(final long wait)
-  {
-    operationRetryWait = wait;
-  }
-
-
-  /**
-   * Returns the operation retry backoff. This is the factor by which the retry
-   * wait will be multiplied in order to progressively delay the amount time
-   * between each operation retry.
-   *
-   * @return  operation retry backoff
-   */
-  public int getOperationRetryBackoff()
-  {
-    return operationRetryBackoff;
-  }
-
-
-  /**
-   * Sets the operation retry backoff.
-   *
-   * @param  backoff  to set
-   */
-  public void setOperationRetryBackoff(final int backoff)
-  {
-    operationRetryBackoff = backoff;
+    operationExceptionHandler = handler;
   }
 
 
@@ -195,13 +138,22 @@ public abstract class AbstractOperation<Q extends Request, S>
     logger.debug("execute request={} with connection={}", request, connection);
 
     Response<S> response = null;
-    for (int i = 0; i <= operationRetry || operationRetry == -1; i++) {
-      try {
-        response = invoke(request);
-        break;
-      } catch (OperationException e) {
-        operationRetry(e, i);
+    try {
+      response = invoke(request);
+    } catch (OperationException e) {
+      if (operationExceptionHandler == null) {
+        throw  e;
       }
+      logger.warn(
+        "Error performing LDAP operation, invoking exception handler: {}",
+        operationExceptionHandler,
+        e);
+      final HandlerResult<Response<S>> hr = operationExceptionHandler.process(
+        connection, request, response);
+      if (hr.getAbort()) {
+        throw e;
+      }
+      response = hr.getResult();
     }
 
     // execute response handlers
@@ -214,44 +166,6 @@ public abstract class AbstractOperation<Q extends Request, S>
       "execute response={} for request={} with connection={}",
       new Object[] {hr.getResult(), request, connection});
     return hr.getResult();
-  }
-
-
-  /**
-   * Called in response to an operation failure. This method determines whether
-   * that operation should be attempted again. If so, the underlying ldap
-   * connection is closed and re-opened in preparation for that event. If not,
-   * the supplied exception is thrown.
-   *
-   * @param  e  exception that was thrown
-   * @param  count  number of operation attempts
-   *
-   * @throws  LdapException  if the operation won't be retried
-   */
-  protected void operationRetry(final LdapException e, final int count)
-    throws LdapException
-  {
-    if (count < operationRetry || operationRetry == -1) {
-      logger.warn(
-        "Error performing LDAP operation, retrying (attempt {})",
-        count,
-        e);
-      connection.close();
-      if (operationRetryWait > 0) {
-        long sleepTime = operationRetryWait;
-        if (operationRetryBackoff > 0 && count > 0) {
-          sleepTime = sleepTime * operationRetryBackoff * count;
-        }
-        try {
-          Thread.sleep(sleepTime);
-        } catch (InterruptedException ie) {
-          logger.debug("Operation retry wait interrupted", ie);
-        }
-      }
-      connection.open();
-    } else {
-      throw e;
-    }
   }
 
 
@@ -309,14 +223,87 @@ public abstract class AbstractOperation<Q extends Request, S>
   {
     return
       String.format(
-        "[%s@%d::connection=%s, operationRetry=%s, operationRetryWait=%s, " +
-        "operationRetryBackoff=%s, operationResponseHandlers=%s]",
+        "[%s@%d::connection=%s, operationExceptionHandler=%s, " +
+        "operationResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         connection,
-        operationRetry,
-        operationRetryWait,
-        operationRetryBackoff,
+        operationExceptionHandler,
         Arrays.toString(operationResponseHandlers));
+  }
+
+
+  /**
+   * Exception handler that invokes {@link Connection#reopen(BindRequest)} when
+   * an operation exception occurs and then invokes the operation again.
+   */
+  public class ReopenOperationExceptionHandler
+    extends AbstractRetryOperationExceptionHandler<Q, S>
+  {
+
+    /** Bind request to use when reopening a connection. */
+    private final BindRequest bindRequest;
+
+
+    /** Default constructor. */
+    public ReopenOperationExceptionHandler()
+    {
+      bindRequest = null;
+    }
+
+
+    /**
+     * Creates a new reopen operation exception handler.
+     *
+     * @param  request  to bind with on reopen
+     */
+    public ReopenOperationExceptionHandler(final BindRequest request)
+    {
+      bindRequest = request;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected void processInternal(
+      final Connection conn,
+      final Q request,
+      final Response<S> response)
+      throws LdapException
+    {
+      if (bindRequest != null) {
+        conn.reopen(bindRequest);
+      } else {
+        conn.reopen();
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected HandlerResult<Response<S>> createResult(
+      final Connection conn,
+      final Q request,
+      final Response<S> response)
+      throws LdapException
+    {
+      return new HandlerResult<Response<S>>(invoke(request));
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+      return
+        String.format(
+          "[%s@%d::retry=%s, retryWait=%s, retryBackoff=%s, bindRequest=%s]",
+          getClass().getName(),
+          hashCode(),
+          getRetry(),
+          getRetryWait(),
+          getRetryBackoff(),
+          bindRequest);
+    }
   }
 }

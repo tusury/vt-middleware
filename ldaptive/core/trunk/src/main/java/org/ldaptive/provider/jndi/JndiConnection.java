@@ -719,7 +719,7 @@ public class JndiConnection implements ProviderConnection
   {
     final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
     ProviderUtils.throwOperationException(
-      config.getOperationRetryResultCodes(),
+      config.getOperationExceptionResultCodes(),
       e,
       rc != null ? rc.value() : -1,
       null,
