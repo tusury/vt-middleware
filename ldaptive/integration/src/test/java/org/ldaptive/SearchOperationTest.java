@@ -1409,32 +1409,19 @@ public class SearchOperationTest extends AbstractTest
     final ResultCode retryResultCode = ResultCode.valueOf(resultCode);
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
     DefaultConnectionFactory cf = new DefaultConnectionFactory(cc);
-    cf.getProvider().getProviderConfig().setOperationRetryResultCodes(
-      new ResultCode[] {retryResultCode, });
+    cf.getProvider().getProviderConfig().setOperationExceptionResultCodes(
+      new ResultCode[]{retryResultCode,});
 
     Connection conn = cf.getConnection();
-    RetrySearchOperation search = new RetrySearchOperation(conn);
+    RetrySearchOperation search = new RetrySearchOperation(
+      conn,
+      new LdapException("Retry search exception", ResultCode.NO_SUCH_OBJECT));
 
     try {
       conn.open();
 
-      // test defaults
-      try {
-        final Response<SearchResult> response = search.execute(
-          new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
-        AssertJUnit.fail(
-          "Should have thrown LdapException, returned: " + response);
-      } catch (LdapException e) {
-        AssertJUnit.assertEquals(
-          ResultCode.NO_SUCH_OBJECT, e.getResultCode());
-      }
-      AssertJUnit.assertEquals(1, search.getRetryCount());
-      AssertJUnit.assertTrue(search.getRunTime() > 0);
-
       // test no retry
-      search.reset();
-      search.setOperationRetry(0);
-
+      search.setAllowRetry(false);
       try {
         final Response<SearchResult> response = search.execute(
           new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
@@ -1451,11 +1438,13 @@ public class SearchOperationTest extends AbstractTest
     }
 
     // test no exception
+    search.setAllowRetry(true);
     cf = new DefaultConnectionFactory(cc);
-    cf.getProvider().getProviderConfig().setOperationRetryResultCodes(null);
+    cf.getProvider().getProviderConfig().setOperationExceptionResultCodes(null);
     conn = cf.getConnection();
-    search = new RetrySearchOperation(conn);
-    search.setOperationRetry(1);
+    search = new RetrySearchOperation(
+      conn,
+      new LdapException("Retry search exception", ResultCode.NO_SUCH_OBJECT));
 
     try {
       conn.open();
@@ -1476,12 +1465,14 @@ public class SearchOperationTest extends AbstractTest
 
     // test retry count and wait time
     cf = new DefaultConnectionFactory(cc);
-    cf.getProvider().getProviderConfig().setOperationRetryResultCodes(
-      new ResultCode[] {retryResultCode, });
+    cf.getProvider().getProviderConfig().setOperationExceptionResultCodes(
+      new ResultCode[]{retryResultCode,});
     conn = cf.getConnection();
-    search = new RetrySearchOperation(conn);
-    search.setOperationRetry(3);
-    search.setOperationRetryWait(1000);
+    search = new RetrySearchOperation(
+      conn,
+      new LdapException("Retry search exception", ResultCode.NO_SUCH_OBJECT));
+    search.setReopenRetry(3);
+    search.setReopenRetryWait(1);
 
     try {
       conn.open();
@@ -1499,7 +1490,7 @@ public class SearchOperationTest extends AbstractTest
 
       // test backoff interval
       search.reset();
-      search.setOperationRetryBackoff(2);
+      search.setReopenRetryBackoff(2);
       try {
         final Response<SearchResult> response = search.execute(
           new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
@@ -1515,7 +1506,7 @@ public class SearchOperationTest extends AbstractTest
       // test infinite retries
       search.reset();
       search.setStopCount(10);
-      search.setOperationRetry(-1);
+      search.setReopenRetry(-1);
       try {
         final Response<SearchResult> response = search.execute(
           new SearchRequest(dn, new SearchFilter("(objectclass=*)")));
