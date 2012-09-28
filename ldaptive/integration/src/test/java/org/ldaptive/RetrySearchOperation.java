@@ -13,8 +13,10 @@
 */
 package org.ldaptive;
 
+import org.ldaptive.handler.OperationExceptionHandler;
+
 /**
- * Provides a wrapper class for testing {@link #operationRetry()}.
+ * Provides a wrapper class for testing {@link OperationExceptionHandler}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -24,6 +26,12 @@ public class RetrySearchOperation extends SearchOperation
 
   /** serial version uid. */
   private static final long serialVersionUID = 4247614583961731974L;
+
+  /** exception to rethrow. */
+  private final LdapException ex;
+
+  /** whether to perform retries. */
+  private boolean allowRetry = true;
 
   /** retry counter. */
   private int retryCount;
@@ -39,10 +47,24 @@ public class RetrySearchOperation extends SearchOperation
    * Creates a new retry search operation.
    *
    * @param  c  connection
+   * @param  e  ldap exception
    */
-  public RetrySearchOperation(final Connection c)
+  public RetrySearchOperation(final Connection c, final LdapException e)
   {
     super(c);
+    ex = e;
+    setOperationExceptionHandler(new RetryExceptionHandler());
+  }
+
+
+  /**
+   * Sets whether to allow retry.
+   *
+   * @param  b  whether to allow retry
+   */
+  public void setAllowRetry(final boolean b)
+  {
+    allowRetry = b;
   }
 
 
@@ -88,20 +110,79 @@ public class RetrySearchOperation extends SearchOperation
   }
 
 
-  /** {@inheritDoc} */
-  @Override
-  protected void operationRetry(
-    final LdapException e,
-    final int count)
-    throws LdapException
+  /**
+   * See {@link ReopenOperationExceptionHandler#setRetry(int)}.
+   *
+   * @param  i  to set
+   */
+  public void setReopenRetry(final int i)
   {
-    retryCount = count;
+    ((ReopenOperationExceptionHandler)
+      getOperationExceptionHandler()).setRetry(i);
+  }
 
-    final long t = System.currentTimeMillis();
-    super.operationRetry(e, count);
-    runTime += System.currentTimeMillis() - t;
-    if (stopCount > 0 && retryCount == stopCount) {
-      throw e;
+
+  /**
+   * See {@link ReopenOperationExceptionHandler#setRetryWait(long)}.
+   *
+   * @param  l  to set
+   */
+  public void setReopenRetryWait(final long l)
+  {
+    ((ReopenOperationExceptionHandler)
+      getOperationExceptionHandler()).setRetryWait(l);
+  }
+
+
+  /**
+   * See {@link ReopenOperationExceptionHandler#setRetryBackoff(int)}.
+   *
+   * @param  i  to set
+   */
+  public void setReopenRetryBackoff(final int i)
+  {
+    ((ReopenOperationExceptionHandler)
+      getOperationExceptionHandler()).setRetryBackoff(i);
+  }
+
+
+  /**
+   * Calculates the execution time of {@link ReopenOperationExceptionHandler}.
+   */
+  public class RetryExceptionHandler extends ReopenOperationExceptionHandler
+  {
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void processInternal(
+      final Connection conn,
+      final SearchRequest request,
+      final Response<SearchResult> response)
+      throws LdapException
+    {
+      if (!allowRetry) {
+        return;
+      }
+      final long t = System.currentTimeMillis();
+      super.processInternal(conn, request, response);
+      runTime += System.currentTimeMillis() - t;
+      throw ex;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    protected boolean retry(final int count)
+    {
+      if (stopCount > 0 && retryCount == stopCount) {
+        return false;
+      }
+      boolean b = super.retry(count);
+      if (b) {
+        retryCount++;
+      }
+      return b;
     }
   }
 }

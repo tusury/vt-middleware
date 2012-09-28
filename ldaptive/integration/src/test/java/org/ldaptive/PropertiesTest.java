@@ -118,9 +118,6 @@ public class PropertiesTest
       "true",
       cf.getProvider().getProviderConfig().getProperties().get(
         "java.naming.authoritative"));
-    AssertJUnit.assertEquals(7, cc.getOperationRetry());
-    AssertJUnit.assertEquals(2000, cc.getOperationRetryWait());
-    AssertJUnit.assertEquals(3, cc.getOperationRetryBackoff());
 
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource =
@@ -246,9 +243,6 @@ public class PropertiesTest
       "true",
       cf.getProvider().getProviderConfig().getProperties().get(
         "java.naming.authoritative"));
-    AssertJUnit.assertEquals(7, cc.getOperationRetry());
-    AssertJUnit.assertEquals(2000, cc.getOperationRetryWait());
-    AssertJUnit.assertEquals(3, cc.getOperationRetryBackoff());
 
     AssertJUnit.assertEquals(
       DnParser.substring(bindDn, 1).toLowerCase(),
