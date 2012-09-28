@@ -14,6 +14,7 @@
 package org.ldaptive.pool;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.LinkedList;
@@ -501,6 +502,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   protected boolean validateAndPassivateConnection(
     final PooledConnectionHandler pc)
   {
+    if (!pc.getConnection().isOpen()) {
+      logger.debug("connection not open: {}", pc);
+      return false;
+    }
     boolean valid = false;
     if (getPoolConfig().isValidateOnCheckIn()) {
       if (!validate(pc.getConnection())) {
@@ -691,7 +696,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
   /**
    * Contains a connection that is participating in this pool. Used to track how
-   * long a connection has been in use and override close invocations.
+   * long a connection has been in use and override certain method invocations.
    *
    * @author  Middleware Services
    * @version  $Revision$ $Date$
@@ -774,14 +779,30 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     {
       Object retValue = null;
       if ("open".equals(method.getName())) {
+        // if the connection has been closed, invoke open
         if (!conn.isOpen()) {
+          try {
+            openResponse = (Response<Void>) method.invoke(conn, args);
+          } catch (InvocationTargetException e) {
+            throw e.getTargetException();
+          }
+        }
+        retValue = openResponse;
+      } else if ("reopen".equals(method.getName())) {
+        try {
           openResponse = (Response<Void>) method.invoke(conn, args);
+        } catch (InvocationTargetException e) {
+          throw e.getTargetException();
         }
         retValue = openResponse;
       } else if ("close".equals(method.getName())) {
         putConnection((Connection) proxy);
       } else {
-        retValue = method.invoke(conn, args);
+        try {
+          retValue = method.invoke(conn, args);
+        } catch (InvocationTargetException e) {
+          throw e.getTargetException();
+        }
       }
       return retValue;
     }

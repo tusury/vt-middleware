@@ -33,8 +33,8 @@ public class ProviderConfig extends AbstractConfig
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Result codes indicating that an operation should be retried. */
-  private ResultCode[] operationRetryResultCodes;
+  /** Result codes indicating that an operation exception should be thrown. */
+  private ResultCode[] operationExceptionResultCodes;
 
   /** Additional provider properties. */
   private Map<String, Object> properties = new HashMap<String, Object>();
@@ -44,28 +44,28 @@ public class ProviderConfig extends AbstractConfig
 
 
   /**
-   * Returns the result codes that trigger an operation retry.
+   * Returns the result codes that trigger an operation exception.
    *
    * @return  ldap result codes
    */
-  public ResultCode[] getOperationRetryResultCodes()
+  public ResultCode[] getOperationExceptionResultCodes()
   {
-    return operationRetryResultCodes;
+    return operationExceptionResultCodes;
   }
 
 
   /**
-   * Sets the result codes that trigger an operation retry.
+   * Sets the result codes that trigger an operation exception.
    *
    * @param  codes  ldap result codes
    */
-  public void setOperationRetryResultCodes(final ResultCode... codes)
+  public void setOperationExceptionResultCodes(final ResultCode... codes)
   {
     checkImmutable();
     logger.trace(
-      "setting operationRetryResultCodes: {}",
+      "setting operationExceptionResultCodes: {}",
       Arrays.toString(codes));
-    operationRetryResultCodes = codes;
+    operationExceptionResultCodes = codes;
   }
 
 
@@ -123,11 +123,11 @@ public class ProviderConfig extends AbstractConfig
   {
     return
       String.format(
-        "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
         "connectionStrategy=%s]",
         getClass().getName(),
         hashCode(),
-        Arrays.toString(operationRetryResultCodes),
+        Arrays.toString(operationExceptionResultCodes),
         properties,
         connectionStrategy);
   }

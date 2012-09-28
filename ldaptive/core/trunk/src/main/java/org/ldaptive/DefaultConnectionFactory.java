@@ -364,6 +364,40 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
     /** {@inheritDoc} */
     @Override
+    public synchronized Response<Void> reopen()
+      throws LdapException
+    {
+      final BindRequest request = new BindRequest();
+      request.setDn(config.getBindDn());
+      request.setCredential(config.getBindCredential());
+      request.setSaslConfig(config.getBindSaslConfig());
+      request.setControls(config.getBindControls());
+      return reopen(request);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public synchronized Response<Void> reopen(final BindRequest request)
+      throws LdapException
+    {
+      try {
+        if (providerConnection != null) {
+          providerConnection.close();
+        }
+      } catch (LdapException e) {
+        logger.warn("Error closing connection with the LDAP", e);
+      } finally {
+        providerConnection = null;
+      }
+
+      providerConnection = providerConnectionFactory.create();
+      return providerConnection.bind(request);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public String toString()
     {
       return

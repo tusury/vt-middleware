@@ -35,10 +35,12 @@ public interface Connection
 
 
   /**
-   * This will establish a connection if one does not already exist to the LDAP.
+   * This will establish a connection to the LDAP. This connection should be
+   * closed using {@link #close()}.
    *
    * @return  response associated with the bind operation
    *
+   * @throws  IllegalStateException  if the connection is already open
    * @throws  LdapException  if the LDAP cannot be reached
    */
   Response<Void> open()
@@ -46,9 +48,8 @@ public interface Connection
 
 
   /**
-   * This will establish a connection if one does not already exist by binding
-   * to the LDAP using the supplied bind request. This connection should be
-   * closed using {@link #close()}.
+   * This will establish a connection to the LDAP using the supplied bind
+   * request. This connection should be closed using {@link #close()}.
    *
    * @param  request  containing bind information
    *
@@ -82,4 +83,30 @@ public interface Connection
 
   /** This will close the connection to the LDAP. */
   void close();
+
+
+  /**
+   * This will close an existing connection to the LDAP and establish a new
+   * connection to the LDAP.
+   *
+   * @return  response associated with the bind operation
+   *
+   * @throws  LdapException  if the LDAP cannot be reached
+   */
+  Response<Void> reopen()
+    throws LdapException;
+
+
+  /**
+   * This will close an existing connection to the LDAP and establish a new
+   * connection to the LDAP using the supplied bind request.
+   *
+   * @param  request  containing bind information
+   *
+   * @return  response associated with the bind operation
+   *
+   * @throws  LdapException  if the LDAP cannot be reached
+   */
+  Response<Void> reopen(BindRequest request)
+    throws LdapException;
 }

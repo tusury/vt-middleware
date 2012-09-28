@@ -125,8 +125,8 @@ public final class DefaultConnectionFactoryPropertySource
     pcPropSource.initialize();
     object.getProvider().getProviderConfig().setConnectionStrategy(
       pc.getConnectionStrategy());
-    object.getProvider().getProviderConfig().setOperationRetryResultCodes(
-      pc.getOperationRetryResultCodes());
+    object.getProvider().getProviderConfig().setOperationExceptionResultCodes(
+      pc.getOperationExceptionResultCodes());
     object.getProvider().getProviderConfig().setProperties(extraProps);
   }
 
