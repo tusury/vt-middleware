@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractRetryOperationExceptionHandler<Q extends Request, S>
+public abstract class
+AbstractRetryOperationExceptionHandler<Q extends Request, S>
   implements OperationExceptionHandler<Q, S>
 {
 
@@ -62,12 +63,12 @@ public abstract class AbstractRetryOperationExceptionHandler<Q extends Request, 
   /**
    * Sets the number of retries.
    *
-   * @param  retry  to set
+   * @param  i  to set
    */
-  public void setRetry(final int retry)
+  public void setRetry(final int i)
   {
-    logger.trace("setting retry: {}", retry);
-    this.retry = retry;
+    logger.trace("setting retry: {}", i);
+    retry = i;
   }
 
 
