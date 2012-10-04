@@ -43,11 +43,8 @@ public class PoolConfig extends AbstractConfig
   /** Default validate period, value is {@value}. */
   public static final long DEFAULT_VALIDATE_PERIOD = 1800;
 
-  /** Default prune period, value is {@value}. */
-  public static final long DEFAULT_PRUNE_PERIOD = 300;
-
-  /** Default expiration time, value is {@value}. */
-  public static final long DEFAULT_EXPIRATION_TIME = 600;
+  /** Default maximum average idle time, value is {@value}. */
+  public static final long DEFAULT_AVERAGE_IDLE_TIME = 300;
 
   /** Min pool size. */
   private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
@@ -67,11 +64,8 @@ public class PoolConfig extends AbstractConfig
   /** Time in seconds that the validate pool should repeat. */
   private long validatePeriod = DEFAULT_VALIDATE_PERIOD;
 
-  /** Time in seconds that the prune pool should repeat. */
-  private long prunePeriod = DEFAULT_PRUNE_PERIOD;
-
-  /** Time in seconds that ldap objects should be considered expired. */
-  private long expirationTime = DEFAULT_EXPIRATION_TIME;
+  /** Time in seconds that is the maximum average idle time of connections. */
+  private long averageIdleTime = DEFAULT_AVERAGE_IDLE_TIME;
 
 
   /**
@@ -205,32 +199,6 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the prune period. Default value is {@link #DEFAULT_PRUNE_PERIOD}.
-   *
-   * @return  prune period in seconds
-   */
-  public long getPrunePeriod()
-  {
-    return prunePeriod;
-  }
-
-
-  /**
-   * Sets the period for which the pool will be pruned.
-   *
-   * @param  time  in seconds
-   */
-  public void setPrunePeriod(final long time)
-  {
-    checkImmutable();
-    if (time >= 0) {
-      logger.trace("setting prunePeriod: {}", time);
-      prunePeriod = time;
-    }
-  }
-
-
-  /**
    * Returns the validate period. Default value is {@link
    * #DEFAULT_VALIDATE_PERIOD}.
    *
@@ -258,32 +226,31 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the expiration time. Default value is {@link
-   * #DEFAULT_EXPIRATION_TIME}. The expiration time represents the max time a
-   * connection should be available before it is considered stale. This value
+   * Returns the maximum average idle time for connections. Default value is
+   * {@link #DEFAULT_AVERAGE_IDLE_TIME}. Pool size will be reduced by pruning if
+   * the average of all idle times in the pool exceeds this value.. This value
    * does not apply to connections in the pool if the pool has only the minimum
    * number of connections available.
    *
-   * @return  expiration time in seconds
+   * @return  maximum average idle time in seconds
    */
-  public long getExpirationTime()
+  public long getAverageIdleTime()
   {
-    return expirationTime;
+    return averageIdleTime;
   }
 
 
   /**
-   * Sets the time that an ldap object should be considered stale and ready for
-   * removal from the pool.
+   * Sets the maximum average idle time for connections in the pool.
    *
    * @param  time  in seconds
    */
-  public void setExpirationTime(final long time)
+  public void setAverageIdleTime(final long time)
   {
     checkImmutable();
     if (time >= 0) {
-      logger.trace("setting expirationTime: {}", time);
-      expirationTime = time;
+      logger.trace("setting averageIdleTime: {}", time);
+      averageIdleTime = time;
     }
   }
 
@@ -296,7 +263,7 @@ public class PoolConfig extends AbstractConfig
       String.format(
         "[%s@%d::minPoolSize=%s, maxPoolSize=%s, validateOnCheckIn=%s, " +
         "validateOnCheckOut=%s, validatePeriodically=%s, validatePeriod=%s, " +
-        "prunePeriod=%s, expirationTime=%s]",
+        "averageIdleTime=%s]",
         getClass().getName(),
         hashCode(),
         minPoolSize,
@@ -305,7 +272,6 @@ public class PoolConfig extends AbstractConfig
         validateOnCheckOut,
         validatePeriodically,
         validatePeriod,
-        prunePeriod,
-        expirationTime);
+        averageIdleTime);
   }
 }
