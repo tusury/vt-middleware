@@ -39,7 +39,7 @@ import org.ldaptive.Response;
  * queues, one for available connections and one for active connections.
  * Connections that are available via {@link #getConnection()} exist in the
  * available queue. Connections that are actively in use exist in the active
- * queue.
+ * queue. This implementation uses FIFO operations for each queue.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -186,8 +186,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
           logger.debug("End prune task for {}", this);
         }
       },
-      getPoolConfig().getPrunePeriod(),
-      getPoolConfig().getPrunePeriod(),
+      getPoolConfig().getAverageIdleTime(),
+      getPoolConfig().getAverageIdleTime(),
       TimeUnit.SECONDS);
     logger.debug("prune pool task scheduled");
 
@@ -263,11 +263,13 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     try {
       while (!available.isEmpty()) {
         final PooledConnectionHandler pc = available.remove();
+        pc.setAvailableTime(0);
         pc.getConnection().close();
         logger.trace("destroyed connection: {}", pc);
       }
       while (!active.isEmpty()) {
         final PooledConnectionHandler pc = active.remove();
+        pc.setActiveTime(0);
         pc.getConnection().close();
         logger.trace("destroyed connection: {}", pc);
       }
@@ -347,6 +349,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       poolLock.lock();
       try {
         available.add(pc);
+        pc.setAvailableTime(System.currentTimeMillis());
       } finally {
         poolLock.unlock();
       }
@@ -369,6 +372,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       poolLock.lock();
       try {
         active.add(pc);
+        pc.setActiveTime(System.currentTimeMillis());
       } finally {
         poolLock.unlock();
       }
@@ -390,6 +394,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     poolLock.lock();
     try {
       if (available.remove(pc)) {
+        pc.setAvailableTime(0);
         destroy = true;
       } else {
         logger.warn("attempt to remove unknown available connection: {}", pc);
@@ -416,6 +421,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     poolLock.lock();
     try {
       if (active.remove(pc)) {
+        pc.setActiveTime(0);
         destroy = true;
       } else {
         logger.warn("attempt to remove unknown active connection: {}", pc);
@@ -443,11 +449,13 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     poolLock.lock();
     try {
       if (available.remove(pc)) {
+        pc.setAvailableTime(0);
         destroy = true;
       } else {
         logger.debug("attempt to remove unknown available connection: {}", pc);
       }
       if (active.remove(pc)) {
+        pc.setActiveTime(0);
         destroy = true;
       } else {
         logger.debug("attempt to remove unknown active connection: {}", pc);
@@ -538,25 +546,49 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       poolLock.getQueueLength());
     poolLock.lock();
     try {
-      if (active.isEmpty()) {
-        logger.debug("pruning pool of size {}", available.size());
-        while (available.size() > getPoolConfig().getMinPoolSize()) {
-          PooledConnectionHandler pc = available.peek();
-          final long time = System.currentTimeMillis() - pc.getCreatedTime();
-          if (
-            time >
-              TimeUnit.SECONDS.toMillis(getPoolConfig().getExpirationTime())) {
-            pc = available.remove();
-            logger.trace("removing {} in the pool for {}ms", pc, time);
-            pc.getConnection().close();
-            logger.trace("destroyed connection: {}", pc);
-          } else {
-            break;
+      if (!available.isEmpty()) {
+        final int minPoolSize = getPoolConfig().getMinPoolSize();
+        int currentPoolSize = active.size() + available.size();
+        if (currentPoolSize > minPoolSize) {
+          logger.debug("pruning available pool of size {}", available.size());
+          long totalIdleTime = 0;
+          final long currentTime = System.currentTimeMillis();
+          for (PooledConnectionHandler pc : available) {
+            totalIdleTime += currentTime - pc.getAvailableTime();
           }
+          final long avgIdleTime = totalIdleTime / available.size();
+          final long maxAvgIdleTime = getPoolConfig().getAverageIdleTime();
+          if (avgIdleTime > maxAvgIdleTime) {
+            final long numConnToPrune = avgIdleTime / maxAvgIdleTime;
+            logger.debug(
+              "pruning {} connection(s) from pool with average idle time {} " +
+                "greater than {}",
+              numConnToPrune,
+              avgIdleTime,
+              maxAvgIdleTime);
+
+            for (int i = 0;
+                 i < numConnToPrune && currentPoolSize > minPoolSize;
+                 i++)
+            {
+              final PooledConnectionHandler pc = available.remove();
+              pc.setAvailableTime(0);
+              pc.getConnection().close();
+              logger.trace("destroyed connection: {}", pc);
+              currentPoolSize = active.size() + available.size();
+            }
+            logger.debug("available pool size pruned to {}", available.size());
+          } else {
+            logger.debug(
+              "average idle time {} less then {}, no connections pruned",
+              avgIdleTime,
+              maxAvgIdleTime);
+          }
+        } else {
+          logger.debug("pool size is at the minimum, no connections pruned");
         }
-        logger.debug("pool size pruned to {}", available.size());
       } else {
-        logger.debug("pool is currently active, no connections pruned");
+        logger.debug("all connections currently active, no connections pruned");
       }
     } finally {
       poolLock.unlock();
@@ -575,9 +607,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     isInitialized();
     poolLock.lock();
     try {
-      if (active.isEmpty()) {
+      if (!available.isEmpty()) {
         if (getPoolConfig().isValidatePeriodically()) {
-          logger.debug("validate for pool of size {}", available.size());
+          logger.debug("validate available pool of size {}", available.size());
 
           final Queue<PooledConnectionHandler> remove =
             new LinkedList<PooledConnectionHandler>();
@@ -593,6 +625,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
           for (PooledConnectionHandler pc : remove) {
             logger.trace("removing {} from the pool", pc);
             available.remove(pc);
+            pc.setAvailableTime(0);
             pc.getConnection().close();
             logger.trace("destroyed connection: {}", pc);
           }
@@ -600,7 +633,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         initializePool();
         logger.debug("pool size after validation is {}", available.size());
       } else {
-        logger.debug("pool is currently active, no validation performed");
+        logger.debug("all connections currently active, no validation pruned");
       }
     } finally {
       poolLock.unlock();
@@ -716,6 +749,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     /** Time this connection was created. */
     private final long createdTime = System.currentTimeMillis();
 
+    /** Time this connection was made available. */
+    private long availableTime;
+
+    /** Time this connection was made active. */
+    private long activeTime;
+
 
     /**
      * Creates a new pooled connection.
@@ -749,6 +788,50 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     public long getCreatedTime()
     {
       return createdTime;
+    }
+
+
+    /**
+     * Returns the time this connection was placed in the available queue.
+     *
+     * @return  available time
+     */
+    public long getAvailableTime()
+    {
+      return availableTime;
+    }
+
+
+    /**
+     * Sets the time this connection was placed in the available queue.
+     *
+     * @param  time  to set available
+     */
+    protected void setAvailableTime(final long time)
+    {
+      availableTime = time;
+    }
+
+
+    /**
+     * Returns the time this connection was placed in the active queue.
+     *
+     * @return  active time
+     */
+    public long getActiveTime()
+    {
+      return activeTime;
+    }
+
+
+    /**
+     * Sets the time this connection was placed in the active queue.
+     *
+     * @param  time  to set active
+     */
+    protected void setActiveTime(final long time)
+    {
+      activeTime = System.currentTimeMillis();
     }
 
 

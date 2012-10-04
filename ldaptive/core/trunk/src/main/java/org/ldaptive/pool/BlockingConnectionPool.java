@@ -196,7 +196,9 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     poolLock.lock();
     try {
       pc = available.remove();
+      pc.setAvailableTime(0);
       active.add(pc);
+      pc.setActiveTime(System.currentTimeMillis());
       logger.trace("retrieved available connection: {}", pc);
     } finally {
       poolLock.unlock();
@@ -266,8 +268,10 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     poolLock.lock();
     try {
       if (active.remove(pc)) {
+        pc.setActiveTime(0);
         if (valid) {
           available.add(pc);
+          pc.setAvailableTime(System.currentTimeMillis());
           logger.trace("returned active connection: {}", pc);
           poolNotEmpty.signal();
         }
