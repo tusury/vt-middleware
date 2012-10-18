@@ -13,6 +13,7 @@
 */
 package org.ldaptive.pool;
 
+import java.util.Set;
 import org.ldaptive.Connection;
 
 /**
@@ -106,6 +107,14 @@ public interface ConnectionPool
    * @return  count
    */
   int activeCount();
+
+
+  /**
+   * Returns the statistics for each connection in the pool.
+   *
+   * @return  connection statistics
+   */
+  Set<PooledConnectionStatistics> getPooledConnectionStatistics();
 
 
   /** Empty this pool, freeing any resources. */

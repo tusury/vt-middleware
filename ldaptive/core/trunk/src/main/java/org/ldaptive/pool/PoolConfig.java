@@ -43,13 +43,10 @@ public class PoolConfig extends AbstractConfig
   /** Default validate period, value is {@value}. */
   public static final long DEFAULT_VALIDATE_PERIOD = 1800;
 
-  /** Default maximum average idle time, value is {@value}. */
-  public static final long DEFAULT_AVERAGE_IDLE_TIME = 300;
-
-  /** Min pool size. */
+  /** Minimum pool size. */
   private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
 
-  /** Max pool size. */
+  /** Maximum pool size. */
   private int maxPoolSize = DEFAULT_MAX_POOL_SIZE;
 
   /** Whether the ldap object should be validated when returned to the pool. */
@@ -63,9 +60,6 @@ public class PoolConfig extends AbstractConfig
 
   /** Time in seconds that the validate pool should repeat. */
   private long validatePeriod = DEFAULT_VALIDATE_PERIOD;
-
-  /** Time in seconds that is the maximum average idle time of connections. */
-  private long averageIdleTime = DEFAULT_AVERAGE_IDLE_TIME;
 
 
   /**
@@ -225,36 +219,6 @@ public class PoolConfig extends AbstractConfig
   }
 
 
-  /**
-   * Returns the maximum average idle time for connections. Default value is
-   * {@link #DEFAULT_AVERAGE_IDLE_TIME}. Pool size will be reduced by pruning if
-   * the average of all idle times in the pool exceeds this value.. This value
-   * does not apply to connections in the pool if the pool has only the minimum
-   * number of connections available.
-   *
-   * @return  maximum average idle time in seconds
-   */
-  public long getAverageIdleTime()
-  {
-    return averageIdleTime;
-  }
-
-
-  /**
-   * Sets the maximum average idle time for connections in the pool.
-   *
-   * @param  time  in seconds
-   */
-  public void setAverageIdleTime(final long time)
-  {
-    checkImmutable();
-    if (time >= 0) {
-      logger.trace("setting averageIdleTime: {}", time);
-      averageIdleTime = time;
-    }
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -262,8 +226,7 @@ public class PoolConfig extends AbstractConfig
     return
       String.format(
         "[%s@%d::minPoolSize=%s, maxPoolSize=%s, validateOnCheckIn=%s, " +
-        "validateOnCheckOut=%s, validatePeriodically=%s, validatePeriod=%s, " +
-        "averageIdleTime=%s]",
+        "validateOnCheckOut=%s, validatePeriodically=%s, validatePeriod=%s]",
         getClass().getName(),
         hashCode(),
         minPoolSize,
@@ -271,7 +234,6 @@ public class PoolConfig extends AbstractConfig
         validateOnCheckIn,
         validateOnCheckOut,
         validatePeriodically,
-        validatePeriod,
-        averageIdleTime);
+        validatePeriod);
   }
 }
