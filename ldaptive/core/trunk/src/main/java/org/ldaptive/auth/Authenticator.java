@@ -303,7 +303,7 @@ public class Authenticator
         "DN cannot be null",
         null,
         -1);
-    } else if (dn.length() == 0) {
+    } else if (dn.isEmpty()) {
       response = new AuthenticationResponse(
         AuthenticationResultCode.DN_RESOLUTION_FAILURE,
         null,
