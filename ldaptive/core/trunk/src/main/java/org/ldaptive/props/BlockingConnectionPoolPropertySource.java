@@ -32,8 +32,8 @@ public final class BlockingConnectionPoolPropertySource
 {
 
   /** Invoker for connection factory. */
-  private static final SimplePropertyInvoker INVOKER =
-    new SimplePropertyInvoker(BlockingConnectionPool.class);
+  private static final BlockingConnectionPoolPropertyInvoker INVOKER =
+    new BlockingConnectionPoolPropertyInvoker(BlockingConnectionPool.class);
 
 
   /**
