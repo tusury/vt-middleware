@@ -42,6 +42,9 @@ public abstract class AbstractPool<T>
   /** For validating pooled objects. */
   private Validator<T> validator;
 
+  /** For removing pooled objects. */
+  private PruneStrategy pruneStrategy;
+
 
   /**
    * Returns the configuration for this pool.
@@ -61,6 +64,7 @@ public abstract class AbstractPool<T>
    */
   public void setPoolConfig(final PoolConfig pc)
   {
+    logger.trace("setting poolConfig: {}", pc);
     poolConfig = pc;
   }
 
@@ -83,6 +87,7 @@ public abstract class AbstractPool<T>
    */
   public void setActivator(final Activator<T> a)
   {
+    logger.trace("setting activator: {}", a);
     activator = a;
   }
 
@@ -126,6 +131,7 @@ public abstract class AbstractPool<T>
    */
   public void setPassivator(final Passivator<T> p)
   {
+    logger.trace("setting passivator: {}", p);
     passivator = p;
   }
 
@@ -169,6 +175,7 @@ public abstract class AbstractPool<T>
    */
   public void setValidator(final Validator<T> v)
   {
+    logger.trace("setting validator: {}", v);
     validator = v;
   }
 
@@ -191,5 +198,28 @@ public abstract class AbstractPool<T>
       logger.trace("validation for {} = {}", t, success);
     }
     return success;
+  }
+
+
+  /**
+   * Returns the prune strategy for this pool.
+   *
+   * @return  prune strategy
+   */
+  public PruneStrategy getPruneStrategy()
+  {
+    return pruneStrategy;
+  }
+
+
+  /**
+   * Sets the prune strategy for this pool.
+   *
+   * @param  ps  prune strategy
+   */
+  public void setPruneStrategy(final PruneStrategy ps)
+  {
+    logger.trace("setting pruneStrategy: {}", ps);
+    pruneStrategy = ps;
   }
 }

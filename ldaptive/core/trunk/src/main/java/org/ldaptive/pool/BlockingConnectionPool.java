@@ -32,7 +32,6 @@ import org.ldaptive.DefaultConnectionFactory;
  * @version  $Revision$ $Date$
  */
 public class BlockingConnectionPool extends AbstractConnectionPool
-  implements ConnectionPool
 {
 
   /** Time in milliseconds to wait for an available connection. */
@@ -103,7 +102,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     throws PoolException
   {
     isInitialized();
-    PooledConnectionHandler pc = null;
+    PooledConnectionProxy pc = null;
     boolean create = false;
     logger.trace(
       "waiting on pool lock for check out {}",
@@ -115,14 +114,19 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       // otherwise the pool is full, block until a connection is returned
       if (!available.isEmpty()) {
         try {
-          logger.trace("retrieve available connection");
+          logger.trace(
+            "retrieve available connection from pool of size {}",
+            available.size());
           pc = retrieveAvailableConnection();
         } catch (NoSuchElementException e) {
           logger.error("could not remove connection from list", e);
           throw new IllegalStateException("Pool is empty", e);
         }
       } else if (active.size() < getPoolConfig().getMaxPoolSize()) {
-        logger.trace("pool can grow, attempt to create connection");
+        logger.trace(
+          "pool can grow, attempt to create active connection in pool of " +
+            "size {}",
+          active.size());
         create = true;
       } else {
         logger.trace("pool is full, block until connection is available");
@@ -142,9 +146,13 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         boolean b = true;
         poolLock.lock();
         try {
+          logger.trace(
+            "create connection in pool of size {}",
+            available.size() + active.size());
           if (
             available.size() + active.size() ==
               getPoolConfig().getMaxPoolSize()) {
+            logger.trace("pool at maximum size, create not allowed");
             b = false;
           }
         } finally {
@@ -187,18 +195,17 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    *
    * @throws  NoSuchElementException  if the available queue is empty
    */
-  protected PooledConnectionHandler retrieveAvailableConnection()
+  protected PooledConnectionProxy retrieveAvailableConnection()
   {
-    PooledConnectionHandler pc = null;
+    PooledConnectionProxy pc = null;
     logger.trace(
       "waiting on pool lock for retrieve available {}",
       poolLock.getQueueLength());
     poolLock.lock();
     try {
       pc = available.remove();
-      pc.setAvailableTime(0);
       active.add(pc);
-      pc.setActiveTime(System.currentTimeMillis());
+      pc.getPooledConnectionStatistics().addActiveStat();
       logger.trace("retrieved available connection: {}", pc);
     } finally {
       poolLock.unlock();
@@ -217,10 +224,10 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    * time and it occurs
    * @throws  PoolInterruptedException  if the current thread is interrupted
    */
-  protected PooledConnectionHandler blockAvailableConnection()
+  protected PooledConnectionProxy blockAvailableConnection()
     throws PoolException
   {
-    PooledConnectionHandler pc = null;
+    PooledConnectionProxy pc = null;
     logger.trace(
       "waiting on pool lock for block available {}",
       poolLock.getQueueLength());
@@ -260,7 +267,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public void putConnection(final Connection c)
   {
     isInitialized();
-    final PooledConnectionHandler pc = retrieveInvocationHandler(c);
+    final PooledConnectionProxy pc = retrieveConnectionProxy(c);
     final boolean valid = validateAndPassivateConnection(pc);
     logger.trace(
       "waiting on pool lock for check in {}",
@@ -268,10 +275,9 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     poolLock.lock();
     try {
       if (active.remove(pc)) {
-        pc.setActiveTime(0);
         if (valid) {
           available.add(pc);
-          pc.setAvailableTime(System.currentTimeMillis());
+          pc.getPooledConnectionStatistics().addAvailableStat();
           logger.trace("returned active connection: {}", pc);
           poolNotEmpty.signal();
         }

@@ -21,11 +21,10 @@ import org.ldaptive.DefaultConnectionFactory;
  * Implements a pool of connections that has a set minimum and maximum size. The
  * pool will grow beyond it's maximum size as necessary based on it's current
  * load. Pool size will return to it's minimum based on the configuration of the
- * average idle time. See {@link PoolConfig#setAverageIdleTime(long)}. This
- * implementation should be used when you have some flexibility in the number of
- * connections that can be created to handle spikes in load. See
- * {@link AbstractConnectionPool}. Note that this pool will begin blocking if it
- * cannot create new connections.
+ * prune strategy. See {@link PruneStrategy}. This implementation should be used
+ * when you have some flexibility in the number of connections that can be
+ * created to handle spikes in load. See {@link AbstractConnectionPool}. Note
+ * that this pool will begin blocking if it cannot create new connections.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -69,7 +68,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
     throws PoolException
   {
     isInitialized();
-    PooledConnectionHandler pc = null;
+    PooledConnectionProxy pc = null;
     logger.trace(
       "waiting on pool lock for check out {}",
       poolLock.getQueueLength());

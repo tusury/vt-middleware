@@ -13,12 +13,15 @@
 */
 package org.ldaptive.pool;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -45,6 +48,7 @@ import org.ldaptive.Response;
  * @version  $Revision$ $Date$
  */
 public abstract class AbstractConnectionPool extends AbstractPool<Connection>
+  implements ConnectionPool
 {
 
   /** Lock for the entire pool. */
@@ -60,18 +64,20 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   protected final ReentrantLock checkOutLock = new ReentrantLock();
 
   /** List of available connections in the pool. */
-  protected final Queue<PooledConnectionHandler> available =
-    new LinkedList<PooledConnectionHandler>();
+  protected Queue<PooledConnectionProxy> available;
 
   /** List of connections in use. */
-  protected final Queue<PooledConnectionHandler> active =
-    new LinkedList<PooledConnectionHandler>();
+  protected Queue<PooledConnectionProxy> active;
 
   /** Connection factory to create connections with. */
   private DefaultConnectionFactory connectionFactory;
 
-  /** Whether to connect to the ldap on connection creation. */
+  /** Whether to connect to the ldap on connection creation. Default value is
+     {@value}. */
   private boolean connectOnCreate = true;
+
+  /** Type of queue. LIFO or FIFO. Default value is {@value}. */
+  private QueueType queueType = QueueType.LIFO;
 
   /** Executor for scheduling pool tasks. */
   private ScheduledExecutorService poolExecutor;
@@ -98,6 +104,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   public void setConnectionFactory(final DefaultConnectionFactory cf)
   {
+    logger.trace("setting connectionFactory: {}", cf);
     connectionFactory = cf;
   }
 
@@ -122,7 +129,32 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   public void setConnectOnCreate(final boolean b)
   {
+    logger.trace("setting connectOnCreate: {}", b);
     connectOnCreate = b;
+  }
+
+
+  /**
+   * Returns the type of queue used for this connection pool.
+   *
+   * @return  queue type
+   */
+  public QueueType getQueueType()
+  {
+    return queueType;
+  }
+
+
+  /**
+   * Sets the type of queue used for this connection pool. This property may
+   * have an impact on the success of the prune strategy.
+   *
+   * @param  type  of queue
+   */
+  public void setQueueType(final QueueType type)
+  {
+    logger.trace("setting queueType: {}", type);
+    queueType = type;
   }
 
 
@@ -147,6 +179,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * @throws  IllegalStateException  if this pool has already been initialized
    * or the pooling configuration is inconsistent
    */
+  @Override
   public void initialize()
   {
     if (initialized) {
@@ -163,6 +196,18 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
     getPoolConfig().makeImmutable();
+
+    if (getPruneStrategy() == null) {
+      setPruneStrategy(new IdlePruneStrategy());
+      logger.debug(
+        "no prune strategy configured, using default prune strategy: {}",
+        getPruneStrategy());
+    }
+
+    available = new Queue<PooledConnectionProxy>(queueType);
+    active = new Queue<PooledConnectionProxy>(queueType);
+    initializePool();
+    logger.debug("initialized available queue: {}", available);
 
     poolExecutor =
       Executors.newSingleThreadScheduledExecutor(
@@ -186,8 +231,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
           logger.debug("End prune task for {}", this);
         }
       },
-      getPoolConfig().getAverageIdleTime(),
-      getPoolConfig().getAverageIdleTime(),
+      getPruneStrategy().getPrunePeriod(),
+      getPruneStrategy().getPrunePeriod(),
       TimeUnit.SECONDS);
     logger.debug("prune pool task scheduled");
 
@@ -206,9 +251,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       TimeUnit.SECONDS);
     logger.debug("validate pool task scheduled");
 
-    initializePool();
-
-    logger.debug("pool initialized to size {}", available.size());
     initialized = true;
   }
 
@@ -222,8 +264,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   private void initializePool()
   {
     logger.debug(
-      "checking ldap pool size >= {}",
-      getPoolConfig().getMinPoolSize());
+      "checking connection pool size >= {}", getPoolConfig().getMinPoolSize());
 
     int count = 0;
     poolLock.lock();
@@ -231,7 +272,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       while (
         available.size() < getPoolConfig().getMinPoolSize() &&
           count < getPoolConfig().getMinPoolSize() * 2) {
-        final PooledConnectionHandler pc = createAvailableConnection();
+        final PooledConnectionProxy pc = createAvailableConnection();
         if (getPoolConfig().isValidateOnCheckIn()) {
           if (validate(pc.getConnection())) {
             logger.trace("connection passed initialize validation: {}", pc);
@@ -256,20 +297,21 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
+  @Override
   public void close()
   {
+    logger.debug(
+      "closing connection pool of size {}", available.size() + active.size());
     isInitialized();
     poolLock.lock();
     try {
       while (!available.isEmpty()) {
-        final PooledConnectionHandler pc = available.remove();
-        pc.setAvailableTime(0);
+        final PooledConnectionProxy pc = available.remove();
         pc.getConnection().close();
         logger.trace("destroyed connection: {}", pc);
       }
       while (!active.isEmpty()) {
-        final PooledConnectionHandler pc = active.remove();
-        pc.setActiveTime(0);
+        final PooledConnectionProxy pc = active.remove();
         pc.getConnection().close();
         logger.trace("destroyed connection: {}", pc);
       }
@@ -297,6 +339,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * time and the current thread is interrupted
    * @throws  IllegalStateException  if this pool has not been initialized
    */
+  @Override
   public abstract Connection getConnection()
     throws PoolException;
 
@@ -317,7 +360,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @return  pooled connection
    */
-  protected PooledConnectionHandler createConnection()
+  protected PooledConnectionProxy createConnection()
   {
     Connection c = connectionFactory.getConnection();
     Response<Void> r = null;
@@ -330,7 +373,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       }
     }
     if (c != null) {
-      return new PooledConnectionHandler(c, r);
+      return new DefaultPooledConnectionProxy(c, r);
     } else {
       return null;
     }
@@ -342,14 +385,15 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @return  connection that was placed in the available pool
    */
-  protected PooledConnectionHandler createAvailableConnection()
+  protected PooledConnectionProxy createAvailableConnection()
   {
-    final PooledConnectionHandler pc = createConnection();
+    final PooledConnectionProxy pc = createConnection();
     if (pc != null) {
       poolLock.lock();
       try {
         available.add(pc);
-        pc.setAvailableTime(System.currentTimeMillis());
+        pc.getPooledConnectionStatistics().addAvailableStat();
+        logger.trace("added available connection: {}", pc);
       } finally {
         poolLock.unlock();
       }
@@ -365,14 +409,15 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @return  connection that was placed in the active pool
    */
-  protected PooledConnectionHandler createActiveConnection()
+  protected PooledConnectionProxy createActiveConnection()
   {
-    final PooledConnectionHandler pc = createConnection();
+    final PooledConnectionProxy pc = createConnection();
     if (pc != null) {
       poolLock.lock();
       try {
         active.add(pc);
-        pc.setActiveTime(System.currentTimeMillis());
+        pc.getPooledConnectionStatistics().addActiveStat();
+        logger.trace("added active connection: {}", pc);
       } finally {
         poolLock.unlock();
       }
@@ -388,13 +433,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @param  pc  connection that is in the available pool
    */
-  protected void removeAvailableConnection(final PooledConnectionHandler pc)
+  protected void removeAvailableConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
     try {
       if (available.remove(pc)) {
-        pc.setAvailableTime(0);
         destroy = true;
       } else {
         logger.warn("attempt to remove unknown available connection: {}", pc);
@@ -403,7 +447,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       poolLock.unlock();
     }
     if (destroy) {
-      logger.trace("removing available connection: {}", pc);
       pc.getConnection().close();
       logger.trace("destroyed connection: {}", pc);
     }
@@ -415,13 +458,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @param  pc  connection that is in the active pool
    */
-  protected void removeActiveConnection(final PooledConnectionHandler pc)
+  protected void removeActiveConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
     try {
       if (active.remove(pc)) {
-        pc.setActiveTime(0);
         destroy = true;
       } else {
         logger.warn("attempt to remove unknown active connection: {}", pc);
@@ -430,7 +472,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       poolLock.unlock();
     }
     if (destroy) {
-      logger.trace("removing active connection: {}", pc);
       pc.getConnection().close();
       logger.trace("destroyed connection: {}", pc);
     }
@@ -443,19 +484,17 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * @param  pc  connection that is in both the available and active pools
    */
   protected void removeAvailableAndActiveConnection(
-    final PooledConnectionHandler pc)
+    final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
     try {
       if (available.remove(pc)) {
-        pc.setAvailableTime(0);
         destroy = true;
       } else {
         logger.debug("attempt to remove unknown available connection: {}", pc);
       }
       if (active.remove(pc)) {
-        pc.setActiveTime(0);
         destroy = true;
       } else {
         logger.debug("attempt to remove unknown active connection: {}", pc);
@@ -464,7 +503,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       poolLock.unlock();
     }
     if (destroy) {
-      logger.trace("removing active connection: {}", pc);
       pc.getConnection().close();
       logger.trace("destroyed connection: {}", pc);
     }
@@ -481,7 +519,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * @throws  ActivationException  if the connection cannot be activated
    * @throws  ValidationException  if the connection cannot be validated
    */
-  protected void activateAndValidateConnection(final PooledConnectionHandler pc)
+  protected void activateAndValidateConnection(final PooledConnectionProxy pc)
     throws PoolException
   {
     if (!activate(pc.getConnection())) {
@@ -508,7 +546,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * @return  whether both validate and passivation succeeded
    */
   protected boolean validateAndPassivateConnection(
-    final PooledConnectionHandler pc)
+    final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
       logger.debug("connection not open: {}", pc);
@@ -551,44 +589,31 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         int currentPoolSize = active.size() + available.size();
         if (currentPoolSize > minPoolSize) {
           logger.debug("pruning available pool of size {}", available.size());
-          long totalIdleTime = 0;
-          final long currentTime = System.currentTimeMillis();
-          for (PooledConnectionHandler pc : available) {
-            totalIdleTime += currentTime - pc.getAvailableTime();
-          }
-          final long avgIdleTime = totalIdleTime / available.size();
-          final long maxAvgIdleTime = getPoolConfig().getAverageIdleTime();
-          if (avgIdleTime > maxAvgIdleTime) {
-            final long numConnToPrune = avgIdleTime / maxAvgIdleTime;
-            logger.debug(
-              "pruning {} connection(s) from pool with average idle time {} " +
-                "greater than {}",
-              numConnToPrune,
-              avgIdleTime,
-              maxAvgIdleTime);
-
-            for (int i = 0;
-                 i < numConnToPrune && currentPoolSize > minPoolSize;
-                 i++)
-            {
-              final PooledConnectionHandler pc = available.remove();
-              pc.setAvailableTime(0);
+          final int numConnToPrune = available.size();
+          final Iterator<PooledConnectionProxy> connIter = available.iterator();
+          for (int i = 0;
+               i < numConnToPrune && currentPoolSize > minPoolSize;
+               i++)
+          {
+            final PooledConnectionProxy pc = connIter.next();
+            if (getPruneStrategy().prune(pc)) {
+              connIter.remove();
               pc.getConnection().close();
               logger.trace("destroyed connection: {}", pc);
-              currentPoolSize = active.size() + available.size();
+              currentPoolSize--;
             }
-            logger.debug("available pool size pruned to {}", available.size());
+          }
+          if (numConnToPrune == available.size()) {
+            logger.debug("prune strategy did not remove any connections");
           } else {
-            logger.debug(
-              "average idle time {} less then {}, no connections pruned",
-              avgIdleTime,
-              maxAvgIdleTime);
+            logger.debug("available pool size pruned to {}", available.size());
           }
         } else {
           logger.debug("pool size is at the minimum, no connections pruned");
         }
       } else {
-        logger.debug("all connections currently active, no connections pruned");
+        logger.debug(
+          "no connections currently available, no connections pruned");
       }
     } finally {
       poolLock.unlock();
@@ -611,9 +636,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         if (getPoolConfig().isValidatePeriodically()) {
           logger.debug("validate available pool of size {}", available.size());
 
-          final Queue<PooledConnectionHandler> remove =
-            new LinkedList<PooledConnectionHandler>();
-          for (PooledConnectionHandler pc : available) {
+          final List<PooledConnectionProxy> remove =
+            new ArrayList<PooledConnectionProxy>();
+          for (PooledConnectionProxy pc : available) {
             logger.trace("validating {}", pc);
             if (validate(pc.getConnection())) {
               logger.trace("connection passed validation: {}", pc);
@@ -622,10 +647,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
               remove.add(pc);
             }
           }
-          for (PooledConnectionHandler pc : remove) {
+          for (PooledConnectionProxy pc : remove) {
             logger.trace("removing {} from the pool", pc);
             available.remove(pc);
-            pc.setAvailableTime(0);
             pc.getConnection().close();
             logger.trace("destroyed connection: {}", pc);
           }
@@ -641,25 +665,41 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /**
-   * Returns the number of connections available for use.
-   *
-   * @return  count
-   */
+  /** {@inheritDoc} */
+  @Override
   public int availableCount()
   {
     return available.size();
   }
 
 
-  /**
-   * Returns the number of connections in use.
-   *
-   * @return  count
-   */
+  /** {@inheritDoc} */
+  @Override
   public int activeCount()
   {
     return active.size();
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Set<PooledConnectionStatistics> getPooledConnectionStatistics()
+  {
+    isInitialized();
+    final Set<PooledConnectionStatistics> stats =
+      Collections.unmodifiableSet(new HashSet<PooledConnectionStatistics>());
+    poolLock.lock();
+    try {
+      for (PooledConnectionProxy cp : available) {
+        stats.add(cp.getPooledConnectionStatistics());
+      }
+      for (PooledConnectionProxy cp : active) {
+        stats.add(cp.getPooledConnectionStatistics());
+      }
+    } finally {
+      poolLock.unlock();
+    }
+    return stats;
   }
 
 
@@ -670,7 +710,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @return  connection proxy
    */
-  protected Connection createConnectionProxy(final PooledConnectionHandler pc)
+  protected Connection createConnectionProxy(final PooledConnectionProxy pc)
   {
     return
       (Connection) Proxy.newProxyInstance(
@@ -685,12 +725,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @param  proxy  connection proxy
    *
-   * @return  pooled connection handler
+   * @return  pooled connection proxy
    */
-  protected PooledConnectionHandler retrieveInvocationHandler(
+  protected PooledConnectionProxy retrieveConnectionProxy(
     final Connection proxy)
   {
-    return (PooledConnectionHandler) Proxy.getInvocationHandler(proxy);
+    return (PooledConnectionProxy) Proxy.getInvocationHandler(proxy);
   }
 
 
@@ -718,12 +758,20 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   {
     return
       String.format(
-        "[%s@%d::connectOnCreate=%s, connectionFactory=%s, poolConfig=%s]",
+        "[%s@%d::poolConfig=%s, activator=%s, passivator=%s, validator=%s " +
+        "pruneStrategy=%s, connectOnCreate=%s, connectionFactory=%s, " +
+        "availableCount=%s, activeCount=%s]",
         getClass().getName(),
         hashCode(),
+        getPoolConfig(),
+        getActivator(),
+        getPassivator(),
+        getValidator(),
+        getPruneStrategy(),
         connectOnCreate,
         connectionFactory,
-        getPoolConfig());
+        availableCount(),
+        activeCount());
   }
 
 
@@ -734,7 +782,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * @author  Middleware Services
    * @version  $Revision$ $Date$
    */
-  protected class PooledConnectionHandler implements InvocationHandler
+  protected class DefaultPooledConnectionProxy
+    implements PooledConnectionProxy
   {
 
     /** hash code seed. */
@@ -749,11 +798,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     /** Time this connection was created. */
     private final long createdTime = System.currentTimeMillis();
 
-    /** Time this connection was made available. */
-    private long availableTime;
-
-    /** Time this connection was made active. */
-    private long activeTime;
+    /** Statistics for this connection. */
+    private final PooledConnectionStatistics statistics =
+      new PooledConnectionStatistics(getPruneStrategy().getStatisticsSize());
 
 
     /**
@@ -762,76 +809,44 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
      * @param  c  connection to participate in this pool
      * @param  r  response produced by opening the connection
      */
-    public PooledConnectionHandler(final Connection c, final Response<Void> r)
+    public DefaultPooledConnectionProxy(
+      final Connection c,
+      final Response<Void> r)
     {
       conn = c;
       openResponse = r;
     }
 
 
-    /**
-     * Returns the connection.
-     *
-     * @return  underlying connection
-     */
+    /** {@inheritDoc} */
+    @Override
+    public ConnectionPool getConnectionPool()
+    {
+      return AbstractConnectionPool.this;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public Connection getConnection()
     {
       return conn;
     }
 
 
-    /**
-     * Returns the time this connection was created.
-     *
-     * @return  creation time
-     */
+    /** {@inheritDoc} */
+    @Override
     public long getCreatedTime()
     {
       return createdTime;
     }
 
 
-    /**
-     * Returns the time this connection was placed in the available queue.
-     *
-     * @return  available time
-     */
-    public long getAvailableTime()
+    /** {@inheritDoc} */
+    @Override
+    public PooledConnectionStatistics getPooledConnectionStatistics()
     {
-      return availableTime;
-    }
-
-
-    /**
-     * Sets the time this connection was placed in the available queue.
-     *
-     * @param  time  to set available
-     */
-    protected void setAvailableTime(final long time)
-    {
-      availableTime = time;
-    }
-
-
-    /**
-     * Returns the time this connection was placed in the active queue.
-     *
-     * @return  active time
-     */
-    public long getActiveTime()
-    {
-      return activeTime;
-    }
-
-
-    /**
-     * Sets the time this connection was placed in the active queue.
-     *
-     * @param  time  to set active
-     */
-    protected void setActiveTime(final long time)
-    {
-      activeTime = System.currentTimeMillis();
+      return statistics;
     }
 
 
