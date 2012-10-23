@@ -91,6 +91,29 @@ public class AsyncSearchOperation
 
 
   /**
+   * Invokes {@link ExecutorService#shutdown()} on the underlying executor
+   * service.
+   */
+  public void shutdown()
+  {
+    executorService.shutdown();
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  protected void finalize()
+    throws Throwable
+  {
+    try {
+      shutdown();
+    } finally {
+      super.finalize();
+    }
+  }
+
+
+  /**
    * Async search listener used to build a search result and invoke search
    * request handlers.
    */
