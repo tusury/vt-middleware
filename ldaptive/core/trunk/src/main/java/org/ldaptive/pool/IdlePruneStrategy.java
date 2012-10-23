@@ -47,9 +47,7 @@ public class IdlePruneStrategy implements PruneStrategy
   private long idleTime;
 
 
-  /**
-   * Creates a new idle prune strategy.
-   */
+  /** Creates a new idle prune strategy. */
   public IdlePruneStrategy()
   {
     this(DEFAULT_PRUNE_PERIOD, DEFAULT_IDLE_TIME);
@@ -76,8 +74,11 @@ public class IdlePruneStrategy implements PruneStrategy
     final long timeAvailable =
       conn.getPooledConnectionStatistics().getLastAvailableState();
     logger.trace(
-      "evaluating timestamp {} for connection {}", timeAvailable, conn);
-    return System.currentTimeMillis() - timeAvailable >
+      "evaluating timestamp {} for connection {}",
+      timeAvailable,
+      conn);
+    return
+      System.currentTimeMillis() - timeAvailable >
       TimeUnit.SECONDS.toMillis(idleTime);
   }
 

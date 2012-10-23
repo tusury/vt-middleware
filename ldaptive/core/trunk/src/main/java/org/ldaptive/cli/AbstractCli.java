@@ -96,7 +96,9 @@ public abstract class AbstractCli
     options.addOption(new Option(OPT_HELP, false, "display all options"));
     options.addOption(
       new Option(
-        OPT_PROVIDER_PROPERTIES, true, "provider specific properties"));
+        OPT_PROVIDER_PROPERTIES,
+        true,
+        "provider specific properties"));
   }
 
 

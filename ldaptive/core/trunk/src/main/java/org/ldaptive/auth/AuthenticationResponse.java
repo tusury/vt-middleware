@@ -51,7 +51,8 @@ public class AuthenticationResponse extends Response<Boolean>
     final LdapEntry entry)
   {
     super(
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc);
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc,
+      rc);
     authenticationResultCode = authRc;
     ldapEntry = entry;
   }

@@ -90,8 +90,8 @@ public class PagedResultsClient
    *     PagedResultsControl}</li>
    * </ul>
    *
-   * The cookie is extracted from the supplied response and replayed in the
-   * request.
+   * <p>The cookie is extracted from the supplied response and replayed in the
+   * request.</p>
    *
    * @param  request  search request to execute
    * @param  response  of a previous paged results operation
@@ -110,6 +110,7 @@ public class PagedResultsClient
       throw new IllegalArgumentException(
         "Response does not contain a paged results cookie");
     }
+
     final SearchOperation search = new SearchOperation(connection);
     request.setControls(new PagedResultsControl(resultSize, cookie, true));
     return search.execute(request);
@@ -140,10 +141,10 @@ public class PagedResultsClient
    *     PagedResultsControl}</li>
    * </ul>
    *
-   * This method will continue to execute search operations until all paged
+   * <p>This method will continue to execute search operations until all paged
    * search results have been retrieved from the server. The returned response
    * contains the response data of the last paged result operation plus the
-   * entries and references returned by all previous search operations.
+   * entries and references returned by all previous search operations.</p>
    *
    * @param  request  search request to execute
    *
@@ -184,8 +185,8 @@ public class PagedResultsClient
   protected byte[] getPagedResultsCookie(final Response<SearchResult> response)
   {
     byte[] cookie = null;
-    final PagedResultsControl ctl =
-      (PagedResultsControl) response.getControl(PagedResultsControl.OID);
+    final PagedResultsControl ctl = (PagedResultsControl) response.getControl(
+      PagedResultsControl.OID);
     if (ctl != null) {
       if (ctl.getCookie() != null && ctl.getCookie().length > 0) {
         cookie = ctl.getCookie();

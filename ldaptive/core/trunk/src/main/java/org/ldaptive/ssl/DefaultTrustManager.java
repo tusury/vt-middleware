@@ -43,15 +43,14 @@ public class DefaultTrustManager implements X509TrustManager
   private final X509TrustManager[] trustManagers;
 
 
-  /**
-   * Creates a new default trust manager.
-   */
+  /** Creates a new default trust manager. */
   public DefaultTrustManager()
   {
     try {
       final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
         TrustManagerFactory.getDefaultAlgorithm());
       tmf.init((KeyStore) null);
+
       final TrustManager[] tm = tmf.getTrustManagers();
       trustManagers = new X509TrustManager[tm.length];
       for (int i = 0; i < tm.length; i++) {

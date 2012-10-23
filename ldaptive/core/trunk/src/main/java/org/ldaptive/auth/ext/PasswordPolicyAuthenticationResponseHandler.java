@@ -44,9 +44,7 @@ public class PasswordPolicyAuthenticationResponseHandler
       }
       if (exp != null || ppc.getGraceAuthNsRemaining() > 0) {
         response.setAccountState(
-          new PasswordPolicyAccountState(
-            exp,
-            ppc.getGraceAuthNsRemaining()));
+          new PasswordPolicyAccountState(exp, ppc.getGraceAuthNsRemaining()));
       }
       if (response.getAccountState() == null && ppc.getError() != null) {
         response.setAccountState(

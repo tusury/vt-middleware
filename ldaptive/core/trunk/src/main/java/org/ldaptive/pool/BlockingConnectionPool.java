@@ -102,6 +102,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     throws PoolException
   {
     isInitialized();
+
     PooledConnectionProxy pc = null;
     boolean create = false;
     logger.trace(
@@ -125,7 +126,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       } else if (active.size() < getPoolConfig().getMaxPoolSize()) {
         logger.trace(
           "pool can grow, attempt to create active connection in pool of " +
-            "size {}",
+          "size {}",
           active.size());
         create = true;
       } else {
@@ -267,6 +268,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public void putConnection(final Connection c)
   {
     isInitialized();
+
     final PooledConnectionProxy pc = retrieveConnectionProxy(c);
     final boolean valid = validateAndPassivateConnection(pc);
     logger.trace(

@@ -30,15 +30,15 @@ import org.ldaptive.asn1.UniversalDERTag;
  * defined as:
  *
  * <pre>
- * VirtualListViewRequest ::= SEQUENCE {
- *    beforeCount    INTEGER (0..maxInt),
- *    afterCount     INTEGER (0..maxInt),
- *    target         CHOICE {
- *       byOffset           [0] SEQUENCE {
- *          offset             INTEGER (1 .. maxInt),
- *          contentCount       INTEGER (0 .. maxInt) },
- *       greaterThanOrEqual [1] AssertionValue },
- *    contextID      OCTET STRING OPTIONAL }
+   VirtualListViewRequest ::= SEQUENCE {
+      beforeCount    INTEGER (0..maxInt),
+      afterCount     INTEGER (0..maxInt),
+      target         CHOICE {
+         byOffset           [0] SEQUENCE {
+            offset             INTEGER (1 .. maxInt),
+            contentCount       INTEGER (0 .. maxInt) },
+         greaterThanOrEqual [1] AssertionValue },
+      contextID      OCTET STRING OPTIONAL }
  * </pre>
  *
  * @author  Middleware Services
@@ -63,17 +63,23 @@ public class VirtualListViewRequestControl extends AbstractControl
   /** target entry's offset within the ordered search result set. */
   private int targetOffset;
 
-  /** server's estimate of the current number of entries in the ordered search
-      result set. */
+  /**
+   * server's estimate of the current number of entries in the ordered search
+   * result set.
+   */
   private int contentCount;
 
-  /** value to match against the ordering matching rule for the
-      attributeDescription in the sort control. */
+  /**
+   * value to match against the ordering matching rule for the
+   * attributeDescription in the sort control.
+   */
   private String assertionValue;
 
-  /** value that clients should send back to the server to indicate that
-      the server is willing to return contiguous data from a subsequent search
-      request which uses the same search criteria. */
+  /**
+   * value that clients should send back to the server to indicate that the
+   * server is willing to return contiguous data from a subsequent search
+   * request which uses the same search criteria.
+   */
   private byte[] contextID;
 
 
@@ -312,13 +318,12 @@ public class VirtualListViewRequestControl extends AbstractControl
 
   /**
    * Returns the content count. From the RFC:
-   * <p>
-   * contentCount gives the server's estimate of the current number of entries
-   * in the list. Together these give sufficient information for the client to
-   * update a list box slider position to match the newly retrieved entries and
-   * identify the target entry. The contentCount value returned SHOULD be used
-   * in a subsequent VirtualListViewRequest control.
-   * </p>
+   *
+   * <p>contentCount gives the server's estimate of the current number of
+   * entries in the list. Together these give sufficient information for the
+   * client to update a list box slider position to match the newly retrieved
+   * entries and identify the target entry. The contentCount value returned
+   * SHOULD be used in a subsequent VirtualListViewRequest control.</p>
    *
    * @return  content count
    */
@@ -341,14 +346,14 @@ public class VirtualListViewRequestControl extends AbstractControl
 
   /**
    * Returns the assertion value. From the RFC:
-   * <p>
-   * The assertion value is encoded according to the ORDERING matching rule for
-   * the attributeDescription in the sort control [SSS]. If present, the value
-   * supplied in greaterThanOrEqual is used to determine the target entry by
-   * comparison with the values of the attribute specified as the primary sort
-   * key. The first list entry who's value is no less than (less than or equal
-   * to when the sort order is reversed) the supplied value is the target entry.
-   * </p>
+   *
+   * <p>The assertion value is encoded according to the ORDERING matching rule
+   * for the attributeDescription in the sort control [SSS]. If present, the
+   * value supplied in greaterThanOrEqual is used to determine the target entry
+   * by comparison with the values of the attribute specified as the primary
+   * sort key. The first list entry who's value is no less than (less than or
+   * equal to when the sort order is reversed) the supplied value is the target
+   * entry.</p>
    *
    * @return  assertion value
    */
@@ -371,15 +376,14 @@ public class VirtualListViewRequestControl extends AbstractControl
 
   /**
    * Returns the context id. From the RFC:
-   * <p>
-   * The contextID is a server-defined octet string. If present, the contents of
-   * the contextID field SHOULD be returned to the server by a client in a
+   *
+   * <p>The contextID is a server-defined octet string. If present, the contents
+   * of the contextID field SHOULD be returned to the server by a client in a
    * subsequent virtual list request. The presence of a contextID here indicates
    * that the server is willing to return contiguous data from a subsequent
    * search request which uses the same search criteria, accompanied by a
    * VirtualListViewRequest which indicates that the client wishes to receive an
-   * adjoining page of data.
-   * </p>
+   * adjoining page of data.</p>
    *
    * @return  context id
    */
@@ -446,23 +450,24 @@ public class VirtualListViewRequestControl extends AbstractControl
     if (getAssertionValue() != null) {
       l.add(new IntegerType(getBeforeCount()));
       l.add(new IntegerType(getAfterCount()));
-      l.add(new OctetStringType(
-        new ContextDERTag(1, false), getAssertionValue()));
+      l.add(
+        new OctetStringType(new ContextDERTag(1, false), getAssertionValue()));
       if (getContextID() != null) {
         l.add(new OctetStringType(getContextID()));
       }
     } else {
       l.add(new IntegerType(getBeforeCount()));
       l.add(new IntegerType(getAfterCount()));
-      l.add(new ConstructedDEREncoder(
-        new ContextDERTag(0, true),
-        new IntegerType(getTargetOffset()),
-        new IntegerType(getContentCount())
-      ));
+      l.add(
+        new ConstructedDEREncoder(
+          new ContextDERTag(0, true),
+          new IntegerType(getTargetOffset()),
+          new IntegerType(getContentCount())));
       if (getContextID() != null) {
         l.add(new OctetStringType(getContextID()));
       }
     }
+
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
       l.toArray(new DEREncoder[l.size()]));

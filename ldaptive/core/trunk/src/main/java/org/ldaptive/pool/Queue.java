@@ -49,8 +49,8 @@ public class Queue<T> implements Iterable<T>
 
 
   /**
-   * Adds an object to the queue based on the queue type. See
-   * {@link Deque#offerFirst(Object)} and {@link Deque#offerLast(Object)}.
+   * Adds an object to the queue based on the queue type. See {@link
+   * Deque#offerFirst(Object)} and {@link Deque#offerLast(Object)}.
    *
    * @param  t  to add
    */
@@ -78,8 +78,8 @@ public class Queue<T> implements Iterable<T>
 
 
   /**
-   * Removes the supplied element from the queue. See
-   * {@link Deque#remove(Object)}.
+   * Removes the supplied element from the queue. See {@link
+   * Deque#remove(Object)}.
    *
    * @param  t  to remove
    *
@@ -92,8 +92,8 @@ public class Queue<T> implements Iterable<T>
 
 
   /**
-   * Retrieves, but does not remove, the first element in the queue. See
-   * {@link Deque#getFirst()}.
+   * Retrieves, but does not remove, the first element in the queue. See {@link
+   * Deque#getFirst()}.
    *
    * @return  first element in the queue
    */

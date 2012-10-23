@@ -72,8 +72,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   /** Connection factory to create connections with. */
   private DefaultConnectionFactory connectionFactory;
 
-  /** Whether to connect to the ldap on connection creation. Default value is
-     {@value}. */
+  /**
+   * Whether to connect to the ldap on connection creation. Default value is
+   * {@value}.
+   */
   private boolean connectOnCreate = true;
 
   /** Type of queue. LIFO or FIFO. Default value is {@value}. */
@@ -209,17 +211,16 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     initializePool();
     logger.debug("initialized available queue: {}", available);
 
-    poolExecutor =
-      Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactory() {
-          @Override
-          public Thread newThread(final Runnable r)
-          {
-            final Thread t = new Thread(r);
-            t.setDaemon(true);
-            return t;
-          }
-        });
+    poolExecutor = Executors.newSingleThreadScheduledExecutor(
+      new ThreadFactory() {
+        @Override
+        public Thread newThread(final Runnable r)
+        {
+          final Thread t = new Thread(r);
+          t.setDaemon(true);
+          return t;
+        }
+      });
 
     poolExecutor.scheduleAtFixedRate(
       new Runnable() {
@@ -264,7 +265,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   private void initializePool()
   {
     logger.debug(
-      "checking connection pool size >= {}", getPoolConfig().getMinPoolSize());
+      "checking connection pool size >= {}",
+      getPoolConfig().getMinPoolSize());
 
     int count = 0;
     poolLock.lock();
@@ -301,7 +303,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   public void close()
   {
     logger.debug(
-      "closing connection pool of size {}", available.size() + active.size());
+      "closing connection pool of size {}",
+      available.size() + active.size());
     isInitialized();
     poolLock.lock();
     try {
@@ -552,6 +555,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       logger.debug("connection not open: {}", pc);
       return false;
     }
+
     boolean valid = false;
     if (getPoolConfig().isValidateOnCheckIn()) {
       if (!validate(pc.getConnection())) {
@@ -589,6 +593,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         int currentPoolSize = active.size() + available.size();
         if (currentPoolSize > minPoolSize) {
           logger.debug("pruning available pool of size {}", available.size());
+
           final int numConnToPrune = available.size();
           final Iterator<PooledConnectionProxy> connIter = available.iterator();
           for (int i = 0;
@@ -686,8 +691,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   public Set<PooledConnectionStatistics> getPooledConnectionStatistics()
   {
     isInitialized();
-    final Set<PooledConnectionStatistics> stats =
-      Collections.unmodifiableSet(new HashSet<PooledConnectionStatistics>());
+
+    final Set<PooledConnectionStatistics> stats = Collections.unmodifiableSet(
+      new HashSet<PooledConnectionStatistics>());
     poolLock.lock();
     try {
       for (PooledConnectionProxy cp : available) {
@@ -782,8 +788,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * @author  Middleware Services
    * @version  $Revision$ $Date$
    */
-  protected class DefaultPooledConnectionProxy
-    implements PooledConnectionProxy
+  protected class DefaultPooledConnectionProxy implements PooledConnectionProxy
   {
 
     /** hash code seed. */

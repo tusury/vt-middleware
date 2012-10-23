@@ -26,18 +26,35 @@ public final class Hex
 
   /** Hexidecimal characters. */
   private static final char[] HEX_CHARS = {
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-    'A', 'B', 'C', 'D', 'E', 'F',
+    '0',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'A',
+    'B',
+    'C',
+    'D',
+    'E',
+    'F',
   };
 
-  /** Decode table which stores characters from 0 to f. Anything higher than 'f'
-      is invalid so that is the max size of the array. */
+  /**
+   * Decode table which stores characters from 0 to f. Anything higher than 'f'
+   * is invalid so that is the max size of the array.
+   */
   private static final byte[] DECODE = new byte['f' + 1];
 
-  /** Initialize the DECODE table. */
+  /**
+   * Initialize the DECODE table.
+   */
   // CheckStyle:MagicNumber OFF
-  static
-  {
+  static {
     // set all values to -1 to indicate error
     Arrays.fill(DECODE, (byte) -1);
     // set values for hex 0-9
@@ -61,8 +78,8 @@ public final class Hex
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns
-   * null if the supplied value is null.
+   * This will convert the supplied value to a hex encoded string. Returns null
+   * if the supplied value is null.
    *
    * @param  value  to hex encode
    *
@@ -73,6 +90,7 @@ public final class Hex
     if (value == null) {
       return null;
     }
+
     final int l = value.length;
     final char[] encoded = new char[l << 1];
     // CheckStyle:MagicNumber OFF
@@ -86,8 +104,8 @@ public final class Hex
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns
-   * null if the supplied value is null.
+   * This will convert the supplied value to a hex encoded string. Returns null
+   * if the supplied value is null.
    *
    * @param  value  to hex encode
    *
@@ -100,6 +118,7 @@ public final class Hex
     if (value == null) {
       return null;
     }
+
     final int l = value.length;
     // CheckStyle:MagicNumber OFF
     if ((l & 0x01) != 0) {
@@ -144,6 +163,7 @@ public final class Hex
           i,
           Arrays.toString(hex)));
     }
+
     final byte b = DECODE[c];
     if (b < 0) {
       throw new IllegalArgumentException(
