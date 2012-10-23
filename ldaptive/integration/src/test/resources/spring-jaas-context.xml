@@ -60,8 +60,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     p:minPoolSize="5"
     p:maxPoolSize="20"
     p:validatePeriod="30"
-    p:expirationTime="600"
-    p:prunePeriod="60"
   />
 
   <bean id="connectionFactory"

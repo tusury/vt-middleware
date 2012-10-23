@@ -18,8 +18,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         p:maxPoolSize="20"
         p:validatePeriodically="true"
         p:validatePeriod="30"
-        p:expirationTime="600"
-        p:prunePeriod="60"
       />
     </constructor-arg>
     <constructor-arg index="1" ref="connectionFactory"/>

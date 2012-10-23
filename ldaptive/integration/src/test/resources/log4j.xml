@@ -36,6 +36,12 @@
     <appender-ref ref="CONSOLE"/>
   </category>
 
+  <category name="org.ldaptive.props"
+            additivity="false">
+    <priority value="INFO"/>
+    <appender-ref ref="CONSOLE"/>
+  </category>
+
   <category name="org.ldaptive.ssl"
             additivity="false">
     <priority value="INFO"/>

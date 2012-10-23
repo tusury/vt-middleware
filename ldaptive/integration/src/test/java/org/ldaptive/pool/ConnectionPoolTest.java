@@ -21,10 +21,10 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.TestUtils;
 import org.ldaptive.io.LdifWriter;
 import org.ldaptive.provider.ConnectionStrategy;
@@ -92,7 +92,15 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("ldapTestHost")
-  public ConnectionPoolTest(final String host)
+  @BeforeClass(
+    groups = {
+      "softlimitpool",
+      "blockingpool",
+      "blockingtimeoutpool",
+      "connstrategypool"
+    }
+  )
+  public void createPools(final String host)
     throws Exception
   {
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
@@ -101,33 +109,30 @@ public class ConnectionPoolTest extends AbstractTest
     softLimitPc.setValidateOnCheckIn(true);
     softLimitPc.setValidateOnCheckOut(true);
     softLimitPc.setValidatePeriodically(true);
-    softLimitPc.setPrunePeriod(5L);
-    softLimitPc.setExpirationTime(1L);
     softLimitPc.setValidatePeriod(5L);
     softLimitPool = new SoftLimitConnectionPool(
       softLimitPc, new DefaultConnectionFactory(cc));
+    softLimitPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
     softLimitPool.setValidator(new SearchValidator());
 
     final PoolConfig blockingPc = new PoolConfig();
     blockingPc.setValidateOnCheckIn(true);
     blockingPc.setValidateOnCheckOut(true);
     blockingPc.setValidatePeriodically(true);
-    blockingPc.setPrunePeriod(5L);
-    blockingPc.setExpirationTime(1L);
     blockingPc.setValidatePeriod(5L);
     blockingPool = new BlockingConnectionPool(
       blockingPc, new DefaultConnectionFactory(cc));
+    blockingPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
     blockingPool.setValidator(new SearchValidator());
 
     final PoolConfig blockingTimeoutPc = new PoolConfig();
     blockingTimeoutPc.setValidateOnCheckIn(true);
     blockingTimeoutPc.setValidateOnCheckOut(true);
     blockingTimeoutPc.setValidatePeriodically(true);
-    blockingTimeoutPc.setPrunePeriod(5L);
-    blockingTimeoutPc.setExpirationTime(1L);
     blockingTimeoutPc.setValidatePeriod(5L);
     blockingTimeoutPool = new BlockingConnectionPool(
       blockingTimeoutPc, new DefaultConnectionFactory(cc));
+    blockingTimeoutPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
     blockingTimeoutPool.setBlockWaitTime(1000L);
     blockingTimeoutPool.setValidator(new SearchValidator());
 
@@ -175,7 +180,8 @@ public class ConnectionPoolTest extends AbstractTest
       "blockingpool",
       "blockingtimeoutpool",
       "connstrategypool"
-      }
+      },
+    dependsOnMethods = {"createPools"}
   )
   public void createPoolEntry(
     final String ldifFile2,
@@ -762,7 +768,7 @@ public class ConnectionPoolTest extends AbstractTest
       result = search.execute(request).getResult();
       logger.trace("search completed: {}", result);
     } finally {
-      logger.trace("returning ldap to pool");
+      logger.trace("returning connection to pool");
       if (conn != null) {
         conn.close();
       }
