@@ -46,7 +46,7 @@ public class UnboundIDProviderConfig extends ProviderConfig
   /** Default constructor. */
   public UnboundIDProviderConfig()
   {
-    setOperationRetryResultCodes(
+    setOperationExceptionResultCodes(
       ResultCode.LDAP_TIMEOUT,
       ResultCode.CONNECT_ERROR);
     searchIgnoreResultCodes = new ResultCode[] {
@@ -158,12 +158,12 @@ public class UnboundIDProviderConfig extends ProviderConfig
   {
     return
       String.format(
-        "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
         "connectionStrategy=%s, connectionOptions=%s, socketFactory=%s, " +
         "searchIgnoreResultCodes=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
-        Arrays.toString(getOperationRetryResultCodes()),
+        Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         connectionOptions,

@@ -556,7 +556,7 @@ public class UnboundIDConnection implements ProviderConnection
     throws LdapException
   {
     ProviderUtils.throwOperationException(
-      config.getOperationRetryResultCodes(),
+      config.getOperationExceptionResultCodes(),
       e,
       e.getResultCode().intValue(),
       e.getMatchedDN(),

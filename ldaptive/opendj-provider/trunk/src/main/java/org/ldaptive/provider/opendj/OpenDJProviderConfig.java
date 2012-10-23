@@ -42,7 +42,7 @@ public class OpenDJProviderConfig extends ProviderConfig
   /** Default constructor. */
   public OpenDJProviderConfig()
   {
-    setOperationRetryResultCodes(
+    setOperationExceptionResultCodes(
       ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
@@ -129,12 +129,12 @@ public class OpenDJProviderConfig extends ProviderConfig
   {
     return
       String.format(
-        "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
         "connectionStrategy=%s, options=%s, searchIgnoreResultCodes=%s, " +
         "controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
-        Arrays.toString(getOperationRetryResultCodes()),
+        Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         options,
