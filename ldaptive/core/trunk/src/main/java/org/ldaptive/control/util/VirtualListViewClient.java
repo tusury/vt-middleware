@@ -49,9 +49,7 @@ public class VirtualListViewClient
    * @param  conn  to execute the search operation on
    * @param  keys  to supply to a sort request control
    */
-  public VirtualListViewClient(
-    final Connection conn,
-    final SortKey... keys)
+  public VirtualListViewClient(final Connection conn, final SortKey... keys)
   {
     connection = conn;
     sortControl = new SortRequestControl(keys);
@@ -83,9 +81,7 @@ public class VirtualListViewClient
     throws LdapException
   {
     final SearchOperation search = new SearchOperation(connection);
-    request.setControls(
-      sortControl,
-      params.createRequestControl(true));
+    request.setControls(sortControl, params.createRequestControl(true));
     return search.execute(request);
   }
 
@@ -102,8 +98,8 @@ public class VirtualListViewClient
    *     org.ldaptive.control.VirtualListViewRequestControl}</li>
    * </ul>
    *
-   * The content count and context id are extracted from the supplied response
-   * and replayed as appropriate in the request.
+   * <p>The content count and context id are extracted from the supplied
+   * response and replayed as appropriate in the request.</p>
    *
    * @param  request  search request to execute
    * @param  params  virtual list view data

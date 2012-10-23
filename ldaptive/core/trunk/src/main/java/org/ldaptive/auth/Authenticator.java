@@ -210,7 +210,7 @@ public class Authenticator
   {
     logger.debug("authenticate dn={} with request={}", dn, request);
 
-    final AuthenticationResponse invalidInput = validateInput(dn , request);
+    final AuthenticationResponse invalidInput = validateInput(dn, request);
     if (invalidInput != null) {
       return invalidInput;
     }
@@ -259,7 +259,9 @@ public class Authenticator
 
     logger.debug(
       "authenticate response={} for dn={} with request={}",
-      response, dn, request);
+      response,
+      dn,
+      request);
     return authResponse;
   }
 
@@ -354,8 +356,7 @@ public class Authenticator
     }
     if (entry == null) {
       entry = NOOP_RESOLVER.resolve(conn, criteria);
-      logger.trace(
-        "resolved entry={} with resolver={}", entry, NOOP_RESOLVER);
+      logger.trace("resolved entry={} with resolver={}", entry, NOOP_RESOLVER);
     }
     return entry;
   }

@@ -146,11 +146,13 @@ public class SortRequestControl extends AbstractControl
         l.add(new ContextType(1, sortKeys[i].getReverseOrder()));
       }
       keyEncoders[i] = new ConstructedDEREncoder(
-        UniversalDERTag.SEQ, l.toArray(new DEREncoder[l.size()]));
+        UniversalDERTag.SEQ,
+        l.toArray(new DEREncoder[l.size()]));
     }
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
-      UniversalDERTag.SEQ, keyEncoders);
+      UniversalDERTag.SEQ,
+      keyEncoders);
     return se.encode();
   }
 }

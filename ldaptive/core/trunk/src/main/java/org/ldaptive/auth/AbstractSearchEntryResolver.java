@@ -71,7 +71,8 @@ public abstract class AbstractSearchEntryResolver implements EntryResolver
    * @throws  LdapException  if an error occurs attempting the search
    */
   protected abstract SearchResult performLdapSearch(
-    final Connection conn, final AuthenticationCriteria ac)
+    final Connection conn,
+    final AuthenticationCriteria ac)
     throws LdapException;
 
 
@@ -85,10 +86,11 @@ public abstract class AbstractSearchEntryResolver implements EntryResolver
    * @return  search request
    */
   protected SearchRequest createSearchRequest(
-    final AuthenticationCriteria ac, final String[] returnAttributes)
+    final AuthenticationCriteria ac,
+    final String[] returnAttributes)
   {
-    return SearchRequest.newObjectScopeSearchRequest(
-      ac.getDn(), returnAttributes);
+    return
+      SearchRequest.newObjectScopeSearchRequest(ac.getDn(), returnAttributes);
   }
 
 
@@ -102,8 +104,7 @@ public abstract class AbstractSearchEntryResolver implements EntryResolver
     logger.debug(
       "resolve criteria={} with attributes={}",
       ac,
-      retAttrs == null ? "<all attributes>"
-        : Arrays.toString(retAttrs));
+      retAttrs == null ? "<all attributes>" : Arrays.toString(retAttrs));
 
     final SearchResult result = performLdapSearch(conn, ac);
     logger.debug(
@@ -111,8 +112,7 @@ public abstract class AbstractSearchEntryResolver implements EntryResolver
       new Object[] {
         result,
         ac,
-        retAttrs == null ? "<all attributes>"
-          : Arrays.toString(retAttrs),
+        retAttrs == null ? "<all attributes>" : Arrays.toString(retAttrs),
       });
     return resolveEntry(result);
   }

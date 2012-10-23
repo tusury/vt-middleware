@@ -49,37 +49,39 @@ public class PooledConnectionStatistics
     availableStats = new LinkedList<Long>() {
 
 
-        /** {@inheritDoc} */
-        @Override
-        public boolean add(final Long e)
-        {
-          if (size < 1) {
-            return false;
-          }
-          final boolean b = super.add(e);
-          while (size() > size) {
-            remove();
-          }
-          return b;
+      /** {@inheritDoc} */
+      @Override
+      public boolean add(final Long e)
+      {
+        if (size < 1) {
+          return false;
         }
-      };
+
+        final boolean b = super.add(e);
+        while (size() > size) {
+          remove();
+        }
+        return b;
+      }
+    };
     activeStats = new LinkedList<Long>() {
 
 
-        /** {@inheritDoc} */
-        @Override
-        public boolean add(final Long e)
-        {
-          if (size < 1) {
-            return false;
-          }
-          final boolean b = super.add(e);
-          while (size() > size) {
-            remove();
-          }
-          return b;
+      /** {@inheritDoc} */
+      @Override
+      public boolean add(final Long e)
+      {
+        if (size < 1) {
+          return false;
         }
-      };
+
+        final boolean b = super.add(e);
+        while (size() > size) {
+          remove();
+        }
+        return b;
+      }
+    };
   }
 
 
@@ -105,9 +107,7 @@ public class PooledConnectionStatistics
   }
 
 
-  /**
-   * Inserts the current timestamp into the available statistics.
-   */
+  /** Inserts the current timestamp into the available statistics. */
   public synchronized void addAvailableStat()
   {
     availableStats.add(System.currentTimeMillis());
@@ -136,9 +136,7 @@ public class PooledConnectionStatistics
   }
 
 
-  /**
-   * Inserts the current timestamp into the active statistics.
-   */
+  /** Inserts the current timestamp into the active statistics. */
   public synchronized void addActiveStat()
   {
     activeStats.add(System.currentTimeMillis());
@@ -150,10 +148,6 @@ public class PooledConnectionStatistics
   public String toString()
   {
     return
-      String.format(
-        "[%s@%d::size=%s]",
-        getClass().getName(),
-        hashCode(),
-        size);
+      String.format("[%s@%d::size=%s]", getClass().getName(), hashCode(), size);
   }
 }

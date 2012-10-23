@@ -67,7 +67,6 @@ public class VirtualListViewParams
   /**
    * Creates a new virtual list view params.
    *
-   *
    * @param  assertion  assertion value
    * @param  before  before count
    * @param  after  after count
@@ -140,18 +139,26 @@ public class VirtualListViewParams
     final boolean critical)
   {
     if (assertionValue != null) {
-      return new VirtualListViewRequestControl(
-        assertionValue, beforeCount, afterCount, critical);
+      return
+        new VirtualListViewRequestControl(
+          assertionValue,
+          beforeCount,
+          afterCount,
+          critical);
     } else {
-      return new VirtualListViewRequestControl(
-        targetOffset, beforeCount, afterCount, critical);
+      return
+        new VirtualListViewRequestControl(
+          targetOffset,
+          beforeCount,
+          afterCount,
+          critical);
     }
   }
 
 
   /**
    * Creates a new virtual list view request control using the properties in
-   * this VLV params.  The supplied response is inspected and if it contains a
+   * this VLV params. The supplied response is inspected and if it contains a
    * VLV response control, it's contextID and/or content count will be passed
    * into the created request control.
    *
@@ -161,7 +168,8 @@ public class VirtualListViewParams
    * @return  virtual list view request control
    */
   public VirtualListViewRequestControl createRequestControl(
-    final Response<SearchResult> response, final boolean critical)
+    final Response<SearchResult> response,
+    final boolean critical)
   {
     final VirtualListViewRequestControl control = createRequestControl(
       critical);

@@ -19,26 +19,17 @@ package org.ldaptive.auth;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public enum AuthenticationResultCode
-{
+public enum AuthenticationResultCode {
 
-  /**
-   * The configured authentication handler produced a result of true.
-   */
+  /** The configured authentication handler produced a result of true. */
   AUTHENTICATION_HANDLER_SUCCESS,
 
-  /**
-   * The configured authentication handler produced a result of false.
-   */
+  /** The configured authentication handler produced a result of false. */
   AUTHENTICATION_HANDLER_FAILURE,
 
-  /**
-   * The supplied credential was empty or null.
-   */
+  /** The supplied credential was empty or null. */
   INVALID_CREDENTIAL,
 
-  /**
-   * The configured DN resolver produced an empty or null value.
-   */
+  /** The configured DN resolver produced an empty or null value. */
   DN_RESOLUTION_FAILURE
 }

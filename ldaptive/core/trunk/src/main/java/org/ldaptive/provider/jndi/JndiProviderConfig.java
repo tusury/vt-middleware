@@ -253,6 +253,7 @@ public class JndiProviderConfig extends ProviderConfig
   public void setProperties(final Map<String, Object> props)
   {
     checkImmutable();
+
     final boolean allowAnyHostname = Boolean.valueOf(
       (String) props.get(ALLOW_ANY_HOSTNAME));
     if (allowAnyHostname) {

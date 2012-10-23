@@ -97,7 +97,8 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   /** {@inheritDoc} */
   @Override
   public SearchResult performLdapSearch(
-    final Connection conn, final AuthenticationCriteria ac)
+    final Connection conn,
+    final AuthenticationCriteria ac)
     throws LdapException
   {
     if (factory == null) {
@@ -109,6 +110,7 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
       try {
         factoryConn = factory.getConnection();
         factoryConn.open();
+
         final SearchOperation search = new SearchOperation(factoryConn);
         return search.execute(
           createSearchRequest(ac, getReturnAttributes())).getResult();

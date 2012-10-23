@@ -82,9 +82,8 @@ public final class LdapUtils
   public static String base64Encode(final byte[] value)
   {
     return
-      value != null ? new String(
-                        Base64.encodeToByte(value, false), UTF8_CHARSET)
-                    : null;
+      value != null ?
+        new String(Base64.encodeToByte(value, false), UTF8_CHARSET) : null;
   }
 
 
@@ -131,8 +130,8 @@ public final class LdapUtils
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns
-   * null if the supplied byte array is null.
+   * This will convert the supplied value to a hex encoded string. Returns null
+   * if the supplied byte array is null.
    *
    * @param  value  to hex encode
    *

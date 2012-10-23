@@ -173,7 +173,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
    *
    * @return  handler result containing a response for the original invocation
    *
-   * @throws LdapException  if the operation fails
+   * @throws  LdapException  if the operation fails
    */
   protected abstract HandlerResult<Response<S>> createResult(
     final Connection conn,

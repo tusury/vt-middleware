@@ -142,14 +142,17 @@ public abstract class AbstractOperation<Q extends Request, S>
       response = invoke(request);
     } catch (OperationException e) {
       if (operationExceptionHandler == null) {
-        throw  e;
+        throw e;
       }
       logger.warn(
         "Error performing LDAP operation, invoking exception handler: {}",
         operationExceptionHandler,
         e);
+
       final HandlerResult<Response<S>> hr = operationExceptionHandler.process(
-        connection, request, response);
+        connection,
+        request,
+        response);
       if (hr.getAbort()) {
         throw e;
       }

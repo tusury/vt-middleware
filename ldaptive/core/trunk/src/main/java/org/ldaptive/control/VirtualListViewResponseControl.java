@@ -29,23 +29,23 @@ import org.ldaptive.asn1.OctetStringType;
  * defined as:
  *
  * <pre>
- * VirtualListViewResponse ::= SEQUENCE {
- *    targetPosition    INTEGER (0 .. maxInt),
- *    contentCount      INTEGER (0 .. maxInt),
- *    virtualListViewResult ENUMERATED {
- *       success (0),
- *       operationsError (1),
- *       protocolError (2),
- *       unwillingToPerform (53),
- *       insufficientAccessRights (50),
- *       timeLimitExceeded (3),
- *       adminLimitExceeded (11),
- *       innapropriateMatching (18),
- *       sortControlMissing (60),
- *       offsetRangeError (61),
- *       other(80),
- *       ... },
- *    contextID         OCTET STRING OPTIONAL }
+   VirtualListViewResponse ::= SEQUENCE {
+      targetPosition    INTEGER (0 .. maxInt),
+      contentCount      INTEGER (0 .. maxInt),
+      virtualListViewResult ENUMERATED {
+         success (0),
+         operationsError (1),
+         protocolError (2),
+         unwillingToPerform (53),
+         insufficientAccessRights (50),
+         timeLimitExceeded (3),
+         adminLimitExceeded (11),
+         innapropriateMatching (18),
+         sortControlMissing (60),
+         offsetRangeError (61),
+         other(80),
+         ... },
+      contextID         OCTET STRING OPTIONAL }
  * </pre>
  *
  * @author  Middleware Services
@@ -64,16 +64,20 @@ public class VirtualListViewResponseControl extends AbstractControl
   /** list offset for the target entry. */
   private int targetPosition;
 
-  /** server's estimate of the current number of entries in the ordered search
-      result set. */
+  /**
+   * server's estimate of the current number of entries in the ordered search
+   * result set.
+   */
   private int contentCount;
 
   /** Result of the vlv operation. */
   private ResultCode viewResult;
 
-  /** value that clients should send back to the server to indicate that
-      the server is willing to return contiguous data from a subsequent search
-      request which uses the same search criteria. */
+  /**
+   * value that clients should send back to the server to indicate that the
+   * server is willing to return contiguous data from a subsequent search
+   * request which uses the same search criteria.
+   */
   private byte[] contextID;
 
 
@@ -138,7 +142,7 @@ public class VirtualListViewResponseControl extends AbstractControl
 
 
   /**
-   * Returns the target position. This indicates the  list offset for the target
+   * Returns the target position. This indicates the list offset for the target
    * entry.
    *
    * @return  target position
@@ -162,13 +166,12 @@ public class VirtualListViewResponseControl extends AbstractControl
 
   /**
    * Returns the content count. From the RFC:
-   * <p>
-   * contentCount gives the server's estimate of the current number of entries
-   * in the list. Together these give sufficient information for the client to
-   * update a list box slider position to match the newly retrieved entries and
-   * identify the target entry. The contentCount value returned SHOULD be used
-   * in a subsequent VirtualListViewRequest control.
-   * </p>
+   *
+   * <p>contentCount gives the server's estimate of the current number of
+   * entries in the list. Together these give sufficient information for the
+   * client to update a list box slider position to match the newly retrieved
+   * entries and identify the target entry. The contentCount value returned
+   * SHOULD be used in a subsequent VirtualListViewRequest control.</p>
    *
    * @return  content count
    */
@@ -213,15 +216,14 @@ public class VirtualListViewResponseControl extends AbstractControl
 
   /**
    * Returns the context id. From the RFC:
-   * <p>
-   * The contextID is a server-defined octet string. If present, the contents of
-   * the contextID field SHOULD be returned to the server by a client in a
+   *
+   * <p>The contextID is a server-defined octet string. If present, the contents
+   * of the contextID field SHOULD be returned to the server by a client in a
    * subsequent virtual list request. The presence of a contextID here indicates
    * that the server is willing to return contiguous data from a subsequent
    * search request which uses the same search criteria, accompanied by a
    * VirtualListViewRequest which indicates that the client wishes to receive an
-   * adjoining page of data.
-   * </p>
+   * adjoining page of data.</p>
    *
    * @return  context id
    */
@@ -282,9 +284,11 @@ public class VirtualListViewResponseControl extends AbstractControl
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(
-      TargetPositionHandler.PATH, new TargetPositionHandler(this));
+      TargetPositionHandler.PATH,
+      new TargetPositionHandler(this));
     parser.registerHandler(
-      ContentCountHandler.PATH, new ContentCountHandler(this));
+      ContentCountHandler.PATH,
+      new ContentCountHandler(this));
     parser.registerHandler(ViewResultHandler.PATH, new ViewResultHandler(this));
     parser.registerHandler(ContextIDHandler.PATH, new ContextIDHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
