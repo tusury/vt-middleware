@@ -19,7 +19,6 @@ import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.PooledSearchDnResolver;
-import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
@@ -28,6 +27,7 @@ import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.jaas.RoleResolver;
 import org.ldaptive.jaas.TestCallbackHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
 import org.ldaptive.props.AuthenticatorPropertySource;
@@ -158,9 +158,21 @@ public class PropertiesTest
         auth, "classpath:/org/ldaptive/ldap.parser.properties");
     aSource.initialize();
 
-    final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
-    final DefaultConnectionFactory authCf =
-      (DefaultConnectionFactory) dnResolver.getConnectionFactory();
+    final PooledSearchDnResolver dnResolver =
+      (PooledSearchDnResolver) auth.getDnResolver();
+    final BlockingConnectionPool authCp =
+      (BlockingConnectionPool)
+        dnResolver.getConnectionFactory().getConnectionPool();
+    AssertJUnit.assertEquals(1, authCp.getPoolConfig().getMinPoolSize());
+    AssertJUnit.assertEquals(3, authCp.getPoolConfig().getMaxPoolSize());
+    final IdlePruneStrategy pruneStrategy =
+      (IdlePruneStrategy) authCp.getPruneStrategy();
+    AssertJUnit.assertEquals(60, pruneStrategy.getPrunePeriod());
+    AssertJUnit.assertEquals(120, pruneStrategy.getIdleTime());
+    AssertJUnit.assertNotNull(authCp.getActivator());
+    AssertJUnit.assertNotNull(authCp.getPassivator());
+
+    final DefaultConnectionFactory authCf = authCp.getConnectionFactory();
     final ConnectionConfig authCc = authCf.getConnectionConfig();
     AssertJUnit.assertEquals(
       "ldap://ed-auth.middleware.vt.edu:14389", authCc.getLdapUrl());
@@ -276,6 +288,12 @@ public class PropertiesTest
       ((PooledSearchDnResolver) auth.getDnResolver()).getConnectionFactory();
     final BlockingConnectionPool authCp =
       (BlockingConnectionPool) authCf.getConnectionPool();
+    AssertJUnit.assertEquals(1, authCp.getPoolConfig().getMinPoolSize());
+    AssertJUnit.assertEquals(3, authCp.getPoolConfig().getMaxPoolSize());
+    final IdlePruneStrategy pruneStrategy =
+      (IdlePruneStrategy) authCp.getPruneStrategy();
+    AssertJUnit.assertEquals(60, pruneStrategy.getPrunePeriod());
+    AssertJUnit.assertEquals(120, pruneStrategy.getIdleTime());
     final ConnectionConfig authCc =
       authCp.getConnectionFactory().getConnectionConfig();
     final Provider<?> authP =

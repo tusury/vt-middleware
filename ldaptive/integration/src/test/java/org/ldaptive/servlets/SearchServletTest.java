@@ -113,7 +113,8 @@ public class SearchServletTest extends AbstractTest
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/plain", response.getContentType());
 
-    final SearchResult result = TestUtils.convertLdifToResult(response.getText());
+    final SearchResult result =
+      TestUtils.convertLdifToResult(response.getText());
     AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
 
