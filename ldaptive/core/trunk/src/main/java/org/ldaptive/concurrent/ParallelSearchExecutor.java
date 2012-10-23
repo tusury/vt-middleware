@@ -30,6 +30,7 @@ import org.ldaptive.handler.SearchEntryHandler;
  * Executes a list of search filters in parallel. This implementation executes
  * each search on the same connection in separate threads. If you need parallel
  * searches over a pool of connections see {@link ParallelPooledSearchExecutor}.
+ * A cached thread pool is used by default.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

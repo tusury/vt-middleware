@@ -169,4 +169,27 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
       }
     };
   }
+
+
+  /**
+   * Invokes {@link ExecutorService#shutdown()} on the underlying executor
+   * service.
+   */
+  public void shutdown()
+  {
+    service.shutdown();
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  protected void finalize()
+    throws Throwable
+  {
+    try {
+      shutdown();
+    } finally {
+      super.finalize();
+    }
+  }
 }

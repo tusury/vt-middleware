@@ -37,7 +37,8 @@ import org.ldaptive.pool.PooledConnectionFactory;
 /**
  * Executes a list of search filters in parallel, each search is performed on a
  * separate connection in the pool. If you need to execute all searches on the
- * same connection see {@link ParallelSearchExecutor}.
+ * same connection see {@link ParallelSearchExecutor}. A cached thread pool is
+ * used by default.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

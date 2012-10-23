@@ -28,8 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for parallel search executors. A cached thread pool is used by
- * default.
+ * Base class for parallel search executors.
  *
  * @param  <T>  type of connection factory
  *
@@ -119,6 +118,19 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
   public List<Runnable> shutdownNow()
   {
     return service.shutdownNow();
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  protected void finalize()
+    throws Throwable
+  {
+    try {
+      shutdown();
+    } finally {
+      super.finalize();
+    }
   }
 
 
