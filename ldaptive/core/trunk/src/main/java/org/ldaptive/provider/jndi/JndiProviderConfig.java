@@ -268,7 +268,7 @@ public class JndiProviderConfig extends ProviderConfig
   {
     return
       String.format(
-        "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
         "connectionStrategy=%s, environment=%s, tracePackets=%s, " +
         "removeDnUrls=%s, searchIgnoreResultCodes=%s, sslSocketFactory=%s, " +
         "hostnameVerifier=%s, controlProcessor=%s]",
