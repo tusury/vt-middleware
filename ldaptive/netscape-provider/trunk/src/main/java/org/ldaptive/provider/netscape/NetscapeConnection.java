@@ -498,7 +498,7 @@ public class NetscapeConnection implements ProviderConnection
     throws LdapException
   {
     ProviderUtils.throwOperationException(
-      config.getOperationRetryResultCodes(),
+      config.getOperationExceptionResultCodes(),
       String.format(
         "Ldap returned result code: %s", ldapResponse.getResultCode()),
       ldapResponse.getResultCode(),
@@ -549,7 +549,7 @@ public class NetscapeConnection implements ProviderConnection
     throws LdapException
   {
     ProviderUtils.throwOperationException(
-      config.getOperationRetryResultCodes(),
+      config.getOperationExceptionResultCodes(),
       e,
       e instanceof LDAPReferralException ?
         ResultCode.REFERRAL.value() : e.getLDAPResultCode(),

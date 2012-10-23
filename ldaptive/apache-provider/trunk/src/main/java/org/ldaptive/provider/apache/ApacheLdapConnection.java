@@ -594,7 +594,7 @@ public class ApacheLdapConnection implements ProviderConnection
     final LdapResult ldapResult = resultResponse.getLdapResult();
     final Referral ref = ldapResult.getReferral();
     ProviderUtils.throwOperationException(
-      config.getOperationRetryResultCodes(),
+      config.getOperationExceptionResultCodes(),
       String.format(
         "Ldap returned result code: %s",
         ldapResult.getResultCode()),
@@ -656,7 +656,7 @@ public class ApacheLdapConnection implements ProviderConnection
     throws LdapException
   {
     ProviderUtils.throwOperationException(
-      config.getOperationRetryResultCodes(),
+      config.getOperationExceptionResultCodes(),
       e,
       e.getResultCode().getResultCode(),
       e.getResolvedDn().getName(),

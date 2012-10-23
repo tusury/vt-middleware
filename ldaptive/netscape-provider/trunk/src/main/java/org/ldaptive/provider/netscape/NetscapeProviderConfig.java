@@ -46,7 +46,7 @@ public class NetscapeProviderConfig extends ProviderConfig
   /** Default constructor. */
   public NetscapeProviderConfig()
   {
-    setOperationRetryResultCodes(
+    setOperationExceptionResultCodes(
       ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
@@ -159,13 +159,13 @@ public class NetscapeProviderConfig extends ProviderConfig
   {
     return
       String.format(
-        "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
         "connectionStrategy=%s, ldapConstraints=%s, " +
         "searchIgnoreResultCodes=%s, ldapSocketFactory=%s, " +
         "controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
-        Arrays.toString(getOperationRetryResultCodes()),
+        Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         ldapConstraints,

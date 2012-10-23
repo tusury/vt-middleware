@@ -654,7 +654,7 @@ public class OpenDJConnection
     final List<Control> ctls = e.getResult().getControls();
     final List<String> urls = e.getResult().getReferralURIs();
     ProviderUtils.throwOperationException(
-      config.getOperationRetryResultCodes(),
+      config.getOperationExceptionResultCodes(),
       e,
       e.getResult().getResultCode().intValue(),
       e.getResult().getMatchedDN(),
@@ -747,7 +747,7 @@ public class OpenDJConnection
         return false;
       }
 
-      boolean more = resultIterator.hasNext();
+      final boolean more = resultIterator.hasNext();
       if (!more) {
         final Result result = resultIterator.getResult();
         logger.trace("reading search result: {}", result);

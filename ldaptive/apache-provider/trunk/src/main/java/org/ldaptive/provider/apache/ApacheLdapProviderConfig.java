@@ -97,11 +97,11 @@ public class ApacheLdapProviderConfig extends ProviderConfig
   {
     return
       String.format(
-        "[%s@%d::operationRetryResultCodes=%s, properties=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
         "connectionStrategy=%s, ldapConnectionConfig=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
-        Arrays.toString(getOperationRetryResultCodes()),
+        Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
         connectionConfig,
