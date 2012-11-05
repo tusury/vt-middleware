@@ -13,28 +13,26 @@
 */
 package org.ldaptive.servlets;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.ldaptive.SearchResult;
-import org.ldaptive.io.Dsmlv1Writer;
-import org.ldaptive.io.LdapResultWriter;
-import org.ldaptive.io.LdifWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Queries an LDAP and returns the result as LDIF or DSML. The following init
- * params can be set for this servlet:
+ * Queries an LDAP and returns the result in the servlet response. The following
+ * init params can be set for this servlet:
  *
  * <ul>
- *   <li>poolType</li>
- *   <li>outputFormat</li>
+ *   <li>poolType - BLOCKING or SOFTLIMIT</li>
+ *   <li>searchExecutorClass - fully qualified class name that implements
+ *   ServletSearchExecutor</li>
  * </ul>
  *
- * <p>All other init params can be set from properties on:</p>
+ * <p>All other init params will set properties on:</p>
  *
  * <ul>
  *   <li>{@link org.ldaptive.SearchRequest}</li>
@@ -49,43 +47,23 @@ import org.ldaptive.io.LdifWriter;
  * http://www.server.com/Search?query=uid=dfisher&attrs=givenname&attrs=surname
  * </p>
  *
- * <h3>LDIF</h3>
- *
- * <p>The content returned by the servlet is of type text/plain.</p>
- * <hr/>
- * <h3>DSML</h3>
- *
- * <p>The content returned by the servlet is of type text/xml, if you want to
- * receive the content as text/plain that can be specified as well. Example:
- * http://www.server.com/Search?query=uid=dfisher&content-type=text</p>
- *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public final class SearchServlet extends AbstractServlet
+public final class SearchServlet extends HttpServlet
 {
 
-  /** Format of search output, value is {@value}. */
-  public static final String OUTPUT_FORMAT = "outputFormat";
-
-  /** Default format of search output, value is {@value}. */
-  public static final String DEFAULT_OUTPUT_FORMAT = "DSML";
+  /** Custom search executor implementation, value is {@value}. */
+  private static final String SEARCH_EXECUTOR_CLASS = "searchExecutorClass";
 
   /** serial version uid. */
   private static final long serialVersionUID = 3437252581014900696L;
 
-  /** Types of available output. */
-  private enum OutputType {
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** LDIF output type. */
-    LDIF,
-
-    /** DSML output type. */
-    DSML
-  }
-
-  /** Type of output to produce. */
-  private OutputType output;
+  /** Parses servlet requests and performs search operations. */
+  private ServletSearchExecutor searchExecutor;
 
 
   /** {@inheritDoc} */
@@ -94,13 +72,21 @@ public final class SearchServlet extends AbstractServlet
     throws ServletException
   {
     super.init(config);
-
-    String outputType = getInitParameter(OUTPUT_FORMAT);
-    if (outputType == null) {
-      outputType = DEFAULT_OUTPUT_FORMAT;
+    final String searchExecutorClass = config.getInitParameter(
+      SEARCH_EXECUTOR_CLASS);
+    if (searchExecutorClass != null) {
+      try {
+        logger.debug("Creating search executor: {}", searchExecutorClass);
+        searchExecutor = (ServletSearchExecutor) Class.forName(
+          searchExecutorClass).newInstance();
+      } catch (Exception e) {
+        logger.error("Error instantiating {}", searchExecutorClass, e);
+        throw new IllegalStateException(e);
+      }
+    } else {
+      searchExecutor = new Dsmlv1ServletSearchExecutor();
     }
-    logger.debug("{} = {}", OUTPUT_FORMAT, outputType);
-    output = OutputType.valueOf(outputType);
+    searchExecutor.initialize(config);
   }
 
 
@@ -116,31 +102,22 @@ public final class SearchServlet extends AbstractServlet
       request.getParameter("query"),
       request.getParameter("attrs"));
     try {
-      final SearchResult result = search(
-        request.getParameter("query"),
-        request.getParameterValues("attrs"));
-      LdapResultWriter writer;
-      if (output == OutputType.LDIF) {
-        response.setContentType("text/plain");
-        writer = new LdifWriter(
-          new BufferedWriter(
-            new OutputStreamWriter(response.getOutputStream())));
-      } else {
-        final String content = request.getParameter("content-type");
-        if ("text".equalsIgnoreCase(content)) {
-          response.setContentType("text/plain");
-        } else {
-          response.setContentType("text/xml");
-        }
-
-        writer = new Dsmlv1Writer(
-          new BufferedWriter(
-            new OutputStreamWriter(response.getOutputStream())));
-      }
-      writer.write(result);
+      searchExecutor.search(request, response);
     } catch (Exception e) {
       logger.error("Error performing search", e);
       throw new ServletException(e);
+    }
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void destroy()
+  {
+    try {
+      searchExecutor.close();
+    } finally {
+      super.destroy();
     }
   }
 }
