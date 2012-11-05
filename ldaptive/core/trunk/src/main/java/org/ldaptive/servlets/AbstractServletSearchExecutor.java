@@ -13,11 +13,12 @@
 */
 package org.ldaptive.servlets;
 
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
@@ -30,19 +31,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for ldap search servlets.
+ * Uses {@link PooledConnectionFactory} and {@link SearchExecutor} to perform
+ * search operations. These objects are configured from properties found in the
+ * servlet configuration.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractServlet extends HttpServlet
+public abstract class AbstractServletSearchExecutor
+  implements ServletSearchExecutor
 {
 
   /** Type of pool used, value is {@value}. */
-  public static final String POOL_TYPE = "poolType";
-
-  /** serial version uid. */
-  private static final long serialVersionUID = -6245486456044663458L;
+  private static final String POOL_TYPE = "poolType";
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -56,11 +57,8 @@ public abstract class AbstractServlet extends HttpServlet
 
   /** {@inheritDoc} */
   @Override
-  public void init(final ServletConfig config)
-    throws ServletException
+  public void initialize(final ServletConfig config)
   {
-    super.init(config);
-
     searchExecutor = new SearchExecutor();
 
     final SearchRequestPropertySource srSource =
@@ -75,7 +73,7 @@ public abstract class AbstractServlet extends HttpServlet
         connectionFactory,
         createProperties(config));
     cfPropSource.setPoolType(
-      ConnectionPoolType.valueOf(getInitParameter(POOL_TYPE)));
+      ConnectionPoolType.valueOf(config.getInitParameter(POOL_TYPE)));
     cfPropSource.initialize();
     logger.debug("connectionFactory = {}", connectionFactory);
   }
@@ -108,36 +106,39 @@ public abstract class AbstractServlet extends HttpServlet
   }
 
 
-  /**
-   * Performs an ldap search uses this servlet's connection pool.
-   *
-   * @param  query  to execute
-   * @param  attrs  to return
-   *
-   * @return  ldap result
-   *
-   * @throws  LdapException  if an error occurs
-   */
-  protected SearchResult search(final String query, final String[] attrs)
-    throws LdapException
+  /** {@inheritDoc} */
+  @Override
+  public void search(
+    final HttpServletRequest request,
+    final HttpServletResponse response)
+    throws LdapException, IOException
   {
-    SearchResult result = null;
-    if (query != null) {
-      result = searchExecutor.search(
-        connectionFactory, query, attrs).getResult();
-    }
-    return result;
+    final SearchResult result = searchExecutor.search(
+      connectionFactory,
+      request.getParameter("query"),
+      request.getParameterValues("attrs")).getResult();
+    writeResponse(result, response);
   }
+
+
+  /**
+   * Writes the supplied search result to the servlet response output stream.
+   *
+   * @param  result  search result to write
+   * @param  response  to write to
+   *
+   * @throws  IOException  if an error occurs writing to the response
+   */
+  protected abstract void writeResponse(
+    final SearchResult result,
+    final HttpServletResponse response)
+    throws IOException;
 
 
   /** {@inheritDoc} */
   @Override
-  public void destroy()
+  public void close()
   {
-    try {
-      connectionFactory.getConnectionPool().close();
-    } finally {
-      super.destroy();
-    }
+    connectionFactory.getConnectionPool().close();
   }
 }
