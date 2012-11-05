@@ -24,12 +24,12 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.SortBehavior;
 
 /**
- * Reads an LDIF from a {@link Reader} and supplies an {@link SearchResult}.
+ * Reads an LDIF from a {@link Reader} and returns a {@link SearchResult}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LdifReader implements LdapResultReader
+public class LdifReader implements SearchResultReader
 {
 
   /** Reader to read from. */
@@ -67,9 +67,9 @@ public class LdifReader implements LdapResultReader
 
 
   /**
-   * Reads LDIF data from the reader and returns an ldap result.
+   * Reads LDIF data from the reader and returns a search result.
    *
-   * @return  ldap result derived from the LDIF
+   * @return  search result derived from the LDIF
    *
    * @throws  IOException  if an error occurs using the reader
    */
@@ -77,7 +77,7 @@ public class LdifReader implements LdapResultReader
   public SearchResult read()
     throws IOException
   {
-    final SearchResult ldapResult = new SearchResult(sortBehavior);
+    final SearchResult result = new SearchResult(sortBehavior);
     final BufferedReader br = new BufferedReader(ldifReader);
     String line;
     int lineCount = 0;
@@ -102,7 +102,7 @@ public class LdifReader implements LdapResultReader
       }
       if (!line.startsWith("#")) {
         if (line.startsWith("dn:")) {
-          ldapResult.addEntry(ldapEntry);
+          result.addEntry(ldapEntry);
           ldapEntry = new LdapEntry(sortBehavior);
         }
         if (line.startsWith(" ")) {
@@ -148,8 +148,8 @@ public class LdifReader implements LdapResultReader
       }
     }
     if (ldapEntry != null) {
-      ldapResult.addEntry(ldapEntry);
+      result.addEntry(ldapEntry);
     }
-    return ldapResult;
+    return result;
   }
 }

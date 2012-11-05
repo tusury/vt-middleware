@@ -35,12 +35,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Writes DSML version 1 to a {@link Writer} using an {@link SearchResult}.
+ * Writes a {@link SearchResult} as DSML version 1 to a {@link Writer}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class Dsmlv1Writer implements LdapResultWriter
+public class Dsmlv1Writer implements SearchResultWriter
 {
 
   /** Document builder factory. */
@@ -75,9 +75,9 @@ public class Dsmlv1Writer implements LdapResultWriter
 
 
   /**
-   * Writes the supplied ldap result to the writer.
+   * Writes the supplied search result to the writer.
    *
-   * @param  result  ldap result to write
+   * @param  result  search result to write
    *
    * @throws  IOException  if an error occurs using the writer
    */
@@ -105,9 +105,9 @@ public class Dsmlv1Writer implements LdapResultWriter
 
 
   /**
-   * Creates DSML that corresponds to the supplied ldap result.
+   * Creates DSML that corresponds to the supplied search result.
    *
-   * @param  result  ldap result to parse
+   * @param  result  search result to parse
    *
    * @return  DSML
    *
