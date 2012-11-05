@@ -17,12 +17,12 @@ import java.io.IOException;
 import org.ldaptive.SearchResult;
 
 /**
- * Interface for reading ldap results.
+ * Interface for reading ldap search results.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface LdapResultReader
+public interface SearchResultReader
 {
 
 

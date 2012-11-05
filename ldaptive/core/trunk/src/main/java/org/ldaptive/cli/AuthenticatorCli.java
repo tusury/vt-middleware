@@ -27,8 +27,8 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.io.Dsmlv1Writer;
-import org.ldaptive.io.LdapResultWriter;
 import org.ldaptive.io.LdifWriter;
+import org.ldaptive.io.SearchResultWriter;
 import org.ldaptive.props.AuthenticationRequestPropertySource;
 import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
@@ -184,7 +184,7 @@ public class AuthenticatorCli extends AbstractCli
     final LdapEntry entry = response.getLdapEntry();
     if (response.getResult()) {
       if (entry != null) {
-        LdapResultWriter writer;
+        SearchResultWriter writer;
         if (outputDsmlv1) {
           writer = new Dsmlv1Writer(
             new BufferedWriter(new OutputStreamWriter(System.out)));

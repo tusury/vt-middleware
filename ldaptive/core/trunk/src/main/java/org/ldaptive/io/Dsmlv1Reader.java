@@ -32,13 +32,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Reads DSML version 1 from a {@link Reader} and supplies an {@link
+ * Reads DSML version 1 from a {@link Reader} and returns a {@link
  * SearchResult}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class Dsmlv1Reader implements LdapResultReader
+public class Dsmlv1Reader implements SearchResultReader
 {
 
   /** Document builder factory. */
@@ -88,9 +88,9 @@ public class Dsmlv1Reader implements LdapResultReader
 
 
   /**
-   * Reads DSML data from the reader and returns an ldap result.
+   * Reads DSML data from the reader and returns a search result.
    *
-   * @return  ldap result derived from the DSML
+   * @return  search result derived from the DSML
    *
    * @throws  IOException  if an error occurs using the reader
    */
@@ -101,7 +101,7 @@ public class Dsmlv1Reader implements LdapResultReader
     try {
       final DocumentBuilder db = DOC_BUILDER_FACTORY.newDocumentBuilder();
       final Document dsml = db.parse(new InputSource(dsmlReader));
-      return createLdapResult(dsml);
+      return createSearchResult(dsml);
     } catch (ParserConfigurationException e) {
       throw new IOException(e);
     } catch (SAXException e) {
@@ -111,13 +111,13 @@ public class Dsmlv1Reader implements LdapResultReader
 
 
   /**
-   * Creates an ldap result that corresponds to the supplied DSML document.
+   * Creates a search result that corresponds to the supplied DSML document.
    *
    * @param  doc  DSML to parse
    *
-   * @return  ldap result
+   * @return  search result
    */
-  protected SearchResult createLdapResult(final Document doc)
+  protected SearchResult createSearchResult(final Document doc)
   {
     final SearchResult result = new SearchResult(sortBehavior);
 

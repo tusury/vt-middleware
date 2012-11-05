@@ -21,12 +21,12 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchResult;
 
 /**
- * Writes an LDIF to a {@link Writer} using an {@link SearchResult}.
+ * Writes a {@link SearchResult} as LDIF to a {@link Writer}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LdifWriter implements LdapResultWriter
+public class LdifWriter implements SearchResultWriter
 {
 
   /** ASCII decimal value of nul. */
@@ -70,9 +70,9 @@ public class LdifWriter implements LdapResultWriter
 
 
   /**
-   * Writes the supplied ldap result to the writer.
+   * Writes the supplied search result to the writer.
    *
-   * @param  result  ldap result to write
+   * @param  result  search result to write
    *
    * @throws  IOException  if an error occurs using the writer
    */
@@ -86,9 +86,9 @@ public class LdifWriter implements LdapResultWriter
 
 
   /**
-   * Creates an LDIF using the supplied ldap result.
+   * Creates an LDIF using the supplied search result.
    *
-   * @param  result  ldap result
+   * @param  result  search result
    *
    * @return  LDIF
    */
