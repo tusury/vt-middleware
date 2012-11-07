@@ -103,7 +103,7 @@ public class ParallelPooledSearchExecutor
       } catch (ExecutionException e) {
         logger.debug("ExecutionException thrown, ignoring", e);
       } catch (InterruptedException e) {
-        logger.warn("InterrupedException thrown, ignoring", e);
+        logger.warn("InterruptedException thrown, ignoring", e);
       }
     }
     return response;
