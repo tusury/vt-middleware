@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for parallel search executors.
+ * Base class for aggregate search executors.
  *
  * @param  <T>  type of connection factory
  *
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version  $Revision$ $Date$
  */
 public abstract class
-AbstractParallelSearchExecutor<T extends ConnectionFactory>
+AbstractAggregateSearchExecutor<T extends ConnectionFactory>
   extends SearchRequest
 {
 
@@ -53,11 +53,11 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
 
 
   /**
-   * Creates a new abstract parallel search executor.
+   * Creates a new abstract aggregate search executor.
    *
    * @param  es  executor service
    */
-  public AbstractParallelSearchExecutor(final ExecutorService es)
+  public AbstractAggregateSearchExecutor(final ExecutorService es)
   {
     if (es == null) {
       throw new NullPointerException("ExecutorService cannot be null");
@@ -150,9 +150,9 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
 
 
   /**
-   * Performs a search operation with the supplied connection factory.
+   * Performs a search operation with the supplied connection factories.
    *
-   * @param  factory  to get a connection from
+   * @param  factories  to get a connection from
    * @param  filters  to search with
    *
    * @return  search results
@@ -160,7 +160,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<SearchResult>> search(
-    final T factory,
+    final ConnectionFactory[] factories,
     final String... filters)
     throws LdapException
   {
@@ -168,14 +168,14 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
     for (int i = 0; i < filters.length; i++) {
       sf[i] = new SearchFilter(filters[i]);
     }
-    return search(factory, sf, (String[]) null, (SearchEntryHandler[]) null);
+    return search(factories, sf, (String[]) null, (SearchEntryHandler[]) null);
   }
 
 
   /**
-   * Performs a search operation with the supplied connection factory.
+   * Performs a search operation with the supplied connection factories.
    *
-   * @param  factory  to get a connection from
+   * @param  factories  to get a connection from
    * @param  filters  to search with
    *
    * @return  search results
@@ -183,19 +183,19 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<SearchResult>> search(
-    final T factory,
+    final ConnectionFactory[] factories,
     final SearchFilter[] filters)
     throws LdapException
   {
     return
-      search(factory, filters, (String[]) null, (SearchEntryHandler[]) null);
+      search(factories, filters, (String[]) null, (SearchEntryHandler[]) null);
   }
 
 
   /**
-   * Performs a search operation with the supplied connection factory.
+   * Performs a search operation with the supplied connection factories.
    *
-   * @param  factory  to get a connection from
+   * @param  factories  to get a connection from
    * @param  filters  to search with
    * @param  attrs  to return
    *
@@ -204,7 +204,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<SearchResult>> search(
-    final T factory,
+    final ConnectionFactory[] factories,
     final String[] filters,
     final String... attrs)
     throws LdapException
@@ -213,14 +213,14 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
     for (int i = 0; i < filters.length; i++) {
       sf[i] = new SearchFilter(filters[i]);
     }
-    return search(factory, sf, attrs, (SearchEntryHandler[]) null);
+    return search(factories, sf, attrs, (SearchEntryHandler[]) null);
   }
 
 
   /**
-   * Performs a search operation with the supplied connection factory.
+   * Performs a search operation with the supplied connection factories.
    *
-   * @param  factory  to get a connection from
+   * @param  factories  to get a connection from
    * @param  filters  to search with
    * @param  attrs  to return
    *
@@ -229,19 +229,19 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public Collection<Response<SearchResult>> search(
-    final T factory,
+    final ConnectionFactory[] factories,
     final SearchFilter[] filters,
     final String... attrs)
     throws LdapException
   {
-    return search(factory, filters, attrs, (SearchEntryHandler[]) null);
+    return search(factories, filters, attrs, (SearchEntryHandler[]) null);
   }
 
 
   /**
-   * Performs a search operation with the supplied connection factory.
+   * Performs a search operation with the supplied connection factories.
    *
-   * @param  factory  to get a connection from
+   * @param  factories  to get a connection from
    * @param  filters  to search with
    * @param  attrs  to return
    * @param  handlers  entry handlers
@@ -251,7 +251,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    * @throws  LdapException  if the search fails
    */
   public abstract Collection<Response<SearchResult>> search(
-    final T factory,
+    final ConnectionFactory[] factories,
     final SearchFilter[] filters,
     final String[] attrs,
     final SearchEntryHandler... handlers)
