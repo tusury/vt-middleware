@@ -47,7 +47,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new connection factory.
+   * Creates a new default connection factory.
    *
    * @param  ldapUrl  to connect to
    */
@@ -58,7 +58,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new connection factory.
+   * Creates a new default connection factory.
    *
    * @param  cc  connection configuration
    */
@@ -69,7 +69,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new connection factory.
+   * Creates a new default connection factory.
    *
    * @param  cc  connection configuration
    * @param  p  provider
@@ -218,9 +218,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
   /**
    * Default implementation for managing a connection to an LDAP.
-   *
-   * @author  Middleware Services
-   * @version  $Revision$ $Date$
    */
   protected static class DefaultConnection implements Connection
   {
@@ -239,7 +236,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
     /**
-     * Creates a new connection.
+     * Creates a new default connection.
      *
      * @param  cc  connection configuration
      * @param  cf  provider connection factory
