@@ -32,12 +32,12 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link AttributeServlet}.
+ * Unit test for {@link AttributeValueServletSearchExecutor}.
  *
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class AttributeServletTest extends AbstractTest
+public class AttributeValueServletSearchExecutorTest extends AbstractTest
 {
 
   /** Entry created for tests. */
@@ -72,6 +72,7 @@ public class AttributeServletTest extends AbstractTest
     throws Exception
   {
     super.deleteLdapEntry(testLdapEntry.getDn());
+    servletRunner.shutDown();
   }
 
 
@@ -98,10 +99,9 @@ public class AttributeServletTest extends AbstractTest
   {
     final ServletUnitClient sc = servletRunner.newClient();
     final WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldap.middleware.vt.edu/AttributeSearch");
+      "http://servlets.ldaptive.org/AttributeSearch");
     request.setParameter("query", query);
-    request.setParameter("attr", attr);
-    request.setParameter("content-type", "octet");
+    request.setParameter("attrs", attr);
 
     final WebResponse response = sc.getResponse(request);
 
@@ -129,17 +129,5 @@ public class AttributeServletTest extends AbstractTest
     AssertJUnit.assertEquals(
       attributeValue,
       LdapUtils.base64Encode(data.toByteArray()));
-  }
-
-
-  /** @throws  Exception  On test failure. */
-  @Test(
-    groups = {"servlet"},
-    dependsOnMethods = {"attributeServlet"}
-  )
-  public void prunePools()
-    throws Exception
-  {
-    Thread.sleep(10000);
   }
 }

@@ -57,6 +57,8 @@
              value="/org/ldaptive/createLdapEntry-23.ldif"/>
   <parameter name="createEntry25"
              value="/org/ldaptive/createLdapEntry-25.ldif"/>
+  <parameter name="createEntry26"
+             value="/org/ldaptive/createLdapEntry-26.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -388,9 +390,25 @@
   <parameter name="dsmlSearchServletAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
   <parameter name="dsmlSearchServletLdif" value="/org/ldaptive/searchResults-11.ldif"/>
 
+  <parameter name="jsonSearchServletQuery" value="(uid=11)"/>
+  <parameter name="jsonSearchServletAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
+  <parameter name="jsonSearchServletLdif" value="/org/ldaptive/searchResults-11.ldif"/>
+
   <parameter name="attributeServletQuery" value="(&amp;(givenName=zachary)(sn=taylor))"/>
   <parameter name="attributeServletAttr" value="jpegPhoto"/>
   <parameter name="attributeServletValue" value="/9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k="/>
+
+  <parameter name="ldifTemplateSearchQuery" value="jkpolk"/>
+  <parameter name="ldifTemplateSearchAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
+  <parameter name="ldifTemplateSearchLdif" value="/org/ldaptive/searchResults-11.ldif"/>
+
+  <parameter name="dsmlTemplateSearchQuery" value="james polk"/>
+  <parameter name="dsmlTemplateSearchAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
+  <parameter name="dsmlTemplateSearchLdif" value="/org/ldaptive/searchResults-11.ldif"/>
+
+  <parameter name="jsonTemplateSearchQuery" value="polk"/>
+  <parameter name="jsonTemplateSearchAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
+  <parameter name="jsonTemplateSearchLdif" value="/org/ldaptive/searchResults-11.ldif"/>
 
   <parameter name="dsmlSearchDn" value="${ldapBaseDn}"/>
   <parameter name="dsmlSearchFilter" value="(uid=13)"/>
@@ -425,6 +443,7 @@
         <include name="ldif" />
         <include name="ssl" />
         <include name="ldapcli" />
+        <include name="templates" />
         <include name="conn" />
       </define>
       <define name="core-sysprops">
