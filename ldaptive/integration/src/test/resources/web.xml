@@ -8,6 +8,10 @@
     <servlet-name>LdifSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchExecutor</param-value>
+    </init-param>
+    <init-param>
       <param-name>ldapUrl</param-name>
       <param-value>${ldapTestHost}</param-value>
     </init-param>
@@ -26,10 +30,6 @@
     <init-param>
       <param-name>poolType</param-name>
       <param-value>BLOCKING</param-value>
-    </init-param>
-    <init-param>
-      <param-name>outputFormat</param-name>
-      <param-value>LDIF</param-value>
     </init-param>
     <init-param>
       <param-name>blockWaitTime</param-name>
@@ -59,14 +59,14 @@
       <param-name>poolType</param-name>
       <param-value>SOFTLIMIT</param-value>
     </init-param>
-    <init-param>
-      <param-name>outputFormat</param-name>
-      <param-value>DSML</param-value>
-    </init-param>
   </servlet>
   <servlet>
     <servlet-name>AttributeSearch</servlet-name>
-    <servlet-class>org.ldaptive.servlets.AttributeServlet</servlet-class>
+    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.AttributeValueServletSearchExecutor</param-value>
+    </init-param>
     <init-param>
       <param-name>ldapUrl</param-name>
       <param-value>${ldapTestHost}</param-value>
@@ -88,6 +88,58 @@
       <param-value>BLOCKING</param-value>
     </init-param>
   </servlet>
+  <servlet>
+    <servlet-name>TemplatesLdifSearch</servlet-name>
+    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesExecutor</param-value>
+    </init-param>
+    <init-param>
+      <param-name>springContextPath</param-name>
+      <param-value>/templates-context.xml</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>TemplatesDsmlSearch</servlet-name>
+    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.Dsmlv1ServletSearchTemplatesExecutor</param-value>
+    </init-param>
+    <init-param>
+      <param-name>springContextPath</param-name>
+      <param-value>/templates-context.xml</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>TemplatesJsonSearch</servlet-name>
+    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesExecutor</param-value>
+    </init-param>
+    <init-param>
+      <param-name>springContextPath</param-name>
+      <param-value>/templates-context.xml</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
+    <servlet-name>TemplatesLdifIgnoreSearch</servlet-name>
+    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesExecutor</param-value>
+    </init-param>
+    <init-param>
+      <param-name>springContextPath</param-name>
+      <param-value>/templates-context.xml</param-value>
+    </init-param>
+    <init-param>
+      <param-name>ignorePattern</param-name>
+      <param-value>^\w{1,2}$</param-value>
+    </init-param>
+  </servlet>
   <servlet-mapping>
     <servlet-name>LdifSearch</servlet-name>
     <url-pattern>/LdifSearch</url-pattern>
@@ -99,5 +151,21 @@
   <servlet-mapping>
     <servlet-name>AttributeSearch</servlet-name>
     <url-pattern>/AttributeSearch</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplatesLdifSearch</servlet-name>
+    <url-pattern>/TemplatesLdifSearch</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplatesDsmlSearch</servlet-name>
+    <url-pattern>/TemplatesDsmlSearch</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplatesJsonSearch</servlet-name>
+    <url-pattern>/TemplatesJsonSearch</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplatesLdifIgnoreSearch</servlet-name>
+    <url-pattern>/TemplatesLdifIgnoreSearch</url-pattern>
   </servlet-mapping>
 </web-app>

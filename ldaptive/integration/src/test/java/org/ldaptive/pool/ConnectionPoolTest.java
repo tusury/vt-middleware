@@ -85,8 +85,6 @@ public class ConnectionPoolTest extends AbstractTest
 
 
   /**
-   * Default constructor.
-   *
    * @param  host  to connect to.
    *
    * @throws  Exception  On test failure.
