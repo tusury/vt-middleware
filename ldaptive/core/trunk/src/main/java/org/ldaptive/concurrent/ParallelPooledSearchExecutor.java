@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.Operation;
@@ -75,11 +76,11 @@ public class ParallelPooledSearchExecutor
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    final List<Response<SearchResult>> response =
-      new ArrayList<Response<SearchResult>>(filters.length);
     final CompletionService<Response<SearchResult>> searches =
       new ExecutorCompletionService<Response<SearchResult>>(
         getExecutorService());
+    final List<Future<Response<SearchResult>>> futures =
+      new ArrayList<Future<Response<SearchResult>>>(filters.length);
     for (SearchFilter filter : filters) {
       final SearchRequest sr = newSearchRequest(this);
       if (filter != null) {
@@ -95,18 +96,20 @@ public class ParallelPooledSearchExecutor
       final Connection conn = factory.getConnection();
       final SearchOperation op = new SearchOperation(conn);
       op.setOperationResponseHandlers(getSearchResponseHandlers());
-      searches.submit(createCallable(conn, op, sr));
+      futures.add(searches.submit(createCallable(conn, op, sr)));
     }
-    for (SearchFilter filter : filters) {
+    final List<Response<SearchResult>> responses =
+      new ArrayList<Response<SearchResult>>(filters.length);
+    for (Future<Response<SearchResult>> future : futures) {
       try {
-        response.add(searches.take().get());
+        responses.add(future.get());
       } catch (ExecutionException e) {
         logger.debug("ExecutionException thrown, ignoring", e);
       } catch (InterruptedException e) {
         logger.warn("InterruptedException thrown, ignoring", e);
       }
     }
-    return response;
+    return responses;
   }
 
 

@@ -126,21 +126,24 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   {
     final CompletionService<Response<S>> cs =
       new ExecutorCompletionService<Response<S>>(service);
-    final List<Response<S>> results = new ArrayList<Response<S>>(
-      requests.length);
+    final List<Future<Response<S>>> futures =
+      new ArrayList<Future<Response<S>>>(requests.length);
     for (Q request : requests) {
-      cs.submit(createCallable(operation, request));
+      futures.add(cs.submit(createCallable(operation, request)));
     }
-    for (Q request : requests) {
+
+    final List<Response<S>> responses = new ArrayList<Response<S>>(
+      requests.length);
+    for (Future<Response<S>> future : futures) {
       try {
-        results.add(cs.take().get());
+        responses.add(future.get());
       } catch (ExecutionException e) {
         logger.debug("ExecutionException thrown, ignoring", e);
       } catch (InterruptedException e) {
         logger.warn("InterruptedException thrown, ignoring", e);
       }
     }
-    return results;
+    return responses;
   }
 
 
