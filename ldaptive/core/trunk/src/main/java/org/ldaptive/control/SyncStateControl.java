@@ -14,7 +14,6 @@
 package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.UUID;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
@@ -297,7 +296,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
         getCriticality(),
         syncState,
         entryUuid,
-        Arrays.toString(cookie));
+        LdapUtils.base64Encode(cookie));
   }
 
 

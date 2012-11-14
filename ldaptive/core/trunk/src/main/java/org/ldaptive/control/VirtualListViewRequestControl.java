@@ -14,7 +14,6 @@
 package org.ldaptive.control;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
@@ -438,7 +437,7 @@ public class VirtualListViewRequestControl extends AbstractControl
         targetOffset,
         contentCount,
         assertionValue,
-        Arrays.toString(contextID));
+        LdapUtils.base64Encode(contextID));
   }
 
 

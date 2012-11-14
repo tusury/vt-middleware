@@ -13,7 +13,6 @@
 */
 package org.ldaptive.control;
 
-import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.BooleanType;
 import org.ldaptive.asn1.ConstructedDEREncoder;
@@ -277,7 +276,7 @@ public class SyncRequestControl extends AbstractControl
         hashCode(),
         getCriticality(),
         requestMode,
-        Arrays.toString(cookie),
+        LdapUtils.base64Encode(cookie),
         reloadHint);
   }
 

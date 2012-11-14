@@ -14,7 +14,6 @@
 package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.ConstructedDEREncoder;
@@ -200,7 +199,7 @@ public class PagedResultsControl extends AbstractControl
         hashCode(),
         getCriticality(),
         resultSize,
-        Arrays.toString(cookie));
+        LdapUtils.base64Encode(cookie));
   }
 
 
