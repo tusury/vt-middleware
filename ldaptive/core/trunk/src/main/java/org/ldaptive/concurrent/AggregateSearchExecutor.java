@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -75,8 +76,6 @@ public class AggregateSearchExecutor
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    final List<Response<SearchResult>> response =
-      new ArrayList<Response<SearchResult>>(filters.length);
     final CompletionService<Collection<Response<SearchResult>>> searches =
       new ExecutorCompletionService<Collection<Response<SearchResult>>>(
         getExecutorService());
@@ -94,6 +93,9 @@ public class AggregateSearchExecutor
       }
       requests[i] = sr;
     }
+    final List<Future<Collection<Response<SearchResult>>>> futures =
+      new ArrayList<Future<Collection<Response<SearchResult>>>>(
+        factories.length * filters.length);
     for (ConnectionFactory factory : factories) {
       final Connection conn = factory.getConnection();
       final SearchOperation op = new SearchOperation(conn);
@@ -101,18 +103,20 @@ public class AggregateSearchExecutor
       final SearchOperationWorker worker = new SearchOperationWorker(
         op,
         getExecutorService());
-      searches.submit(createCallable(conn, worker, requests));
+      futures.add(searches.submit(createCallable(conn, worker, requests)));
     }
-    for (ConnectionFactory factory : factories) {
+    final List<Response<SearchResult>> responses =
+      new ArrayList<Response<SearchResult>>(factories.length * filters.length);
+    for (Future<Collection<Response<SearchResult>>> future : futures) {
       try {
-        response.addAll(searches.take().get());
+        responses.addAll(future.get());
       } catch (ExecutionException e) {
         logger.debug("ExecutionException thrown, ignoring", e);
       } catch (InterruptedException e) {
         logger.warn("InterruptedException thrown, ignoring", e);
       }
     }
-    return response;
+    return responses;
   }
 
 

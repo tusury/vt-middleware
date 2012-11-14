@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -76,16 +77,17 @@ public class AggregatePooledSearchExecutor
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    final List<Response<SearchResult>> response =
-      new ArrayList<Response<SearchResult>>(filters.length);
     final CompletionService<Response<SearchResult>> searches =
       new ExecutorCompletionService<Response<SearchResult>>(
         getExecutorService());
+    final List<Future<Response<SearchResult>>> futures =
+      new ArrayList<Future<Response<SearchResult>>>(
+        factories.length * filters.length);
     for (ConnectionFactory factory : factories) {
-      for (int i = 0; i < filters.length; i++) {
+      for (SearchFilter filter : filters) {
         final SearchRequest sr = newSearchRequest(this);
-        if (filters[i] != null) {
-          sr.setSearchFilter(filters[i]);
+        if (filter != null) {
+          sr.setSearchFilter(filter);
         }
         if (attrs != null) {
           sr.setReturnAttributes(attrs);
@@ -96,21 +98,21 @@ public class AggregatePooledSearchExecutor
         final Connection conn = factory.getConnection();
         final SearchOperation op = new SearchOperation(conn);
         op.setOperationResponseHandlers(getSearchResponseHandlers());
-        searches.submit(createCallable(conn, op, sr));
+        futures.add(searches.submit(createCallable(conn, op, sr)));
       }
     }
-    for (ConnectionFactory factory : factories) {
-      for (SearchFilter filter : filters) {
-        try {
-          response.add(searches.take().get());
-        } catch (ExecutionException e) {
-          logger.debug("ExecutionException thrown, ignoring", e);
-        } catch (InterruptedException e) {
-          logger.warn("InterruptedException thrown, ignoring", e);
-        }
+    final List<Response<SearchResult>> responses =
+      new ArrayList<Response<SearchResult>>(factories.length * filters.length);
+    for (Future<Response<SearchResult>> future : futures) {
+      try {
+        responses.add(future.get());
+      } catch (ExecutionException e) {
+        logger.debug("ExecutionException thrown, ignoring", e);
+      } catch (InterruptedException e) {
+        logger.warn("InterruptedException thrown, ignoring", e);
       }
     }
-    return response;
+    return responses;
   }
 
 
