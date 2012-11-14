@@ -289,7 +289,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
         getClass().getName(),
         hashCode(),
         messageType,
-        Arrays.toString(cookie),
+        LdapUtils.base64Encode(cookie),
         refreshDone,
         refreshDeletes,
         entryUuids,

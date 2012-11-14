@@ -14,7 +14,6 @@
 package org.ldaptive.control;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.BooleanType;
@@ -181,7 +180,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
         getClass().getName(),
         hashCode(),
         getCriticality(),
-        Arrays.toString(cookie),
+        LdapUtils.base64Encode(cookie),
         refreshDeletes);
   }
 
