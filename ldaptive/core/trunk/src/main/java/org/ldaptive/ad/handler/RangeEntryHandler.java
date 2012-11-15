@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package org.ldaptive.handler.ext;
+package org.ldaptive.ad.handler;
 
 import java.util.HashMap;
 import java.util.Map;
