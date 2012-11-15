@@ -13,6 +13,8 @@
 */
 package org.ldaptive.control;
 
+import org.ldaptive.ad.control.DirSyncControl;
+
 /**
  * Utility class for creating controls.
  *
@@ -59,6 +61,9 @@ public final class ControlFactory
       ctl.decode(encoded);
     } else if (SyncDoneControl.OID.equals(oid)) {
       ctl = new SyncDoneControl(critical);
+      ctl.decode(encoded);
+    } else if (DirSyncControl.OID.equals(oid)) {
+      ctl = new DirSyncControl(critical);
       ctl.decode(encoded);
     } else {
       throw new IllegalArgumentException("Unknown OID: " + oid);
