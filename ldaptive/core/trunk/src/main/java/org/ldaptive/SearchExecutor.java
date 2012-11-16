@@ -13,6 +13,8 @@
 */
 package org.ldaptive;
 
+import org.ldaptive.cache.Cache;
+import org.ldaptive.handler.OperationExceptionHandler;
 import org.ldaptive.handler.OperationResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 
@@ -29,9 +31,40 @@ import org.ldaptive.handler.SearchEntryHandler;
 public class SearchExecutor extends SearchRequest
 {
 
+  /** Handler to process search exceptions. */
+  private OperationExceptionHandler<SearchRequest, SearchResult>
+  searchExceptionHandler;
+
   /** Handlers to process search responses. */
   private OperationResponseHandler<SearchRequest, SearchResult>[]
   searchResponseHandlers;
+
+  /** Cache to use when performing searches. */
+  private Cache<SearchRequest> searchCache;
+
+
+  /**
+   * Returns the search exception handler.
+   *
+   * @return  search exception handler
+   */
+  public OperationExceptionHandler<SearchRequest, SearchResult>
+  getSearchExceptionHandler()
+  {
+    return searchExceptionHandler;
+  }
+
+
+  /**
+   * Sets the search exception handler.
+   *
+   * @param  handler  search exception handler
+   */
+  public void setSearchResponseHandlers(
+    final OperationExceptionHandler<SearchRequest, SearchResult> handler)
+  {
+    searchExceptionHandler = handler;
+  }
 
 
   /**
@@ -55,6 +88,28 @@ public class SearchExecutor extends SearchRequest
     final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
   {
     searchResponseHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the search cache.
+   *
+   * @return  cache
+   */
+  public Cache<SearchRequest> getSearchCache()
+  {
+    return searchCache;
+  }
+
+
+  /**
+   * Sets the search cache.
+   *
+   * @param  cache  to set
+   */
+  public void setSearchCache(final Cache<SearchRequest> cache)
+  {
+    searchCache = cache;
   }
 
 
@@ -190,7 +245,15 @@ public class SearchExecutor extends SearchRequest
       conn.open();
 
       final SearchOperation op = new SearchOperation(conn);
-      op.setOperationResponseHandlers(searchResponseHandlers);
+      if (searchExceptionHandler != null) {
+        op.setOperationExceptionHandler(searchExceptionHandler);
+      }
+      if (searchResponseHandlers != null) {
+        op.setOperationResponseHandlers(searchResponseHandlers);
+      }
+      if (searchCache != null) {
+        op.setCache(searchCache);
+      }
 
       final SearchRequest sr = newSearchRequest(this);
       if (filter != null) {

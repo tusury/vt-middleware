@@ -71,8 +71,7 @@ public class ParallelSearchExecutor
     try {
       conn.open();
 
-      final SearchOperation op = new SearchOperation(conn);
-      op.setOperationResponseHandlers(getSearchResponseHandlers());
+      final SearchOperation op = createSearchOperation(conn);
 
       final SearchOperationWorker worker = new SearchOperationWorker(
         op,

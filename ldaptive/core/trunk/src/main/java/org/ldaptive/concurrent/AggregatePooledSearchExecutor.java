@@ -71,7 +71,7 @@ public class AggregatePooledSearchExecutor
   /** {@inheritDoc} */
   @Override
   public Collection<Response<SearchResult>> search(
-    final ConnectionFactory[] factories,
+    final PooledConnectionFactory[] factories,
     final SearchFilter[] filters,
     final String[] attrs,
     final SearchEntryHandler... handlers)
@@ -96,8 +96,7 @@ public class AggregatePooledSearchExecutor
           sr.setSearchEntryHandlers(handlers);
         }
         final Connection conn = factory.getConnection();
-        final SearchOperation op = new SearchOperation(conn);
-        op.setOperationResponseHandlers(getSearchResponseHandlers());
+        final SearchOperation op = createSearchOperation(conn);
         futures.add(searches.submit(createCallable(conn, op, sr)));
       }
     }

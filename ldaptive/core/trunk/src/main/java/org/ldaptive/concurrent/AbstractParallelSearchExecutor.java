@@ -13,20 +13,14 @@
 */
 package org.ldaptive.concurrent;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.handler.OperationResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for parallel search executors.
@@ -38,18 +32,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class
 AbstractParallelSearchExecutor<T extends ConnectionFactory>
-  extends SearchRequest
+  extends AbstractSearchExecutor
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-  /** to submit operations to. */
-  private final ExecutorService service;
-
-  /** Handlers to process search responses. */
-  private OperationResponseHandler<SearchRequest, SearchResult>[]
-  searchResponseHandlers;
 
 
   /**
@@ -59,93 +43,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    */
   public AbstractParallelSearchExecutor(final ExecutorService es)
   {
-    if (es == null) {
-      throw new NullPointerException("ExecutorService cannot be null");
-    }
-    service = es;
-  }
-
-
-  /**
-   * Returns the executor service for this search executor.
-   *
-   * @return  executor service
-   */
-  protected ExecutorService getExecutorService()
-  {
-    return service;
-  }
-
-
-  /**
-   * Returns the search response handlers.
-   *
-   * @return  search response handlers
-   */
-  public OperationResponseHandler<SearchRequest, SearchResult>[]
-  getSearchResponseHandlers()
-  {
-    return searchResponseHandlers;
-  }
-
-
-  /**
-   * Sets the search response handlers.
-   *
-   * @param  handlers  search response handlers
-   */
-  public void setSearchResponseHandlers(
-    final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
-  {
-    searchResponseHandlers = handlers;
-  }
-
-
-  /**
-   * Shuts down the executor service. See {@link ExecutorService#shutdown()}.
-   */
-  public void shutdown()
-  {
-    service.shutdown();
-  }
-
-
-  /**
-   * Immediately shuts down the executor service. See {@link
-   * ExecutorService#shutdownNow()}.
-   *
-   * @return  list of tasks that never executed
-   */
-  public List<Runnable> shutdownNow()
-  {
-    return service.shutdownNow();
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void finalize()
-    throws Throwable
-  {
-    try {
-      shutdown();
-    } finally {
-      super.finalize();
-    }
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public String toString()
-  {
-    return
-      String.format(
-        "[%s@%d::service=%s, searchResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        service,
-        Arrays.toString(searchResponseHandlers));
+    super(es);
   }
 
 
