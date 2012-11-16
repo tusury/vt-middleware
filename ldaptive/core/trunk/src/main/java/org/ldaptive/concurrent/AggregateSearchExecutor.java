@@ -98,8 +98,7 @@ public class AggregateSearchExecutor
         factories.length * filters.length);
     for (ConnectionFactory factory : factories) {
       final Connection conn = factory.getConnection();
-      final SearchOperation op = new SearchOperation(conn);
-      op.setOperationResponseHandlers(getSearchResponseHandlers());
+      final SearchOperation op = createSearchOperation(conn);
       final SearchOperationWorker worker = new SearchOperationWorker(
         op,
         getExecutorService());

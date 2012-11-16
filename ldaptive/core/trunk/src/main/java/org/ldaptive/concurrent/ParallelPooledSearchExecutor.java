@@ -94,8 +94,7 @@ public class ParallelPooledSearchExecutor
       }
 
       final Connection conn = factory.getConnection();
-      final SearchOperation op = new SearchOperation(conn);
-      op.setOperationResponseHandlers(getSearchResponseHandlers());
+      final SearchOperation op = createSearchOperation(conn);
       futures.add(searches.submit(createCallable(conn, op, sr)));
     }
     final List<Response<SearchResult>> responses =
