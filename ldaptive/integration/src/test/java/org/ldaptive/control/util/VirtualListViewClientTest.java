@@ -22,6 +22,7 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.control.SortKey;
 import org.testng.AssertJUnit;
@@ -100,6 +101,11 @@ public class VirtualListViewClientTest extends AbstractTest
   public void execute(final String dn, final String filter)
     throws Exception
   {
+    // AD server says vlv is a supported control, but returns UNAVAIL_EXTENSION
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     Connection conn = TestUtils.createConnection();
     try {
       conn.open();
@@ -125,6 +131,9 @@ public class VirtualListViewClientTest extends AbstractTest
       AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
       AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
 
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported
+      AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
     }
@@ -153,6 +162,9 @@ public class VirtualListViewClientTest extends AbstractTest
       AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
       AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
 
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported
+      AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
     }

@@ -111,7 +111,8 @@ public class PagedResultsClientTest extends AbstractTest
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(1, response.getResult().size());
       AssertJUnit.assertEquals(
-        testLdapEntries[0].getDn(), response.getResult().getEntry().getDn());
+        testLdapEntries[0].getDn().toLowerCase(),
+        response.getResult().getEntry().getDn().toLowerCase());
 
       int i = 1;
       while (client.hasMore(response)) {
@@ -119,7 +120,8 @@ public class PagedResultsClientTest extends AbstractTest
         AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
         AssertJUnit.assertEquals(1, response.getResult().size());
         AssertJUnit.assertEquals(
-          testLdapEntries[i].getDn(), response.getResult().getEntry().getDn());
+          testLdapEntries[i].getDn().toLowerCase(),
+          response.getResult().getEntry().getDn().toLowerCase());
         i++;
       }
 
@@ -161,9 +163,15 @@ public class PagedResultsClientTest extends AbstractTest
       AssertJUnit.assertEquals(3, response.getResult().size());
       Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
+      AssertJUnit.assertEquals(
+        testLdapEntries[1].getDn().toLowerCase(),
+        i.next().getDn().toLowerCase());
+      AssertJUnit.assertEquals(
+        testLdapEntries[0].getDn().toLowerCase(),
+        i.next().getDn().toLowerCase());
+      AssertJUnit.assertEquals(
+        testLdapEntries[2].getDn().toLowerCase(),
+        i.next().getDn().toLowerCase());
     } finally {
       conn.close();
     }

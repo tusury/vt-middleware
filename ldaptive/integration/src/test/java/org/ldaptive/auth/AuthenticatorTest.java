@@ -491,16 +491,25 @@ public class AuthenticatorTest extends AbstractTest
   public void authenticateCramMd5(final String user, final String credential)
     throws Exception
   {
-    final Authenticator auth = TestUtils.createCramMD5Authenticator();
-    AuthenticationResponse response = auth.authenticate(
-      new AuthenticationRequest(
-        user, new Credential(INVALID_PASSWD), new String[0]));
-    AssertJUnit.assertFalse(response.getResult());
+    try {
+      final Authenticator auth = TestUtils.createCramMD5Authenticator();
+      AuthenticationResponse response = auth.authenticate(
+        new AuthenticationRequest(
+          user, new Credential(INVALID_PASSWD), new String[0]));
+      AssertJUnit.assertFalse(response.getResult());
 
-    response = auth.authenticate(
-      new AuthenticationRequest(
-        user, new Credential(credential), new String[0]));
-    AssertJUnit.assertTrue(response.getResult());
+      response = auth.authenticate(
+        new AuthenticationRequest(
+          user, new Credential(credential), new String[0]));
+      AssertJUnit.assertTrue(response.getResult());
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.AUTH_METHOD_NOT_SUPPORTED, e.getResultCode());
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported by the provider
+      AssertJUnit.assertNotNull(e);
+    }
   }
 
 

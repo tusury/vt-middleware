@@ -157,7 +157,9 @@ public class ServletSearchExecutorTest extends AbstractTest
 
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/xml", response.getContentType());
-    AssertJUnit.assertEquals(dsmlv1, response.getText());
+    // active directory uppercases CN in the DN
+    AssertJUnit.assertEquals(
+      dsmlv1, response.getText().replaceAll("CN=", "cn="));
   }
 
 
@@ -240,7 +242,9 @@ public class ServletSearchExecutorTest extends AbstractTest
 
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/xml", response.getContentType());
-    AssertJUnit.assertEquals(dsmlv1, response.getText());
+    // active directory uppercases CN in the DN
+    AssertJUnit.assertEquals(
+      dsmlv1, response.getText().replaceAll("CN=", "cn="));
   }
 
 
@@ -283,7 +287,8 @@ public class ServletSearchExecutorTest extends AbstractTest
 
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("application/json", response.getContentType());
-    AssertJUnit.assertEquals(json, response.getText());
+    // active directory uppercases CN in the DN
+    AssertJUnit.assertEquals(json, response.getText().replaceAll("CN=", "cn="));
   }
 
 
