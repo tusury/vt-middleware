@@ -58,6 +58,8 @@ public class SearchTemplatesExecutorTest extends AbstractTest
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
+    // remove objectClass as active directory adds some additional ones
+    testLdapEntry.removeAttribute("objectClass");
   }
 
 
@@ -151,6 +153,7 @@ public class SearchTemplatesExecutorTest extends AbstractTest
     throws Exception
   {
     final Query q = new Query(query);
+    q.setReturnAttributes(testLdapEntry.getAttributeNames());
     final SearchResult sr = executor.search(q);
     TestUtils.assertEquals(testLdapEntry, sr.getEntry());
   }

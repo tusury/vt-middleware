@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.control.SortRequestControl;
@@ -33,7 +34,6 @@ import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.handler.SearchReferenceHandler;
-import org.ldaptive.handler.ext.RangeEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.testng.AssertJUnit;
@@ -464,6 +464,10 @@ public class SearchOperationTest extends AbstractTest
         0,
         (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
           TestUtils.convertLdifToResult(expected), result));
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
