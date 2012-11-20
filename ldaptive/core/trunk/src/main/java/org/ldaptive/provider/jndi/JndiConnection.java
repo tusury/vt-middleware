@@ -197,9 +197,11 @@ public class JndiConnection implements ProviderConnection
         context.close();
       }
     } catch (NamingException e) {
-      throw new LdapException(
-        e,
-        NamingExceptionUtils.getResultCode(e.getClass()));
+      ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
+      if (rc == null) {
+        rc = NamingExceptionUtils.getResultCode(e.getMessage());
+      }
+      throw new LdapException(e, rc);
     } finally {
       context = null;
     }
@@ -684,10 +686,14 @@ public class JndiConnection implements ProviderConnection
     final String[] urls,
     final LdapContext ctx)
   {
+    ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
+    if (rc == null) {
+      rc = NamingExceptionUtils.getResultCode(e.getMessage());
+    }
     return
       new Response<T>(
         result,
-        NamingExceptionUtils.getResultCode(e.getClass()),
+        rc,
         e.getMessage(),
         null,
         processResponseControls(
@@ -717,7 +723,10 @@ public class JndiConnection implements ProviderConnection
     final LdapContext ctx)
     throws LdapException
   {
-    final ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
+    ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
+    if (rc == null) {
+      rc = NamingExceptionUtils.getResultCode(e.getMessage());
+    }
     ProviderUtils.throwOperationException(
       config.getOperationExceptionResultCodes(),
       e,
