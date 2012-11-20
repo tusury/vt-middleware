@@ -16,6 +16,8 @@ package org.ldaptive.provider.jndi;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.naming.AuthenticationException;
 import javax.naming.AuthenticationNotSupportedException;
 import javax.naming.CommunicationException;
@@ -60,6 +62,10 @@ public final class NamingExceptionUtils
   /** Map of ldap result codes to naming exceptions. */
   private static final Map<ResultCode, Class<? extends NamingException>>
   RESULT_CODES_TO_EXCEPTION;
+
+  /** Pattern to find error code in exception messages. */
+  private static final Pattern PATTERN = Pattern.compile(
+    "LDAP: error code (\\d+)");
 
   /**
    * initialize map of exceptions to result codes.
@@ -352,6 +358,36 @@ public final class NamingExceptionUtils
         "naming exception {} is ambiguous, maps to multiple result codes: {}",
         clazz,
         Arrays.toString(codes));
+    }
+    return null;
+  }
+
+
+  /**
+   * Returns the result code contained in the supplied naming exception message.
+   * JNDI displays the error code in the form "[LDAP: error code <code> -
+   * <message>]" and this method attempts to parse that numeric code from the
+   * message.
+   *
+   * @param  message  naming exception message
+   *
+   * @return  ldap result code or null
+   */
+  public static ResultCode getResultCode(final String message)
+  {
+    if (message != null) {
+      final Matcher matcher = PATTERN.matcher(message);
+      if (matcher.find()) {
+        try {
+          return
+            ResultCode.valueOf(Integer.parseInt(matcher.group(1)));
+        } catch (NumberFormatException e) {
+          final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
+          l.debug("Error parsing LDAP error code", e);
+        }
+      }
+      final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
+      l.debug("could not find result code in naming exception {}", message);
     }
     return null;
   }
