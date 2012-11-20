@@ -116,7 +116,8 @@ public class TestControl
     try {
       return search.execute(request).getResult().size() == 1;
     } catch (LdapException e) {
-      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode()) {
+      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() ||
+          ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
         return false;
       }
       throw e;
