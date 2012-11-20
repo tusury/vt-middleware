@@ -59,6 +59,12 @@
              value="/org/ldaptive/createLdapEntry-25.ldif"/>
   <parameter name="createEntry26"
              value="/org/ldaptive/createLdapEntry-26.ldif"/>
+  <parameter name="createEntry27"
+             value="/org/ldaptive/createLdapEntry-27.ldif"/>
+  <parameter name="createEntry28"
+             value="/org/ldaptive/createLdapEntry-28.ldif"/>
+  <parameter name="createEntry29"
+             value="/org/ldaptive/createLdapEntry-29.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -240,6 +246,9 @@
 
   <parameter name="prSearchDn" value="${ldapBaseDn}"/>
   <parameter name="prSearchFilter" value="(|(uid=22)(uid=23)(uid=25))"/>
+
+  <parameter name="dsSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="dsSearchFilter" value="(|(uid=27)(uid=28)(uid=29))"/>
 
   <parameter name="getSchemaDn" value="${ldapBaseDn}"/>
   <parameter name="getSchemaResults"
