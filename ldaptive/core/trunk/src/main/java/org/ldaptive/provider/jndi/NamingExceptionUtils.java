@@ -365,8 +365,8 @@ public final class NamingExceptionUtils
 
   /**
    * Returns the result code contained in the supplied naming exception message.
-   * JNDI displays the error code in the form "[LDAP: error code <code> -
-   * <message>]" and this method attempts to parse that numeric code from the
+   * JNDI displays the error code in the form "[LDAP: error code {code} -
+   * {message}" and this method attempts to parse that numeric code from the
    * message.
    *
    * @param  message  naming exception message
