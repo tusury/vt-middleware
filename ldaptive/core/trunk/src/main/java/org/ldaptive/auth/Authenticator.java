@@ -14,7 +14,6 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
-import org.ldaptive.Connection;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -47,6 +46,9 @@ public class Authenticator
 
   /** Handlers to process authentication responses. */
   private AuthenticationResponseHandler[] authenticationResponseHandlers;
+
+  /** Whether to execute the entry resolver on authentication failure. */
+  private boolean resolveEntryOnFailure;
 
 
   /** Default constructor. */
@@ -131,6 +133,28 @@ public class Authenticator
   public void setEntryResolver(final EntryResolver resolver)
   {
     entryResolver = resolver;
+  }
+
+
+  /**
+   * Returns whether to execute the entry resolver on authentication failure.
+   *
+   * @return  whether to execute the entry resolver on authentication failure
+   */
+  public boolean getResolveEntryOnFailure()
+  {
+    return resolveEntryOnFailure;
+  }
+
+
+  /**
+   * Sets whether to execute the entry resolver on authentication failure.
+   *
+   * @param  b  whether to execute the entry resolver
+   */
+  public void setResolveEntryOnFailure(final boolean b)
+  {
+    resolveEntryOnFailure = b;
   }
 
 
@@ -225,7 +249,7 @@ public class Authenticator
       // attempt to authenticate as this dn
       response = getAuthenticationHandler().authenticate(ac);
       // resolve the entry
-      entry = resolveEntry(request, response.getConnection(), ac);
+      entry = resolveEntry(request, response, ac);
     } finally {
       if (response != null && response.getConnection() != null) {
         response.getConnection().close();
@@ -325,7 +349,7 @@ public class Authenticator
    * {@link NoOpDnResolver} is used.
    *
    * @param  request  authentication request
-   * @param  conn  that authentication occurred on
+   * @param  response  from the authentication handler
    * @param  criteria  needed by the entry resolver
    *
    * @return  ldap entry
@@ -334,28 +358,30 @@ public class Authenticator
    */
   protected LdapEntry resolveEntry(
     final AuthenticationRequest request,
-    final Connection conn,
+    final AuthenticationHandlerResponse response,
     final AuthenticationCriteria criteria)
     throws LdapException
   {
     LdapEntry entry = null;
     EntryResolver er;
-    if (entryResolver != null) {
-      er = entryResolver;
-    } else if (request.getReturnAttributes() == null ||
-               request.getReturnAttributes().length > 0) {
-      er = new SearchEntryResolver(request.getReturnAttributes());
-    } else {
-      er = NOOP_RESOLVER;
-    }
-    try {
-      entry = er.resolve(conn, criteria);
-      logger.trace("resolved entry={} with resolver={}", entry, er);
-    } catch (LdapException e) {
-      logger.debug("entry resolution failed for resolver={}", er, e);
+    if (resolveEntryOnFailure || response.getResult()) {
+      if (entryResolver != null) {
+        er = entryResolver;
+      } else if (request.getReturnAttributes() == null ||
+                 request.getReturnAttributes().length > 0) {
+        er = new SearchEntryResolver(request.getReturnAttributes());
+      } else {
+        er = NOOP_RESOLVER;
+      }
+      try {
+        entry = er.resolve(response.getConnection(), criteria);
+        logger.trace("resolved entry={} with resolver={}", entry, er);
+      } catch (LdapException e) {
+        logger.debug("entry resolution failed for resolver={}", er, e);
+      }
     }
     if (entry == null) {
-      entry = NOOP_RESOLVER.resolve(conn, criteria);
+      entry = NOOP_RESOLVER.resolve(response.getConnection(), criteria);
       logger.trace("resolved entry={} with resolver={}", entry, NOOP_RESOLVER);
     }
     return entry;
