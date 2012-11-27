@@ -102,8 +102,8 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
     throws LdapException
   {
     if (factory == null) {
-      final SearchOperation search = new SearchOperation(conn);
-      return search.execute(
+      final SearchOperation op = createSearchOperation(conn);
+      return op.execute(
         createSearchRequest(ac, getReturnAttributes())).getResult();
     } else {
       Connection factoryConn = null;
@@ -111,8 +111,8 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
         factoryConn = factory.getConnection();
         factoryConn.open();
 
-        final SearchOperation search = new SearchOperation(factoryConn);
-        return search.execute(
+        final SearchOperation op = createSearchOperation(conn);
+        return op.execute(
           createSearchRequest(ac, getReturnAttributes())).getResult();
       } finally {
         if (factoryConn != null) {

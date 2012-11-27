@@ -11,11 +11,8 @@
   Version: $Revision$
   Updated: $Date$
 */
-package org.ldaptive.concurrent;
+package org.ldaptive.auth;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
 import org.ldaptive.Connection;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -27,19 +24,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for concurrent search executors.
+ * Base class for authentication related classes that perform searches.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractSearchExecutor extends SearchRequest
+public abstract class AbstractSearchOperationFactory
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-  /** To submit operations to. */
-  private final ExecutorService service;
 
   /** Handler to process search exceptions. */
   private OperationExceptionHandler<SearchRequest, SearchResult>
@@ -51,31 +45,6 @@ public abstract class AbstractSearchExecutor extends SearchRequest
 
   /** Cache to use when performing searches. */
   private Cache<SearchRequest> searchCache;
-
-
-  /**
-   * Creates a new abstract search executor.
-   *
-   * @param  es  executor service
-   */
-  public AbstractSearchExecutor(final ExecutorService es)
-  {
-    if (es == null) {
-      throw new NullPointerException("ExecutorService cannot be null");
-    }
-    service = es;
-  }
-
-
-  /**
-   * Returns the executor service for this search executor.
-   *
-   * @return  executor service
-   */
-  protected ExecutorService getExecutorService()
-  {
-    return service;
-  }
 
 
   /**
@@ -149,29 +118,8 @@ public abstract class AbstractSearchExecutor extends SearchRequest
 
 
   /**
-   * Shuts down the executor service. See {@link ExecutorService#shutdown()}.
-   */
-  public void shutdown()
-  {
-    service.shutdown();
-  }
-
-
-  /**
-   * Immediately shuts down the executor service. See {@link
-   * ExecutorService#shutdownNow()}.
-   *
-   * @return  list of tasks that never executed
-   */
-  public List<Runnable> shutdownNow()
-  {
-    return service.shutdownNow();
-  }
-
-
-  /**
    * Creates a new search operation configured with the properties on this
-   * search executor.
+   * factory.
    *
    * @param  conn  to pass to the search operation
    *
@@ -190,35 +138,5 @@ public abstract class AbstractSearchExecutor extends SearchRequest
       op.setCache(searchCache);
     }
     return op;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  protected void finalize()
-    throws Throwable
-  {
-    try {
-      shutdown();
-    } finally {
-      super.finalize();
-    }
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public String toString()
-  {
-    return
-      String.format(
-        "[%s@%d::service=%s, searchExceptionHandler=%s, " +
-        "searchResponseHandlers=%s, searchCache=%s]",
-        getClass().getName(),
-        hashCode(),
-        service,
-        searchExceptionHandler,
-        Arrays.toString(searchResponseHandlers),
-        searchCache);
   }
 }
