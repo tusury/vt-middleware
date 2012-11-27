@@ -18,8 +18,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ldaptive.auth.AbstractSearchOperationFactory;
 
 /**
  * Base class for search role resolver implementations.
@@ -27,11 +26,9 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractSearchRoleResolver implements RoleResolver
+public abstract class AbstractSearchRoleResolver
+  extends AbstractSearchOperationFactory implements RoleResolver
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
   /** {@inheritDoc} */
@@ -43,8 +40,8 @@ public abstract class AbstractSearchRoleResolver implements RoleResolver
     try {
       conn = getConnection();
 
-      final SearchOperation search = new SearchOperation(conn);
-      return LdapRole.toRoles(search.execute(request).getResult());
+      final SearchOperation op = createSearchOperation(conn);
+      return LdapRole.toRoles(op.execute(request).getResult());
     } finally {
       if (conn != null) {
         conn.close();

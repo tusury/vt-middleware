@@ -24,8 +24,6 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation for search dn resolvers.
@@ -33,11 +31,9 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractSearchDnResolver implements DnResolver
+public abstract class AbstractSearchDnResolver
+  extends AbstractSearchOperationFactory implements DnResolver
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** DN to search. */
   private String baseDn = "";
@@ -366,7 +362,7 @@ public abstract class AbstractSearchDnResolver implements DnResolver
     try {
       conn = getConnection();
 
-      final SearchOperation op = new SearchOperation(conn);
+      final SearchOperation op = createSearchOperation(conn);
       return op.execute(request).getResult();
     } finally {
       if (conn != null) {

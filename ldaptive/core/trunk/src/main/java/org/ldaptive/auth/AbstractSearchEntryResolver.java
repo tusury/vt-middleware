@@ -19,8 +19,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation for search entry resolvers.
@@ -28,11 +26,9 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractSearchEntryResolver implements EntryResolver
+public abstract class AbstractSearchEntryResolver
+  extends AbstractSearchOperationFactory implements EntryResolver
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** User attributes to return. */
   private String[] retAttrs;
