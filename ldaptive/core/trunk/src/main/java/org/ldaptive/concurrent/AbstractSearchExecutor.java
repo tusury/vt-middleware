@@ -95,7 +95,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
    *
    * @param  handler  search exception handler
    */
-  public void setSearchResponseHandlers(
+  public void setSearchResponseHandler(
     final OperationExceptionHandler<SearchRequest, SearchResult> handler)
   {
     searchExceptionHandler = handler;
