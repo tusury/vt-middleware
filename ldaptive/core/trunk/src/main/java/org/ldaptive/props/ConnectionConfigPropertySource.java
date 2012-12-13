@@ -16,7 +16,9 @@ package org.ldaptive.props;
 import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
+import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.ssl.SslConfig;
 
 /**
@@ -120,10 +122,34 @@ public final class ConnectionConfigPropertySource
         propertiesDomain,
         properties);
       scSource.initialize();
-      object.setSslConfig(sc);
+      if (!sc.isEmpty()) {
+        object.setSslConfig(sc);
+      }
     } else {
       final SimplePropertySource<SslConfig> sPropSource =
         new SimplePropertySource<SslConfig>(sc, propertiesDomain, properties);
+      sPropSource.initialize();
+    }
+
+
+    final ConnectionInitializer ci = object.getConnectionInitializer();
+    // configure a bind connection initializer if bind properties are found
+    if (ci == null) {
+      final BindConnectionInitializer bci = new BindConnectionInitializer();
+
+      final BindConnectionInitializerPropertySource bciSource =
+        new BindConnectionInitializerPropertySource(
+          bci,
+          propertiesDomain,
+          properties);
+      bciSource.initialize();
+      if (!bci.isEmpty()) {
+        object.setConnectionInitializer(bci);
+      }
+    } else {
+      final SimplePropertySource<ConnectionInitializer> sPropSource =
+        new SimplePropertySource<ConnectionInitializer>(
+          ci, propertiesDomain, properties);
       sPropSource.initialize();
     }
   }

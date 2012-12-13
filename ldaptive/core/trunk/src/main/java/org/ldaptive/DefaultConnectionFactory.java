@@ -33,7 +33,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   public static final String PROVIDER = "org.ldaptive.provider";
 
   /** Static reference to the default ldap provider. */
-  private static final Provider<?> DEFAULT_PROVIDER = getDefaultProvider();
+  protected static final Provider<?> DEFAULT_PROVIDER = getDefaultProvider();
 
   /** Provider used by this factory. */
   private Provider<?> provider = DEFAULT_PROVIDER.newInstance();
@@ -250,11 +250,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /**
-     * Returns the connection configuration.
-     *
-     * @return  connection configuration
-     */
+    /** {@inheritDoc} */
     @Override
     public ConnectionConfig getConnectionConfig()
     {
@@ -281,34 +277,33 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
     /**
-     * This will establish a connection if one does not already exist by binding
-     * to the LDAP using parameters given by {@link
-     * ConnectionConfig#getBindDn()}, {@link
-     * ConnectionConfig#getBindCredential()}, {@link
-     * ConnectionConfig#getBindSaslConfig()}, and {@link
-     * ConnectionConfig#getBindControls()}. If these parameters have not been
-     * set then an anonymous bind will be attempted. This connection should be
-     * closed using {@link #close()}.
+     * This will establish a connection if one does not already exist. This
+     * connection should be closed using {@link #close()}.
      *
-     * @return  response associated with the bind operation
+     * @return  response associated with the {@link ConnectionInitializer} or an
+     * empty response if no connection initializer was configured
      *
+     * @throws  IllegalStateException  if the connection is already open
      * @throws  LdapException  if the LDAP cannot be reached
      */
     @Override
     public synchronized Response<Void> open()
       throws LdapException
     {
-      final BindRequest request = new BindRequest();
-      request.setDn(config.getBindDn());
-      request.setCredential(config.getBindCredential());
-      request.setSaslConfig(config.getBindSaslConfig());
-      request.setControls(config.getBindControls());
-      return open(request);
+      if (isOpen()) {
+        throw new IllegalStateException("Connection already open");
+      }
+      providerConnection = providerConnectionFactory.create();
+      if (config.getConnectionInitializer() != null) {
+        return config.getConnectionInitializer().initialize(this);
+      } else {
+        return new Response<Void>(null, null);
+      }
     }
 
 
     /**
-     * This will establish a connection if one does not already exist by binding
+     * This will establish a connection if one does not already exist and bind
      * to the LDAP using the supplied bind request. This connection should be
      * closed using {@link #close()}.
      *
@@ -364,12 +359,22 @@ public class DefaultConnectionFactory implements ConnectionFactory
     public synchronized Response<Void> reopen()
       throws LdapException
     {
-      final BindRequest request = new BindRequest();
-      request.setDn(config.getBindDn());
-      request.setCredential(config.getBindCredential());
-      request.setSaslConfig(config.getBindSaslConfig());
-      request.setControls(config.getBindControls());
-      return reopen(request);
+      try {
+        if (providerConnection != null) {
+          providerConnection.close();
+        }
+      } catch (LdapException e) {
+        logger.warn("Error closing connection with the LDAP", e);
+      } finally {
+        providerConnection = null;
+      }
+
+      providerConnection = providerConnectionFactory.create();
+      if (config.getConnectionInitializer() != null) {
+        return config.getConnectionInitializer().initialize(this);
+      } else {
+        return new Response<Void>(null, null);
+      }
     }
 
 
