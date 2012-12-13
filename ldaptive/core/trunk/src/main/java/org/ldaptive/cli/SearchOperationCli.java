@@ -27,6 +27,7 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.io.Dsmlv1Writer;
 import org.ldaptive.io.LdifWriter;
 import org.ldaptive.io.SearchResultWriter;
+import org.ldaptive.props.BindConnectionInitializerPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.ldaptive.props.PropertySource.PropertyDomain;
 import org.ldaptive.props.SearchRequestPropertySource;
@@ -75,6 +76,9 @@ public class SearchOperationCli extends AbstractCli
       options.addOption(new Option(s, true, desc.get(s)));
     }
     for (String s : SslConfigPropertySource.getProperties()) {
+      options.addOption(new Option(s, true, desc.get(s)));
+    }
+    for (String s : BindConnectionInitializerPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
     for (String s : SearchRequestPropertySource.getProperties()) {

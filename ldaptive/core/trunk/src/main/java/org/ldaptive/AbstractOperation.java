@@ -42,8 +42,7 @@ public abstract class AbstractOperation<Q extends Request, S>
   private final Connection connection;
 
   /** Handler to process operation exceptions. */
-  private OperationExceptionHandler<Q, S> operationExceptionHandler =
-    new ReopenOperationExceptionHandler();
+  private OperationExceptionHandler<Q, S> operationExceptionHandler;
 
   /** Handlers to process operation responses. */
   private OperationResponseHandler<Q, S>[] operationResponseHandlers;

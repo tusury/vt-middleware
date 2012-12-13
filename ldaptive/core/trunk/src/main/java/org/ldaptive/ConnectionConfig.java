@@ -13,9 +13,6 @@
 */
 package org.ldaptive;
 
-import java.util.Arrays;
-import org.ldaptive.control.RequestControl;
-import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.SslConfig;
 
 /**
@@ -36,18 +33,6 @@ public class ConnectionConfig extends AbstractConfig
   /** Amount of time in milliseconds to wait for responses. */
   private long responseTimeout = -1;
 
-  /** DN to bind as before performing operations. */
-  private String bindDn;
-
-  /** Credential for the bind DN. */
-  private Credential bindCredential;
-
-  /** Configuration for bind SASL authentication. */
-  private SaslConfig bindSaslConfig;
-
-  /** Bind controls. */
-  private RequestControl[] bindControls;
-
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
 
@@ -57,13 +42,16 @@ public class ConnectionConfig extends AbstractConfig
   /** Connect to LDAP using startTLS. */
   private boolean useStartTLS;
 
+  /** Connection initializer to execute on {@link Connection#open()}. */
+  private ConnectionInitializer connectionInitializer;
+
 
   /** Default constructor. */
   public ConnectionConfig() {}
 
 
   /**
-   * Creates a new ldap config.
+   * Creates a new connection config.
    *
    * @param  url  to connect to
    */
@@ -150,103 +138,6 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the bind DN.
-   *
-   * @return  DN to bind as
-   */
-  public String getBindDn()
-  {
-    return bindDn;
-  }
-
-
-  /**
-   * Sets the bind DN to authenticate as before performing operations.
-   *
-   * @param  dn  to bind as
-   */
-  public void setBindDn(final String dn)
-  {
-    checkImmutable();
-    checkStringInput(dn, true);
-    logger.trace("setting bindDn: {}", dn);
-    bindDn = dn;
-  }
-
-
-  /**
-   * Returns the credential used with the bind DN.
-   *
-   * @return  bind DN credential
-   */
-  public Credential getBindCredential()
-  {
-    return bindCredential;
-  }
-
-
-  /**
-   * Sets the credential of the bind DN.
-   *
-   * @param  credential  to use with bind DN
-   */
-  public void setBindCredential(final Credential credential)
-  {
-    checkImmutable();
-    logger.trace("setting bindCredential: <suppressed>");
-    bindCredential = credential;
-  }
-
-
-  /**
-   * Returns the bind sasl config.
-   *
-   * @return  sasl config
-   */
-  public SaslConfig getBindSaslConfig()
-  {
-    return bindSaslConfig;
-  }
-
-
-  /**
-   * Sets the bind sasl config.
-   *
-   * @param  config  sasl config
-   */
-  public void setBindSaslConfig(final SaslConfig config)
-  {
-    checkImmutable();
-    logger.trace("setting bindSaslConfig: {}", config);
-    bindSaslConfig = config;
-  }
-
-
-  /**
-   * Returns the bind controls.
-   *
-   * @return  controls
-   */
-  public RequestControl[] getBindControls()
-  {
-    return bindControls;
-  }
-
-
-  /**
-   * Sets the bind controls.
-   *
-   * @param  c  controls to set
-   */
-  public void setBindControls(final RequestControl... c)
-  {
-    checkImmutable();
-    logger.trace("setting bindControls: {}", Arrays.toString(c));
-    bindControls = c;
-  }
-
-
-  /**
    * Returns the ssl config.
    *
    * @return  ssl config
@@ -318,6 +209,52 @@ public class ConnectionConfig extends AbstractConfig
   }
 
 
+  /**
+   * Returns the connection initializer.
+   *
+   * @return  connection initializer
+   */
+  public ConnectionInitializer getConnectionInitializer()
+  {
+    return connectionInitializer;
+  }
+
+
+  /**
+   * Sets the connection initializer.
+   *
+   * @param  initializer  connection initializer
+   */
+  public void setConnectionInitializer(final ConnectionInitializer initializer)
+  {
+    checkImmutable();
+    logger.trace("setting connectionInitializer: {}", initializer);
+    connectionInitializer = initializer;
+  }
+
+
+  /**
+   * Returns a connection config initialized with the supplied config.
+   *
+   * @param  config  connection config to read properties from
+   *
+   * @return  connection config
+   */
+  public static ConnectionConfig newConnectionConfig(
+    final ConnectionConfig config)
+  {
+    final ConnectionConfig cc = new ConnectionConfig();
+    cc.setLdapUrl(config.getLdapUrl());
+    cc.setConnectTimeout(config.getConnectTimeout());
+    cc.setResponseTimeout(config.getResponseTimeout());
+    cc.setSslConfig(config.getSslConfig());
+    cc.setUseSSL(config.getUseSSL());
+    cc.setUseStartTLS(config.getUseStartTLS());
+    cc.setConnectionInitializer(config.getConnectionInitializer());
+    return cc;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -325,18 +262,15 @@ public class ConnectionConfig extends AbstractConfig
     return
       String.format(
         "[%s@%d::ldapUrl=%s, connectTimeout=%s, responseTimeout=%s, " +
-        "bindDn=%s, bindSaslConfig=%s, bindControls=%s, sslConfig=%s, " +
-        "useSSL=%s, useStartTLS=%s]",
+        "sslConfig=%s, useSSL=%s, useStartTLS=%s, connectionInitializer=%s]",
         getClass().getName(),
         hashCode(),
         ldapUrl,
         connectTimeout,
         responseTimeout,
-        bindDn,
-        bindSaslConfig,
-        Arrays.toString(bindControls),
         sslConfig,
         useSSL,
-        useStartTLS);
+        useStartTLS,
+        connectionInitializer);
   }
 }

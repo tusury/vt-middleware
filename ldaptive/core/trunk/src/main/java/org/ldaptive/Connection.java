@@ -38,7 +38,8 @@ public interface Connection
    * This will establish a connection to the LDAP. This connection should be
    * closed using {@link #close()}.
    *
-   * @return  response associated with the bind operation
+   * @return  response associated with the {@link ConnectionInitializer} or an
+   * empty response if no connection initializer was configured
    *
    * @throws  IllegalStateException  if the connection is already open
    * @throws  LdapException  if the LDAP cannot be reached
@@ -89,7 +90,8 @@ public interface Connection
    * This will close an existing connection to the LDAP and establish a new
    * connection to the LDAP.
    *
-   * @return  response associated with the bind operation
+   * @return  response associated with the {@link ConnectionInitializer} or an
+   * empty response if no connection initializer was configured
    *
    * @throws  LdapException  if the LDAP cannot be reached
    */

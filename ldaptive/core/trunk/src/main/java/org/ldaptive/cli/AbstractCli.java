@@ -27,7 +27,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionFactory;
+import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.props.DefaultConnectionFactoryPropertySource;
@@ -117,14 +119,17 @@ public abstract class AbstractCli
         factory,
         getPropertiesFromOptions(PropertyDomain.LDAP.value(), line));
     cfSource.initialize();
-    if (
-      factory.getConnectionConfig().getBindDn() != null &&
-        factory.getConnectionConfig().getBindCredential() == null) {
-      // prompt the user to enter a password
-      final char[] pass = System.console().readPassword(
-        "[Enter password for %s]: ",
-        factory.getConnectionConfig().getBindDn());
-      factory.getConnectionConfig().setBindCredential(new Credential(pass));
+
+    final ConnectionInitializer ci =
+      factory.getConnectionConfig().getConnectionInitializer();
+    if (ci instanceof BindConnectionInitializer) {
+      final BindConnectionInitializer bci = (BindConnectionInitializer) ci;
+      if (bci.getBindDn() != null && bci.getBindCredential() == null) {
+        // prompt the user to enter a password
+        final char[] pass = System.console().readPassword(
+          "[Enter password for %s]: ", bci.getBindDn());
+        bci.setBindCredential(new Credential(pass));
+      }
     }
     return factory;
   }

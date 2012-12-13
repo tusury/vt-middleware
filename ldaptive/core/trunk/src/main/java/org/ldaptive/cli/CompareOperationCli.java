@@ -23,6 +23,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.props.BindConnectionInitializerPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.ldaptive.props.SslConfigPropertySource;
 import org.ldaptive.ssl.SslConfig;
@@ -75,6 +76,9 @@ public class CompareOperationCli extends AbstractCli
       options.addOption(new Option(s, true, desc.get(s)));
     }
     for (String s : SslConfigPropertySource.getProperties()) {
+      options.addOption(new Option(s, true, desc.get(s)));
+    }
+    for (String s : BindConnectionInitializerPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
     super.initOptions();

@@ -13,10 +13,7 @@
 */
 package org.ldaptive.props;
 
-import org.ldaptive.Credential;
-import org.ldaptive.control.RequestControl;
-import org.ldaptive.provider.Provider;
-import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.ConnectionInitializer;
 
 /**
  * Handles properties for {@link org.ldaptive.ConnectionConfig}.
@@ -45,31 +42,9 @@ public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
   {
     Object newValue = value;
     if (type != String.class) {
-      if (Provider.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(Provider.class, value);
-      } else if (SaslConfig.class.isAssignableFrom(type)) {
-        if ("null".equals(value)) {
-          newValue = null;
-        } else {
-          if (PropertyValueParser.isParamsOnlyConfig(value)) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              value,
-              "org.ldaptive.sasl.SaslConfig");
-            newValue = configParser.initializeType();
-          } else if (PropertyValueParser.isConfig(value)) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              value);
-            newValue = configParser.initializeType();
-          } else {
-            newValue = instantiateType(SaslConfig.class, value);
-          }
-        }
-      } else if (RequestControl[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          RequestControl.class,
-          value);
-      } else if (Credential.class.isAssignableFrom(type)) {
-        newValue = new Credential(value);
+      if (ConnectionInitializer.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(
+          ConnectionInitializer.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }
