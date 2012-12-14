@@ -13,6 +13,9 @@
 */
 package org.ldaptive.extended;
 
+import org.ldaptive.ad.extended.FastBindRequest;
+import org.ldaptive.ad.extended.FastBindResponse;
+
 /**
  * Utility class for creating extended responses.
  *
@@ -54,6 +57,8 @@ public final class ExtendedResponseFactory
       }
     } else if (CancelRequest.OID.equals(requestOID)) {
       res = new CancelResponse();
+    } else if (FastBindRequest.OID.equals(requestOID)) {
+      res = new FastBindResponse();
     } else {
       throw new IllegalArgumentException("Unknown OID: " + responseOID);
     }
