@@ -71,14 +71,19 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
     class="org.ldaptive.ConnectionConfig"
     p:ldapUrl="${ldapTestHost}"
     p:useStartTLS="true"
-    p:bindDn="${ldapBindDn}"
-    p:bindCredential="${ldapBindCredential}"
     p:sslConfig-ref="sslConfig"
+    p:connectionInitializer-ref="bindConnectionInitializer"
   />
 
   <bean id="sslConfig"
     class="org.ldaptive.ssl.SslConfig"
     p:credentialConfig-ref="credentialConfig"
+  />
+
+  <bean id="bindConnectionInitializer"
+    class="org.ldaptive.BindConnectionInitializer"
+    p:bindDn="${ldapBindDn}"
+    p:bindCredential="${ldapBindCredential}"
   />
 
   <bean id="credentialConfig"
