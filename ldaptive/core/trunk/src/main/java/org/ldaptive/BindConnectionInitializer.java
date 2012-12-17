@@ -165,6 +165,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
     request.setSaslConfig(bindSaslConfig);
     request.setControls(bindControls);
     final BindOperation op = new BindOperation(c);
+    op.setOperationExceptionHandler(null);
     return op.execute(request);
   }
 
