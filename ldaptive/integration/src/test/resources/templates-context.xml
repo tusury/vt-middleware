@@ -32,10 +32,14 @@
           <bean class="org.ldaptive.DefaultConnectionFactory">
             <constructor-arg index="0">
               <bean class="org.ldaptive.ConnectionConfig"
-                    p:ldapUrl="${ldapTestHost}"
-                    p:bindDn="${ldapBindDn}"
-                    p:bindCredential="${ldapBindCredential}"
-              />
+                    p:ldapUrl="${ldapTestHost}">
+                <property name="connectionInitializer">
+                  <bean class="org.ldaptive.BindConnectionInitializer"
+                        p:bindDn="${ldapBindDn}"
+                        p:bindCredential="${ldapBindCredential}"
+                  />
+                </property>
+              </bean>
             </constructor-arg>
           </bean>
         </constructor-arg>

@@ -17,9 +17,12 @@ import java.net.Socket;
 import java.util.Arrays;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
+import org.ldaptive.CompareOperation;
+import org.ldaptive.CompareRequest;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.Provider;
 import org.testng.AssertJUnit;
@@ -175,6 +178,11 @@ public class TLSSocketFactoryTest
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
+      // some providers won't perform the handshake until an operation is
+      // executed
+      final CompareOperation op = new CompareOperation(conn);
+      op.execute(
+        new CompareRequest("", new LdapAttribute("objectClass", "top")));
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);

@@ -14,6 +14,7 @@
 package org.ldaptive.extended;
 
 import org.ldaptive.AbstractTest;
+import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Connection;
 import org.ldaptive.Response;
 import org.ldaptive.TestUtils;
@@ -42,8 +43,10 @@ public class WhoAmIOperationTest extends AbstractTest
       conn.open();
       final WhoAmIOperation whoami = new WhoAmIOperation(conn);
       final Response<String> res = whoami.execute(new WhoAmIRequest());
-      AssertJUnit.assertEquals(
-        "dn:" + conn.getConnectionConfig().getBindDn(), res.getResult());
+      final BindConnectionInitializer ci =
+        (BindConnectionInitializer)
+          conn.getConnectionConfig().getConnectionInitializer();
+      AssertJUnit.assertEquals("dn:" + ci.getBindDn(), res.getResult());
     } finally {
       conn.close();
     }

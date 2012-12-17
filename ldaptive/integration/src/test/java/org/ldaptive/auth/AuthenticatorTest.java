@@ -921,6 +921,7 @@ public class AuthenticatorTest extends AbstractTest
     final Authenticator auth = createTLSAuthenticator(true);
     auth.setAuthenticationResponseHandlers(
       new ActiveDirectoryAuthenticationResponseHandler());
+    auth.setResolveEntryOnFailure(true);
 
     // success, store the entry for modify operations
     // setting null return attributes uses the search entry resolver
@@ -958,8 +959,7 @@ public class AuthenticatorTest extends AbstractTest
     // bad password, leverage an existing connection factory for entry
     // resolution on a failed bind
     BindAuthenticationHandler ah =
-      (BindAuthenticationHandler)
-        singleTLSAuth.getAuthenticationHandler();
+      (BindAuthenticationHandler) singleTLSAuth.getAuthenticationHandler();
     auth.setEntryResolver(
       new SearchEntryResolver(ah.getConnectionFactory()));
     response = auth.authenticate(
