@@ -66,6 +66,7 @@ public class FastBindOperation extends AbstractOperation<FastBindRequest, Void>
       throws LdapException
     {
       final FastBindOperation op = new FastBindOperation(c);
+      op.setOperationExceptionHandler(null);
       return op.execute(new FastBindRequest());
     }
   }

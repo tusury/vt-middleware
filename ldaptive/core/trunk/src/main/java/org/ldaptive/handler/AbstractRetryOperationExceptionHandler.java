@@ -38,13 +38,13 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Number of times to retry reopening an ldap connection. */
+  /** Number of times to retry. */
   private int retry;
 
-  /** Amount of time in seconds to wait before reopen retries. */
+  /** Amount of time in seconds to wait before retries. */
   private long retryWait;
 
-  /** Factor to multiply reopen retry wait by. */
+  /** Factor to multiply retry wait by. */
   private int retryBackoff;
 
 
@@ -154,7 +154,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
    * @param  request  executed by the operation
    * @param  response  typically null
    *
-   * @throws  LdapException  if the reopen fails
+   * @throws  LdapException  if the retry fails
    */
   protected abstract void processInternal(
     final Connection conn,

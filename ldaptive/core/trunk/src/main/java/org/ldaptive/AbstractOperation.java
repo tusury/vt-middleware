@@ -42,7 +42,8 @@ public abstract class AbstractOperation<Q extends Request, S>
   private final Connection connection;
 
   /** Handler to process operation exceptions. */
-  private OperationExceptionHandler<Q, S> operationExceptionHandler;
+  private OperationExceptionHandler<Q, S> operationExceptionHandler =
+    new ReopenOperationExceptionHandler();
 
   /** Handlers to process operation responses. */
   private OperationResponseHandler<Q, S>[] operationResponseHandlers;
@@ -143,7 +144,7 @@ public abstract class AbstractOperation<Q extends Request, S>
       if (operationExceptionHandler == null) {
         throw e;
       }
-      logger.warn(
+      logger.debug(
         "Error performing LDAP operation, invoking exception handler: {}",
         operationExceptionHandler,
         e);
@@ -273,6 +274,7 @@ public abstract class AbstractOperation<Q extends Request, S>
       final Response<S> response)
       throws LdapException
     {
+      logger.warn("Operation exception encountered, reopening connection");
       if (bindRequest != null) {
         conn.reopen(bindRequest);
       } else {
