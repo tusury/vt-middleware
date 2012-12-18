@@ -20,8 +20,8 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 
 /**
- * Executes an active directory fast bind operation.
- * See http://msdn.microsoft.com/en-us/library/cc223503(v=prot.20).aspx.
+ * Executes an active directory fast bind operation. See
+ * http://msdn.microsoft.com/en-us/library/cc223503(v=prot.20).aspx.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -52,9 +52,7 @@ public class FastBindOperation extends AbstractOperation<FastBindRequest, Void>
   }
 
 
-  /**
-   * Connection initializer that executes the {@link FastBindOperation}.
-   */
+  /** Connection initializer that executes the {@link FastBindOperation}. */
   public static class FastBindConnectionInitializer
     implements ConnectionInitializer
   {

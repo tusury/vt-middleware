@@ -51,8 +51,6 @@ public interface ServletSearchExecutor
     throws LdapException, IOException;
 
 
-  /**
-   * Closes any resources associated with this servlet search executor.
-   */
+  /** Closes any resources associated with this servlet search executor. */
   void close();
 }

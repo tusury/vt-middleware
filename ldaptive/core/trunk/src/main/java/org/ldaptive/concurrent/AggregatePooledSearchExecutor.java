@@ -39,8 +39,8 @@ import org.ldaptive.pool.PooledConnectionFactory;
 /**
  * Executes a list of search filters in parallel over a list of connection
  * factories, each search is performed on a separate connection in the pool. If
- * you need to execute all searches on the same connection see
- * {@link AggregateSearchExecutor}. A cached thread pool is used by default.
+ * you need to execute all searches on the same connection see {@link
+ * AggregateSearchExecutor}. A cached thread pool is used by default.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -95,11 +95,13 @@ public class AggregatePooledSearchExecutor
         if (handlers != null) {
           sr.setSearchEntryHandlers(handlers);
         }
+
         final Connection conn = factory.getConnection();
         final SearchOperation op = createSearchOperation(conn);
         futures.add(searches.submit(createCallable(conn, op, sr)));
       }
     }
+
     final List<Response<SearchResult>> responses =
       new ArrayList<Response<SearchResult>>(factories.length * filters.length);
     for (Future<Response<SearchResult>> future : futures) {
@@ -128,25 +130,24 @@ public class AggregatePooledSearchExecutor
    *
    * @return  callable for the supplied operation and request
    */
-  protected static <Q extends Request, S> Callable<Response<S>>
-  createCallable(
+  protected static <Q extends Request, S> Callable<Response<S>> createCallable(
     final Connection conn,
     final Operation<Q, S> operation,
     final Q request)
   {
     return
       new Callable<Response<S>>() {
-        @Override
-        public Response<S> call()
-          throws LdapException
-        {
-          try {
-            conn.open();
-            return operation.execute(request);
-          } finally {
-            conn.close();
-          }
+      @Override
+      public Response<S> call()
+        throws LdapException
+      {
+        try {
+          conn.open();
+          return operation.execute(request);
+        } finally {
+          conn.close();
         }
-      };
+      }
+    };
   }
 }

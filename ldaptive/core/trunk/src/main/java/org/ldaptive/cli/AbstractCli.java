@@ -127,7 +127,8 @@ public abstract class AbstractCli
       if (bci.getBindDn() != null && bci.getBindCredential() == null) {
         // prompt the user to enter a password
         final char[] pass = System.console().readPassword(
-          "[Enter password for %s]: ", bci.getBindDn());
+          "[Enter password for %s]: ",
+          bci.getBindDn());
         bci.setBindCredential(new Credential(pass));
       }
     }

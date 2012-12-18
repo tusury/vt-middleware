@@ -149,7 +149,9 @@ public final class ConnectionConfigPropertySource
     } else {
       final SimplePropertySource<ConnectionInitializer> sPropSource =
         new SimplePropertySource<ConnectionInitializer>(
-          ci, propertiesDomain, properties);
+          ci,
+          propertiesDomain,
+          properties);
       sPropSource.initialize();
     }
   }

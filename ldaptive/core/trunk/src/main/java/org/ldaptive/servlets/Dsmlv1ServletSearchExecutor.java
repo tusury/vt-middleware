@@ -21,8 +21,8 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.io.Dsmlv1Writer;
 
 /**
- * Writes search results as DSML version 1. See
- * {@link AbstractServletSearchExecutor}.
+ * Writes search results as DSML version 1. See {@link
+ * AbstractServletSearchExecutor}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -39,6 +39,7 @@ public class Dsmlv1ServletSearchExecutor extends AbstractServletSearchExecutor
     throws IOException
   {
     response.setContentType("text/xml");
+
     final Dsmlv1Writer writer = new Dsmlv1Writer(
       new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
     writer.write(result);
