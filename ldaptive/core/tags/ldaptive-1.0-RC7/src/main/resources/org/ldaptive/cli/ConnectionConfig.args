@@ -1,0 +1,13 @@
+bindControls:fully qualified class name(s) that implements org.ldaptive.control.Control
+bindCredential:password for the bindDn
+bindDn:fully qualified dn to bind as
+bindSaslConfig:SASL configuration data
+connectTimeout:milliseconds to wait for connections
+ldapUrl:URL that identifies the LDAP server to search
+operationRetry:number of times to retry LDAP operations on exception
+operationRetryBackoff:factor to multiply operationRetryWait by
+operationRetryWait:milliseconds to wait before retrying LDAP operations
+responseTimeout:milliseconds to wait for LDAP operation responses
+sslConfig:SSL configuration data
+useSSL:whether to use SSL (true|false)
+useStartTLS:whether to use startTLS (true|false)
