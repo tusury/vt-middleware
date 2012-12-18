@@ -353,6 +353,7 @@ public final class NamingExceptionUtils
       if (codes.length == 1) {
         return codes[0];
       }
+
       final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
       l.debug(
         "naming exception {} is ambiguous, maps to multiple result codes: {}",
@@ -379,13 +380,13 @@ public final class NamingExceptionUtils
       final Matcher matcher = PATTERN.matcher(message);
       if (matcher.find()) {
         try {
-          return
-            ResultCode.valueOf(Integer.parseInt(matcher.group(1)));
+          return ResultCode.valueOf(Integer.parseInt(matcher.group(1)));
         } catch (NumberFormatException e) {
           final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
           l.debug("Error parsing LDAP error code", e);
         }
       }
+
       final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
       l.debug("could not find result code in naming exception {}", message);
     }

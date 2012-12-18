@@ -33,8 +33,7 @@ import org.ldaptive.control.RequestControl;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ExtendedDnControl extends AbstractControl
-  implements RequestControl
+public class ExtendedDnControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -117,7 +116,10 @@ public class ExtendedDnControl extends AbstractControl
   {
     return
       LdapUtils.computeHashCode(
-        HASH_CODE_SEED, getOID(), getCriticality(), flag);
+        HASH_CODE_SEED,
+        getOID(),
+        getCriticality(),
+        flag);
   }
 
 

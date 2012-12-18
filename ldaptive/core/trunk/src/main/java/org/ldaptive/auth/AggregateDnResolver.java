@@ -138,22 +138,23 @@ public class AggregateDnResolver implements DnResolver
   public String resolve(final String user)
     throws LdapException
   {
-    final CompletionService<String> cs =
-      new ExecutorCompletionService<String>(service);
+    final CompletionService<String> cs = new ExecutorCompletionService<String>(
+      service);
     final List<String> results = new ArrayList<String>();
     for (final Map.Entry<String, DnResolver> entry : dnResolvers.entrySet()) {
-      cs.submit(new Callable<String>() {
-        @Override
-        public String call()
-          throws Exception
-        {
-          final String dn = entry.getValue().resolve(user);
-          if (dn != null && !dn.isEmpty()) {
-            return String.format("%s:%s", entry.getKey(), dn);
+      cs.submit(
+        new Callable<String>() {
+          @Override
+          public String call()
+            throws Exception
+          {
+            final String dn = entry.getValue().resolve(user);
+            if (dn != null && !dn.isEmpty()) {
+              return String.format("%s:%s", entry.getKey(), dn);
+            }
+            return null;
           }
-          return null;
-        }
-      });
+        });
     }
     for (DnResolver resolver : dnResolvers.values()) {
       try {

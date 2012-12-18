@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * <ul>
  *   <li>poolType - BLOCKING or SOFTLIMIT</li>
  *   <li>searchExecutorClass - fully qualified class name that implements
- *   ServletSearchExecutor</li>
+ *     ServletSearchExecutor</li>
  * </ul>
  *
  * <p>All other init params will set properties on:</p>
@@ -72,6 +72,7 @@ public final class SearchServlet extends HttpServlet
     throws ServletException
   {
     super.init(config);
+
     final String searchExecutorClass = config.getInitParameter(
       SEARCH_EXECUTOR_CLASS);
     if (searchExecutorClass != null) {

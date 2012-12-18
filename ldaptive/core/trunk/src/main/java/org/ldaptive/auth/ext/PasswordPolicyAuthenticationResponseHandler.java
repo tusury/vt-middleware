@@ -34,8 +34,8 @@ public class PasswordPolicyAuthenticationResponseHandler
   @Override
   public void process(final AuthenticationResponse response)
   {
-    final PasswordPolicyControl ppc =
-      (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+    final PasswordPolicyControl ppc = (PasswordPolicyControl)
+      response.getControl(PasswordPolicyControl.OID);
     if (ppc != null) {
       Calendar exp = null;
       if (ppc.getTimeBeforeExpiration() > 0) {

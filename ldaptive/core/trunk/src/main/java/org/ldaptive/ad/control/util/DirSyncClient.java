@@ -118,8 +118,8 @@ public class DirSyncClient
 
 
   /**
-   * Performs a search operation with the {@link DirSyncControl}. The
-   * supplied request is modified in the following way:
+   * Performs a search operation with the {@link DirSyncControl}. The supplied
+   * request is modified in the following way:
    *
    * <ul>
    *   <li>{@link SearchRequest#setControls(
@@ -292,10 +292,11 @@ public class DirSyncClient
    */
   private RequestControl[] createRequestControls(final byte[] cookie)
   {
-    return new RequestControl[] {
-      new DirSyncControl(dirSyncFlags, cookie, maxAttributeCount, true),
-      new ExtendedDnControl(extendedDnFlag),
-      new ShowDeletedControl(),
-    };
+    return
+      new RequestControl[] {
+        new DirSyncControl(dirSyncFlags, cookie, maxAttributeCount, true),
+        new ExtendedDnControl(extendedDnFlag),
+        new ShowDeletedControl(),
+      };
   }
 }

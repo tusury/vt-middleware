@@ -32,5 +32,6 @@ public interface ConnectionInitializer
    *
    * @throws  LdapException  if initialization fails
    */
-  Response<Void> initialize(Connection conn) throws LdapException;
+  Response<Void> initialize(Connection conn)
+    throws LdapException;
 }

@@ -350,15 +350,15 @@ public class DirSyncControl extends AbstractControl
     final DERParser parser = new DERParser();
     parser.registerHandler(FlagHandler.PATH, new FlagHandler(this));
     parser.registerHandler(
-      MaxAttrCountHandler.PATH, new MaxAttrCountHandler(this));
+      MaxAttrCountHandler.PATH,
+      new MaxAttrCountHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
   /** Parse handler implementation for the flag. */
-  private static class FlagHandler
-    extends AbstractParseHandler<DirSyncControl>
+  private static class FlagHandler extends AbstractParseHandler<DirSyncControl>
   {
 
     /** DER path to flag. */

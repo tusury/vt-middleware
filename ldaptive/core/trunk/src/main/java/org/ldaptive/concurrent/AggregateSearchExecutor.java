@@ -93,6 +93,7 @@ public class AggregateSearchExecutor
       }
       requests[i] = sr;
     }
+
     final List<Future<Collection<Response<SearchResult>>>> futures =
       new ArrayList<Future<Collection<Response<SearchResult>>>>(
         factories.length * filters.length);
@@ -104,6 +105,7 @@ public class AggregateSearchExecutor
         getExecutorService());
       futures.add(searches.submit(createCallable(conn, worker, requests)));
     }
+
     final List<Response<SearchResult>> responses =
       new ArrayList<Response<SearchResult>>(factories.length * filters.length);
     for (Future<Collection<Response<SearchResult>>> future : futures) {
@@ -140,17 +142,17 @@ public class AggregateSearchExecutor
   {
     return
       new Callable<Collection<Response<S>>>() {
-        @Override
-        public Collection<Response<S>> call()
-          throws LdapException
-        {
-          try {
-            conn.open();
-            return worker.executeToCompletion(requests);
-          } finally {
-            conn.close();
-          }
+      @Override
+      public Collection<Response<S>> call()
+        throws LdapException
+      {
+        try {
+          conn.open();
+          return worker.executeToCompletion(requests);
+        } finally {
+          conn.close();
         }
-      };
+      }
+    };
   }
 }

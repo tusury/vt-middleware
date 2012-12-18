@@ -52,6 +52,7 @@ public class AttributeValueServletSearchExecutor
         } else {
           response.setContentType("text/plain");
         }
+
         final OutputStream out = response.getOutputStream();
         out.write(a.getBinaryValue());
         out.flush();

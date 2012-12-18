@@ -216,9 +216,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   }
 
 
-  /**
-   * Default implementation for managing a connection to an LDAP.
-   */
+  /** Default implementation for managing a connection to an LDAP. */
   protected static class DefaultConnection implements Connection
   {
 

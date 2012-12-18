@@ -103,8 +103,8 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   {
     if (factory == null) {
       final SearchOperation op = createSearchOperation(conn);
-      return op.execute(
-        createSearchRequest(ac, getReturnAttributes())).getResult();
+      return
+        op.execute(createSearchRequest(ac, getReturnAttributes())).getResult();
     } else {
       Connection factoryConn = null;
       try {

@@ -164,6 +164,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
     request.setCredential(bindCredential);
     request.setSaslConfig(bindSaslConfig);
     request.setControls(bindControls);
+
     final BindOperation op = new BindOperation(c);
     op.setOperationExceptionHandler(null);
     return op.execute(request);
@@ -178,7 +179,8 @@ public class BindConnectionInitializer implements ConnectionInitializer
    */
   public boolean isEmpty()
   {
-    return bindDn == null && bindCredential == null && bindSaslConfig == null &&
+    return
+      bindDn == null && bindCredential == null && bindSaslConfig == null &&
       bindControls == null;
   }
 
