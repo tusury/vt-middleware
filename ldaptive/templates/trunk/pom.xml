@@ -6,8 +6,8 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-templates</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>LDAPTIVE Templates</name>
+  <version>1.0-RC7</version>
+  <name>LDAPTIVE TEMPLATES</name>
   <description>Provides templating functionality for aggregating LDAP searches</description>
   <url>http://www.ldaptive.org</url>
   <issueManagement>
@@ -72,12 +72,12 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-RC7</version>
     </dependency>
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-json</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-RC7</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
