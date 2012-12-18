@@ -1,0 +1,4 @@
+authenticationHandler:fully qualified class name that implements org.ldaptive.auth.AuthenticationHandler
+authenticationResponseHandlers:LDAP handlers for post processing responses
+dnResolver:fully qualified class name that implements org.ldaptive.auth.DnResolver
+entryResolver:fully qualified class name that implements org.ldaptive.auth.EntryResolver
