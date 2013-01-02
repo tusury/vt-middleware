@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -72,21 +72,24 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
    * @return  jndi startTLS connection factory
    */
   protected JLdapStartTLSConnectionFactory getJLdapStartTLSConnectionFactory(
-    final ConnectionConfig cc, final LDAPConstraints constraints)
+    final ConnectionConfig cc,
+    final LDAPConstraints constraints)
   {
-    return new JLdapStartTLSConnectionFactory(
-      cc.getLdapUrl(),
-      config,
-      constraints != null ? constraints : getDefaultLDAPConstraints(cc),
-      (int) cc.getResponseTimeout(),
-      config.getSslSocketFactory() != null ?
-        config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
+    return
+      new JLdapStartTLSConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        constraints != null ? constraints : getDefaultLDAPConstraints(cc),
+        (int) cc.getResponseTimeout(),
+        config.getSslSocketFactory() != null
+          ? config.getSslSocketFactory()
+          : getHostnameVerifierSocketFactory(cc));
   }
 
 
   /**
-   * Returns a jldap SSL connection factory using the properties found in
-   * the supplied connection config. If the supplied constraints is null, the
+   * Returns a jldap SSL connection factory using the properties found in the
+   * supplied connection config. If the supplied constraints is null, the
    * environment is retrieved from {@link
    * #getDefaultLDAPConstraints(ConnectionConfig)}.
    *
@@ -96,15 +99,18 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
    * @return  jndi SSL connection factory
    */
   protected JLdapSSLConnectionFactory getJLdapSSLConnectionFactory(
-    final ConnectionConfig cc, final LDAPConstraints constraints)
+    final ConnectionConfig cc,
+    final LDAPConstraints constraints)
   {
-    return new JLdapSSLConnectionFactory(
-      cc.getLdapUrl(),
-      config,
-      constraints != null ? constraints : getDefaultLDAPConstraints(cc),
-      (int) cc.getResponseTimeout(),
-      config.getSslSocketFactory() != null ?
-        config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
+    return
+      new JLdapSSLConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        constraints != null ? constraints : getDefaultLDAPConstraints(cc),
+        (int) cc.getResponseTimeout(),
+        config.getSslSocketFactory() != null
+          ? config.getSslSocketFactory()
+          : getHostnameVerifierSocketFactory(cc));
   }
 
 
@@ -120,13 +126,15 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
    * @return  jndi connection factory
    */
   protected JLdapConnectionFactory getJLdapConnectionFactory(
-    final ConnectionConfig cc, final LDAPConstraints constraints)
+    final ConnectionConfig cc,
+    final LDAPConstraints constraints)
   {
-    return new JLdapConnectionFactory(
-      cc.getLdapUrl(),
-      config,
-      constraints != null ? constraints : getDefaultLDAPConstraints(cc),
-      (int) cc.getResponseTimeout());
+    return
+      new JLdapConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        constraints != null ? constraints : getDefaultLDAPConstraints(cc),
+        (int) cc.getResponseTimeout());
   }
 
 
@@ -143,8 +151,10 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     // JLdap does not do hostname verification by default
     // set a default hostname verifier
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-    return TLSSocketFactory.getHostnameVerifierFactory(
-      cc.getSslConfig(), ldapUrl.getEntriesAsString());
+    return
+      TLSSocketFactory.getHostnameVerifierFactory(
+        cc.getSslConfig(),
+        ldapUrl.getEntriesAsString());
   }
 
 
@@ -155,8 +165,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
    *
    * @return  ldap connection constraints
    */
-  protected LDAPConstraints getDefaultLDAPConstraints(
-    final ConnectionConfig cc)
+  protected LDAPConstraints getDefaultLDAPConstraints(final ConnectionConfig cc)
   {
     return new LDAPConstraints();
   }

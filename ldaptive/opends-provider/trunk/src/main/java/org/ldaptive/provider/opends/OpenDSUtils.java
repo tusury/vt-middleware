@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -36,8 +36,8 @@ import org.opends.sdk.ModificationType;
 import org.opends.sdk.SortKey;
 
 /**
- * Provides methods for converting between OpenDS specific objects and
- * ldaptive specific objects.
+ * Provides methods for converting between OpenDS specific objects and ldaptive
+ * specific objects.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -178,8 +178,8 @@ public class OpenDSUtils
 
 
   /**
-   * Returns an opends attribute that represents the values in the supplied
-   * ldap attribute.
+   * Returns an opends attribute that represents the values in the supplied ldap
+   * attribute.
    *
    * @param  la  ldap attribute
    *
@@ -190,10 +190,12 @@ public class OpenDSUtils
     Attribute attribute;
     if (la.isBinary()) {
       attribute = new LinkedAttribute(
-        la.getName(), (Object[]) fromBinaryValues(la.getBinaryValues()));
+        la.getName(),
+        (Object[]) fromBinaryValues(la.getBinaryValues()));
     } else {
       attribute = new LinkedAttribute(
-        la.getName(), (Object[]) fromStringValues(la.getStringValues()));
+        la.getName(),
+        (Object[]) fromStringValues(la.getStringValues()));
     }
     return attribute;
   }
@@ -282,7 +284,9 @@ public class OpenDSUtils
    * @return  search entry
    */
   public SearchEntry toSearchEntry(
-    final Entry e, final ResponseControl[] c, final int id)
+    final Entry e,
+    final ResponseControl[] c,
+    final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(e.getName().toString());
@@ -294,8 +298,7 @@ public class OpenDSUtils
 
 
   /**
-   * Returns opends modifications using the supplied attribute
-   * modifications.
+   * Returns opends modifications using the supplied attribute modifications.
    *
    * @param  am  attribute modifications
    *
@@ -309,10 +312,12 @@ public class OpenDSUtils
       final Attribute a = fromLdapAttribute(am[i].getAttribute());
       if (am[i].getAttribute().isBinary()) {
         mods[i] = new Modification(
-          getModificationType(am[i].getAttributeModificationType()), a);
+          getModificationType(am[i].getAttributeModificationType()),
+          a);
       } else {
         mods[i] = new Modification(
-          getModificationType(am[i].getAttributeModificationType()), a);
+          getModificationType(am[i].getAttributeModificationType()),
+          a);
       }
     }
     return mods;
@@ -326,8 +331,7 @@ public class OpenDSUtils
    *
    * @return  opends sort keys
    */
-  public static SortKey[] fromSortKey(
-    final org.ldaptive.control.SortKey[] sk)
+  public static SortKey[] fromSortKey(final org.ldaptive.control.SortKey[] sk)
   {
     SortKey[] keys = null;
     if (sk != null) {

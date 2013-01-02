@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -88,7 +88,8 @@ public class NetscapeConnection implements ProviderConnection
    * @param  pc  provider configuration
    */
   public NetscapeConnection(
-    final LDAPConnection lc, final NetscapeProviderConfig pc)
+    final LDAPConnection lc,
+    final NetscapeProviderConfig pc)
   {
     connection = lc;
     config = pc;
@@ -304,7 +305,9 @@ public class NetscapeConnection implements ProviderConnection
         getLDAPConstraints(request));
       final LDAPResponse r = listener.getResponse();
       response = createResponse(
-        request, ResultCode.COMPARE_TRUE.value() == r.getResultCode(), r);
+        request,
+        ResultCode.COMPARE_TRUE.value() == r.getResultCode(),
+        r);
     } catch (LDAPException e) {
       processLDAPException(e);
     }
@@ -378,8 +381,7 @@ public class NetscapeConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public SearchIterator search(
-    final org.ldaptive.SearchRequest request)
+  public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
   {
     final NetscapeSearchIterator i = new NetscapeSearchIterator(request);
@@ -396,7 +398,8 @@ public class NetscapeConnection implements ProviderConnection
     throws LdapException
   {
     final NetscapeAsyncSearchListener l = new NetscapeAsyncSearchListener(
-      request, listener);
+      request,
+      listener);
     l.initialize();
   }
 
@@ -458,7 +461,8 @@ public class NetscapeConnection implements ProviderConnection
    * @param  cons  to configure
    */
   protected void initializeLDAPConstraints(
-    final Request request, final LDAPConstraints cons)
+    final Request request,
+    final LDAPConstraints cons)
   {
     cons.setTimeLimit(timeLimit);
     cons.setServerControls(
@@ -469,16 +473,19 @@ public class NetscapeConnection implements ProviderConnection
       if (connection.getConstraints().getRebindProc() == null) {
         // configure a default rebind that uses the existing credentials
         if (connection.getAuthenticationDN() != null) {
-          cons.setRebindProc(new LDAPRebind() {
-            @Override
-            public LDAPRebindAuth getRebindAuthentication(
-              final String host, final int port)
-            {
-              return new LDAPRebindAuth(
-                connection.getAuthenticationDN(),
-                connection.getAuthenticationPassword());
-            }
-          });
+          cons.setRebindProc(
+            new LDAPRebind() {
+              @Override
+              public LDAPRebindAuth getRebindAuthentication(
+                final String host,
+                final int port)
+              {
+                return
+                  new LDAPRebindAuth(
+                    connection.getAuthenticationDN(),
+                    connection.getAuthenticationPassword());
+              }
+            });
         }
       }
     }
@@ -494,13 +501,15 @@ public class NetscapeConnection implements ProviderConnection
    * @throws  LdapException  wrapping the ldap exception
    */
   protected void throwOperationException(
-    final Request request, final LDAPResponse ldapResponse)
+    final Request request,
+    final LDAPResponse ldapResponse)
     throws LdapException
   {
     ProviderUtils.throwOperationException(
       config.getOperationExceptionResultCodes(),
       String.format(
-        "Ldap returned result code: %s", ldapResponse.getResultCode()),
+        "Ldap returned result code: %s",
+        ldapResponse.getResultCode()),
       ldapResponse.getResultCode(),
       ldapResponse.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
@@ -525,15 +534,16 @@ public class NetscapeConnection implements ProviderConnection
     final T result,
     final LDAPResponse ldapResponse)
   {
-    return new Response<T>(
-      result,
-      ResultCode.valueOf(ldapResponse.getResultCode()),
-      ldapResponse.getErrorMessage(),
-      ldapResponse.getMatchedDN(),
-      config.getControlProcessor().processResponseControls(
-        ldapResponse.getControls()),
-      ldapResponse.getReferrals(),
-      ldapResponse.getMessageID());
+    return
+      new Response<T>(
+        result,
+        ResultCode.valueOf(ldapResponse.getResultCode()),
+        ldapResponse.getErrorMessage(),
+        ldapResponse.getMatchedDN(),
+        config.getControlProcessor().processResponseControls(
+          ldapResponse.getControls()),
+        ldapResponse.getReferrals(),
+        ldapResponse.getMessageID());
   }
 
 
@@ -551,8 +561,8 @@ public class NetscapeConnection implements ProviderConnection
     ProviderUtils.throwOperationException(
       config.getOperationExceptionResultCodes(),
       e,
-      e instanceof LDAPReferralException ?
-        ResultCode.REFERRAL.value() : e.getLDAPResultCode(),
+      e instanceof LDAPReferralException ? ResultCode.REFERRAL.value()
+                                         : e.getLDAPResultCode(),
       e.getMatchedDN(),
       null,
       null,
@@ -560,11 +570,9 @@ public class NetscapeConnection implements ProviderConnection
   }
 
 
-  /**
-   * Search iterator for netscape search results.
-   */
-  protected class NetscapeSearchIterator
-    extends AbstractNetscapeSearch implements SearchIterator
+  /** Search iterator for netscape search results. */
+  protected class NetscapeSearchIterator extends AbstractNetscapeSearch
+    implements SearchIterator
   {
 
     /** Response data. */
@@ -621,12 +629,19 @@ public class NetscapeConnection implements ProviderConnection
         }
       } catch (LDAPException e) {
         final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
+          config.getSearchIgnoreResultCodes(),
+          e);
         if (rc == null) {
           processLDAPException(e);
         }
         response = new Response<Void>(
-          null, rc, e.getLDAPErrorMessage(), e.getMatchedDN(), null, null, -1);
+          null,
+          rc,
+          e.getLDAPErrorMessage(),
+          e.getMatchedDN(),
+          null,
+          null,
+          -1);
       }
       return more;
     }
@@ -666,9 +681,7 @@ public class NetscapeConnection implements ProviderConnection
   }
 
 
-  /**
-   * Async search listener for Netscape search results.
-   */
+  /** Async search listener for Netscape search results. */
   protected class NetscapeAsyncSearchListener extends AbstractNetscapeSearch
   {
 
@@ -737,17 +750,18 @@ public class NetscapeConnection implements ProviderConnection
           throw new IllegalStateException("Unknown message: " + message);
         }
       }
+
       final Response<Void> response = createResponse(
-        request, null, i.getResponse());
+        request,
+        null,
+        i.getResponse());
       listener.searchResponseReceived(response);
       return null;
     }
   }
 
 
-  /**
-   * Common search functionality for netscape iterators and listeners.
-   */
+  /** Common search functionality for netscape iterators and listeners. */
   protected abstract class AbstractNetscapeSearch
   {
 
@@ -794,8 +808,7 @@ public class NetscapeConnection implements ProviderConnection
         conn.search(
           sr.getBaseDn(),
           getSearchScope(sr.getSearchScope()),
-          sr.getSearchFilter() != null ?
-            sr.getSearchFilter().format() : null,
+          sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
           retAttrs,
           sr.getTypesOnly(),
           (LDAPSearchListener) null,
@@ -905,17 +918,20 @@ public class NetscapeConnection implements ProviderConnection
      *
      * @return  search item
      */
-    protected SearchItem processLDAPSearchResult(
-      final LDAPSearchResult res)
+    protected SearchItem processLDAPSearchResult(final LDAPSearchResult res)
     {
       logger.trace("reading search result: {}", res);
+
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
           res.getControls());
       }
+
       final SearchEntry se = util.toSearchEntry(
-        res.getEntry(), respControls, res.getMessageID());
+        res.getEntry(),
+        respControls,
+        res.getMessageID());
       return new SearchItem(se);
     }
 
@@ -932,21 +948,23 @@ public class NetscapeConnection implements ProviderConnection
       final LDAPSearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
+
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
           ref.getControls());
       }
+
       final SearchReference sr = new SearchReference(
-        ref.getMessageID(), respControls, ref.getUrls());
+        ref.getMessageID(),
+        respControls,
+        ref.getUrls());
       return new SearchItem(sr);
     }
   }
 
 
-  /**
-   * Iterates over an ldap search listener.
-   */
+  /** Iterates over an ldap search listener. */
   protected static class SearchResultIterator
   {
 
@@ -984,6 +1002,7 @@ public class NetscapeConnection implements ProviderConnection
       if (response != null) {
         return false;
       }
+
       boolean more = false;
       message = listener.getResponse();
       if (message != null) {

@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-json</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-RC7</version>
+  <version>1.0-SNAPSHOT</version>
   <name>LDAPTIVE JSON</name>
   <description>Provides JSON reader and writer</description>
   <url>http://www.ldaptive.org</url>
@@ -125,7 +125,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.8.1</version>
         <configuration>
-          <bottom><![CDATA[<i>Copyright &#169; 2003-2012 Virginia Tech. All Rights Reserved.</i>]]></bottom>
+          <bottom><![CDATA[<i>Copyright &#169; 2003-2013 Virginia Tech. All Rights Reserved.</i>]]></bottom>
         </configuration>
         <executions>
           <execution>

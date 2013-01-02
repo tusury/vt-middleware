@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -70,13 +70,16 @@ public abstract class AbstractServletSearchTemplatesExecutor
       springContextPath);
     setSearchExecutor(context.getBean(AggregatePooledSearchExecutor.class));
     logger.debug("searchExecutor = {}", getSearchExecutor());
+
     final Map<String, PooledConnectionFactory> factories =
       context.getBeansOfType(PooledConnectionFactory.class);
     setConnectionFactories(
       factories.values().toArray(
         new PooledConnectionFactory[factories.size()]));
     logger.debug(
-      "connectionFactories = {}", Arrays.toString(getConnectionFactories()));
+      "connectionFactories = {}",
+      Arrays.toString(getConnectionFactories()));
+
     final Map<String, SearchTemplates> templates = context.getBeansOfType(
       SearchTemplates.class);
     setSearchTemplates(
@@ -117,6 +120,7 @@ public abstract class AbstractServletSearchTemplatesExecutor
           request.getParameter("to-result"));
       }
     }
+
     boolean doSearch = true;
     final String queryString = request.getParameter("query");
     if (queryString == null || queryString.length() == 0) {
@@ -137,6 +141,7 @@ public abstract class AbstractServletSearchTemplatesExecutor
       query.setFromResult(fromResult);
       query.setToResult(toResult);
       logger.info("Performing query {}", query);
+
       final SearchResult result = search(query);
       writeResponse(result, response);
     }

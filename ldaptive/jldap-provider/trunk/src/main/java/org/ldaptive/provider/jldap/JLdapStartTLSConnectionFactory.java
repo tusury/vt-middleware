@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -82,7 +82,8 @@ public class JLdapStartTLSConnectionFactory
   /** {@inheritDoc} */
   @Override
   protected JLdapStartTLSConnection createJLdapConnection(
-    final LDAPConnection conn, final JLdapProviderConfig config)
+    final LDAPConnection conn,
+    final JLdapProviderConfig config)
   {
     return new JLdapStartTLSConnection(conn, config);
   }

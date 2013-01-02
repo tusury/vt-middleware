@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -28,8 +28,8 @@ import org.ldaptive.ssl.SSLContextInitializer;
 import org.opends.sdk.LDAPOptions;
 
 /**
- * OpenDS provider implementation. Provides connection factories for clear,
- * SSL, and TLS connections.
+ * OpenDS provider implementation. Provides connection factories for clear, SSL,
+ * and TLS connections.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -85,7 +85,8 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
         new HostnameVerifyingTrustManager(
-          new DefaultHostnameVerifier(), ldapUrl.getEntriesAsString()));
+          new DefaultHostnameVerifier(),
+          ldapUrl.getEntriesAsString()));
     }
     try {
       sslContext = contextInit.initSSLContext("TLS");
@@ -118,8 +119,7 @@ public class OpenDSProvider implements Provider<OpenDSProviderConfig>
     }
     if (cc.getSslConfig() != null &&
         cc.getSslConfig().getEnabledCipherSuites() != null) {
-      options.addEnabledCipherSuite(
-        cc.getSslConfig().getEnabledCipherSuites());
+      options.addEnabledCipherSuite(cc.getSslConfig().getEnabledCipherSuites());
     }
     if (cc.getSslConfig() != null &&
         cc.getSslConfig().getEnabledProtocols() != null) {

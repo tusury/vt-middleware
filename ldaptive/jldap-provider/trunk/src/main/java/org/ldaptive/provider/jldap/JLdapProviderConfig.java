@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -47,7 +47,8 @@ public class JLdapProviderConfig extends ProviderConfig
   public JLdapProviderConfig()
   {
     setOperationExceptionResultCodes(
-      ResultCode.LDAP_TIMEOUT, ResultCode.CONNECT_ERROR);
+      ResultCode.LDAP_TIMEOUT,
+      ResultCode.CONNECT_ERROR);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
@@ -60,7 +61,7 @@ public class JLdapProviderConfig extends ProviderConfig
   /**
    * Returns the connection constraints.
    *
-   * @return ldap connection constraints
+   * @return  ldap connection constraints
    */
   public LDAPConstraints getLDAPConstraints()
   {

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -83,7 +83,7 @@ public class SearchTemplatesExecutor
 
 
   /**
-   * Sets the search executor
+   * Sets the search executor.
    *
    * @param  executor  aggregate pooled search executor
    */
@@ -173,7 +173,8 @@ public class SearchTemplatesExecutor
             termCount);
         } else {
           logger.debug(
-            "No search module found for term count of {}", termCount);
+            "No search module found for term count of {}",
+            termCount);
         }
       } else {
         logger.debug("No terms found in query {}", query);
@@ -181,11 +182,12 @@ public class SearchTemplatesExecutor
     }
 
     if (templates != null) {
-      return search(
-        templates.format(query),
-        query.getReturnAttributes(),
-        query.getFromResult(),
-        query.getToResult());
+      return
+        search(
+          templates.format(query),
+          query.getReturnAttributes(),
+          query.getFromResult(),
+          query.getToResult());
     } else {
       return null;
     }
@@ -216,7 +218,9 @@ public class SearchTemplatesExecutor
 
     // perform parallel searches
     final Collection<Response<SearchResult>> responses = searchExecutor.search(
-      connectionFactories, filters, returnAttrs);
+      connectionFactories,
+      filters,
+      returnAttrs);
 
     // iterate over all results and store each entry
     final SearchResult result = new SearchResult(SortBehavior.ORDERED);
@@ -243,9 +247,7 @@ public class SearchTemplatesExecutor
   }
 
 
-  /**
-   * Closes any resources associated with this object.
-   */
+  /** Closes any resources associated with this object. */
   public void close()
   {
     for (PooledConnectionFactory factory : connectionFactories) {

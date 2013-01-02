@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-unboundid</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-RC7</version>
+  <version>1.0-SNAPSHOT</version>
   <name>LDAPTIVE UNBOUNDID PROVIDER</name>
   <description>ldaptive unboundid provider</description>
   <url>http://www.ldaptive.org</url>
@@ -160,7 +160,7 @@
           <links>
             <link>http://download.oracle.com/javase/6/docs/api</link>
           </links>
-          <bottom><![CDATA[<i>Copyright &#169; 2003-2012 Virginia Tech. All Rights Reserved.</i>]]></bottom>
+          <bottom><![CDATA[<i>Copyright &#169; 2003-2013 Virginia Tech. All Rights Reserved.</i>]]></bottom>
         </configuration>
         <executions>
           <execution>

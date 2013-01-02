@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -172,9 +172,7 @@ public class SearchTemplates
   }
 
 
-  /**
-   * Converts query terms into search filter parameters.
-   */
+  /** Converts query terms into search filter parameters. */
   public interface TermParser
   {
 
@@ -192,12 +190,13 @@ public class SearchTemplates
 
   /**
    * Adds each term as a filter parameter using the name 'termX' where X is the
-   * index of the term. For the argument: {'fname', 'lname'}, produces:
+   * index of the term. For the argument: {'fname', 'lname' }, produces:
+   *
    * <pre>
-   * {
-   *   'term1' => 'fname',
-   *   'term2' => 'lname',
-   * }
+     {
+       'term1' => 'fname',
+       'term2' => 'lname',
+     }
    * </pre>
    */
   public class DefaultTermParser implements TermParser
@@ -220,13 +219,14 @@ public class SearchTemplates
 
   /**
    * Adds the first letter of each term as a filter parameter using the name
-   * 'initialX' where X is the index of the term. For the argument:
-   * {'fname', 'lname'}, produces:
+   * 'initialX' where X is the index of the term. For the argument: {'fname',
+   * 'lname' }, produces:
+   *
    * <pre>
-   * {
-   *   'initial1' => 'f',
-   *   'initial2' => 'l',
-   * }
+     {
+       'initial1' => 'f',
+       'initial2' => 'l',
+     }
    * </pre>
    */
   public class InitialTermParser implements TermParser
