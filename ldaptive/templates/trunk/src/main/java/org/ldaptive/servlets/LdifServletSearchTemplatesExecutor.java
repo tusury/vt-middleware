@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -21,8 +21,8 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.io.LdifWriter;
 
 /**
- * Writes search results in LDIF format. See
- * {@link AbstractServletSearchTemplatesExecutor}.
+ * Writes search results in LDIF format. See {@link
+ * AbstractServletSearchTemplatesExecutor}.
  *
  * @author  Middleware Services
  * @version  $Revision $ $Date$
@@ -40,6 +40,7 @@ public class LdifServletSearchTemplatesExecutor
     throws IOException
   {
     response.setContentType("text/plain");
+
     final LdifWriter writer = new LdifWriter(
       new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
     writer.write(result);

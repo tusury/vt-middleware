@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -52,17 +52,19 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
     if (constraints == null) {
       constraints = getDefaultLDAPConstraints(cc);
     }
+
     LDAPSocketFactory factory = config.getLDAPSocketFactory();
     if (cc.getUseSSL() && factory == null) {
       factory = getHostnameVerifierSocketFactory(cc);
     }
-    return new NetscapeConnectionFactory(
-      cc.getLdapUrl(),
-      config,
-      constraints,
-      factory,
-      (int) cc.getConnectTimeout(),
-      (int) cc.getResponseTimeout());
+    return
+      new NetscapeConnectionFactory(
+        cc.getLdapUrl(),
+        config,
+        constraints,
+        factory,
+        (int) cc.getConnectTimeout(),
+        (int) cc.getResponseTimeout());
   }
 
 
@@ -79,9 +81,11 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
     // Netscape does not do hostname verification by default
     // set a default hostname verifier
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-    return new NetscapeLDAPSocketFactory(
-      TLSSocketFactory.getHostnameVerifierFactory(
-        cc.getSslConfig(), ldapUrl.getEntriesAsString()));
+    return
+      new NetscapeLDAPSocketFactory(
+        TLSSocketFactory.getHostnameVerifierFactory(
+          cc.getSslConfig(),
+          ldapUrl.getEntriesAsString()));
   }
 
 
@@ -92,8 +96,7 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
    *
    * @return  ldap connection constraints
    */
-  protected LDAPConstraints getDefaultLDAPConstraints(
-    final ConnectionConfig cc)
+  protected LDAPConstraints getDefaultLDAPConstraints(final ConnectionConfig cc)
   {
     return new LDAPConstraints();
   }

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -178,7 +178,9 @@ public class NetscapeUtils
    */
   @SuppressWarnings("unchecked")
   public SearchEntry toSearchEntry(
-    final LDAPEntry e, final ResponseControl[] c, final int id)
+    final LDAPEntry e,
+    final ResponseControl[] c,
+    final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(e.getDN() != null ? e.getDN() : "");

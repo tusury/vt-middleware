@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -92,7 +92,8 @@ public class JLdapConnection implements ProviderConnection
    * @param  pc  provider configuration
    */
   public JLdapConnection(
-    final LDAPConnection conn, final JLdapProviderConfig pc)
+    final LDAPConnection conn,
+    final JLdapProviderConfig pc)
   {
     connection = conn;
     config = pc;
@@ -298,7 +299,9 @@ public class JLdapConnection implements ProviderConnection
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(
-        request, lr.getResultCode() == ResultCode.COMPARE_TRUE.value(), lr);
+        request,
+        lr.getResultCode() == ResultCode.COMPARE_TRUE.value(),
+        lr);
     } catch (LDAPException e) {
       processLDAPException(e);
     }
@@ -390,8 +393,9 @@ public class JLdapConnection implements ProviderConnection
     final SearchListener listener)
     throws LdapException
   {
-    final JLdapAsyncSearchListener l =
-      new JLdapAsyncSearchListener(request, listener);
+    final JLdapAsyncSearchListener l = new JLdapAsyncSearchListener(
+      request,
+      listener);
     l.initialize();
   }
 
@@ -462,13 +466,15 @@ public class JLdapConnection implements ProviderConnection
    * @throws  LdapException  wrapping the ldap exception
    */
   protected void throwOperationException(
-    final Request request, final LDAPResponse ldapResponse)
+    final Request request,
+    final LDAPResponse ldapResponse)
     throws LdapException
   {
     ProviderUtils.throwOperationException(
       config.getOperationExceptionResultCodes(),
       String.format(
-        "Ldap returned result code: %s", ldapResponse.getResultCode()),
+        "Ldap returned result code: %s",
+        ldapResponse.getResultCode()),
       ldapResponse.getResultCode(),
       ldapResponse.getMatchedDN(),
       config.getControlProcessor().processResponseControls(
@@ -493,15 +499,16 @@ public class JLdapConnection implements ProviderConnection
     final T result,
     final LDAPResponse ldapResponse)
   {
-    return new Response<T>(
-      result,
-      ResultCode.valueOf(ldapResponse.getResultCode()),
-      ldapResponse.getErrorMessage(),
-      ldapResponse.getMatchedDN(),
-      config.getControlProcessor().processResponseControls(
-        ldapResponse.getControls()),
-      ldapResponse.getReferrals(),
-      ldapResponse.getMessageID());
+    return
+      new Response<T>(
+        result,
+        ResultCode.valueOf(ldapResponse.getResultCode()),
+        ldapResponse.getErrorMessage(),
+        ldapResponse.getMatchedDN(),
+        config.getControlProcessor().processResponseControls(
+          ldapResponse.getControls()),
+        ldapResponse.getReferrals(),
+        ldapResponse.getMessageID());
   }
 
 
@@ -577,11 +584,9 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /**
-   * Search iterator for JLdap search results.
-   */
-  protected class JLdapSearchIterator
-    extends AbstractJLdapSearch implements SearchIterator
+  /** Search iterator for JLdap search results. */
+  protected class JLdapSearchIterator extends AbstractJLdapSearch
+    implements SearchIterator
   {
 
     /** Response data. */
@@ -611,8 +616,7 @@ public class JLdapConnection implements ProviderConnection
       throws LdapException
     {
       try {
-        resultIterator = new SearchResultIterator(
-          search(connection, request));
+        resultIterator = new SearchResultIterator(search(connection, request));
       } catch (LDAPException e) {
         processLDAPException(e);
       }
@@ -639,12 +643,19 @@ public class JLdapConnection implements ProviderConnection
         }
       } catch (LDAPException e) {
         final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
+          config.getSearchIgnoreResultCodes(),
+          e);
         if (rc == null) {
           processLDAPException(e);
         }
         response = new Response<Void>(
-          null, rc, e.getLDAPErrorMessage(), null, null, null, -1);
+          null,
+          rc,
+          e.getLDAPErrorMessage(),
+          null,
+          null,
+          null,
+          -1);
       }
       return more;
     }
@@ -687,9 +698,7 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /**
-   * Async search listener for JLdap search results.
-   */
+  /** Async search listener for JLdap search results. */
   protected class JLdapAsyncSearchListener extends AbstractJLdapSearch
   {
 
@@ -762,17 +771,18 @@ public class JLdapConnection implements ProviderConnection
           throw new IllegalStateException("Unknown message: " + message);
         }
       }
+
       final Response<Void> response = createResponse(
-        request, null, i.getResponse());
+        request,
+        null,
+        i.getResponse());
       listener.searchResponseReceived(response);
       return null;
     }
   }
 
 
-  /**
-   * Common search functionality for jldap iterators and listeners.
-   */
+  /** Common search functionality for jldap iterators and listeners. */
   protected abstract class AbstractJLdapSearch
   {
 
@@ -941,17 +951,20 @@ public class JLdapConnection implements ProviderConnection
      *
      * @return  search item
      */
-    protected SearchItem processLDAPSearchResult(
-      final LDAPSearchResult res)
+    protected SearchItem processLDAPSearchResult(final LDAPSearchResult res)
     {
       logger.trace("reading search result: {}", res);
+
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
           res.getControls());
       }
+
       final SearchEntry se = util.toSearchEntry(
-        res.getEntry(), respControls, res.getMessageID());
+        res.getEntry(),
+        respControls,
+        res.getMessageID());
       return new SearchItem(se);
     }
 
@@ -968,13 +981,17 @@ public class JLdapConnection implements ProviderConnection
       final LDAPSearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
+
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
           ref.getControls());
       }
+
       final SearchReference sr = new SearchReference(
-        ref.getMessageID(), respControls, ref.getReferrals());
+        ref.getMessageID(),
+        respControls,
+        ref.getReferrals());
       return new SearchItem(sr);
     }
 
@@ -991,11 +1008,13 @@ public class JLdapConnection implements ProviderConnection
       final LDAPIntermediateResponse res)
     {
       logger.trace("reading intermediate response: {}", res);
+
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
         respControls = config.getControlProcessor().processResponseControls(
           res.getControls());
       }
+
       final org.ldaptive.intermediate.IntermediateResponse ir =
         IntermediateResponseFactory.createIntermediateResponse(
           res.getID(),
@@ -1007,9 +1026,7 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /**
-   * Iterates over an ldap search queue.
-   */
+  /** Iterates over an ldap search queue. */
   protected static class SearchResultIterator
   {
 
@@ -1047,6 +1064,7 @@ public class JLdapConnection implements ProviderConnection
       if (response != null) {
         return false;
       }
+
       boolean more = false;
       message = queue.getResponse();
       if (message != null) {

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -195,7 +195,9 @@ public class JLdapUtils
    */
   @SuppressWarnings("unchecked")
   public SearchEntry toSearchEntry(
-    final LDAPEntry entry, final ResponseControl[] c, final int id)
+    final LDAPEntry entry,
+    final ResponseControl[] c,
+    final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(entry.getDN());

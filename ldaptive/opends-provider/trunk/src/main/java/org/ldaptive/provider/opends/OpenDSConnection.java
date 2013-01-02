@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -134,6 +134,7 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
@@ -195,7 +196,8 @@ public class OpenDSConnection
     Response<Void> response = null;
     try {
       final SimpleBindRequest sbr = Requests.newSimpleBindRequest(
-        request.getDn(), request.getCredential().getChars());
+        request.getDn(),
+        request.getCredential().getChars());
       if (request.getControls() != null) {
         for (Control c :
              config.getControlProcessor().processRequestControls(
@@ -382,13 +384,13 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final OpenDSUtils util = new OpenDSUtils();
-      final org.opends.sdk.requests.AddRequest ar =
-        Requests.newAddRequest(
-          util.fromLdapEntry(
-            new LdapEntry(request.getDn(), request.getLdapAttributes())));
+      final org.opends.sdk.requests.AddRequest ar = Requests.newAddRequest(
+        util.fromLdapEntry(
+          new LdapEntry(request.getDn(), request.getLdapAttributes())));
       if (request.getControls() != null) {
         for (Control c :
              config.getControlProcessor().processRequestControls(
@@ -417,6 +419,7 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Boolean> response = null;
     try {
       final OpenDSUtils util = new OpenDSUtils();
@@ -460,6 +463,7 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final org.opends.sdk.requests.DeleteRequest dr =
@@ -492,6 +496,7 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final OpenDSUtils util = new OpenDSUtils();
@@ -530,6 +535,7 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<Void> response = null;
     try {
       final org.opends.sdk.requests.ModifyDNRequest mdr =
@@ -556,14 +562,14 @@ public class OpenDSConnection
 
   /** {@inheritDoc} */
   @Override
-  public SearchIterator search(
-    final org.ldaptive.SearchRequest request)
+  public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
   {
     if (request.getFollowReferrals()) {
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     final OpenDSSearchIterator i = new OpenDSSearchIterator(request);
     i.initialize();
     return i;
@@ -581,8 +587,10 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     final OpenDSAsyncSearchListener l = new OpenDSAsyncSearchListener(
-      request, listener);
+      request,
+      listener);
     l.initialize();
   }
 
@@ -615,6 +623,7 @@ public class OpenDSConnection
       throw new UnsupportedOperationException(
         "Referral following not supported");
     }
+
     Response<?> response = null;
     try {
       GenericExtendedRequest er;
@@ -623,7 +632,8 @@ public class OpenDSConnection
         er = Requests.newGenericExtendedRequest(request.getOID());
       } else {
         er = Requests.newGenericExtendedRequest(
-          request.getOID(), ByteString.wrap(requestBerValue));
+          request.getOID(),
+          ByteString.wrap(requestBerValue));
       }
       if (request.getControls() != null) {
         for (Control c :
@@ -666,15 +676,16 @@ public class OpenDSConnection
   {
     final List<Control> ctls = ldapResult.getControls();
     final List<String> urls = ldapResult.getReferralURIs();
-    return new Response<T>(
-      result,
-      ResultCode.valueOf(ldapResult.getResultCode().intValue()),
-      ldapResult.getDiagnosticMessage(),
-      ldapResult.getMatchedDN(),
-      config.getControlProcessor().processResponseControls(
-        ctls.toArray(new Control[ctls.size()])),
-      urls.toArray(new String[urls.size()]),
-      -1);
+    return
+      new Response<T>(
+        result,
+        ResultCode.valueOf(ldapResult.getResultCode().intValue()),
+        ldapResult.getDiagnosticMessage(),
+        ldapResult.getMatchedDN(),
+        config.getControlProcessor().processResponseControls(
+          ctls.toArray(new Control[ctls.size()])),
+        urls.toArray(new String[urls.size()]),
+        -1);
   }
 
 
@@ -688,7 +699,8 @@ public class OpenDSConnection
    * @throws  LdapException  wrapping the error result exception
    */
   protected void processErrorResultException(
-    final Request request, final ErrorResultException e)
+    final Request request,
+    final ErrorResultException e)
     throws LdapException
   {
     final List<Control> ctls = e.getResult().getControls();
@@ -705,11 +717,9 @@ public class OpenDSConnection
   }
 
 
-  /**
-   * Search iterator for opends search results.
-   */
-  protected class OpenDSSearchIterator
-    extends AbstractOpenDSSearch implements SearchIterator
+  /** Search iterator for opends search results. */
+  protected class OpenDSSearchIterator extends AbstractOpenDSSearch
+    implements SearchIterator
   {
 
     /** Response data. */
@@ -753,7 +763,8 @@ public class OpenDSConnection
      * @throws  LdapException  if an error occurs
      */
     protected SearchResultIterator search(
-      final Connection conn, final org.ldaptive.SearchRequest sr)
+      final Connection conn,
+      final org.ldaptive.SearchRequest sr)
       throws LdapException
     {
       final SearchRequest opendsSr = getSearchRequest(sr);
@@ -764,12 +775,14 @@ public class OpenDSConnection
           opendsSr.addControl(c);
         }
       }
+
       final SearchResultIterator i = new SearchResultIterator();
       try {
         conn.search(opendsSr, i);
       } catch (ErrorResultException e) {
         final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(), e);
+          config.getSearchIgnoreResultCodes(),
+          e);
         if (rc == null) {
           processErrorResultException(request, e);
         }
@@ -818,7 +831,8 @@ public class OpenDSConnection
 
     /** {@inheritDoc} */
     @Override
-    public void close() throws LdapException {}
+    public void close()
+      throws LdapException {}
 
 
     /**
@@ -904,11 +918,8 @@ public class OpenDSConnection
   }
 
 
-  /**
-   * Search listener for opends id async search results.
-   */
-  protected class OpenDSAsyncSearchListener
-    extends AbstractOpenDSSearch
+  /** Search listener for opends id async search results. */
+  protected class OpenDSAsyncSearchListener extends AbstractOpenDSSearch
     implements SearchResultHandler, IntermediateResponseHandler
   {
 
@@ -923,7 +934,8 @@ public class OpenDSConnection
      * @param  sl  search listener
      */
     public OpenDSAsyncSearchListener(
-      final org.ldaptive.SearchRequest sr, final SearchListener sl)
+      final org.ldaptive.SearchRequest sr,
+      final SearchListener sl)
     {
       super(sr);
       listener = sl;
@@ -951,7 +963,8 @@ public class OpenDSConnection
      * @throws  LdapException  if an error occurs
      */
     protected void search(
-      final Connection conn, final org.ldaptive.SearchRequest sr)
+      final Connection conn,
+      final org.ldaptive.SearchRequest sr)
       throws LdapException
     {
       final SearchRequest opendsSr = getSearchRequest(sr);
@@ -971,8 +984,11 @@ public class OpenDSConnection
     public void handleErrorResult(final ErrorResultException e)
     {
       logger.trace("reading error result: {}", e);
+
       final org.ldaptive.Response<Void> response = createResponse(
-        request, null, e.getResult());
+        request,
+        null,
+        e.getResult());
       listener.searchResponseReceived(response);
     }
 
@@ -982,8 +998,11 @@ public class OpenDSConnection
     public void handleResult(final Result r)
     {
       logger.trace("reading result: {}", r);
+
       final org.ldaptive.Response<Void> response = createResponse(
-        request, null, r);
+        request,
+        null,
+        r);
       listener.searchResponseReceived(response);
     }
 
@@ -1015,9 +1034,7 @@ public class OpenDSConnection
   }
 
 
-  /**
-   * Common search functionality for opends iterators and listeners.
-   */
+  /** Common search functionality for opends iterators and listeners. */
   protected abstract class AbstractOpenDSSearch
   {
 
@@ -1081,8 +1098,7 @@ public class OpenDSConnection
      *
      * @return  opends search scope
      */
-    protected SearchScope getSearchScope(
-      final org.ldaptive.SearchScope ss)
+    protected SearchScope getSearchScope(final org.ldaptive.SearchScope ss)
     {
       SearchScope scope = null;
       if (ss == org.ldaptive.SearchScope.OBJECT) {
@@ -1154,17 +1170,17 @@ public class OpenDSConnection
      *
      * @return  search item
      */
-    protected SearchItem processSearchResultEntry(
-      final SearchResultEntry entry)
+    protected SearchItem processSearchResultEntry(final SearchResultEntry entry)
     {
       logger.trace("reading search entry: {}", entry);
+
       ResponseControl[] respControls = null;
       if (entry.getControls() != null && entry.getControls().size() > 0) {
         final List<Control> ctls = entry.getControls();
-        respControls =
-          config.getControlProcessor().processResponseControls(
-            ctls.toArray(new Control[ctls.size()]));
+        respControls = config.getControlProcessor().processResponseControls(
+          ctls.toArray(new Control[ctls.size()]));
       }
+
       final SearchEntry se =  util.toSearchEntry(entry, respControls, -1);
       return new SearchItem(se);
     }
@@ -1186,15 +1202,17 @@ public class OpenDSConnection
         throw new UnsupportedOperationException(
           "Referral following not supported");
       }
+
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().size() > 0) {
         final List<Control> ctls = ref.getControls();
-        respControls =
-          config.getControlProcessor().processResponseControls(
-            ctls.toArray(new Control[ctls.size()]));
+        respControls = config.getControlProcessor().processResponseControls(
+          ctls.toArray(new Control[ctls.size()]));
       }
       final SearchReference sr = new SearchReference(
-        -1, respControls, ref.getURIs());
+        -1,
+        respControls,
+        ref.getURIs());
       return new SearchItem(sr);
     }
 
@@ -1211,13 +1229,14 @@ public class OpenDSConnection
       final IntermediateResponse res)
     {
       logger.trace("reading intermediate response: {}", res);
+
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().size() > 0) {
         final List<Control> ctls = res.getControls();
-        respControls =
-          config.getControlProcessor().processResponseControls(
-            ctls.toArray(new Control[ctls.size()]));
+        respControls = config.getControlProcessor().processResponseControls(
+          ctls.toArray(new Control[ctls.size()]));
       }
+
       final org.ldaptive.intermediate.IntermediateResponse ir =
         IntermediateResponseFactory.createIntermediateResponse(
           res.getOID(),

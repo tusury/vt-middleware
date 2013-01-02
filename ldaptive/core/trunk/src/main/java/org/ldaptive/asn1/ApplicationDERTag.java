@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2003-2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -17,7 +17,7 @@ package org.ldaptive.asn1;
  * Generic application-specific tag.
  *
  * @author  Middleware Services
- * @version  $Revision: $
+ * @version  $Revision$
  */
 public class ApplicationDERTag extends AbstractDERTag
 {
