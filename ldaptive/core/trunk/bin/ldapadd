@@ -23,5 +23,5 @@ for JAR in `ls ${PREFIX}/lib/*.jar` ; do
 done
 
 ${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \
-  org.ldaptive.cli.AddOperationCli $@
+  org.ldaptive.cli.AddOperationCli "$@"
 
