@@ -35,4 +35,12 @@ public interface SearchEntryHandler extends Handler<SearchRequest, SearchEntry>
     SearchRequest request,
     SearchEntry entry)
     throws LdapException;
+
+
+  /**
+   * Initialize the search request for use with this entry handler.
+   *
+   * @param  request  to initialize for this entry handler
+   */
+  void initializeRequest(SearchRequest request);
 }

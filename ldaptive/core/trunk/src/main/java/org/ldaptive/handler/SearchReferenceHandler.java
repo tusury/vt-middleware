@@ -36,4 +36,12 @@ public interface SearchReferenceHandler
     SearchRequest request,
     SearchReference reference)
     throws LdapException;
+
+
+  /**
+   * Initialize the search request for use with this reference handler.
+   *
+   * @param  request  to initialize for this reference handler
+   */
+  void initializeRequest(SearchRequest request);
 }

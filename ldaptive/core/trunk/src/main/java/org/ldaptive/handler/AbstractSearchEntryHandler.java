@@ -184,6 +184,11 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
+  public void initializeRequest(final SearchRequest request) {}
+
+
+  /** {@inheritDoc} */
+  @Override
   public boolean equals(final Object o)
   {
     return LdapUtils.areEqual(this, o);
