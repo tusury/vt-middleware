@@ -21,56 +21,57 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to use an extended form of an
- * object distinguished name. Control is defined as:
+ * Request control for active directory servers to control various search
+ * behaviors. Control is defined as:
  *
  * <pre>
-    extendedDnValue ::= SEQUENCE {
-          flag  INTEGER
-    }
+     searchOptionsValue ::= SEQUENCE {
+       flag  INTEGER
+     }
  * </pre>
  *
- * See http://msdn.microsoft.com/en-us/library/cc223349.aspx
+ * See http://msdn.microsoft.com/en-us/library/cc223324.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ExtendedDnControl extends AbstractControl implements RequestControl
+public class SearchOptionsControl extends AbstractControl
+  implements RequestControl
 {
 
   /** OID of this control. */
-  public static final String OID = "1.2.840.113556.1.4.529";
+  public static final String OID = "1.2.840.113556.1.4.1340";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 919;
+  private static final int HASH_CODE_SEED = 953;
 
   /** Types of flags. */
   public enum Flag {
 
-    /** hexadecimal format. */
-    HEXADECIMAL,
+    /** SERVER_SEARCH_FLAG_DOMAIN_SCOPE . */
+    DOMAIN_SCOPE,
 
-    /** standard format. */
-    STANDARD
+    /** SERVER_SEARCH_FLAG_PHANTOM_ROOT . */
+    PHANTOM_ROOT
   }
 
   /** flag. */
-  private Flag flag = Flag.STANDARD;
+  private Flag flag = Flag.DOMAIN_SCOPE;
 
 
   /** Default constructor. */
-  public ExtendedDnControl()
+  public SearchOptionsControl()
   {
     super(OID);
   }
 
 
   /**
-   * Creates a new extended dn control.
+   * Creates a new search options control.
    *
    * @param  f  flag
    */
-  public ExtendedDnControl(final Flag f)
+  public SearchOptionsControl(final Flag f)
   {
     super(OID);
     setFlag(f);
@@ -78,12 +79,12 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
 
 
   /**
-   * Creates a new extended dn control.
+   * Creates a new search options control.
    *
    * @param  f  flag
    * @param  critical  whether this control is critical
    */
-  public ExtendedDnControl(final Flag f, final boolean critical)
+  public SearchOptionsControl(final Flag f, final boolean critical)
   {
     super(OID, critical);
     setFlag(f);

@@ -30,7 +30,7 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
   private static final int HASH_CODE_SEED = 1823;
 
   /** objectGuid attribute name. */
-  private static final String ATTRIBUTE_NAME = "objectGuid";
+  private static final String ATTRIBUTE_NAME = "objectGUID";
 
 
   /**

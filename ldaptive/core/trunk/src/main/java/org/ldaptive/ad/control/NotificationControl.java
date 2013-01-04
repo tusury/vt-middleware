@@ -18,37 +18,37 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to include deleted objects that
- * match a search filter.
- * See http://msdn.microsoft.com/en-us/library/cc223326.aspx
+ * Request control for active directory servers to send asynchronous
+ * notifications to the client when a change is made.
+ * See http://msdn.microsoft.com/en-us/library/cc223353.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ShowDeletedControl extends AbstractControl
+public class NotificationControl extends AbstractControl
   implements RequestControl
 {
 
   /** OID of this control. */
-  public static final String OID = "1.2.840.113556.1.4.417";
+  public static final String OID = "1.2.840.113556.1.4.528";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 911;
+  private static final int HASH_CODE_SEED = 947;
 
 
   /** Default constructor. */
-  public ShowDeletedControl()
+  public NotificationControl()
   {
     super(OID);
   }
 
 
   /**
-   * Creates a new show deleted control.
+   * Creates a new notification control.
    *
    * @param  critical  whether this control is critical
    */
-  public ShowDeletedControl(final boolean critical)
+  public NotificationControl(final boolean critical)
   {
     super(OID, critical);
   }
