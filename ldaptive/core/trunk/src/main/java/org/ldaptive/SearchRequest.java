@@ -370,8 +370,10 @@ public class SearchRequest extends AbstractRequest
    */
   public void setSearchEntryHandlers(final SearchEntryHandler... handlers)
   {
-    for (SearchEntryHandler handler : handlers) {
-      handler.initializeRequest(this);
+    if (handlers != null) {
+      for (SearchEntryHandler handler : handlers) {
+        handler.initializeRequest(this);
+      }
     }
     entryHandlers = handlers;
   }
@@ -396,8 +398,10 @@ public class SearchRequest extends AbstractRequest
   public void setSearchReferenceHandlers(
     final SearchReferenceHandler... handlers)
   {
-    for (SearchReferenceHandler handler : handlers) {
-      handler.initializeRequest(this);
+    if (handlers != null) {
+      for (SearchReferenceHandler handler : handlers) {
+        handler.initializeRequest(this);
+      }
     }
     referenceHandlers = handlers;
   }
