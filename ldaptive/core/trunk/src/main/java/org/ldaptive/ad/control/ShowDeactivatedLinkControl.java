@@ -18,37 +18,37 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to include deleted objects that
- * match a search filter.
- * See http://msdn.microsoft.com/en-us/library/cc223326.aspx
+ * Request control for active directory servers in include link attributes that
+ * refer to deleted-objects in a search operation.
+ * See http://msdn.microsoft.com/en-us/library/dd302781.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ShowDeletedControl extends AbstractControl
+public class ShowDeactivatedLinkControl extends AbstractControl
   implements RequestControl
 {
 
   /** OID of this control. */
-  public static final String OID = "1.2.840.113556.1.4.417";
+  public static final String OID = "1.2.840.113556.1.4.2065";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 911;
+  private static final int HASH_CODE_SEED = 967;
 
 
   /** Default constructor. */
-  public ShowDeletedControl()
+  public ShowDeactivatedLinkControl()
   {
     super(OID);
   }
 
 
   /**
-   * Creates a new show deleted control.
+   * Creates a new show deactivated link control.
    *
    * @param  critical  whether this control is critical
    */
-  public ShowDeletedControl(final boolean critical)
+  public ShowDeactivatedLinkControl(final boolean critical)
   {
     super(OID, critical);
   }

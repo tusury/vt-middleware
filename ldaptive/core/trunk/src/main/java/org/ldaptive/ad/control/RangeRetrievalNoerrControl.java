@@ -18,37 +18,37 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to include deleted objects that
- * match a search filter.
- * See http://msdn.microsoft.com/en-us/library/cc223326.aspx
+ * Request control for active directory servers to avoid error response with
+ * range retrieval.
+ * See http://msdn.microsoft.com/en-us/library/cc223345.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ShowDeletedControl extends AbstractControl
+public class RangeRetrievalNoerrControl extends AbstractControl
   implements RequestControl
 {
 
   /** OID of this control. */
-  public static final String OID = "1.2.840.113556.1.4.417";
+  public static final String OID = "1.2.840.113556.1.4.1948";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 911;
+  private static final int HASH_CODE_SEED = 983;
 
 
   /** Default constructor. */
-  public ShowDeletedControl()
+  public RangeRetrievalNoerrControl()
   {
     super(OID);
   }
 
 
   /**
-   * Creates a new show deleted control.
+   * Creates a new notification control.
    *
    * @param  critical  whether this control is critical
    */
-  public ShowDeletedControl(final boolean critical)
+  public RangeRetrievalNoerrControl(final boolean critical)
   {
     super(OID, critical);
   }

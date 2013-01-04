@@ -16,6 +16,7 @@ package org.ldaptive.ad.control;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.IntegerType;
+import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UniversalDERTag;
 import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
@@ -25,90 +26,81 @@ import org.ldaptive.control.RequestControl;
  * object distinguished name. Control is defined as:
  *
  * <pre>
-    extendedDnValue ::= SEQUENCE {
-          flag  INTEGER
-    }
+   verifyNameValue ::= SEQUENCE {
+     Flags       INTEGER
+     ServerName  OCTET STRING
+   }
  * </pre>
  *
- * See http://msdn.microsoft.com/en-us/library/cc223349.aspx
+ * See http://msdn.microsoft.com/en-us/library/cc223328.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ExtendedDnControl extends AbstractControl implements RequestControl
+public class VerifyNameControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
-  public static final String OID = "1.2.840.113556.1.4.529";
+  public static final String OID = "1.2.840.113556.1.4.1338";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 919;
+  private static final int HASH_CODE_SEED = 977;
 
-  /** Types of flags. */
-  public enum Flag {
-
-    /** hexadecimal format. */
-    HEXADECIMAL,
-
-    /** standard format. */
-    STANDARD
-  }
-
-  /** flag. */
-  private Flag flag = Flag.STANDARD;
+  /** Global catalog server to contact. */
+  private String serverName;
 
 
   /** Default constructor. */
-  public ExtendedDnControl()
+  public VerifyNameControl()
   {
     super(OID);
   }
 
 
   /**
-   * Creates a new extended dn control.
+   * Creates a new verify name control.
    *
-   * @param  f  flag
+   * @param  name  server name
    */
-  public ExtendedDnControl(final Flag f)
+  public VerifyNameControl(final String name)
   {
     super(OID);
-    setFlag(f);
+    setServerName(name);
   }
 
 
   /**
-   * Creates a new extended dn control.
+   * Creates a new verify name control.
    *
-   * @param  f  flag
+   * @param  name  server name
    * @param  critical  whether this control is critical
    */
-  public ExtendedDnControl(final Flag f, final boolean critical)
+  public VerifyNameControl(final String name, final boolean critical)
   {
     super(OID, critical);
-    setFlag(f);
+    setServerName(name);
   }
 
 
   /**
-   * Returns the flag.
+   * Returns the server name.
    *
-   * @return  flag
+   * @return  server name
    */
-  public Flag getFlag()
+  public String getServerName()
   {
-    return flag;
+    return serverName;
   }
 
 
   /**
-   * Sets the flag.
+   * Sets the server name.
    *
-   * @param  f  flag
+   * @param  name  server name
    */
-  public void setFlag(final Flag f)
+  public void setServerName(final String name)
   {
-    flag = f;
+    serverName = name;
   }
 
 
@@ -121,7 +113,7 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
         HASH_CODE_SEED,
         getOID(),
         getCriticality(),
-        flag);
+        serverName);
   }
 
 
@@ -131,11 +123,11 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   {
     return
       String.format(
-        "[%s@%d::criticality=%s, flag=%s]",
+        "[%s@%d::criticality=%s, serverName=%s]",
         getClass().getName(),
         hashCode(),
         getCriticality(),
-        flag);
+        serverName);
   }
 
 
@@ -145,7 +137,8 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   {
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      new IntegerType(getFlag().ordinal()));
+      new IntegerType(0),
+      new OctetStringType(serverName));
     return se.encode();
   }
 }

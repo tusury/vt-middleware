@@ -39,6 +39,8 @@ import org.ldaptive.control.ResponseControl;
     }
  * </pre>
  *
+ * See http://msdn.microsoft.com/en-us/library/cc223347.aspx
+ *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
