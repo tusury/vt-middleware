@@ -153,6 +153,9 @@ public class SyncReplClient
           }
           return new HandlerResult<SearchEntry>(null);
         }
+
+        @Override
+        public void initializeRequest(final SearchRequest request) {}
       });
     request.setIntermediateResponseHandlers(
       new IntermediateResponseHandler() {
