@@ -181,9 +181,9 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public void setProviderConfig(final JLdapProviderConfig jpc)
+  public void setProviderConfig(final JLdapProviderConfig pc)
   {
-    config = jpc;
+    config = pc;
   }
 
 
