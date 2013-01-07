@@ -184,9 +184,9 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public void setProviderConfig(final ApacheLdapProviderConfig alpc)
+  public void setProviderConfig(final ApacheLdapProviderConfig pc)
   {
-    config = alpc;
+    config = pc;
   }
 
 

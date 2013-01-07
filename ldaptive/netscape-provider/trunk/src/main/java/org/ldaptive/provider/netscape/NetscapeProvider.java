@@ -112,9 +112,9 @@ public class NetscapeProvider implements Provider<NetscapeProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public void setProviderConfig(final NetscapeProviderConfig npc)
+  public void setProviderConfig(final NetscapeProviderConfig pc)
   {
-    config = npc;
+    config = pc;
   }
 
 

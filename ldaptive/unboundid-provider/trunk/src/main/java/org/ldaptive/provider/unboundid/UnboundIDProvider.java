@@ -180,9 +180,9 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
 
   /** {@inheritDoc} */
   @Override
-  public void setProviderConfig(final UnboundIDProviderConfig jpc)
+  public void setProviderConfig(final UnboundIDProviderConfig pc)
   {
-    config = jpc;
+    config = pc;
   }
 
 
