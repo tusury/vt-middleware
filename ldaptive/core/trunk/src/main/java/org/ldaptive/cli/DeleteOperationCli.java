@@ -49,7 +49,9 @@ public class DeleteOperationCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    new DeleteOperationCli().performAction(args);
+    final DeleteOperationCli cli = new DeleteOperationCli();
+    final int status = cli.performAction(args);
+    System.exit(status);
   }
 
 
@@ -77,14 +79,15 @@ public class DeleteOperationCli extends AbstractCli
 
   /** {@inheritDoc} */
   @Override
-  protected void dispatch(final CommandLine line)
+  protected int dispatch(final CommandLine line)
     throws Exception
   {
     if (line.hasOption(OPT_HELP)) {
       printHelp();
     } else {
-      delete(initConnectionFactory(line), line.getOptionValues(OPT_DN));
+      return delete(initConnectionFactory(line), line.getOptionValues(OPT_DN));
     }
+    return -1;
   }
 
 
@@ -94,9 +97,11 @@ public class DeleteOperationCli extends AbstractCli
    * @param  cf  connection factory.
    * @param  entryDns  to delete
    *
+   * @return  status code
+   *
    * @throws  Exception  on any LDAP search error
    */
-  protected void delete(final ConnectionFactory cf, final String[] entryDns)
+  protected int delete(final ConnectionFactory cf, final String[] entryDns)
     throws Exception
   {
     final Connection conn = cf.getConnection();
@@ -108,6 +113,7 @@ public class DeleteOperationCli extends AbstractCli
       System.out.println(String.format("Deleted entry: %s", dn));
     }
     conn.close();
+    return 0;
   }
 
 

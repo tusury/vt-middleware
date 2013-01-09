@@ -58,7 +58,9 @@ public class AuthenticatorCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    new AuthenticatorCli().performAction(args);
+    final AuthenticatorCli cli = new AuthenticatorCli();
+    final int status = cli.performAction(args);
+    System.exit(status);
   }
 
 
@@ -146,7 +148,7 @@ public class AuthenticatorCli extends AbstractCli
 
   /** {@inheritDoc} */
   @Override
-  protected void dispatch(final CommandLine line)
+  protected int dispatch(final CommandLine line)
     throws Exception
   {
     if (line.hasOption(OPT_DSMLV1)) {
@@ -155,8 +157,10 @@ public class AuthenticatorCli extends AbstractCli
     if (line.hasOption(OPT_HELP)) {
       printHelp();
     } else {
-      authenticate(initAuthenticator(line), initAuthenticationRequest(line));
+      return authenticate(
+        initAuthenticator(line), initAuthenticationRequest(line));
     }
+    return -1;
   }
 
 
@@ -166,9 +170,11 @@ public class AuthenticatorCli extends AbstractCli
    * @param  auth  authenticator
    * @param  request  authentication request
    *
+   * @return  status code
+   *
    * @throws  Exception  on any LDAP error
    */
-  protected void authenticate(
+  protected int authenticate(
     final Authenticator auth,
     final AuthenticationRequest request)
     throws Exception
@@ -197,6 +203,7 @@ public class AuthenticatorCli extends AbstractCli
     } else {
       System.out.println(String.format("Authentication failed for %s", entry));
     }
+    return response.getResultCode().value();
   }
 
 

@@ -53,7 +53,9 @@ public class AddOperationCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    new AddOperationCli().performAction(args);
+    final AddOperationCli cli = new AddOperationCli();
+    final int status = cli.performAction(args);
+    System.exit(status);
   }
 
 
@@ -81,14 +83,15 @@ public class AddOperationCli extends AbstractCli
 
   /** {@inheritDoc} */
   @Override
-  protected void dispatch(final CommandLine line)
+  protected int dispatch(final CommandLine line)
     throws Exception
   {
     if (line.hasOption(OPT_HELP)) {
       printHelp();
     } else {
-      add(initConnectionFactory(line), line.getOptionValue(OPT_FILE));
+      return add(initConnectionFactory(line), line.getOptionValue(OPT_FILE));
     }
+    return -1;
   }
 
 
@@ -98,9 +101,11 @@ public class AddOperationCli extends AbstractCli
    * @param  cf  connection factory
    * @param  file  to read ldif from
    *
+   * @return  status code
+   *
    * @throws  Exception  on any LDAP search error
    */
-  protected void add(final ConnectionFactory cf, final String file)
+  protected int add(final ConnectionFactory cf, final String file)
     throws Exception
   {
     final Connection conn = cf.getConnection();
@@ -114,6 +119,7 @@ public class AddOperationCli extends AbstractCli
       System.out.println(String.format("Added entry: %s", le));
     }
     conn.close();
+    return 0;
   }
 
 

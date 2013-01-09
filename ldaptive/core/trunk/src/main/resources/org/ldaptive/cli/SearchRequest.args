@@ -4,7 +4,7 @@ controls:fully qualified class name(s) that implements org.ldaptive.control.Cont
 derefAliases:how to handle aliases (NEVER|SEARCHING|FINDING|ALWAYS)
 followReferrals:how to handle referrals (true|false)
 intermediateResponseHandlers:LDAP handlers for processing intermediate responses
-returnAttributes:attributes to return from the search
+returnAttributes:comma delimited list of attributes to return from the search
 searchEntryHandlers:LDAP handlers for post processing result entries
 searchFilter:LDAP filter to execute
 searchReferenceHandlers:LDAP handlers for post processing result references

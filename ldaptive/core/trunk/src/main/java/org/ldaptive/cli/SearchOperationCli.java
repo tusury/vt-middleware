@@ -21,6 +21,7 @@ import org.apache.commons.cli.Option;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
+import org.ldaptive.Response;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
@@ -57,7 +58,9 @@ public class SearchOperationCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    new SearchOperationCli().performAction(args);
+    final SearchOperationCli cli = new SearchOperationCli();
+    final int status = cli.performAction(args);
+    System.exit(status);
   }
 
 
@@ -109,7 +112,7 @@ public class SearchOperationCli extends AbstractCli
 
   /** {@inheritDoc} */
   @Override
-  protected void dispatch(final CommandLine line)
+  protected int dispatch(final CommandLine line)
     throws Exception
   {
     if (line.hasOption(OPT_DSMLV1)) {
@@ -118,8 +121,9 @@ public class SearchOperationCli extends AbstractCli
     if (line.hasOption(OPT_HELP)) {
       printHelp();
     } else {
-      search(initConnectionFactory(line), initSearchRequest(line));
+      return search(initConnectionFactory(line), initSearchRequest(line));
     }
+    return -1;
   }
 
 
@@ -129,16 +133,19 @@ public class SearchOperationCli extends AbstractCli
    * @param  cf  connection factory
    * @param  request  search request
    *
+   * @return  status code
+   *
    * @throws  Exception  on any LDAP search error
    */
-  protected void search(final ConnectionFactory cf, final SearchRequest request)
+  protected int search(final ConnectionFactory cf, final SearchRequest request)
     throws Exception
   {
     final Connection conn = cf.getConnection();
     conn.open();
 
     final SearchOperation op = new SearchOperation(conn);
-    final SearchResult result = op.execute(request).getResult();
+    final Response<SearchResult> response = op.execute(request);
+    final SearchResult result = response.getResult();
     SearchResultWriter writer;
     if (outputDsmlv1) {
       writer = new Dsmlv1Writer(
@@ -149,6 +156,7 @@ public class SearchOperationCli extends AbstractCli
     }
     writer.write(result);
     conn.close();
+    return response.getResultCode().value();
   }
 
 
