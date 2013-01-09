@@ -23,6 +23,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.Response;
 import org.ldaptive.props.BindConnectionInitializerPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.ldaptive.props.SslConfigPropertySource;
@@ -54,7 +55,9 @@ public class CompareOperationCli extends AbstractCli
    */
   public static void main(final String[] args)
   {
-    new CompareOperationCli().performAction(args);
+    final CompareOperationCli cli = new CompareOperationCli();
+    final int status = cli.performAction(args);
+    System.exit(status);
   }
 
 
@@ -87,7 +90,7 @@ public class CompareOperationCli extends AbstractCli
 
   /** {@inheritDoc} */
   @Override
-  protected void dispatch(final CommandLine line)
+  protected int dispatch(final CommandLine line)
     throws Exception
   {
     if (line.hasOption(OPT_HELP)) {
@@ -102,8 +105,10 @@ public class CompareOperationCli extends AbstractCli
       } else {
         la = new LdapAttribute(attr[0], attr[1]);
       }
-      compare(initConnectionFactory(line), line.getOptionValue(OPT_DN), la);
+      return compare(
+        initConnectionFactory(line), line.getOptionValue(OPT_DN), la);
     }
+    return -1;
   }
 
 
@@ -114,9 +119,11 @@ public class CompareOperationCli extends AbstractCli
    * @param  dn  to compare attribute on
    * @param  attr  attribute to compare
    *
+   * @return  status code
+   *
    * @throws  Exception  on any LDAP search error
    */
-  protected void compare(
+  protected int compare(
     final ConnectionFactory cf,
     final String dn,
     final LdapAttribute attr)
@@ -126,8 +133,10 @@ public class CompareOperationCli extends AbstractCli
     conn.open();
 
     final CompareOperation op = new CompareOperation(conn);
-    System.out.println(op.execute(new CompareRequest(dn, attr)).getResult());
+    final Response<Boolean> response = op.execute(new CompareRequest(dn, attr));
+    System.out.println(response.getResult());
     conn.close();
+    return response.getResultCode().value();
   }
 
 

@@ -32,6 +32,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapException;
 import org.ldaptive.props.DefaultConnectionFactoryPropertySource;
 import org.ldaptive.props.PropertySource.PropertyDomain;
 
@@ -62,15 +63,18 @@ public abstract class AbstractCli
    * default action if no action is specified.
    *
    * @param  args  command line arguments
+   *
+   * @return  status code
    */
-  public final void performAction(final String[] args)
+  public final int performAction(final String[] args)
   {
     initOptions();
+    int status = -1;
     try {
       if (args.length > 0) {
         final CommandLineParser parser = new GnuParser();
         final CommandLine line = parser.parse(options, args, false);
-        dispatch(line);
+        status = dispatch(line);
       } else {
         printExamples();
       }
@@ -85,10 +89,15 @@ public abstract class AbstractCli
       System.err.println(msg);
     } catch (RuntimeException rex) {
       throw rex;
+    } catch (LdapException ex) {
+      System.err.println("LDAP Operation failed:");
+      ex.printStackTrace(System.err);
+      status = ex.getResultCode().value();
     } catch (Exception ex) {
       System.err.println("Operation failed:");
       ex.printStackTrace(System.err);
     }
+    return status;
   }
 
 
@@ -151,9 +160,11 @@ public abstract class AbstractCli
    *
    * @param  line  parsed command line arguments
    *
+   * @return  status code
+   *
    * @throws  Exception  on errors thrown by action
    */
-  protected abstract void dispatch(final CommandLine line)
+  protected abstract int dispatch(final CommandLine line)
     throws Exception;
 
 
