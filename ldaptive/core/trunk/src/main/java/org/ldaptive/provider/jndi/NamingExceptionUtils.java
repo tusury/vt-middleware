@@ -376,21 +376,27 @@ public final class NamingExceptionUtils
    */
   public static ResultCode getResultCode(final String message)
   {
+    ResultCode code = null;
     if (message != null) {
       final Matcher matcher = PATTERN.matcher(message);
       if (matcher.find()) {
         try {
-          return ResultCode.valueOf(Integer.parseInt(matcher.group(1)));
+          code = ResultCode.valueOf(Integer.parseInt(matcher.group(1)));
         } catch (NumberFormatException e) {
           final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
           l.debug("Error parsing LDAP error code", e);
         }
+      } else if (message.contains("socket closed")) {
+        // jndi does not return an error code for a closed socket
+        code = ResultCode.SERVER_DOWN;
       }
 
-      final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
-      l.debug("could not find result code in naming exception {}", message);
+      if (code == null) {
+        final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
+        l.debug("could not find result code in naming exception {}", message);
+      }
     }
-    return null;
+    return code;
   }
 
 

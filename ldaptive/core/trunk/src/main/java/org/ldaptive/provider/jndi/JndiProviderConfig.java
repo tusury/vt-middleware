@@ -67,8 +67,7 @@ public class JndiProviderConfig extends ProviderConfig
   {
     setOperationExceptionResultCodes(
       ResultCode.PROTOCOL_ERROR,
-      ResultCode.BUSY,
-      ResultCode.UNAVAILABLE);
+      ResultCode.SERVER_DOWN);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
