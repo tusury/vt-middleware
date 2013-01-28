@@ -33,6 +33,6 @@ public interface SearchResultWriter
    *
    * @throws  IOException  if an error occurs using the writer
    */
-  void write(final SearchResult result)
+  void write(SearchResult result)
     throws IOException;
 }

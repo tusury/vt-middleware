@@ -33,5 +33,5 @@ public interface CertificateHostnameVerifier
    *
    * @return  whether hostname is valid for the supplied certificate
    */
-  boolean verify(final String hostname, final X509Certificate cert);
+  boolean verify(String hostname, X509Certificate cert);
 }

@@ -39,7 +39,7 @@ public interface ConnectionPool
    *
    * @param  a  activator
    */
-  void setActivator(final Activator<Connection> a);
+  void setActivator(Activator<Connection> a);
 
 
   /**
@@ -55,7 +55,7 @@ public interface ConnectionPool
    *
    * @param  p  passivator
    */
-  void setPassivator(final Passivator<Connection> p);
+  void setPassivator(Passivator<Connection> p);
 
 
   /**
@@ -71,7 +71,7 @@ public interface ConnectionPool
    *
    * @param  v  validator
    */
-  void setValidator(final Validator<Connection> v);
+  void setValidator(Validator<Connection> v);
 
 
   /** Initialize this pool for use. */
