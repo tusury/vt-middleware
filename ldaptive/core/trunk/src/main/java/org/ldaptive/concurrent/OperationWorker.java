@@ -39,7 +39,7 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  future response for this operation
    */
-  Future<Response<S>> execute(final Q request);
+  Future<Response<S>> execute(Q request);
 
 
   /**
@@ -49,7 +49,7 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  future responses for this operation
    */
-  Collection<Future<Response<S>>> execute(final Q... requests);
+  Collection<Future<Response<S>>> execute(Q... requests);
 
 
   /**
@@ -60,5 +60,5 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  responses for this operation
    */
-  Collection<Response<S>> executeToCompletion(final Q... requests);
+  Collection<Response<S>> executeToCompletion(Q... requests);
 }

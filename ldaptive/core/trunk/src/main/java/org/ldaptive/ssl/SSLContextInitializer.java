@@ -59,7 +59,7 @@ public interface SSLContextInitializer
    *
    * @param  managers  trust managers
    */
-  void setTrustManagers(final TrustManager... managers);
+  void setTrustManagers(TrustManager... managers);
 
 
   /**

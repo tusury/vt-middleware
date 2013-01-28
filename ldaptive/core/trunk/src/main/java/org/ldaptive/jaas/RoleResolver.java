@@ -36,6 +36,6 @@ public interface RoleResolver
    *
    * @throws  LdapException  if the ldap operation fails
    */
-  Set<LdapRole> search(final SearchRequest request)
+  Set<LdapRole> search(SearchRequest request)
     throws LdapException;
 }
