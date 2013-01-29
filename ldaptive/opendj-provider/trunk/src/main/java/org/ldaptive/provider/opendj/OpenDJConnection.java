@@ -20,6 +20,7 @@ import org.forgerock.opendj.ldap.ByteString;
 import org.forgerock.opendj.ldap.Connection;
 import org.forgerock.opendj.ldap.DereferenceAliasesPolicy;
 import org.forgerock.opendj.ldap.ErrorResultException;
+import org.forgerock.opendj.ldap.FutureResult;
 import org.forgerock.opendj.ldap.IntermediateResponseHandler;
 import org.forgerock.opendj.ldap.Modification;
 import org.forgerock.opendj.ldap.SearchResultHandler;
@@ -54,6 +55,8 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
 import org.ldaptive.async.AbandonRequest;
+import org.ldaptive.async.AsyncRequest;
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
@@ -935,7 +938,11 @@ public class OpenDJConnection
           opendjSr.addControl(c);
         }
       }
-      conn.searchAsync(opendjSr, this, this);
+      final FutureResult<Result> result = conn.searchAsync(
+        opendjSr,
+        this,
+        this);
+      listener.asyncRequestReceived(new OpenDJAsyncRequest(result));
     }
 
 
@@ -949,7 +956,7 @@ public class OpenDJConnection
         request,
         null,
         e.getResult());
-      listener.searchResponseReceived(response);
+      listener.responseReceived(response);
     }
 
 
@@ -963,7 +970,7 @@ public class OpenDJConnection
         request,
         null,
         r);
-      listener.searchResponseReceived(response);
+      listener.responseReceived(response);
     }
 
 
@@ -1205,6 +1212,63 @@ public class OpenDJConnection
           respControls,
           -1);
       return new SearchItem(ir);
+    }
+  }
+
+
+  /** Async request to invoke abandons. */
+  protected class OpenDJAsyncRequest implements AsyncRequest
+  {
+
+    /** Future result. */
+    private final FutureResult<Result> result;
+
+
+    /**
+     * Creates a new OpenDJ async request.
+     *
+     * @param  r  future result from an async operation
+     */
+    public OpenDJAsyncRequest(final FutureResult<Result> r)
+    {
+      result = r;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getMessageId()
+    {
+      return result.getRequestID();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon()
+      throws LdapException
+    {
+      final org.forgerock.opendj.ldap.requests.AbandonRequest ar =
+        Requests.newAbandonRequest(result.getRequestID());
+      connection.abandonAsync(ar);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon(final RequestControl[] controls)
+      throws LdapException
+    {
+      final org.forgerock.opendj.ldap.requests.AbandonRequest ar =
+        Requests.newAbandonRequest(result.getRequestID());
+      if (controls != null) {
+        for (Control c :
+          config.getControlProcessor().processRequestControls(
+            controls)) {
+          ar.addControl(c);
+        }
+      }
+      connection.abandonAsync(ar);
     }
   }
 }
