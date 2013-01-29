@@ -57,6 +57,8 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
 import org.ldaptive.async.AbandonRequest;
+import org.ldaptive.async.AsyncRequest;
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
@@ -821,6 +823,7 @@ public class UnboundIDConnection implements ProviderConnection
         unboundIdSr.addControls(c);
         logger.debug("performing search: {}", unboundIdSr);
         requestID = conn.asyncSearch(unboundIdSr);
+        listener.asyncRequestReceived(new UnboundIDAsyncRequest(requestID, sr));
       } catch (LDAPSearchException e) {
         final ResultCode rc = ignoreSearchException(
           config.getSearchIgnoreResultCodes(),
@@ -870,7 +873,7 @@ public class UnboundIDConnection implements ProviderConnection
         request,
         null,
         res);
-      listener.searchResponseReceived(response);
+      listener.responseReceived(response);
     }
   }
 
@@ -1095,6 +1098,68 @@ public class UnboundIDConnection implements ProviderConnection
           respControls,
           res.getMessageID());
       return new SearchItem(ir);
+    }
+  }
+
+
+  /** Async request to invoke abandons. */
+  protected class UnboundIDAsyncRequest implements AsyncRequest
+  {
+
+    /** Async request id. */
+    private final AsyncRequestID requestID;
+
+    /** Request that produced this async request. */
+    private final Request request;
+
+
+    /**
+     * Creates a new unboundid async request.
+     *
+     * @param  id  async request id
+     * @param   r  request
+     */
+    public UnboundIDAsyncRequest(final AsyncRequestID id, final Request r)
+    {
+      requestID = id;
+      request = r;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getMessageId()
+    {
+      return requestID.getMessageID();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon()
+      throws LdapException
+    {
+      try {
+        connection.abandon(requestID);
+      } catch (LDAPException e) {
+        processLDAPException(request, e);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon(final RequestControl[] controls)
+      throws LdapException
+    {
+      try {
+        connection.abandon(
+          requestID,
+          config.getControlProcessor().processRequestControls(
+            request.getControls()));
+      } catch (LDAPException e) {
+        processLDAPException(request, e);
+      }
     }
   }
 }
