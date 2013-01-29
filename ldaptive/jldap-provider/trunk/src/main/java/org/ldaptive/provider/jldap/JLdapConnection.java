@@ -28,6 +28,7 @@ import com.novell.ldap.LDAPExtendedOperation;
 import com.novell.ldap.LDAPExtendedResponse;
 import com.novell.ldap.LDAPIntermediateResponse;
 import com.novell.ldap.LDAPMessage;
+import com.novell.ldap.LDAPMessageQueue;
 import com.novell.ldap.LDAPResponse;
 import com.novell.ldap.LDAPResponseQueue;
 import com.novell.ldap.LDAPSearchConstraints;
@@ -52,6 +53,8 @@ import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.async.AbandonRequest;
+import org.ldaptive.async.AsyncRequest;
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
@@ -754,6 +757,8 @@ public class JLdapConnection implements ProviderConnection
     {
       final SearchResultIterator i = new SearchResultIterator(
         super.search(conn, sr));
+      listener.asyncRequestReceived(
+        new JLdapAsyncRequest(i.getLDAPSearchQueue()));
       while (i.hasNext()) {
         final LDAPMessage message = i.next();
         if (message instanceof LDAPSearchResult) {
@@ -776,7 +781,7 @@ public class JLdapConnection implements ProviderConnection
         request,
         null,
         i.getResponse());
-      listener.searchResponseReceived(response);
+      listener.responseReceived(response);
       return null;
     }
   }
@@ -1052,6 +1057,17 @@ public class JLdapConnection implements ProviderConnection
 
 
     /**
+     * Returns the search queue used by this iterator.
+     *
+     * @return  ldap search queue
+     */
+    public LDAPSearchQueue getLDAPSearchQueue()
+    {
+      return queue;
+    }
+
+
+    /**
      * Returns whether the queue has another message to read.
      *
      * @return  whether the queue has another message to read
@@ -1102,6 +1118,77 @@ public class JLdapConnection implements ProviderConnection
     public LDAPResponse getResponse()
     {
       return response;
+    }
+  }
+
+
+  /** Async request to invoke abandons. */
+  protected class JLdapAsyncRequest implements AsyncRequest
+  {
+
+    /** Message queue. */
+    private final LDAPMessageQueue messageQueue;
+
+
+    /**
+     * Creates a new JLDAP async request.
+     *
+     * @param  queue  from an async operation
+     */
+    public JLdapAsyncRequest(final LDAPMessageQueue queue)
+    {
+      messageQueue = queue;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getMessageId()
+    {
+      final int[] ids = messageQueue.getMessageIDs();
+      if (ids == null || ids.length == 0) {
+        return -1;
+      }
+      return ids[ids.length - 1];
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon()
+      throws LdapException
+    {
+      try {
+        LDAPConstraints constraints = connection.getConstraints();
+        if (constraints == null) {
+          constraints = new LDAPConstraints();
+        }
+        connection.abandon(messageQueue, constraints);
+      } catch (LDAPException e) {
+        processLDAPException(e);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon(final RequestControl[] controls)
+      throws LdapException
+    {
+      try {
+        LDAPConstraints constraints = connection.getConstraints();
+        if (constraints == null) {
+          constraints = new LDAPConstraints();
+        }
+        if (controls != null) {
+          constraints.setControls(
+            config.getControlProcessor().processRequestControls(
+              controls));
+        }
+        connection.abandon(messageQueue, constraints);
+      } catch (LDAPException e) {
+        processLDAPException(e);
+      }
     }
   }
 }
