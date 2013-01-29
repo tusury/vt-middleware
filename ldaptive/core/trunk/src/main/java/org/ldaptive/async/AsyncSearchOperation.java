@@ -127,7 +127,7 @@ public class AsyncSearchOperation
     private final SearchResult searchResult;
 
     /** Wait for the response to arrive. */
-    private final Semaphore lock = new Semaphore(0);
+    private final Semaphore responseLock = new Semaphore(0);
 
     /** To return when a response is received or the operation is aborted. */
     private Response<SearchResult> searchResponse;
@@ -142,6 +142,27 @@ public class AsyncSearchOperation
     {
       searchRequest = request;
       searchResult = new SearchResult(searchRequest.getSortBehavior());
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void asyncRequestReceived(final AsyncRequest request)
+    {
+      executorService.submit(
+        new Callable<Void>() {
+          @Override
+          public Void call()
+            throws LdapException
+          {
+            try {
+              processAsyncRequest(request);
+            } catch (LdapException e) {
+              logger.warn("Handler exception ignored", e);
+            }
+            return null;
+          }
+        });
     }
 
 
@@ -168,7 +189,7 @@ public class AsyncSearchOperation
 
     /** {@inheritDoc} */
     @Override
-    public void searchResponseReceived(final Response<Void> response)
+    public void responseReceived(final Response<Void> response)
     {
       searchResponse = new Response<SearchResult>(
         searchResult,
@@ -178,7 +199,7 @@ public class AsyncSearchOperation
         response.getControls(),
         response.getReferralURLs(),
         response.getMessageId());
-      lock.release();
+      responseLock.release();
     }
 
 
@@ -194,14 +215,37 @@ public class AsyncSearchOperation
     public Response<SearchResult> getResponse()
       throws InterruptedException
     {
-      lock.acquire();
+      responseLock.acquire();
       return searchResponse;
     }
 
 
     /**
+     * Invokes the handlers for the supplied async request. Calls {@link
+     * #responseReceived(Response)} if a handler aborts the operation.
+     *
+     * @param  request  to process
+     *
+     * @throws  LdapException  if a handler throws
+     */
+    protected void processAsyncRequest(final AsyncRequest request)
+      throws LdapException
+    {
+      logger.trace("Received async request={}", request);
+      final HandlerResult<AsyncRequest> hr = executeHandlers(
+        searchRequest.getAsyncRequestHandlers(),
+        searchRequest,
+        request);
+      if (hr.getAbort()) {
+        logger.debug("Aborting search on async request=%s", request);
+        responseReceived(new Response<Void>(null, null));
+      }
+    }
+
+
+    /**
      * Invokes the handlers for the supplied search item. Calls {@link
-     * #searchResponseReceived(Response)} if a handler aborts the operation.
+     * #responseReceived(Response)} if a handler aborts the operation.
      *
      * @param  item  to process
      *
@@ -223,7 +267,7 @@ public class AsyncSearchOperation
           }
           if (hr.getAbort()) {
             logger.debug("Aborting search on entry=%s", se);
-            searchResponseReceived(new Response<Void>(null, null));
+            responseReceived(new Response<Void>(null, null));
           }
         }
       } else if (item.isSearchReference()) {
@@ -238,7 +282,7 @@ public class AsyncSearchOperation
           }
           if (hr.getAbort()) {
             logger.debug("Aborting search on reference=%s", sr);
-            searchResponseReceived(new Response<Void>(null, null));
+            responseReceived(new Response<Void>(null, null));
           }
         }
       } else if (item.isIntermediateResponse()) {
@@ -250,7 +294,7 @@ public class AsyncSearchOperation
             ir);
           if (hr.getAbort()) {
             logger.debug("Aborting search on intermediate response=%s", ir);
-            searchResponseReceived(new Response<Void>(null, null));
+            responseReceived(new Response<Void>(null, null));
           }
         }
       }
