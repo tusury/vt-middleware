@@ -14,9 +14,9 @@
 package org.ldaptive.provider.apache;
 
 import java.io.IOException;
+import org.apache.directory.api.ldap.model.exception.LdapOperationException;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
-import org.apache.directory.shared.ldap.model.exception.LdapOperationException;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.ResultCode;
@@ -93,7 +93,7 @@ public class ApacheLdapConnectionFactory
       throw new ConnectionException(
         e,
         ResultCode.valueOf(e.getResultCode().getValue()));
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       closeConn = true;
       throw new ConnectionException(e);
     } catch (IOException e) {

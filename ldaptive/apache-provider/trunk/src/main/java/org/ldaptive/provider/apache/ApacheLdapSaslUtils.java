@@ -14,11 +14,11 @@
 package org.ldaptive.provider.apache;
 
 import javax.security.auth.login.Configuration;
+import org.apache.directory.api.ldap.model.constants.SaslQoP;
+import org.apache.directory.api.ldap.model.constants.SaslSecurityStrength;
 import org.apache.directory.ldap.client.api.CramMd5Request;
 import org.apache.directory.ldap.client.api.DigestMd5Request;
 import org.apache.directory.ldap.client.api.GssApiRequest;
-import org.apache.directory.shared.ldap.model.constants.SaslQoP;
-import org.apache.directory.shared.ldap.model.constants.SaslSecurityStrength;
 import org.ldaptive.Credential;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.GssApiConfig;
