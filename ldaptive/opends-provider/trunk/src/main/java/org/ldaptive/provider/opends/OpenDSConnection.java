@@ -31,6 +31,8 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
 import org.ldaptive.async.AbandonRequest;
+import org.ldaptive.async.AsyncRequest;
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
@@ -42,10 +44,12 @@ import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.provider.SearchListener;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
+import org.opends.sdk.AsynchronousConnection;
 import org.opends.sdk.ByteString;
 import org.opends.sdk.Connection;
 import org.opends.sdk.DereferenceAliasesPolicy;
 import org.opends.sdk.ErrorResultException;
+import org.opends.sdk.FutureResult;
 import org.opends.sdk.IntermediateResponseHandler;
 import org.opends.sdk.Modification;
 import org.opends.sdk.SearchResultHandler;
@@ -975,7 +979,12 @@ public class OpenDSConnection
           opendsSr.addControl(c);
         }
       }
-      conn.getAsynchronousConnection().search(opendsSr, this, this);
+      final AsynchronousConnection asyncConn = conn.getAsynchronousConnection();
+      final FutureResult<Result> result = asyncConn.search(
+        opendsSr,
+        this,
+        this);
+      listener.asyncRequestReceived(new OpenDSAsyncRequest(result));
     }
 
 
@@ -989,7 +998,7 @@ public class OpenDSConnection
         request,
         null,
         e.getResult());
-      listener.searchResponseReceived(response);
+      listener.responseReceived(response);
     }
 
 
@@ -1003,7 +1012,7 @@ public class OpenDSConnection
         request,
         null,
         r);
-      listener.searchResponseReceived(response);
+      listener.responseReceived(response);
     }
 
 
@@ -1023,6 +1032,7 @@ public class OpenDSConnection
       listener.searchItemReceived(processSearchResultReference(ref));
       return true;
     }
+
 
     /** {@inheritDoc} */
     @Override
@@ -1244,6 +1254,63 @@ public class OpenDSConnection
           respControls,
           -1);
       return new SearchItem(ir);
+    }
+  }
+
+
+  /** Async request to invoke abandons. */
+  protected class OpenDSAsyncRequest implements AsyncRequest
+  {
+
+    /** Future result. */
+    private final FutureResult<Result> result;
+
+
+    /**
+     * Creates a new OpenDS async request.
+     *
+     * @param  r  future result from an async operation
+     */
+    public OpenDSAsyncRequest(final FutureResult<Result> r)
+    {
+      result = r;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getMessageId()
+    {
+      return result.getRequestID();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon()
+      throws LdapException
+    {
+      final org.opends.sdk.requests.AbandonRequest ar =
+        Requests.newAbandonRequest(result.getRequestID());
+      connection.getAsynchronousConnection().abandon(ar);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon(final RequestControl[] controls)
+      throws LdapException
+    {
+      final org.opends.sdk.requests.AbandonRequest ar =
+        Requests.newAbandonRequest(result.getRequestID());
+      if (controls != null) {
+        for (Control c :
+          config.getControlProcessor().processRequestControls(
+            controls)) {
+          ar.addControl(c);
+        }
+      }
+      connection.getAsynchronousConnection().abandon(ar);
     }
   }
 }
