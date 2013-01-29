@@ -46,6 +46,8 @@ import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.async.AbandonRequest;
+import org.ldaptive.async.AsyncRequest;
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
@@ -737,6 +739,8 @@ public class NetscapeConnection implements ProviderConnection
     {
       final SearchResultIterator i = new SearchResultIterator(
         super.search(conn, sr));
+      listener.asyncRequestReceived(
+        new NetscapeAsyncRequest(i.getLDAPSearchListener()));
       while (i.hasNext()) {
         final LDAPMessage message = i.next();
         if (message instanceof LDAPSearchResult) {
@@ -755,7 +759,7 @@ public class NetscapeConnection implements ProviderConnection
         request,
         null,
         i.getResponse());
-      listener.searchResponseReceived(response);
+      listener.responseReceived(response);
       return null;
     }
   }
@@ -990,6 +994,17 @@ public class NetscapeConnection implements ProviderConnection
 
 
     /**
+     * Returns the ldap search listener.
+     *
+     * @return  ldap search listener
+     */
+    public LDAPSearchListener getLDAPSearchListener()
+    {
+      return listener;
+    }
+
+
+    /**
      * Returns whether the listener has another message to read.
      *
      * @return  whether the listener has another message to read
@@ -1038,6 +1053,61 @@ public class NetscapeConnection implements ProviderConnection
     public LDAPResponse getResponse()
     {
       return response;
+    }
+  }
+
+
+  /** Async request to invoke abandons. */
+  protected class NetscapeAsyncRequest implements AsyncRequest
+  {
+
+    /** Search listener. */
+    private final LDAPSearchListener searchListener;
+
+
+    /**
+     * Creates a new Netscape async request.
+     *
+     * @param  listener  from an async operation
+     */
+    public NetscapeAsyncRequest(final LDAPSearchListener listener)
+    {
+      searchListener = listener;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getMessageId()
+    {
+      final int[] ids = searchListener.getMessageIDs();
+      if (ids == null || ids.length == 0) {
+        return -1;
+      }
+      return ids[ids.length - 1];
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon()
+      throws LdapException
+    {
+      try {
+        connection.abandon(searchListener);
+      } catch (LDAPException e) {
+        processLDAPException(e);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void abandon(final RequestControl[] controls)
+      throws LdapException
+    {
+      throw new UnsupportedOperationException(
+        "Cannot abandon operation with request controls");
     }
   }
 }
