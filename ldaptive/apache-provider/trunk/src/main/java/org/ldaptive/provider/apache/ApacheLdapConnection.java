@@ -19,6 +19,7 @@ import org.apache.directory.ldap.client.api.CramMd5Request;
 import org.apache.directory.ldap.client.api.DigestMd5Request;
 import org.apache.directory.ldap.client.api.GssApiRequest;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
+import org.apache.directory.ldap.client.api.exception.InvalidConnectionException;
 import org.apache.directory.shared.ldap.model.cursor.SearchCursor;
 import org.apache.directory.shared.ldap.model.entry.Entry;
 import org.apache.directory.shared.ldap.model.entry.Modification;
@@ -199,7 +200,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     } catch (IOException e) {
       throw new LdapException(e);
     }
@@ -238,7 +239,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     } catch (IOException e) {
       throw new LdapException(e);
     }
@@ -306,7 +307,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     } catch (IOException e) {
       throw new LdapException(e);
     }
@@ -343,7 +344,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     }
     return response;
   }
@@ -381,7 +382,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     }
     return response;
   }
@@ -413,7 +414,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     }
     return response;
   }
@@ -451,7 +452,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     }
     return response;
   }
@@ -488,7 +489,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     }
     return response;
   }
@@ -572,7 +573,7 @@ public class ApacheLdapConnection implements ProviderConnection
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
     } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
-      throw new LdapException(e);
+      processLdapException(e);
     }
     return response;
   }
@@ -646,7 +647,7 @@ public class ApacheLdapConnection implements ProviderConnection
 
   /**
    * Determines if the supplied ldap exception should result in an operation
-   * retry.
+   * exception.
    *
    * @param  e  that was produced
    *
@@ -663,6 +664,33 @@ public class ApacheLdapConnection implements ProviderConnection
       null,
       null,
       true);
+  }
+
+
+  /**
+   * Determines if the supplied ldap exception should result in an operation
+   * exception.
+   *
+   * @param  e  that was produced
+   *
+   * @throws  LdapException  wrapping the ldap exception
+   */
+  protected void processLdapException(
+    final org.apache.directory.shared.ldap.model.exception.LdapException e)
+    throws LdapException
+  {
+    if (e instanceof InvalidConnectionException) {
+      // map InvalidConnectionException to error code SERVER_DOWN(81)
+      ProviderUtils.throwOperationException(
+        config.getOperationExceptionResultCodes(),
+        e,
+        ResultCode.SERVER_DOWN.value(),
+        null,
+        null,
+        null,
+        true);
+    }
+    throw new LdapException(e);
   }
 
 
@@ -740,6 +768,10 @@ public class ApacheLdapConnection implements ProviderConnection
       } catch (LdapOperationException e) {
         closeCursor = true;
         processLdapOperationException(e);
+      } catch (
+        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        closeCursor = true;
+        processLdapException(e);
       } catch (RuntimeException e) {
         closeCursor = true;
         throw e;
@@ -787,6 +819,9 @@ public class ApacheLdapConnection implements ProviderConnection
         }
       } catch (LdapOperationException e) {
         processLdapOperationException(e);
+      } catch (
+        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        processLdapException(e);
       } catch (org.ldaptive.LdapException e) {
         throw e;
       } catch (RuntimeException e) {
@@ -820,6 +855,9 @@ public class ApacheLdapConnection implements ProviderConnection
         }
       } catch (LdapOperationException e) {
         processLdapOperationException(e);
+      } catch (
+        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        processLdapException(e);
       } catch (RuntimeException e) {
         throw e;
       } catch (Exception e) {
@@ -896,10 +934,14 @@ public class ApacheLdapConnection implements ProviderConnection
 
         final SearchResultDone done = cursor.getSearchResultDone();
         final Response<Void> response = createResponse(request, null, done);
-        listener.searchResponseReceived(response);
+        listener.responseReceived(response);
       } catch (LdapOperationException e) {
         closeCursor = true;
         processLdapOperationException(e);
+      } catch (
+        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        closeCursor = true;
+        processLdapException(e);
       } catch (org.ldaptive.LdapException e) {
         throw e;
       } catch (RuntimeException e) {
