@@ -16,6 +16,7 @@ package org.ldaptive.provider.apache;
 import java.util.Arrays;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.shared.ldap.model.message.Control;
+import org.ldaptive.ResultCode;
 import org.ldaptive.provider.ControlProcessor;
 import org.ldaptive.provider.ProviderConfig;
 
@@ -38,6 +39,7 @@ public class ApacheLdapProviderConfig extends ProviderConfig
   /** Default constructor. */
   public ApacheLdapProviderConfig()
   {
+    setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
     controlProcessor = new ControlProcessor<Control>(
       new ApacheLdapControlHandler());
   }
