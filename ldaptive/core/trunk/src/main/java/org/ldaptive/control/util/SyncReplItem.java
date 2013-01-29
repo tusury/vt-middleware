@@ -15,11 +15,10 @@ package org.ldaptive.control.util;
 
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchResult;
+import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncStateControl;
 import org.ldaptive.intermediate.SyncInfoMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Contains data returned when using the sync repl search control.
@@ -30,8 +29,8 @@ import org.slf4j.LoggerFactory;
 public class SyncReplItem
 {
 
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  /** Async request from the search operation. */
+  private final AsyncRequest asyncRequest;
 
   /** Entry contained in this sync repl item. */
   private final Entry syncReplEntry;
@@ -46,10 +45,25 @@ public class SyncReplItem
   /**
    * Creates a new sync repl item.
    *
+   * @param  request  that represents this item
+   */
+  public SyncReplItem(final AsyncRequest request)
+  {
+    asyncRequest = request;
+    syncReplEntry = null;
+    syncInfoMessage = null;
+    syncReplResponse = null;
+  }
+
+
+  /**
+   * Creates a new sync repl item.
+   *
    * @param  entry  that represents this item
    */
   public SyncReplItem(final Entry entry)
   {
+    asyncRequest = null;
     syncReplEntry = entry;
     syncInfoMessage = null;
     syncReplResponse = null;
@@ -63,6 +77,7 @@ public class SyncReplItem
    */
   public SyncReplItem(final SyncInfoMessage message)
   {
+    asyncRequest = null;
     syncReplEntry = null;
     syncInfoMessage = message;
     syncReplResponse = null;
@@ -76,9 +91,33 @@ public class SyncReplItem
    */
   public SyncReplItem(final Response response)
   {
+    asyncRequest = null;
     syncReplEntry = null;
     syncInfoMessage = null;
     syncReplResponse = response;
+  }
+
+
+  /**
+   * Returns whether this item represents an async request.
+   *
+   * @return  whether this item represents an async request
+   */
+  public boolean isAsyncRequest()
+  {
+    return asyncRequest != null;
+  }
+
+
+  /**
+   * Returns the async request contained in this item or null if this item does
+   * not contain an async request.
+   *
+   * @return  async request
+   */
+  public AsyncRequest getAsyncRequest()
+  {
+    return asyncRequest;
   }
 
 
@@ -156,7 +195,13 @@ public class SyncReplItem
   public String toString()
   {
     String s;
-    if (isEntry()) {
+    if (isAsyncRequest()) {
+      s = String.format(
+        "[%s@%d::asyncRequest=%s]",
+        getClass().getName(),
+        hashCode(),
+        asyncRequest);
+    } else if (isEntry()) {
       s = String.format(
         "[%s@%d::syncReplEntry=%s]",
         getClass().getName(),

@@ -13,15 +13,13 @@
 */
 package org.ldaptive.provider;
 
-import org.ldaptive.Response;
-
 /**
  * Search results listener.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface SearchListener
+public interface SearchListener extends ResponseListener
 {
 
 
@@ -31,14 +29,5 @@ public interface SearchListener
    * @param  item  containing a search result entry, reference, or intermediate
    * response
    */
-  void searchItemReceived(final SearchItem item);
-
-
-  /**
-   * Invoked when a search result is received from a provider indicating the
-   * search operation has completed.
-   *
-   * @param  response  containing the result
-   */
-  void searchResponseReceived(final Response<Void> response);
+  void searchItemReceived(SearchItem item);
 }

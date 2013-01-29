@@ -22,10 +22,12 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.extended.CancelOperation;
 import org.ldaptive.extended.CancelRequest;
+import org.ldaptive.handler.AsyncRequestHandler;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.OperationResponseHandler;
@@ -178,6 +180,25 @@ public class SyncReplClient
           return new HandlerResult<IntermediateResponse>(null);
         }
       });
+    request.setAsyncRequestHandlers(
+      new AsyncRequestHandler() {
+        @Override
+        public HandlerResult<AsyncRequest> process(
+          final Connection conn,
+          final Request request,
+          final AsyncRequest asyncRequest)
+          throws LdapException
+        {
+          try {
+            logger.debug("received {}", asyncRequest);
+            queue.put(new SyncReplItem(asyncRequest));
+          } catch (Exception e) {
+            logger.warn("Unable to enqueue async request {}", asyncRequest);
+          }
+          return new HandlerResult<AsyncRequest>(null);
+        }
+      });
+
     search.execute(request);
     return queue;
   }
