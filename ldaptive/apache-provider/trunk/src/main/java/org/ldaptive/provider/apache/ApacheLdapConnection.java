@@ -15,43 +15,44 @@ package org.ldaptive.provider.apache;
 
 import java.io.IOException;
 import java.util.Map;
+import org.apache.directory.api.ldap.model.cursor.CursorException;
+import org.apache.directory.api.ldap.model.cursor.SearchCursor;
+import org.apache.directory.api.ldap.model.entry.Entry;
+import org.apache.directory.api.ldap.model.entry.Modification;
+import org.apache.directory.api.ldap.model.exception.LdapOperationException;
+import org.apache.directory.api.ldap.model.message.AbandonRequestImpl;
+import org.apache.directory.api.ldap.model.message.AddRequestImpl;
+import org.apache.directory.api.ldap.model.message.AddResponse;
+import org.apache.directory.api.ldap.model.message.AliasDerefMode;
+import org.apache.directory.api.ldap.model.message.BindRequestImpl;
+import org.apache.directory.api.ldap.model.message.BindResponse;
+import org.apache.directory.api.ldap.model.message.CompareRequestImpl;
+import org.apache.directory.api.ldap.model.message.CompareResponse;
+import org.apache.directory.api.ldap.model.message.Control;
+import org.apache.directory.api.ldap.model.message.DeleteRequestImpl;
+import org.apache.directory.api.ldap.model.message.DeleteResponse;
+import org.apache.directory.api.ldap.model.message.ExtendedResponse;
+import org.apache.directory.api.ldap.model.message.IntermediateResponse;
+import org.apache.directory.api.ldap.model.message.LdapResult;
+import org.apache.directory.api.ldap.model.message.Message;
+import org.apache.directory.api.ldap.model.message.ModifyDnRequestImpl;
+import org.apache.directory.api.ldap.model.message.ModifyDnResponse;
+import org.apache.directory.api.ldap.model.message.ModifyRequestImpl;
+import org.apache.directory.api.ldap.model.message.ModifyResponse;
+import org.apache.directory.api.ldap.model.message.Referral;
+import org.apache.directory.api.ldap.model.message.ResultResponse;
+import org.apache.directory.api.ldap.model.message.SearchRequest;
+import org.apache.directory.api.ldap.model.message.SearchRequestImpl;
+import org.apache.directory.api.ldap.model.message.SearchResultDone;
+import org.apache.directory.api.ldap.model.message.SearchResultEntry;
+import org.apache.directory.api.ldap.model.message.SearchResultReference;
+import org.apache.directory.api.ldap.model.message.SearchScope;
+import org.apache.directory.api.ldap.model.name.Dn;
 import org.apache.directory.ldap.client.api.CramMd5Request;
 import org.apache.directory.ldap.client.api.DigestMd5Request;
 import org.apache.directory.ldap.client.api.GssApiRequest;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
 import org.apache.directory.ldap.client.api.exception.InvalidConnectionException;
-import org.apache.directory.shared.ldap.model.cursor.SearchCursor;
-import org.apache.directory.shared.ldap.model.entry.Entry;
-import org.apache.directory.shared.ldap.model.entry.Modification;
-import org.apache.directory.shared.ldap.model.exception.LdapOperationException;
-import org.apache.directory.shared.ldap.model.message.AbandonRequestImpl;
-import org.apache.directory.shared.ldap.model.message.AddRequestImpl;
-import org.apache.directory.shared.ldap.model.message.AddResponse;
-import org.apache.directory.shared.ldap.model.message.AliasDerefMode;
-import org.apache.directory.shared.ldap.model.message.BindRequestImpl;
-import org.apache.directory.shared.ldap.model.message.BindResponse;
-import org.apache.directory.shared.ldap.model.message.CompareRequestImpl;
-import org.apache.directory.shared.ldap.model.message.CompareResponse;
-import org.apache.directory.shared.ldap.model.message.Control;
-import org.apache.directory.shared.ldap.model.message.DeleteRequestImpl;
-import org.apache.directory.shared.ldap.model.message.DeleteResponse;
-import org.apache.directory.shared.ldap.model.message.ExtendedResponse;
-import org.apache.directory.shared.ldap.model.message.IntermediateResponse;
-import org.apache.directory.shared.ldap.model.message.LdapResult;
-import org.apache.directory.shared.ldap.model.message.Message;
-import org.apache.directory.shared.ldap.model.message.ModifyDnRequestImpl;
-import org.apache.directory.shared.ldap.model.message.ModifyDnResponse;
-import org.apache.directory.shared.ldap.model.message.ModifyRequestImpl;
-import org.apache.directory.shared.ldap.model.message.ModifyResponse;
-import org.apache.directory.shared.ldap.model.message.Referral;
-import org.apache.directory.shared.ldap.model.message.ResultResponse;
-import org.apache.directory.shared.ldap.model.message.SearchRequest;
-import org.apache.directory.shared.ldap.model.message.SearchRequestImpl;
-import org.apache.directory.shared.ldap.model.message.SearchResultDone;
-import org.apache.directory.shared.ldap.model.message.SearchResultEntry;
-import org.apache.directory.shared.ldap.model.message.SearchResultReference;
-import org.apache.directory.shared.ldap.model.message.SearchScope;
-import org.apache.directory.shared.ldap.model.name.Dn;
 import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
@@ -137,7 +138,7 @@ public class ApacheLdapConnection implements ProviderConnection
           connection.unBind();
         }
       } catch (
-        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        org.apache.directory.api.ldap.model.exception.LdapException e) {
         logger.error("Error unbinding from LDAP", e);
       }
       try {
@@ -199,7 +200,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, null, br);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     } catch (IOException e) {
       throw new LdapException(e);
@@ -238,7 +239,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, null, br);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     } catch (IOException e) {
       throw new LdapException(e);
@@ -306,7 +307,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, null, br);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     } catch (IOException e) {
       throw new LdapException(e);
@@ -343,7 +344,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, null, ar);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     }
     return response;
@@ -381,7 +382,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, cr.isTrue(), cr);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     }
     return response;
@@ -413,7 +414,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, null, dr);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     }
     return response;
@@ -451,7 +452,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, null, mr);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     }
     return response;
@@ -488,7 +489,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, null, mdr);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     }
     return response;
@@ -572,7 +573,7 @@ public class ApacheLdapConnection implements ProviderConnection
       response = createResponse(request, extRes.getValue(), apacheExtRes);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
-    } catch (org.apache.directory.shared.ldap.model.exception.LdapException e) {
+    } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
     }
     return response;
@@ -676,7 +677,7 @@ public class ApacheLdapConnection implements ProviderConnection
    * @throws  LdapException  wrapping the ldap exception
    */
   protected void processLdapException(
-    final org.apache.directory.shared.ldap.model.exception.LdapException e)
+    final org.apache.directory.api.ldap.model.exception.LdapException e)
     throws LdapException
   {
     if (e instanceof InvalidConnectionException) {
@@ -769,7 +770,7 @@ public class ApacheLdapConnection implements ProviderConnection
         closeCursor = true;
         processLdapOperationException(e);
       } catch (
-        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        org.apache.directory.api.ldap.model.exception.LdapException e) {
         closeCursor = true;
         processLdapException(e);
       } catch (RuntimeException e) {
@@ -820,7 +821,7 @@ public class ApacheLdapConnection implements ProviderConnection
       } catch (LdapOperationException e) {
         processLdapOperationException(e);
       } catch (
-        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        org.apache.directory.api.ldap.model.exception.LdapException e) {
         processLdapException(e);
       } catch (org.ldaptive.LdapException e) {
         throw e;
@@ -840,7 +841,7 @@ public class ApacheLdapConnection implements ProviderConnection
     {
       SearchItem si = null;
       try {
-        final org.apache.directory.shared.ldap.model.message.Response curRes =
+        final org.apache.directory.api.ldap.model.message.Response curRes =
           cursor.get();
         if (curRes instanceof SearchResultEntry) {
           si = processSearchResultEntry((SearchResultEntry) curRes);
@@ -853,11 +854,8 @@ public class ApacheLdapConnection implements ProviderConnection
         } else if (curRes instanceof IntermediateResponse) {
           si = processIntermediateResponse((IntermediateResponse) curRes);
         }
-      } catch (LdapOperationException e) {
-        processLdapOperationException(e);
-      } catch (
-        org.apache.directory.shared.ldap.model.exception.LdapException e) {
-        processLdapException(e);
+      } catch (CursorException e) {
+        throw new org.ldaptive.LdapException(e);
       } catch (RuntimeException e) {
         throw e;
       } catch (Exception e) {
@@ -918,7 +916,7 @@ public class ApacheLdapConnection implements ProviderConnection
       try {
         cursor = search(connection, request);
         while (cursor.next()) {
-          final org.apache.directory.shared.ldap.model.message.Response curRes =
+          final org.apache.directory.api.ldap.model.message.Response curRes =
             cursor.get();
           if (curRes instanceof SearchResultEntry) {
             listener.searchItemReceived(
@@ -939,11 +937,9 @@ public class ApacheLdapConnection implements ProviderConnection
         closeCursor = true;
         processLdapOperationException(e);
       } catch (
-        org.apache.directory.shared.ldap.model.exception.LdapException e) {
+        org.apache.directory.api.ldap.model.exception.LdapException e) {
         closeCursor = true;
         processLdapException(e);
-      } catch (org.ldaptive.LdapException e) {
-        throw e;
       } catch (RuntimeException e) {
         closeCursor = true;
         throw e;
@@ -997,13 +993,13 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  ldap search results
      *
-     * @throws  org.apache.directory.shared.ldap.model.exception.LdapException
+     * @throws  org.apache.directory.api.ldap.model.exception.LdapException
      * if an error occurs
      */
     protected SearchCursor search(
       final LdapNetworkConnection conn,
       final org.ldaptive.SearchRequest sr)
-      throws org.apache.directory.shared.ldap.model.exception.LdapException
+      throws org.apache.directory.api.ldap.model.exception.LdapException
     {
       final SearchRequest apacheSr = getSearchRequest(sr);
       final Control[] c = config.getControlProcessor().processRequestControls(
@@ -1024,12 +1020,12 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  search request
      *
-     * @throws  org.apache.directory.shared.ldap.model.exception.LdapException
+     * @throws  org.apache.directory.api.ldap.model.exception.LdapException
      * if the search request cannot be initialized
      */
     protected SearchRequest getSearchRequest(
       final org.ldaptive.SearchRequest sr)
-      throws org.apache.directory.shared.ldap.model.exception.LdapException
+      throws org.apache.directory.api.ldap.model.exception.LdapException
     {
       final SearchRequest apacheSr = new SearchRequestImpl();
       if (sr.getReturnAttributes() != null) {
