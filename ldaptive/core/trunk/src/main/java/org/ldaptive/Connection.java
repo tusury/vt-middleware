@@ -13,6 +13,7 @@
 */
 package org.ldaptive;
 
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.provider.ProviderConnection;
 
 /**
@@ -84,6 +85,14 @@ public interface Connection
 
   /** This will close the connection to the LDAP. */
   void close();
+
+
+  /**
+   * This will close the connection to the LDAP using the supplied controls.
+   *
+   * @param  controls  request controls
+   */
+  void close(RequestControl[] controls);
 
 
   /**

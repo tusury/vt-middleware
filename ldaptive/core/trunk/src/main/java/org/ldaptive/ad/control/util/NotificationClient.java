@@ -22,7 +22,6 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.ad.control.NotificationControl;
 import org.ldaptive.async.AbandonOperation;
-import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.handler.AsyncRequestHandler;
@@ -146,7 +145,7 @@ public class NotificationClient
     throws LdapException
   {
     final AbandonOperation abandon = new AbandonOperation(connection);
-    abandon.execute(new AbandonRequest(messageId));
+    abandon.execute(messageId);
   }
 
 

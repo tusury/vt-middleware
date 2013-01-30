@@ -13,8 +13,10 @@
 */
 package org.ldaptive.async;
 
+import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
+import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,14 +50,33 @@ public class AbandonOperation
   /**
    * Execute this ldap operation.
    *
-   * @param  request  containing the data required by this operation
+   * @param  messageId  of the operation to abandon
    *
    * @throws  LdapException  if the operation fails
    */
-  public void execute(final AbandonRequest request)
+  public void execute(final int messageId)
     throws LdapException
   {
-    logger.debug("execute request={} with connection={}", request, connection);
-    connection.getProviderConnection().abandon(request);
+    execute(messageId, null);
+  }
+
+
+  /**
+   * Execute this ldap operation.
+   *
+   * @param  messageId  of the operation to abandon
+   * @param  controls  request controls
+   *
+   * @throws  LdapException  if the operation fails
+   */
+  public void execute(final int messageId, final RequestControl[] controls)
+    throws LdapException
+  {
+    logger.debug(
+      "execute abandon for messageId={}, controls={} with connection={}",
+      messageId,
+      Arrays.toString(controls),
+      connection);
+    connection.getProviderConnection().abandon(messageId, controls);
   }
 }

@@ -22,7 +22,7 @@ import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.Response;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.async.AbandonRequest;
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.extended.ExtendedRequest;
 
 /**
@@ -141,11 +141,12 @@ public interface ProviderConnection
   /**
    * Abandon an operation.
    *
-   * @param  request  containing the data necessary to perform the operation
+   * @param  messageId  of the operation to abandon
+   * @param  controls  request controls
    *
    * @throws  LdapException  if an error occurs
    */
-  void abandon(AbandonRequest request)
+  void abandon(int messageId, RequestControl[] controls)
     throws LdapException;
 
 
@@ -165,8 +166,10 @@ public interface ProviderConnection
   /**
    * Tear down this connection to an LDAP.
    *
+   * @param  controls  request controls
+   *
    * @throws  LdapException  if an LDAP error occurs
    */
-  void close()
+  void close(RequestControl[] controls)
     throws LdapException;
 }

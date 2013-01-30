@@ -13,6 +13,7 @@
 */
 package org.ldaptive;
 
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderConnectionFactory;
@@ -336,13 +337,29 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** This will close the connection to the LDAP. */
+    /** {@inheritDoc} */
     @Override
     public synchronized void close()
     {
       try {
         if (isOpen()) {
-          providerConnection.close();
+          providerConnection.close(null);
+        }
+      } catch (LdapException e) {
+        logger.warn("Error closing connection with the LDAP", e);
+      } finally {
+        providerConnection = null;
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public synchronized void close(final RequestControl[] controls)
+    {
+      try {
+        if (isOpen()) {
+          providerConnection.close(controls);
         }
       } catch (LdapException e) {
         logger.warn("Error closing connection with the LDAP", e);
@@ -359,7 +376,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
     {
       try {
         if (providerConnection != null) {
-          providerConnection.close();
+          providerConnection.close(null);
         }
       } catch (LdapException e) {
         logger.warn("Error closing connection with the LDAP", e);
@@ -383,7 +400,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
     {
       try {
         if (providerConnection != null) {
-          providerConnection.close();
+          providerConnection.close(null);
         }
       } catch (LdapException e) {
         logger.warn("Error closing connection with the LDAP", e);
