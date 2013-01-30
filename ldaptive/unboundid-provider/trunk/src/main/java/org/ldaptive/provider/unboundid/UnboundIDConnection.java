@@ -56,7 +56,6 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
-import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -122,12 +121,13 @@ public class UnboundIDConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
     if (connection != null) {
       try {
-        connection.close();
+        connection.close(
+          config.getControlProcessor().processRequestControls(controls));
       } finally {
         connection = null;
       }
@@ -469,10 +469,11 @@ public class UnboundIDConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void abandon(final AbandonRequest request)
+  public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
   {
-    throw new UnsupportedOperationException("Abandons not supported");
+    throw new UnsupportedOperationException(
+      "Abandons via messageId not supported, use AsyncRequest instead");
   }
 
 

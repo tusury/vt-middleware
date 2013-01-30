@@ -45,7 +45,6 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
-import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -133,9 +132,13 @@ public class NetscapeConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
+    if (controls != null) {
+      throw new UnsupportedOperationException(
+        "Provider does not support unbind with controls");
+    }
     if (connection != null) {
       try {
         if (connection.isConnected()) {
@@ -408,11 +411,15 @@ public class NetscapeConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void abandon(final AbandonRequest request)
+  public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
   {
+    if (controls != null) {
+      throw new UnsupportedOperationException(
+        "Provider does not support abandon with controls");
+    }
     try {
-      connection.abandon(request.getMessageId());
+      connection.abandon(messageId);
     } catch (LDAPException e) {
       processLDAPException(e);
     }

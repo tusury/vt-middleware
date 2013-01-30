@@ -30,7 +30,6 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
-import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -116,12 +115,20 @@ public class OpenDSConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
     if (connection != null) {
+      final org.opends.sdk.requests.UnbindRequest ur =
+        Requests.newUnbindRequest();
+      if (controls != null) {
+        for (Control c :
+          config.getControlProcessor().processRequestControls(controls)) {
+          ur.addControl(c);
+        }
+      }
       try {
-        connection.close();
+        connection.close(ur, "Close requested by client");
       } finally {
         connection = null;
       }
@@ -601,15 +608,14 @@ public class OpenDSConnection
 
   /** {@inheritDoc} */
   @Override
-  public void abandon(final AbandonRequest request)
+  public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
   {
     final org.opends.sdk.requests.AbandonRequest ar =
-      Requests.newAbandonRequest(request.getMessageId());
-    if (request.getControls() != null) {
+      Requests.newAbandonRequest(messageId);
+    if (controls != null) {
       for (Control c :
-        config.getControlProcessor().processRequestControls(
-          request.getControls())) {
+        config.getControlProcessor().processRequestControls(controls)) {
         ar.addControl(c);
       }
     }

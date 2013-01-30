@@ -102,7 +102,7 @@ public class UnboundIDStartTLSConnectionFactory
       if (closeConn) {
         try {
           if (conn != null) {
-            conn.close();
+            conn.close(null);
           }
         } catch (LdapException e) {
           logger.debug("Problem tearing down connection", e);

@@ -52,7 +52,6 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
-import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -116,12 +115,12 @@ public class JLdapConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
     try {
       if (connection != null) {
-        connection.disconnect();
+        connection.disconnect(getLDAPConstraints(controls));
       }
     } catch (LDAPException e) {
       throw new LdapException(e, ResultCode.valueOf(e.getResultCode()));
@@ -405,11 +404,11 @@ public class JLdapConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void abandon(final AbandonRequest request)
+  public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
   {
     try {
-      connection.abandon(request.getMessageId(), getLDAPConstraints(request));
+      connection.abandon(messageId, getLDAPConstraints(controls));
     } catch (LDAPException e) {
       processLDAPException(e);
     }
@@ -456,6 +455,27 @@ public class JLdapConnection implements ProviderConnection
           request.getControls()));
     }
     constraints.setReferralFollowing(request.getFollowReferrals());
+    return constraints;
+  }
+
+
+  /**
+   * Returns an ldap constraints object configured with the supplied controls.
+   *
+   * @param  controls  to sets in the constraints
+   *
+   * @return  ldap constraints
+   */
+  protected LDAPConstraints getLDAPConstraints(final RequestControl[] controls)
+  {
+    LDAPConstraints constraints = connection.getConstraints();
+    if (constraints == null) {
+      constraints = new LDAPConstraints();
+    }
+    if (controls != null) {
+      constraints.setControls(
+        config.getControlProcessor().processRequestControls(controls));
+    }
     return constraints;
   }
 
