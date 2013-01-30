@@ -43,7 +43,6 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
-import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
@@ -189,9 +188,13 @@ public class JndiConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
+    if (controls != null) {
+      throw new UnsupportedOperationException(
+        "Provider does not support unbind with controls");
+    }
     try {
       if (context != null) {
         context.close();
@@ -544,7 +547,7 @@ public class JndiConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void abandon(final AbandonRequest request)
+  public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
   {
     throw new UnsupportedOperationException("Abandons not supported");

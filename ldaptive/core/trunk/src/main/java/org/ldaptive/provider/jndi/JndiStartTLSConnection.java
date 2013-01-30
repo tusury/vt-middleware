@@ -17,6 +17,7 @@ import java.io.IOException;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsResponse;
 import org.ldaptive.LdapException;
+import org.ldaptive.control.RequestControl;
 
 /**
  * JNDI provider implementation of ldap operations using startTLS.
@@ -31,8 +32,8 @@ public class JndiStartTLSConnection extends JndiConnection
   private StartTlsResponse startTlsResponse;
 
   /**
-   * Whether to call {@link StartTlsResponse#close()} when {@link #close()} is
-   * called.
+   * Whether to call {@link StartTlsResponse#close()} when {@link
+   * #close(RequestControl[])} is called.
    */
   private boolean stopTLSOnClose;
 
@@ -70,7 +71,7 @@ public class JndiStartTLSConnection extends JndiConnection
 
   /**
    * Returns whether to call {@link StartTlsResponse#close()} when {@link
-   * #close()} is called.
+   * #close(RequestControl[])} is called.
    *
    * @return  stop TLS on close
    */
@@ -81,8 +82,8 @@ public class JndiStartTLSConnection extends JndiConnection
 
 
   /**
-   * Sets whether to call {@link StartTlsResponse#close()} when {@link #close()}
-   * is called.
+   * Sets whether to call {@link StartTlsResponse#close()} when {@link
+   * #close(RequestControl[])} is called.
    *
    * @param  b  stop TLS on close
    */
@@ -117,7 +118,7 @@ public class JndiStartTLSConnection extends JndiConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
     try {
@@ -130,7 +131,7 @@ public class JndiStartTLSConnection extends JndiConnection
       logger.error("Error stopping TLS", e);
     } finally {
       startTlsResponse = null;
-      super.close();
+      super.close(controls);
     }
   }
 }
