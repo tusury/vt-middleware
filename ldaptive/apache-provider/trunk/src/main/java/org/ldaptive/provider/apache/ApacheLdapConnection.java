@@ -67,7 +67,6 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
-import org.ldaptive.async.AbandonRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
@@ -129,9 +128,13 @@ public class ApacheLdapConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
+    if (controls != null) {
+      throw new UnsupportedOperationException(
+        "Provider does not support unbind with controls");
+    }
     if (connection != null) {
       try {
         if (connection.isConnected()) {
@@ -533,16 +536,15 @@ public class ApacheLdapConnection implements ProviderConnection
 
   /** {@inheritDoc} */
   @Override
-  public void abandon(final AbandonRequest request)
+  public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
   {
     final AbandonRequestImpl ari = new AbandonRequestImpl();
-    if (request.getControls() != null) {
+    if (controls != null) {
       ari.addAllControls(
-        config.getControlProcessor().processRequestControls(
-          request.getControls()));
+        config.getControlProcessor().processRequestControls(controls));
     }
-    ari.setAbandoned(request.getMessageId());
+    ari.setAbandoned(messageId);
     connection.abandon(ari);
   }
 

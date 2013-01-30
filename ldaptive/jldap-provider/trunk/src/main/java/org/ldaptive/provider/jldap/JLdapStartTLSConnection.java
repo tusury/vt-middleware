@@ -16,6 +16,7 @@ package org.ldaptive.provider.jldap;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPException;
 import org.ldaptive.LdapException;
+import org.ldaptive.control.RequestControl;
 
 /**
  * JLDAP provider implementation of ldap operations over TLS.
@@ -27,8 +28,8 @@ public class JLdapStartTLSConnection extends JLdapConnection
 {
 
   /**
-   * Whether to call {@link LDAPConnection#stopTLS()} when {@link #close()} is
-   * called.
+   * Whether to call {@link LDAPConnection#stopTLS()} when {@link
+   * #close(RequestControl[])} is called.
    */
   private boolean stopTlsOnClose;
 
@@ -49,7 +50,7 @@ public class JLdapStartTLSConnection extends JLdapConnection
 
   /**
    * Returns whether to call {@link LDAPConnection#stopTLS()} when {@link
-   * #close()} is called.
+   * #close(RequestControl[])} is called.
    *
    * @return  stop TLS on close
    */
@@ -60,8 +61,8 @@ public class JLdapStartTLSConnection extends JLdapConnection
 
 
   /**
-   * Sets whether to call {@link LDAPConnection#stopTLS()} when {@link #close()}
-   * is called.
+   * Sets whether to call {@link LDAPConnection#stopTLS()} when {@link
+   * #close(RequestControl[])} is called.
    *
    * @param  b  stop TLS on close
    */
@@ -74,7 +75,7 @@ public class JLdapStartTLSConnection extends JLdapConnection
 
   /** {@inheritDoc} */
   @Override
-  public void close()
+  public void close(final RequestControl[] controls)
     throws LdapException
   {
     try {
@@ -84,7 +85,7 @@ public class JLdapStartTLSConnection extends JLdapConnection
     } catch (LDAPException e) {
       logger.error("Error stopping TLS", e);
     } finally {
-      super.close();
+      super.close(controls);
     }
   }
 }
