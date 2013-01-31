@@ -14,7 +14,6 @@
 package org.ldaptive;
 
 import org.ldaptive.control.RequestControl;
-import org.ldaptive.handler.AsyncRequestHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 
 /**
@@ -34,9 +33,6 @@ public abstract class AbstractRequest implements Request
 
   /** Intermediate response handlers. */
   private IntermediateResponseHandler[] intermediateResponseHandlers;
-
-  /** Async request handlers. */
-  private AsyncRequestHandler[] asyncRequestHandlers;
 
 
   /** {@inheritDoc} */
@@ -94,24 +90,5 @@ public abstract class AbstractRequest implements Request
     final IntermediateResponseHandler... handlers)
   {
     intermediateResponseHandlers = handlers;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public AsyncRequestHandler[] getAsyncRequestHandlers()
-  {
-    return asyncRequestHandlers;
-  }
-
-
-  /**
-   * Sets the async request handlers.
-   *
-   * @param  handlers  async request handlers
-   */
-  public void setAsyncRequestHandlers(final AsyncRequestHandler... handlers)
-  {
-    asyncRequestHandlers = handlers;
   }
 }

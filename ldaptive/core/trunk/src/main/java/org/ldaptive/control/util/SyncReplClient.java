@@ -131,6 +131,24 @@ public class SyncReplClient
           return new HandlerResult<Response<SearchResult>>(response);
         }
       });
+    search.setAsyncRequestHandlers(
+      new AsyncRequestHandler() {
+        @Override
+        public HandlerResult<AsyncRequest> process(
+          final Connection conn,
+          final Request request,
+          final AsyncRequest asyncRequest)
+          throws LdapException
+        {
+          try {
+            logger.debug("received {}", asyncRequest);
+            queue.put(new SyncReplItem(asyncRequest));
+          } catch (Exception e) {
+            logger.warn("Unable to enqueue async request {}", asyncRequest);
+          }
+          return new HandlerResult<AsyncRequest>(null);
+        }
+      });
 
     request.setControls(
       new SyncRequestControl(
@@ -178,24 +196,6 @@ public class SyncReplClient
             }
           }
           return new HandlerResult<IntermediateResponse>(null);
-        }
-      });
-    request.setAsyncRequestHandlers(
-      new AsyncRequestHandler() {
-        @Override
-        public HandlerResult<AsyncRequest> process(
-          final Connection conn,
-          final Request request,
-          final AsyncRequest asyncRequest)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", asyncRequest);
-            queue.put(new SyncReplItem(asyncRequest));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue async request {}", asyncRequest);
-          }
-          return new HandlerResult<AsyncRequest>(null);
         }
       });
 

@@ -87,6 +87,25 @@ public class NotificationClient
       new LinkedBlockingQueue<NotificationItem>();
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
+    search.setAsyncRequestHandlers(
+      new AsyncRequestHandler() {
+        @Override
+        public HandlerResult<AsyncRequest> process(
+          final Connection conn,
+          final Request request,
+          final AsyncRequest asyncRequest)
+          throws LdapException
+        {
+          try {
+            logger.debug("received {}", asyncRequest);
+            queue.put(new NotificationItem(asyncRequest));
+          } catch (Exception e) {
+            logger.warn("Unable to enqueue async request {}", asyncRequest);
+          }
+          return new HandlerResult<AsyncRequest>(null);
+        }
+      });
+
     request.setControls(new NotificationControl());
     request.setSearchEntryHandlers(
       new SearchEntryHandler() {
@@ -108,24 +127,6 @@ public class NotificationClient
 
         @Override
         public void initializeRequest(final SearchRequest request) {}
-      });
-    request.setAsyncRequestHandlers(
-      new AsyncRequestHandler() {
-        @Override
-        public HandlerResult<AsyncRequest> process(
-          final Connection conn,
-          final Request request,
-          final AsyncRequest asyncRequest)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", asyncRequest);
-            queue.put(new NotificationItem(asyncRequest));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue async request {}", asyncRequest);
-          }
-          return new HandlerResult<AsyncRequest>(null);
-        }
       });
 
     search.execute(request);

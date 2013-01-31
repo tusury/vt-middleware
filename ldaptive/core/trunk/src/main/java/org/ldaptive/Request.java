@@ -14,7 +14,6 @@
 package org.ldaptive;
 
 import org.ldaptive.control.RequestControl;
-import org.ldaptive.handler.AsyncRequestHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 
 /**
@@ -41,12 +40,4 @@ public interface Request extends Message<RequestControl>
    * @return  intermediate response handlers
    */
   IntermediateResponseHandler[] getIntermediateResponseHandlers();
-
-
-  /**
-   * Returns the async request handlers.
-   *
-   * @return  async request handlers
-   */
-  AsyncRequestHandler[] getAsyncRequestHandlers();
 }
