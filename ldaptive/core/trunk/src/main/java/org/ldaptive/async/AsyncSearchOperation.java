@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
-import org.ldaptive.AbstractOperation;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
@@ -38,7 +37,7 @@ import org.ldaptive.provider.SearchListener;
  * @version  $Revision$ $Date$
  */
 public class AsyncSearchOperation
-  extends AbstractOperation<SearchRequest, SearchResult>
+  extends AbstractAsyncOperation<SearchRequest, SearchResult>
 {
 
   /** Single thread executor to submit async operations to. */
@@ -233,7 +232,7 @@ public class AsyncSearchOperation
     {
       logger.trace("Received async request={}", request);
       final HandlerResult<AsyncRequest> hr = executeHandlers(
-        searchRequest.getAsyncRequestHandlers(),
+        getAsyncRequestHandlers(),
         searchRequest,
         request);
       if (hr.getAbort()) {
