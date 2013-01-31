@@ -40,7 +40,7 @@ public class AsyncSearchOperation
   extends AbstractAsyncOperation<SearchRequest, SearchResult>
 {
 
-  /** Single thread executor to submit async operations to. */
+  /** Cached thread executor to submit async operations to. */
   private final ExecutorService executorService =
     Executors.newCachedThreadPool();
 
