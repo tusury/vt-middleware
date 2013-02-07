@@ -24,10 +24,11 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
+import org.ldaptive.async.handler.AsyncRequestHandler;
+import org.ldaptive.async.handler.ExceptionHandler;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.extended.CancelOperation;
 import org.ldaptive.extended.CancelRequest;
-import org.ldaptive.handler.AsyncRequestHandler;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.OperationResponseHandler;
@@ -124,6 +125,7 @@ public class SyncReplClient
         {
           try {
             logger.debug("received {}", response);
+            search.shutdown();
             queue.put(new SyncReplItem(new SyncReplItem.Response(response)));
           } catch (Exception e) {
             logger.warn("Unable to enqueue response {}", response);
@@ -149,6 +151,25 @@ public class SyncReplClient
           return new HandlerResult<AsyncRequest>(null);
         }
       });
+    search.setExceptionHandler(
+      new ExceptionHandler() {
+        @Override
+        public HandlerResult<Exception> process(
+          final Connection conn,
+          final Request request,
+          final Exception exception)
+        {
+          try {
+            logger.debug("received {}", exception);
+            search.shutdown();
+            queue.put(new SyncReplItem(exception));
+          } catch (Exception e) {
+            logger.warn("Unable to enqueue exception {}", exception);
+          }
+          return new HandlerResult<Exception>(null);
+        }
+      }
+    );
 
     request.setControls(
       new SyncRequestControl(

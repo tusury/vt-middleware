@@ -25,6 +25,9 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.async.handler.ExceptionHandler;
+import org.ldaptive.extended.UnsolicitedNotificationListener;
+import org.ldaptive.extended.UnsolicitedNotifications;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.intermediate.IntermediateResponse;
 import org.ldaptive.provider.SearchItem;
@@ -67,7 +70,20 @@ public class AsyncSearchOperation
         public Response<SearchResult> call()
           throws LdapException
         {
-          return AsyncSearchOperation.super.execute(request);
+          final ExceptionHandler handler = getExceptionHandler();
+          try {
+            return AsyncSearchOperation.super.execute(request);
+          } catch (LdapException e) {
+            if (handler != null) {
+              handler.process(getConnection(), request, e);
+            }
+            throw e;
+          } catch (RuntimeException e) {
+            if (handler != null) {
+              handler.process(getConnection(), request, e);
+            }
+            throw e;
+          }
         }
       });
     return new FutureResponse<SearchResult>(future);
@@ -131,6 +147,9 @@ public class AsyncSearchOperation
     /** To return when a response is received or the operation is aborted. */
     private Response<SearchResult> searchResponse;
 
+    /** Listen for unsolicited notifications. */
+    private UnsolicitedNotificationListener notificationListener;
+
 
     /**
      * Creates a new async search listener.
@@ -141,6 +160,22 @@ public class AsyncSearchOperation
     {
       searchRequest = request;
       searchResult = new SearchResult(searchRequest.getSortBehavior());
+      notificationListener = new UnsolicitedNotificationListener() {
+        @Override
+        public void notificationReceived(
+          final String oid,
+          final Response<Void> response)
+        {
+          logger.warn(
+            "unsolicited notification received: oid={}, response={}",
+            oid,
+            response);
+          responseReceived(response);
+        }
+      };
+      final UnsolicitedNotifications notification =
+        new UnsolicitedNotifications(getConnection());
+      notification.addListener(notificationListener);
     }
 
 
@@ -198,12 +233,15 @@ public class AsyncSearchOperation
         response.getControls(),
         response.getReferralURLs(),
         response.getMessageId());
+      final UnsolicitedNotifications notification =
+        new UnsolicitedNotifications(getConnection());
+      notification.removeListener(notificationListener);
       responseLock.release();
     }
 
 
     /**
-     * Returns the response data associated with this search ,blocking until a
+     * Returns the response data associated with this search, blocking until a
      * response is available.
      *
      * @return  response data
