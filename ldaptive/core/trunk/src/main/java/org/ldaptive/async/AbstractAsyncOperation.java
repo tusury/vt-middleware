@@ -16,7 +16,8 @@ package org.ldaptive.async;
 import org.ldaptive.AbstractOperation;
 import org.ldaptive.Connection;
 import org.ldaptive.Request;
-import org.ldaptive.handler.AsyncRequestHandler;
+import org.ldaptive.async.handler.AsyncRequestHandler;
+import org.ldaptive.async.handler.ExceptionHandler;
 
 /**
  * Base class for asynchronous ldap operations.
@@ -33,6 +34,9 @@ public abstract class AbstractAsyncOperation<Q extends Request, S>
 
   /** Handlers to process async requests. */
   private AsyncRequestHandler[] asyncRequestHandlers;
+
+  /** Handler to process exceptions. */
+  private ExceptionHandler exceptionHandler;
 
 
   /**
@@ -65,5 +69,27 @@ public abstract class AbstractAsyncOperation<Q extends Request, S>
   public void setAsyncRequestHandlers(final AsyncRequestHandler... handlers)
   {
     asyncRequestHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the exception handler.
+   *
+   * @return  exception handler
+   */
+  public ExceptionHandler getExceptionHandler()
+  {
+    return exceptionHandler;
+  }
+
+
+  /**
+   * Sets the exception handler.
+   *
+   * @param  handler  exception handler
+   */
+  public void setExceptionHandler(final ExceptionHandler handler)
+  {
+    exceptionHandler = handler;
   }
 }

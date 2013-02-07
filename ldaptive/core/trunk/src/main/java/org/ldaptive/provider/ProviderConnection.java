@@ -24,6 +24,7 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.UnsolicitedNotificationListener;
 
 /**
  * Interface for a provider specific implementation of ldap operations.
@@ -161,6 +162,24 @@ public interface ProviderConnection
    */
   Response<?> extendedOperation(ExtendedRequest request)
     throws LdapException;
+
+
+  /**
+   * Adds a listener to receive unsolicited notifications.
+   *
+   * @param  listener  to receive unsolicited notifications
+   */
+  void addUnsolicitedNotificationListener(
+    UnsolicitedNotificationListener listener);
+
+
+  /**
+   * Removes a listener from receiving unsolicited notifications.
+   *
+   * @param  listener  that was registered to receive unsolicited notifications
+   */
+  void removeUnsolicitedNotificationListener(
+    UnsolicitedNotificationListener listener);
 
 
   /**

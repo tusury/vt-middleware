@@ -24,7 +24,7 @@ import org.ldaptive.ad.control.NotificationControl;
 import org.ldaptive.async.AbandonOperation;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
-import org.ldaptive.handler.AsyncRequestHandler;
+import org.ldaptive.async.handler.AsyncRequestHandler;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.slf4j.Logger;

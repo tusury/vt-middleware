@@ -41,6 +41,9 @@ public class SyncReplItem
   /** Response contained in this sync repl item. */
   private final Response syncReplResponse;
 
+  /** Exception thrown by the search operation. */
+  private final Exception syncReplException;
+
 
   /**
    * Creates a new sync repl item.
@@ -53,6 +56,7 @@ public class SyncReplItem
     syncReplEntry = null;
     syncInfoMessage = null;
     syncReplResponse = null;
+    syncReplException = null;
   }
 
 
@@ -67,6 +71,7 @@ public class SyncReplItem
     syncReplEntry = entry;
     syncInfoMessage = null;
     syncReplResponse = null;
+    syncReplException = null;
   }
 
 
@@ -81,6 +86,7 @@ public class SyncReplItem
     syncReplEntry = null;
     syncInfoMessage = message;
     syncReplResponse = null;
+    syncReplException = null;
   }
 
 
@@ -95,6 +101,22 @@ public class SyncReplItem
     syncReplEntry = null;
     syncInfoMessage = null;
     syncReplResponse = response;
+    syncReplException = null;
+  }
+
+
+  /**
+   * Creates a new sync repl item.
+   *
+   * @param  exception  that represents this item
+   */
+  public SyncReplItem(final Exception exception)
+  {
+    asyncRequest = null;
+    syncReplEntry = null;
+    syncInfoMessage = null;
+    syncReplResponse = null;
+    syncReplException = exception;
   }
 
 
@@ -190,6 +212,29 @@ public class SyncReplItem
   }
 
 
+  /**
+   * Returns whether this item represents an exception.
+   *
+   * @return  whether this item represents an exception
+   */
+  public boolean isException()
+  {
+    return syncReplException != null;
+  }
+
+
+  /**
+   * Returns the exception contained in this item or null if this item does not
+   * contain an exception.
+   *
+   * @return  exception
+   */
+  public Exception getException()
+  {
+    return syncReplException;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -219,6 +264,12 @@ public class SyncReplItem
         getClass().getName(),
         hashCode(),
         syncReplResponse);
+    } else if (isException()) {
+      s = String.format(
+        "[%s@%d::syncReplException=%s]",
+        getClass().getName(),
+        hashCode(),
+        syncReplException);
     } else {
       s = String.format("[%s@%d]", getClass().getName(), hashCode());
     }
