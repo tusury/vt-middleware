@@ -61,7 +61,7 @@ public class ControlProcessor<T>
   @SuppressWarnings("unchecked")
   public T[] processRequestControls(final RequestControl[] requestControls)
   {
-    if (requestControls == null) {
+    if (requestControls == null || requestControls.length == 0) {
       return null;
     }
     logger.trace(
@@ -117,7 +117,7 @@ public class ControlProcessor<T>
    */
   public ResponseControl[] processResponseControls(final T[] responseControls)
   {
-    if (responseControls == null) {
+    if (responseControls == null || responseControls.length == 0) {
       return null;
     }
     logger.trace("processing provider response controls: {}", responseControls);
