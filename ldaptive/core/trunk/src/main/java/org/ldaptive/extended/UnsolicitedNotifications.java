@@ -24,10 +24,6 @@ import org.ldaptive.Connection;
 public class UnsolicitedNotifications
 {
 
-  /** OID for the notice of disconnection notification. */
-  public static final String NOTICE_OF_DISCONNECTION_OID =
-    "1.3.6.1.4.1.1466.20036";
-
   /** Connection to configure unsolicited notifications on. */
   private final Connection connection;
 
