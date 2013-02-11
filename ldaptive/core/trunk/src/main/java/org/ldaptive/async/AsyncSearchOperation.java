@@ -244,11 +244,11 @@ public class AsyncSearchOperation
     @Override
     public void exceptionReceived(final Exception exception)
     {
-      final ExceptionHandler handler = getExceptionHandler();
-      if (handler != null) {
-        handler.process(getConnection(), searchRequest, exception);
+      if (exception instanceof LdapException) {
+        searchException = (LdapException) exception;
+      } else {
+        searchException = new LdapException(exception);
       }
-      searchException = new LdapException(exception);
       responseLock.release();
     }
 
