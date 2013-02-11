@@ -41,4 +41,13 @@ public interface ResponseListener
    * @param  response  containing the result
    */
   void responseReceived(Response<Void> response);
+
+
+  /**
+   * Invoked when an exception is thrown from a provider indicating the
+   * operation cannot be completed.
+   *
+   * @param  exception  thrown from the async operation
+   */
+  void exceptionReceived(Exception exception);
 }
