@@ -46,9 +46,7 @@ public class NetscapeProviderConfig extends ProviderConfig
   /** Default constructor. */
   public NetscapeProviderConfig()
   {
-    setOperationExceptionResultCodes(
-      ResultCode.LDAP_TIMEOUT,
-      ResultCode.CONNECT_ERROR);
+    setOperationExceptionResultCodes(ResultCode.CONNECT_ERROR);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,

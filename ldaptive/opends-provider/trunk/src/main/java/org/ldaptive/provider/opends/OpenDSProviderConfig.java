@@ -42,9 +42,7 @@ public class OpenDSProviderConfig extends ProviderConfig
   /** Default constructor. */
   public OpenDSProviderConfig()
   {
-    setOperationExceptionResultCodes(
-      ResultCode.LDAP_TIMEOUT,
-      ResultCode.CONNECT_ERROR);
+    setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
