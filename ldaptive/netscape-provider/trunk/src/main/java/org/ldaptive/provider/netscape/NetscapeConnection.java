@@ -51,6 +51,7 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
+import org.ldaptive.extended.UnsolicitedNotificationListener;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
@@ -444,6 +445,26 @@ public class NetscapeConnection implements ProviderConnection
       processLDAPException(e);
     }
     return response;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void addUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    throw new UnsupportedOperationException(
+      "Unsolicited notifications not supported");
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void removeUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    throw new UnsupportedOperationException(
+      "Unsolicited notifications not supported");
   }
 
 

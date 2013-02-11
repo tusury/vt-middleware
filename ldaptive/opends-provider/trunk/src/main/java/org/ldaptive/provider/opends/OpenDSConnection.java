@@ -14,6 +14,7 @@
 package org.ldaptive.provider.opends;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import org.ldaptive.AddRequest;
@@ -36,6 +37,7 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
+import org.ldaptive.extended.UnsolicitedNotificationListener;
 import org.ldaptive.intermediate.IntermediateResponseFactory;
 import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
@@ -46,6 +48,7 @@ import org.ldaptive.sasl.SaslConfig;
 import org.opends.sdk.AsynchronousConnection;
 import org.opends.sdk.ByteString;
 import org.opends.sdk.Connection;
+import org.opends.sdk.ConnectionEventListener;
 import org.opends.sdk.DereferenceAliasesPolicy;
 import org.opends.sdk.ErrorResultException;
 import org.opends.sdk.FutureResult;
@@ -61,6 +64,7 @@ import org.opends.sdk.requests.SearchRequest;
 import org.opends.sdk.requests.SimpleBindRequest;
 import org.opends.sdk.responses.BindResult;
 import org.opends.sdk.responses.CompareResult;
+import org.opends.sdk.responses.ExtendedResult;
 import org.opends.sdk.responses.GenericExtendedResult;
 import org.opends.sdk.responses.IntermediateResponse;
 import org.opends.sdk.responses.Result;
@@ -88,6 +92,10 @@ public class OpenDSConnection
   /** Provider configuration. */
   private final OpenDSProviderConfig config;
 
+  /** Connection event listener for unsolicited notifications. */
+  private final AggregateUnsolicitedNotificationListener notificationListener =
+    new AggregateUnsolicitedNotificationListener();
+
 
   /**
    * Creates a new opends ldap connection.
@@ -99,6 +107,7 @@ public class OpenDSConnection
   {
     connection = c;
     config = pc;
+    connection.addConnectionEventListener(notificationListener);
   }
 
 
@@ -669,6 +678,24 @@ public class OpenDSConnection
   }
 
 
+  /** {@inheritDoc} */
+  @Override
+  public void addUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    notificationListener.addUnsolicitedNotificationListener(listener);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void removeUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    notificationListener.removeUnsolicitedNotificationListener(listener);
+  }
+
+
   /**
    * Creates an operation response with the supplied response data.
    *
@@ -1000,11 +1027,16 @@ public class OpenDSConnection
     {
       logger.trace("reading error result: {}", e);
 
-      final org.ldaptive.Response<Void> response = createResponse(
-        request,
-        null,
-        e.getResult());
-      listener.responseReceived(response);
+      final List<Control> ctls = e.getResult().getControls();
+      final List<String> urls = e.getResult().getReferralURIs();
+      listener.exceptionReceived(new LdapException(
+        e.getMessage(),
+        new Exception(e.getCause()),
+        ResultCode.valueOf(e.getResult().getResultCode().intValue()),
+        e.getResult().getMatchedDN(),
+        config.getControlProcessor().processResponseControls(
+          ctls.toArray(new Control[ctls.size()])),
+        urls.toArray(new String[urls.size()])));
     }
 
 
@@ -1317,6 +1349,78 @@ public class OpenDSConnection
         }
       }
       connection.getAsynchronousConnection().abandon(ar);
+    }
+  }
+
+
+  /** Allows the use of multiple unsolicited notification listeners per
+      connection. */
+  protected class AggregateUnsolicitedNotificationListener
+    implements ConnectionEventListener
+  {
+
+    /** Listeners to receive unsolicited notifications. */
+    private final List<UnsolicitedNotificationListener> listeners =
+      new ArrayList<UnsolicitedNotificationListener>();
+
+
+    /**
+     * Adds an unsolicited notification listener to this listener.
+     *
+     * @param  listener  to receive unsolicited notifications
+     */
+    public void addUnsolicitedNotificationListener(
+      final UnsolicitedNotificationListener listener)
+    {
+      synchronized (listeners) {
+        listeners.add(listener);
+      }
+    }
+
+
+    /**
+     * Removes an unsolicited notification listener from this listener.
+     *
+     * @param  listener  to stop receiving unsolicited notifications
+     */
+    public void removeUnsolicitedNotificationListener(
+      final UnsolicitedNotificationListener listener)
+    {
+      synchronized (listeners) {
+        listeners.remove(listener);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleConnectionClosed() {}
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleConnectionError(
+      final boolean b,
+      final ErrorResultException e) {}
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleUnsolicitedNotification(
+      final ExtendedResult extendedResult)
+    {
+      logger.debug("Unsolicited notification received: {}", extendedResult);
+      synchronized (listeners) {
+        final Response<Void> response = createResponse(
+          null,
+          null,
+          extendedResult);
+        for (UnsolicitedNotificationListener listener : listeners) {
+          listener.notificationReceived(
+            extendedResult.getOID(),
+            response);
+        }
+      }
     }
   }
 }

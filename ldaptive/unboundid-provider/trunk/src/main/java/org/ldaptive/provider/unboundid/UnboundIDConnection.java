@@ -14,6 +14,8 @@
 package org.ldaptive.provider.unboundid;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.AsyncRequestID;
@@ -25,6 +27,8 @@ import com.unboundid.ldap.sdk.Control;
 import com.unboundid.ldap.sdk.DIGESTMD5BindRequest;
 import com.unboundid.ldap.sdk.DN;
 import com.unboundid.ldap.sdk.DereferencePolicy;
+import com.unboundid.ldap.sdk.DisconnectHandler;
+import com.unboundid.ldap.sdk.DisconnectType;
 import com.unboundid.ldap.sdk.EXTERNALBindRequest;
 import com.unboundid.ldap.sdk.ExtendedResult;
 import com.unboundid.ldap.sdk.GSSAPIBindRequest;
@@ -32,6 +36,7 @@ import com.unboundid.ldap.sdk.GSSAPIBindRequestProperties;
 import com.unboundid.ldap.sdk.IntermediateResponse;
 import com.unboundid.ldap.sdk.IntermediateResponseListener;
 import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.LDAPResult;
 import com.unboundid.ldap.sdk.LDAPSearchException;
@@ -43,6 +48,7 @@ import com.unboundid.ldap.sdk.SearchResultListener;
 import com.unboundid.ldap.sdk.SearchResultReference;
 import com.unboundid.ldap.sdk.SearchScope;
 import com.unboundid.ldap.sdk.SimpleBindRequest;
+import com.unboundid.ldap.sdk.UnsolicitedNotificationHandler;
 import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.CompareRequest;
@@ -62,6 +68,7 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
+import org.ldaptive.extended.UnsolicitedNotificationListener;
 import org.ldaptive.intermediate.IntermediateResponseFactory;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderUtils;
@@ -92,6 +99,14 @@ public class UnboundIDConnection implements ProviderConnection
   /** Provider configuration. */
   private final UnboundIDProviderConfig config;
 
+  /** Receives unsolicited notifications. */
+  private final AggregateUnsolicitedNotificationHandler notificationHandler =
+    new AggregateUnsolicitedNotificationHandler();
+
+  /** Receives disconnect notifications. */
+  private final AggregateDisconnectHandler disconnectHandler =
+    new AggregateDisconnectHandler();
+
 
   /**
    * Creates a new unboundid ldap connection.
@@ -105,6 +120,13 @@ public class UnboundIDConnection implements ProviderConnection
   {
     connection = lc;
     config = pc;
+    final LDAPConnectionOptions options = connection.getConnectionOptions();
+    if (options.getUnsolicitedNotificationHandler() == null) {
+      options.setUnsolicitedNotificationHandler(notificationHandler);
+    }
+    if (options.getDisconnectHandler() == null) {
+      options.setDisconnectHandler(disconnectHandler);
+    }
   }
 
 
@@ -516,6 +538,24 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
+  /** {@inheritDoc} */
+  @Override
+  public void addUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    notificationHandler.addUnsolicitedNotificationListener(listener);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void removeUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    notificationHandler.removeUnsolicitedNotificationListener(listener);
+  }
+
+
   /**
    * Creates an operation response with the supplied response data.
    *
@@ -765,6 +805,9 @@ public class UnboundIDConnection implements ProviderConnection
     /** Request ID of the search operation. */
     private AsyncRequestID requestID;
 
+    /** Receives disconnect notifications for this async operation. */
+    private DisconnectHandler handler;
+
 
     /**
      * Creates a new unbound id search listener.
@@ -778,6 +821,20 @@ public class UnboundIDConnection implements ProviderConnection
     {
       super(sr);
       listener = sl;
+      handler = new DisconnectHandler() {
+        @Override
+        public void handleDisconnect(
+          final LDAPConnection ldapConnection,
+          final String host,
+          final int port,
+          final DisconnectType disconnectType,
+          final String message,
+          final Throwable throwable)
+        {
+          listener.exceptionReceived(new Exception(message, throwable));
+          disconnectHandler.removeDisconnectHandler(this);
+        }
+      };
     }
 
 
@@ -824,6 +881,7 @@ public class UnboundIDConnection implements ProviderConnection
         unboundIdSr.addControls(c);
         logger.debug("performing search: {}", unboundIdSr);
         requestID = conn.asyncSearch(unboundIdSr);
+        disconnectHandler.addDisconnectHandler(handler);
         listener.asyncRequestReceived(new UnboundIDAsyncRequest(requestID, sr));
       } catch (LDAPSearchException e) {
         final ResultCode rc = ignoreSearchException(
@@ -870,6 +928,7 @@ public class UnboundIDConnection implements ProviderConnection
     {
       logger.trace("reading result: {}", res);
 
+      disconnectHandler.removeDisconnectHandler(handler);
       final org.ldaptive.Response<Void> response = createResponse(
         request,
         null,
@@ -1160,6 +1219,126 @@ public class UnboundIDConnection implements ProviderConnection
             request.getControls()));
       } catch (LDAPException e) {
         processLDAPException(request, e);
+      }
+    }
+  }
+
+
+  /** Allows the use of multiple unsolicited notification handlers per
+      connection. */
+  protected class AggregateUnsolicitedNotificationHandler
+    implements UnsolicitedNotificationHandler
+  {
+
+    /** Listeners to receive unsolicited notifications. */
+    private final List<UnsolicitedNotificationListener> listeners =
+      new ArrayList<UnsolicitedNotificationListener>();
+
+
+    /**
+     * Adds an unsolicited notification listener to this handler.
+     *
+     * @param  listener  to receive unsolicited notifications
+     */
+    public void addUnsolicitedNotificationListener(
+      final UnsolicitedNotificationListener listener)
+    {
+      synchronized (listeners) {
+        listeners.add(listener);
+      }
+    }
+
+
+    /**
+     * Removes an unsolicited notification listener from this handler.
+     *
+     * @param  listener  to stop receiving unsolicited notifications
+     */
+    public void removeUnsolicitedNotificationListener(
+      final UnsolicitedNotificationListener listener)
+    {
+      synchronized (listeners) {
+        listeners.remove(listener);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleUnsolicitedNotification(
+      final LDAPConnection ldapConnection,
+      final ExtendedResult extendedResult)
+    {
+      logger.debug("Unsolicited notification received: {}", extendedResult);
+      synchronized (listeners) {
+        final Response<Void> response = createResponse(
+          null, null, extendedResult);
+        for (UnsolicitedNotificationListener listener : listeners) {
+          listener.notificationReceived(
+            extendedResult.getOID(),
+            response);
+        }
+      }
+    }
+  }
+
+
+  /** Allows the use of multiple disconnect handlers per connection. */
+  protected class AggregateDisconnectHandler implements DisconnectHandler
+  {
+
+    /** Handlers to receive disconnect notifications. */
+    private final List<DisconnectHandler> handlers =
+      new ArrayList<DisconnectHandler>();
+
+
+    /**
+     * Adds an disconnect handler to this handler.
+     *
+     * @param  handler  to receive disconnect notifications
+     */
+    public void addDisconnectHandler(final DisconnectHandler handler)
+    {
+      synchronized (handlers) {
+        handlers.add(handler);
+      }
+    }
+
+
+    /**
+     * Removes a disconnect handler from this handler.
+     *
+     * @param  handler  to stop receiving disconnect notifications
+     */
+    public void removeDisconnectHandler(final DisconnectHandler handler)
+    {
+      synchronized (handlers) {
+        handlers.remove(handler);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void handleDisconnect(
+      final LDAPConnection ldapConnection,
+      final String host,
+      final int port,
+      final DisconnectType disconnectType,
+      final String message,
+      final Throwable throwable)
+    {
+      logger.debug("Disconnection received: {}", disconnectType);
+      synchronized (handlers) {
+        for (DisconnectHandler handler : handlers) {
+          handler.handleDisconnect(
+            ldapConnection,
+            host,
+            port,
+            disconnectType,
+            message,
+            throwable);
+        }
       }
     }
   }

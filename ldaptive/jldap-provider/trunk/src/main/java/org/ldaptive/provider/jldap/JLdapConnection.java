@@ -14,6 +14,8 @@
 package org.ldaptive.provider.jldap;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -35,6 +37,7 @@ import com.novell.ldap.LDAPSearchConstraints;
 import com.novell.ldap.LDAPSearchQueue;
 import com.novell.ldap.LDAPSearchResult;
 import com.novell.ldap.LDAPSearchResultReference;
+import com.novell.ldap.LDAPUnsolicitedNotificationListener;
 import com.novell.security.sasl.RealmCallback;
 import com.novell.security.sasl.RealmChoiceCallback;
 import org.ldaptive.AddRequest;
@@ -58,6 +61,7 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.ExtendedResponseFactory;
+import org.ldaptive.extended.UnsolicitedNotificationListener;
 import org.ldaptive.intermediate.IntermediateResponseFactory;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderUtils;
@@ -86,6 +90,10 @@ public class JLdapConnection implements ProviderConnection
   /** Provider configuration. */
   private final JLdapProviderConfig config;
 
+  /** Receives unsolicited notifications. */
+  private final AggregateUnsolicitedNotificationListener notificationListener =
+    new AggregateUnsolicitedNotificationListener();
+
 
   /**
    * Creates a new jldap connection.
@@ -99,6 +107,7 @@ public class JLdapConnection implements ProviderConnection
   {
     connection = conn;
     config = pc;
+    connection.addUnsolicitedNotificationListener(notificationListener);
   }
 
 
@@ -433,6 +442,24 @@ public class JLdapConnection implements ProviderConnection
       processLDAPException(e);
     }
     return response;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void addUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    notificationListener.addUnsolicitedNotificationListener(listener);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public void removeUnsolicitedNotificationListener(
+    final UnsolicitedNotificationListener listener)
+  {
+    notificationListener.removeUnsolicitedNotificationListener(listener);
   }
 
 
@@ -1208,6 +1235,65 @@ public class JLdapConnection implements ProviderConnection
         connection.abandon(messageQueue, constraints);
       } catch (LDAPException e) {
         processLDAPException(e);
+      }
+    }
+  }
+
+
+  /** Allows the use of multiple unsolicited notification handlers per
+      connection. */
+  protected class AggregateUnsolicitedNotificationListener
+    implements LDAPUnsolicitedNotificationListener
+  {
+
+    /** Listeners to receive unsolicited notifications. */
+    private final List<UnsolicitedNotificationListener> listeners =
+      new ArrayList<UnsolicitedNotificationListener>();
+
+
+    /**
+     * Adds an unsolicited notification listener to this handler.
+     *
+     * @param  listener  to receive unsolicited notifications
+     */
+    public void addUnsolicitedNotificationListener(
+      final UnsolicitedNotificationListener listener)
+    {
+      synchronized (listeners) {
+        listeners.add(listener);
+      }
+    }
+
+
+    /**
+     * Removes an unsolicited notification listener from this handler.
+     *
+     * @param  listener  to stop receiving unsolicited notifications
+     */
+    public void removeUnsolicitedNotificationListener(
+      final UnsolicitedNotificationListener listener)
+    {
+      synchronized (listeners) {
+        listeners.remove(listener);
+      }
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void messageReceived(final LDAPExtendedResponse extendedResponse)
+    {
+      logger.debug("Unsolicited notification received: {}", extendedResponse);
+      synchronized (listeners) {
+        final Response<Void> response = createResponse(
+          null,
+          null,
+          extendedResponse);
+        for (UnsolicitedNotificationListener listener : listeners) {
+          listener.notificationReceived(
+            extendedResponse.getID(),
+            response);
+        }
       }
     }
   }
