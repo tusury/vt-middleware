@@ -26,8 +26,6 @@ import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.async.handler.ExceptionHandler;
-import org.ldaptive.extended.UnsolicitedNotificationListener;
-import org.ldaptive.extended.UnsolicitedNotifications;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.intermediate.IntermediateResponse;
 import org.ldaptive.provider.SearchItem;
@@ -147,8 +145,8 @@ public class AsyncSearchOperation
     /** To return when a response is received or the operation is aborted. */
     private Response<SearchResult> searchResponse;
 
-    /** Listen for unsolicited notifications. */
-    private UnsolicitedNotificationListener notificationListener;
+    /** Thrown by the async search operation. */
+    private LdapException searchException;
 
 
     /**
@@ -160,22 +158,6 @@ public class AsyncSearchOperation
     {
       searchRequest = request;
       searchResult = new SearchResult(searchRequest.getSortBehavior());
-      notificationListener = new UnsolicitedNotificationListener() {
-        @Override
-        public void notificationReceived(
-          final String oid,
-          final Response<Void> response)
-        {
-          logger.warn(
-            "unsolicited notification received: oid={}, response={}",
-            oid,
-            response);
-          responseReceived(response);
-        }
-      };
-      final UnsolicitedNotifications notification =
-        new UnsolicitedNotifications(getConnection());
-      notification.addListener(notificationListener);
     }
 
 
@@ -233,9 +215,6 @@ public class AsyncSearchOperation
         response.getControls(),
         response.getReferralURLs(),
         response.getMessageId());
-      final UnsolicitedNotifications notification =
-        new UnsolicitedNotifications(getConnection());
-      notification.removeListener(notificationListener);
       responseLock.release();
     }
 
@@ -248,12 +227,29 @@ public class AsyncSearchOperation
      *
      * @throws  InterruptedException  if this thread is interrupted before a
      * response is received
+     * @throws  LdapException  if the async search encountered an error
      */
     public Response<SearchResult> getResponse()
-      throws InterruptedException
+      throws InterruptedException, LdapException
     {
       responseLock.acquire();
+      if (searchException != null) {
+        throw searchException;
+      }
       return searchResponse;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public void exceptionReceived(final Exception exception)
+    {
+      final ExceptionHandler handler = getExceptionHandler();
+      if (handler != null) {
+        handler.process(getConnection(), searchRequest, exception);
+      }
+      searchException = new LdapException(exception);
+      responseLock.release();
     }
 
 
