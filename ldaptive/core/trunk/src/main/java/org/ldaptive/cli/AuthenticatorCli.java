@@ -31,6 +31,7 @@ import org.ldaptive.io.LdifWriter;
 import org.ldaptive.io.SearchResultWriter;
 import org.ldaptive.props.AuthenticationRequestPropertySource;
 import org.ldaptive.props.AuthenticatorPropertySource;
+import org.ldaptive.props.BindConnectionInitializerPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.ldaptive.props.PropertySource.PropertyDomain;
 import org.ldaptive.props.SearchDnResolverPropertySource;
@@ -79,12 +80,15 @@ public class AuthenticatorCli extends AbstractCli
     for (String s : ConnectionConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
+    for (String s : BindConnectionInitializerPropertySource.getProperties()) {
+      options.addOption(new Option(s, true, desc.get(s)));
+    }
     for (String s : AuthenticatorPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
     for (String s : SearchDnResolverPropertySource.getProperties()) {
-      // ignore connection config property
-      if (!s.equalsIgnoreCase(ConnectionConfig.class.getSimpleName())) {
+      // ignore core search related properties
+      if (!s.startsWith("search")) {
         options.addOption(new Option(s, true, desc.get(s)));
       }
     }
