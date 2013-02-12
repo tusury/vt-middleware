@@ -60,7 +60,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @param  handler  search exception handler
    */
-  public void setSearchResponseHandlers(
+  public void setSearchExceptionHandler(
     final OperationExceptionHandler<SearchRequest, SearchResult> handler)
   {
     searchExceptionHandler = handler;
