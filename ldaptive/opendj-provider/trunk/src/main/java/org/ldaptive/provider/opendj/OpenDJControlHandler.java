@@ -41,7 +41,7 @@ public class OpenDJControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public org.forgerock.opendj.ldap.controls.Control processRequest(
+  public org.forgerock.opendj.ldap.controls.Control handleRequest(
     final RequestControl requestControl)
   {
     final byte[] value = requestControl.encode();
@@ -64,7 +64,7 @@ public class OpenDJControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public ResponseControl processResponse(
+  public ResponseControl handleResponse(
     final org.forgerock.opendj.ldap.controls.Control responseControl)
   {
     return

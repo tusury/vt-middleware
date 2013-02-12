@@ -42,7 +42,7 @@ public class UnboundIDControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public com.unboundid.ldap.sdk.Control processRequest(
+  public com.unboundid.ldap.sdk.Control handleRequest(
     final RequestControl requestControl)
   {
     try {
@@ -67,7 +67,7 @@ public class UnboundIDControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public ResponseControl processResponse(
+  public ResponseControl handleResponse(
     final com.unboundid.ldap.sdk.Control responseControl)
   {
     return

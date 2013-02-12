@@ -39,7 +39,7 @@ public class NetscapeControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public netscape.ldap.LDAPControl processRequest(
+  public netscape.ldap.LDAPControl handleRequest(
     final RequestControl requestControl)
   {
     return
@@ -52,7 +52,7 @@ public class NetscapeControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public ResponseControl processResponse(
+  public ResponseControl handleResponse(
     final netscape.ldap.LDAPControl responseControl)
   {
     return

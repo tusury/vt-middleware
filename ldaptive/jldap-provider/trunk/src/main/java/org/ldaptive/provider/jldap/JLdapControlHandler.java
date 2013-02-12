@@ -39,7 +39,7 @@ public class JLdapControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public com.novell.ldap.LDAPControl processRequest(
+  public com.novell.ldap.LDAPControl handleRequest(
     final RequestControl requestControl)
   {
     return
@@ -52,7 +52,7 @@ public class JLdapControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public ResponseControl processResponse(
+  public ResponseControl handleResponse(
     final com.novell.ldap.LDAPControl responseControl)
   {
     return

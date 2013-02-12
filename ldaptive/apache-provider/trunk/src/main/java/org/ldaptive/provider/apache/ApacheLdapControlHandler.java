@@ -55,7 +55,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
 
   /** {@inheritDoc} */
   @Override
-  public Control processRequest(
+  public Control handleRequest(
     final org.ldaptive.control.RequestControl requestControl)
   {
     Control ctl = null;
@@ -86,7 +86,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
 
   /** {@inheritDoc} */
   @Override
-  public org.ldaptive.control.ResponseControl processResponse(
+  public org.ldaptive.control.ResponseControl handleResponse(
     final Control responseControl)
   {
     org.ldaptive.control.ResponseControl ctl = null;
