@@ -32,7 +32,7 @@ public class TestAuthenticationResponseHandler
 
   /** {@inheritDoc} */
   @Override
-  public void process(final AuthenticationResponse response)
+  public void handle(final AuthenticationResponse response)
   {
     results.put(response.getLdapEntry().getDn(), response.getResult());
   }

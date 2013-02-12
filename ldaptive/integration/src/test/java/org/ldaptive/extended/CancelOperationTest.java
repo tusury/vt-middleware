@@ -80,7 +80,7 @@ public class CancelOperationTest extends AbstractTest
       request.setSearchEntryHandlers(
         new SearchEntryHandler() {
           @Override
-          public HandlerResult<SearchEntry> process(
+          public HandlerResult<SearchEntry> handle(
             final Connection conn,
             final SearchRequest request,
             final SearchEntry entry) throws LdapException
@@ -92,6 +92,9 @@ public class CancelOperationTest extends AbstractTest
               ResultCode.SUCCESS, response.getResultCode());
             return new HandlerResult<SearchEntry>(null);
           }
+
+          @Override
+          public void initializeRequest(final SearchRequest request) {}
         }
       );
       request.setControls(

@@ -155,7 +155,7 @@ public class RetrySearchOperation extends SearchOperation
 
     /** {@inheritDoc} */
     @Override
-    public void processInternal(
+    public void handleInternal(
       final Connection conn,
       final SearchRequest request,
       final Response<SearchResult> response)
@@ -165,7 +165,7 @@ public class RetrySearchOperation extends SearchOperation
         return;
       }
       final long t = System.currentTimeMillis();
-      super.processInternal(conn, request, response);
+      super.handleInternal(conn, request, response);
       runTime += System.currentTimeMillis() - t;
       throw ex;
     }
