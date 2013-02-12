@@ -26,6 +26,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.control.SyncStateControl;
 import org.ldaptive.intermediate.SyncInfoMessage;
@@ -93,6 +94,10 @@ public class SyncReplClientTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
     if (p.getClass().getName().equals(
       "org.ldaptive.provider.jndi.JndiProvider")) {
@@ -110,6 +115,9 @@ public class SyncReplClientTest extends AbstractTest
       final BlockingQueue<SyncReplItem> results = client.execute(request);
 
       SyncReplItem item = results.take();
+      AssertJUnit.assertTrue(item.isAsyncRequest());
+      AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
+      item = results.take();
       AssertJUnit.assertTrue(item.isEntry());
       AssertJUnit.assertEquals(
         SyncStateControl.State.ADD,
@@ -124,11 +132,9 @@ public class SyncReplClientTest extends AbstractTest
         true, item.getResponse().getSyncDoneControl().getRefreshDeletes());
       AssertJUnit.assertNotNull(
         item.getResponse().getSyncDoneControl().getCookie());
-
     } finally {
       conn.close();
     }
-
   }
 
 
@@ -151,6 +157,10 @@ public class SyncReplClientTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
     if (p.getClass().getName().equals(
       "org.ldaptive.provider.jndi.JndiProvider")) {
@@ -178,8 +188,13 @@ public class SyncReplClientTest extends AbstractTest
         dn, returnAttrs.split("\\|"));
       final BlockingQueue<SyncReplItem> results = client.execute(request);
 
-      // test the first entry
+      // test the async request
       SyncReplItem item = results.take();
+      AssertJUnit.assertTrue(item.isAsyncRequest());
+      AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
+
+      // test the first entry
+      item = results.take();
       AssertJUnit.assertTrue(item.isEntry());
       AssertJUnit.assertEquals(
         SyncStateControl.State.ADD,
