@@ -19,7 +19,7 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 
 /**
- * Provides post search processing of a search entry.
+ * Provides post search handling of a search entry.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -30,7 +30,7 @@ public interface SearchEntryHandler extends Handler<SearchRequest, SearchEntry>
 
   /** {@inheritDoc} */
   @Override
-  HandlerResult<SearchEntry> process(
+  HandlerResult<SearchEntry> handle(
     Connection conn,
     SearchRequest request,
     SearchEntry entry)

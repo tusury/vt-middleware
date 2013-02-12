@@ -35,11 +35,11 @@ public abstract class AbstractSearchOperationFactory
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Handler to process search exceptions. */
+  /** Handler to handle search exceptions. */
   private OperationExceptionHandler<SearchRequest, SearchResult>
   searchExceptionHandler;
 
-  /** Handlers to process search responses. */
+  /** Handlers to handle search responses. */
   private OperationResponseHandler<SearchRequest, SearchResult>[]
   searchResponseHandlers;
 

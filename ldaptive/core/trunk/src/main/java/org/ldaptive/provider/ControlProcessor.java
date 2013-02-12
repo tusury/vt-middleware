@@ -42,7 +42,7 @@ public class ControlProcessor<T>
   /**
    * Creates a new control processor.
    *
-   * @param  handler  to process controls with
+   * @param  handler  to handle controls with
    */
   public ControlProcessor(final ControlHandler<T> handler)
   {
@@ -98,7 +98,7 @@ public class ControlProcessor<T>
       return null;
     }
 
-    final T providerCtl = controlHandler.processRequest(ctl);
+    final T providerCtl = controlHandler.handleRequest(ctl);
     if (providerCtl == null) {
       throw new UnsupportedOperationException(
         "Request control not supported: " + ctl);
@@ -148,7 +148,7 @@ public class ControlProcessor<T>
       return null;
     }
 
-    final ResponseControl ctl = controlHandler.processResponse(providerCtl);
+    final ResponseControl ctl = controlHandler.handleResponse(providerCtl);
     if (ctl == null) {
       throw new UnsupportedOperationException(
         "Response control not supported: " + providerCtl);

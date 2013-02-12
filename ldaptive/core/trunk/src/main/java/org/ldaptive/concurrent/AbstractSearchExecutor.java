@@ -41,11 +41,11 @@ public abstract class AbstractSearchExecutor extends SearchRequest
   /** To submit operations to. */
   private final ExecutorService service;
 
-  /** Handler to process search exceptions. */
+  /** Handler to handle search exceptions. */
   private OperationExceptionHandler<SearchRequest, SearchResult>
   searchExceptionHandler;
 
-  /** Handlers to process search responses. */
+  /** Handlers to handle search responses. */
   private OperationResponseHandler<SearchRequest, SearchResult>[]
   searchResponseHandlers;
 

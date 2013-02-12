@@ -20,7 +20,7 @@ import org.ldaptive.Response;
 
 /**
  * Returns a handler result containing the response passed to {@link
- * #process(Connection, Request, Response)}.
+ * #handle(Connection, Request, Response)}.
  *
  * @param  <Q>  type of ldap request
  * @param  <S>  type of ldap response
@@ -35,7 +35,7 @@ public class NoOpOperationExceptionHandler<Q extends Request, S>
 
   /** {@inheritDoc} */
   @Override
-  public HandlerResult<Response<S>> process(
+  public HandlerResult<Response<S>> handle(
     final Connection conn,
     final Q request,
     final Response<S> response)

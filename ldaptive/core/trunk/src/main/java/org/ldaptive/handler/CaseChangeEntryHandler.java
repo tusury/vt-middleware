@@ -144,7 +144,7 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  protected String processDn(
+  protected String handleDn(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)
@@ -155,7 +155,7 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  protected String processAttributeName(
+  protected String handleAttributeName(
     final Connection conn,
     final SearchRequest request,
     final String name)
@@ -166,7 +166,7 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  protected String processAttributeValue(
+  protected String handleAttributeValue(
     final Connection conn,
     final SearchRequest request,
     final String value)
@@ -177,7 +177,7 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  protected byte[] processAttributeValue(
+  protected byte[] handleAttributeValue(
     final Connection conn,
     final SearchRequest request,
     final byte[] value)

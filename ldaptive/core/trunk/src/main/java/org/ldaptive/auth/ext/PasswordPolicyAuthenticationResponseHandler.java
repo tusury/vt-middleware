@@ -32,7 +32,7 @@ public class PasswordPolicyAuthenticationResponseHandler
 
   /** {@inheritDoc} */
   @Override
-  public void process(final AuthenticationResponse response)
+  public void handle(final AuthenticationResponse response)
   {
     final PasswordPolicyControl ppc = (PasswordPolicyControl)
       response.getControl(PasswordPolicyControl.OID);

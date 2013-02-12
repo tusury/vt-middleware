@@ -21,7 +21,7 @@ import org.ldaptive.handler.Handler;
 import org.ldaptive.handler.HandlerResult;
 
 /**
- * Provides post processing of an ldap async request.
+ * Provides post search handling of an ldap async request.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -32,7 +32,7 @@ public interface AsyncRequestHandler extends Handler<Request, AsyncRequest>
 
   /** {@inheritDoc} */
   @Override
-  HandlerResult<AsyncRequest> process(
+  HandlerResult<AsyncRequest> handle(
     Connection conn,
     Request request,
     AsyncRequest asyncRequest)

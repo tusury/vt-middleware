@@ -38,13 +38,13 @@ public class Authenticator
   /** For finding user DNs. */
   private DnResolver dnResolver;
 
-  /** Handler to process authentication. */
+  /** Handler to handle authentication. */
   private AuthenticationHandler authenticationHandler;
 
   /** For finding user entries. */
   private EntryResolver entryResolver;
 
-  /** Handlers to process authentication responses. */
+  /** Handlers to handle authentication responses. */
   private AuthenticationResponseHandler[] authenticationResponseHandlers;
 
   /** Whether to execute the entry resolver on authentication failure. */
@@ -277,7 +277,7 @@ public class Authenticator
         getAuthenticationResponseHandlers().length > 0) {
       for (AuthenticationResponseHandler ah :
            getAuthenticationResponseHandlers()) {
-        ah.process(authResponse);
+        ah.handle(authResponse);
       }
     }
 

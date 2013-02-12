@@ -117,7 +117,7 @@ public class SyncReplClient
     search.setOperationResponseHandlers(
       new OperationResponseHandler<SearchRequest, SearchResult>() {
         @Override
-        public HandlerResult<Response<SearchResult>> process(
+        public HandlerResult<Response<SearchResult>> handle(
           final Connection conn,
           final SearchRequest request,
           final Response<SearchResult> response)
@@ -136,7 +136,7 @@ public class SyncReplClient
     search.setAsyncRequestHandlers(
       new AsyncRequestHandler() {
         @Override
-        public HandlerResult<AsyncRequest> process(
+        public HandlerResult<AsyncRequest> handle(
           final Connection conn,
           final Request request,
           final AsyncRequest asyncRequest)
@@ -154,7 +154,7 @@ public class SyncReplClient
     search.setExceptionHandler(
       new ExceptionHandler() {
         @Override
-        public HandlerResult<Exception> process(
+        public HandlerResult<Exception> handle(
           final Connection conn,
           final Request request,
           final Exception exception)
@@ -180,7 +180,7 @@ public class SyncReplClient
     request.setSearchEntryHandlers(
       new SearchEntryHandler() {
         @Override
-        public HandlerResult<SearchEntry> process(
+        public HandlerResult<SearchEntry> handle(
           final Connection conn,
           final SearchRequest request,
           final SearchEntry entry)
@@ -201,7 +201,7 @@ public class SyncReplClient
     request.setIntermediateResponseHandlers(
       new IntermediateResponseHandler() {
         @Override
-        public HandlerResult<IntermediateResponse> process(
+        public HandlerResult<IntermediateResponse> handle(
           final Connection conn,
           final Request request,
           final IntermediateResponse response)

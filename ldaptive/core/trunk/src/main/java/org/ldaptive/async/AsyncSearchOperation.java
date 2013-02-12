@@ -73,12 +73,12 @@ public class AsyncSearchOperation
             return AsyncSearchOperation.super.execute(request);
           } catch (LdapException e) {
             if (handler != null) {
-              handler.process(getConnection(), request, e);
+              handler.handle(getConnection(), request, e);
             }
             throw e;
           } catch (RuntimeException e) {
             if (handler != null) {
-              handler.process(getConnection(), request, e);
+              handler.handle(getConnection(), request, e);
             }
             throw e;
           }
@@ -257,7 +257,7 @@ public class AsyncSearchOperation
      * Invokes the handlers for the supplied async request. Calls {@link
      * #responseReceived(Response)} if a handler aborts the operation.
      *
-     * @param  request  to process
+     * @param  request  to handle
      *
      * @throws  LdapException  if a handler throws
      */
@@ -280,7 +280,7 @@ public class AsyncSearchOperation
      * Invokes the handlers for the supplied search item. Calls {@link
      * #responseReceived(Response)} if a handler aborts the operation.
      *
-     * @param  item  to process
+     * @param  item  to handle
      *
      * @throws  LdapException  if a handler throws
      */

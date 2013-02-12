@@ -39,30 +39,30 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  public HandlerResult<SearchEntry> process(
+  public HandlerResult<SearchEntry> handle(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)
     throws LdapException
   {
     if (entry != null) {
-      entry.setDn(processDn(conn, request, entry));
-      processAttributes(conn, request, entry);
+      entry.setDn(handleDn(conn, request, entry));
+      handleAttributes(conn, request, entry);
     }
     return new HandlerResult<SearchEntry>(entry);
   }
 
 
   /**
-   * Process the dn of a search entry.
+   * Handle the dn of a search entry.
    *
    * @param  conn  the search was performed on
    * @param  request  used to find the search entry
    * @param  entry  search entry to extract the dn from
    *
-   * @return  processed dn
+   * @return  handled dn
    */
-  protected String processDn(
+  protected String handleDn(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)
@@ -72,7 +72,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
 
 
   /**
-   * Process the attributes of a search entry.
+   * Handle the attributes of a search entry.
    *
    * @param  conn  the search was performed on
    * @param  request  used to find the search entry
@@ -80,46 +80,46 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @throws  LdapException  if the LDAP returns an error
    */
-  protected void processAttributes(
+  protected void handleAttributes(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)
     throws LdapException
   {
     for (LdapAttribute la : entry.getAttributes()) {
-      processAttribute(conn, request, la);
+      handleAttribute(conn, request, la);
     }
   }
 
 
   /**
-   * Process a single attribute.
+   * Handle a single attribute.
    *
    * @param  conn  the search was performed on
    * @param  request  used to find the search entry
-   * @param  attr  to process
+   * @param  attr  to handle
    *
    * @throws  LdapException  if the LDAP returns an error
    */
-  protected void processAttribute(
+  protected void handleAttribute(
     final Connection conn,
     final SearchRequest request,
     final LdapAttribute attr)
     throws LdapException
   {
     if (attr != null) {
-      attr.setName(processAttributeName(conn, request, attr.getName()));
+      attr.setName(handleAttributeName(conn, request, attr.getName()));
       if (attr.isBinary()) {
         final Set<byte[]> newValues = new HashSet<byte[]>(attr.size());
         for (byte[] b : attr.getBinaryValues()) {
-          newValues.add(processAttributeValue(conn, request, b));
+          newValues.add(handleAttributeValue(conn, request, b));
         }
         attr.clear();
         attr.addBinaryValues(newValues);
       } else {
         final Set<String> newValues = new HashSet<String>(attr.size());
         for (String s : attr.getStringValues()) {
-          newValues.add(processAttributeValue(conn, request, s));
+          newValues.add(handleAttributeValue(conn, request, s));
         }
         attr.clear();
         attr.addStringValues(newValues);
@@ -133,11 +133,11 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @param  conn  the search was performed on
    * @param  request  used to find the search entry
-   * @param  name  to process
+   * @param  name  to handle
    *
-   * @return  processed name
+   * @return  handled name
    */
-  protected String processAttributeName(
+  protected String handleAttributeName(
     final Connection conn,
     final SearchRequest request,
     final String name)
@@ -151,11 +151,11 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @param  conn  the search was performed on
    * @param  request  used to find the search entry
-   * @param  value  to process
+   * @param  value  to handle
    *
-   * @return  processed value
+   * @return  handled value
    */
-  protected String processAttributeValue(
+  protected String handleAttributeValue(
     final Connection conn,
     final SearchRequest request,
     final String value)
@@ -169,11 +169,11 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @param  conn  the search was performed on
    * @param  request  used to find the search entry
-   * @param  value  to process
+   * @param  value  to handle
    *
-   * @return  processed value
+   * @return  handled value
    */
-  protected byte[] processAttributeValue(
+  protected byte[] handleAttributeValue(
     final Connection conn,
     final SearchRequest request,
     final byte[] value)

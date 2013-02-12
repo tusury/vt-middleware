@@ -125,7 +125,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
 
   /** {@inheritDoc} */
   @Override
-  public HandlerResult<Response<S>> process(
+  public HandlerResult<Response<S>> handle(
     final Connection conn,
     final Q request,
     final Response<S> response)
@@ -133,12 +133,12 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
   {
     for (int i = 0; i <= retry || retry == -1; i++) {
       try {
-        processInternal(conn, request, response);
+        handleInternal(conn, request, response);
         break;
       } catch (LdapException e) {
-        logger.error("unable to process operation exception", e);
+        logger.error("unable to handle operation exception", e);
         if (!retry(i)) {
-          // process failed, throw the original exception
+          // handle failed, throw the original exception
           return new HandlerResult<Response<S>>(null, true);
         }
       }
@@ -156,7 +156,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
    *
    * @throws  LdapException  if the retry fails
    */
-  protected abstract void processInternal(
+  protected abstract void handleInternal(
     final Connection conn,
     final Q request,
     final Response<S> response)
@@ -164,8 +164,8 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
 
 
   /**
-   * Invoked if {@link #processInternal(Connection, Request, Response)}
-   * succeeded. Creates a response to the original invocation that failed.
+   * Invoked if {@link #handleInternal} succeeded. Creates a response for the
+   * original invocation that failed.
    *
    * @param  conn  connection the operation was executed on
    * @param  request  executed by the operation

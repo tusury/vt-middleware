@@ -60,7 +60,7 @@ public abstract class AbstractBinaryAttributeHandler
 
   /** {@inheritDoc} */
   @Override
-  protected void processAttributes(
+  protected void handleAttributes(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)
@@ -76,15 +76,15 @@ public abstract class AbstractBinaryAttributeHandler
           }
           entry.addAttribute(newAttr);
           logger.debug("Processed attribute %s", newAttr);
-          processAttribute(conn, request, newAttr);
+          handleAttribute(conn, request, newAttr);
         } else {
           logger.warn(
             "Attribute %s must be set as a binary attribute",
             attributeName);
-          processAttribute(conn, request, la);
+          handleAttribute(conn, request, la);
         }
       } else {
-        processAttribute(conn, request, la);
+        handleAttribute(conn, request, la);
       }
     }
   }

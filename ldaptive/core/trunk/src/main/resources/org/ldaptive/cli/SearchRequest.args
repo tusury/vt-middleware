@@ -3,11 +3,11 @@ binaryAttributes:comma delimited list of binary attributes
 controls:fully qualified class name(s) that implements org.ldaptive.control.Control
 derefAliases:how to handle aliases (NEVER|SEARCHING|FINDING|ALWAYS)
 followReferrals:how to handle referrals (true|false)
-intermediateResponseHandlers:LDAP handlers for processing intermediate responses
+intermediateResponseHandlers:LDAP handlers for handling intermediate responses
 returnAttributes:comma delimited list of attributes to return from the search
-searchEntryHandlers:LDAP handlers for post processing result entries
+searchEntryHandlers:LDAP handlers for post search handling of result entries
 searchFilter:LDAP filter to execute
-searchReferenceHandlers:LDAP handlers for post processing result references
+searchReferenceHandlers:LDAP handlers for handling result references
 searchScope:scope of the search (OBJECT|ONELEVEL|SUBTREE)
 sizeLimit:maximum number of entries to return
 sortBehavior:how search results should be sorted

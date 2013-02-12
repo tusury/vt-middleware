@@ -30,7 +30,7 @@ public class ActiveDirectoryAuthenticationResponseHandler
 
   /** {@inheritDoc} */
   @Override
-  public void process(final AuthenticationResponse response)
+  public void handle(final AuthenticationResponse response)
   {
     if (response.getMessage() != null) {
       final ActiveDirectoryAccountState.Error adError =

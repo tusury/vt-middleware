@@ -19,7 +19,7 @@ import org.ldaptive.Request;
 import org.ldaptive.intermediate.IntermediateResponse;
 
 /**
- * Provides post processing of an ldap intermediate response.
+ * Provides handling of an ldap intermediate response.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -31,7 +31,7 @@ public interface IntermediateResponseHandler
 
   /** {@inheritDoc} */
   @Override
-  HandlerResult<IntermediateResponse> process(
+  HandlerResult<IntermediateResponse> handle(
     Connection conn,
     Request request,
     IntermediateResponse response)

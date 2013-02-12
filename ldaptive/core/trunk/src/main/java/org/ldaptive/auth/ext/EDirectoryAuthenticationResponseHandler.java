@@ -37,7 +37,7 @@ public class EDirectoryAuthenticationResponseHandler
 
   /** {@inheritDoc} */
   @Override
-  public void process(final AuthenticationResponse response)
+  public void handle(final AuthenticationResponse response)
   {
     final LdapEntry entry = response.getLdapEntry();
     final LdapAttribute expTime = entry.getAttribute("passwordExpirationTime");
