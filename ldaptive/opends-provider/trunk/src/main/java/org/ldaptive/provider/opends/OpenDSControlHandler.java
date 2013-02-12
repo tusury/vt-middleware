@@ -41,7 +41,7 @@ public class OpenDSControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public org.opends.sdk.controls.Control processRequest(
+  public org.opends.sdk.controls.Control handleRequest(
     final RequestControl requestControl)
   {
     final byte[] value = requestControl.encode();
@@ -64,7 +64,7 @@ public class OpenDSControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public ResponseControl processResponse(
+  public ResponseControl handleResponse(
     final org.opends.sdk.controls.Control responseControl)
   {
     return
