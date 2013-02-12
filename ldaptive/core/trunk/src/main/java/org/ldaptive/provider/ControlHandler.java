@@ -45,7 +45,7 @@ public interface ControlHandler<T>
    *
    * @return  provider specific controls
    */
-  T processRequest(RequestControl requestControl);
+  T handleRequest(RequestControl requestControl);
 
 
   /**
@@ -55,5 +55,5 @@ public interface ControlHandler<T>
    *
    * @return  control
    */
-  ResponseControl processResponse(T responseControl);
+  ResponseControl handleResponse(T responseControl);
 }

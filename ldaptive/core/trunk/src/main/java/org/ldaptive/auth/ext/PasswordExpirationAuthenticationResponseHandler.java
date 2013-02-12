@@ -39,7 +39,7 @@ public class PasswordExpirationAuthenticationResponseHandler
 
   /** {@inheritDoc} */
   @Override
-  public void process(final AuthenticationResponse response)
+  public void handle(final AuthenticationResponse response)
   {
     final PasswordExpiringControl expiringControl =
       (PasswordExpiringControl)

@@ -90,7 +90,7 @@ public class NotificationClient
     search.setAsyncRequestHandlers(
       new AsyncRequestHandler() {
         @Override
-        public HandlerResult<AsyncRequest> process(
+        public HandlerResult<AsyncRequest> handle(
           final Connection conn,
           final Request request,
           final AsyncRequest asyncRequest)
@@ -110,7 +110,7 @@ public class NotificationClient
     request.setSearchEntryHandlers(
       new SearchEntryHandler() {
         @Override
-        public HandlerResult<SearchEntry> process(
+        public HandlerResult<SearchEntry> handle(
           final Connection conn,
           final SearchRequest request,
           final SearchEntry entry)

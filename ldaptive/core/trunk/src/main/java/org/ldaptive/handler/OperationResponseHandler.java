@@ -19,7 +19,7 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 
 /**
- * Provides post processing of operation responses.
+ * Provides handling of operation responses.
  *
  * @param  <Q>  type of ldap request
  * @param  <T>  type of ldap result contained in the response
@@ -34,7 +34,7 @@ public interface OperationResponseHandler<Q extends Request, T>
 
   /** {@inheritDoc} */
   @Override
-  HandlerResult<Response<T>> process(
+  HandlerResult<Response<T>> handle(
     Connection conn,
     Q request,
     Response<T> response)

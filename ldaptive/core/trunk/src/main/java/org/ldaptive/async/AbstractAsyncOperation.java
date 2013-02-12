@@ -32,10 +32,10 @@ public abstract class AbstractAsyncOperation<Q extends Request, S>
   extends AbstractOperation<Q, S>
 {
 
-  /** Handlers to process async requests. */
+  /** Handlers to handle async requests. */
   private AsyncRequestHandler[] asyncRequestHandlers;
 
-  /** Handler to process exceptions. */
+  /** Handler to handle exceptions. */
   private ExceptionHandler exceptionHandler;
 
 

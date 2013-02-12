@@ -157,7 +157,7 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  public HandlerResult<SearchEntry> process(
+  public HandlerResult<SearchEntry> handle(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)

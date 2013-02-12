@@ -68,7 +68,7 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  protected void processAttributes(
+  protected void handleAttributes(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)
@@ -149,7 +149,7 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
         entry.addAttributes(result.getEntry().getAttributes());
 
         // Iterate
-        processAttributes(conn, request, entry);
+        handleAttributes(conn, request, entry);
       }
     }
   }

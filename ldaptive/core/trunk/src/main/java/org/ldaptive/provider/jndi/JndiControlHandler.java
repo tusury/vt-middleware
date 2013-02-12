@@ -39,7 +39,7 @@ public class JndiControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public javax.naming.ldap.Control processRequest(
+  public javax.naming.ldap.Control handleRequest(
     final RequestControl requestControl)
   {
     return
@@ -52,7 +52,7 @@ public class JndiControlHandler
 
   /** {@inheritDoc} */
   @Override
-  public ResponseControl processResponse(
+  public ResponseControl handleResponse(
     final javax.naming.ldap.Control responseControl)
   {
     return

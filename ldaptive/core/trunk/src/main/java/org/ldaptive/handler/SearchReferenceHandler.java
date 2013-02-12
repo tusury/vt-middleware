@@ -19,7 +19,7 @@ import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 
 /**
- * Provides post search processing of a search reference.
+ * Provides post search handling of a search reference.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -31,7 +31,7 @@ public interface SearchReferenceHandler
 
   /** {@inheritDoc} */
   @Override
-  HandlerResult<SearchReference> process(
+  HandlerResult<SearchReference> handle(
     Connection conn,
     SearchRequest request,
     SearchReference reference)

@@ -34,7 +34,7 @@ public interface OperationExceptionHandler<Q extends Request, S>
 
   /** {@inheritDoc} */
   @Override
-  HandlerResult<Response<S>> process(
+  HandlerResult<Response<S>> handle(
     Connection conn,
     Q request,
     Response<S> response)

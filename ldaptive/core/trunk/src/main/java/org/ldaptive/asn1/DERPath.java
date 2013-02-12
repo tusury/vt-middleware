@@ -22,7 +22,7 @@ import org.ldaptive.LdapUtils;
 /**
  * Describes paths to individual elements of an encoded DER object that may be
  * addressed during parsing to associate a parsed element with a handler to
- * process that element. Consider the following production rule for a complex
+ * handle that element. Consider the following production rule for a complex
  * type that may be DER encoded:
  *
  * <pre>

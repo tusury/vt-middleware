@@ -93,7 +93,7 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
 
   /** {@inheritDoc} */
   @Override
-  protected void processAttributes(
+  protected void handleAttributes(
     final Connection conn,
     final SearchRequest request,
     final SearchEntry entry)

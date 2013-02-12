@@ -41,11 +41,11 @@ public abstract class AbstractOperation<Q extends Request, S>
   /** Connection to perform operation. */
   private final Connection connection;
 
-  /** Handler to process operation exceptions. */
+  /** Handler to handle operation exceptions. */
   private OperationExceptionHandler<Q, S> operationExceptionHandler =
     new ReopenOperationExceptionHandler();
 
-  /** Handlers to process operation responses. */
+  /** Handlers to handle operation responses. */
   private OperationResponseHandler<Q, S>[] operationResponseHandlers;
 
 
@@ -149,7 +149,7 @@ public abstract class AbstractOperation<Q extends Request, S>
         operationExceptionHandler,
         e);
 
-      final HandlerResult<Response<S>> hr = operationExceptionHandler.process(
+      final HandlerResult<Response<S>> hr = operationExceptionHandler.handle(
         connection,
         request,
         response);
@@ -200,7 +200,7 @@ public abstract class AbstractOperation<Q extends Request, S>
       for (Handler<Q, S> handler : handlers) {
         if (handler != null) {
           try {
-            final HandlerResult<S> hr = handler.process(
+            final HandlerResult<S> hr = handler.handle(
               getConnection(),
               request,
               processed);
@@ -268,7 +268,7 @@ public abstract class AbstractOperation<Q extends Request, S>
 
     /** {@inheritDoc} */
     @Override
-    protected void processInternal(
+    protected void handleInternal(
       final Connection conn,
       final Q request,
       final Response<S> response)

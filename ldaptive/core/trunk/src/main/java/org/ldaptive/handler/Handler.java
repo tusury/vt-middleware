@@ -31,7 +31,7 @@ public interface Handler<Q extends Request, S>
 
 
   /**
-   * Process the supplied result for this handler.
+   * Handle the supplied result.
    *
    * @param  conn  connection the operation was executed on
    * @param  request  executed by the operation
@@ -39,8 +39,8 @@ public interface Handler<Q extends Request, S>
    *
    * @return  handler result
    *
-   * @throws  LdapException  if processing fails
+   * @throws  LdapException  if handling fails
    */
-  HandlerResult<S> process(Connection conn, Q request, S result)
+  HandlerResult<S> handle(Connection conn, Q request, S result)
     throws LdapException;
 }
