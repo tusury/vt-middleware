@@ -304,6 +304,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   @Override
   public void decode(final byte[] berValue)
   {
+    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
     final DERParser parser = new DERParser();
     parser.registerHandler(StateHandler.PATH, new StateHandler(this));
     parser.registerHandler(EntryUuidHandler.PATH, new EntryUuidHandler(this));
@@ -370,7 +371,9 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
-      getObject().setEntryUuid(UuidType.decode(encoded));
+      if (encoded.hasRemaining()) {
+        getObject().setEntryUuid(UuidType.decode(encoded));
+      }
     }
   }
 

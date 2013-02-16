@@ -149,6 +149,7 @@ public class GetStatsControl extends AbstractControl
   @Override
   public void decode(final byte[] berValue)
   {
+    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ/INT[1]", new IntegerHandler(this, "threadCount"));

@@ -146,6 +146,7 @@ public class PasswordExpiringControl extends AbstractControl
   @Override
   public void decode(final byte[] berValue)
   {
+    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
     final String time = OctetStringType.decode(ByteBuffer.wrap(berValue));
     setTimeBeforeExpiration(Integer.valueOf(time));
   }

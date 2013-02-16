@@ -76,6 +76,32 @@ public class SyncStateControlTest
           },
           false),
       },
+      // Add state, cookie length of 52, empty UUID
+      // BER:30:3B:0A:01:01:04:00:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32
+      //    :30:31:33:30:32:31:35:32:31:32:33:32:30:2E:34:36:34:34:38:35:5A:23
+      //    :30:30:30:30:30:30:23:30:30:30:23:30:30:30:30:30:30:
+      new Object[] {
+        LdapUtils.base64Decode(
+          "MDsKAQEEAAQ0cmlkPTAwMCxjc249MjAxMzAyMTUyMTIzMjAuNDY0NDg1WiMwMDAwM" +
+            "DAjMDAwIzAwMDAwMA=="),
+        new SyncStateControl(
+          SyncStateControl.State.ADD,
+          null,
+          new byte[] {
+            (byte) 0x72, (byte) 0x69, (byte) 0x64, (byte) 0x3d, (byte) 0x30,
+            (byte) 0x30, (byte) 0x30, (byte) 0x2c, (byte) 0x63, (byte) 0x73,
+            (byte) 0x6e, (byte) 0x3d, (byte) 0x32, (byte) 0x30, (byte) 0x31,
+            (byte) 0x33, (byte) 0x30, (byte) 0x32, (byte) 0x31, (byte) 0x35,
+            (byte) 0x32, (byte) 0x31, (byte) 0x32, (byte) 0x33, (byte) 0x32,
+            (byte) 0x30, (byte) 0x2e, (byte) 0x34, (byte) 0x36, (byte) 0x34,
+            (byte) 0x34, (byte) 0x38, (byte) 0x35, (byte) 0x5a, (byte) 0x23,
+            (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x30,
+            (byte) 0x30, (byte) 0x23, (byte) 0x30, (byte) 0x30, (byte) 0x30,
+            (byte) 0x23, (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x30,
+            (byte) 0x30, (byte) 0x30,
+          },
+          false),
+      },
     };
   }
 

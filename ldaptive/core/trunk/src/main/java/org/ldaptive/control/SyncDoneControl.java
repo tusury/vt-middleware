@@ -189,6 +189,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   @Override
   public void decode(final byte[] berValue)
   {
+    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
     final DERParser parser = new DERParser();
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.registerHandler(
