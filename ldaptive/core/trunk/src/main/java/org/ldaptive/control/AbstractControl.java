@@ -14,6 +14,8 @@
 package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for ldap controls.
@@ -23,6 +25,9 @@ import org.ldaptive.LdapUtils;
  */
 public abstract class AbstractControl implements Control
 {
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** control oid. */
   private final String oid;

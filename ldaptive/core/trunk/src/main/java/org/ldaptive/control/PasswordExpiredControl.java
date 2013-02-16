@@ -95,6 +95,7 @@ public class PasswordExpiredControl extends AbstractControl
   @Override
   public void decode(final byte[] berValue)
   {
+    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
     final String value = OctetStringType.decode(ByteBuffer.wrap(berValue));
     if (!"0".equals(value)) {
       throw new IllegalArgumentException(

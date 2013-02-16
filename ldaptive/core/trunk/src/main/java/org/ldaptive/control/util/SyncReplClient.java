@@ -160,11 +160,11 @@ public class SyncReplClient
           final Exception exception)
         {
           try {
-            logger.debug("received {}", exception);
+            logger.debug("received exception:", exception);
             search.shutdown();
             queue.put(new SyncReplItem(exception));
           } catch (Exception e) {
-            logger.warn("Unable to enqueue exception {}", exception);
+            logger.warn("Unable to enqueue exception:", exception);
           }
           return new HandlerResult<Exception>(null);
         }

@@ -317,8 +317,9 @@ public class PasswordPolicyControl extends AbstractControl
 
   /** {@inheritDoc} */
   @Override
-  public void decode(final byte[] encoded)
+  public void decode(final byte[] berValue)
   {
+    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
     final DERParser parser = new DERParser();
     parser.registerHandler(
       TimeBeforeExpirationHandler.PATH,
@@ -327,7 +328,7 @@ public class PasswordPolicyControl extends AbstractControl
       GraceAuthnsRemainingHandler.PATH,
       new GraceAuthnsRemainingHandler(this));
     parser.registerHandler(ErrorHandler.PATH, new ErrorHandler(this));
-    parser.parse(ByteBuffer.wrap(encoded));
+    parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
