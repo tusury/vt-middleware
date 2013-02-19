@@ -78,7 +78,7 @@ public class GetStatsControl extends AbstractControl
   private static final int HASH_CODE_SEED = 929;
 
   /** statistics. */
-  private Map<String, Object> statistics = new HashMap<String, Object>();
+  private final Map<String, Object> statistics = new HashMap<String, Object>();
 
 
   /** Default constructor. */
