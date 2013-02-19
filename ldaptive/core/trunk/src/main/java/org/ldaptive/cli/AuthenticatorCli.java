@@ -161,8 +161,8 @@ public class AuthenticatorCli extends AbstractCli
     if (line.hasOption(OPT_HELP)) {
       printHelp();
     } else {
-      return authenticate(
-        initAuthenticator(line), initAuthenticationRequest(line));
+      return
+        authenticate(initAuthenticator(line), initAuthenticationRequest(line));
     }
     return -1;
   }

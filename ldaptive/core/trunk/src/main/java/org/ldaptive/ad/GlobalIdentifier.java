@@ -87,7 +87,8 @@ public final class GlobalIdentifier
 
     // remove the enclosing brackets {...}
     final StringTokenizer st = new StringTokenizer(
-      guid.substring(1, guid.length() - 1), "-");
+      guid.substring(1, guid.length() - 1),
+      "-");
     // first token is 4 bytes, big endian
     final String data1 = st.nextToken();
     // second token is 2 bytes, big endian

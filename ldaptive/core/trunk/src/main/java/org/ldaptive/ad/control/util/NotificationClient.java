@@ -150,9 +150,7 @@ public class NotificationClient
   }
 
 
-  /**
-   * Contains data returned when using the notification control.
-   */
+  /** Contains data returned when using the notification control. */
   public static class NotificationItem
   {
 

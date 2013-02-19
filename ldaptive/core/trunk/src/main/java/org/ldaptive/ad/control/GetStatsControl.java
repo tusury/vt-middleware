@@ -62,7 +62,7 @@ import org.ldaptive.control.ResponseControl;
    }
  * </pre>
  *
- * See http://msdn.microsoft.com/en-us/library/cc223350.aspx
+ * <p>See http://msdn.microsoft.com/en-us/library/cc223350.aspx</p>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -150,33 +150,41 @@ public class GetStatsControl extends AbstractControl
   public void decode(final byte[] berValue)
   {
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
+
     final DERParser parser = new DERParser();
     parser.registerHandler(
-      "/SEQ/INT[1]", new IntegerHandler(this, "threadCount"));
+      "/SEQ/INT[1]",
+      new IntegerHandler(this, "threadCount"));
+    parser.registerHandler("/SEQ/INT[3]", new IntegerHandler(this, "callTime"));
     parser.registerHandler(
-      "/SEQ/INT[3]", new IntegerHandler(this, "callTime"));
+      "/SEQ/INT[5]",
+      new IntegerHandler(this, "entriesReturned"));
     parser.registerHandler(
-      "/SEQ/INT[5]", new IntegerHandler(this, "entriesReturned"));
+      "/SEQ/INT[7]",
+      new IntegerHandler(this, "entriesVisited"));
+    parser.registerHandler("/SEQ/OCTSTR[9]", new StringHandler(this, "filter"));
+    parser.registerHandler("/SEQ/OCTSTR[11]", new StringHandler(this, "index"));
     parser.registerHandler(
-      "/SEQ/INT[7]", new IntegerHandler(this, "entriesVisited"));
+      "/SEQ/INT[13]",
+      new IntegerHandler(this, "pagesReferenced"));
     parser.registerHandler(
-      "/SEQ/OCTSTR[9]", new StringHandler(this, "filter"));
+      "/SEQ/INT[15]",
+      new IntegerHandler(this, "pagesRead"));
     parser.registerHandler(
-      "/SEQ/OCTSTR[11]", new StringHandler(this, "index"));
+      "/SEQ/INT[17]",
+      new IntegerHandler(this, "pagesPreread"));
     parser.registerHandler(
-      "/SEQ/INT[13]", new IntegerHandler(this, "pagesReferenced"));
+      "/SEQ/INT[19]",
+      new IntegerHandler(this, "pagesDirtied"));
     parser.registerHandler(
-      "/SEQ/INT[15]", new IntegerHandler(this, "pagesRead"));
+      "/SEQ/INT[21]",
+      new IntegerHandler(this, "pagesRedirtied"));
     parser.registerHandler(
-      "/SEQ/INT[17]", new IntegerHandler(this, "pagesPreread"));
+      "/SEQ/INT[23]",
+      new IntegerHandler(this, "logRecordCount"));
     parser.registerHandler(
-      "/SEQ/INT[19]", new IntegerHandler(this, "pagesDirtied"));
-    parser.registerHandler(
-      "/SEQ/INT[21]", new IntegerHandler(this, "pagesRedirtied"));
-    parser.registerHandler(
-      "/SEQ/INT[23]", new IntegerHandler(this, "logRecordCount"));
-    parser.registerHandler(
-      "/SEQ/INT[25]", new IntegerHandler(this, "logRecordBytes"));
+      "/SEQ/INT[25]",
+      new IntegerHandler(this, "logRecordBytes"));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
@@ -208,7 +216,8 @@ public class GetStatsControl extends AbstractControl
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
       getObject().getStatistics().put(
-        statName, IntegerType.decode(encoded).intValue());
+        statName,
+        IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -241,7 +250,8 @@ public class GetStatsControl extends AbstractControl
     {
       // strings are terminated with 0x00(null), use trim to remove
       getObject().getStatistics().put(
-        statName, OctetStringType.decode(encoded).trim());
+        statName,
+        OctetStringType.decode(encoded).trim());
     }
   }
 }

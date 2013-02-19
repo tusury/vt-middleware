@@ -19,8 +19,8 @@ import org.ldaptive.asn1.OctetStringType;
 
 /**
  * Response control indicating an expired password. See
- * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00. Control is
- * defined as:
+ * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00. Control is defined
+ * as:
  *
  * <pre>
    controlValue ::= OCTET STRING  -- always "0"
@@ -71,10 +71,7 @@ public class PasswordExpiredControl extends AbstractControl
   public int hashCode()
   {
     return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality());
+      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 
@@ -96,6 +93,7 @@ public class PasswordExpiredControl extends AbstractControl
   public void decode(final byte[] berValue)
   {
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
+
     final String value = OctetStringType.decode(ByteBuffer.wrap(berValue));
     if (!"0".equals(value)) {
       throw new IllegalArgumentException(

@@ -99,6 +99,7 @@ public final class SecurityIdentifier
     final StringTokenizer st = new StringTokenizer(sid, "-");
     // first token is the 'S'
     st.nextToken();
+
     // second token is the revision
     final int revision = Integer.valueOf(st.nextToken());
     // third token is the authority

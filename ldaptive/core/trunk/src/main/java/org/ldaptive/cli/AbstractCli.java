@@ -69,6 +69,7 @@ public abstract class AbstractCli
   public final int performAction(final String[] args)
   {
     initOptions();
+
     int status = -1;
     try {
       if (args.length > 0) {

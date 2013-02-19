@@ -18,8 +18,7 @@ import org.ldaptive.ad.SecurityIdentifier;
 
 /**
  * Processes the objectSid attribute by converting it from binary to it's string
- * form. See
- * http://msdn.microsoft.com/en-us/library/windows/desktop/
+ * form. See http://msdn.microsoft.com/en-us/library/windows/desktop/
  * ms679024(v=vs.85).aspx.
  *
  * @author  Middleware Services
@@ -35,9 +34,7 @@ public class ObjectSidHandler extends AbstractBinaryAttributeHandler
   private static final String ATTRIBUTE_NAME = "objectSid";
 
 
-  /**
-   * Creates a new object sid handler.
-   */
+  /** Creates a new object sid handler. */
   public ObjectSidHandler()
   {
     setAttributeName(ATTRIBUTE_NAME);

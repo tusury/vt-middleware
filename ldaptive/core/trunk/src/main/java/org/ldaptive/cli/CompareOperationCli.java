@@ -105,8 +105,8 @@ public class CompareOperationCli extends AbstractCli
       } else {
         la = new LdapAttribute(attr[0], attr[1]);
       }
-      return compare(
-        initConnectionFactory(line), line.getOptionValue(OPT_DN), la);
+      return
+        compare(initConnectionFactory(line), line.getOptionValue(OPT_DN), la);
     }
     return -1;
   }

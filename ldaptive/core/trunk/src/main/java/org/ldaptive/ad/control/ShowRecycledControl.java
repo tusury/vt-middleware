@@ -19,8 +19,8 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory servers to include tombstones,
- * deleted-objects, and recycled-objects that match a search filter.
- * See http://msdn.microsoft.com/en-us/library/dd304621.aspx
+ * deleted-objects, and recycled-objects that match a search filter. See
+ * http://msdn.microsoft.com/en-us/library/dd304621.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

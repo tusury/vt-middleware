@@ -9,7 +9,7 @@
   Author:  Middleware Services
   Email:   middleware@vt.edu
   Version: $Revision$
-  Updated: $Date
+  Updated: $Date$
 */
 package org.ldaptive.auth.ext;
 
@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Attempts to parse the authentication response and set the account state using
- * data associated with the password expiring and password expired controls.
- * See http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00.
+ * data associated with the password expiring and password expired controls. See
+ * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

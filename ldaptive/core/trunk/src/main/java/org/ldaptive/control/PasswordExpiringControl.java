@@ -19,8 +19,8 @@ import org.ldaptive.asn1.OctetStringType;
 
 /**
  * Response control indicating a password that will expire. See
- * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00. Control is
- * defined as:
+ * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00. Control is defined
+ * as:
  *
  * <pre>
    controlValue ::= secondsUntilExpiration  OCTET STRING
@@ -121,10 +121,7 @@ public class PasswordExpiringControl extends AbstractControl
   public int hashCode()
   {
     return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality());
+      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 
@@ -147,6 +144,7 @@ public class PasswordExpiringControl extends AbstractControl
   public void decode(final byte[] berValue)
   {
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
+
     final String time = OctetStringType.decode(ByteBuffer.wrap(berValue));
     setTimeBeforeExpiration(Integer.valueOf(time));
   }

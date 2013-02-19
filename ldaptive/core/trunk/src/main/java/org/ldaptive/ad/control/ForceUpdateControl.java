@@ -19,8 +19,8 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory servers to perform an update even if the
- * data is already the same.
- * See http://msdn.microsoft.com/en-us/library/cc223344.aspx
+ * data is already the same. See
+ * http://msdn.microsoft.com/en-us/library/cc223344.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

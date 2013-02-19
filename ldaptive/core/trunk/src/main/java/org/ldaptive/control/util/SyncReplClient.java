@@ -168,8 +168,7 @@ public class SyncReplClient
           }
           return new HandlerResult<Exception>(null);
         }
-      }
-    );
+      });
 
     request.setControls(
       new SyncRequestControl(
@@ -213,7 +212,8 @@ public class SyncReplClient
               queue.put(new SyncReplItem((SyncInfoMessage) response));
             } catch (Exception e) {
               logger.warn(
-                "Unable to enqueue intermediate response {}", response);
+                "Unable to enqueue intermediate response {}",
+                response);
             }
           }
           return new HandlerResult<IntermediateResponse>(null);
