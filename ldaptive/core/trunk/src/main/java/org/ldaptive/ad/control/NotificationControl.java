@@ -19,8 +19,8 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory servers to send asynchronous
- * notifications to the client when a change is made.
- * See http://msdn.microsoft.com/en-us/library/cc223353.aspx
+ * notifications to the client when a change is made. See
+ * http://msdn.microsoft.com/en-us/library/cc223353.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

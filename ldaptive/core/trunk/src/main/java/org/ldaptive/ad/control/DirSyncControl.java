@@ -39,7 +39,7 @@ import org.ldaptive.control.ResponseControl;
     }
  * </pre>
  *
- * See http://msdn.microsoft.com/en-us/library/cc223347.aspx
+ * <p>See http://msdn.microsoft.com/en-us/library/cc223347.aspx</p>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -350,6 +350,7 @@ public class DirSyncControl extends AbstractControl
   public void decode(final byte[] berValue)
   {
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
+
     final DERParser parser = new DERParser();
     parser.registerHandler(FlagHandler.PATH, new FlagHandler(this));
     parser.registerHandler(

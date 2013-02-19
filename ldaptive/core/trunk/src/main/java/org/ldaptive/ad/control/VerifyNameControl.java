@@ -32,7 +32,7 @@ import org.ldaptive.control.RequestControl;
    }
  * </pre>
  *
- * See http://msdn.microsoft.com/en-us/library/cc223328.aspx
+ * <p>See http://msdn.microsoft.com/en-us/library/cc223328.aspx</p>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

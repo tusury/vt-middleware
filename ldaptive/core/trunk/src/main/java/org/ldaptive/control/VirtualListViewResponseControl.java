@@ -282,6 +282,7 @@ public class VirtualListViewResponseControl extends AbstractControl
   public void decode(final byte[] berValue)
   {
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
+
     final DERParser parser = new DERParser();
     parser.registerHandler(
       TargetPositionHandler.PATH,

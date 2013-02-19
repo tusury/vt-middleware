@@ -115,7 +115,7 @@ public abstract class AbstractBinaryAttributeHandler
       }
       if (!isAttrSet) {
         request.setBinaryAttributes(
-          LdapUtils.concatArrays(binaryAttrs, new String[]{attributeName}));
+          LdapUtils.concatArrays(binaryAttrs, new String[] {attributeName}));
       }
     } else {
       request.setBinaryAttributes(new String[] {attributeName});

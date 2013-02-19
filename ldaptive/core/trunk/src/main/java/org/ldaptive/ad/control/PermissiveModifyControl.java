@@ -19,8 +19,8 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory servers to return success on
- * add/modify/delete operations that would normally return an error.
- * See http://msdn.microsoft.com/en-us/library/cc223352.aspx
+ * add/modify/delete operations that would normally return an error. See
+ * http://msdn.microsoft.com/en-us/library/cc223352.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

@@ -19,14 +19,13 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory domain controllers to sacrifice
- * durability guarantees on updates to improve performance.
- * See http://msdn.microsoft.com/en-us/library/cc223351.aspx
+ * durability guarantees on updates to improve performance. See
+ * http://msdn.microsoft.com/en-us/library/cc223351.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LazyCommitControl extends AbstractControl
-  implements RequestControl
+public class LazyCommitControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */

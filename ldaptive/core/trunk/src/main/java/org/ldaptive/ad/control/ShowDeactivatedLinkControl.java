@@ -19,8 +19,8 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory servers in include link attributes that
- * refer to deleted-objects in a search operation.
- * See http://msdn.microsoft.com/en-us/library/dd302781.aspx
+ * refer to deleted-objects in a search operation. See
+ * http://msdn.microsoft.com/en-us/library/dd302781.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

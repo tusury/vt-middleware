@@ -265,6 +265,7 @@ public class AsyncSearchOperation
       throws LdapException
     {
       logger.trace("Received async request={}", request);
+
       final HandlerResult<AsyncRequest> hr = executeHandlers(
         getAsyncRequestHandlers(),
         searchRequest,

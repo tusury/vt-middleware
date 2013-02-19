@@ -19,7 +19,7 @@ import org.ldaptive.handler.Handler;
 import org.ldaptive.handler.HandlerResult;
 
 /**
- * Provides post search handling of an exception thrown by an async operation
+ * Provides post search handling of an exception thrown by an async operation.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

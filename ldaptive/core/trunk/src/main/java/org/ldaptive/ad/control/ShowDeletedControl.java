@@ -19,8 +19,8 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory servers to include deleted objects that
- * match a search filter.
- * See http://msdn.microsoft.com/en-us/library/cc223326.aspx
+ * match a search filter. See
+ * http://msdn.microsoft.com/en-us/library/cc223326.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

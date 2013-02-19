@@ -19,8 +19,7 @@ import org.ldaptive.control.RequestControl;
 
 /**
  * Request control for active directory servers to avoid error response with
- * range retrieval.
- * See http://msdn.microsoft.com/en-us/library/cc223345.aspx
+ * range retrieval. See http://msdn.microsoft.com/en-us/library/cc223345.aspx
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

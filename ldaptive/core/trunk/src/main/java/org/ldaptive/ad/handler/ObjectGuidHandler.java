@@ -33,9 +33,7 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
   private static final String ATTRIBUTE_NAME = "objectGUID";
 
 
-  /**
-   * Creates a new object guid handler.
-   */
+  /** Creates a new object guid handler. */
   public ObjectGuidHandler()
   {
     setAttributeName(ATTRIBUTE_NAME);
