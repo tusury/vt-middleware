@@ -1012,6 +1012,7 @@ public class OpenDSConnection
           opendsSr.addControl(c);
         }
       }
+
       final AsynchronousConnection asyncConn = conn.getAsynchronousConnection();
       final FutureResult<Result> result = asyncConn.search(
         opendsSr,
@@ -1029,14 +1030,15 @@ public class OpenDSConnection
 
       final List<Control> ctls = e.getResult().getControls();
       final List<String> urls = e.getResult().getReferralURIs();
-      listener.exceptionReceived(new LdapException(
-        e.getMessage(),
-        new Exception(e.getCause()),
-        ResultCode.valueOf(e.getResult().getResultCode().intValue()),
-        e.getResult().getMatchedDN(),
-        config.getControlProcessor().processResponseControls(
-          ctls.toArray(new Control[ctls.size()])),
-        urls.toArray(new String[urls.size()])));
+      listener.exceptionReceived(
+        new LdapException(
+          e.getMessage(),
+          new Exception(e.getCause()),
+          ResultCode.valueOf(e.getResult().getResultCode().intValue()),
+          e.getResult().getMatchedDN(),
+          config.getControlProcessor().processResponseControls(
+            ctls.toArray(new Control[ctls.size()])),
+          urls.toArray(new String[urls.size()])));
     }
 
 
@@ -1229,7 +1231,7 @@ public class OpenDSConnection
           ctls.toArray(new Control[ctls.size()]));
       }
 
-      final SearchEntry se =  util.toSearchEntry(entry, respControls, -1);
+      final SearchEntry se = util.toSearchEntry(entry, respControls, -1);
       return new SearchItem(se);
     }
 
@@ -1257,6 +1259,7 @@ public class OpenDSConnection
         respControls = config.getControlProcessor().processResponseControls(
           ctls.toArray(new Control[ctls.size()]));
       }
+
       final SearchReference sr = new SearchReference(
         -1,
         respControls,
@@ -1353,8 +1356,10 @@ public class OpenDSConnection
   }
 
 
-  /** Allows the use of multiple unsolicited notification listeners per
-      connection. */
+  /**
+   * Allows the use of multiple unsolicited notification listeners per
+   * connection.
+   */
   protected class AggregateUnsolicitedNotificationListener
     implements ConnectionEventListener
   {
@@ -1416,9 +1421,7 @@ public class OpenDSConnection
           null,
           extendedResult);
         for (UnsolicitedNotificationListener listener : listeners) {
-          listener.notificationReceived(
-            extendedResult.getOID(),
-            response);
+          listener.notificationReceived(extendedResult.getOID(), response);
         }
       }
     }
