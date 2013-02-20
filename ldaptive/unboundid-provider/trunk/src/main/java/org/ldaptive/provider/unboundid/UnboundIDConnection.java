@@ -120,6 +120,7 @@ public class UnboundIDConnection implements ProviderConnection
   {
     connection = lc;
     config = pc;
+
     final LDAPConnectionOptions options = connection.getConnectionOptions();
     if (options.getUnsolicitedNotificationHandler() == null) {
       options.setUnsolicitedNotificationHandler(notificationHandler);
@@ -703,11 +704,7 @@ public class UnboundIDConnection implements ProviderConnection
     public boolean hasNext()
       throws org.ldaptive.LdapException
     {
-      if (resultIterator == null) {
-        return false;
-      }
-
-      return resultIterator.hasNext();
+      return resultIterator != null && resultIterator.hasNext();
     }
 
 
@@ -806,7 +803,7 @@ public class UnboundIDConnection implements ProviderConnection
     private AsyncRequestID requestID;
 
     /** Receives disconnect notifications for this async operation. */
-    private DisconnectHandler handler;
+    private final DisconnectHandler handler;
 
 
     /**
@@ -929,6 +926,7 @@ public class UnboundIDConnection implements ProviderConnection
       logger.trace("reading result: {}", res);
 
       disconnectHandler.removeDisconnectHandler(handler);
+
       final org.ldaptive.Response<Void> response = createResponse(
         request,
         null,
@@ -1177,7 +1175,7 @@ public class UnboundIDConnection implements ProviderConnection
      * Creates a new unboundid async request.
      *
      * @param  id  async request id
-     * @param   r  request
+     * @param  r  request
      */
     public UnboundIDAsyncRequest(final AsyncRequestID id, final Request r)
     {
@@ -1224,8 +1222,10 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** Allows the use of multiple unsolicited notification handlers per
-      connection. */
+  /**
+   * Allows the use of multiple unsolicited notification handlers per
+   * connection.
+   */
   protected class AggregateUnsolicitedNotificationHandler
     implements UnsolicitedNotificationHandler
   {
@@ -1272,11 +1272,11 @@ public class UnboundIDConnection implements ProviderConnection
       logger.debug("Unsolicited notification received: {}", extendedResult);
       synchronized (listeners) {
         final Response<Void> response = createResponse(
-          null, null, extendedResult);
+          null,
+          null,
+          extendedResult);
         for (UnsolicitedNotificationListener listener : listeners) {
-          listener.notificationReceived(
-            extendedResult.getOID(),
-            response);
+          listener.notificationReceived(extendedResult.getOID(), response);
         }
       }
     }
