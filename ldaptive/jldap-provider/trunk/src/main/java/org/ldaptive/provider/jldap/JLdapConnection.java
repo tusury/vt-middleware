@@ -1229,8 +1229,7 @@ public class JLdapConnection implements ProviderConnection
         }
         if (controls != null) {
           constraints.setControls(
-            config.getControlProcessor().processRequestControls(
-              controls));
+            config.getControlProcessor().processRequestControls(controls));
         }
         connection.abandon(messageQueue, constraints);
       } catch (LDAPException e) {
@@ -1240,8 +1239,10 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** Allows the use of multiple unsolicited notification handlers per
-      connection. */
+  /**
+   * Allows the use of multiple unsolicited notification handlers per
+   * connection.
+   */
   protected class AggregateUnsolicitedNotificationListener
     implements LDAPUnsolicitedNotificationListener
   {
@@ -1290,9 +1291,7 @@ public class JLdapConnection implements ProviderConnection
           null,
           extendedResponse);
         for (UnsolicitedNotificationListener listener : listeners) {
-          listener.notificationReceived(
-            extendedResponse.getID(),
-            response);
+          listener.notificationReceived(extendedResponse.getID(), response);
         }
       }
     }
