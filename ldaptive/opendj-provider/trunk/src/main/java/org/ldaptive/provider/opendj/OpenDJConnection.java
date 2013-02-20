@@ -716,8 +716,8 @@ public class OpenDJConnection
 
 
   /** Search iterator for opendj search results. */
-  protected class OpenDJSearchIterator
-    extends AbstractOpenDJSearch implements SearchIterator
+  protected class OpenDJSearchIterator extends AbstractOpenDJSearch
+    implements SearchIterator
   {
 
     /** Response data. */
@@ -915,8 +915,7 @@ public class OpenDJConnection
 
 
   /** Search listener for opends id async search results. */
-  protected class OpenDJAsyncSearchListener
-    extends AbstractOpenDJSearch
+  protected class OpenDJAsyncSearchListener extends AbstractOpenDJSearch
     implements SearchResultHandler, IntermediateResponseHandler
   {
 
@@ -972,6 +971,7 @@ public class OpenDJConnection
           opendjSr.addControl(c);
         }
       }
+
       final FutureResult<Result> result = conn.searchAsync(
         opendjSr,
         this,
@@ -1189,7 +1189,7 @@ public class OpenDJConnection
           ctls.toArray(new Control[ctls.size()]));
       }
 
-      final SearchEntry se =  util.toSearchEntry(entry, respControls, -1);
+      final SearchEntry se = util.toSearchEntry(entry, respControls, -1);
       return new SearchItem(se);
     }
 
@@ -1245,6 +1245,7 @@ public class OpenDJConnection
         respControls = config.getControlProcessor().processResponseControls(
           ctls.toArray(new Control[ctls.size()]));
       }
+
       final org.ldaptive.intermediate.IntermediateResponse ir =
         IntermediateResponseFactory.createIntermediateResponse(
           res.getOID(),
@@ -1313,8 +1314,10 @@ public class OpenDJConnection
   }
 
 
-  /** Allows the use of multiple unsolicited notification listeners per
-      connection. */
+  /**
+   * Allows the use of multiple unsolicited notification listeners per
+   * connection.
+   */
   protected class AggregateUnsolicitedNotificationListener
     implements ConnectionEventListener
   {
@@ -1376,9 +1379,7 @@ public class OpenDJConnection
           null,
           extendedResult);
         for (UnsolicitedNotificationListener listener : listeners) {
-          listener.notificationReceived(
-            extendedResult.getOID(),
-            response);
+          listener.notificationReceived(extendedResult.getOID(), response);
         }
       }
     }
