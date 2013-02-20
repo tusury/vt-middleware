@@ -141,8 +141,7 @@ public class ApacheLdapConnection implements ProviderConnection
         if (connection.isConnected()) {
           connection.unBind();
         }
-      } catch (
-        org.apache.directory.api.ldap.model.exception.LdapException e) {
+      } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
         logger.error("Error unbinding from LDAP", e);
       }
       try {
@@ -792,8 +791,7 @@ public class ApacheLdapConnection implements ProviderConnection
       } catch (LdapOperationException e) {
         closeCursor = true;
         processLdapOperationException(e);
-      } catch (
-        org.apache.directory.api.ldap.model.exception.LdapException e) {
+      } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
         closeCursor = true;
         processLdapException(e);
       } catch (RuntimeException e) {
@@ -843,8 +841,7 @@ public class ApacheLdapConnection implements ProviderConnection
         }
       } catch (LdapOperationException e) {
         processLdapOperationException(e);
-      } catch (
-        org.apache.directory.api.ldap.model.exception.LdapException e) {
+      } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
         processLdapException(e);
       } catch (org.ldaptive.LdapException e) {
         throw e;
@@ -959,8 +956,7 @@ public class ApacheLdapConnection implements ProviderConnection
       } catch (LdapOperationException e) {
         closeCursor = true;
         processLdapOperationException(e);
-      } catch (
-        org.apache.directory.api.ldap.model.exception.LdapException e) {
+      } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
         closeCursor = true;
         processLdapException(e);
       } catch (RuntimeException e) {
@@ -1016,8 +1012,8 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  ldap search results
      *
-     * @throws  org.apache.directory.api.ldap.model.exception.LdapException
-     * if an error occurs
+     * @throws  org.apache.directory.api.ldap.model.exception.LdapException  if
+     * an error occurs
      */
     protected SearchCursor search(
       final LdapNetworkConnection conn,
@@ -1043,8 +1039,8 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  search request
      *
-     * @throws  org.apache.directory.api.ldap.model.exception.LdapException
-     * if the search request cannot be initialized
+     * @throws  org.apache.directory.api.ldap.model.exception.LdapException  if
+     * the search request cannot be initialized
      */
     protected SearchRequest getSearchRequest(
       final org.ldaptive.SearchRequest sr)
