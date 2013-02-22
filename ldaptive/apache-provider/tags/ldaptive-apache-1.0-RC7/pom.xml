@@ -230,6 +230,11 @@
         <artifactId>wagon-svn</artifactId>
         <version>1.9</version>
       </extension>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>2.2</version>
+      </extension>
     </extensions>
   </build>
   <profiles>
