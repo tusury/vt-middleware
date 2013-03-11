@@ -94,7 +94,7 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
     try {
       pooledConn = factory.getConnection();
 
-      final SearchOperation op = createSearchOperation(conn);
+      final SearchOperation op = createSearchOperation(pooledConn);
       return
         op.execute(createSearchRequest(ac, getReturnAttributes())).getResult();
     } finally {

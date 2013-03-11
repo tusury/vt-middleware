@@ -111,7 +111,7 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
         factoryConn = factory.getConnection();
         factoryConn.open();
 
-        final SearchOperation op = createSearchOperation(conn);
+        final SearchOperation op = createSearchOperation(factoryConn);
         return op.execute(
           createSearchRequest(ac, getReturnAttributes())).getResult();
       } finally {
