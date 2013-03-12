@@ -21,10 +21,13 @@ import org.ldaptive.Request;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.ad.control.NotificationControl;
+import org.ldaptive.ad.handler.ObjectGuidHandler;
+import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.async.AbandonOperation;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.async.handler.AsyncRequestHandler;
+import org.ldaptive.async.handler.ExceptionHandler;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.slf4j.Logger;
@@ -67,7 +70,11 @@ public class NotificationClient
    *     NotificationControl}</li>
    *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)}
    *     is invoked with a custom handler that places notification data in a
-   *     blocking queue.</li>
+   *     blocking queue. The {@link ObjectGuidHandler} and {@link
+   *     ObjectSidHandler} handlers are included as well.</li>
+   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is
+   *     invoked with a custom handler that places the exception in a blocking
+   *     queue.</li>
    * </ul>
    *
    * <p>The search request object should not be reused for any other search
@@ -105,9 +112,29 @@ public class NotificationClient
           return new HandlerResult<AsyncRequest>(null);
         }
       });
+    search.setExceptionHandler(
+      new ExceptionHandler() {
+        @Override
+        public HandlerResult<Exception> handle(
+          final Connection conn,
+          final Request request,
+          final Exception exception)
+        {
+          try {
+            logger.debug("received exception:", exception);
+            search.shutdown();
+            queue.put(new NotificationItem(exception));
+          } catch (Exception e) {
+            logger.warn("Unable to enqueue exception:", exception);
+          }
+          return new HandlerResult<Exception>(null);
+        }
+      });
 
     request.setControls(new NotificationControl());
     request.setSearchEntryHandlers(
+      new ObjectGuidHandler(),
+      new ObjectSidHandler(),
       new SearchEntryHandler() {
         @Override
         public HandlerResult<SearchEntry> handle(
@@ -160,6 +187,9 @@ public class NotificationClient
     /** Entry contained in this sync repl item. */
     private final SearchEntry searchEntry;
 
+    /** Exception thrown by the search operation. */
+    private final Exception searchException;
+
 
     /**
      * Creates a new notification item.
@@ -170,6 +200,7 @@ public class NotificationClient
     {
       asyncRequest = request;
       searchEntry = null;
+      searchException = null;
     }
 
 
@@ -182,6 +213,20 @@ public class NotificationClient
     {
       asyncRequest = null;
       searchEntry = entry;
+      searchException = null;
+    }
+
+
+    /**
+     * Creates a new notification item.
+     *
+     * @param  exception  that represents this item
+     */
+    public NotificationItem(final Exception exception)
+    {
+      asyncRequest = null;
+      searchEntry = null;
+      searchException = exception;
     }
 
 
@@ -231,6 +276,29 @@ public class NotificationClient
     }
 
 
+    /**
+     * Returns whether this item represents an exception.
+     *
+     * @return  whether this item represents an exception
+     */
+    public boolean isException()
+    {
+      return searchException != null;
+    }
+
+
+    /**
+     * Returns the exception contained in this item or null if this item does
+     * not contain an exception.
+     *
+     * @return  exception
+     */
+    public Exception getException()
+    {
+      return searchException;
+    }
+
+
     /** {@inheritDoc} */
     @Override
     public String toString()
@@ -244,10 +312,16 @@ public class NotificationClient
           asyncRequest);
       } else if (isSearchEntry()) {
         s = String.format(
-          "[%s@%d::seachEntry=%s]",
+          "[%s@%d::searchEntry=%s]",
           getClass().getName(),
           hashCode(),
           searchEntry);
+      } else if (isException()) {
+        s = String.format(
+          "[%s@%d::searchException=%s]",
+          getClass().getName(),
+          hashCode(),
+          searchException);
       } else {
         s = String.format("[%s@%d]", getClass().getName(), hashCode());
       }
