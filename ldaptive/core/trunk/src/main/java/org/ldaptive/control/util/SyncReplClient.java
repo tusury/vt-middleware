@@ -95,6 +95,9 @@ public class SyncReplClient
    *   <li>{@link AsyncSearchOperation#setOperationResponseHandlers(
    *     OperationResponseHandler[])} is invoked with a custom handler that
    *     places the sync repl response in a blocking queue.</li>
+   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is
+   *     invoked with a custom handler that places the exception in a blocking
+   *     queue.</li>
    * </ul>
    *
    * <p>The search request object should not be reused for any other search
