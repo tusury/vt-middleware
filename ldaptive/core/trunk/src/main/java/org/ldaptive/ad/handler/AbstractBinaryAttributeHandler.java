@@ -75,11 +75,11 @@ public abstract class AbstractBinaryAttributeHandler
             newAttr.addStringValue(convertValue(b));
           }
           entry.addAttribute(newAttr);
-          logger.debug("Processed attribute %s", newAttr);
+          logger.debug("Processed attribute {}", newAttr);
           handleAttribute(conn, request, newAttr);
         } else {
           logger.warn(
-            "Attribute %s must be set as a binary attribute",
+            "Attribute {} must be set as a binary attribute",
             attributeName);
           handleAttribute(conn, request, la);
         }
