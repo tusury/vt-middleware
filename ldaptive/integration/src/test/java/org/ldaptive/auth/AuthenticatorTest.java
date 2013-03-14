@@ -466,6 +466,11 @@ public class AuthenticatorTest extends AbstractTest
   public void authenticateDigestMd5(final String user, final String credential)
     throws Exception
   {
+    // TODO ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final Authenticator auth = TestUtils.createDigestMD5Authenticator();
 
     AuthenticationResponse response = auth.authenticate(
@@ -491,6 +496,11 @@ public class AuthenticatorTest extends AbstractTest
   public void authenticateCramMd5(final String user, final String credential)
     throws Exception
   {
+    // TODO ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     try {
       final Authenticator auth = TestUtils.createCramMD5Authenticator();
       AuthenticationResponse response = auth.authenticate(
@@ -786,6 +796,11 @@ public class AuthenticatorTest extends AbstractTest
     final String user, final String credential)
     throws Exception
   {
+    // TODO ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final Authenticator auth = createTLSAuthenticator(true);
 
     // test without rewrite
