@@ -45,6 +45,9 @@ public class AsyncSearchOperation
   private final ExecutorService executorService =
     Executors.newCachedThreadPool();
 
+  /** Whether the listener should spawn a new thread to process each result. */
+  private boolean useMultiThreadedListener;
+
 
   /**
    * Creates a new async search operation.
@@ -54,6 +57,29 @@ public class AsyncSearchOperation
   public AsyncSearchOperation(final Connection conn)
   {
     super(conn);
+  }
+
+
+  /**
+   * Returns whether the listener should spawn a new thread to process each
+   * result.
+   *
+   * @return  whether the listener is multi-threaded
+   */
+  public boolean getUseMultiThreadedListener()
+  {
+    return useMultiThreadedListener;
+  }
+
+
+  /**
+   * Sets whether the listener should spawn a new thread to process each result.
+   *
+   * @param  b  make the listener multi-threaded
+   */
+  public void setUseMultiThreadedListener(final boolean b)
+  {
+    useMultiThreadedListener = b;
   }
 
 
@@ -165,20 +191,29 @@ public class AsyncSearchOperation
     @Override
     public void asyncRequestReceived(final AsyncRequest request)
     {
-      executorService.submit(
-        new Callable<Void>() {
-          @Override
-          public Void call()
-            throws LdapException
-          {
-            try {
-              processAsyncRequest(request);
-            } catch (LdapException e) {
-              logger.warn("Handler exception ignored", e);
+      logger.trace("received async request={}", request);
+      if (useMultiThreadedListener) {
+        executorService.submit(
+          new Callable<Void>() {
+            @Override
+            public Void call()
+              throws LdapException
+            {
+              try {
+                processAsyncRequest(request);
+              } catch (LdapException e) {
+                logger.warn("Handler exception ignored", e);
+              }
+              return null;
             }
-            return null;
-          }
-        });
+          });
+      } else {
+        try {
+          processAsyncRequest(request);
+        } catch (LdapException e) {
+          logger.warn("Handler exception ignored", e);
+        }
+      }
     }
 
 
@@ -186,20 +221,29 @@ public class AsyncSearchOperation
     @Override
     public void searchItemReceived(final SearchItem item)
     {
-      executorService.submit(
-        new Callable<Void>() {
-          @Override
-          public Void call()
-            throws LdapException
-          {
-            try {
-              processSearchItem(item);
-            } catch (LdapException e) {
-              logger.warn("Handler exception ignored", e);
+      logger.trace("received search item={}", item);
+      if (useMultiThreadedListener) {
+        executorService.submit(
+          new Callable<Void>() {
+            @Override
+            public Void call()
+              throws LdapException
+            {
+              try {
+                processSearchItem(item);
+              } catch (LdapException e) {
+                logger.warn("Handler exception ignored", e);
+              }
+              return null;
             }
-            return null;
-          }
-        });
+          });
+      } else {
+        try {
+          processSearchItem(item);
+        } catch (LdapException e) {
+          logger.warn("Handler exception ignored", e);
+        }
+      }
     }
 
 
@@ -244,6 +288,7 @@ public class AsyncSearchOperation
     @Override
     public void exceptionReceived(final Exception exception)
     {
+      logger.trace("received exception={}", exception);
       if (exception instanceof LdapException) {
         searchException = (LdapException) exception;
       } else {
@@ -264,7 +309,7 @@ public class AsyncSearchOperation
     protected void processAsyncRequest(final AsyncRequest request)
       throws LdapException
     {
-      logger.trace("Received async request={}", request);
+      logger.trace("processing async request={}", request);
 
       final HandlerResult<AsyncRequest> hr = executeHandlers(
         getAsyncRequestHandlers(),
@@ -288,7 +333,7 @@ public class AsyncSearchOperation
     protected void processSearchItem(final SearchItem item)
       throws LdapException
     {
-      logger.trace("Received search item={}", item);
+      logger.trace("processing search item={}", item);
       if (item.isSearchEntry()) {
         final SearchEntry se = item.getSearchEntry();
         if (se != null) {
