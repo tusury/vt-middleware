@@ -18,7 +18,6 @@ import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.Connection;
-import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ModifyOperation;
@@ -30,7 +29,6 @@ import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.control.SyncStateControl;
 import org.ldaptive.intermediate.SyncInfoMessage;
-import org.ldaptive.provider.Provider;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -98,12 +96,6 @@ public class SyncReplClientTest extends AbstractTest
       return;
     }
 
-    final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
-    if (p.getClass().getName().equals(
-      "org.ldaptive.provider.jndi.JndiProvider")) {
-      throw new UnsupportedOperationException(
-        "Search entry controls not supported");
-    }
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     Connection conn = TestUtils.createConnection();
@@ -115,9 +107,12 @@ public class SyncReplClientTest extends AbstractTest
       final BlockingQueue<SyncReplItem> results = client.execute(request);
 
       SyncReplItem item = results.take();
-      AssertJUnit.assertTrue(item.isAsyncRequest());
-      AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
-      item = results.take();
+      if (item.isAsyncRequest()) {
+        // some providers don't support the request object
+        AssertJUnit.assertTrue(item.isAsyncRequest());
+        AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
+        item = results.take();
+      }
       AssertJUnit.assertTrue(item.isEntry());
       AssertJUnit.assertEquals(
         SyncStateControl.State.ADD,
@@ -161,23 +156,6 @@ public class SyncReplClientTest extends AbstractTest
       return;
     }
 
-    final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
-    if (p.getClass().getName().equals(
-      "org.ldaptive.provider.jndi.JndiProvider")) {
-      throw new UnsupportedOperationException(
-        "Intermediate responses not supported");
-    } else if (p.getClass().getName().equals(
-      "org.ldaptive.provider.netscape.NetscapeProvider")) {
-      throw new UnsupportedOperationException(
-        "Intermediate responses not supported");
-    } else if (p.getClass().getName().equals(
-      "org.ldaptive.provider.opends.OpenDSProvider")) {
-      throw new UnsupportedOperationException(
-        "Intermediate responses not supported");
-    } else if (p.getClass().getName().equals(
-      "org.ldaptive.provider.opendj.OpenDJProvider")) {
-      throw new UnsupportedOperationException("Message IDs not supported");
-    }
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     Connection conn = TestUtils.createConnection();
@@ -190,11 +168,17 @@ public class SyncReplClientTest extends AbstractTest
 
       // test the async request
       SyncReplItem item = results.take();
-      AssertJUnit.assertTrue(item.isAsyncRequest());
-      AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
+      if (item.isException()) {
+        throw item.getException();
+      }
+      if (item.isAsyncRequest()) {
+        // some providers don't support the request object
+        AssertJUnit.assertTrue(item.isAsyncRequest());
+        AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
+        item = results.take();
+      }
 
       // test the first entry
-      item = results.take();
       AssertJUnit.assertTrue(item.isEntry());
       AssertJUnit.assertEquals(
         SyncStateControl.State.ADD,
