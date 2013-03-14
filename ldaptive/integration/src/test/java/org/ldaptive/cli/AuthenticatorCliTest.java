@@ -15,6 +15,7 @@ package org.ldaptive.cli;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.security.Permission;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.TestUtils;
@@ -33,6 +34,9 @@ import org.testng.annotations.Test;
 public class AuthenticatorCliTest extends AbstractTest
 {
 
+  /** System security manager. */
+  private final SecurityManager securityManager = System.getSecurityManager();
+
   /** Entry created for ldap tests. */
   private static LdapEntry testLdapEntry;
 
@@ -47,6 +51,18 @@ public class AuthenticatorCliTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
+    // don't allow System#exit
+    System.setSecurityManager(
+      new SecurityManager() {
+        @Override
+        public void checkPermission(Permission permission) {
+          if (permission.getName().startsWith("exitVM")) {
+            throw new SecurityException("System.exit blocked.");
+          }
+        }
+      }
+    );
+
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
@@ -69,6 +85,7 @@ public class AuthenticatorCliTest extends AbstractTest
     System.clearProperty("javax.net.ssl.trustStorePassword");
 
     super.deleteLdapEntry(testLdapEntry.getDn());
+    System.setSecurityManager(securityManager);
   }
 
 
@@ -117,10 +134,12 @@ public class AuthenticatorCliTest extends AbstractTest
       final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
       System.setOut(new PrintStream(outStream));
 
-      AuthenticatorCli.main(args.split("\\|"));
-      AssertJUnit.assertEquals(
-        TestUtils.convertLdifToResult(ldif),
-        TestUtils.convertLdifToResult(outStream.toString()));
+      try {
+        AuthenticatorCli.main(args.split("\\|"));
+      } catch (SecurityException e) {}
+        AssertJUnit.assertEquals(
+          TestUtils.convertLdifToResult(ldif),
+          TestUtils.convertLdifToResult(outStream.toString()));
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);
