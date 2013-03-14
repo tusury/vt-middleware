@@ -15,8 +15,8 @@ package org.ldaptive.extended;
 
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
-import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
+import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
@@ -25,10 +25,10 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.async.AsyncSearchOperation;
+import org.ldaptive.async.handler.ExceptionHandler;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.SearchEntryHandler;
-import org.ldaptive.provider.Provider;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -56,25 +56,22 @@ public class CancelOperationTest extends AbstractTest
     if (TestControl.isActiveDirectory()) {
       return;
     }
-    final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
-    if (p.getClass().getName().equals(
-      "org.ldaptive.provider.jndi.JndiProvider")) {
-      throw new UnsupportedOperationException("Message IDs not supported");
-    } else if (p.getClass().getName().equals(
-      "org.ldaptive.provider.netscape.NetscapeProvider")) {
-      throw new UnsupportedOperationException(
-        "Intermediate responses not supported");
-    } else if (p.getClass().getName().equals(
-      "org.ldaptive.provider.opends.OpenDSProvider")) {
-      throw new UnsupportedOperationException("Message IDs not supported");
-    } else if (p.getClass().getName().equals(
-      "org.ldaptive.provider.opendj.OpenDJProvider")) {
-      throw new UnsupportedOperationException("Message IDs not supported");
-    }
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final AsyncSearchOperation search = new AsyncSearchOperation(conn);
+      // needed to perform operations inside a handler
+      search.setUseMultiThreadedListener(true);
+      search.setExceptionHandler(new ExceptionHandler() {
+        @Override
+        public HandlerResult<Exception> handle(
+          final Connection conn,
+          final Request request,
+          final Exception exception)
+        {
+          throw new UnsupportedOperationException(exception);
+        }
+      });
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
         dn);
       request.setSearchEntryHandlers(
@@ -85,12 +82,16 @@ public class CancelOperationTest extends AbstractTest
             final SearchRequest request,
             final SearchEntry entry) throws LdapException
           {
-            final CancelOperation cancel = new CancelOperation(conn);
-            final Response<Void> response = cancel.execute(
-              new CancelRequest(entry.getMessageId()));
-            AssertJUnit.assertEquals(
-              ResultCode.SUCCESS, response.getResultCode());
-            return new HandlerResult<SearchEntry>(null);
+            try {
+              final CancelOperation cancel = new CancelOperation(conn);
+              final Response<Void> response = cancel.execute(
+                new CancelRequest(entry.getMessageId()));
+              AssertJUnit.assertEquals(
+                ResultCode.SUCCESS, response.getResultCode());
+              return new HandlerResult<SearchEntry>(null);
+            } catch (LdapException e) {
+              return new HandlerResult<SearchEntry>(null, true);
+            }
           }
 
           @Override
