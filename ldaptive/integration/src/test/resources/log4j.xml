@@ -18,6 +18,18 @@
     <appender-ref ref="CONSOLE"/>
   </category>
 
+  <category name="org.ldaptive.ad"
+            additivity="false">
+    <priority value="INFO"/>
+    <appender-ref ref="CONSOLE"/>
+  </category>
+
+  <category name="org.ldaptive.async"
+            additivity="false">
+    <priority value="INFO"/>
+    <appender-ref ref="CONSOLE"/>
+  </category>
+
   <category name="org.ldaptive.auth"
             additivity="false">
     <priority value="INFO"/>
