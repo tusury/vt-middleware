@@ -19,6 +19,7 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -51,19 +52,22 @@ public class SearchValidatorTest extends AbstractTest
 
 
   /**
+   * @param  searchDn  to test with
+   *
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"validator"})
-  public void customSettings()
+  @Parameters("ldapBaseDn")
+  public void customSettings(final String searchDn)
     throws Exception
   {
     final Connection c = TestUtils.createConnection();
     final SearchValidator sv = new SearchValidator(
-      new SearchRequest("ou=test,dc=vt,dc=edu", new SearchFilter("uid=*")));
+      new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
     try {
       c.open();
       AssertJUnit.assertTrue(sv.validate(c));
-      sv.getSearchRequest().setSearchFilter(new SearchFilter("dne=*"));
+      sv.getSearchRequest().setSearchFilter(new SearchFilter("(dne=*)"));
       AssertJUnit.assertFalse(sv.validate(c));
     } finally {
       c.close();
