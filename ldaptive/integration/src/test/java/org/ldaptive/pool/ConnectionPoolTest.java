@@ -62,6 +62,9 @@ public class ConnectionPoolTest extends AbstractTest
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Base DN for searching. */
+  private String searchBaseDn;
+
   /** LdapPool instance for concurrency testing. */
   private SoftLimitConnectionPool softLimitPool;
 
@@ -89,7 +92,12 @@ public class ConnectionPoolTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters("ldapTestHost")
+  @Parameters(
+    {
+      "ldapTestHost",
+      "ldapBaseDn"
+    }
+  )
   @BeforeClass(
     groups = {
       "softlimitpool",
@@ -98,9 +106,11 @@ public class ConnectionPoolTest extends AbstractTest
       "connstrategypool"
     }
   )
-  public void createPools(final String host)
+  public void createPools(final String host, final String dn)
     throws Exception
   {
+    searchBaseDn = dn;
+
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
 
     final PoolConfig softLimitPc = new PoolConfig();
@@ -343,49 +353,49 @@ public class ConnectionPoolTest extends AbstractTest
       new Object[][] {
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=jadams@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("2")[1],
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=tjefferson@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("3")[1],
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=jmadison@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("4")[1],
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=jmonroe@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("5")[1],
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=jqadams@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("6")[1],
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=ajackson@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("7")[1],
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=mvburen@ldaptive.org)"),
             new String[] {
               "departmentNumber", "givenName", "sn", "jpegPhoto", }),
@@ -393,14 +403,14 @@ public class ConnectionPoolTest extends AbstractTest
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=whharrison@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("9")[1],
         },
         {
           new SearchRequest(
-            "ou=test,dc=vt,dc=edu",
+            searchBaseDn,
             new SearchFilter("(mail=jtyler@ldaptive.org)"),
             new String[] {"departmentNumber", "givenName", "sn", }),
           entries.get("10")[1],
