@@ -19,6 +19,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.ldaptive.ad.control.ForceUpdateControl;
+import org.ldaptive.ad.control.GetStatsControl;
+import org.ldaptive.ad.control.LazyCommitControl;
+import org.ldaptive.ad.control.PermissiveModifyControl;
+import org.ldaptive.ad.control.RangeRetrievalNoerrControl;
+import org.ldaptive.ad.control.SearchOptionsControl;
+import org.ldaptive.ad.control.ShowDeactivatedLinkControl;
+import org.ldaptive.ad.control.ShowDeletedControl;
+import org.ldaptive.ad.control.ShowRecycledControl;
+import org.ldaptive.ad.handler.ObjectGuidHandler;
+import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.SortKey;
@@ -427,6 +438,11 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    // AD server says vlv is a supported control, but returns UNAVAIL_EXTENSION
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final SortRequestControl src = new SortRequestControl(
       new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
     VirtualListViewRequestControl vlvrc =
@@ -936,7 +952,10 @@ public class SearchOperationTest extends AbstractTest
       final SearchOperation search = new SearchOperation(conn);
       final SearchRequest sr = new SearchRequest(
         dn, new SearchFilter(filter), returnAttrs.split("\\|"));
-      sr.setSearchEntryHandlers(new RangeEntryHandler());
+      sr.setSearchEntryHandlers(
+        new RangeEntryHandler(),
+        new ObjectSidHandler(),
+        new ObjectGuidHandler());
       final SearchResult result = search.execute(sr).getResult();
       // ignore the case of member; some directories return it in mixed case
       AssertJUnit.assertEquals(
@@ -944,6 +963,95 @@ public class SearchOperationTest extends AbstractTest
         (new LdapEntryIgnoreCaseComparator("member")).compare(
           TestUtils.convertLdifToResult(expected).getEntry(),
           result.getEntry()));
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "statsSearchDn",
+      "statsSearchFilter"
+    }
+  )
+  @Test(groups = {"search"})
+  public void getStatsSearch(final String dn, final String filter)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    final Connection conn = createLdapConnection(true);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      final SearchRequest sr = new SearchRequest(
+        dn, new SearchFilter(filter));
+      sr.setSearchEntryHandlers(
+        new ObjectSidHandler(), new ObjectGuidHandler());
+      sr.setControls(new GetStatsControl());
+      final Response<SearchResult> response = search.execute(sr);
+      final GetStatsControl ctrl =
+        (GetStatsControl) response.getControl(GetStatsControl.OID);
+      AssertJUnit.assertTrue(ctrl.getStatistics().size() > 1);
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  host  for verify name
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "miscADControlsHost",
+      "miscADControlsDn",
+      "miscADControlsFilter"
+    }
+  )
+  @Test(groups = {"search"})
+  public void miscADControlsSearch(
+    final String host, final String dn, final String filter)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    final Connection conn = createLdapConnection(true);
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+      final SearchRequest sr = new SearchRequest(
+        dn, new SearchFilter(filter));
+      sr.setSearchEntryHandlers(
+        new ObjectSidHandler(), new ObjectGuidHandler());
+      sr.setControls(
+        new ForceUpdateControl(),
+        new LazyCommitControl(),
+        /*
+        new NotificationControl());
+        new VerifyNameControl(host));
+        */
+        new PermissiveModifyControl(),
+        new RangeRetrievalNoerrControl(),
+        new SearchOptionsControl(),
+        new ShowDeactivatedLinkControl(),
+        new ShowDeletedControl(),
+        new ShowRecycledControl());
     } finally {
       conn.close();
     }
@@ -1214,7 +1322,7 @@ public class SearchOperationTest extends AbstractTest
     request.setSearchFilter(new SearchFilter(filter));
     request.setSearchReferenceHandlers(new SearchReferenceHandler() {
       @Override
-      public HandlerResult<SearchReference> process(
+      public HandlerResult<SearchReference> handle(
         final Connection conn,
         final SearchRequest request,
         final SearchReference reference)
@@ -1223,6 +1331,9 @@ public class SearchOperationTest extends AbstractTest
         refs.add(reference);
         return new HandlerResult<SearchReference>(null);
       }
+
+      @Override
+      public void initializeRequest(final SearchRequest request) {}
     });
 
     request.setFollowReferrals(false);
@@ -1320,9 +1431,11 @@ public class SearchOperationTest extends AbstractTest
     request.setSearchScope(SearchScope.ONELEVEL);
     request.setReturnAttributes(new String[0]);
     request.setSearchFilter(new SearchFilter(filter));
+    request.setSearchEntryHandlers(
+      new ObjectSidHandler(), new ObjectGuidHandler());
     request.setSearchReferenceHandlers(new SearchReferenceHandler() {
       @Override
-      public HandlerResult<SearchReference> process(
+      public HandlerResult<SearchReference> handle(
         final Connection conn,
         final SearchRequest request,
         final SearchReference reference)
@@ -1331,6 +1444,9 @@ public class SearchOperationTest extends AbstractTest
         refs.add(reference);
         return new HandlerResult<SearchReference>(null);
       }
+
+      @Override
+      public void initializeRequest(final SearchRequest request) {}
     });
 
     request.setFollowReferrals(false);
@@ -1668,7 +1784,7 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    // ignore active directory until it's configured
+    // TODO ignore active directory until it's configured
     if (TestControl.isActiveDirectory()) {
       return;
     }
@@ -1720,6 +1836,11 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
+    // TODO ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final Connection conn = TestUtils.createCramMd5Connection();
     try {
@@ -1771,7 +1892,7 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    // ignore active directory until it's configured
+    // TODO ignore active directory until it's configured
     if (TestControl.isActiveDirectory()) {
       return;
     }

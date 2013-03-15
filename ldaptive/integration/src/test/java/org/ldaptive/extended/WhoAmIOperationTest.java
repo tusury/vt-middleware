@@ -17,6 +17,7 @@ import org.ldaptive.AbstractTest;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Connection;
 import org.ldaptive.Response;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
@@ -38,6 +39,11 @@ public class WhoAmIOperationTest extends AbstractTest
   public void whoami()
     throws Exception
   {
+    // AD supports whoami, but returns a completely different value
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();

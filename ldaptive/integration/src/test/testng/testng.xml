@@ -179,6 +179,13 @@
   <parameter name="rangeHandlerResults"
              value="/org/ldaptive/rangeHandlerResults.ldif"/>
 
+  <parameter name="miscADControlsHost" value="${ldapTestHost}"/>
+  <parameter name="miscADControlsDn" value="${ldapBaseDn}"/>
+  <parameter name="miscADControlsFilter" value="(CN=Test Admin)"/>
+
+  <parameter name="statsSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="statsSearchFilter" value="(uid=2)"/>
+
   <parameter name="specialCharSearchDn" value="${ldapBaseDn}"/>
   <parameter name="specialCharSearchFilter" value="(&amp;(uid=17893)(sn={0}))"/>
   <parameter name="specialCharSearchFilterParameters" value="(Us\er)*"/>
@@ -253,6 +260,8 @@
   <parameter name="getSchemaDn" value="${ldapBaseDn}"/>
   <parameter name="getSchemaResults"
              value="/org/ldaptive/getSchemaResults.ldif"/>
+
+  <parameter name="ncSearchDn" value="${ldapBindDn}"/>
 
   <parameter name="compareDn" value="cn=Thomas Jefferson,${ldapBaseDn}"/>
   <parameter name="compareAttrName" value="departmentNumber"/>
@@ -425,7 +434,7 @@
   <parameter name="ldifSearchDn" value="${ldapBaseDn}"/>
   <parameter name="ldifSearchFilter" value="(uid=14)"/>
 
-  <parameter name="sleepTime" value="10000"/>
+  <parameter name="sleepTime" value="15000"/>
 
   <listeners>
     <listener class-name="org.ldaptive.SkipTestInvokedMethodListener" />
@@ -451,7 +460,7 @@
         <include name="dsml" />
         <include name="ldif" />
         <include name="ssl" />
-        <include name="ldapcli" />
+        <include name="cli" />
         <include name="templates" />
         <include name="conn" />
       </define>
