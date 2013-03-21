@@ -3,6 +3,12 @@
 
 <wiki:toc max_depth="2" />
 
+<br><br><br>
+----
+= This project has finished incubation and has moved to [http://www.ldaptive.org Ldaptive] =
+----
+<br><br><br>
+
 = Introduction =
 VT Ldap is a Java library for interfacing with version 3 LDAPs.
 This library meets the following design goals:
