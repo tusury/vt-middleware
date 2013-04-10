@@ -176,7 +176,7 @@ public class DirSyncClient
     }
 
     final SearchOperation search = new SearchOperation(connection);
-    request.setControls(createRequestControls(null));
+    request.setControls(createRequestControls(cookie));
     return search.execute(request);
   }
 
