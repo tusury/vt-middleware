@@ -674,6 +674,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   @Override
   public int availableCount()
   {
+    if (available == null) {
+      return 0;
+    }
     return available.size();
   }
 
@@ -682,6 +685,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   @Override
   public int activeCount()
   {
+    if (active == null) {
+      return 0;
+    }
     return active.size();
   }
 
