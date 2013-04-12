@@ -14,9 +14,11 @@
 package org.ldaptive;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.TreeSet;
@@ -521,9 +523,47 @@ public class LdapAttribute extends AbstractLdapBean
     } else if (SortBehavior.ORDERED == getSortBehavior()) {
       values = new LinkedHashSet<E>();
     } else if (SortBehavior.SORTED == getSortBehavior()) {
-      values = new TreeSet<E>();
+      if (!c.isAssignableFrom(Comparable.class)) {
+        values = new TreeSet<E>(getComparator(c));
+      } else {
+        values = new TreeSet<E>();
+      }
     }
     return values;
+  }
+
+
+  /**
+   * Returns a comparator for the supplied class type. Should not be invoked for
+   * classes that have a natural ordering. Returns a comparator that uses {@link
+   * Object#toString()} for unknown types.
+   *
+   * @param  <E>  type of class
+   * @param  c  type to compare
+   *
+   * @return  comparator for use with the supplied type
+   */
+  private static <E> Comparator<E> getComparator(final Class<E> c)
+  {
+    if (c.isAssignableFrom(byte[].class)) {
+      return new Comparator<E>() {
+        @Override
+        public int compare(final E o1, final E o2)
+        {
+          final ByteBuffer bb1 = ByteBuffer.wrap((byte[]) o1);
+          final ByteBuffer bb2 = ByteBuffer.wrap((byte[]) o2);
+          return bb1.compareTo(bb2);
+        }
+      };
+    } else {
+      return new Comparator<E>() {
+        @Override
+        public int compare(final E o1, final E o2)
+        {
+          return o1.toString().compareTo(o2.toString());
+        }
+      };
+    }
   }
 
 

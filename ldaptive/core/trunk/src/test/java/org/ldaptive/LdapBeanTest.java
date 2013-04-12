@@ -13,8 +13,11 @@
 */
 package org.ldaptive;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
@@ -297,7 +300,90 @@ public class LdapBeanTest
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
 
-    // test binary values
+    // test string value
+    la = new LdapAttribute("cn", "William Wallace");
+    AssertJUnit.assertEquals("William Wallace", la.getStringValue());
+    AssertJUnit.assertEquals(
+      "William Wallace".getBytes(Charset.forName("UTF-8")),
+      la.getBinaryValue());
+    AssertJUnit.assertEquals(1, la.getStringValues().size());
+    AssertJUnit.assertEquals(1, la.getBinaryValues().size());
+    AssertJUnit.assertEquals(la, new LdapAttribute("cn", "William Wallace"));
+    try {
+      la.addStringValue((String[]) null);
+      AssertJUnit.fail("Should have thrown NullPointerException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
+    }
+    try {
+      la.addBinaryValue("Bill".getBytes());
+      AssertJUnit.fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
+    }
+    la.clear();
+    AssertJUnit.assertEquals(0, la.size());
+
+    // test string values
+    final List<String> commonNames = new ArrayList<String>();
+    commonNames.add("Bill Wallace");
+    commonNames.add("William Wallace");
+    final List<byte[]> binaryCommonNames = new ArrayList<byte[]>();
+    binaryCommonNames.add("Bill Wallace".getBytes(Charset.forName("UTF-8")));
+    binaryCommonNames.add("William Wallace".getBytes(Charset.forName("UTF-8")));
+
+    la = new LdapAttribute(SortBehavior.UNORDERED);
+    la.setName("cn");
+    la.addStringValue(commonNames.get(0));
+    la.addStringValue(commonNames.get(1));
+    AssertJUnit.assertNotNull(la.getStringValue());
+    AssertJUnit.assertNotNull(la.getStringValues());
+    AssertJUnit.assertEquals(2, la.getStringValues().size());
+    AssertJUnit.assertNotNull(la.getBinaryValue());
+    AssertJUnit.assertNotNull(la.getBinaryValues());
+    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
+    la.clear();
+    AssertJUnit.assertEquals(0, la.size());
+
+    la = new LdapAttribute(SortBehavior.ORDERED);
+    la.setName("cn");
+    la.addStringValue(commonNames.get(0));
+    la.addStringValue(commonNames.get(1));
+    AssertJUnit.assertEquals("Bill Wallace", la.getStringValue());
+    AssertJUnit.assertArrayEquals(
+      commonNames.toArray(new String[2]),
+      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertEquals(2, la.getStringValues().size());
+    AssertJUnit.assertEquals(
+      "Bill Wallace".getBytes(Charset.forName("UTF-8")),
+      la.getBinaryValue());
+    AssertJUnit.assertArrayEquals(
+      binaryCommonNames.toArray(new byte[2][0]),
+      la.getBinaryValues().toArray(new byte[2][0]));
+    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
+    la.clear();
+    AssertJUnit.assertEquals(0, la.size());
+
+    la = new LdapAttribute(SortBehavior.SORTED);
+    la.setName("cn");
+    la.addStringValue(commonNames.get(0));
+    la.addStringValue(commonNames.get(1));
+    AssertJUnit.assertEquals("Bill Wallace", la.getStringValue());
+    AssertJUnit.assertArrayEquals(
+      commonNames.toArray(new String[2]),
+      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertEquals(2, la.getStringValues().size());
+    AssertJUnit.assertEquals(
+      "Bill Wallace".getBytes(Charset.forName("UTF-8")),
+      la.getBinaryValue());
+    AssertJUnit.assertArrayEquals(
+      binaryCommonNames.toArray(new byte[2][0]),
+      la.getBinaryValues().toArray(new byte[2][0]));
+    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
+    la.clear();
+    AssertJUnit.assertEquals(0, la.size());
+
+    // test binary value
     la = new LdapAttribute("jpegPhoto", "image".getBytes());
     AssertJUnit.assertTrue(
       Arrays.equals("image".getBytes(), la.getBinaryValue()));
@@ -307,10 +393,10 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(
       la, new LdapAttribute("jpegPhoto", "image".getBytes()));
     try {
-      la.addBinaryValue((byte[]) null);
-      AssertJUnit.fail("Should have thrown IllegalArgumentException");
+      la.addBinaryValue((byte[][]) null);
+      AssertJUnit.fail("Should have thrown NullPointerException");
     } catch (Exception e) {
-      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
+      AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
     }
     try {
       la.addStringValue("Bill");
@@ -318,6 +404,61 @@ public class LdapBeanTest
     } catch (Exception e) {
       AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
     }
+    la.clear();
+    AssertJUnit.assertEquals(0, la.size());
+
+    // test binary values
+    final List<byte[]> jpegPhotos = new ArrayList<byte[]>();
+    jpegPhotos.add("image1".getBytes());
+    jpegPhotos.add("image2".getBytes());
+    final List<String> stringJpegPhotos = new ArrayList<String>();
+    stringJpegPhotos.add("aW1hZ2Ux");
+    stringJpegPhotos.add("aW1hZ2Uy");
+
+    la = new LdapAttribute(SortBehavior.UNORDERED, true);
+    la.setName("jpegPhoto");
+    la.addBinaryValue(jpegPhotos.get(0));
+    la.addBinaryValue(jpegPhotos.get(1));
+    AssertJUnit.assertNotNull(la.getStringValue());
+    AssertJUnit.assertNotNull(la.getStringValues());
+    AssertJUnit.assertEquals(2, la.getStringValues().size());
+    AssertJUnit.assertNotNull(la.getBinaryValue());
+    AssertJUnit.assertNotNull(la.getBinaryValues());
+    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
+    la.clear();
+    AssertJUnit.assertEquals(0, la.size());
+
+    la = new LdapAttribute(SortBehavior.ORDERED, true);
+    la.setName("jpegPhoto");
+    la.addBinaryValue(jpegPhotos.get(0));
+    la.addBinaryValue(jpegPhotos.get(1));
+    AssertJUnit.assertEquals("aW1hZ2Ux", la.getStringValue());
+    AssertJUnit.assertArrayEquals(
+      stringJpegPhotos.toArray(new String[2]),
+      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertEquals(2, la.getStringValues().size());
+    AssertJUnit.assertEquals("image1".getBytes(), la.getBinaryValue());
+    AssertJUnit.assertArrayEquals(
+      jpegPhotos.toArray(new byte[2][0]),
+      la.getBinaryValues().toArray(new byte[2][0]));
+    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
+    la.clear();
+    AssertJUnit.assertEquals(0, la.size());
+
+    la = new LdapAttribute(SortBehavior.SORTED, true);
+    la.setName("jpegPhoto");
+    la.addBinaryValue(jpegPhotos.get(0));
+    la.addBinaryValue(jpegPhotos.get(1));
+    AssertJUnit.assertEquals("aW1hZ2Ux", la.getStringValue());
+    AssertJUnit.assertArrayEquals(
+      stringJpegPhotos.toArray(new String[2]),
+      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertEquals(2, la.getStringValues().size());
+    AssertJUnit.assertEquals("image1".getBytes(), la.getBinaryValue());
+    AssertJUnit.assertArrayEquals(
+      jpegPhotos.toArray(new byte[2][0]),
+      la.getBinaryValues().toArray(new byte[2][0]));
+    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
 
