@@ -18,6 +18,9 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.vt.middleware.crypt.asymmetric.AsymmetricAlgorithm;
+import edu.vt.middleware.crypt.asymmetric.PublicKeyUtils;
+import edu.vt.middleware.crypt.asymmetric.RSA;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
@@ -169,6 +172,27 @@ public class DigestAlgorithmTest
 
 
   /**
+   * @return  Test data.
+   *
+   * @throws  Exception  On test data generation failure.
+   */
+  @DataProvider(name = "testclone")
+  public Object[][] createTestDataForClone()
+    throws Exception
+  {
+    final DigestAlgorithm sha256 = new SHA256();
+    sha256.setRandomByteSize(16);
+    sha256.setSalt(sha256.getRandomSalt());
+    return
+      new Object[][] {
+        {new MD5()},
+        {new SHA1()},
+        {sha256},
+      };
+  }
+
+
+  /**
    * @param  digest  A digest instance to test.
    * @param  salt  Initial salt data.
    *
@@ -278,5 +302,23 @@ public class DigestAlgorithmTest
     AssertJUnit.assertEquals(
       REFERENCE_HASHES.get(digest.getAlgorithm()),
       testHash);
+  }
+
+
+  /**
+   * @param  algorithm  Digest algorithm to clone and test.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+    groups = {"functest", "digest"},
+    dataProvider = "testclone"
+  )
+  public void testClone(final DigestAlgorithm algorithm)
+    throws Exception
+  {
+    final DigestAlgorithm clone = (DigestAlgorithm) algorithm.clone();
+    final byte[] cleartext = "Able was I ere I saw elba".getBytes();
+    AssertJUnit.assertArrayEquals(algorithm.digest(cleartext), clone.digest(cleartext));
   }
 }

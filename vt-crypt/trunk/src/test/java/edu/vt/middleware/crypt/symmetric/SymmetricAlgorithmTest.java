@@ -16,6 +16,7 @@ package edu.vt.middleware.crypt.symmetric;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
+import java.security.SecureRandom;
 
 import edu.vt.middleware.crypt.FileHelper;
 import edu.vt.middleware.crypt.io.Base64FilterInputStream;
@@ -25,11 +26,16 @@ import edu.vt.middleware.crypt.io.HexFilterOutputStream;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
+import org.bouncycastle.util.test.FixedSecureRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Unit test for all subclasses of {@link SymmetricAlgorithm}.
@@ -158,6 +164,27 @@ public class SymmetricAlgorithmTest
         {new Twofish("ECB", "PKCS5Padding")},
         {new Twofish("OFB", "NoPadding")},
         {new Twofish("OFB", "PKCS5Padding")},
+      };
+  }
+
+
+  /**
+   * @return  Test data.
+   *
+   * @throws  Exception  On test data generation failure.
+   */
+  @DataProvider(name = "testclone")
+  public Object[][] createTestDataForClone()
+    throws Exception
+  {
+
+    final SymmetricAlgorithm aes1 = new AES();
+    aes1.setRandomProvider(new FixedSecureRandom(aes1.getRandomData(1024)));
+    aes1.setIV(aes1.getRandomIV());
+    aes1.setKey(SecretKeyUtils.generate("AES", 256));
+    return
+      new Object[][] {
+        {aes1},
       };
   }
 
@@ -351,6 +378,26 @@ public class SymmetricAlgorithmTest
         testIn.close();
       }
     }
+  }
+
+
+  /**
+   * @param  algorithm  Symmetric algorithm to clone and test.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+    groups = {"functest", "symmetric"},
+    dataProvider = "testclone"
+  )
+  public void testClone(final SymmetricAlgorithm algorithm)
+    throws Exception
+  {
+    final SymmetricAlgorithm clone = (SymmetricAlgorithm) algorithm.clone();
+    algorithm.initEncrypt();
+    clone.initEncrypt();
+    final byte[] cleartext = "Able was I ere I saw elba".getBytes();
+    AssertJUnit.assertArrayEquals(algorithm.encrypt(cleartext), clone.encrypt(cleartext));
   }
 
 

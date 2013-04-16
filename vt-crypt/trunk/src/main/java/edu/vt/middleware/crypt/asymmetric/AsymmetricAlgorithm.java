@@ -90,6 +90,17 @@ public class AsymmetricAlgorithm extends AbstractEncryptionAlgorithm
 
 
   /** {@inheritDoc} */
+  @Override
+  public Object clone() throws CloneNotSupportedException
+  {
+    final AsymmetricAlgorithm clone = AsymmetricAlgorithm.newInstance(getAlgorithm());
+    clone.setRandomProvider(randomProvider);
+    clone.setKey(key);
+    return clone;
+  }
+
+
+  /** {@inheritDoc} */
   protected AlgorithmParameterSpec getAlgorithmParameterSpec()
   {
     return null;

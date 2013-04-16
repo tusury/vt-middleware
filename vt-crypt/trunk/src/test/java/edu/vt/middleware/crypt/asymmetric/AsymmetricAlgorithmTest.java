@@ -15,6 +15,10 @@ package edu.vt.middleware.crypt.asymmetric;
 
 import java.security.KeyPair;
 
+import edu.vt.middleware.crypt.symmetric.AES;
+import edu.vt.middleware.crypt.symmetric.SecretKeyUtils;
+import edu.vt.middleware.crypt.symmetric.SymmetricAlgorithm;
+import org.bouncycastle.util.test.FixedSecureRandom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
@@ -62,6 +66,24 @@ public class AsymmetricAlgorithmTest
 
 
   /**
+   * @return  Test data.
+   *
+   * @throws  Exception  On test data generation failure.
+   */
+  @DataProvider(name = "testclone")
+  public Object[][] createTestDataForClone()
+    throws Exception
+  {
+
+    final AsymmetricAlgorithm rsa = new RSA();
+    return
+      new Object[][] {
+        {rsa, PublicKeyUtils.generate("RSA", 2048)},
+      };
+  }
+
+
+  /**
    * @param  asymmetric  A symmetric crypt algorithm to test.
    * @param  keys  Key pair used for encryption/decryption.
    *
@@ -87,5 +109,34 @@ public class AsymmetricAlgorithmTest
     AssertJUnit.assertEquals(
       CLEARTEXT.getBytes(),
       asymmetric.decrypt(ciphertext));
+  }
+
+
+  /**
+   * @param  algorithm  Asymmetric algorithm to clone and test.
+   * @param  keys  Encryption/decryption keys.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+    groups = {"functest", "asymmetric"},
+    dataProvider = "testclone"
+  )
+  public void testClone(final AsymmetricAlgorithm algorithm, final KeyPair keys)
+    throws Exception
+  {
+    algorithm.setKey(keys.getPrivate());
+    final AsymmetricAlgorithm clone = (AsymmetricAlgorithm) algorithm.clone();
+    algorithm.initEncrypt();
+    clone.initEncrypt();
+    final byte[] cleartext = "Able was I ere I saw elba".getBytes();
+    // Note comparison of ciphertext is not possible due to random data produced by OAEP padding
+    final byte[] ciphertext1 = algorithm.encrypt(cleartext);
+    final byte[] ciphertext2 = clone.encrypt(cleartext);
+    algorithm.setKey(keys.getPublic());
+    clone.setKey(keys.getPublic());
+    algorithm.initDecrypt();
+    clone.initDecrypt();
+    AssertJUnit.assertArrayEquals(algorithm.decrypt(ciphertext1), clone.decrypt(ciphertext2));
   }
 }

@@ -328,4 +328,18 @@ public class SignatureAlgorithm extends AbstractAlgorithm
   {
     return verify(in, converter.toBytes(signature));
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public Object clone() throws CloneNotSupportedException
+  {
+    final SignatureAlgorithm clone = SignatureAlgorithm.newInstance(
+      getAlgorithm(),
+      digest.getAlgorithm());
+    clone.setRandomProvider(randomProvider);
+    clone.setSignKey(signKey);
+    clone.setVerifyKey(verifyKey);
+    return clone;
+  }
 }

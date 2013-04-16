@@ -17,12 +17,9 @@ import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.SecureRandom;
 
+import edu.vt.middleware.crypt.asymmetric.AsymmetricAlgorithm;
 import edu.vt.middleware.crypt.asymmetric.PublicKeyUtils;
-import edu.vt.middleware.crypt.digest.MD5;
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.digest.SHA512;
-import edu.vt.middleware.crypt.digest.Tiger;
-import edu.vt.middleware.crypt.digest.Whirlpool;
+import edu.vt.middleware.crypt.digest.*;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.HexConverter;
@@ -114,6 +111,27 @@ public class SignatureAlgorithmTest
           PublicKeyUtils.generate("EC", 384),
           new HexConverter(),
         },
+      };
+  }
+
+
+  /**
+   * @return  Test data.
+   *
+   * @throws  Exception  On test data generation failure.
+   */
+  @DataProvider(name = "testclone")
+  public Object[][] createTestDataForClone()
+    throws Exception
+  {
+    final SignatureAlgorithm rsa = new RSASignature(new SHA256());
+    rsa.setSignKey(PublicKeyUtils.generate("RSA", 1576).getPrivate());
+    final SignatureAlgorithm ecdsa = new ECDSASignature();
+    ecdsa.setSignKey(PublicKeyUtils.generate("EC", 512).getPrivate());
+    return
+      new Object[][] {
+        {rsa},
+        {ecdsa},
       };
   }
 
@@ -242,5 +260,25 @@ public class SignatureAlgorithmTest
         in2.close();
       }
     }
+  }
+
+
+  /**
+   * @param  algorithm  Signature algorithm to clone and test.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+    groups = {"functest", "signature"},
+    dataProvider = "testclone"
+  )
+  public void testClone(final SignatureAlgorithm algorithm)
+    throws Exception
+  {
+    final SignatureAlgorithm clone = (SignatureAlgorithm) algorithm.clone();
+    algorithm.initSign();
+    clone.initSign();
+    final byte[] cleartext = "Able was I ere I saw elba".getBytes();
+    AssertJUnit.assertArrayEquals(algorithm.sign(cleartext), clone.sign(cleartext));
   }
 }
