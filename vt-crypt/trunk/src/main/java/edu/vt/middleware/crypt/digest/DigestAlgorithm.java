@@ -28,7 +28,7 @@ import org.bouncycastle.crypto.Digest;
  * @version  $Revision: 84 $
  */
 
-public class DigestAlgorithm extends AbstractRandomizableAlgorithm
+public class DigestAlgorithm extends AbstractRandomizableAlgorithm implements Cloneable
 {
 
   /** Chunk size used in stream-based digestion. */
@@ -237,4 +237,15 @@ public class DigestAlgorithm extends AbstractRandomizableAlgorithm
     return converter.fromBytes(digest(in));
   }
 
+
+  /** {@inheritDoc} */
+  @Override
+  public Object clone() throws CloneNotSupportedException
+  {
+    final DigestAlgorithm clone = DigestAlgorithm.newInstance(getAlgorithm());
+    clone.setSalt(salt);
+    clone.setRandomByteSize(randomByteSize);
+    clone.setRandomProvider(randomProvider);
+    return clone;
+  }
 }

@@ -304,6 +304,21 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
 
 
   /** {@inheritDoc} */
+  @Override
+  public Object clone() throws CloneNotSupportedException
+  {
+    final SymmetricAlgorithm clone = SymmetricAlgorithm.newInstance(
+      getAlgorithm(),
+      getMode(),
+      getPadding());
+    clone.setRandomProvider(randomProvider);
+    clone.setIV(iv);
+    clone.setKey(key);
+    return clone;
+  }
+
+
+  /** {@inheritDoc} */
   protected AlgorithmParameterSpec getAlgorithmParameterSpec()
   {
     final AlgorithmParameterSpec spec;
