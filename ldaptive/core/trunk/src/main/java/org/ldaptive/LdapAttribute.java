@@ -115,9 +115,7 @@ public class LdapAttribute extends AbstractLdapBean
   {
     this(false);
     setName(name);
-    for (String value : values) {
-      addStringValue(value);
-    }
+    addStringValue(values);
   }
 
 
@@ -131,9 +129,7 @@ public class LdapAttribute extends AbstractLdapBean
   {
     this(true);
     setName(name);
-    for (byte[] value : values) {
-      addBinaryValue(value);
-    }
+    addBinaryValue(values);
   }
 
 
