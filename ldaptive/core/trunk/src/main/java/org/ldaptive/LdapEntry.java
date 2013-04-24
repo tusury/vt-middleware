@@ -13,9 +13,11 @@
 */
 package org.ldaptive;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -290,5 +292,50 @@ public class LdapEntry extends AbstractLdapBean
   public String toString()
   {
     return String.format("[dn=%s%s]", entryDn, entryAttributes.values());
+  }
+
+
+  /**
+   * Returns the list of attribute modifications needed to change the supplied
+   * target entry into the supplied source entry.
+   *
+   * @param  source  ldap entry containing new data
+   * @param  target  ldap entry containing existing data
+   *
+   * @return  attribute modifications needed to change target into source or
+   * an empty array
+   */
+  public static AttributeModification[] computeModifications(
+    final LdapEntry source,
+    final LdapEntry target)
+  {
+    final List<AttributeModification> mods =
+      new ArrayList<AttributeModification>();
+    for (LdapAttribute sourceAttr : source.getAttributes()) {
+      final LdapAttribute targetAttr =
+        target.getAttribute(sourceAttr.getName());
+      if (targetAttr == null) {
+        final AttributeModification mod =
+          new AttributeModification(AttributeModificationType.ADD,
+            sourceAttr);
+        mods.add(mod);
+      } else if (!targetAttr.equals(sourceAttr)) {
+        final AttributeModification mod =
+          new AttributeModification(AttributeModificationType.REPLACE,
+            sourceAttr);
+        mods.add(mod);
+      }
+    }
+    for (LdapAttribute targetAttr : target.getAttributes()) {
+      final LdapAttribute sourceAttr =
+        source.getAttribute(targetAttr.getName());
+      if (sourceAttr == null) {
+        final AttributeModification mod =
+          new AttributeModification(AttributeModificationType.REMOVE,
+            targetAttr);
+        mods.add(mod);
+      }
+    }
+    return mods.toArray(new AttributeModification[mods.size()]);
   }
 }
