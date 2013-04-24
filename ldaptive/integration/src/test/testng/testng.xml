@@ -65,6 +65,8 @@
              value="/org/ldaptive/createLdapEntry-28.ldif"/>
   <parameter name="createEntry29"
              value="/org/ldaptive/createLdapEntry-29.ldif"/>
+  <parameter name="createEntry30"
+             value="/org/ldaptive/createLdapEntry-30.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -450,6 +452,7 @@
         <include name="compare" />
         <include name="modify" />
         <include name="modifyDn" />
+        <include name="merge" />
         <include name="extended" />
         <include name="async" />
         <include name="control-util" />
