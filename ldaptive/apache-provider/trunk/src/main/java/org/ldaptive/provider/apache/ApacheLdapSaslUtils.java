@@ -16,9 +16,9 @@ package org.ldaptive.provider.apache;
 import javax.security.auth.login.Configuration;
 import org.apache.directory.api.ldap.model.constants.SaslQoP;
 import org.apache.directory.api.ldap.model.constants.SaslSecurityStrength;
-import org.apache.directory.ldap.client.api.CramMd5Request;
-import org.apache.directory.ldap.client.api.DigestMd5Request;
-import org.apache.directory.ldap.client.api.GssApiRequest;
+import org.apache.directory.ldap.client.api.SaslCramMd5Request;
+import org.apache.directory.ldap.client.api.SaslDigestMd5Request;
+import org.apache.directory.ldap.client.api.SaslGssApiRequest;
 import org.ldaptive.Credential;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.GssApiConfig;
@@ -49,12 +49,12 @@ public final class ApacheLdapSaslUtils
    *
    * @return  digest md5 request
    */
-  protected static DigestMd5Request createDigestMd5Request(
+  protected static SaslDigestMd5Request createDigestMd5Request(
     final String username,
     final Credential credential,
     final SaslConfig config)
   {
-    final DigestMd5Request request = new DigestMd5Request();
+    final SaslDigestMd5Request request = new SaslDigestMd5Request();
     if (username != null) {
       request.setUsername(username);
     }
@@ -95,12 +95,12 @@ public final class ApacheLdapSaslUtils
    *
    * @return  cram md5 request
    */
-  protected static CramMd5Request createCramMd5Request(
+  protected static SaslCramMd5Request createCramMd5Request(
     final String username,
     final Credential credential,
     final SaslConfig config)
   {
-    final CramMd5Request request = new CramMd5Request();
+    final SaslCramMd5Request request = new SaslCramMd5Request();
     if (username != null) {
       request.setUsername(username);
     }
@@ -135,12 +135,12 @@ public final class ApacheLdapSaslUtils
    *
    * @return  gssapi request
    */
-  protected static GssApiRequest createGssApiRequest(
+  protected static SaslGssApiRequest createGssApiRequest(
     final String username,
     final Credential credential,
     final SaslConfig config)
   {
-    final GssApiRequest request = new GssApiRequest();
+    final SaslGssApiRequest request = new SaslGssApiRequest();
     if (username != null) {
       request.setUsername(username);
     }

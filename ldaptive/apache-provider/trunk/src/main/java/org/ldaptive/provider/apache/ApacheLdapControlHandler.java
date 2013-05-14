@@ -102,7 +102,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
         ((PasswordPolicyControl) ctl).setTimeBeforeExpiration(
           ppr.getTimeBeforeExpiration());
         ((PasswordPolicyControl) ctl).setGraceAuthNsRemaining(
-          ppr.getGraceAuthNsRemaining());
+          ppr.getGraceAuthNRemaining());
 
         final PasswordPolicyErrorEnum error = ppr.getPasswordPolicyError();
         if (error != null) {
