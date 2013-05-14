@@ -48,10 +48,10 @@ import org.apache.directory.api.ldap.model.message.SearchResultEntry;
 import org.apache.directory.api.ldap.model.message.SearchResultReference;
 import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.api.ldap.model.name.Dn;
-import org.apache.directory.ldap.client.api.CramMd5Request;
-import org.apache.directory.ldap.client.api.DigestMd5Request;
-import org.apache.directory.ldap.client.api.GssApiRequest;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
+import org.apache.directory.ldap.client.api.SaslCramMd5Request;
+import org.apache.directory.ldap.client.api.SaslDigestMd5Request;
+import org.apache.directory.ldap.client.api.SaslGssApiRequest;
 import org.apache.directory.ldap.client.api.exception.InvalidConnectionException;
 import org.ldaptive.AddRequest;
 import org.ldaptive.BindRequest;
@@ -273,7 +273,7 @@ public class ApacheLdapConnection implements ProviderConnection
 
       case DIGEST_MD5:
 
-        final DigestMd5Request digestMd5Request = ApacheLdapSaslUtils
+        final SaslDigestMd5Request digestMd5Request = ApacheLdapSaslUtils
           .createDigestMd5Request(
             request.getDn(),
             request.getCredential(),
@@ -283,7 +283,7 @@ public class ApacheLdapConnection implements ProviderConnection
 
       case CRAM_MD5:
 
-        final CramMd5Request cramMd5Request = ApacheLdapSaslUtils
+        final SaslCramMd5Request cramMd5Request = ApacheLdapSaslUtils
           .createCramMd5Request(
             request.getDn(),
             request.getCredential(),
@@ -293,7 +293,7 @@ public class ApacheLdapConnection implements ProviderConnection
 
       case GSSAPI:
 
-        final GssApiRequest gssApiRequest = ApacheLdapSaslUtils
+        final SaslGssApiRequest gssApiRequest = ApacheLdapSaslUtils
           .createGssApiRequest(
             request.getDn(),
             request.getCredential(),
