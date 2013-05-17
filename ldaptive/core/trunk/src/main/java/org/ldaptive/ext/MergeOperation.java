@@ -94,10 +94,12 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
       }
     }
     if (searchResponse != null &&
-        searchResponse.getResultCode() != ResultCode.SUCCESS) {
+        searchResponse.getResultCode() != ResultCode.SUCCESS &&
+        searchResponse.getResultCode() != ResultCode.NO_SUCH_OBJECT) {
       throw new LdapException(
         String.format(
-          "Error searching for entry: %s, response did not return success: %s",
+          "Error searching for entry: %s, response did not return success or " +
+          "no_such_object: %s",
           sourceEntry,
           searchResponse));
     }
