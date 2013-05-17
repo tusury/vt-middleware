@@ -258,6 +258,20 @@ public class NotificationClient
      *
      * @return  whether this item represents a search entry
      */
+    public boolean isEntry()
+    {
+      return searchEntry != null;
+    }
+
+
+    /**
+     * Returns whether this item represents a search entry.
+     *
+     * @return  whether this item represents a search entry
+     *
+     * @deprecated  use {@link #isEntry()} instead
+     */
+    @Deprecated
     public boolean isSearchEntry()
     {
       return searchEntry != null;
@@ -310,7 +324,7 @@ public class NotificationClient
           getClass().getName(),
           hashCode(),
           asyncRequest);
-      } else if (isSearchEntry()) {
+      } else if (isEntry()) {
         s = String.format(
           "[%s@%d::searchEntry=%s]",
           getClass().getName(),
