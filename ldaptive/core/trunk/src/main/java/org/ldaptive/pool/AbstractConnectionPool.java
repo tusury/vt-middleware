@@ -178,8 +178,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * Initialize this pool for use. Once invoked the pool config is made
    * immutable. See {@link PoolConfig#makeImmutable()}.
    *
-   * @throws  IllegalStateException  if this pool has already been initialized
-   * or the pooling configuration is inconsistent
+   * @throws  IllegalStateException  if this pool has already been initialized,
+   * the pooling configuration is inconsistent or the pool does not contain at
+   * least one connection and it's minimum size is greater than zero
    */
   @Override
   public void initialize()
@@ -187,7 +188,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     if (initialized) {
       throw new IllegalStateException("Pool has already been initialized");
     }
-    logger.debug("beginning pool initialization");
+    logger.debug("beginning pool initialization for {}", this);
 
     // sanity check the configuration
     if ((getPoolConfig().isValidatePeriodically() ||
@@ -195,6 +196,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
          getPoolConfig().isValidateOnCheckOut()) && getValidator() == null) {
       throw new IllegalStateException(
         "Validation is enabled, but no validator has been configured");
+    }
+    if ((!getPoolConfig().isValidatePeriodically() &&
+         !getPoolConfig().isValidateOnCheckIn() &&
+         !getPoolConfig().isValidateOnCheckOut()) && getValidator() != null) {
+      throw new IllegalStateException(
+        "Validator configured, but no validate flag has been set");
     }
 
     getPoolConfig().makeImmutable();
@@ -208,7 +215,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
     available = new Queue<PooledConnectionProxy>(queueType);
     active = new Queue<PooledConnectionProxy>(queueType);
-    initializePool();
+    grow(getPoolConfig().getMinPoolSize());
+    if (available.isEmpty() && getPoolConfig().getMinPoolSize() > 0) {
+      throw new IllegalStateException("Could not initialize pool");
+    }
     logger.debug("initialized available queue: {}", available);
 
     poolExecutor = Executors.newSingleThreadScheduledExecutor(
@@ -227,53 +237,67 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         @Override
         public void run()
         {
-          logger.debug("Begin prune task for {}", this);
-          prune();
-          logger.debug("End prune task for {}", this);
+          logger.debug("begin prune task for {}", AbstractConnectionPool.this);
+          try {
+            prune();
+          } catch (Exception e) {
+            logger.error(
+              "prune task failed for {}",
+              AbstractConnectionPool.this);
+          }
+          logger.debug("end prune task for {}", AbstractConnectionPool.this);
         }
       },
       getPruneStrategy().getPrunePeriod(),
       getPruneStrategy().getPrunePeriod(),
       TimeUnit.SECONDS);
-    logger.debug("prune pool task scheduled");
+    logger.debug("prune pool task scheduled for {}", this);
 
     poolExecutor.scheduleAtFixedRate(
       new Runnable() {
         @Override
         public void run()
         {
-          logger.debug("Begin validate task for {}", this);
-          validate();
-          logger.debug("End validate task for {}", this);
+          logger.debug(
+            "begin validate task for {}",
+            AbstractConnectionPool.this);
+          try {
+            validate();
+          } catch (Exception e) {
+            logger.error(
+              "validation task failed for {}",
+              AbstractConnectionPool.this);
+          }
+          logger.debug("end validate task for {}", AbstractConnectionPool.this);
         }
       },
       getPoolConfig().getValidatePeriod(),
       getPoolConfig().getValidatePeriod(),
       TimeUnit.SECONDS);
-    logger.debug("validate pool task scheduled");
+    logger.debug("validate pool task scheduled for {}", this);
+    logger.info("pool initialized {}", this);
 
     initialized = true;
   }
 
 
   /**
-   * Attempts to fill the pool to its minimum size.
+   * Attempts to grow the pool to the supplied size. If the pool size is greater
+   * than or equal to size, this method is a no-op.
    *
-   * @throws  IllegalStateException  if the pool does not contain at least one
-   * connection and it's minimum size is greater than zero
+   * @param  size  to grow the pool to
    */
-  private void initializePool()
+  private void grow(final int size)
   {
-    logger.debug(
-      "checking connection pool size >= {}",
-      getPoolConfig().getMinPoolSize());
-
+    logger.trace(
+      "waiting for pool lock to initialize pool {}",
+      poolLock.getQueueLength());
     int count = 0;
     poolLock.lock();
     try {
-      while (
-        available.size() < getPoolConfig().getMinPoolSize() &&
-          count < getPoolConfig().getMinPoolSize() * 2) {
+      int currentPoolSize = active.size() + available.size();
+      logger.debug("checking connection pool size >= {} for {}", size, this);
+      while (currentPoolSize < size && count < size * 2) {
         final PooledConnectionProxy pc = createAvailableConnection();
         if (getPoolConfig().isValidateOnCheckIn()) {
           if (validate(pc.getConnection())) {
@@ -283,10 +307,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
             removeAvailableConnection(pc);
           }
         }
+        currentPoolSize = active.size() + available.size();
         count++;
-      }
-      if (available.isEmpty() && getPoolConfig().getMinPoolSize() > 0) {
-        throw new IllegalStateException("Could not initialize pool");
       }
     } finally {
       poolLock.unlock();
@@ -303,8 +325,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   public void close()
   {
     logger.debug(
-      "closing connection pool of size {}",
-      available.size() + active.size());
+      "closing connection pool of size {} for {}",
+      available.size() + active.size(),
+      this);
     isInitialized();
     poolLock.lock();
     try {
@@ -326,6 +349,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     logger.debug("shutting down executor");
     poolExecutor.shutdown();
     logger.debug("executor shutdown");
+    logger.info("pool closed {}", this);
     initialized = false;
   }
 
@@ -592,7 +616,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         final int minPoolSize = getPoolConfig().getMinPoolSize();
         int currentPoolSize = active.size() + available.size();
         if (currentPoolSize > minPoolSize) {
-          logger.debug("pruning available pool of size {}", available.size());
+          logger.debug(
+            "pruning available pool of size {} for {}",
+            available.size(),
+            this);
 
           final int numConnToPrune = available.size();
           final Iterator<PooledConnectionProxy> connIter = available.iterator();
@@ -614,11 +641,15 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
             logger.debug("available pool size pruned to {}", available.size());
           }
         } else {
-          logger.debug("pool size is at the minimum, no connections pruned");
+          logger.debug(
+            "pool size is {}, no connections pruned for {}",
+            currentPoolSize,
+            this);
         }
       } else {
         logger.debug(
-          "no connections currently available, no connections pruned");
+          "no available connections, no connections pruned for {}",
+          this);
       }
     } finally {
       poolLock.unlock();
@@ -639,7 +670,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     try {
       if (!available.isEmpty()) {
         if (getPoolConfig().isValidatePeriodically()) {
-          logger.debug("validate available pool of size {}", available.size());
+          logger.debug(
+            "validate available pool of size {} for {}",
+            available.size(),
+            this);
 
           final List<PooledConnectionProxy> remove =
             new ArrayList<PooledConnectionProxy>();
@@ -659,11 +693,14 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
             logger.trace("destroyed connection: {}", pc);
           }
         }
-        initializePool();
-        logger.debug("pool size after validation is {}", available.size());
       } else {
-        logger.debug("all connections currently active, no validation pruned");
+        logger.debug(
+          "no available connections, no validation performed for {}",
+          this);
       }
+      grow(getPoolConfig().getMinPoolSize());
+      logger.debug(
+        "pool size after validation is {}", available.size() + active.size());
     } finally {
       poolLock.unlock();
     }
