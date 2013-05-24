@@ -1052,6 +1052,7 @@ public class SearchOperationTest extends AbstractTest
         new ShowDeactivatedLinkControl(),
         new ShowDeletedControl(),
         new ShowRecycledControl());
+      search.execute(sr);
     } finally {
       conn.close();
     }
