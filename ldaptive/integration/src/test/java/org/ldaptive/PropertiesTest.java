@@ -170,6 +170,9 @@ public class PropertiesTest
         dnResolver.getConnectionFactory().getConnectionPool();
     AssertJUnit.assertEquals(1, authCp.getPoolConfig().getMinPoolSize());
     AssertJUnit.assertEquals(3, authCp.getPoolConfig().getMaxPoolSize());
+    AssertJUnit.assertEquals(
+      true, authCp.getPoolConfig().isValidatePeriodically());
+    AssertJUnit.assertNotNull(authCp.getValidator());
     final IdlePruneStrategy pruneStrategy =
       (IdlePruneStrategy) authCp.getPruneStrategy();
     AssertJUnit.assertEquals(60, pruneStrategy.getPrunePeriod());
@@ -299,6 +302,9 @@ public class PropertiesTest
       (BlockingConnectionPool) authCf.getConnectionPool();
     AssertJUnit.assertEquals(1, authCp.getPoolConfig().getMinPoolSize());
     AssertJUnit.assertEquals(3, authCp.getPoolConfig().getMaxPoolSize());
+    AssertJUnit.assertEquals(
+      true, authCp.getPoolConfig().isValidatePeriodically());
+    AssertJUnit.assertNotNull(authCp.getValidator());
     final IdlePruneStrategy pruneStrategy =
       (IdlePruneStrategy) authCp.getPruneStrategy();
     AssertJUnit.assertEquals(60, pruneStrategy.getPrunePeriod());
