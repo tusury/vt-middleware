@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-templates</artifactId>
   <packaging>jar</packaging>
-  <version>1.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>LDAPTIVE TEMPLATES</name>
   <description>Provides templating functionality for aggregating LDAP searches</description>
   <url>http://www.ldaptive.org</url>
@@ -69,19 +69,19 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>${basedir}/src/main/checkstyle</checkstyle.dir>
     <assembly.dir>${basedir}/src/main/assembly</assembly.dir>
-    <spring.version>3.2.2.RELEASE</spring.version>
+    <spring.version>3.2.3.RELEASE</spring.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive</artifactId>
-      <version>1.0</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-json</artifactId>
-      <version>1.0</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8</version>
+      <version>6.8.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
