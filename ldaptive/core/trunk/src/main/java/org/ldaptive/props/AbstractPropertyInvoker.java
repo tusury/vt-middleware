@@ -88,6 +88,22 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
               properties.put(pName, new Method[] {method, null});
             }
           } else if (
+            method.getName().startsWith("is") &&
+              method.getParameterTypes().length == 0) {
+            final String mName = method.getName().substring(2);
+            final String pName = mName.substring(0, 1).toLowerCase() +
+              mName.substring(1, mName.length());
+            if (properties.containsKey(pName)) {
+              final Method[] m = properties.get(pName);
+              // prefer any get method that may exist
+              if (m[0] == null) {
+                m[0] = method;
+                properties.put(pName, m);
+              }
+            } else {
+              properties.put(pName, new Method[] {method, null});
+            }
+          } else if (
             "initialize".equals(method.getName()) &&
               method.getParameterTypes().length == 0) {
             final String pName = method.getName();
