@@ -283,11 +283,11 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
   /**
    * Attempts to grow the pool to the supplied size. If the pool size is greater
-   * than or equal to size, this method is a no-op.
+   * than or equal to the supplied size, this method is a no-op.
    *
    * @param  size  to grow the pool to
    */
-  private void grow(final int size)
+  protected void grow(final int size)
   {
     logger.trace(
       "waiting for pool lock to initialize pool {}",
