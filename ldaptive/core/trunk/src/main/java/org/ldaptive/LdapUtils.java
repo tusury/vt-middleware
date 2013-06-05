@@ -304,9 +304,9 @@ public final class LdapUtils
 
 
   /**
-   * Computes a hash code for the supplied object. Checks for arrays of type
-   * byte[] and Object[] and delegates to the {@link Arrays} class. Otherwise
-   * {@link Object#hashCode()} is invoked.
+   * Computes a hash code for the supplied object. Checks for arrays of
+   * primitives and Objects then delegates to the {@link Arrays} class.
+   * Otherwise {@link Object#hashCode()} is invoked.
    *
    * @param  object  to calculate hash code for
    *
@@ -315,8 +315,22 @@ public final class LdapUtils
   private static int computeHashCode(final Object object)
   {
     int hc = 0;
-    if (object instanceof byte[]) {
+    if (object instanceof boolean[]) {
+      hc += Arrays.hashCode((boolean[]) object);
+    } else if (object instanceof byte[]) {
       hc += Arrays.hashCode((byte[]) object);
+    } else if (object instanceof char[]) {
+      hc += Arrays.hashCode((char[]) object);
+    } else if (object instanceof double[]) {
+      hc += Arrays.hashCode((double[]) object);
+    } else if (object instanceof float[]) {
+      hc += Arrays.hashCode((float[]) object);
+    } else if (object instanceof int[]) {
+      hc += Arrays.hashCode((int[]) object);
+    } else if (object instanceof long[]) {
+      hc += Arrays.hashCode((long[]) object);
+    } else if (object instanceof short[]) {
+      hc += Arrays.hashCode((short[]) object);
     } else if (object instanceof Object[]) {
       hc += Arrays.hashCode((Object[]) object);
     } else {
