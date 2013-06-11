@@ -41,11 +41,12 @@ public class CancelOperation extends AbstractOperation<CancelRequest, Void>
 
   /** {@inheritDoc} */
   @Override
-  @SuppressWarnings("unchecked")
   protected Response<Void> invoke(final CancelRequest request)
     throws LdapException
   {
-    return (Response<Void>)
-      getConnection().getProviderConnection().extendedOperation(request);
+    @SuppressWarnings("unchecked") final Response<Void> response =
+      (Response<Void>)
+        getConnection().getProviderConnection().extendedOperation(request);
+    return response;
   }
 }

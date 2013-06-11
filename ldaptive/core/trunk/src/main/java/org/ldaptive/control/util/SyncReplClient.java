@@ -105,7 +105,6 @@ public class SyncReplClient
    *
    * @throws  LdapException  if the search fails
    */
-  @SuppressWarnings("unchecked")
   public BlockingQueue<SyncReplItem> execute(final SearchRequest request)
     throws LdapException
   {

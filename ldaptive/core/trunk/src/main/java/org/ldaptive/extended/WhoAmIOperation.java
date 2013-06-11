@@ -41,11 +41,12 @@ public class WhoAmIOperation extends AbstractOperation<WhoAmIRequest, String>
 
   /** {@inheritDoc} */
   @Override
-  @SuppressWarnings("unchecked")
   protected Response<String> invoke(final WhoAmIRequest request)
     throws LdapException
   {
-    return (Response<String>)
-      getConnection().getProviderConnection().extendedOperation(request);
+    @SuppressWarnings("unchecked") final Response<String> response =
+      (Response<String>)
+        getConnection().getProviderConnection().extendedOperation(request);
+    return response;
   }
 }
