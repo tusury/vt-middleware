@@ -25,7 +25,7 @@ import java.security.cert.X509Certificate;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class CredentialConfigFactory
+public final class CredentialConfigFactory
 {
 
 
