@@ -177,9 +177,7 @@ public class DirSyncClient
         "Response does not contain a dir sync cookie");
     }
 
-    final SearchOperation search = new SearchOperation(connection);
-    request.setControls(createRequestControls(cookie));
-    return search.execute(request);
+    return execute(request, new DefaultCookieManager(cookie));
   }
 
 
@@ -236,20 +234,8 @@ public class DirSyncClient
 
 
   /**
-   * Performs a search operation with the {@link DirSyncControl}. The supplied
-   * request is modified in the following way:
-   *
-   * <ul>
-   *   <li>{@link SearchRequest#setControls(
-   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
-   *     DirSyncControl}, {@link ShowDeletedControl}, and {@link
-   *     ExtendedDnControl}</li>
-   * </ul>
-   *
-   * <p>This method will continue to execute search operations until all dir
-   * sync search results have been retrieved from the server. The returned
-   * response contains the response data of the last dir sync operation plus the
-   * entries and references returned by all previous search operations.</p>
+   * Invokes {@link #execute(SearchRequest, CookieManager)} with a {@link
+   * DefaultCookieManager}.
    *
    * @param  request  search request to execute
    *
@@ -260,7 +246,7 @@ public class DirSyncClient
   public Response<SearchResult> executeToCompletion(final SearchRequest request)
     throws LdapException
   {
-    return execute(request, new DefaultCookieManager());
+    return executeToCompletion(request, new DefaultCookieManager());
   }
 
 
@@ -280,7 +266,7 @@ public class DirSyncClient
    * response contains the response data of the last dir sync operation plus the
    * entries and references returned by all previous search operations.</p>
    *
-   * <p>The cookie used in the request is read from the cookie manager and
+   * <p>The cookie used for each request is read from the cookie manager and
    * written to the cookie manager after a successful search, if the response
    * contains a cookie.</p>
    *
