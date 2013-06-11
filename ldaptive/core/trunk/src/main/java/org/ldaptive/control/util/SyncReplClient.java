@@ -56,8 +56,22 @@ public class SyncReplClient
   /** Controls which mode the sync repl control should use. */
   private final boolean refreshAndPersist;
 
-  /** Optional sync cookie. */
-  private final byte[] syncCookie;
+  /** Cookie manager used by the deprecated constructor. */
+  private final CookieManager cookieManager;
+
+
+  /**
+   * Creates a new sync repl client.
+   *
+   * @param  conn  to execute the async search operation on
+   * @param  persist  whether to refresh and persist or just refresh
+   */
+  public SyncReplClient(final Connection conn, final boolean persist)
+  {
+    connection = conn;
+    refreshAndPersist = persist;
+    cookieManager = null;
+  }
 
 
   /**
@@ -66,7 +80,10 @@ public class SyncReplClient
    * @param  conn  to execute the async search operation on
    * @param  persist  whether to refresh and persist or just refresh
    * @param  cookie  optional sync repl cookie
+   *
+   * @deprecated  use {@link #SyncReplClient(Connection, boolean)} instead
    */
+  @Deprecated
   public SyncReplClient(
     final Connection conn,
     final boolean persist,
@@ -74,7 +91,27 @@ public class SyncReplClient
   {
     connection = conn;
     refreshAndPersist = persist;
-    syncCookie = cookie;
+    cookieManager = new DefaultCookieManager(cookie);
+  }
+
+
+  /**
+   * Invokes {@link #execute(SearchRequest, CookieManager)} with a {@link
+   * DefaultCookieManager}.
+   *
+   * @param  request  search request to execute
+   *
+   * @return  blocking queue to wait for sync repl items
+   *
+   * @throws  LdapException  if the search fails
+   */
+  @SuppressWarnings("unchecked")
+  public BlockingQueue<SyncReplItem> execute(final SearchRequest request)
+    throws LdapException
+  {
+    final CookieManager manager =
+      cookieManager != null ? cookieManager : new DefaultCookieManager();
+    return execute(request, manager);
   }
 
 
@@ -104,13 +141,16 @@ public class SyncReplClient
    * operations.</p>
    *
    * @param  request  search request to execute
+   * @param  manager  for reading and writing cookies
    *
    * @return  blocking queue to wait for sync repl items
    *
    * @throws  LdapException  if the search fails
    */
   @SuppressWarnings("unchecked")
-  public BlockingQueue<SyncReplItem> execute(final SearchRequest request)
+  public BlockingQueue<SyncReplItem> execute(
+    final SearchRequest request,
+    final CookieManager manager)
     throws LdapException
   {
     final BlockingQueue<SyncReplItem> queue =
@@ -129,7 +169,16 @@ public class SyncReplClient
           try {
             logger.debug("received {}", response);
             search.shutdown();
-            queue.put(new SyncReplItem(new SyncReplItem.Response(response)));
+            final SyncReplItem item = new SyncReplItem(
+              new SyncReplItem.Response(response));
+            if (item.getResponse().getSyncDoneControl() != null) {
+              final byte[] cookie =
+                item.getResponse().getSyncDoneControl().getCookie();
+              if (cookie != null) {
+                manager.writeCookie(cookie);
+              }
+            }
+            queue.put(item);
           } catch (Exception e) {
             logger.warn("Unable to enqueue response {}", response);
           }
@@ -177,7 +226,7 @@ public class SyncReplClient
       new SyncRequestControl(
         refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST
                           : SyncRequestControl.Mode.REFRESH_ONLY,
-        syncCookie,
+        manager.readCookie(),
         true));
     request.setSearchEntryHandlers(
       new SearchEntryHandler() {
@@ -190,7 +239,16 @@ public class SyncReplClient
         {
           try {
             logger.debug("received {}", entry);
-            queue.put(new SyncReplItem(new SyncReplItem.Entry(entry)));
+            final SyncReplItem item = new SyncReplItem(
+              new SyncReplItem.Entry(entry));
+            if (item.getEntry().getSyncStateControl() != null) {
+              final byte[] cookie =
+                item.getEntry().getSyncStateControl().getCookie();
+              if (cookie != null) {
+                manager.writeCookie(cookie);
+              }
+            }
+            queue.put(item);
           } catch (Exception e) {
             logger.warn("Unable to enqueue entry {}", entry);
           }
@@ -212,7 +270,11 @@ public class SyncReplClient
           if (SyncInfoMessage.OID.equals(response.getOID())) {
             try {
               logger.debug("received {}", response);
-              queue.put(new SyncReplItem((SyncInfoMessage) response));
+              final SyncInfoMessage message = (SyncInfoMessage) response;
+              if (message.getCookie() != null) {
+                manager.writeCookie(message.getCookie());
+              }
+              queue.put(new SyncReplItem(message));
             } catch (Exception e) {
               logger.warn(
                 "Unable to enqueue intermediate response {}",

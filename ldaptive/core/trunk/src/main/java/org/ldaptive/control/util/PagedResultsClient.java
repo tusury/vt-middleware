@@ -74,9 +74,7 @@ public class PagedResultsClient
   public Response<SearchResult> execute(final SearchRequest request)
     throws LdapException
   {
-    final SearchOperation search = new SearchOperation(connection);
-    request.setControls(new PagedResultsControl(resultSize, true));
-    return search.execute(request);
+    return execute(request, new DefaultCookieManager());
   }
 
 
@@ -111,9 +109,45 @@ public class PagedResultsClient
         "Response does not contain a paged results cookie");
     }
 
+    return execute(request, new DefaultCookieManager(cookie));
+  }
+
+
+  /**
+   * Performs a search operation with the {@link PagedResultsControl}. The
+   * supplied request is modified in the following way:
+   *
+   * <ul>
+   *   <li>{@link SearchRequest#setControls(
+   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
+   *     PagedResultsControl}</li>
+   * </ul>
+   *
+   * <p>The cookie used in the request is read from the cookie manager and
+   * written to the cookie manager after a successful search, if the response
+   * contains a cookie.</p>
+   *
+   * @param  request  search request to execute
+   * @param  manager  for reading and writing cookies
+   *
+   * @return  search operation response
+   *
+   * @throws  LdapException  if the search fails
+   */
+  public Response<SearchResult> execute(
+    final SearchRequest request,
+    final CookieManager manager)
+    throws LdapException
+  {
     final SearchOperation search = new SearchOperation(connection);
-    request.setControls(new PagedResultsControl(resultSize, cookie, true));
-    return search.execute(request);
+    request.setControls(
+      new PagedResultsControl(resultSize, manager.readCookie(), true));
+    final Response<SearchResult> response = search.execute(request);
+    final byte[] cookie = getPagedResultsCookie(response);
+    if (cookie != null) {
+      manager.writeCookie(cookie);
+    }
+    return response;
   }
 
 
@@ -155,10 +189,45 @@ public class PagedResultsClient
   public Response<SearchResult> executeToCompletion(final SearchRequest request)
     throws LdapException
   {
+    return executeToCompletion(request, new DefaultCookieManager());
+  }
+
+
+  /**
+   * Performs a search operation with the {@link PagedResultsControl}. The
+   * supplied request is modified in the following way:
+   *
+   * <ul>
+   *   <li>{@link SearchRequest#setControls(
+   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
+   *     PagedResultsControl}</li>
+   * </ul>
+   *
+   * <p>This method will continue to execute search operations until all paged
+   * search results have been retrieved from the server. The returned response
+   * contains the response data of the last paged result operation plus the
+   * entries and references returned by all previous search operations.</p>
+   *
+   * <p>The cookie used for each request is read from the cookie manager and
+   * written to the cookie manager after a successful search, if the response
+   * contains a cookie.</p>
+   *
+   * @param  request  search request to execute
+   * @param  manager  for reading and writing cookies
+   *
+   * @return  search operation response of the last paged result operation
+   *
+   * @throws  LdapException  if the search fails
+   */
+  public Response<SearchResult> executeToCompletion(
+    final SearchRequest request,
+    final CookieManager manager)
+    throws LdapException
+  {
     Response<SearchResult> response = null;
     final SearchResult result = new SearchResult();
     final SearchOperation search = new SearchOperation(connection);
-    byte[] cookie = null;
+    byte[] cookie = manager.readCookie();
     do {
       if (response != null && response.getResult() != null) {
         result.addEntries(response.getResult().getEntries());
@@ -167,6 +236,9 @@ public class PagedResultsClient
       request.setControls(new PagedResultsControl(resultSize, cookie, true));
       response = search.execute(request);
       cookie = getPagedResultsCookie(response);
+      if (cookie != null) {
+        manager.writeCookie(cookie);
+      }
     } while (cookie != null);
     response.getResult().addEntries(result.getEntries());
     response.getResult().addReferences(result.getReferences());
