@@ -80,7 +80,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
     throws LdapException
   {
     final LdapEntry sourceEntry = request.getEntry();
-    Response<Void> response = null;
+    Response<Void> response;
 
     // search for existing entry
     Response<SearchResult> searchResponse = null;
@@ -149,7 +149,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
     final LdapEntry target)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     final AttributeModification[] modifications =
       LdapEntry.computeModifications(source, target);
     if (modifications != null && modifications.length > 0) {
@@ -206,7 +206,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
     final LdapEntry entry)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     final AddOperation add = new AddOperation(getConnection());
     response = add.execute(
       new AddRequest(entry.getDn(), entry.getAttributes()));
@@ -230,7 +230,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
     final LdapEntry entry)
     throws LdapException
   {
-    Response<Void> response = null;
+    Response<Void> response;
     final DeleteOperation delete = new DeleteOperation(getConnection());
     response = delete.execute(new DeleteRequest(entry.getDn()));
     logger.info("delete entry {} for request {}", entry, request);
