@@ -219,14 +219,14 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    * @throws  IllegalArgumentException  if the supplied class name cannot create
    * a new instance of T
    */
-  @SuppressWarnings("unchecked")
   public static <T> T instantiateType(final T type, final String className)
   {
     try {
       try {
         final Class<?> clazz = createClass(className);
         final Constructor<?> con = clazz.getDeclaredConstructor((Class[]) null);
-        return (T) con.newInstance();
+        @SuppressWarnings("unchecked") final T t = (T) con.newInstance();
+        return t;
       } catch (NoSuchMethodException e) {
         throw new IllegalArgumentException(e);
       } catch (InvocationTargetException e) {

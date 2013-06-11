@@ -43,11 +43,12 @@ public class PasswordModifyOperation
 
   /** {@inheritDoc} */
   @Override
-  @SuppressWarnings("unchecked")
   protected Response<Credential> invoke(final PasswordModifyRequest request)
     throws LdapException
   {
-    return (Response<Credential>)
-      getConnection().getProviderConnection().extendedOperation(request);
+    @SuppressWarnings("unchecked") final Response<Credential> response =
+      (Response<Credential>)
+        getConnection().getProviderConnection().extendedOperation(request);
+    return response;
   }
 }

@@ -43,12 +43,13 @@ public class FastBindOperation extends AbstractOperation<FastBindRequest, Void>
 
   /** {@inheritDoc} */
   @Override
-  @SuppressWarnings("unchecked")
   protected Response<Void> invoke(final FastBindRequest request)
     throws LdapException
   {
-    return (Response<Void>)
-      getConnection().getProviderConnection().extendedOperation(request);
+    @SuppressWarnings("unchecked") final Response<Void> response =
+      (Response<Void>)
+        getConnection().getProviderConnection().extendedOperation(request);
+    return response;
   }
 
 
