@@ -623,7 +623,8 @@ public class ApacheLdapConnection implements ProviderConnection
         "Ldap returned result code: %s",
         ldapResult.getResultCode()),
       ldapResult.getResultCode().getResultCode(),
-      ldapResult.getMatchedDn().getName(),
+      ldapResult.getMatchedDn() != null
+        ? ldapResult.getMatchedDn().getName() : null,
       processResponseControls(
         config.getControlProcessor(),
         request.getControls(),
@@ -656,7 +657,9 @@ public class ApacheLdapConnection implements ProviderConnection
         result,
         ResultCode.valueOf(ldapResult.getResultCode().getValue()),
         ldapResult.getDiagnosticMessage(),
-        ldapResult.getMatchedDn().getName(),
+        ldapResult.getMatchedDn() != null
+          ? ldapResult.getMatchedDn().getName()
+          : null,
         processResponseControls(
           config.getControlProcessor(),
           request.getControls(),
