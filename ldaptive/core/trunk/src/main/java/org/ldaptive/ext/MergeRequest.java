@@ -109,8 +109,8 @@ public class MergeRequest extends AbstractRequest
 
 
   /**
-   * Returns the attributes names of attributes that are ignored when
-   * determining whether a modify should occur.
+   * Returns the names of attributes that are ignored when determining whether a
+   * modify should occur.
    *
    * @return  attribute names to ignore
    */
