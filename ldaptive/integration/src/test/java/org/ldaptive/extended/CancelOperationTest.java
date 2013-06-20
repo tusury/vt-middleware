@@ -13,6 +13,7 @@
 */
 package org.ldaptive.extended;
 
+import java.util.concurrent.ExecutionException;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
@@ -103,6 +104,8 @@ public class CancelOperationTest extends AbstractTest
           SyncRequestControl.Mode.REFRESH_AND_PERSIST, true));
       final Response<SearchResult> response = search.execute(request);
       AssertJUnit.assertEquals(ResultCode.CANCELED, response.getResultCode());
+    } catch (IllegalStateException e) {
+      throw (Exception) e.getCause();
     } finally {
       conn.close();
     }
