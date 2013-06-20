@@ -17,7 +17,7 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.ad.GlobalIdentifier;
 
 /**
- * Processes the objectGuid attribute by converting it from binary to it's
+ * Processes an objectGuid attribute by converting it from binary to it's
  * string form.
  *
  * @author  Middleware Services
@@ -37,6 +37,17 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
   public ObjectGuidHandler()
   {
     setAttributeName(ATTRIBUTE_NAME);
+  }
+
+
+  /**
+   * Creates a new object guid handler.
+   *
+   * @param  attrName  name of the attribute which is encoded as an objectGUID
+   */
+  public ObjectGuidHandler(final String attrName)
+  {
+    setAttributeName(attrName);
   }
 
 
