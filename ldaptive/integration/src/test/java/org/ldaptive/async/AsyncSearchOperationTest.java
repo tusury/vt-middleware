@@ -13,6 +13,7 @@
 */
 package org.ldaptive.async;
 
+import java.util.concurrent.ExecutionException;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
@@ -103,6 +104,8 @@ public class AsyncSearchOperationTest extends AbstractTest
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       TestUtils.assertEquals(
         TestUtils.convertLdifToResult(expected), response.getResult());
+    } catch (ExecutionException e) {
+      throw (Exception) e.getCause();
     } catch (IllegalStateException e) {
       throw (Exception) e.getCause();
     } finally {

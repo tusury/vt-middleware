@@ -107,6 +107,9 @@ public class SyncReplClientTest extends AbstractTest
       final BlockingQueue<SyncReplItem> results = client.execute(request);
 
       SyncReplItem item = results.take();
+      if (item.isException()) {
+        throw item.getException();
+      }
       if (item.isAsyncRequest()) {
         // some providers don't support the request object
         AssertJUnit.assertTrue(item.isAsyncRequest());
