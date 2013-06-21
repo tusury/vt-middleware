@@ -17,7 +17,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -30,10 +33,56 @@ import org.ldaptive.LdapUtils;
 public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
 {
 
+  /** Pattern for capturing the year in generalized time. */
+  private static final String YEAR_PATTERN = "(\\d{4})";
+
+  /** Pattern for capturing the month in generalized time. */
+  private static final String MONTH_PATTERN =
+    "((?:\\x30[\\x31-\\x39])|(?:\\x31[\\x30-\\x32]))";
+
+  /** Pattern for capturing the day in generalized time. */
+  private static final String DAY_PATTERN =
+    "((?:\\x30[\\x31-\\x39])" +
+    "|(?:[\\x31-\\x32][\\x30-\\x39])" +
+    "|(?:\\x33[\\x30-\\x31]))";
+
+  /** Pattern for capturing hours in generalized time. */
+  private static final String HOUR_PATTERN =
+    "((?:[\\x30-\\x31][\\x30-\\x39])|(?:\\x32[\\x30-\\x33]))";
+
+  /** Pattern for capturing optional minutes in generalized time. */
+  private static final String MIN_PATTERN = "([\\x30-\\x35][\\x30-\\x39])?";
+
+  /** Pattern for capturing optional seconds in generalized time. */
+  private static final String SECOND_PATTERN = "([\\x30-\\x35][\\x30-\\x39])?";
+
+  /** Pattern for capturing optional fraction in generalized time. */
+  private static final String FRACTION_PATTERN = "([,.](\\d+))?";
+
+  /** Pattern for capturing timezone in generalized time. */
+  private static final String TIMEZONE_PATTERN =
+    "(Z|(?:[+-]" + HOUR_PATTERN + MIN_PATTERN + "))";
+
+  /** Generalized time format regular expression. */
+  private static final Pattern TIME_REGEX = Pattern.compile(
+    YEAR_PATTERN +
+    MONTH_PATTERN +
+    DAY_PATTERN +
+    HOUR_PATTERN +
+    MIN_PATTERN +
+    SECOND_PATTERN +
+    FRACTION_PATTERN +
+    TIMEZONE_PATTERN);
+
+  /** UTC time zone. */
+  private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+
+  /** Default locale. */
+  private static final Locale DEFAULT_LOCALE = Locale.getDefault();
+
   /** Thread local container holding date format which is not thread safe. */
   private static final ThreadLocal<DateFormat> DATE_FORMAT =
     new ThreadLocal<DateFormat>() {
-
 
       /** {@inheritDoc} */
       @Override
@@ -41,10 +90,50 @@ public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
       {
         final SimpleDateFormat format = new SimpleDateFormat(
           "yyyyMMddHHmmss.SSS'Z'");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        format.setTimeZone(UTC);
         return format;
       }
     };
+
+  /** Describes the fractional part of a generalized time string. */
+  private static enum FractionalPart
+  {
+    /** Fractional hours. */
+    Hours(3600000),
+
+    /** Fractional minutes. */
+    Minutes(60000),
+
+    /** Fractional seconds. */
+    Seconds(1000);
+
+    /** Scale factor to convert units to millis. */
+    private final int scaleFactor;
+
+
+    /**
+     * Creates a new fractional part.
+     *
+     * @param  scale  scale factor.
+     */
+    FractionalPart(final int scale)
+    {
+      scaleFactor = scale;
+    }
+
+
+    /**
+     * Converts the given fractional date part to milliseconds.
+     *
+     * @param  fraction  digits of fractional date part
+     *
+     * @return fraction converted to milliseconds.
+     */
+    int toMillis(final String fraction)
+    {
+      return (int) (Double.parseDouble('.' + fraction) * scaleFactor);
+    }
+  }
 
 
   /** {@inheritDoc} */
@@ -105,230 +194,67 @@ public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
   protected Calendar parseGeneralizedTime(final String value)
     throws ParseException
   {
-    // CheckStyle:MagicNumber OFF
-    if (value == null || value.length() < 11) {
-      throw new ParseException(
-        "Generalized time must be at least 11 characters long",
-        value == null ? 0 : value.length());
+    if (value == null) {
+      throw new IllegalArgumentException("String to parse cannot be null.");
     }
-    // CheckStyle:MagicNumber ON
-    final Calendar calendar = Calendar.getInstance();
+    final Matcher m = TIME_REGEX.matcher(value);
+    if (!m.matches()) {
+      throw new ParseException(
+        "Invalid generalized time string.", value.length());
+    }
+
+    // CheckStyle:MagicNumber OFF
+    // Get calendar in correct time zone
+    final String tzString = m.group(9);
+    final TimeZone tz;
+    if ("Z".equals(tzString)) {
+      tz = UTC;
+    } else {
+      tz = TimeZone.getTimeZone("GMT" + tzString);
+    }
+    final Calendar calendar = Calendar.getInstance(tz, DEFAULT_LOCALE);
+
+    // Initialize calendar and impose strict calendrical field constraints
     calendar.setTimeInMillis(0);
     calendar.setLenient(false);
 
-    boolean foundTimeZone = false;
-    int pos = 0;
-    try {
-      while (pos < value.length()) {
-        final char c = value.charAt(pos);
-        if (c >= '0' && c <= '9') {
-          String datePart;
-          // CheckStyle:MagicNumber OFF
-          switch (pos) {
-          case 0:
-            datePart = value.substring(pos, pos + 4);
-            calendar.set(Calendar.YEAR, Integer.parseInt(datePart));
-            break;
-          case 4:
-            datePart = value.substring(pos, pos + 2);
-            calendar.set(Calendar.MONTH, Integer.parseInt(datePart) - 1);
-            break;
-          case 6:
-            datePart = value.substring(pos, pos + 2);
-            calendar.set(Calendar.DATE, Integer.parseInt(datePart));
-            break;
-          case 8:
-            datePart = value.substring(pos, pos + 2);
-            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(datePart));
-            break;
-          case 10:
-            datePart = value.substring(pos, pos + 2);
-            calendar.set(Calendar.MINUTE, Integer.parseInt(datePart));
-            break;
-          case 12:
-            datePart = value.substring(pos, pos + 2);
-            calendar.set(Calendar.SECOND, Integer.parseInt(datePart));
-            break;
-          default:
-            throw new ParseException(
-              String.format("Error parsing generalized time %s", value), pos);
-          }
-          // CheckStyle:MagicNumber ON
-          pos += datePart.length();
-        } else if (c == '.' || c == ',') {
-          final String digits = parseDigits(value.substring(pos + 1));
-          setFraction(calendar, digits, pos);
-          pos += digits.length() + 1;
-        } else if (c == 'Z' || c == '+' || c == '-') {
-          final String tz = value.substring(pos);
-          try {
-            setTimeZone(calendar, tz);
-          } catch (ParseException e) {
-            throw new ParseException(
-              String.format(
-                "Invalid timezone for %s at position %s", value, pos),
-              pos);
-          }
-          foundTimeZone = true;
-          pos += tz.length();
-        } else {
-          throw new ParseException(
-            String.format(
-              "Invalid character for %s at position %s", value, pos),
-            pos);
-        }
-      }
-    } catch (NumberFormatException e) {
-      throw new ParseException(
-        String.format("Expected integer for %s at position %s", value, pos),
-        pos);
-    } catch (StringIndexOutOfBoundsException e) {
-      throw new ParseException(
-        String.format(
-          "Incorrect integer length for %s at position %s", value, pos),
-        pos);
-    }
+    // Set required time fields
+    calendar.set(Calendar.YEAR, Integer.parseInt(m.group(1)));
+    calendar.set(Calendar.MONTH, Integer.parseInt(m.group(2)) - 1);
+    calendar.set(Calendar.DATE, Integer.parseInt(m.group(3)));
+    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));
 
-    if (!foundTimeZone) {
-      throw new ParseException(
-        String.format("No timezone found for %s", value), pos);
-    }
+    FractionalPart fraction = FractionalPart.Hours;
 
-    // force calendar to calculate
-    try {
-      calendar.getTimeInMillis();
-    } catch (IllegalArgumentException e) {
-      throw new ParseException(e.getMessage(), 0);
+    // Set optional minutes
+    int minutes = 0;
+    if (m.group(5) != null) {
+      fraction = FractionalPart.Minutes;
+      minutes = Integer.parseInt(m.group(5));
     }
+    calendar.set(Calendar.MINUTE, minutes);
+
+    // Set optional seconds
+    int seconds = 0;
+    if (m.group(6) != null) {
+      fraction = FractionalPart.Seconds;
+      seconds = Integer.parseInt(m.group(6));
+    }
+    calendar.set(Calendar.SECOND, seconds);
+
+    // Set optional fractional part
+    calendar.add(Calendar.MILLISECOND, 0);
+    if (m.group(7) != null) {
+      calendar.add(Calendar.MILLISECOND, fraction.toMillis(m.group(8)));
+    }
+    // CheckStyle:MagicNumber ON
+
+    // Force calendar to calculate
+    calendar.getTimeInMillis();
+
+    // Relax calendrical field constraints
     calendar.setLenient(true);
+
     return calendar;
-  }
-
-
-  /**
-   * Parses a fraction and set the minute, second, and millisecond fields of the
-   * supplied calendar appropriately. Which fields are set is determined by the
-   * supplied position.
-   *
-   * @param  calendar  to set fields on
-   * @param  value  of the fraction to parse
-   * @param  pos  of the fraction in the generalized time string
-   *
-   * @throws  ParseException  if the fraction cannot be read from the value
-   */
-  private void setFraction(
-    final Calendar calendar,
-    final String value,
-    final int pos)
-    throws ParseException
-  {
-    if (value.isEmpty()) {
-      throw new ParseException("Fraction length cannot be zero", pos);
-    }
-
-    double fraction;
-    try {
-      fraction = Double.parseDouble(String.format("0.%s", value));
-    } catch (NumberFormatException e) {
-      throw new ParseException(
-        String.format("Error parsing fraction %s at position %s", value, pos),
-        pos);
-    }
-
-    // CheckStyle:MagicNumber OFF
-    switch (pos) {
-    case 10:
-      final double minOfHour = fraction * 60;
-      final double secOfHour = (minOfHour - Math.floor(minOfHour)) * 60;
-      final double msecOfHour = Math.round(
-        (secOfHour - Math.floor(secOfHour)) * 1000);
-      calendar.set(Calendar.MINUTE, (int) minOfHour);
-      calendar.set(Calendar.SECOND, (int) secOfHour);
-      calendar.set(Calendar.MILLISECOND, (int) msecOfHour);
-      break;
-    case 12:
-      final double secOfMin = fraction * 60;
-      final double msecOfMin = Math.round(
-        (secOfMin - Math.floor(secOfMin)) * 1000);
-      calendar.set(Calendar.SECOND, (int) secOfMin);
-      calendar.set(Calendar.MILLISECOND, (int) msecOfMin);
-      break;
-    case 14:
-      final double msecOfSec = fraction * 1000;
-      calendar.set(Calendar.MILLISECOND, (int) msecOfSec);
-      break;
-    default:
-      throw new ParseException(
-        String.format(
-          "Error parsing generalized time fraction %s at position %s",
-          value,
-          pos),
-        pos);
-    }
-    // CheckStyle:MagicNumber ON
-  }
-
-
-  /**
-   * Parses a timezone from the supplied value and sets it on the supplied
-   * calendar. A value of 'Z' corresponds to 'UTC'.
-   *
-   * @param  calendar  to set the timezone for
-   * @param  value  to parse the timezone from
-   *
-   * @throws  ParseException  if a timezone cannot be read from the value
-   */
-  private void setTimeZone(final Calendar calendar, final String value)
-    throws ParseException
-  {
-    // CheckStyle:MagicNumber OFF
-    if ("Z".equals(value)) {
-      calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
-    } else if (value.startsWith("-") || value.startsWith("+")) {
-      if (value.length() != 3 && value.length() != 5) {
-        throw new ParseException(
-          String.format("Invalid timezone %s", value), 0);
-      }
-      final TimeZone tz = TimeZone.getTimeZone("GMT" + value);
-      if (tz.getRawOffset() == 0) {
-        if (value.length() == 3 && !value.endsWith("00")) {
-          throw new ParseException(
-            String.format("Invalid timezone %s", value), 0);
-        } else if (value.length() == 5 && !value.endsWith("0000")) {
-          throw new ParseException(
-            String.format("Invalid timezone %s", value), 0);
-        }
-      }
-      calendar.setTimeZone(tz);
-    } else {
-      throw new ParseException(
-        String.format("Could not parse timezone %s", value), 0);
-    }
-    // CheckStyle:MagicNumber ON
-  }
-
-
-  /**
-   * Reads all the digits from the beginning of the supplied value until a
-   * non-digit is found.
-   *
-   * @param  value  to read digits from
-   *
-   * @return  digits found at the beginning of value or an empty string
-   */
-  private String parseDigits(final String value)
-  {
-    final StringBuilder sb = new StringBuilder();
-    int pos = 0;
-    while (pos < value.length()) {
-      final char c = value.charAt(pos);
-      if (c >= '0' && c <= '9') {
-        sb.append(c);
-      } else {
-        break;
-      }
-      pos++;
-    }
-    return sb.toString();
   }
 }
