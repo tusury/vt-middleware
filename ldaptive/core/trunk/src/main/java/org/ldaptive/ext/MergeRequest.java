@@ -32,8 +32,14 @@ public class MergeRequest extends AbstractRequest
   /** Whether to delete the entry. */
   private boolean deleteEntry;
 
-  /** Attribute names to ignore when determining merge. */
-  private String[] ignoreAttrs;
+  /** Attribute names to include in the search. */
+  private String[] searchAttrs;
+
+  /** Attribute names to include when performing a merge. */
+  private String[] includeAttrs;
+
+  /** Attribute names to exclude when performing a merge. */
+  private String[] excludeAttrs;
 
 
   /** Default constructor. */
@@ -109,26 +115,69 @@ public class MergeRequest extends AbstractRequest
 
 
   /**
-   * Returns the names of attributes that are ignored when determining whether a
-   * modify should occur.
+   * Returns the names of attributes that are used when searching for the entry.
    *
-   * @return  attribute names to ignore
+   * @return  attribute names to return when searching
    */
-  public String[] getIgnoreAttributes()
+  public String[] getSearchAttributes()
   {
-    return ignoreAttrs;
+    return searchAttrs;
   }
 
 
   /**
-   * Sets the list of attribute names to ignore when determining whether a
-   * modify should occur.
+   * Sets the list of attribute names that are used when searching for the
+   * entry.
    *
-   * @param  attrs  names to ignore
+   * @param  attrs  names to return when searching
    */
-  public void setIgnoreAttributes(final String... attrs)
+  public void setSearchAttributes(final String... attrs)
   {
-    ignoreAttrs = attrs;
+    searchAttrs = attrs;
+  }
+
+
+  /**
+   * Returns the names of attributes that are included when performing a modify.
+   *
+   * @return  attribute names to include
+   */
+  public String[] getIncludeAttributes()
+  {
+    return includeAttrs;
+  }
+
+
+  /**
+   * Sets the list of attribute names to include when performing modify.
+   *
+   * @param  attrs  names to include
+   */
+  public void setIncludeAttributes(final String... attrs)
+  {
+    includeAttrs = attrs;
+  }
+
+
+  /**
+   * Returns the names of attributes that are excluded when performing a modify.
+   *
+   * @return  attribute names to exclude
+   */
+  public String[] getExcludeAttributes()
+  {
+    return excludeAttrs;
+  }
+
+
+  /**
+   * Sets the list of attribute names to exclude when performing a modify.
+   *
+   * @param  attrs  names to exclude
+   */
+  public void setExcludeAttributes(final String... attrs)
+  {
+    excludeAttrs = attrs;
   }
 
 
@@ -138,13 +187,15 @@ public class MergeRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::ldapEntry=%s, deleteEntry=%s, ignoreAttributes=%s, " +
-        "controls=%s]",
+        "[%s@%d::ldapEntry=%s, deleteEntry=%s, searchAttributes=%s, " +
+        "includeAttributes=%s, excludeAttributes=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
         ldapEntry,
         deleteEntry,
-        Arrays.toString(ignoreAttrs),
+        Arrays.toString(searchAttrs),
+        Arrays.toString(includeAttrs),
+        Arrays.toString(excludeAttrs),
         Arrays.toString(getControls()));
   }
 }
