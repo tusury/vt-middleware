@@ -104,4 +104,17 @@ public class SearchValidator implements Validator<Connection>
     }
     return success;
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::searchRequest=%s]",
+        getClass().getName(),
+        hashCode(),
+        searchRequest);
+  }
 }

@@ -275,9 +275,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       getPoolConfig().getValidatePeriod(),
       TimeUnit.SECONDS);
     logger.debug("validate pool task scheduled for {}", this);
-    logger.info("pool initialized {}", this);
 
     initialized = true;
+    logger.info("pool initialized {}", this);
   }
 
 
