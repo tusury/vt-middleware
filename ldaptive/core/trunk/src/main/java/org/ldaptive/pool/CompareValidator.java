@@ -96,4 +96,17 @@ public class CompareValidator implements Validator<Connection>
     }
     return success;
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::compareRequest=%s]",
+        getClass().getName(),
+        hashCode(),
+        compareRequest);
+  }
 }
