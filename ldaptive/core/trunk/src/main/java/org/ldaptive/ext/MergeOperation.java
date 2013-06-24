@@ -13,6 +13,7 @@
 */
 package org.ldaptive.ext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.ldaptive.AbstractOperation;
@@ -44,7 +45,8 @@ import org.ldaptive.SearchResult;
  * </ul>
  * <p>{@link LdapEntry#computeModifications(LdapEntry, LdapEntry)} is used to
  * determine the list of attribute modifications that are necessary to perform
- * the merge.</p>
+ * the merge. Either {@link MergeRequest#getIncludeAttributes()} or {@link
+ * MergeRequest#getExcludeAttributes()} will be used, but not both.</p>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -71,7 +73,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
    * @param  request  merge request
    *
    * @return  response associated with whatever underlying operation was
-   * performed by the merge
+   * performed by the merge or an empty response if no operation was performed
    *
    * @throws  LdapException  if the invocation fails
    */
@@ -87,7 +89,9 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
     try {
       final SearchOperation search = new SearchOperation(getConnection());
       searchResponse = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(sourceEntry.getDn()));
+        SearchRequest.newObjectScopeSearchRequest(
+          sourceEntry.getDn(),
+          request.getSearchAttributes()));
     } catch (LdapException e) {
       if (e.getResultCode() != ResultCode.NO_SUCH_OBJECT) {
         throw e;
@@ -109,7 +113,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
         logger.info(
           "target entry does not exist, no delete performed for request {}",
           request);
-        response = new Response<Void>(null, ResultCode.SUCCESS);
+        response = new Response<Void>(null, null);
       } else {
         // entry does not exist, add it
         response = add(request, sourceEntry);
@@ -139,7 +143,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
    * @param  target  ldap entry that exists in the LDAP
    *
    * @return  response of the modify operation or an empty response if no
-   * operation is necessary
+   * operation is performed
    *
    * @throws  LdapException  if an error occurs executing the modify operation
    */
@@ -153,34 +157,54 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
     final AttributeModification[] modifications =
       LdapEntry.computeModifications(source, target);
     if (modifications != null && modifications.length > 0) {
-      boolean doModify = false;
-      final String[] ignoreAttrs = request.getIgnoreAttributes();
-      if (ignoreAttrs != null && ignoreAttrs.length > 0) {
-        final List<String> l = Arrays.asList(ignoreAttrs);
+      final List<AttributeModification> resultModifications =
+        new ArrayList<AttributeModification>(modifications.length);
+      final String[] includeAttrs = request.getIncludeAttributes();
+      final String[] excludeAttrs = request.getExcludeAttributes();
+      if (includeAttrs != null && includeAttrs.length > 0) {
+        final List<String> l = Arrays.asList(includeAttrs);
+        for (AttributeModification am : modifications) {
+          if (l.contains(am.getAttribute().getName())) {
+            resultModifications.add(am);
+          }
+        }
+      } else if (excludeAttrs != null && excludeAttrs.length > 0) {
+        final List<String> l = Arrays.asList(excludeAttrs);
         for (AttributeModification am : modifications) {
           if (!l.contains(am.getAttribute().getName())) {
-            doModify = true;
-            break;
+            resultModifications.add(am);
           }
         }
       } else {
-        doModify = true;
+        for (AttributeModification am : modifications) {
+          resultModifications.add(am);
+        }
       }
-      if (doModify) {
+      if (resultModifications.size() > 0) {
+        logger.info(
+          "modifying target entry {} with modifications {} from source entry " +
+            "{} for request {}",
+          target,
+          resultModifications,
+          source,
+          request);
         final ModifyOperation modify = new ModifyOperation(getConnection());
         response = modify.execute(
-          new ModifyRequest(target.getDn(), modifications));
+          new ModifyRequest(
+            target.getDn(),
+            resultModifications.toArray(
+              new AttributeModification[resultModifications.size()])));
         logger.info(
           "modified target entry {} with modifications {} from source entry " +
           "{} for request {}",
           target,
-          modifications,
+          resultModifications,
           source,
           request);
         return response;
       }
     }
-    response = new Response<Void>(null, ResultCode.SUCCESS);
+    response = new Response<Void>(null, null);
     logger.info(
       "target entry {} equals source entry {}, no modification performed for " +
       "request {}",
