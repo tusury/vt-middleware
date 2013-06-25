@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -19,7 +19,7 @@ package edu.vt.middleware.crypt.asymmetric;
  * to 'OAEP'. This classes defaults to a key creation length of 2048 bits.</p>
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 
 public class RSA extends AsymmetricAlgorithm

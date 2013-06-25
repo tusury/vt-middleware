@@ -29,7 +29,7 @@ import edu.vt.middleware.crypt.util.HexConverter;
  * Helps with naming and creating file-based streams.
  *
  * @author  Middleware Services
- * @version  $Revision: 12 $
+ * @version  $Revision$
  */
 public class FileHelper
 {

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -14,7 +14,6 @@
 package edu.vt.middleware.crypt;
 
 import java.security.SecureRandom;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * signature algorithms.
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 public abstract class AbstractAlgorithm implements Algorithm
 {

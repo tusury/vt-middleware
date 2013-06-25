@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -23,12 +23,10 @@ import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * objects using a set of providers.</p>
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 
 public final class CryptProvider
@@ -47,8 +45,8 @@ public final class CryptProvider
   public static final int RANDOM_BYTE_ARRAY_SIZE = 256;
 
   /** Class logger instance. */
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(CryptProvider.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(
+    CryptProvider.class);
 
   /** List of providers to use. */
   private static String[] providers = new String[0];
@@ -62,7 +60,9 @@ public final class CryptProvider
   }
 
 
-  /** <p>Default constructor.</p> */
+  /**
+   * <p>Default constructor.</p>
+   */
   private CryptProvider() {}
 
 
@@ -488,15 +488,15 @@ public final class CryptProvider
   /**
    * Handles a provider algorithm lookup error.
    *
-   * @param provider Name of provider that was queried for the algorithm or null
-   *                 for the default provider.
-   * @param algorithm Algorithm name.
-   * @param error Exception thrown on provider lookup error.
+   * @param  provider  Name of provider that was queried for the algorithm or
+   * null for the default provider.
+   * @param  algorithm  Algorithm name.
+   * @param  error  Exception thrown on provider lookup error.
    */
   private static void handleProviderError(
-      final String provider,
-      final String algorithm,
-      final GeneralSecurityException error)
+    final String provider,
+    final String algorithm,
+    final GeneralSecurityException error)
   {
     if (error instanceof NoSuchProviderException) {
       if (provider != null) {

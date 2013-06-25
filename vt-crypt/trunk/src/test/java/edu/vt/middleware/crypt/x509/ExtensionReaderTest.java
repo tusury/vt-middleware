@@ -49,7 +49,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link ExtensionReader} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 428 $
+ * @version  $Revision$
  */
 public class ExtensionReaderTest
 {

@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link RelativeDistinguishedName} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 578 $
+ * @version  $Revision$
  */
 public class RelativeDistinguishedNameTest
 {

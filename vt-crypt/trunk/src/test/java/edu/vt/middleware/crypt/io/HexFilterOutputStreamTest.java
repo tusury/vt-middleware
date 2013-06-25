@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link HexFilterOutputStream} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 public class HexFilterOutputStreamTest
 {

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -19,7 +19,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.digest.SHA1;
@@ -36,7 +35,7 @@ import org.bouncycastle.crypto.signers.RSADigestSigner;
  * http://www.ietf.org/rfc/rfc2437.txt</a>.
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 public class RSASignature extends SignatureAlgorithm
 {
@@ -101,7 +100,9 @@ public class RSASignature extends SignatureAlgorithm
     }
 
     final RSAPrivateKey privKey = (RSAPrivateKey) signKey;
-    init(true, new RSAKeyParameters(
+    init(
+      true,
+      new RSAKeyParameters(
         true,
         privKey.getModulus(),
         privKey.getPrivateExponent()));
@@ -117,10 +118,12 @@ public class RSASignature extends SignatureAlgorithm
     }
 
     final RSAPublicKey pubKey = (RSAPublicKey) verifyKey;
-    init(false, new RSAKeyParameters(
+    init(
       false,
-      pubKey.getModulus(),
-      pubKey.getPublicExponent()));
+      new RSAKeyParameters(
+        false,
+        pubKey.getModulus(),
+        pubKey.getPublicExponent()));
   }
 
 

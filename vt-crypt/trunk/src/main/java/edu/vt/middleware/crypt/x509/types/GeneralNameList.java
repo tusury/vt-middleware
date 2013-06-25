@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -20,7 +20,7 @@ import java.util.List;
  * 4.2.1.7 of RFC 2459, which simply stores a list of {@link GeneralName} items.
  *
  * @author  Middleware Services
- * @version  $Revision: 427 $
+ * @version  $Revision$
  */
 public class GeneralNameList extends AbstractList<GeneralName>
 {

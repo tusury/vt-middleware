@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -15,7 +15,6 @@ package edu.vt.middleware.crypt.x509;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.vt.middleware.crypt.x509.types.AccessDescription;
 import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
 import edu.vt.middleware.crypt.x509.types.AccessMethod;
@@ -36,7 +35,6 @@ import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
 import edu.vt.middleware.crypt.x509.types.PolicyQualifierInfo;
 import edu.vt.middleware.crypt.x509.types.ReasonFlags;
 import edu.vt.middleware.crypt.x509.types.UserNotice;
-
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERBitString;
@@ -49,7 +47,7 @@ import org.bouncycastle.asn1.DERInteger;
  * ASN1Encodable types.
  *
  * @author  Middleware Services
- * @version  $Revision: 428 $
+ * @version  $Revision$
  */
 public final class ExtensionFactory
 {
@@ -160,7 +158,7 @@ public final class ExtensionFactory
     final List<GeneralName> nameList = new ArrayList<GeneralName>();
     for (
       org.bouncycastle.asn1.x509.GeneralName name :
-        org.bouncycastle.asn1.x509.GeneralNames.getInstance(enc).getNames()) {
+      org.bouncycastle.asn1.x509.GeneralNames.getInstance(enc).getNames()) {
       nameList.add(createGeneralName(name));
     }
     return new GeneralNameList(nameList);
@@ -509,7 +507,7 @@ public final class ExtensionFactory
       new ArrayList<AccessDescription>();
     for (
       org.bouncycastle.asn1.x509.AccessDescription desc :
-        info.getAccessDescriptions()) {
+      info.getAccessDescriptions()) {
       accessDescList.add(
         new AccessDescription(
           AccessMethod.getByOid(desc.getAccessMethod().toString()),

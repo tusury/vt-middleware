@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -21,7 +21,7 @@ import edu.vt.middleware.crypt.x509.types.RelativeDistinguishedName;
  * process described in section 2 of RFC 2253, LADPv3 Distinguished Names.
  *
  * @author  Middleware Services
- * @version  $Revision: 578 $
+ * @version  $Revision$
  */
 public class LDAPv3DNFormatter implements DNFormatter
 {

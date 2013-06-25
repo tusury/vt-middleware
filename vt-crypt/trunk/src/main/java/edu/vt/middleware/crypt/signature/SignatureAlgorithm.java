@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -30,15 +30,15 @@ import edu.vt.middleware.crypt.util.Converter;
  * operations.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 
 public class SignatureAlgorithm extends AbstractAlgorithm
 {
 
   /** Map of signature algorithm names to classes. */
-  private static final Map<String, Class<? extends SignatureAlgorithm>>
-  NAME_CLASS_MAP = new HashMap<String, Class<? extends SignatureAlgorithm>>();
+  private static final Map<String, Class<? extends SignatureAlgorithm>> NAME_CLASS_MAP =
+    new HashMap<String, Class<? extends SignatureAlgorithm>>();
 
 
   /**
@@ -332,7 +332,8 @@ public class SignatureAlgorithm extends AbstractAlgorithm
 
   /** {@inheritDoc} */
   @Override
-  public Object clone() throws CloneNotSupportedException
+  public Object clone()
+    throws CloneNotSupportedException
   {
     final SignatureAlgorithm clone = SignatureAlgorithm.newInstance(
       getAlgorithm(),

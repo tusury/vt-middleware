@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * Utility class with helper methods for CLI unit tests.
  *
  * @author  Middleware Services
- * @version  $Revision: 318 $
+ * @version  $Revision$
  */
 public class CliHelper
 {

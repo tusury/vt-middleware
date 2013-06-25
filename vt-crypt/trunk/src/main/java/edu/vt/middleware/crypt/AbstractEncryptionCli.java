@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -31,7 +31,7 @@ import org.apache.commons.cli.Option;
  * Abstract base class for CLI handler of encryption operations.
  *
  * @author  Middleware Services
- * @version  $Revision: 12 $
+ * @version  $Revision$
  */
 public abstract class AbstractEncryptionCli extends AbstractCli
 {

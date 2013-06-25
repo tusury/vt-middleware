@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -109,7 +109,7 @@ public final class DERHelper
    *
    * @return  DER SEQUENCE over given items.
    */
-  public static DERSequence sequence(final DEREncodable ... items)
+  public static DERSequence sequence(final DEREncodable... items)
   {
     final ASN1EncodableVector v = new ASN1EncodableVector();
     for (DEREncodable item : items) {

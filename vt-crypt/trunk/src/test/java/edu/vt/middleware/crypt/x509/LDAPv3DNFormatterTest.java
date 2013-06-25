@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link LDAPv3DNFormatter} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 586 $
+ * @version  $Revision$
  */
 public class LDAPv3DNFormatterTest
 {

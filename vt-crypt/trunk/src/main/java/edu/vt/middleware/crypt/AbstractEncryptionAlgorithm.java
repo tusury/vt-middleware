@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -32,7 +32,7 @@ import edu.vt.middleware.crypt.util.Converter;
  * essentially a wrapper for the {@link Cipher} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 public abstract class AbstractEncryptionAlgorithm extends AbstractAlgorithm
   implements EncryptionAlgorithm

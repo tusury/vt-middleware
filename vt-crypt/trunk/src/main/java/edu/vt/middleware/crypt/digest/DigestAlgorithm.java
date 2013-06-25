@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -25,18 +25,19 @@ import org.bouncycastle.crypto.Digest;
  * <code>DigestAlgorithm</code> provides message digest operations.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 
-public class DigestAlgorithm extends AbstractRandomizableAlgorithm implements Cloneable
+public class DigestAlgorithm extends AbstractRandomizableAlgorithm
+  implements Cloneable
 {
 
   /** Chunk size used in stream-based digestion. */
   public static final int CHUNK_SIZE = 4096;
 
   /** Map of digest algorithm names to classes. */
-  private static final Map<String, Class<? extends DigestAlgorithm>>
-  NAME_CLASS_MAP = new HashMap<String, Class<? extends DigestAlgorithm>>();
+  private static final Map<String, Class<? extends DigestAlgorithm>> NAME_CLASS_MAP =
+    new HashMap<String, Class<? extends DigestAlgorithm>>();
 
 
   /**
@@ -240,7 +241,8 @@ public class DigestAlgorithm extends AbstractRandomizableAlgorithm implements Cl
 
   /** {@inheritDoc} */
   @Override
-  public Object clone() throws CloneNotSupportedException
+  public Object clone()
+    throws CloneNotSupportedException
   {
     final DigestAlgorithm clone = DigestAlgorithm.newInstance(getAlgorithm());
     clone.setSalt(salt);

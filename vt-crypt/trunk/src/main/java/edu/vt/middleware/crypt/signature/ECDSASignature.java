@@ -1,15 +1,15 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.signature;
 
@@ -18,7 +18,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.digest.SHA1;
 import org.bouncycastle.crypto.CipherParameters;
@@ -29,8 +28,8 @@ import org.bouncycastle.jce.provider.asymmetric.ec.ECUtil;
 /**
  * Implements the ECDSA algorithm.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public class ECDSASignature extends AbstractDSASignature
 {
@@ -40,8 +39,8 @@ public class ECDSASignature extends AbstractDSASignature
 
 
   /**
-   * Creates a new ECDSA signature instance that uses SHA-1 for computation
-   * of message digests.
+   * Creates a new ECDSA signature instance that uses SHA-1 for computation of
+   * message digests.
    */
   public ECDSASignature()
   {
@@ -88,7 +87,7 @@ public class ECDSASignature extends AbstractDSASignature
   {
     if (signKey == null) {
       throw new IllegalStateException(
-          "Sign key must be set prior to initialization.");
+        "Sign key must be set prior to initialization.");
     }
     try {
       init(true, ECUtil.generatePrivateKeyParameter(signKey));
@@ -103,7 +102,7 @@ public class ECDSASignature extends AbstractDSASignature
   {
     if (verifyKey == null) {
       throw new IllegalStateException(
-          "Verify key must be set prior to initialization.");
+        "Verify key must be set prior to initialization.");
     }
     try {
       init(false, ECUtil.generatePublicKeyParameter(verifyKey));

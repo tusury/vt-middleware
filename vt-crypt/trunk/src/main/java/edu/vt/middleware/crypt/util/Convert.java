@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
  * Utility class provides static methods to perform common conversions.
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 
 public final class Convert
@@ -44,7 +44,9 @@ public final class Convert
   private static final Base64Converter B64_CONVERTER = new Base64Converter();
 
 
-  /** <p>Default constructor.</p> */
+  /**
+   * <p>Default constructor.</p>
+   */
   private Convert() {}
 
 

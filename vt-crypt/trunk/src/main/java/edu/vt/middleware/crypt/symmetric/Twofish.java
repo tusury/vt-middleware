@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -17,7 +17,7 @@ package edu.vt.middleware.crypt.symmetric;
  * Provider of symmetric encryption/decryption operations using Twofish cipher.
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 
 public class Twofish extends SymmetricAlgorithm

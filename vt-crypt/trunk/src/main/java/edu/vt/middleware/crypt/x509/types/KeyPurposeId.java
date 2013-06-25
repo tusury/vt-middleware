@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -18,7 +18,7 @@ package edu.vt.middleware.crypt.x509.types;
  * of RFC 2459, which is used to indicate extended key usage.
  *
  * @author  Middleware Services
- * @version  $Revision: 425 $
+ * @version  $Revision$
  */
 public enum KeyPurposeId {
 

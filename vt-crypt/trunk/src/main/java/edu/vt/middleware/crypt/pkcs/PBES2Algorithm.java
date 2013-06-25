@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -23,14 +23,10 @@ import edu.vt.middleware.crypt.symmetric.AlgorithmSpec;
  * @author  Middleware Services
  * @version  $Revision$
  */
-public enum PBES2Algorithm
-{
+public enum PBES2Algorithm {
 
   /** DES CBC cipher. */
-  DES(
-    "1.3.14.3.2.7",
-    new AlgorithmSpec("DES", "CBC", "PKCS5Padding"),
-    64),
+  DES("1.3.14.3.2.7", new AlgorithmSpec("DES", "CBC", "PKCS5Padding"), 64),
 
   /** 3-DES CBC cipher. */
   DESede(
@@ -39,16 +35,10 @@ public enum PBES2Algorithm
     192),
 
   /** RC2 CBC cipher. */
-  RC2(
-    "1.2.840.113549.3.2",
-    new AlgorithmSpec("RC2", "CBC", "PKCS5Padding"),
-    -1),
+  RC2("1.2.840.113549.3.2", new AlgorithmSpec("RC2", "CBC", "PKCS5Padding"), -1),
 
   /** RC5 CBC cipher. */
-  RC5(
-    "1.2.840.113549.3.9",
-    new AlgorithmSpec("RC5", "CBC", "PKCS5Padding"),
-    -1),
+  RC5("1.2.840.113549.3.9", new AlgorithmSpec("RC5", "CBC", "PKCS5Padding"), -1),
 
   /** AES-128 CBC cipher. */
   AES128(

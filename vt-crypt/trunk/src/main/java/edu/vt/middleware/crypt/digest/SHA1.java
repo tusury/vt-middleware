@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -21,7 +21,7 @@ import org.bouncycastle.crypto.digests.SHA1Digest;
  * algorithm. This algorithm outputs a 160 bit hash.</p>
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 
 public class SHA1 extends DigestAlgorithm

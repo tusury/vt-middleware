@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -25,8 +25,7 @@ import edu.vt.middleware.crypt.symmetric.AlgorithmSpec;
  * @author  Middleware Services
  * @version  $Revision$
  */
-public enum PBES1Algorithm
-{
+public enum PBES1Algorithm {
 
   /** PBES1 encryption method with MD2 hash and DES CBC cipher. */
   PbeWithMD2AndDES_CBC(

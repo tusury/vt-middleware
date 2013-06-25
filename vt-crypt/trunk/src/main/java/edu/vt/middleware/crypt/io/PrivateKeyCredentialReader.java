@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -71,7 +71,8 @@ public class PrivateKeyCredentialReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public PrivateKey read(final File file, final char[] password) throws IOException, CryptException
+  public PrivateKey read(final File file, final char[] password)
+    throws IOException, CryptException
   {
     byte[] data = IOHelper.read(new FileInputStream(file).getChannel());
     data = decryptKey(data, password);
@@ -93,7 +94,8 @@ public class PrivateKeyCredentialReader
    * @throws  CryptException  On cryptography errors such as invalid formats,
    * unsupported ciphers, illegal settings.
    */
-  public PrivateKey read(final InputStream in, final char[] password) throws CryptException, IOException
+  public PrivateKey read(final InputStream in, final char[] password)
+    throws CryptException, IOException
   {
     byte[] data = IOHelper.read(in);
     data = decryptKey(data, password);
@@ -102,7 +104,8 @@ public class PrivateKeyCredentialReader
 
 
   /** {@inheritDoc} */
-  protected PrivateKey decode(final byte[] encoded) throws CryptException
+  protected PrivateKey decode(final byte[] encoded)
+    throws CryptException
   {
     final KeySpec spec;
     final String algorithm;
@@ -140,17 +143,19 @@ public class PrivateKeyCredentialReader
     } else if (o instanceof DERObjectIdentifier) {
       // Indicates we have an EC key in the default OpenSSL format emitted by
       //
-      //   openssl ecparam -name xxxx -genkey
+      // openssl ecparam -name xxxx -genkey
       //
       // which is the concatenation of the named curve OID and a sequence of 1
       // containing the private point
       algorithm = "EC";
+
       final DERObjectIdentifier oid = (DERObjectIdentifier) o;
       final int len = encoded[1];
       final byte[] privatePart = new byte[encoded.length - len - 2];
       System.arraycopy(encoded, len + 2, privatePart, 0, privatePart.length);
       try {
-        final ASN1Sequence seq = (ASN1Sequence) ASN1Sequence.fromByteArray(privatePart);
+        final ASN1Sequence seq = (ASN1Sequence) ASN1Sequence.fromByteArray(
+          privatePart);
         spec = new ECPrivateKeySpec(
           DERInteger.getInstance(seq.getObjectAt(0)).getValue(),
           ECUtils.fromNamedCurve(oid));
@@ -190,10 +195,10 @@ public class PrivateKeyCredentialReader
         algorithm = "DSA";
         try {
           spec = new DSAPrivateKeySpec(
-              DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
-              DERInteger.getInstance(sequence.getObjectAt(3)).getValue());
+            DERInteger.getInstance(sequence.getObjectAt(5)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(1)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(2)).getValue(),
+            DERInteger.getInstance(sequence.getObjectAt(3)).getValue());
         } catch (Exception e) {
           throw new CryptException("Invalid DSA key.", e);
         }
@@ -204,7 +209,8 @@ public class PrivateKeyCredentialReader
         algorithm = "EC";
         spec = ECUtils.readEncodedPrivateKey(sequence);
       } else {
-        throw new CryptException("Invalid OpenSSL traditional private key format.");
+        throw new CryptException(
+          "Invalid OpenSSL traditional private key format.");
       }
     }
     try {
@@ -231,7 +237,8 @@ public class PrivateKeyCredentialReader
     throws IOException, CryptException
   {
     if (password == null || password.length == 0) {
-      throw new IllegalArgumentException("Password is required for decrypting an encrypted private key.");
+      throw new IllegalArgumentException(
+        "Password is required for decrypting an encrypted private key.");
     }
 
     byte[] bytes = encrypted;
@@ -297,7 +304,8 @@ public class PrivateKeyCredentialReader
   {
     final EncryptionScheme scheme;
     try {
-      final EncryptedPrivateKeyInfo ki = EncryptedPrivateKeyInfo.getInstance(ASN1Object.fromByteArray(encrypted));
+      final EncryptedPrivateKeyInfo ki = EncryptedPrivateKeyInfo.getInstance(
+        ASN1Object.fromByteArray(encrypted));
       final AlgorithmIdentifier alg = ki.getEncryptionAlgorithm();
       if (PKCSObjectIdentifiers.id_PBES2.equals(alg.getObjectId())) {
         // PBES2 has following parameters:
@@ -306,8 +314,10 @@ public class PrivateKeyCredentialReader
         // {encryptionAlgorithmOid, iv}
         // }
         final DERSequence pbeSeq = (DERSequence) alg.getParameters();
-        final PBKDF2Parameters kdfParms = PBKDF2Parameters.decode((DERSequence) pbeSeq.getObjectAt(0));
-        final PBES2CipherGenerator cipherGen = new PBES2CipherGenerator((DERSequence) pbeSeq.getObjectAt(1));
+        final PBKDF2Parameters kdfParms = PBKDF2Parameters.decode(
+          (DERSequence) pbeSeq.getObjectAt(0));
+        final PBES2CipherGenerator cipherGen = new PBES2CipherGenerator(
+          (DERSequence) pbeSeq.getObjectAt(1));
         if (kdfParms.getLength() == 0) {
           kdfParms.setLength(cipherGen.getKeySize() / 8);
         }

@@ -17,7 +17,7 @@ package edu.vt.middleware.crypt;
  * Encapsulates option and argument data for testing.
  *
  * @author  Middleware Services
- * @version  $Revision: 318 $
+ * @version  $Revision$
  */
 public class OptionData
 {

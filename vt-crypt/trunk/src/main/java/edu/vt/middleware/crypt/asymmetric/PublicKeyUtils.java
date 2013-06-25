@@ -1,15 +1,15 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.asymmetric;
 
@@ -25,7 +25,6 @@ import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.AlgorithmParameterSpec;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 import edu.vt.middleware.crypt.signature.SignatureAlgorithm;
@@ -33,17 +32,18 @@ import edu.vt.middleware.crypt.signature.SignatureAlgorithm;
 /**
  * Utility methods for public and private keys used for asymmetric encryption.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public final class PublicKeyUtils
 {
+
   /** Default random data provider for key generation. */
   private static final SecureRandom DEFAULT_RANDOM = new SecureRandom();
 
   /** Data used to verify keypairs. */
-  private static final byte[] SIGN_BYTES =
-      "Mr. Watson--come here--I want to see you.".getBytes();
+  private static final byte[] SIGN_BYTES = "Mr. Watson--come here--I want to see you."
+    .getBytes();
 
 
   /** Private constructor of utility class. */
@@ -53,6 +53,7 @@ public final class PublicKeyUtils
   /**
    * Gets the length in bits of a public key where key size is dependent on the
    * particulars of the algorithm.
+   *
    * <ul>
    *   <li>DSA - length of p</li>
    *   <li>EC - length of p for prime fields, m for binary fields</li>
@@ -72,7 +73,7 @@ public final class PublicKeyUtils
       size = ((RSAPublicKey) pubKey).getModulus().bitLength();
     } else if (pubKey instanceof ECPublicKey) {
       size = ((ECPublicKey) pubKey).getParams().getCurve().getField()
-          .getFieldSize();
+        .getFieldSize();
     } else {
       throw new IllegalArgumentException(pubKey + " not supported.");
     }
@@ -83,6 +84,7 @@ public final class PublicKeyUtils
   /**
    * Gets the length in bits of a private key where key size is dependent on the
    * particulars of the algorithm.
+   *
    * <ul>
    *   <li>DSA - length of q in bits</li>
    *   <li>EC - length of p for prime fields, m for binary fields</li>
@@ -102,7 +104,7 @@ public final class PublicKeyUtils
       size = ((RSAPrivateKey) privKey).getModulus().bitLength();
     } else if (privKey instanceof ECPrivateKey) {
       size = ((ECPrivateKey) privKey).getParams().getCurve().getField()
-          .getFieldSize();
+        .getFieldSize();
     } else {
       throw new IllegalArgumentException(privKey + " not supported.");
     }
@@ -120,11 +122,9 @@ public final class PublicKeyUtils
    * @return  Key pair that may be used for encryption/decryption on a cipher of
    * the given algorithm.
    *
-   * @throws CryptException  On key pair generation errors.
+   * @throws  CryptException  On key pair generation errors.
    */
-  public static KeyPair generate(
-      final String algorithm,
-      final int bitLength)
+  public static KeyPair generate(final String algorithm, final int bitLength)
     throws CryptException
   {
     return generate(algorithm, bitLength, DEFAULT_RANDOM);
@@ -142,26 +142,27 @@ public final class PublicKeyUtils
    * @return  Key pair that may be used for encryption/decryption on a cipher of
    * the given algorithm.
    *
-   * @throws CryptException  On key pair generation errors.
+   * @throws  CryptException  On key pair generation errors.
    */
   public static KeyPair generate(
-      final String algorithm,
-      final int bitLength,
-      final SecureRandom random)
+    final String algorithm,
+    final int bitLength,
+    final SecureRandom random)
     throws CryptException
   {
     if (random == null) {
       throw new CryptException("Source of random data cannot be null.");
     }
-    final KeyPairGenerator generator =
-        CryptProvider.getKeyPairGenerator(algorithm);
+
+    final KeyPairGenerator generator = CryptProvider.getKeyPairGenerator(
+      algorithm);
     try {
       generator.initialize(bitLength, random);
       return generator.generateKeyPair();
     } catch (Exception ex) {
       throw new CryptException(
-          String.format("Error generatig %s-bit %s key", bitLength, algorithm),
-          ex);
+        String.format("Error generatig %s-bit %s key", bitLength, algorithm),
+        ex);
     }
   }
 
@@ -176,11 +177,11 @@ public final class PublicKeyUtils
    * @return  Key pair that may be used for encryption/decryption on a cipher of
    * the given algorithm.
    *
-   * @throws CryptException  On key pair generation errors.
+   * @throws  CryptException  On key pair generation errors.
    */
   public static KeyPair generate(
-      final String algorithm,
-      final AlgorithmParameterSpec params)
+    final String algorithm,
+    final AlgorithmParameterSpec params)
     throws CryptException
   {
     return generate(algorithm, params, DEFAULT_RANDOM);
@@ -198,48 +199,50 @@ public final class PublicKeyUtils
    * @return  Key pair that may be used for encryption/decryption on a cipher of
    * the given algorithm.
    *
-   * @throws CryptException  On key pair generation errors.
+   * @throws  CryptException  On key pair generation errors.
    */
   public static KeyPair generate(
-      final String algorithm,
-      final AlgorithmParameterSpec params,
-      final SecureRandom random)
+    final String algorithm,
+    final AlgorithmParameterSpec params,
+    final SecureRandom random)
     throws CryptException
   {
     if (random == null) {
       throw new CryptException("Source of random data cannot be null.");
     }
-    final KeyPairGenerator generator =
-        CryptProvider.getKeyPairGenerator(algorithm);
+
+    final KeyPairGenerator generator = CryptProvider.getKeyPairGenerator(
+      algorithm);
     try {
       generator.initialize(params, random);
       return generator.generateKeyPair();
     } catch (Exception ex) {
       throw new CryptException(
-          String.format("Error generatig %s key with %s", algorithm, params),
-          ex);
+        String.format("Error generatig %s key with %s", algorithm, params),
+        ex);
     }
   }
 
 
   /**
-   * Determines whether the given public and private keys form a proper
-   * key pair by computing and verifying a digital signature with the keys.
+   * Determines whether the given public and private keys form a proper key pair
+   * by computing and verifying a digital signature with the keys.
    *
    * @param  pubKey  Public key.
    * @param  privKey  Private key.
    *
    * @return  True if the keys form a compatible assymetric keypair, false
-   * otherwise.  Errors during signature verification are treated as false.
+   * otherwise. Errors during signature verification are treated as false.
    */
   public static boolean isKeyPair(
-      final PublicKey pubKey,
-      final PrivateKey privKey)
+    final PublicKey pubKey,
+    final PrivateKey privKey)
   {
     final String alg = pubKey.getAlgorithm();
     if (!alg.equals(privKey.getAlgorithm())) {
       return false;
     }
+
     final SignatureAlgorithm signer;
     if ("DSA".equals(alg) || "RSA".equals(alg)) {
       signer = SignatureAlgorithm.newInstance(alg);
@@ -248,11 +251,13 @@ public final class PublicKeyUtils
     } else {
       throw new IllegalArgumentException(alg + " not supported.");
     }
+
     boolean match;
     try {
       signer.setSignKey(privKey);
       signer.setVerifyKey(pubKey);
       signer.initSign();
+
       final byte[] sig = signer.sign(SIGN_BYTES);
       signer.initVerify();
       match = signer.verify(SIGN_BYTES, sig);
