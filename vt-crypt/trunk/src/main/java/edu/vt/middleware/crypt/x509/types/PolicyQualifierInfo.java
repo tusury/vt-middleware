@@ -106,7 +106,7 @@ public class PolicyQualifierInfo
   @Override
   public boolean equals(final Object obj)
   {
-    boolean result = false;
+    boolean result;
     if (obj == this) {
       result = true;
     } else if (obj == null || obj.getClass() != getClass()) {

@@ -56,10 +56,10 @@ public class AttributeTypeAndValue
   }
 
   /** Attribute type OID. */
-  private String type;
+  private final String type;
 
   /** Attribute value as a string. */
-  private String value;
+  private final String value;
 
 
   /**
@@ -152,7 +152,7 @@ public class AttributeTypeAndValue
   @Override
   public boolean equals(final Object obj)
   {
-    boolean result = false;
+    boolean result;
     if (obj == this) {
       result = true;
     } else if (obj == null || obj.getClass() != getClass()) {

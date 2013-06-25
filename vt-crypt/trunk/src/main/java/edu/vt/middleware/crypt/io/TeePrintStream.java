@@ -28,7 +28,7 @@ public class TeePrintStream extends PrintStream
 {
 
   /** Other output stream. */
-  private OutputStream other;
+  private final OutputStream other;
 
 
   /**

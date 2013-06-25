@@ -79,11 +79,11 @@ public final class Convert
   public static byte[] toBytes(final String[] input)
   {
     final ByteArrayOutputStream data = new ByteArrayOutputStream();
-    for (int i = 0; i < input.length; i++) {
+    for (String s : input) {
       try {
-        data.write(input[i].getBytes(getDefaultCharset().name()));
+        data.write(s.getBytes(getDefaultCharset().name()));
       } catch (Exception e) {
-        throw new IllegalStateException("Error decoding " + input[i]);
+        throw new IllegalStateException("Error decoding " + s);
       }
     }
     return data.toByteArray();

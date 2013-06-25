@@ -211,7 +211,7 @@ public class AsymmetricCli extends AbstractEncryptionCli
   protected PublicKey readPublicKey(final CommandLine line)
     throws Exception
   {
-    PublicKey key = null;
+    PublicKey key;
     final File keyFile = new File(line.getOptionValue(OPT_ENCRYPT));
     System.err.println("Reading public key from " + keyFile);
     try {

@@ -67,17 +67,17 @@ public class AsymmetricCliTest
         {
           "rsa",
           null,
-          new Integer(SMALL_KEY_LENGTH),
+          SMALL_KEY_LENGTH,
         },
         {
           "RSA",
           "base64",
-          new Integer(MEDIUM_KEY_LENGTH),
+          MEDIUM_KEY_LENGTH,
         },
         {
           "RSA",
           "hex",
-          new Integer(LARGE_KEY_LENGTH),
+          LARGE_KEY_LENGTH,
         },
       };
   }

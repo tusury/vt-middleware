@@ -52,7 +52,7 @@ public class FileHelper
     final Algorithm algorithm,
     final String type)
   {
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     sb.append("target/test-output/");
     sb.append(basename);
     sb.append('-');

@@ -28,7 +28,7 @@ public class HexFilterInputStream extends AbstractEncodingFilterInputStream
 {
 
   /** Does decoding work. */
-  private HexEncoder encoder = new HexEncoder();
+  private final HexEncoder encoder = new HexEncoder();
 
 
   /**

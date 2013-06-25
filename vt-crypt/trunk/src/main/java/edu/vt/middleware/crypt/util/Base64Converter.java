@@ -26,7 +26,8 @@ public class Base64Converter extends AbstractEncodingConverter
 {
 
   /** Does encoding work. */
-  private Base64Encoder encoder = new Base64Encoder();
+  private final Base64Encoder encoder = new Base64Encoder();
+
 
   /** {@inheritDoc} */
   protected Encoder getEncoder()

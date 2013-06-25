@@ -20,7 +20,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link Base64Encoder} class.
+ * Unit test for {@link Converter} class.
  *
  * @author  Middleware Services
  * @version  $Revision$

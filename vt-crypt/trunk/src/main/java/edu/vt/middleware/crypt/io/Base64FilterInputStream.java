@@ -95,7 +95,7 @@ public class Base64FilterInputStream extends AbstractEncodingFilterInputStream
     if (lineLength == 0) {
       count = in.read(byteBuffer);
     } else {
-      int n = 0;
+      int n;
       while (count + lineLength < CHUNK_SIZE) {
         n = in.read(byteBuffer, count, lineLength);
         if (n < 0) {

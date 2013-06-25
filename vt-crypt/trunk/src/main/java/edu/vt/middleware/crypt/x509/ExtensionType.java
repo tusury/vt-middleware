@@ -68,10 +68,10 @@ public enum ExtensionType {
 
 
   /** Oid value. */
-  private String oid;
+  private final String oid;
 
   /** Whether this extension is critical according to RFC 2459. */
-  private boolean critical;
+  private final boolean critical;
 
 
   /**

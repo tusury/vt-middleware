@@ -43,7 +43,7 @@ public class DigestCli extends AbstractCli
   private static final String COMMAND_NAME = "digest";
 
   /** Converts hex to bytes and vice versa. */
-  private HexConverter hexConv = new HexConverter();
+  private final HexConverter hexConv = new HexConverter();
 
 
   /**
@@ -130,7 +130,7 @@ public class DigestCli extends AbstractCli
     }
     if (line.hasOption(OPT_ENCODING)) {
       final String encName = line.getOptionValue(OPT_ENCODING);
-      Converter conv = null;
+      Converter conv;
       if (BASE_64_ENCODING.equals(encName)) {
         conv = new Base64Converter();
       } else if (HEX_ENCODING.equals(encName)) {

@@ -29,6 +29,7 @@ public class LDAPv3DNFormatter implements DNFormatter
   /** Separator character relative distinguished name components. */
   public static final char SEPARATOR_CHAR = ',';
 
+
   /** {@inheritDoc} */
   public String format(final X500Principal dn)
   {
@@ -44,5 +45,4 @@ public class LDAPv3DNFormatter implements DNFormatter
     }
     return sb.toString();
   }
-
 }

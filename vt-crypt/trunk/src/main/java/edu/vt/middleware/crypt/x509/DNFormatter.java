@@ -25,6 +25,7 @@ import javax.security.auth.x500.X500Principal;
 public interface DNFormatter
 {
 
+
   /**
    * Produces a string representation of the given X.500 principal.
    *

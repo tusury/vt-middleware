@@ -57,14 +57,14 @@ public class PBES2CipherGenerator
       ((DERObjectIdentifier) seq.getObjectAt(0)).getId());
 
     final DEREncodable parms = seq.getObjectAt(1);
-    DERSequence pSeq = null;
+    DERSequence pSeq;
     switch (algorithm) {
 
     case RC2:
       pSeq = (DERSequence) parms;
 
       int effectiveBits = 32;
-      int idx = 0;
+      int idx;
       if (pSeq.size() > 1) {
         idx = 1;
         effectiveBits = RC2.getEffectiveBits(

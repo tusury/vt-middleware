@@ -199,7 +199,7 @@ public class PemHelper
   public static PrivateKey decodeKey(final String pemKey, final char[] password)
     throws IOException
   {
-    PEMReader reader = null;
+    PEMReader reader;
     if (password == null || password.length == 0) {
       reader = new PEMReader(new StringReader(pemKey));
     } else {

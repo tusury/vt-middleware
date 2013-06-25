@@ -47,7 +47,7 @@ public final class ExtensionReader
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** The X509Certificate whose extension fields will be read. */
-  private X509Certificate certificate;
+  private final X509Certificate certificate;
 
 
   /**

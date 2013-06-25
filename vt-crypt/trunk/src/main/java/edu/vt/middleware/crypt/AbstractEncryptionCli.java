@@ -113,8 +113,6 @@ public abstract class AbstractEncryptionCli extends AbstractCli
       System.err.println("Beginning encryption.");
       alg.initEncrypt();
       alg.encrypt(in, out);
-    } catch (Exception ex) {
-      throw ex;
     } finally {
       closeStream(in);
       closeStream(out);
@@ -143,8 +141,6 @@ public abstract class AbstractEncryptionCli extends AbstractCli
       System.err.println("Beginning decryption.");
       alg.initDecrypt();
       alg.decrypt(in, out);
-    } catch (Exception ex) {
-      throw ex;
     } finally {
       closeStream(in);
       closeStream(out);
@@ -194,7 +190,7 @@ public abstract class AbstractEncryptionCli extends AbstractCli
   protected OutputStream getOutputStream(final CommandLine line)
     throws IOException
   {
-    OutputStream out = null;
+    OutputStream out;
     if (line.hasOption(OPT_OUTFILE)) {
       final File file = new File(line.getOptionValue(OPT_OUTFILE));
       System.err.println("Writing output to " + file);
@@ -221,5 +217,4 @@ public abstract class AbstractEncryptionCli extends AbstractCli
     }
     return out;
   }
-
 }

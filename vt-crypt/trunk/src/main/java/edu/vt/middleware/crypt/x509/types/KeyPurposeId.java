@@ -42,7 +42,7 @@ public enum KeyPurposeId {
 
 
   /** Key purpose object identifier. */
-  private String oid;
+  private final String oid;
 
 
   /**

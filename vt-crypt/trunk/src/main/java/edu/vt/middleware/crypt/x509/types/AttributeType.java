@@ -103,10 +103,10 @@ public enum AttributeType {
 
 
   /** OID of RDN attribute type. */
-  private String oid;
+  private final String oid;
 
   /** Display string of the type in an RDN. */
-  private String name;
+  private final String name;
 
 
   /**

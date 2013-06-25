@@ -161,7 +161,7 @@ public class SignatureCli extends AbstractCli
    */
   protected SignatureAlgorithm newInstance(final CommandLine line)
   {
-    SignatureAlgorithm sig = null;
+    SignatureAlgorithm sig;
     if (line.hasOption(OPT_DIGEST)) {
       sig = SignatureAlgorithm.newInstance(
         line.getOptionValue(OPT_ALG),
@@ -196,7 +196,7 @@ public class SignatureCli extends AbstractCli
     closeStream(in);
     if (line.hasOption(OPT_ENCODING)) {
       final String encName = line.getOptionValue(OPT_ENCODING);
-      Converter conv = null;
+      Converter conv;
       if (BASE_64_ENCODING.equals(encName)) {
         conv = new Base64Converter();
       } else if (HEX_ENCODING.equals(encName)) {
@@ -256,7 +256,7 @@ public class SignatureCli extends AbstractCli
   protected PublicKey readPublicKey(final CommandLine line)
     throws Exception
   {
-    PublicKey key = null;
+    PublicKey key;
     final File keyFile = new File(line.getOptionValue(OPT_KEY));
     System.err.println("Reading public key from " + keyFile);
     try {
@@ -316,7 +316,7 @@ public class SignatureCli extends AbstractCli
     final ByteArrayOutputStream os = new ByteArrayOutputStream();
     final int bufSize = 1024;
     final byte[] buffer = new byte[bufSize];
-    int count = 0;
+    int count;
     while ((count = in.read(buffer)) > 0) {
       os.write(buffer, 0, count);
     }

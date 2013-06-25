@@ -287,8 +287,8 @@ public final class CryptWriter
     throws CryptException, IOException
   {
     try {
-      for (int i = 0; i < certs.length; i++) {
-        out.write(certs[i].getEncoded());
+      for (Certificate cert : certs) {
+        out.write(cert.getEncoded());
       }
     } catch (CertificateEncodingException e) {
       throw new CryptException("Cannot generate encoded certificate.", e);
@@ -333,8 +333,8 @@ public final class CryptWriter
     throws IOException
   {
     try {
-      for (int i = 0; i < certs.length; i++) {
-        out.write(Convert.toAsciiBytes(PemHelper.encodeCert(certs[i])));
+      for (Certificate cert : certs) {
+        out.write(Convert.toAsciiBytes(PemHelper.encodeCert(cert)));
       }
     } finally {
       out.close();

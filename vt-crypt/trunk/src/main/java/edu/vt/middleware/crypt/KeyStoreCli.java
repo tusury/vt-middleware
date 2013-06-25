@@ -337,7 +337,7 @@ public class KeyStoreCli extends AbstractCli
   protected KeyStore readKeyStore(final CommandLine line)
     throws Exception
   {
-    KeyStore store = null;
+    KeyStore store;
     if (line.hasOption(OPT_TYPE)) {
       store = CryptProvider.getKeyStore(line.getOptionValue(OPT_TYPE));
     } else {

@@ -292,7 +292,7 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
   public boolean isValidKeyLength(final int bitLength)
   {
     final int[] sizes = getAllowedKeyLengths();
-    for (int i = 0; i < sizes.length; i++) {
+    for (int size : sizes) {
       if (bitLength == sizes[0]) {
         return true;
       }

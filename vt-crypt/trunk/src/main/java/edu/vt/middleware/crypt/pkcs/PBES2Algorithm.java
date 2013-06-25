@@ -60,13 +60,13 @@ public enum PBES2Algorithm {
 
 
   /** Algorithm identifier OID. */
-  private String oid;
+  private final String oid;
 
   /** Cipher algorithm specification. */
-  private AlgorithmSpec spec;
+  private final AlgorithmSpec spec;
 
   /** Cipher key size in bits. */
-  private int keySize;
+  private final int keySize;
 
 
   /**

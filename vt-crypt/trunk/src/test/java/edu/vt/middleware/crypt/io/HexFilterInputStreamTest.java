@@ -57,7 +57,7 @@ public class HexFilterInputStreamTest
     InputStream inRef = null;
     InputStream inTest = null;
     try {
-      int count = 0;
+      int count;
       final int bufsize = 2048;
       final byte[] buffer = new byte[bufsize];
       while ((count = in.read(buffer)) > 0) {

@@ -33,7 +33,7 @@ public class KeyIdentifier
   private final HexConverter converter = new HexConverter(true);
 
   /** Key identifier bytes. */
-  private byte[] identifier;
+  private final byte[] identifier;
 
 
   /**
@@ -81,7 +81,7 @@ public class KeyIdentifier
   @Override
   public boolean equals(final Object obj)
   {
-    boolean result = false;
+    boolean result;
     if (obj == this) {
       result = true;
     } else if (obj == null || obj.getClass() != getClass()) {

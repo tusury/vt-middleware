@@ -53,9 +53,9 @@ public class Base64FilterInputStreamTest
   {
     return
       new Object[][] {
-        {new Integer(0)},
-        {new Integer(Base64FilterInputStream.LINE_LENGTH_64)},
-        {new Integer(Base64FilterInputStream.LINE_LENGTH_76)},
+        {0},
+        {Base64FilterInputStream.LINE_LENGTH_64},
+        {Base64FilterInputStream.LINE_LENGTH_76},
       };
   }
 
@@ -83,12 +83,12 @@ public class Base64FilterInputStreamTest
     final InputStream in = new Base64FilterInputStream(
       getClass().getResourceAsStream(
         "/edu/vt/middleware/crypt/io/base64-" + charsPerLine + ".txt"),
-      charsPerLine.intValue());
+      charsPerLine);
     final OutputStream out = new FileOutputStream(new File(outPath));
     InputStream inRef = null;
     InputStream inTest = null;
     try {
-      int count = 0;
+      int count;
       final int bufsize = 2048;
       final byte[] buffer = new byte[bufsize];
       while ((count = in.read(buffer)) > 0) {

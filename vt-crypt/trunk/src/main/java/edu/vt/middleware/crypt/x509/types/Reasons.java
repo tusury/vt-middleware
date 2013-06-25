@@ -45,7 +45,7 @@ public enum Reasons {
 
 
   /** Bit mask value. */
-  private int mask;
+  private final int mask;
 
 
   /**
