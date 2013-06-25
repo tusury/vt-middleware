@@ -16,10 +16,12 @@ package edu.vt.middleware.crypt.signature;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.SecureRandom;
-
-import edu.vt.middleware.crypt.asymmetric.AsymmetricAlgorithm;
 import edu.vt.middleware.crypt.asymmetric.PublicKeyUtils;
-import edu.vt.middleware.crypt.digest.*;
+import edu.vt.middleware.crypt.digest.MD5;
+import edu.vt.middleware.crypt.digest.SHA256;
+import edu.vt.middleware.crypt.digest.SHA512;
+import edu.vt.middleware.crypt.digest.Tiger;
+import edu.vt.middleware.crypt.digest.Whirlpool;
 import edu.vt.middleware.crypt.util.Base64Converter;
 import edu.vt.middleware.crypt.util.Converter;
 import edu.vt.middleware.crypt.util.HexConverter;

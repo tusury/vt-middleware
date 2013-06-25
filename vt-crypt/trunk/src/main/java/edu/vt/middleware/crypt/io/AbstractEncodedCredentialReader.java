@@ -13,16 +13,15 @@
 */
 package edu.vt.middleware.crypt.io;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.util.PemHelper;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Base class for credential readers that handle credentials that can be

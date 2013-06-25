@@ -13,6 +13,17 @@
 */
 package edu.vt.middleware.crypt.io;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.PrivateKey;
+import java.security.spec.DSAPrivateKeySpec;
+import java.security.spec.ECPrivateKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPrivateCrtKeySpec;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 import edu.vt.middleware.crypt.pbe.EncryptionScheme;
@@ -26,18 +37,15 @@ import edu.vt.middleware.crypt.pkcs.PBKDF2Parameters;
 import edu.vt.middleware.crypt.util.Convert;
 import edu.vt.middleware.crypt.util.ECUtils;
 import edu.vt.middleware.crypt.util.PemHelper;
-import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERInteger;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.PrivateKey;
-import java.security.spec.*;
 
 /**
  * Reads encoded private keys in PKCS#8 or OpenSSL "traditional" format. Both
