@@ -13,10 +13,16 @@
 */
 package edu.vt.middleware.crypt.util;
 
-import org.bouncycastle.asn1.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import org.bouncycastle.asn1.ASN1EncodableVector;
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.DEREncodable;
+import org.bouncycastle.asn1.DERInteger;
+import org.bouncycastle.asn1.DERObject;
+import org.bouncycastle.asn1.DEROctetString;
+import org.bouncycastle.asn1.DERSequence;
 
 /**
  * Utility class with methods to facilitate common operations on BouncyCastle

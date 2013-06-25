@@ -13,14 +13,13 @@
 */
 package edu.vt.middleware.crypt.io;
 
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DEREncodable;
-
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 
 /**
  * Reads encoded public keys in X.509 public key format. Both PEM and DER
@@ -43,7 +42,7 @@ public class PublicKeyCredentialReader extends AbstractEncodedCredentialReader<P
       if (RSA_ID.equals(algId)) {
         algorithm = "RSA";
       } else if (EC_ID.equals(algId)) {
-          algorithm = "EC";
+        algorithm = "EC";
       } else if (DSA_ID.equals(algId)) {
         algorithm = "DSA";
       } else {

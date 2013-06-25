@@ -67,6 +67,10 @@
     </developer>
   </developers>
 
+  <prerequisites>
+    <maven>2.2.1</maven>
+  </prerequisites>
+
   <properties>
     <project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
     <checkstyle.dir>${basedir}/src/main/checkstyle</checkstyle.dir>
@@ -89,24 +93,24 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.6.4</version>
+      <version>1.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.8.1</version>
+      <version>1.9.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8.1</version>
+      <version>6.8.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.6.4</version>
+      <version>1.7.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -115,6 +119,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
         <executions>
           <execution>
             <id>copy-info</id>
@@ -145,11 +150,6 @@
               </resources>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
           <execution>
             <id>copy-scripts</id>
             <phase>validate</phase>
@@ -171,6 +171,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.0</version>
         <configuration>
           <fork>true</fork>
           <debug>true</debug>
@@ -206,6 +207,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.12.4</version>
         <configuration>
           <suiteXmlFiles>
             <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
@@ -215,6 +217,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
         <configuration>
           <links>
             <link>http://docs.oracle.com/javase/6/docs/api/</link>
@@ -234,6 +237,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
         <executions>
           <execution>
             <id>source</id>
@@ -247,6 +251,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
         <executions>
           <execution>
             <id>jar</id>
@@ -260,6 +265,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <appendAssemblyId>true</appendAssemblyId>
           <descriptors>
@@ -299,6 +305,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.4</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>

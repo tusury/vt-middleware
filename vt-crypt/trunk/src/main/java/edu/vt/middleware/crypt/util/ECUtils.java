@@ -13,15 +13,18 @@
 */
 package edu.vt.middleware.crypt.util;
 
-import org.bouncycastle.asn1.*;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.jce.provider.asymmetric.ec.EC5Util;
-import org.bouncycastle.jce.provider.asymmetric.ec.ECUtil;
-
 import java.math.BigInteger;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.EllipticCurve;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1TaggedObject;
+import org.bouncycastle.asn1.DERInteger;
+import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.jce.provider.asymmetric.ec.EC5Util;
+import org.bouncycastle.jce.provider.asymmetric.ec.ECUtil;
 
 /**
  * Elliptic curve cryptography utilty methods.
@@ -47,8 +50,11 @@ public final class ECUtils
   public static ECPrivateKeySpec readEncodedPrivateKey(final ASN1Sequence seq)
   {
     final BigInteger s = DERInteger.getInstance(seq.getObjectAt(1)).getValue();
-    final ASN1TaggedObject params = DERTaggedObject.getInstance(seq.getObjectAt(2));
-    return new ECPrivateKeySpec(s, readEncodedParams((ASN1Sequence) params.getObject()));
+    final ASN1TaggedObject params = DERTaggedObject.getInstance(
+      seq.getObjectAt(2));
+    return new ECPrivateKeySpec(
+      s,
+      readEncodedParams((ASN1Sequence) params.getObject()));
   }
 
 

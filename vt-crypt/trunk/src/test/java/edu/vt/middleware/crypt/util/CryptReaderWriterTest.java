@@ -13,6 +13,14 @@
 */
 package edu.vt.middleware.crypt.util;
 
+import java.io.File;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import javax.crypto.SecretKey;
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.digest.MD2;
 import org.slf4j.Logger;
@@ -20,10 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import javax.crypto.SecretKey;
-import java.io.File;
-import java.security.*;
 
 /**
  * Unit test for {@link CryptReader} and {@link CryptWriter} classes.
