@@ -33,7 +33,7 @@ public class HexConverter extends AbstractEncodingConverter
   public static final String DEFAULT_BYTE_DELIMITER = ":";
 
   /** Does encoding work. */
-  private HexEncoder encoder = new HexEncoder();
+  private final HexEncoder encoder = new HexEncoder();
 
   /** Flag that determines whether bytes are delimited in string output. */
   private boolean delimitBytesFlag;
@@ -135,9 +135,9 @@ public class HexConverter extends AbstractEncodingConverter
     if (delimitBytesFlag) {
       final ByteArrayOutputStream out = new ByteArrayOutputStream();
       final String[] hexBytes = splitPattern.split(input);
-      for (int i = 0; i < hexBytes.length; i++) {
+      for (String hexByte : hexBytes) {
         try {
-          encoder.decode(hexBytes[i], out);
+          encoder.decode(hexByte, out);
         } catch (IOException e) {
           throw new IllegalArgumentException(e.getMessage());
         }

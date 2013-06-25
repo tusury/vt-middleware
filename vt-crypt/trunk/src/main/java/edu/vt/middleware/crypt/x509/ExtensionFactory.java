@@ -300,7 +300,7 @@ public final class ExtensionFactory
     }
 
     final ASN1Sequence seq = (ASN1Sequence) enc;
-    UserNotice result = null;
+    UserNotice result;
     if (seq.size() == 0) {
       // Bouncy Castle will throw an exception if sequence size is 0
       // which is reasonable, since an empty user notice is nonsense.

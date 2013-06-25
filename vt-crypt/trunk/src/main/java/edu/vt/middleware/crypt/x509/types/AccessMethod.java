@@ -30,7 +30,7 @@ public enum AccessMethod {
 
 
   /** Key purpose object identifier. */
-  private String oid;
+  private final String oid;
 
 
   /**

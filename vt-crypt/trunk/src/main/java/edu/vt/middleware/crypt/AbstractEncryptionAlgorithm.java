@@ -193,7 +193,7 @@ public abstract class AbstractEncryptionAlgorithm extends AbstractAlgorithm
   /** {@inheritDoc} */
   public String toString()
   {
-    final StringBuffer sb = new StringBuffer(50);
+    final StringBuilder sb = new StringBuilder(50);
     sb.append(algorithm);
     sb.append('/');
     sb.append(mode);
@@ -297,8 +297,8 @@ public abstract class AbstractEncryptionAlgorithm extends AbstractAlgorithm
 
     final byte[] inBuffer = new byte[getChunkSize()];
     final byte[] outBuffer = new byte[getChunkSize() * 2];
-    int inCount = 0;
-    int outCount = 0;
+    int inCount;
+    int outCount;
     try {
       while ((inCount = in.read(inBuffer)) > 0) {
         outCount = cipher.update(inBuffer, 0, inCount, outBuffer);

@@ -24,6 +24,7 @@ import java.security.SecureRandom;
 public interface Algorithm
 {
 
+
   /**
    * Gets the algorithm name.
    *
@@ -50,5 +51,4 @@ public interface Algorithm
    * @return  Byte array of random data.
    */
   byte[] getRandomData(final int nBytes);
-
 }

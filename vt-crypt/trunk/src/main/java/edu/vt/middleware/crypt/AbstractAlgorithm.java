@@ -75,5 +75,4 @@ public abstract class AbstractAlgorithm implements Algorithm
     randomProvider.nextBytes(data);
     return data;
   }
-
 }

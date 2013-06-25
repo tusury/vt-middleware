@@ -77,9 +77,7 @@ public final class CryptProvider
     java.security.Security.addProvider(provider);
 
     final String[] tmp = new String[providers.length + 1];
-    for (int i = 0; i < providers.length; i++) {
-      tmp[i] = providers[i];
-    }
+    System.arraycopy(providers, 0, tmp, 0, providers.length);
     tmp[providers.length] = name;
     providers = tmp;
 
@@ -108,7 +106,7 @@ public final class CryptProvider
   {
 
     Cipher cipher = null;
-    String transformation = null;
+    String transformation;
     if (mode != null && padding != null) {
       transformation = algorithm + "/" + mode + "/" + padding;
     } else if (mode != null) {
@@ -116,17 +114,14 @@ public final class CryptProvider
     } else {
       transformation = algorithm;
     }
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        cipher = Cipher.getInstance(transformation, providers[i]);
+        cipher = Cipher.getInstance(transformation, provider);
+        break;
       } catch (NoSuchPaddingException e) {
-        LOGGER.debug("{} does not support padding {}", providers[i], padding);
+        LOGGER.debug("{} does not support padding {}", provider, padding);
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], algorithm, e);
-      } finally {
-        if (cipher != null) {
-          break;
-        }
+        handleProviderError(provider, algorithm, e);
       }
     }
     if (cipher == null) {
@@ -159,15 +154,12 @@ public final class CryptProvider
     throws CryptException
   {
     SecretKeyFactory kf = null;
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        kf = SecretKeyFactory.getInstance(algorithm, providers[i]);
+        kf = SecretKeyFactory.getInstance(algorithm, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], algorithm, e);
-      } finally {
-        if (kf != null) {
-          break;
-        }
+        handleProviderError(provider, algorithm, e);
       }
     }
     if (kf == null) {
@@ -197,15 +189,12 @@ public final class CryptProvider
     throws CryptException
   {
     KeyFactory kf = null;
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        kf = KeyFactory.getInstance(algorithm, providers[i]);
+        kf = KeyFactory.getInstance(algorithm, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], algorithm, e);
-      } finally {
-        if (kf != null) {
-          break;
-        }
+        handleProviderError(provider, algorithm, e);
       }
     }
     if (kf == null) {
@@ -235,15 +224,12 @@ public final class CryptProvider
     throws CryptException
   {
     KeyGenerator generator = null;
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        generator = KeyGenerator.getInstance(algorithm, providers[i]);
+        generator = KeyGenerator.getInstance(algorithm, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], algorithm, e);
-      } finally {
-        if (generator != null) {
-          break;
-        }
+        handleProviderError(provider, algorithm, e);
       }
     }
     if (generator == null) {
@@ -274,15 +260,12 @@ public final class CryptProvider
     throws CryptException
   {
     KeyPairGenerator generator = null;
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        generator = KeyPairGenerator.getInstance(algorithm, providers[i]);
+        generator = KeyPairGenerator.getInstance(algorithm, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], algorithm, e);
-      } finally {
-        if (generator != null) {
-          break;
-        }
+        handleProviderError(provider, algorithm, e);
       }
     }
     if (generator == null) {
@@ -318,7 +301,7 @@ public final class CryptProvider
     throws CryptException
   {
     Signature sig = null;
-    String transformation = null;
+    String transformation;
     if (digestAlgorithm != null && padding != null) {
       transformation = digestAlgorithm + "/" + algorithm + "/" + padding;
     } else if (digestAlgorithm != null) {
@@ -326,15 +309,12 @@ public final class CryptProvider
     } else {
       transformation = algorithm;
     }
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        sig = Signature.getInstance(transformation, providers[i]);
+        sig = Signature.getInstance(transformation, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], algorithm, e);
-      } finally {
-        if (sig != null) {
-          break;
-        }
+        handleProviderError(provider, algorithm, e);
       }
     }
     if (sig == null) {
@@ -365,15 +345,12 @@ public final class CryptProvider
     throws CryptException
   {
     MessageDigest digest = null;
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        digest = MessageDigest.getInstance(algorithm, providers[i]);
+        digest = MessageDigest.getInstance(algorithm, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], algorithm, e);
-      } finally {
-        if (digest != null) {
-          break;
-        }
+        handleProviderError(provider, algorithm, e);
       }
     }
     if (digest == null) {
@@ -407,15 +384,12 @@ public final class CryptProvider
     if (keyStoreType == null) {
       keyStoreType = KeyStore.getDefaultType();
     }
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        store = KeyStore.getInstance(keyStoreType, providers[i]);
+        store = KeyStore.getInstance(keyStoreType, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], type, e);
-      } finally {
-        if (store != null) {
-          break;
-        }
+        handleProviderError(provider, type, e);
       }
     }
     if (store == null) {
@@ -462,15 +436,12 @@ public final class CryptProvider
     throws CryptException
   {
     CertificateFactory cf = null;
-    for (int i = 0; i < providers.length; i++) {
+    for (String provider : providers) {
       try {
-        cf = CertificateFactory.getInstance(type, providers[i]);
+        cf = CertificateFactory.getInstance(type, provider);
+        break;
       } catch (GeneralSecurityException e) {
-        handleProviderError(providers[i], type, e);
-      } finally {
-        if (cf != null) {
-          break;
-        }
+        handleProviderError(provider, type, e);
       }
     }
     if (cf == null) {
@@ -510,5 +481,4 @@ public final class CryptProvider
       }
     }
   }
-
 }

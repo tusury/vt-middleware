@@ -153,7 +153,7 @@ public class SignatureCliTest
       SignatureCli.main(CliHelper.splitArgs(fullLine));
 
       final String result = outStream.toString();
-      AssertJUnit.assertTrue(result.indexOf("SUCCESS") != -1);
+      AssertJUnit.assertTrue(result.contains("SUCCESS"));
     } catch (Exception e) {
       e.printStackTrace();
     } finally {

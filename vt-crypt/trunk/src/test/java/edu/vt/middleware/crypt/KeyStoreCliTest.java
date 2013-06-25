@@ -228,7 +228,7 @@ public class KeyStoreCliTest
 
       final String output = outStream.toString();
       logger.info("Keystore listing output:\n{}", output);
-      AssertJUnit.assertTrue(output.indexOf(alias) != -1);
+      AssertJUnit.assertTrue(output.contains(alias));
 
       outStream.reset();
 
@@ -304,7 +304,7 @@ public class KeyStoreCliTest
 
       final String output = outStream.toString();
       logger.info("Keystore listing output:\n{}", output);
-      AssertJUnit.assertTrue(output.indexOf(testAlias) != -1);
+      AssertJUnit.assertTrue(output.contains(testAlias));
 
       outStream.reset();
     } finally {

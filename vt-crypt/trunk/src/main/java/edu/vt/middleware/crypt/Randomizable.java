@@ -23,6 +23,7 @@ package edu.vt.middleware.crypt;
 public interface Randomizable
 {
 
+
   /**
    * Gets the number of random bytes used for calculations that need random
    * data.

@@ -30,7 +30,7 @@ public class OpenSSLKeyGenerator implements KeyGenerator
 {
 
   /** Key generation salt data. */
-  private byte[] salt;
+  private final byte[] salt;
 
 
   /**

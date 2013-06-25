@@ -87,7 +87,7 @@ public class SymmetricCli extends AbstractEncryptionCli
 
 
   /** Converts hex to bytes and vice versa. */
-  private HexConverter hexConv = new HexConverter();
+  private final HexConverter hexConv = new HexConverter();
 
 
   /**
@@ -216,7 +216,7 @@ public class SymmetricCli extends AbstractEncryptionCli
   protected SymmetricAlgorithm newAlgorithm(final CommandLine line)
   {
     final String algName = line.getOptionValue(OPT_CIPHER);
-    SymmetricAlgorithm algorithm = null;
+    SymmetricAlgorithm algorithm;
     if (line.hasOption(OPT_MODE)) {
       if (line.hasOption(OPT_PADDING)) {
         algorithm = SymmetricAlgorithm.newInstance(
@@ -337,7 +337,7 @@ public class SymmetricCli extends AbstractEncryptionCli
     validateOptions(line);
 
     final SymmetricAlgorithm alg = newAlgorithm(line);
-    SecretKey key = null;
+    SecretKey key;
     if (line.hasOption(OPT_PBE)) {
       key = generatePBEKey(alg, line);
     } else {

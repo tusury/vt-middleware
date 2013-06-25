@@ -44,7 +44,7 @@ public class RSASignature extends SignatureAlgorithm
   private static final String ALGORITHM = "RSA";
 
   /** Implements the RSA signature operation. */
-  private RSADigestSigner signer;
+  private final RSADigestSigner signer;
 
 
   /**

@@ -54,7 +54,7 @@ public abstract class AbstractCli
   protected static final String PEM_SUFFIX = "pem";
 
   /** Command line options. */
-  protected Options options = new Options();
+  protected final Options options = new Options();
 
 
   /**
@@ -142,7 +142,7 @@ public abstract class AbstractCli
       try {
         System.out.println();
 
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
           System.out.println(line);
         }
@@ -193,7 +193,7 @@ public abstract class AbstractCli
   protected InputStream getInputStream(final CommandLine line, final String opt)
     throws IOException
   {
-    InputStream in = null;
+    InputStream in;
     if (line.hasOption(opt)) {
       final File file = new File(line.getOptionValue(opt));
       System.err.println("Reading input from " + file);

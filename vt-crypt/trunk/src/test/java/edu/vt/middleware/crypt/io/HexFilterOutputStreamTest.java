@@ -57,7 +57,7 @@ public class HexFilterOutputStreamTest
     final OutputStream out = new HexFilterOutputStream(
       new BufferedOutputStream(new FileOutputStream(new File(outPath))));
     try {
-      int count = 0;
+      int count;
       final int bufsize = 2048;
       final byte[] buffer = new byte[bufsize];
       while ((count = in.read(buffer)) > 0) {

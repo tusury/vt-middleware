@@ -27,7 +27,7 @@ public class HexFilterOutputStream extends AbstractEncodingFilterOutputStream
 {
 
   /** Does encoding work. */
-  private HexEncoder encoder = new HexEncoder();
+  private final HexEncoder encoder = new HexEncoder();
 
   /**
    * Creates a hex filter output stream around the given output stream.

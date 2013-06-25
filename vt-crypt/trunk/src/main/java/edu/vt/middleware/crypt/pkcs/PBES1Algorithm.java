@@ -65,13 +65,13 @@ public enum PBES1Algorithm {
 
 
   /** Algorithm identifier OID. */
-  private String oid;
+  private final String oid;
 
   /** Cipher algorithm specification. */
-  private AlgorithmSpec spec;
+  private final AlgorithmSpec spec;
 
   /** Digest algorithm used for pseudo-random function. */
-  private DigestAlgorithm digest;
+  private final DigestAlgorithm digest;
 
 
   /**

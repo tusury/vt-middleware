@@ -29,6 +29,7 @@ import edu.vt.middleware.crypt.util.Converter;
 public interface EncryptionAlgorithm extends Algorithm
 {
 
+
   /**
    * Gets the encryption mode.
    *

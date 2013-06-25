@@ -385,7 +385,7 @@ public class CryptReaderWriterTest
     final String type,
     final char[] password)
   {
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     if (key instanceof PrivateKey) {
       sb.append("target/test-output/privkey_");
     } else if (key instanceof SecretKey) {

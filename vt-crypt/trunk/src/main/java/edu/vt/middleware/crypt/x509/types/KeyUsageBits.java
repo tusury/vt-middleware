@@ -51,7 +51,7 @@ public enum KeyUsageBits {
 
 
   /** Bit mask value. */
-  private int mask;
+  private final int mask;
 
 
   /**

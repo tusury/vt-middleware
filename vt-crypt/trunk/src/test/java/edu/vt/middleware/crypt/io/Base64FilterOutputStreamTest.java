@@ -54,9 +54,9 @@ public class Base64FilterOutputStreamTest
   {
     return
       new Object[][] {
-        {new Integer(0)},
-        {new Integer(Base64FilterInputStream.LINE_LENGTH_64)},
-        {new Integer(Base64FilterInputStream.LINE_LENGTH_76)},
+        {0},
+        {Base64FilterInputStream.LINE_LENGTH_64},
+        {Base64FilterInputStream.LINE_LENGTH_76},
       };
   }
 
@@ -83,9 +83,9 @@ public class Base64FilterOutputStreamTest
     final InputStream in = getClass().getResourceAsStream(TEXT_FILE_PATH);
     final OutputStream out = new Base64FilterOutputStream(
       new BufferedOutputStream(new FileOutputStream(new File(outPath))),
-      charsPerLine.intValue());
+      charsPerLine);
     try {
-      int count = 0;
+      int count;
       final int bufsize = 2048;
       final byte[] buffer = new byte[bufsize];
       while ((count = in.read(buffer)) > 0) {
