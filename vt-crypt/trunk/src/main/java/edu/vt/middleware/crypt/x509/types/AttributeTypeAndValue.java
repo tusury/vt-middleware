@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -22,7 +22,7 @@ import java.util.Set;
  * comprise the RDN sequence describing an LDAPv3 distinguished name (DN).
  *
  * @author  Middleware Services
- * @version  $Revision: 587 $
+ * @version  $Revision$
  */
 public class AttributeTypeAndValue
 {

@@ -1,15 +1,15 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.signature;
 
@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-
 import edu.vt.middleware.crypt.CryptException;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -32,18 +31,19 @@ import org.bouncycastle.crypto.params.ParametersWithRandom;
 /**
  * Base class for all signatures that implement the DSA scheme.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public abstract class AbstractDSASignature extends SignatureAlgorithm
 {
+
   /** Signer that implements DSA algorithm. */
   protected DSA signer;
 
   /**
    * Creates a new instance of a the given signature algorithm.
    *
-   * @param alg Signature algorithm name, e.g. DSA, RSA.
+   * @param  alg  Signature algorithm name, e.g. DSA, RSA.
    */
   protected AbstractDSASignature(final String alg)
   {
@@ -150,9 +150,9 @@ public abstract class AbstractDSASignature extends SignatureAlgorithm
       throw new CryptException("Error decoding DSA signature.", e);
     }
     return
-        new BigInteger[] {
-            ((DERInteger) s.getObjectAt(0)).getValue(),
-            ((DERInteger) s.getObjectAt(1)).getValue(),
-        };
+      new BigInteger[] {
+        ((DERInteger) s.getObjectAt(0)).getValue(),
+        ((DERInteger) s.getObjectAt(1)).getValue(),
+      };
   }
 }

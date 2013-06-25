@@ -1,41 +1,40 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.symmetric;
 
 import java.security.SecureRandom;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.CryptProvider;
 
 /**
  * Utility class with methods for handling secret keys.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public final class SecretKeyUtils
 {
+
   /** Default random data provider for key generation. */
   private static final SecureRandom DEFAULT_RANDOM = new SecureRandom();
 
 
   /**
-   * Gets the key size in bits, which is simply the size of the encoded
-   * data in bytes converted to bits.
+   * Gets the key size in bits, which is simply the size of the encoded data in
+   * bytes converted to bits.
    *
    * @param  key  Secret key.
    *
@@ -58,11 +57,9 @@ public final class SecretKeyUtils
    *
    * @return  New secret key for use with cipher of given algorithm name.
    *
-   * @throws CryptException  if the private key cannot be generated
+   * @throws  CryptException  if the private key cannot be generated
    */
-  public static SecretKey generate(
-      final String algorithm,
-      final int bitLength)
+  public static SecretKey generate(final String algorithm, final int bitLength)
     throws CryptException
   {
     return generate(algorithm, bitLength, DEFAULT_RANDOM);
@@ -81,12 +78,12 @@ public final class SecretKeyUtils
    *
    * @return  New secret key for use with cipher of given algorithm name.
    *
-   * @throws CryptException  if the private key cannot be generated
+   * @throws  CryptException  if the private key cannot be generated
    */
   public static SecretKey generate(
-      final String algorithm,
-      final int bitLength,
-      final SecureRandom random)
+    final String algorithm,
+    final int bitLength,
+    final SecureRandom random)
     throws CryptException
   {
     if (random == null) {
@@ -99,8 +96,8 @@ public final class SecretKeyUtils
       return keyGen.generateKey();
     } catch (Exception ex) {
       throw new CryptException(
-          String.format("Error generatig %s-bit %s key", bitLength, algorithm),
-          ex);
+        String.format("Error generatig %s-bit %s key", bitLength, algorithm),
+        ex);
     }
   }
 }

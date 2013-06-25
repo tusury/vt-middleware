@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  * @version  $Revision$
  */
-public abstract class AbstractEncodedCredentialReader<T> implements CredentialReader<T>
+public abstract class AbstractEncodedCredentialReader<T>
+  implements CredentialReader<T>
 {
 
   /** DSA algorithm OID. */
@@ -41,7 +42,7 @@ public abstract class AbstractEncodedCredentialReader<T> implements CredentialRe
 
   /** EC algorithm OID. */
   protected static final DERObjectIdentifier EC_ID = new DERObjectIdentifier(
-      "1.2.840.10045.2.1");
+    "1.2.840.10045.2.1");
 
   /** RSA algorithm OID. */
   protected static final DERObjectIdentifier RSA_ID = new DERObjectIdentifier(
@@ -52,7 +53,8 @@ public abstract class AbstractEncodedCredentialReader<T> implements CredentialRe
 
 
   /** {@inheritDoc} */
-  public T read(final File file) throws IOException, CryptException
+  public T read(final File file)
+    throws IOException, CryptException
   {
     byte[] data = IOHelper.read(new FileInputStream(file).getChannel());
     if (PemHelper.isPem(data)) {
@@ -63,7 +65,8 @@ public abstract class AbstractEncodedCredentialReader<T> implements CredentialRe
 
 
   /** {@inheritDoc} */
-  public T read(final InputStream in) throws IOException, CryptException
+  public T read(final InputStream in)
+    throws IOException, CryptException
   {
     byte[] data = IOHelper.read(in);
     if (PemHelper.isPem(data)) {

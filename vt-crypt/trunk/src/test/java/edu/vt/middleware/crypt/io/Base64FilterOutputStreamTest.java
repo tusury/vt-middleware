@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link Base64FilterOutputStream}.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 public class Base64FilterOutputStreamTest
 {

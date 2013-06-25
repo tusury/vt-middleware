@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -19,7 +19,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-
 import edu.vt.middleware.crypt.CryptException;
 
 /**
@@ -29,13 +28,17 @@ import edu.vt.middleware.crypt.CryptException;
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class X509CertificatesCredentialReader extends AbstractX509CredentialReader<X509Certificate[]>
+public class X509CertificatesCredentialReader
+  extends AbstractX509CredentialReader<X509Certificate[]>
 {
+
   /** {@inheritDoc} */
-  public X509Certificate[] read(final InputStream in) throws IOException, CryptException
+  public X509Certificate[] read(final InputStream in)
+    throws IOException, CryptException
   {
     try {
-      final Collection<? extends Certificate> certList = getX509CertificateFactory().generateCertificates(in);
+      final Collection<? extends Certificate> certList =
+        getX509CertificateFactory().generateCertificates(in);
       final X509Certificate[] certs = new X509Certificate[certList.size()];
       return certList.toArray(certs);
     } catch (CertificateException e) {

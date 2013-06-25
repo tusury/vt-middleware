@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -18,7 +18,7 @@ package edu.vt.middleware.crypt.x509.types;
  * section 4.2.1.1 of RFC 2459.
  *
  * @author  Middleware Services
- * @version  $Revision: 427 $
+ * @version  $Revision$
  */
 public class AuthorityKeyIdentifier
 {
@@ -141,13 +141,13 @@ public class AuthorityKeyIdentifier
       result = (keyIdentifier != null
         ? keyIdentifier.equals(other.getKeyIdentifier())
         : other.getKeyIdentifier() == null) &&
-          (authorityCertIssuer != null
-            ? authorityCertIssuer.equals(other.getAuthorityCertIssuer())
-            : other.getAuthorityCertIssuer() == null) &&
-          (authorityCertSerialNumber != null
-            ? authorityCertSerialNumber.equals(
-              other.getAuthorityCertSerialNumber())
-            : other.getAuthorityCertSerialNumber() == null);
+        (authorityCertIssuer != null
+          ? authorityCertIssuer.equals(other.getAuthorityCertIssuer())
+          : other.getAuthorityCertIssuer() == null) &&
+        (authorityCertSerialNumber != null
+          ? authorityCertSerialNumber.equals(
+            other.getAuthorityCertSerialNumber())
+          : other.getAuthorityCertSerialNumber() == null);
     }
     return result;
   }

@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link CryptReader} and {@link CryptWriter} classes.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 public class CryptReaderWriterTest
 {

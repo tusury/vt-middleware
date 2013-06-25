@@ -1,15 +1,15 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.util;
 
@@ -29,11 +29,12 @@ import org.bouncycastle.jce.provider.asymmetric.ec.ECUtil;
 /**
  * Elliptic curve cryptography utilty methods.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public final class ECUtils
 {
+
   /** Private constructor of utility class. */
   private ECUtils() {}
 
@@ -52,16 +53,16 @@ public final class ECUtils
     final BigInteger s = DERInteger.getInstance(seq.getObjectAt(1)).getValue();
     final ASN1TaggedObject params = DERTaggedObject.getInstance(
       seq.getObjectAt(2));
-    return new ECPrivateKeySpec(
-      s,
-      readEncodedParams((ASN1Sequence) params.getObject()));
+    return
+      new ECPrivateKeySpec(
+        s,
+        readEncodedParams((ASN1Sequence) params.getObject()));
   }
 
 
   /**
-   * Reads ASN.1 encoded EC domain parameters as defined by section C.2 of
-   * SEC 1: Elliptic Curve Cryptography,
-   * www.secg.org/collateral/sec1_final.pdf.
+   * Reads ASN.1 encoded EC domain parameters as defined by section C.2 of SEC
+   * 1: Elliptic Curve Cryptography, www.secg.org/collateral/sec1_final.pdf.
    *
    * @param  seq  ASN.1 sequence of EC domain parameters.
    *
@@ -74,13 +75,15 @@ public final class ECUtils
 
 
   /**
-   * Gets an elliptic curve domain parameter specification from a named curve OID.
+   * Gets an elliptic curve domain parameter specification from a named curve
+   * OID.
    *
    * @param  curveOid  Named elliptic curve object identifier.
    *
    * @return  Domain parameters for named curve.
    */
-  public static ECParameterSpec fromNamedCurve(final DERObjectIdentifier curveOid)
+  public static ECParameterSpec fromNamedCurve(
+    final DERObjectIdentifier curveOid)
   {
     return convertParams(ECUtil.getNamedCurveByOid(curveOid));
   }
@@ -95,7 +98,9 @@ public final class ECUtils
    */
   private static ECParameterSpec convertParams(final X9ECParameters params)
   {
-    final EllipticCurve curve = EC5Util.convertCurve(params.getCurve(), params.getSeed());
+    final EllipticCurve curve = EC5Util.convertCurve(
+      params.getCurve(),
+      params.getSeed());
     final org.bouncycastle.jce.spec.ECParameterSpec spec =
       new org.bouncycastle.jce.spec.ECParameterSpec(
         params.getCurve(),

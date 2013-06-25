@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link DNUtils} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 587 $
+ * @version  $Revision$
  */
 public class DNUtilsTest
 {

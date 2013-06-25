@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -18,7 +18,6 @@ import java.security.PublicKey;
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
-
 import edu.vt.middleware.crypt.digest.DigestAlgorithm;
 import edu.vt.middleware.crypt.digest.SHA1;
 import org.bouncycastle.crypto.params.DSAParameters;
@@ -30,7 +29,7 @@ import org.bouncycastle.crypto.signers.DSASigner;
  * Implements the DSA signature algorithm.
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 public class DSASignature extends AbstractDSASignature
 {

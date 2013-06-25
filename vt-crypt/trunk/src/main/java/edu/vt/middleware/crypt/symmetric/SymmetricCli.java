@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -44,7 +44,7 @@ import org.apache.commons.cli.Option;
  * Command line interface for symmetric encryption operations.
  *
  * @author  Middleware Services
- * @version  $Revision: 12 $
+ * @version  $Revision$
  */
 public class SymmetricCli extends AbstractEncryptionCli
 {
@@ -168,9 +168,9 @@ public class SymmetricCli extends AbstractEncryptionCli
     salt.setOptionalArg(false);
 
     final Option genKey = new Option(
-        OPT_GENKEY,
-        true,
-        "generate key of given size written to path specified by -out option");
+      OPT_GENKEY,
+      true,
+      "generate key of given size written to path specified by -out option");
     genKey.setArgName("bitsize");
     genKey.setOptionalArg(false);
 

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -17,7 +17,7 @@ package edu.vt.middleware.crypt.x509;
  * Enumeration of X.509v3 extension fields defined in section 4.2 of RFC 2459.
  *
  * @author  Middleware Services
- * @version  $Revision: $
+ * @version  $Revision$
  */
 public enum ExtensionType {
 

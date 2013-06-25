@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link KeyStoreCli} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 590 $
+ * @version  $Revision$
  */
 public class KeyStoreCliTest
 {

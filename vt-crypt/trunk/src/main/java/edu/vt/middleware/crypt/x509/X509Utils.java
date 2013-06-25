@@ -1,15 +1,15 @@
 /*
-  $Id: $
+  $Id$
 
-  Copyright (C) 2012 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509;
 
@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.signature.SignatureAlgorithm;
 import edu.vt.middleware.crypt.x509.types.GeneralName;
@@ -33,8 +32,8 @@ import edu.vt.middleware.crypt.x509.types.GeneralNameType;
  * Utility class providing convenience methods for common operations on X.509
  * certificates.
  *
- * @author Middleware Services
- * @version $Revision: $
+ * @author  Middleware Services
+ * @version  $Revision$
  */
 public final class X509Utils
 {
@@ -49,13 +48,12 @@ public final class X509Utils
   /**
    * Gets all subject alternative names defined on the given certificate.
    *
-   * @param cert X.509 certificate to examine.
+   * @param  cert  X.509 certificate to examine.
    *
-   * @return List of subject alternative names or an empty list if no subject
+   * @return  List of subject alternative names or an empty list if no subject
    * alt names are defined.
    */
-  public static List<GeneralName> getSubjectAltNames(
-      final X509Certificate cert)
+  public static List<GeneralName> getSubjectAltNames(final X509Certificate cert)
   {
     final GeneralNameList nameList;
     try {
@@ -73,14 +71,15 @@ public final class X509Utils
   /**
    * Gets all subject alternative names of the given type(s) on the given cert.
    *
-   * @param cert X.509 certificate to examine.
-   * @param types One or more name types to fetch.
+   * @param  cert  X.509 certificate to examine.
+   * @param  types  One or more name types to fetch.
    *
-   * @return List of subject alternative names of the matching type(s) or an
+   * @return  List of subject alternative names of the matching type(s) or an
    * empty list if no subject alt names are defined or none match given type.
    */
   public static List<GeneralName> getSubjectAltNames(
-      final X509Certificate cert, final GeneralNameType ... types)
+    final X509Certificate cert,
+    final GeneralNameType... types)
   {
     final List<GeneralName> altNames = new ArrayList<GeneralName>();
     for (GeneralName altName : getSubjectAltNames(cert)) {
@@ -98,9 +97,9 @@ public final class X509Utils
    * Gets all subject names present on the given certificate, i.e. the set of
    * first subject CN and all alternative names.
    *
-   * @param cert X.509 certificate to examine.
+   * @param  cert  X.509 certificate to examine.
    *
-   * @return List of subject names.
+   * @return  List of subject names.
    */
   public static List<String> getSubjectNames(final X509Certificate cert)
   {
@@ -117,13 +116,14 @@ public final class X509Utils
    * Gets CN from the subject DN and the set of all alternative names of the
    * given type.
    *
-   * @param cert X.509 certificate to examine.
-   * @param types One or more name types to fetch.
+   * @param  cert  X.509 certificate to examine.
+   * @param  types  One or more name types to fetch.
    *
-   * @return List of subject names.
+   * @return  List of subject names.
    */
   public static List<String> getSubjectNames(
-      final X509Certificate cert, final GeneralNameType ... types)
+    final X509Certificate cert,
+    final GeneralNameType... types)
   {
     final List<String> names = new ArrayList<String>();
     names.add(DNUtils.getCN(cert.getSubjectX500Principal()));
@@ -137,14 +137,15 @@ public final class X509Utils
   /**
    * Finds a certificate whose public key is paired with the given private key.
    *
-   * @param candidates Array of candidate certificates.
-   * @param key Private key used to find matching public key.
+   * @param  candidates  Array of candidate certificates.
+   * @param  key  Private key used to find matching public key.
    *
-   * @return Certificate among candidates whose public key that forms a keypair
+   * @return  Certificate among candidates whose public key that forms a keypair
    * with the given private key or null if no match is found.
    */
   public static X509Certificate findEntityCertificate(
-      final X509Certificate[] candidates, final PrivateKey key)
+    final X509Certificate[] candidates,
+    final PrivateKey key)
   {
     return findEntityCertificate(Arrays.asList(candidates), key);
   }
@@ -153,14 +154,15 @@ public final class X509Utils
   /**
    * Finds a certificate whose public key is paired with the given private key.
    *
-   * @param candidates Collection of candidate certificates.
-   * @param key Private key used to find matching public key.
+   * @param  candidates  Collection of candidate certificates.
+   * @param  key  Private key used to find matching public key.
    *
-   * @return Certificate among candidates whose public key that forms a keypair
+   * @return  Certificate among candidates whose public key that forms a keypair
    * with the given private key or null if no match is found.
    */
   public static X509Certificate findEntityCertificate(
-      final Collection<X509Certificate> candidates, final PrivateKey key)
+    final Collection<X509Certificate> candidates,
+    final PrivateKey key)
   {
     SignatureAlgorithm alg;
     byte[] sig;
@@ -177,7 +179,8 @@ public final class X509Utils
         }
       } catch (Exception e) {
         throw new RuntimeException(
-            "Error calculating digital signature for key verification", e);
+          "Error calculating digital signature for key verification",
+          e);
       }
     }
     return null;
@@ -187,15 +190,16 @@ public final class X509Utils
   /**
    * Reads a single extension field from the given X.509 certificate.
    *
-   * @param cert Certificate from which to read extensions.
-   * @param type Type that describes the extension to read.
+   * @param  cert  Certificate from which to read extensions.
+   * @param  type  Type that describes the extension to read.
    *
-   * @return Value type of extension from the
-   * {@link edu.vt.middleware.crypt.x509.types} package or null if no such
-   * extension is defined.
+   * @return  Value type of extension from the {@link
+   * edu.vt.middleware.crypt.x509.types} package or null if no such extension is
+   * defined.
    */
   public static Object readExtension(
-      final X509Certificate cert, final ExtensionType type)
+    final X509Certificate cert,
+    final ExtensionType type)
   {
     final ExtensionReader reader = new ExtensionReader(cert);
     try {
@@ -210,16 +214,16 @@ public final class X509Utils
    * Reads all the X.509 extension fields from the certificate and makes them
    * available as a map of types to values.
    *
-   * @param cert Certificate to read.
+   * @param  cert  Certificate to read.
    *
    * @return  Map of X.509 extension types to the corresponding value object in
    * the {@link edu.vt.middleware.crypt.x509.types} package.
    */
   public static Map<ExtensionType, Object> readExtensions(
-      final X509Certificate cert)
+    final X509Certificate cert)
   {
-    final Map<ExtensionType, Object> map =
-        new HashMap<ExtensionType, Object>(ExtensionType.values().length);
+    final Map<ExtensionType, Object> map = new HashMap<ExtensionType, Object>(
+      ExtensionType.values().length);
     final ExtensionReader reader = new ExtensionReader(cert);
     for (ExtensionType type : ExtensionType.values()) {
       try {

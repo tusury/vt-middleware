@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * Unit test for all subclasses of {@link SymmetricAlgorithm}.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 public class SymmetricAlgorithmTest
 {

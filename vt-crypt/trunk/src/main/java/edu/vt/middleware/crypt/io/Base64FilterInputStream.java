@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -21,7 +21,7 @@ import org.bouncycastle.util.encoders.Base64Encoder;
  * Converts an input stream of base-64 encoded character bytes into raw bytes.
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 public class Base64FilterInputStream extends AbstractEncodingFilterInputStream
 {

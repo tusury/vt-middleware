@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -20,7 +20,7 @@ import java.util.Arrays;
  * 4.2.1.5 of RFC 2459.
  *
  * @author  Middleware Services
- * @version  $Revision: 427 $
+ * @version  $Revision$
  */
 public class NoticeReference
 {
@@ -100,7 +100,7 @@ public class NoticeReference
     } else {
       final NoticeReference other = (NoticeReference) obj;
       result = other.getOrganization().equals(organization) &&
-          Arrays.equals(other.getNoticeNumbers(), noticeNumbers);
+        Arrays.equals(other.getNoticeNumbers(), noticeNumbers);
     }
     return result;
   }

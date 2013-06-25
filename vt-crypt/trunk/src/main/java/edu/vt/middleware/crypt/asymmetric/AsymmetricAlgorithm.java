@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -16,7 +16,6 @@ package edu.vt.middleware.crypt.asymmetric;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
-
 import edu.vt.middleware.crypt.AbstractEncryptionAlgorithm;
 
 /**
@@ -24,7 +23,7 @@ import edu.vt.middleware.crypt.AbstractEncryptionAlgorithm;
  * public/private key pair.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 
 public class AsymmetricAlgorithm extends AbstractEncryptionAlgorithm
@@ -40,8 +39,8 @@ public class AsymmetricAlgorithm extends AbstractEncryptionAlgorithm
   private static final int CHUNK_SIZE = 2048;
 
   /** Map of digest algorithm names to classes. */
-  private static final Map<String, Class<? extends AsymmetricAlgorithm>>
-  NAME_CLASS_MAP = new HashMap<String, Class<? extends AsymmetricAlgorithm>>();
+  private static final Map<String, Class<? extends AsymmetricAlgorithm>> NAME_CLASS_MAP =
+    new HashMap<String, Class<? extends AsymmetricAlgorithm>>();
 
 
   /**
@@ -91,9 +90,11 @@ public class AsymmetricAlgorithm extends AbstractEncryptionAlgorithm
 
   /** {@inheritDoc} */
   @Override
-  public Object clone() throws CloneNotSupportedException
+  public Object clone()
+    throws CloneNotSupportedException
   {
-    final AsymmetricAlgorithm clone = AsymmetricAlgorithm.newInstance(getAlgorithm());
+    final AsymmetricAlgorithm clone = AsymmetricAlgorithm.newInstance(
+      getAlgorithm());
     clone.setRandomProvider(randomProvider);
     clone.setKey(key);
     return clone;

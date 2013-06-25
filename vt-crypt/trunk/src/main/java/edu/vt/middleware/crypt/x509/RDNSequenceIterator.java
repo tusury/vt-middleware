@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -29,7 +29,7 @@ import org.bouncycastle.asn1.DERObject;
  * representation of an RDN sequence to a string.
  *
  * @author  Middleware Services
- * @version  $Revision: 578 $
+ * @version  $Revision$
  */
 public class RDNSequenceIterator
   implements Iterator<RelativeDistinguishedName>,

@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -18,7 +18,7 @@ package edu.vt.middleware.crypt;
  * occur when working with the crypt libs.</p>
  *
  * @author  Middleware Services
- * @version  $Revision: 3 $
+ * @version  $Revision$
  */
 
 public final class CryptException extends Exception
@@ -28,7 +28,9 @@ public final class CryptException extends Exception
   private static final long serialVersionUID = -1041478966786912109L;
 
 
-  /** <p>This creates a new <code>CryptException</code>.</p> */
+  /**
+   * <p>This creates a new <code>CryptException</code>.</p>
+   */
   public CryptException() {}
 
 

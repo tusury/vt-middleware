@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -25,7 +25,7 @@ import org.apache.commons.cli.Option;
  * Command line interface for digest operations.
  *
  * @author  Middleware Services
- * @version  $Revision: 16 $
+ * @version  $Revision$
  */
 public class DigestCli extends AbstractCli
 {

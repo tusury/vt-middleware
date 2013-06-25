@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -17,16 +17,14 @@ import java.lang.reflect.Constructor;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.crypto.spec.IvParameterSpec;
-
 import edu.vt.middleware.crypt.AbstractEncryptionAlgorithm;
 
 /**
  * Provides symmetric encryption and decryption operations using a secret key.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 
 public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
@@ -45,8 +43,8 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
   private static final int CHUNK_SIZE = COMMON_BLOCK_SIZE * 128;
 
   /** Map of digest algorithm names to classes. */
-  private static final Map<String, Class<? extends SymmetricAlgorithm>>
-  NAME_CLASS_MAP = new HashMap<String, Class<? extends SymmetricAlgorithm>>();
+  private static final Map<String, Class<? extends SymmetricAlgorithm>> NAME_CLASS_MAP =
+    new HashMap<String, Class<? extends SymmetricAlgorithm>>();
 
 
   /**
@@ -305,7 +303,8 @@ public class SymmetricAlgorithm extends AbstractEncryptionAlgorithm
 
   /** {@inheritDoc} */
   @Override
-  public Object clone() throws CloneNotSupportedException
+  public Object clone()
+    throws CloneNotSupportedException
   {
     final SymmetricAlgorithm clone = SymmetricAlgorithm.newInstance(
       getAlgorithm(),

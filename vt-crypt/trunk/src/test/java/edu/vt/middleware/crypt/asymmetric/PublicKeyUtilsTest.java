@@ -1,5 +1,5 @@
 /*
-  $Id: $
+  $Id$
 
   Copyright (C) 2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.asymmetric;
 
@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link PublicKeyUtils} class.
  *
  * @author Middleware Services
- * @version $Revision: $
+ * @version $Revision$
  */
 public class PublicKeyUtilsTest
 {

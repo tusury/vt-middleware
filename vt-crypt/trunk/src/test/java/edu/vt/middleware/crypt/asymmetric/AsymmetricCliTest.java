@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * Unit test for {@link AsymmetricCli} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 public class AsymmetricCliTest
 {

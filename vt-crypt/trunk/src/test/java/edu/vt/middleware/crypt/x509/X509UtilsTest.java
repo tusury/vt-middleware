@@ -1,5 +1,5 @@
 /*
-  $Id: $
+  $Id$
 
   Copyright (C) 2012 Virginia Tech.
   All rights reserved.
@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version: $Revision: $
-  Updated: $Date: $
+  Version: $Revision$
+  Updated: $Date$
 */
 package edu.vt.middleware.crypt.x509;
 
@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * Description of X509UtilsTest.
  *
  * @author Middleware Services
- * @version $Revision: $
+ * @version $Revision$
  */
 public class X509UtilsTest
 {

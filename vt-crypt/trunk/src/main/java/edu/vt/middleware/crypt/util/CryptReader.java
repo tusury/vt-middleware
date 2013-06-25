@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -24,7 +24,6 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509CRL;
 import javax.crypto.SecretKey;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.io.PrivateKeyCredentialReader;
 import edu.vt.middleware.crypt.io.PublicKeyCredentialReader;
@@ -37,7 +36,7 @@ import edu.vt.middleware.crypt.io.X509CertificatesCredentialReader;
  * Helper class for performing I/O read operations on cryptographic data.
  *
  * @author  Middleware Services
- * @version  $Revision: 578 $
+ * @version  $Revision$
  */
 public class CryptReader
 {
@@ -62,7 +61,10 @@ public class CryptReader
    * unsupported ciphers, illegal settings.
    * @throws  IOException  On IO errors.
    */
-  public static SecretKey readSecretKey(final File keyFile, final String algorithm) throws CryptException, IOException
+  public static SecretKey readSecretKey(
+    final File keyFile,
+    final String algorithm)
+    throws CryptException, IOException
   {
     return new SecretKeyCredentialReader(algorithm).read(keyFile);
   }
@@ -80,7 +82,9 @@ public class CryptReader
    * unsupported ciphers, illegal settings.
    * @throws  IOException  On IO errors.
    */
-  public static SecretKey readSecretKey(final InputStream keyStream, final String algorithm)
+  public static SecretKey readSecretKey(
+    final InputStream keyStream,
+    final String algorithm)
     throws CryptException, IOException
   {
     return new SecretKeyCredentialReader(algorithm).read(keyStream);
@@ -99,7 +103,9 @@ public class CryptReader
    * unsupported ciphers, illegal settings.
    * @throws  IOException  On IO errors.
    */
-  public static SecretKey readSecretKey(final byte[] keyBytes, final String algorithm)
+  public static SecretKey readSecretKey(
+    final byte[] keyBytes,
+    final String algorithm)
     throws CryptException, IOException
   {
     return readSecretKey(new ByteArrayInputStream(keyBytes), algorithm);
@@ -117,7 +123,8 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PrivateKey readPrivateKey(final File keyFile) throws CryptException, IOException
+  public static PrivateKey readPrivateKey(final File keyFile)
+    throws CryptException, IOException
   {
     return new PrivateKeyCredentialReader().read(keyFile);
   }
@@ -134,7 +141,8 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PrivateKey readPrivateKey(final InputStream keyStream) throws CryptException, IOException
+  public static PrivateKey readPrivateKey(final InputStream keyStream)
+    throws CryptException, IOException
   {
     return new PrivateKeyCredentialReader().read(keyStream);
   }
@@ -151,7 +159,8 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PrivateKey readPrivateKey(final byte[] keyBytes) throws CryptException, IOException
+  public static PrivateKey readPrivateKey(final byte[] keyBytes)
+    throws CryptException, IOException
   {
     return readPrivateKey(new ByteArrayInputStream(keyBytes));
   }
@@ -170,7 +179,10 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PrivateKey readPrivateKey(final File keyFile, final char[] password) throws CryptException, IOException
+  public static PrivateKey readPrivateKey(
+    final File keyFile,
+    final char[] password)
+    throws CryptException, IOException
   {
     return new PrivateKeyCredentialReader().read(keyFile, password);
   }
@@ -178,8 +190,8 @@ public class CryptReader
 
   /**
    * Reads an encrypted private key in PKCS#8 or OpenSSL "traditional" format
-   * from an input stream into a {@link PrivateKey} object. Both DER and PEM encoded keys
-   * are supported.
+   * from an input stream into a {@link PrivateKey} object. Both DER and PEM
+   * encoded keys are supported.
    *
    * @param  keyStream  Input stream containing private key data.
    * @param  password  Password to decrypt private key; MUST NOT be null.
@@ -189,7 +201,9 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PrivateKey readPrivateKey(final InputStream keyStream, final char[] password)
+  public static PrivateKey readPrivateKey(
+    final InputStream keyStream,
+    final char[] password)
     throws CryptException, IOException
   {
     return new PrivateKeyCredentialReader().read(keyStream, password);
@@ -198,8 +212,8 @@ public class CryptReader
 
   /**
    * Reads an encrypted private key in PKCS#8 or OpenSSL "traditional" format
-   * from a byte array into a {@link PrivateKey} object. Both DER and PEM encoded keys
-   * are supported.
+   * from a byte array into a {@link PrivateKey} object. Both DER and PEM
+   * encoded keys are supported.
    *
    * @param  keyBytes  Byte array containing private key data.
    * @param  password  Password to decrypt private key; MUST NOT be null.
@@ -209,7 +223,9 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PrivateKey readPrivateKey(final byte[] keyBytes, final char[] password)
+  public static PrivateKey readPrivateKey(
+    final byte[] keyBytes,
+    final char[] password)
     throws CryptException, IOException
   {
     return readPrivateKey(new ByteArrayInputStream(keyBytes), password);
@@ -227,15 +243,16 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PublicKey readPublicKey(final File keyFile) throws CryptException, IOException
+  public static PublicKey readPublicKey(final File keyFile)
+    throws CryptException, IOException
   {
     return new PublicKeyCredentialReader().read(keyFile);
   }
 
 
   /**
-   * Reads a PEM or DER-encoded X.509 public key from an input stream into a {@link
-   * PublicKey} object.
+   * Reads a PEM or DER-encoded X.509 public key from an input stream into a
+   * {@link PublicKey} object.
    *
    * @param  keyStream  Input stream containing DER-encoded X.509 public key.
    *
@@ -244,7 +261,8 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PublicKey readPublicKey(final InputStream keyStream) throws CryptException, IOException
+  public static PublicKey readPublicKey(final InputStream keyStream)
+    throws CryptException, IOException
   {
     return new PublicKeyCredentialReader().read(keyStream);
   }
@@ -261,7 +279,8 @@ public class CryptReader
    * @throws  CryptException  On key format errors.
    * @throws  IOException  On key read errors.
    */
-  public static PublicKey readPublicKey(final byte[] keyBytes) throws CryptException, IOException
+  public static PublicKey readPublicKey(final byte[] keyBytes)
+    throws CryptException, IOException
   {
     return readPublicKey(new ByteArrayInputStream(keyBytes));
   }
@@ -278,7 +297,8 @@ public class CryptReader
    * @throws  CryptException  On certificate format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate readCertificate(final File certFile) throws CryptException, IOException
+  public static Certificate readCertificate(final File certFile)
+    throws CryptException, IOException
   {
     return readCertificate(certFile, DEFAULT_CERTIFICATE_TYPE);
   }
@@ -296,7 +316,10 @@ public class CryptReader
    * @throws  CryptException  On certificate format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate readCertificate(final File certFile, final String type) throws CryptException, IOException
+  public static Certificate readCertificate(
+    final File certFile,
+    final String type)
+    throws CryptException, IOException
   {
     if (!DEFAULT_CERTIFICATE_TYPE.equals(type)) {
       throw new UnsupportedOperationException(type + " not supported.");
@@ -316,7 +339,8 @@ public class CryptReader
    * @throws  CryptException  On certificate read or format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate readCertificate(final InputStream certStream) throws CryptException, IOException
+  public static Certificate readCertificate(final InputStream certStream)
+    throws CryptException, IOException
   {
     return readCertificate(certStream, DEFAULT_CERTIFICATE_TYPE);
   }
@@ -334,7 +358,9 @@ public class CryptReader
    * @throws  IOException  On read errors.
    * @throws  CryptException  On certificate read or format errors.
    */
-  public static Certificate readCertificate(final InputStream certStream, final String type)
+  public static Certificate readCertificate(
+    final InputStream certStream,
+    final String type)
     throws CryptException, IOException
   {
     if (!DEFAULT_CERTIFICATE_TYPE.equals(type)) {
@@ -345,8 +371,8 @@ public class CryptReader
 
 
   /**
-   * Reads a PEM or DER-encoded certificate of the default type from a byte array
-   * into a {@link Certificate} object.
+   * Reads a PEM or DER-encoded certificate of the default type from a byte
+   * array into a {@link Certificate} object.
    *
    * @param  certBytes  Byte array containing certificate data.
    *
@@ -355,15 +381,16 @@ public class CryptReader
    * @throws  CryptException  On certificate read or format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate readCertificate(final byte[] certBytes) throws CryptException, IOException
+  public static Certificate readCertificate(final byte[] certBytes)
+    throws CryptException, IOException
   {
     return readCertificate(certBytes, DEFAULT_CERTIFICATE_TYPE);
   }
 
 
   /**
-   * Reads a PEM or DER-encoded certificate of the default type from a byte array
-   * into a {@link Certificate} object.
+   * Reads a PEM or DER-encoded certificate of the default type from a byte
+   * array into a {@link Certificate} object.
    *
    * @param  certBytes  Byte array containing certificate data.
    * @param  type  Type of certificate to read, e.g. X.509.
@@ -373,7 +400,9 @@ public class CryptReader
    * @throws  IOException  On read errors.
    * @throws  CryptException  On certificate read or format errors.
    */
-  public static Certificate readCertificate(final byte[] certBytes, final String type)
+  public static Certificate readCertificate(
+    final byte[] certBytes,
+    final String type)
     throws CryptException, IOException
   {
     return readCertificate(new ByteArrayInputStream(certBytes), type);
@@ -382,11 +411,13 @@ public class CryptReader
 
   /**
    * Reads a certificate chain of the default certificate type from a file
-   * containing data in any of the formats supported by {@link #readCertificateChain(InputStream, String)}.
+   * containing data in any of the formats supported by {@link
+   * #readCertificateChain(InputStream, String)}.
    *
    * @param  chainFile  Path to certificate chain file.
    *
-   * @return  Array of certificates in the order in which they appear in the given file.
+   * @return  Array of certificates in the order in which they appear in the
+   * given file.
    *
    * @throws  CryptException  On certificate format errors.
    * @throws  IOException  On read errors.
@@ -400,17 +431,21 @@ public class CryptReader
 
   /**
    * Reads a certificate chain of the given type from a file containing data in
-   * any of the formats supported by {@link #readCertificateChain(InputStream, String)}.
+   * any of the formats supported by {@link #readCertificateChain(InputStream,
+   * String)}.
    *
    * @param  chainFile  Path to certificate chain file.
    * @param  type  Type of certificate to read, e.g. X.509.
    *
-   * @return  Array of certificates in the order in which they appear in the given file.
+   * @return  Array of certificates in the order in which they appear in the
+   * given file.
    *
    * @throws  CryptException  On certificate format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate[] readCertificateChain(final File chainFile, final String type)
+  public static Certificate[] readCertificateChain(
+    final File chainFile,
+    final String type)
     throws CryptException, IOException
   {
     return readCertificateChain(toInputStream(chainFile), type);
@@ -419,16 +454,20 @@ public class CryptReader
 
   /**
    * Reads a certificate chain of the default certificate type from an input
-   * stream containing data in any of the formats supported by {@link #readCertificateChain(InputStream, String)}.
+   * stream containing data in any of the formats supported by {@link
+   * #readCertificateChain(InputStream, String)}.
    *
    * @param  chainStream  Stream containing certificate chain data.
    *
-   * @return  Array of certificates in the order in which they appear in the stream.
+   * @return  Array of certificates in the order in which they appear in the
+   * stream.
    *
    * @throws  CryptException  On certificate read or format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate[] readCertificateChain(final InputStream chainStream) throws CryptException, IOException
+  public static Certificate[] readCertificateChain(
+    final InputStream chainStream)
+    throws CryptException, IOException
   {
     return readCertificateChain(chainStream, DEFAULT_CERTIFICATE_TYPE);
   }
@@ -447,12 +486,15 @@ public class CryptReader
    * @param  chainStream  Stream containing certificate chain data.
    * @param  type  Type of certificate to read, e.g. X.509.
    *
-   * @return  Array of certificates in the order in which they appear in the stream.
+   * @return  Array of certificates in the order in which they appear in the
+   * stream.
    *
    * @throws  CryptException  On certificate read or format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate[] readCertificateChain(final InputStream chainStream, final String type)
+  public static Certificate[] readCertificateChain(
+    final InputStream chainStream,
+    final String type)
     throws CryptException, IOException
   {
     if (!DEFAULT_CERTIFICATE_TYPE.equals(type)) {
@@ -464,11 +506,13 @@ public class CryptReader
 
   /**
    * Reads a certificate chain of the default certificate type from a byte array
-   * containing data in any of the formats supported by {@link #readCertificateChain(InputStream, String)}.
+   * containing data in any of the formats supported by {@link
+   * #readCertificateChain(InputStream, String)}.
    *
    * @param  chainBytes  Byte array containing certificate chain data.
    *
-   * @return  Array of certificates in the order in which they appear in the given byte array.
+   * @return  Array of certificates in the order in which they appear in the
+   * given byte array.
    *
    * @throws  CryptException  On certificate format errors.
    * @throws  IOException  On read errors.
@@ -481,18 +525,22 @@ public class CryptReader
 
 
   /**
-   * Reads a certificate chain of the given type from a byte array containing data in
-   * any of the formats supported by {@link #readCertificateChain(InputStream, String)}.
+   * Reads a certificate chain of the given type from a byte array containing
+   * data in any of the formats supported by {@link
+   * #readCertificateChain(InputStream, String)}.
    *
    * @param  chainBytes  Byte array containing certificate chain data.
    * @param  type  Type of certificate to read, e.g. X.509.
    *
-   * @return  Array of certificates in the order in which they appear in the given file.
+   * @return  Array of certificates in the order in which they appear in the
+   * given file.
    *
    * @throws  CryptException  On certificate format errors.
    * @throws  IOException  On read errors.
    */
-  public static Certificate[] readCertificateChain(final byte[] chainBytes, final String type)
+  public static Certificate[] readCertificateChain(
+    final byte[] chainBytes,
+    final String type)
     throws CryptException, IOException
   {
     return readCertificateChain(new ByteArrayInputStream(chainBytes), type);
@@ -500,7 +548,8 @@ public class CryptReader
 
 
   /**
-   * Reads a PEM or DER-encoded X.509 CRL from an input stream into an {@link X509CRL} object.
+   * Reads a PEM or DER-encoded X.509 CRL from an input stream into an {@link
+   * X509CRL} object.
    *
    * @param  crlStream  Input stream with CRL data.
    *
@@ -509,14 +558,16 @@ public class CryptReader
    * @throws  IOException  On read errors.
    * @throws  CryptException  On CRL read or format errors.
    */
-  public static X509CRL readCRL(final InputStream crlStream) throws CryptException, IOException
+  public static X509CRL readCRL(final InputStream crlStream)
+    throws CryptException, IOException
   {
     return new X509CRLCredentialReader().read(crlStream);
   }
 
 
   /**
-   * Reads a PEM or DER-encoded X.509 CRL from a file into an {@link X509CRL} object.
+   * Reads a PEM or DER-encoded X.509 CRL from a file into an {@link X509CRL}
+   * object.
    *
    * @param  crlFile  Path to CRL file.
    *
@@ -525,14 +576,16 @@ public class CryptReader
    * @throws  IOException  On read errors.
    * @throws  CryptException  On CRL read or format errors.
    */
-  public static X509CRL readCRL(final File crlFile) throws CryptException, IOException
+  public static X509CRL readCRL(final File crlFile)
+    throws CryptException, IOException
   {
     return new X509CRLCredentialReader().read(toInputStream(crlFile));
   }
 
 
   /**
-   * Reads a PEM or DER-encoded X.509 CRL from a byte array into an {@link X509CRL} object.
+   * Reads a PEM or DER-encoded X.509 CRL from a byte array into an {@link
+   * X509CRL} object.
    *
    * @param  crlBytes  Byte array containing CRL data.
    *
@@ -541,9 +594,11 @@ public class CryptReader
    * @throws  IOException  On read errors.
    * @throws  CryptException  On CRL read or format errors.
    */
-  public static X509CRL readCRL(final byte[] crlBytes) throws CryptException, IOException
+  public static X509CRL readCRL(final byte[] crlBytes)
+    throws CryptException, IOException
   {
-    return new X509CRLCredentialReader().read(new ByteArrayInputStream(crlBytes));
+    return
+      new X509CRLCredentialReader().read(new ByteArrayInputStream(crlBytes));
   }
 
 
@@ -556,9 +611,9 @@ public class CryptReader
    *
    * @throws  IOException  On IO errors.
    */
-  private static InputStream toInputStream(final File file) throws IOException
+  private static InputStream toInputStream(final File file)
+    throws IOException
   {
     return new BufferedInputStream(new FileInputStream(file));
   }
 }
-

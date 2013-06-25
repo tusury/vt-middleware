@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -18,7 +18,7 @@ package edu.vt.middleware.crypt.x509.types;
  * section 4.2.1.5 of RFC 2459.
  *
  * @author  Middleware Services
- * @version  $Revision: 427 $
+ * @version  $Revision$
  */
 public class PolicyQualifierInfo
 {
@@ -114,7 +114,7 @@ public class PolicyQualifierInfo
     } else {
       final PolicyQualifierInfo other = (PolicyQualifierInfo) obj;
       result = policyQualifierId.equals(other.getPolicyQualifierId()) &&
-          qualifier.equals(other.getQualifier());
+        qualifier.equals(other.getQualifier());
     }
     return result;
   }

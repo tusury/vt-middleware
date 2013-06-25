@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * Unit test for all subclasses of {@link DigestAlgorithm}.
  *
  * @author  Middleware Services
- * @version  $Revision: 84 $
+ * @version  $Revision$
  */
 public class DigestAlgorithmTest
 {

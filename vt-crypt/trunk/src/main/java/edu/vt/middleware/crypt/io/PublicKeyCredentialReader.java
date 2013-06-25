@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -28,11 +28,13 @@ import org.bouncycastle.asn1.DEREncodable;
  * @author  Middleware Services
  * @version  $Revision$
  */
-public class PublicKeyCredentialReader extends AbstractEncodedCredentialReader<PublicKey>
+public class PublicKeyCredentialReader
+  extends AbstractEncodedCredentialReader<PublicKey>
 {
 
   /** {@inheritDoc} */
-  protected PublicKey decode(final byte[] encoded) throws CryptException
+  protected PublicKey decode(final byte[] encoded)
+    throws CryptException
   {
     try {
       final ASN1Sequence seq = (ASN1Sequence) ASN1Object.fromByteArray(encoded);
@@ -49,7 +51,9 @@ public class PublicKeyCredentialReader extends AbstractEncodedCredentialReader<P
         throw new CryptException(
           "Unsupported public key algorithm ID " + algId);
       }
-      return CryptProvider.getKeyFactory(algorithm).generatePublic(new X509EncodedKeySpec(encoded));
+      return
+        CryptProvider.getKeyFactory(algorithm).generatePublic(
+          new X509EncodedKeySpec(encoded));
     } catch (Exception e) {
       throw new CryptException("Invalid public key.", e);
     }

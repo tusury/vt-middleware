@@ -1,7 +1,7 @@
 /*
   $Id$
 
-  Copyright (C) 2007-2011 Virginia Tech.
+  Copyright (C) 2003-2013 Virginia Tech.
   All rights reserved.
 
   SEE LICENSE FOR MORE INFORMATION
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
-
 import edu.vt.middleware.crypt.CryptException;
 import edu.vt.middleware.crypt.util.DERHelper;
 import edu.vt.middleware.crypt.x509.types.AccessDescriptionList;
@@ -29,7 +28,6 @@ import edu.vt.middleware.crypt.x509.types.KeyIdentifier;
 import edu.vt.middleware.crypt.x509.types.KeyPurposeIdList;
 import edu.vt.middleware.crypt.x509.types.KeyUsage;
 import edu.vt.middleware.crypt.x509.types.PolicyInformationList;
-
 import org.bouncycastle.asn1.DEREncodable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * http://www.faqs.org/rfcs/rfc2459.html.
  *
  * @author  Middleware Services
- * @version  $Revision: $
+ * @version  $Revision$
  */
 public final class ExtensionReader
 {
@@ -313,12 +311,14 @@ public final class ExtensionReader
    * @throws  CryptException  On errors reading encoded certificate extension
    * field data.
    */
-  public Map<ExtensionType, Object> readAll() throws CryptException
+  public Map<ExtensionType, Object> readAll()
+    throws CryptException
   {
-    final Map<ExtensionType, Object> map =
-      new HashMap<ExtensionType, Object>(ExtensionType.values().length);
+    final Map<ExtensionType, Object> map = new HashMap<ExtensionType, Object>(
+      ExtensionType.values().length);
     for (ExtensionType type : ExtensionType.values()) {
       logger.debug("Reading {}", type);
+
       final Object extension = read(type);
       if (extension != null) {
         map.put(type, extension);
