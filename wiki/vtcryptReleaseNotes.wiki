@@ -2,6 +2,16 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 2.2 =
+  * Library now requires Java 1.6
+  * Implement clone for algorithms. ([http://code.google.com/p/vt-middleware/issues/detail?id=152 Issue 152])
+  * Convert logging from commons-logging to slf4j. ([http://code.google.com/p/vt-middleware/issues/detail?id=128 Issue 128])
+  * Add additional X.509 helper methods. ([http://code.google.com/p/vt-middleware/issues/detail?id=126 Issue 126])
+  * Support signing and verify signed MACs. ([http://code.google.com/p/vt-middleware/issues/detail?id=125 Issue 125])
+  * Add some additional functionality to CryptReader. ([http://code.google.com/p/vt-middleware/issues/detail?id=124 Issue 124])
+  * Add some additional support for keys. ([http://code.google.com/p/vt-middleware/issues/detail?id=123 Issue 123])
+  * Mark commons-cli as an optional dependency. ([http://code.google.com/p/vt-middleware/issues/detail?id=122 Issue 122])
+
 = Version 2.1.4 =
   * Fix typo that affected X.509 certificate DN parsing capabilities. ([http://code.google.com/p/vt-middleware/issues/detail?id=119 Issue 119])
 = Version 2.1.3 =
