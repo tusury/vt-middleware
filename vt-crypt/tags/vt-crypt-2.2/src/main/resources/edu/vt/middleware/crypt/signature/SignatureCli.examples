@@ -1,0 +1,17 @@
+- Create a base-64-encoded DSA signature of a file
+
+  sign -sign -alg DSA -key path/to/dsa-priv-key.der -encoding base64 \
+       -in path/to/file.txt
+
+
+- Create a hex-encoded RSA signature of a file using an MD5 digest
+
+  sign -sign -alg RSA -key path/to/dsa-priv-key.der -digest MD5 \
+       -encoding base64 -in path/to/file.txt
+
+
+- Verify a hex-encoded RSA signature using a PEM-encoded RSA public key
+  (PEM-encoded key is determined by .pem file extension)
+ 
+  sign -verify path/to/sig.hex -alg RSA -key path/to/rsa-pub-key.pem \
+       -encoding hex -in path/to/file.txt
