@@ -205,8 +205,6 @@ public class ApacheLdapConnection implements ProviderConnection
       processLdapOperationException(e);
     } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
-    } catch (IOException e) {
-      throw new LdapException(e);
     }
     return response;
   }
@@ -244,8 +242,6 @@ public class ApacheLdapConnection implements ProviderConnection
       processLdapOperationException(e);
     } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
-    } catch (IOException e) {
-      throw new LdapException(e);
     }
     return response;
   }
@@ -312,8 +308,6 @@ public class ApacheLdapConnection implements ProviderConnection
       processLdapOperationException(e);
     } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       processLdapException(e);
-    } catch (IOException e) {
-      throw new LdapException(e);
     }
     return response;
   }

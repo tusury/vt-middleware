@@ -96,9 +96,6 @@ public class ApacheLdapConnectionFactory
     } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       closeConn = true;
       throw new ConnectionException(e);
-    } catch (IOException e) {
-      closeConn = true;
-      throw new ConnectionException(e);
     } catch (RuntimeException e) {
       closeConn = true;
       throw e;
