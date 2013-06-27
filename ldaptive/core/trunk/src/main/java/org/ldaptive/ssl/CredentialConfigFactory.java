@@ -13,10 +13,14 @@
 */
 package org.ldaptive.ssl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import org.ldaptive.LdapUtils;
 
 /**
  * Utility class for creating credential configs when the underlying credential
@@ -170,5 +174,41 @@ public final class CredentialConfigFactory
         return sslInit;
       }
     };
+  }
+
+
+  /**
+   * Creates a X509CredentialConfig from PEM encoded certificate(s).
+   *
+   * @param  trustCertificates  to create credential config from
+   *
+   * @return  credential config
+   */
+  public static CredentialConfig createX509CredentialConfig(
+    final String trustCertificates)
+  {
+    return
+      new CredentialConfig() {
+        @Override
+        public SSLContextInitializer createSSLContextInitializer()
+          throws GeneralSecurityException
+        {
+          final X509SSLContextInitializer sslInit =
+            new X509SSLContextInitializer();
+          try {
+            if (trustCertificates != null) {
+              final X509CertificatesCredentialReader certsReader =
+                new X509CertificatesCredentialReader();
+              final InputStream trustCertStream = new ByteArrayInputStream(
+                LdapUtils.utf8Encode(trustCertificates));
+              sslInit.setTrustCertificates(certsReader.read(trustCertStream));
+              trustCertStream.close();
+            }
+          } catch (IOException e) {
+            throw new GeneralSecurityException(e);
+          }
+          return sslInit;
+        }
+      };
   }
 }
