@@ -113,11 +113,16 @@ public abstract class AbstractServletSearchExecutor
     final HttpServletResponse response)
     throws LdapException, IOException
   {
-    final SearchResult result = searchExecutor.search(
-      connectionFactory,
-      request.getParameter("query"),
-      request.getParameterValues("attrs")).getResult();
-    writeResponse(result, response);
+    final String queryString = request.getParameter("query");
+    if (queryString == null || queryString.length() == 0) {
+      logger.info("Ignoring empty query");
+    } else {
+      final SearchResult result = searchExecutor.search(
+        connectionFactory,
+        queryString,
+        request.getParameterValues("attrs")).getResult();
+      writeResponse(result, response);
+    }
   }
 
 
