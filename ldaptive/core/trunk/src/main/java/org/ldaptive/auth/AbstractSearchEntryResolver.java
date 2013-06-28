@@ -19,6 +19,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.handler.SearchEntryHandler;
 
 /**
  * Base implementation for search entry resolvers.
@@ -32,6 +33,9 @@ public abstract class AbstractSearchEntryResolver
 
   /** User attributes to return. */
   private String[] retAttrs;
+
+  /** Ldap entry handlers. */
+  private SearchEntryHandler[] entryHandlers;
 
 
   /**
@@ -53,6 +57,28 @@ public abstract class AbstractSearchEntryResolver
   public void setReturnAttributes(final String... attrs)
   {
     retAttrs = attrs;
+  }
+
+
+  /**
+   * Returns the search entry handlers.
+   *
+   * @return  search entry handlers
+   */
+  public SearchEntryHandler[] getSearchEntryHandlers()
+  {
+    return entryHandlers;
+  }
+
+
+  /**
+   * Sets the search entry handlers.
+   *
+   * @param  handlers  search entry handlers
+   */
+  public void setSearchEntryHandlers(final SearchEntryHandler... handlers)
+  {
+    entryHandlers = handlers;
   }
 
 
@@ -85,8 +111,11 @@ public abstract class AbstractSearchEntryResolver
     final AuthenticationCriteria ac,
     final String[] returnAttributes)
   {
-    return
-      SearchRequest.newObjectScopeSearchRequest(ac.getDn(), returnAttributes);
+    final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(
+      ac.getDn(),
+      returnAttributes);
+    sr.setSearchEntryHandlers(entryHandlers);
+    return sr;
   }
 
 
