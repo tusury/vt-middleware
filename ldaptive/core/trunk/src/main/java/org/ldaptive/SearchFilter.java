@@ -13,6 +13,7 @@
 */
 package org.ldaptive;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,6 +87,17 @@ public class SearchFilter
 
 
   /**
+   * Gets the filter parameters.
+   *
+   * @return  unmodifiable map of filter parameters
+   */
+  public Map<String, Object> getParameters()
+  {
+    return Collections.unmodifiableMap(parameters);
+  }
+
+
+  /**
    * Sets a positional filter parameter.
    *
    * @param  position  of the parameter in the filter
@@ -127,7 +139,7 @@ public class SearchFilter
    * Returns this filter with it's parameters encoded and replaced. See {@link
    * #encode(Object)}.
    *
-   * @return  formated and encoded filter
+   * @return  formatted and encoded filter
    */
   public String format()
   {
@@ -152,7 +164,7 @@ public class SearchFilter
    *
    * @return  encoded object
    */
-  private static String encode(final Object obj)
+  protected static String encode(final Object obj)
   {
     if (obj == null) {
       return null;
