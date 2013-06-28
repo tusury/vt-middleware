@@ -127,7 +127,7 @@ public abstract class AbstractServletSearchTemplatesExecutor
       logger.info("Ignoring empty query");
       doSearch = false;
     }
-    if (ignorePattern != null) {
+    if (doSearch && ignorePattern != null) {
       final Matcher matcher = ignorePattern.matcher(queryString);
       if (matcher.matches()) {
         logger.info("Ignoring query {}", queryString);
