@@ -324,11 +324,11 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   @Override
   public void close()
   {
+    isInitialized();
     logger.debug(
       "closing connection pool of size {} for {}",
       available.size() + active.size(),
       this);
-    isInitialized();
     poolLock.lock();
     try {
       while (!available.isEmpty()) {
