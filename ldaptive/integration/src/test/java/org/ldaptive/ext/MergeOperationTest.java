@@ -20,6 +20,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -91,37 +92,55 @@ public class MergeOperationTest extends AbstractTest
   public void merge()
     throws Exception
   {
-    final LdapEntry source = new LdapEntry(
-      testLdapEntry.getDn(), testLdapEntry.getAttributes());
-
-    final LdapAttribute gn = new LdapAttribute("givenName");
-    gn.addStringValues(source.getAttribute("givenName").getStringValues());
-    gn.addStringValue("John");
-    gn.addStringValue("John");
-    source.addAttribute(gn);
-    final LdapAttribute cn = new LdapAttribute("cn");
-    cn.addStringValues(source.getAttribute("cn").getStringValues());
-    cn.addStringValue("John Calvin Coolidge, Jr.");
-    source.addAttribute(cn);
+    final LdapEntry source = new LdapEntry(testLdapEntry.getDn());
 
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       final MergeOperation merge = new MergeOperation(conn);
       final MergeRequest request = new MergeRequest(source);
-      request.setIgnoreAttributes(new String[] {"givenName", "cn"});
+      if (TestControl.isActiveDirectory()) {
+        // remove objectClass for comparison testing related to AD
+        testLdapEntry.removeAttribute("objectClass");
+        source.addAttributes(testLdapEntry.getAttributes());
+        // these attributes are single value in AD
+        source.addAttribute(new LdapAttribute("givenName", "John"));
+        source.addAttribute(new LdapAttribute("initials", "JC"));
+        request.setIncludeAttributes("uid");
+      } else {
+        source.addAttributes(testLdapEntry.getAttributes());
+        final LdapAttribute gn = new LdapAttribute("givenName");
+        gn.addStringValues(
+          testLdapEntry.getAttribute("givenName").getStringValues());
+        gn.addStringValue("John");
+        source.addAttribute(gn);
+        final LdapAttribute initials = new LdapAttribute("initials");
+        initials.addStringValues(
+          testLdapEntry.getAttribute("initials").getStringValues());
+        initials.addStringValue("JC");
+        source.addAttribute(initials);
+        request.setExcludeAttributes("givenName", "initials");
+      }
+      // no-op, include/exclude should prevent a modify from occurring
       merge.execute(request);
 
       final SearchOperation search = new SearchOperation(conn);
       SearchResult result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(source.getDn())).getResult();
+        SearchRequest.newObjectScopeSearchRequest(
+          testLdapEntry.getDn(),
+          testLdapEntry.getAttributeNames())).getResult();
       TestUtils.assertEquals(testLdapEntry, result.getEntry());
 
-      request.setIgnoreAttributes(null);
+      if (TestControl.isActiveDirectory()) {
+        request.setIncludeAttributes("givenName", "initials");
+      } else {
+        request.setExcludeAttributes(null);
+      }
       merge.execute(request);
 
       result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(source.getDn())).getResult();
+        SearchRequest.newObjectScopeSearchRequest(
+          source.getDn(), source.getAttributeNames())).getResult();
       TestUtils.assertEquals(source, result.getEntry());
     } finally {
       conn.close();
