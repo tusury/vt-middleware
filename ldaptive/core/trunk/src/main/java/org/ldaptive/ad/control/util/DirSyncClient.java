@@ -210,6 +210,7 @@ public class DirSyncClient
   {
     final SearchOperation search = new SearchOperation(connection);
     request.setControls(createRequestControls(manager.readCookie()));
+
     final Response<SearchResult> response = search.execute(request);
     final byte[] cookie = getDirSyncCookie(response);
     if (cookie != null) {

@@ -43,6 +43,7 @@ import org.ldaptive.SearchResult;
  *   <li>if the request is for a delete, execute a delete</li>
  *   <li>if the entry exists in the LDAP, execute a modify</li>
  * </ul>
+ *
  * <p>{@link LdapEntry#computeModifications(LdapEntry, LdapEntry)} is used to
  * determine the list of attribute modifications that are necessary to perform
  * the merge. Either {@link MergeRequest#getIncludeAttributes()} or {@link
@@ -183,11 +184,12 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
       if (!resultModifications.isEmpty()) {
         logger.info(
           "modifying target entry {} with modifications {} from source entry " +
-            "{} for request {}",
+          "{} for request {}",
           target,
           resultModifications,
           source,
           request);
+
         final ModifyOperation modify = new ModifyOperation(getConnection());
         response = modify.execute(
           new ModifyRequest(

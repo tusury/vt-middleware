@@ -189,26 +189,26 @@ public final class CredentialConfigFactory
   {
     return
       new CredentialConfig() {
-        @Override
-        public SSLContextInitializer createSSLContextInitializer()
-          throws GeneralSecurityException
-        {
-          final X509SSLContextInitializer sslInit =
-            new X509SSLContextInitializer();
-          try {
-            if (trustCertificates != null) {
-              final X509CertificatesCredentialReader certsReader =
-                new X509CertificatesCredentialReader();
-              final InputStream trustCertStream = new ByteArrayInputStream(
-                LdapUtils.utf8Encode(trustCertificates));
-              sslInit.setTrustCertificates(certsReader.read(trustCertStream));
-              trustCertStream.close();
-            }
-          } catch (IOException e) {
-            throw new GeneralSecurityException(e);
+      @Override
+      public SSLContextInitializer createSSLContextInitializer()
+        throws GeneralSecurityException
+      {
+        final X509SSLContextInitializer sslInit =
+          new X509SSLContextInitializer();
+        try {
+          if (trustCertificates != null) {
+            final X509CertificatesCredentialReader certsReader =
+              new X509CertificatesCredentialReader();
+            final InputStream trustCertStream = new ByteArrayInputStream(
+              LdapUtils.utf8Encode(trustCertificates));
+            sslInit.setTrustCertificates(certsReader.read(trustCertStream));
+            trustCertStream.close();
           }
-          return sslInit;
+        } catch (IOException e) {
+          throw new GeneralSecurityException(e);
         }
-      };
+        return sslInit;
+      }
+    };
   }
 }

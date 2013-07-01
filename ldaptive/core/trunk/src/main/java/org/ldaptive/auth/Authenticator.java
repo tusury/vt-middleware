@@ -262,9 +262,9 @@ public class Authenticator
       dn);
 
     final AuthenticationResponse authResponse = new AuthenticationResponse(
-      response.getResult() ?
-        AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS :
-        AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
+      response.getResult()
+        ? AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS
+        : AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
       response.getResultCode(),
       entry,
       response.getMessage(),
