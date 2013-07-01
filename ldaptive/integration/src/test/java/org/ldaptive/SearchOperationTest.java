@@ -45,6 +45,7 @@ import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.handler.SearchReferenceHandler;
+import org.ldaptive.io.GeneralizedTimeValueTranscoder;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.testng.AssertJUnit;
@@ -1002,6 +1003,16 @@ public class SearchOperationTest extends AbstractTest
       final GetStatsControl ctrl =
         (GetStatsControl) response.getControl(GetStatsControl.OID);
       AssertJUnit.assertTrue(ctrl.getStatistics().size() > 1);
+
+      final LdapAttribute whenCreated =
+        response.getResult().getEntry().getAttribute("whenCreated");
+      AssertJUnit.assertNotNull(
+        whenCreated.getValue(new GeneralizedTimeValueTranscoder()));
+
+      final LdapAttribute whenChanged =
+        response.getResult().getEntry().getAttribute("whenChanged");
+      AssertJUnit.assertNotNull(
+        whenChanged.getValue(new GeneralizedTimeValueTranscoder()));
     } finally {
       conn.close();
     }
