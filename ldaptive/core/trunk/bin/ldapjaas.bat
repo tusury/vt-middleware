@@ -11,7 +11,7 @@ set LIBDIR=%LDAPTIVE_HOME%\lib
 
 set JAAS_OPTS=-Djava.security.auth.login.config=%LDAPTIVE_HOME%\bin\ldap_jaas.config
 
-set CLASSPATH=%LIBDIR%\commons-cli-1.2.jar;%LIBDIR%\slf4j-api-1.7.3.jar;%LDAP_JAR%
+set CLASSPATH=%LIBDIR%\commons-cli-1.2.jar;%LIBDIR%\slf4j-api-1.7.5.jar;%LDAP_JAR%
 
 call "%JAVA%" "%JAAS_OPTS%" -cp "%CLASSPATH%" org.ldaptive.jaas.LdapLoginModule %*
 goto end

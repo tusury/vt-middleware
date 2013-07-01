@@ -9,7 +9,7 @@ set JAVA=%JAVA_HOME%\bin\java
 set LDAP_JAR=%LDAPTIVE_HOME%\jars\ldaptive-${project.version}.jar
 set LIBDIR=%LDAPTIVE_HOME%\lib
 
-set CLASSPATH=%LIBDIR%\commons-cli-1.2.jar;%LIBDIR%\commons-codec-1.6.jar;%LDAP_JAR%
+set CLASSPATH=%LIBDIR%\commons-cli-1.2.jar;%LIBDIR%\slf4j-api-1.7.5.jar;%LDAP_JAR%
 
 call "%JAVA%" -cp "%CLASSPATH%" org.ldaptive.cli.AuthenticatorCli %*
 goto end
