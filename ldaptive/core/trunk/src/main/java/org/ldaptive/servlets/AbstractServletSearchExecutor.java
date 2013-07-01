@@ -114,7 +114,7 @@ public abstract class AbstractServletSearchExecutor
     throws LdapException, IOException
   {
     final String queryString = request.getParameter("query");
-    if (queryString == null || queryString.length() == 0) {
+    if (queryString == null || queryString.isEmpty()) {
       logger.info("Ignoring empty query");
     } else {
       final SearchResult result = searchExecutor.search(
