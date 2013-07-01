@@ -292,6 +292,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     logger.trace(
       "waiting for pool lock to initialize pool {}",
       poolLock.getQueueLength());
+
     int count = 0;
     poolLock.lock();
     try {
@@ -700,7 +701,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       }
       grow(getPoolConfig().getMinPoolSize());
       logger.debug(
-        "pool size after validation is {}", available.size() + active.size());
+        "pool size after validation is {}",
+        available.size() + active.size());
     } finally {
       poolLock.unlock();
     }

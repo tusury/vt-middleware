@@ -565,8 +565,9 @@ public class JndiConnection implements ProviderConnection
     try {
       try {
         ctx = initializeContext(request);
-        final JndiExtendedResponse jndiExtRes =
-          (JndiExtendedResponse) ctx.extendedOperation(
+
+        final JndiExtendedResponse jndiExtRes = (JndiExtendedResponse)
+          ctx.extendedOperation(
             new JndiExtendedRequest(request.getOID(), request.encode()));
         final ExtendedResponse<?> extRes =
           ExtendedResponseFactory.createExtendedResponse(

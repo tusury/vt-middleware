@@ -542,7 +542,8 @@ public class LdapAttribute extends AbstractLdapBean
   private static <E> Comparator<E> getComparator(final Class<E> c)
   {
     if (c.isAssignableFrom(byte[].class)) {
-      return new Comparator<E>() {
+      return
+        new Comparator<E>() {
         @Override
         public int compare(final E o1, final E o2)
         {
@@ -552,7 +553,8 @@ public class LdapAttribute extends AbstractLdapBean
         }
       };
     } else {
-      return new Comparator<E>() {
+      return
+        new Comparator<E>() {
         @Override
         public int compare(final E o1, final E o2)
         {

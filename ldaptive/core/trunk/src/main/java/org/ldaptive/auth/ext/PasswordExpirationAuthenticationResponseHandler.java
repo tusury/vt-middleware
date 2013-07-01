@@ -41,9 +41,8 @@ public class PasswordExpirationAuthenticationResponseHandler
   @Override
   public void handle(final AuthenticationResponse response)
   {
-    final PasswordExpiringControl expiringControl =
-      (PasswordExpiringControl)
-        response.getControl(PasswordExpiringControl.OID);
+    final PasswordExpiringControl expiringControl = (PasswordExpiringControl)
+      response.getControl(PasswordExpiringControl.OID);
     if (expiringControl != null) {
       if (expiringControl.getTimeBeforeExpiration() > 0) {
         final Calendar exp = Calendar.getInstance();
@@ -57,9 +56,8 @@ public class PasswordExpirationAuthenticationResponseHandler
     }
 
     if (response.getAccountState() == null) {
-      final PasswordExpiredControl expiredControl =
-        (PasswordExpiredControl)
-          response.getControl(PasswordExpiredControl.OID);
+      final PasswordExpiredControl expiredControl = (PasswordExpiredControl)
+        response.getControl(PasswordExpiredControl.OID);
       if (expiredControl != null) {
         response.setAccountState(
           new PasswordExpirationAccountState(

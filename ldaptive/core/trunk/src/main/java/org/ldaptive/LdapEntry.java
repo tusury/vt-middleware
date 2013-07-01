@@ -302,8 +302,8 @@ public class LdapEntry extends AbstractLdapBean
    * @param  source  ldap entry containing new data
    * @param  target  ldap entry containing existing data
    *
-   * @return  attribute modifications needed to change target into source or
-   * an empty array
+   * @return  attribute modifications needed to change target into source or an
+   * empty array
    */
   public static AttributeModification[] computeModifications(
     final LdapEntry source,
@@ -312,27 +312,27 @@ public class LdapEntry extends AbstractLdapBean
     final List<AttributeModification> mods =
       new ArrayList<AttributeModification>();
     for (LdapAttribute sourceAttr : source.getAttributes()) {
-      final LdapAttribute targetAttr =
-        target.getAttribute(sourceAttr.getName());
+      final LdapAttribute targetAttr = target.getAttribute(
+        sourceAttr.getName());
       if (targetAttr == null) {
-        final AttributeModification mod =
-          new AttributeModification(AttributeModificationType.ADD,
-            sourceAttr);
+        final AttributeModification mod = new AttributeModification(
+          AttributeModificationType.ADD,
+          sourceAttr);
         mods.add(mod);
       } else if (!targetAttr.equals(sourceAttr)) {
-        final AttributeModification mod =
-          new AttributeModification(AttributeModificationType.REPLACE,
-            sourceAttr);
+        final AttributeModification mod = new AttributeModification(
+          AttributeModificationType.REPLACE,
+          sourceAttr);
         mods.add(mod);
       }
     }
     for (LdapAttribute targetAttr : target.getAttributes()) {
-      final LdapAttribute sourceAttr =
-        source.getAttribute(targetAttr.getName());
+      final LdapAttribute sourceAttr = source.getAttribute(
+        targetAttr.getName());
       if (sourceAttr == null) {
-        final AttributeModification mod =
-          new AttributeModification(AttributeModificationType.REMOVE,
-            targetAttr);
+        final AttributeModification mod = new AttributeModification(
+          AttributeModificationType.REMOVE,
+          targetAttr);
         mods.add(mod);
       }
     }

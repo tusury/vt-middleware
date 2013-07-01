@@ -26,9 +26,7 @@ public class DefaultCookieManager implements CookieManager
   private byte[] cookie;
 
 
-  /**
-   * Creates a new default cookie manager.
-   */
+  /** Creates a new default cookie manager. */
   public DefaultCookieManager() {}
 
 

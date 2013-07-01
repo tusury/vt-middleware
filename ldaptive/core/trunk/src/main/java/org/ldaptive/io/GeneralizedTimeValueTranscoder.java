@@ -96,8 +96,8 @@ public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
     };
 
   /** Describes the fractional part of a generalized time string. */
-  private static enum FractionalPart
-  {
+  private static enum FractionalPart {
+
     /** Fractional hours. */
     Hours(3600000),
 
@@ -127,7 +127,7 @@ public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
      *
      * @param  fraction  digits of fractional date part
      *
-     * @return fraction converted to milliseconds.
+     * @return  fraction converted to milliseconds.
      */
     int toMillis(final String fraction)
     {
@@ -197,10 +197,12 @@ public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
     if (value == null) {
       throw new IllegalArgumentException("String to parse cannot be null.");
     }
+
     final Matcher m = TIME_REGEX.matcher(value);
     if (!m.matches()) {
       throw new ParseException(
-        "Invalid generalized time string.", value.length());
+        "Invalid generalized time string.",
+        value.length());
     }
 
     // CheckStyle:MagicNumber OFF
@@ -212,6 +214,7 @@ public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
     } else {
       tz = TimeZone.getTimeZone("GMT" + tzString);
     }
+
     final Calendar calendar = Calendar.getInstance(tz, DEFAULT_LOCALE);
 
     // Initialize calendar and impose strict calendrical field constraints

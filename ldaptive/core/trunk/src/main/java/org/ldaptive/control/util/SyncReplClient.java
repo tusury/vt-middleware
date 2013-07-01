@@ -108,8 +108,8 @@ public class SyncReplClient
   public BlockingQueue<SyncReplItem> execute(final SearchRequest request)
     throws LdapException
   {
-    final CookieManager manager =
-      cookieManager != null ? cookieManager : new DefaultCookieManager();
+    final CookieManager manager = cookieManager != null
+      ? cookieManager : new DefaultCookieManager();
     return execute(request, manager);
   }
 
@@ -168,6 +168,7 @@ public class SyncReplClient
           try {
             logger.debug("received {}", response);
             search.shutdown();
+
             final SyncReplItem item = new SyncReplItem(
               new SyncReplItem.Response(response));
             if (item.getResponse().getSyncDoneControl() != null) {
@@ -238,6 +239,7 @@ public class SyncReplClient
         {
           try {
             logger.debug("received {}", entry);
+
             final SyncReplItem item = new SyncReplItem(
               new SyncReplItem.Entry(entry));
             if (item.getEntry().getSyncStateControl() != null) {
@@ -269,6 +271,7 @@ public class SyncReplClient
           if (SyncInfoMessage.OID.equals(response.getOID())) {
             try {
               logger.debug("received {}", response);
+
               final SyncInfoMessage message = (SyncInfoMessage) response;
               if (message.getCookie() != null) {
                 manager.writeCookie(message.getCookie());

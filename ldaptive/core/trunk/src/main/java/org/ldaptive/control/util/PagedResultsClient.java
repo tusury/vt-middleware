@@ -142,6 +142,7 @@ public class PagedResultsClient
     final SearchOperation search = new SearchOperation(connection);
     request.setControls(
       new PagedResultsControl(resultSize, manager.readCookie(), true));
+
     final Response<SearchResult> response = search.execute(request);
     final byte[] cookie = getPagedResultsCookie(response);
     if (cookie != null) {
