@@ -43,9 +43,22 @@ public class SpringTest
         "/spring-context.xml",
       });
     AssertJUnit.assertTrue(context.getBeanDefinitionCount() > 0);
-    final ConnectionFactory cf =
+    ConnectionFactory cf =
       context.getBean("connectionFactory", ConnectionFactory.class);
-    final Connection conn = cf.getConnection();
+    Connection conn = cf.getConnection();
+    try {
+      conn.open();
+    } finally {
+      conn.close();
+    }
+
+    final ClassPathXmlApplicationContext factoryContext =
+      new ClassPathXmlApplicationContext(new String[] {
+        "/spring-factory-context.xml",
+      });
+    AssertJUnit.assertTrue(factoryContext.getBeanDefinitionCount() > 0);
+    cf = factoryContext.getBean("connectionFactory", ConnectionFactory.class);
+    conn = cf.getConnection();
     try {
       conn.open();
     } finally {
