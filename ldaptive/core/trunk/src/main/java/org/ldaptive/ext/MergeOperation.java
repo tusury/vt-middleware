@@ -180,7 +180,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
           resultModifications.add(am);
         }
       }
-      if (resultModifications.size() > 0) {
+      if (!resultModifications.isEmpty()) {
         logger.info(
           "modifying target entry {} with modifications {} from source entry " +
             "{} for request {}",
