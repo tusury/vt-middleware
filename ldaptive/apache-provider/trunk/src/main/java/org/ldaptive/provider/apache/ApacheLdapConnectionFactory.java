@@ -13,7 +13,6 @@
 */
 package org.ldaptive.provider.apache;
 
-import java.io.IOException;
 import org.apache.directory.api.ldap.model.exception.LdapOperationException;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
