@@ -14,6 +14,7 @@
 package org.ldaptive.servlets;
 
 import java.io.IOException;
+import java.util.Arrays;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -101,7 +102,7 @@ public final class SearchServlet extends HttpServlet
     logger.info(
       "search={} for attributes={}",
       request.getParameter("query"),
-      request.getParameter("attrs"));
+      Arrays.toString(request.getParameterValues("attrs")));
     try {
       searchExecutor.search(request, response);
     } catch (Exception e) {
