@@ -17,6 +17,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Used by {@link SortRequestControl} to declare how sorting should occur.
+ * See RFC 3698 for the definition of matchingRuleId.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
