@@ -13,7 +13,6 @@
 */
 package org.ldaptive.auth;
 
-import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -31,8 +30,8 @@ public abstract class AbstractSearchEntryResolver
   extends AbstractSearchOperationFactory implements EntryResolver
 {
 
-  /** User attributes to return. */
-  private String[] retAttrs;
+  /** @deprecated  User attributes to return. */
+  @Deprecated private String[] retAttrs;
 
   /** Ldap entry handlers. */
   private SearchEntryHandler[] entryHandlers;
@@ -42,7 +41,10 @@ public abstract class AbstractSearchEntryResolver
    * Returns the return attributes.
    *
    * @return  attributes to return
+   *
+   * @deprecated  return attributes retrieved from the authentication request
    */
+  @Deprecated
   public String[] getReturnAttributes()
   {
     return retAttrs;
@@ -53,7 +55,10 @@ public abstract class AbstractSearchEntryResolver
    * Sets the return attributes.
    *
    * @param  attrs  to return
+   *
+   * @deprecated  return attributes retrieved from the authentication request
    */
+  @Deprecated
   public void setReturnAttributes(final String... attrs)
   {
     retAttrs = attrs;
@@ -106,7 +111,10 @@ public abstract class AbstractSearchEntryResolver
    * @param  returnAttributes  to request
    *
    * @return  search request
+   *
+   * @deprecated  use {@link #createSearchRequest(AuthenticationCriteria)}
    */
+  @Deprecated
   protected SearchRequest createSearchRequest(
     final AuthenticationCriteria ac,
     final String[] returnAttributes)
@@ -119,6 +127,24 @@ public abstract class AbstractSearchEntryResolver
   }
 
 
+  /**
+   * Returns a search request for an object level search on the DN found in the
+   * authentication criteria.
+   *
+   * @param  ac  authentication criteria containing a DN
+   *
+   * @return  search request
+   */
+  protected SearchRequest createSearchRequest(final AuthenticationCriteria ac)
+  {
+    final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(
+      ac.getDn(),
+      ac.getAuthenticationRequest().getReturnAttributes());
+    sr.setSearchEntryHandlers(entryHandlers);
+    return sr;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public LdapEntry resolve(
@@ -126,19 +152,9 @@ public abstract class AbstractSearchEntryResolver
     final AuthenticationCriteria ac)
     throws LdapException
   {
-    logger.debug(
-      "resolve criteria={} with attributes={}",
-      ac,
-      retAttrs == null ? "<all attributes>" : Arrays.toString(retAttrs));
-
+    logger.debug("resolve criteria={}", ac);
     final SearchResult result = performLdapSearch(conn, ac);
-    logger.debug(
-      "resolved result={} for criteria={} with attributes={}",
-      new Object[] {
-        result,
-        ac,
-        retAttrs == null ? "<all attributes>" : Arrays.toString(retAttrs),
-      });
+    logger.debug("resolved result={} for criteria={}", result, ac);
     return resolveEntry(result);
   }
 

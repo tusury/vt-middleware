@@ -57,7 +57,10 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
    *
    * @param  cf  connection factory
    * @param  attrs  to return
+   *
+   * @deprecated  return attributes are provided in the authentication criteria
    */
+  @Deprecated
   public PooledSearchEntryResolver(
     final PooledConnectionFactory cf,
     final String... attrs)
@@ -96,7 +99,7 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
 
       final SearchOperation op = createSearchOperation(pooledConn);
       return
-        op.execute(createSearchRequest(ac, getReturnAttributes())).getResult();
+        op.execute(createSearchRequest(ac)).getResult();
     } finally {
       if (pooledConn != null) {
         pooledConn.close();
@@ -111,11 +114,10 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   {
     return
       String.format(
-        "[%s@%d::factory=%s, returnAttributes=%s, searchEntryHandlers=%s]",
+        "[%s@%d::factory=%s, searchEntryHandlers=%s]",
         getClass().getName(),
         hashCode(),
         factory,
-        Arrays.toString(getReturnAttributes()),
         Arrays.toString(getSearchEntryHandlers()));
   }
 }
