@@ -47,7 +47,10 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
    * Creates a new search entry resolver.
    *
    * @param  attrs  to return
+   *
+   * @deprecated  return attributes are provided in the authentication criteria
    */
+  @Deprecated
   public SearchEntryResolver(final String... attrs)
   {
     setReturnAttributes(attrs);
@@ -70,7 +73,10 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
    *
    * @param  cf  connection factory
    * @param  attrs  to return
+   *
+   * @deprecated  return attributes are provided in the authentication criteria
    */
+  @Deprecated
   public SearchEntryResolver(final ConnectionFactory cf, final String... attrs)
   {
     setConnectionFactory(cf);
@@ -103,8 +109,7 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   {
     if (factory == null) {
       final SearchOperation op = createSearchOperation(conn);
-      return
-        op.execute(createSearchRequest(ac, getReturnAttributes())).getResult();
+      return op.execute(createSearchRequest(ac)).getResult();
     } else {
       Connection factoryConn = null;
       try {
@@ -112,8 +117,7 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
         factoryConn.open();
 
         final SearchOperation op = createSearchOperation(factoryConn);
-        return op.execute(
-          createSearchRequest(ac, getReturnAttributes())).getResult();
+        return op.execute(createSearchRequest(ac)).getResult();
       } finally {
         if (factoryConn != null) {
           factoryConn.close();
@@ -129,11 +133,10 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   {
     return
       String.format(
-        "[%s@%d::factory=%s, returnAttributes=%s, searchEntryHandlers=%s]",
+        "[%s@%d::factory=%s, searchEntryHandlers=%s]",
         getClass().getName(),
         hashCode(),
         factory,
-        Arrays.toString(getReturnAttributes()),
         Arrays.toString(getSearchEntryHandlers()));
   }
 }

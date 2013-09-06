@@ -27,8 +27,8 @@ public class AuthenticationCriteria
   /** dn. */
   private String authenticationDn;
 
-  /** credential. */
-  private Credential credential;
+  /** authentication request. */
+  private AuthenticationRequest authenticationRequest;
 
 
   /** Default constructor. */
@@ -38,11 +38,26 @@ public class AuthenticationCriteria
   /**
    * Creates a new authentication criteria.
    *
-   * @param  dn  to set
+   * @param  dn  to authenticate
    */
   public AuthenticationCriteria(final String dn)
   {
     authenticationDn = dn;
+  }
+
+
+  /**
+   * Creates a new authentication criteria.
+   *
+   * @param  dn  to authenticate
+   * @param  request  that initiated the authentication
+   */
+  public AuthenticationCriteria(
+    final String dn,
+    final AuthenticationRequest request)
+  {
+    authenticationDn = dn;
+    authenticationRequest = request;
   }
 
 
@@ -75,7 +90,7 @@ public class AuthenticationCriteria
    */
   public Credential getCredential()
   {
-    return credential;
+    return authenticationRequest.getCredential();
   }
 
 
@@ -83,10 +98,36 @@ public class AuthenticationCriteria
    * Sets the credential.
    *
    * @param  c  to set credential
+   *
+   * @deprecated  use {@link #setAuthenticationRequest(AuthenticationRequest)}
+   * instead
    */
+  @Deprecated
   public void setCredential(final Credential c)
   {
-    credential = c;
+    authenticationRequest.setCredential(c);
+  }
+
+
+  /**
+   * Returns the authentication request.
+   *
+   * @return  authentication request
+   */
+  public AuthenticationRequest getAuthenticationRequest()
+  {
+    return authenticationRequest;
+  }
+
+
+  /**
+   * Sets the authentication request.
+   *
+   * @param  request  to set authentication request
+   */
+  public void setAuthenticationRequest(final AuthenticationRequest request)
+  {
+    authenticationRequest = request;
   }
 
 
@@ -96,9 +137,10 @@ public class AuthenticationCriteria
   {
     return
       String.format(
-        "[%s@%d::dn=%s]",
+        "[%s@%d::dn=%s, authenticationRequest=%s]",
         getClass().getName(),
         hashCode(),
-        authenticationDn);
+        authenticationDn,
+        authenticationRequest);
   }
 }

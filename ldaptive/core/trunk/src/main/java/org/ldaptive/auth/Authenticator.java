@@ -243,8 +243,7 @@ public class Authenticator
 
     AuthenticationHandlerResponse response = null;
     try {
-      final AuthenticationCriteria ac = new AuthenticationCriteria(dn);
-      ac.setCredential(request.getCredential());
+      final AuthenticationCriteria ac = new AuthenticationCriteria(dn, request);
 
       // attempt to authenticate as this dn
       response = getAuthenticationHandler().authenticate(ac);
@@ -369,7 +368,7 @@ public class Authenticator
         er = entryResolver;
       } else if (request.getReturnAttributes() == null ||
                  request.getReturnAttributes().length > 0) {
-        er = new SearchEntryResolver(request.getReturnAttributes());
+        er = new SearchEntryResolver();
       } else {
         er = NOOP_RESOLVER;
       }
