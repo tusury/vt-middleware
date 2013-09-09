@@ -490,7 +490,7 @@ public class LdapBeanTest
 
 
   /**
-   * Test {@link LdapAttribute#encodeValue(String)}.
+   * Test {@link LdapAttribute#escapeValue(String)}.
    *
    * @throws  Exception  On test failure.
    */
@@ -513,5 +513,8 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(
       "William\\\\Bill Wallace\\,  ou\\=restricted",
       LdapAttribute.escapeValue("William\\Bill Wallace,  ou=restricted"));
+    AssertJUnit.assertEquals(
+      "WilliÅm WallÅce",
+      LdapAttribute.escapeValue("WilliÅm WallÅce"));
   }
 }
