@@ -144,6 +144,20 @@ public final class LdapUtils
 
 
   /**
+   * This will convert the supplied value to a hex encoded string. Returns null
+   * if the supplied char array is null.
+   *
+   * @param  value  to hex encode
+   *
+   * @return  hex encoded value
+   */
+  public static char[] hexEncode(final char... value)
+  {
+    return value != null ? hexEncode(utf8Encode(String.valueOf(value))) : null;
+  }
+
+
+  /**
    * This will decode the supplied value as a base64 encoded string to a byte[].
    * Returns null if the supplied string is null.
    *

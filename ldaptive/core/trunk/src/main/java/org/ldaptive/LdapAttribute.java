@@ -611,6 +611,64 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
+   * Escapes the supplied string value per RFC 4514 section 2.4.
+   *
+   * @param  value  to escape
+   *
+   * @return  escaped value
+   */
+  public static String escapeValue(final String value)
+  {
+    final int len = value.length();
+    final StringBuilder sb = new StringBuilder(len);
+    char ch;
+    for (int i = 0; i < len; i++) {
+      ch = value.charAt(i);
+      switch (ch) {
+
+      case '"':
+      case '#':
+      case '+':
+      case ',':
+      case ';':
+      case '<':
+      case '=':
+      case '>':
+      case '\\':
+        sb.append('\\').append(ch);
+        break;
+
+      case ' ':
+        // escape first space and last space
+        if (i == 0 || i + 1 == len) {
+          sb.append('\\').append(ch);
+        } else {
+          sb.append(ch);
+        }
+        break;
+
+      case 0:
+        // escape null
+        sb.append("\\00");
+        break;
+
+      default:
+        // escape non-printable ASCII characters
+        // CheckStyle:MagicNumber OFF
+        if (ch < ' ' || ch == 127) {
+          sb.append(LdapUtils.hexEncode(ch));
+        } else {
+          sb.append(ch);
+        }
+        // CheckStyle:MagicNumber ON
+        break;
+      }
+    }
+    return sb.toString();
+  }
+
+
+  /**
    * Simple bean for ldap attribute values.
    *
    * @param  <T>  type of values

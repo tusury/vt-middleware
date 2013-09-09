@@ -14,6 +14,7 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class FormatDnResolver implements DnResolver
 
   /** format arguments. */
   private Object[] formatArgs;
+
+  /** whether to escape the user input. */
+  private boolean escapeUser = true;
 
 
   /** Default constructor. */
@@ -88,7 +92,7 @@ public class FormatDnResolver implements DnResolver
 
 
   /**
-   * Gets the format arguments.
+   * Returns the format arguments.
    *
    * @return  format args
    */
@@ -110,6 +114,30 @@ public class FormatDnResolver implements DnResolver
 
 
   /**
+   * Returns whether the user input will be escaped. See {@link
+   * LdapAttribute#escapeValue(String)}.
+   *
+   * @return  whether the user input will be escaped.
+   */
+  public boolean getEscapeUser()
+  {
+    return escapeUser;
+  }
+
+
+  /**
+   * Sets whether the user input will be escaped. See {@link
+   * LdapAttribute#escapeValue(String)}.
+   *
+   * @param  b  whether the user input will be escaped.
+   */
+  public void setEscapeUser(final boolean b)
+  {
+    escapeUser = b;
+  }
+
+
+  /**
    * Returns a DN for the supplied user by applying it to a format string.
    *
    * @param  user  to format dn for
@@ -124,14 +152,16 @@ public class FormatDnResolver implements DnResolver
   {
     String dn = null;
     if (user != null && !"".equals(user)) {
-      logger.debug("Formatting DN with {}", formatString);
+      final String escapedUser = escapeUser ?
+        LdapAttribute.escapeValue(user) : user;
+      logger.debug("Formatting DN for {} with {}", escapedUser, formatString);
       if (formatArgs != null && formatArgs.length > 0) {
         final Object[] args = new Object[formatArgs.length + 1];
-        args[0] = user;
+        args[0] = escapedUser;
         System.arraycopy(formatArgs, 0, args, 1, formatArgs.length);
         dn = String.format(formatString, args);
       } else {
-        dn = String.format(formatString, user);
+        dn = String.format(formatString, escapedUser);
       }
     } else {
       logger.debug("User input was empty or null");
@@ -146,10 +176,11 @@ public class FormatDnResolver implements DnResolver
   {
     return
       String.format(
-        "[%s@%d::formatString=%s, formatArgs=%s]",
+        "[%s@%d::formatString=%s, formatArgs=%s, escapeUser=%s]",
         getClass().getName(),
         hashCode(),
         formatString,
-        Arrays.toString(formatArgs));
+        Arrays.toString(formatArgs),
+        escapeUser);
   }
 }

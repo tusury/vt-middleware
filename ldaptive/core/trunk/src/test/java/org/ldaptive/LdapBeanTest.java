@@ -487,4 +487,31 @@ public class LdapBeanTest
     AssertJUnit.assertEquals("lang-lv", la.getOptions()[0]);
     AssertJUnit.assertEquals("dynamic", la.getOptions()[1]);
   }
+
+
+  /**
+   * Test {@link LdapAttribute#encodeValue(String)}.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"bean"})
+  public void ldapAttributeValueEscape()
+    throws Exception
+  {
+    AssertJUnit.assertEquals(
+      "James \\\"Jim\\\" Smith\\, III",
+      LdapAttribute.escapeValue("James \"Jim\" Smith, III"));
+    AssertJUnit.assertEquals(
+      "\\ William Wallace\\ ",
+      LdapAttribute.escapeValue(" William Wallace "));
+    AssertJUnit.assertEquals(
+      "Bill\\+Wallace  \\#2",
+      LdapAttribute.escapeValue("Bill+Wallace  #2"));
+    AssertJUnit.assertEquals(
+      "William\\;Bill \\<Wallace\\>",
+      LdapAttribute.escapeValue("William;Bill <Wallace>"));
+    AssertJUnit.assertEquals(
+      "William\\\\Bill Wallace\\,  ou\\=restricted",
+      LdapAttribute.escapeValue("William\\Bill Wallace,  ou=restricted"));
+  }
 }
