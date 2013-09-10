@@ -44,8 +44,8 @@ public class PasswordModifyRequest extends AbstractRequest
   /** OID of this extended request. */
   public static final String OID = "1.3.6.1.4.1.4203.1.11.1";
 
-  /** DN to modify. */
-  private String modifyDn;
+  /** User to modify. */
+  private String userIdentity;
 
   /** Current password. */
   private Credential oldPassword;
@@ -61,27 +61,27 @@ public class PasswordModifyRequest extends AbstractRequest
   /**
    * Creates a new password modify request.
    *
-   * @param  dn  to create
+   * @param  identity  to modify
    */
-  public PasswordModifyRequest(final String dn)
+  public PasswordModifyRequest(final String identity)
   {
-    setDn(dn);
+    setUserIdentity(identity);
   }
 
 
   /**
    * Creates a new password modify request.
    *
-   * @param  dn  to create
+   * @param  identity  to modify
    * @param  oldPass  current password for the dn
    * @param  newPass  desired password for the dn
    */
   public PasswordModifyRequest(
-    final String dn,
+    final String identity,
     final Credential oldPass,
     final Credential newPass)
   {
-    setDn(dn);
+    setUserIdentity(identity);
     setOldPassword(oldPass);
     setNewPassword(newPass);
   }
@@ -91,10 +91,13 @@ public class PasswordModifyRequest extends AbstractRequest
    * Returns the DN to modify.
    *
    * @return  DN
+   *
+   * @deprecated  use {@link #getUserIdentity()}
    */
+  @Deprecated
   public String getDn()
   {
-    return modifyDn;
+    return userIdentity;
   }
 
 
@@ -102,10 +105,35 @@ public class PasswordModifyRequest extends AbstractRequest
    * Sets the DN to modify.
    *
    * @param  dn  to modify
+   *
+   * @deprecated  use {@link #setUserIdentity(String)}
    */
+  @Deprecated
   public void setDn(final String dn)
   {
-    modifyDn = dn;
+    userIdentity = dn;
+  }
+
+
+  /**
+   * Returns the user to modify.
+   *
+   * @return  user identity
+   */
+  public String getUserIdentity()
+  {
+    return userIdentity;
+  }
+
+
+  /**
+   * Sets the user to modify.
+   *
+   * @param  identity  to modify
+   */
+  public void setUserIdentity(final String identity)
+  {
+    userIdentity = identity;
   }
 
 
@@ -158,8 +186,8 @@ public class PasswordModifyRequest extends AbstractRequest
   public byte[] encode()
   {
     final List<DEREncoder> l = new ArrayList<DEREncoder>();
-    if (getDn() != null) {
-      l.add(new ContextType(0, getDn()));
+    if (getUserIdentity() != null) {
+      l.add(new ContextType(0, getUserIdentity()));
     }
     if (getOldPassword() != null) {
       l.add(new ContextType(1, getOldPassword().getString()));
@@ -189,10 +217,10 @@ public class PasswordModifyRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::modifyDn=%s, controls=%s]",
+        "[%s@%d::userIdentity=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
-        modifyDn,
+        userIdentity,
         Arrays.toString(getControls()));
   }
 }
