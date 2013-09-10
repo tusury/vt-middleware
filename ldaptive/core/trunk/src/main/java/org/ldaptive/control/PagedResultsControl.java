@@ -120,14 +120,6 @@ public class PagedResultsControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
-  @Override
-  public String getOID()
-  {
-    return OID;
-  }
-
-
   /**
    * Returns the paged results size. For requests this is the requested page
    * size. For responses this is the result size estimate from the server.

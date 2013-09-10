@@ -60,14 +60,6 @@ public class PasswordExpiredControl extends AbstractControl
 
   /** {@inheritDoc} */
   @Override
-  public String getOID()
-  {
-    return OID;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
   public int hashCode()
   {
     return
