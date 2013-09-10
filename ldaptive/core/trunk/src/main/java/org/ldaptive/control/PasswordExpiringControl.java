@@ -86,14 +86,6 @@ public class PasswordExpiringControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
-  @Override
-  public String getOID()
-  {
-    return OID;
-  }
-
-
   /**
    * Returns the time in seconds until password expiration.
    *
