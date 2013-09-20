@@ -100,7 +100,7 @@ public class VirtualListViewRequestControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  virutal list view request control to test.
+   * @param  expected  virtual list view request control to test.
    *
    * @throws  Exception  On test failure.
    */
