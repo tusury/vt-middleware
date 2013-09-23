@@ -18,8 +18,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.Request;
+import org.ldaptive.Response;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.ad.control.NotificationControl;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
@@ -29,6 +31,7 @@ import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.async.handler.AsyncRequestHandler;
 import org.ldaptive.async.handler.ExceptionHandler;
 import org.ldaptive.handler.HandlerResult;
+import org.ldaptive.handler.OperationResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,6 +96,26 @@ public class NotificationClient
       new LinkedBlockingQueue<NotificationItem>();
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
+    search.setOperationResponseHandlers(
+      new OperationResponseHandler<SearchRequest, SearchResult>() {
+        @Override
+        public HandlerResult<Response<SearchResult>> handle(
+          final Connection conn,
+          final SearchRequest request,
+          final Response<SearchResult> response)
+          throws LdapException
+        {
+          try {
+            logger.debug("received {}", response);
+            search.shutdown();
+
+            queue.put(new NotificationItem(response));
+          } catch (Exception e) {
+            logger.warn("Unable to enqueue response {}", response);
+          }
+          return new HandlerResult<Response<SearchResult>>(response);
+        }
+      });
     search.setAsyncRequestHandlers(
       new AsyncRequestHandler() {
         @Override
@@ -183,8 +206,11 @@ public class NotificationClient
     /** Async request from the search operation. */
     private final AsyncRequest asyncRequest;
 
-    /** Entry contained in this sync repl item. */
+    /** Entry contained in this notification item. */
     private final SearchEntry searchEntry;
+
+    /** Response contained in this notification item. */
+    private final Response searchResponse;
 
     /** Exception thrown by the search operation. */
     private final Exception searchException;
@@ -199,6 +225,7 @@ public class NotificationClient
     {
       asyncRequest = request;
       searchEntry = null;
+      searchResponse = null;
       searchException = null;
     }
 
@@ -212,6 +239,21 @@ public class NotificationClient
     {
       asyncRequest = null;
       searchEntry = entry;
+      searchResponse = null;
+      searchException = null;
+    }
+
+
+    /**
+     * Creates a new notification item.
+     *
+     * @param  response  that represents this item
+     */
+    public NotificationItem(final Response response)
+    {
+      asyncRequest = null;
+      searchEntry = null;
+      searchResponse = response;
       searchException = null;
     }
 
@@ -225,6 +267,7 @@ public class NotificationClient
     {
       asyncRequest = null;
       searchEntry = null;
+      searchResponse = null;
       searchException = exception;
     }
 
@@ -290,6 +333,29 @@ public class NotificationClient
 
 
     /**
+     * Returns whether this item represents a response.
+     *
+     * @return  whether this item represents a response
+     */
+    public boolean isResponse()
+    {
+      return searchResponse != null;
+    }
+
+
+    /**
+     * Returns the response contained in this item or null if this item does not
+     * contain a response.
+     *
+     * @return  response
+     */
+    public Response getResponse()
+    {
+      return searchResponse;
+    }
+
+
+    /**
      * Returns whether this item represents an exception.
      *
      * @return  whether this item represents an exception
@@ -329,6 +395,12 @@ public class NotificationClient
           getClass().getName(),
           hashCode(),
           searchEntry);
+      } else if (isResponse()) {
+        s = String.format(
+          "[%s@%d::searchResponse=%s]",
+          getClass().getName(),
+          hashCode(),
+          searchResponse);
       } else if (isException()) {
         s = String.format(
           "[%s@%d::searchException=%s]",
