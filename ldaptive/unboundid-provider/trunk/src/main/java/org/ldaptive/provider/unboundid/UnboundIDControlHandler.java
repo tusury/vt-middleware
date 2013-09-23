@@ -13,9 +13,7 @@
 */
 package org.ldaptive.provider.unboundid;
 
-import com.unboundid.asn1.ASN1Exception;
 import com.unboundid.asn1.ASN1OctetString;
-import com.unboundid.asn1.ASN1Sequence;
 import org.ldaptive.control.ControlFactory;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -45,22 +43,18 @@ public class UnboundIDControlHandler
   public com.unboundid.ldap.sdk.Control handleRequest(
     final RequestControl requestControl)
   {
-    try {
-      final byte[] value = requestControl.encode();
-      if (value == null) {
-        return
-          new com.unboundid.ldap.sdk.Control(
-            requestControl.getOID(),
-            requestControl.getCriticality());
-      } else {
-        return
-          new com.unboundid.ldap.sdk.Control(
-            requestControl.getOID(),
-            requestControl.getCriticality(),
-            new ASN1OctetString(ASN1Sequence.decodeAsSequence(value).encode()));
-      }
-    } catch (ASN1Exception e) {
-      throw new IllegalArgumentException(e);
+    final byte[] value = requestControl.encode();
+    if (value == null) {
+      return
+        new com.unboundid.ldap.sdk.Control(
+          requestControl.getOID(),
+          requestControl.getCriticality());
+    } else {
+      return
+        new com.unboundid.ldap.sdk.Control(
+          requestControl.getOID(),
+          requestControl.getCriticality(),
+          new ASN1OctetString(value));
     }
   }
 
