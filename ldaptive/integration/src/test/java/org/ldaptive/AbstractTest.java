@@ -13,9 +13,9 @@
 */
 package org.ldaptive;
 
-import java.nio.charset.Charset;
 import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.ldaptive.ad.UnicodePwdAttribute;
 
 /**
  * Contains functions common to all tests.
@@ -56,8 +56,8 @@ public abstract class AbstractTest
       conn.open();
       final AddOperation create = new AddOperation(conn);
       create.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
-      while (!entryExists(conn, entry)) {
-        Thread.sleep(100);
+      if (!entryExists(conn, entry)) {
+        throw new IllegalStateException("Could not add entry to LDAP");
       }
       if (TestControl.isActiveDirectory() &&
           entry.getAttribute("userPassword") != null) {
@@ -67,7 +67,8 @@ public abstract class AbstractTest
             entry.getDn(),
             new AttributeModification(
               AttributeModificationType.REPLACE,
-              new LdapAttribute("unicodePwd", createADPassword(entry))),
+              new UnicodePwdAttribute(
+                "password" + entry.getAttribute("uid").getStringValue())),
             new AttributeModification(
               AttributeModificationType.REPLACE,
               new LdapAttribute("userAccountControl", "512"))));
@@ -131,21 +132,5 @@ public abstract class AbstractTest
       }
       throw e;
     }
-  }
-
-
-  /**
-   * Creates a password in the format required by Active Directory for the
-   * supplied entry. Test data uses a password of the form 'password${uid}'.
-   *
-   * @param  entry  to create password for
-   *
-   * @return  AD password
-   */
-  protected byte[] createADPassword(final LdapEntry entry)
-  {
-    final String pwd = String.format(
-      "\"password%s\"", entry.getAttribute("uid").getStringValue());
-    return pwd.getBytes(Charset.forName("UTF-16LE"));
   }
 }
