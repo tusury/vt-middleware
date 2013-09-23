@@ -14,9 +14,8 @@
 package org.ldaptive.provider.unboundid;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import com.unboundid.asn1.ASN1OctetString;
 import com.unboundid.ldap.sdk.AsyncRequestID;
 import com.unboundid.ldap.sdk.AsyncSearchResultListener;
@@ -1231,8 +1230,8 @@ public class UnboundIDConnection implements ProviderConnection
   {
 
     /** Listeners to receive unsolicited notifications. */
-    private final List<UnsolicitedNotificationListener> listeners =
-      new ArrayList<UnsolicitedNotificationListener>();
+    private final Queue<UnsolicitedNotificationListener> listeners =
+      new ConcurrentLinkedQueue<UnsolicitedNotificationListener>();
 
 
     /**
@@ -1243,9 +1242,7 @@ public class UnboundIDConnection implements ProviderConnection
     public void addUnsolicitedNotificationListener(
       final UnsolicitedNotificationListener listener)
     {
-      synchronized (listeners) {
-        listeners.add(listener);
-      }
+      listeners.add(listener);
     }
 
 
@@ -1257,9 +1254,7 @@ public class UnboundIDConnection implements ProviderConnection
     public void removeUnsolicitedNotificationListener(
       final UnsolicitedNotificationListener listener)
     {
-      synchronized (listeners) {
-        listeners.remove(listener);
-      }
+      listeners.remove(listener);
     }
 
 
@@ -1270,14 +1265,12 @@ public class UnboundIDConnection implements ProviderConnection
       final ExtendedResult extendedResult)
     {
       logger.debug("Unsolicited notification received: {}", extendedResult);
-      synchronized (listeners) {
-        final Response<Void> response = createResponse(
-          null,
-          null,
-          extendedResult);
-        for (UnsolicitedNotificationListener listener : listeners) {
-          listener.notificationReceived(extendedResult.getOID(), response);
-        }
+      final Response<Void> response = createResponse(
+        null,
+        null,
+        extendedResult);
+      for (UnsolicitedNotificationListener listener : listeners) {
+        listener.notificationReceived(extendedResult.getOID(), response);
       }
     }
   }
@@ -1288,8 +1281,8 @@ public class UnboundIDConnection implements ProviderConnection
   {
 
     /** Handlers to receive disconnect notifications. */
-    private final List<DisconnectHandler> handlers =
-      new ArrayList<DisconnectHandler>();
+    private final Queue<DisconnectHandler> handlers =
+      new ConcurrentLinkedQueue<DisconnectHandler>();
 
 
     /**
@@ -1299,9 +1292,7 @@ public class UnboundIDConnection implements ProviderConnection
      */
     public void addDisconnectHandler(final DisconnectHandler handler)
     {
-      synchronized (handlers) {
-        handlers.add(handler);
-      }
+      handlers.add(handler);
     }
 
 
@@ -1312,9 +1303,7 @@ public class UnboundIDConnection implements ProviderConnection
      */
     public void removeDisconnectHandler(final DisconnectHandler handler)
     {
-      synchronized (handlers) {
-        handlers.remove(handler);
-      }
+      handlers.remove(handler);
     }
 
 
@@ -1329,16 +1318,14 @@ public class UnboundIDConnection implements ProviderConnection
       final Throwable throwable)
     {
       logger.debug("Disconnection received: {}", disconnectType);
-      synchronized (handlers) {
-        for (DisconnectHandler handler : handlers) {
-          handler.handleDisconnect(
-            ldapConnection,
-            host,
-            port,
-            disconnectType,
-            message,
-            throwable);
-        }
+      for (DisconnectHandler handler : handlers) {
+        handler.handleDisconnect(
+          ldapConnection,
+          host,
+          port,
+          disconnectType,
+          message,
+          throwable);
       }
     }
   }
