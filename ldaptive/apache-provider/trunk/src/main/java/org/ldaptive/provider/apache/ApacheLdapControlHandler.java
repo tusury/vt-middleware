@@ -23,13 +23,19 @@ import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyError
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyImpl;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyResponse;
 import org.apache.directory.api.ldap.model.message.Control;
+import org.apache.directory.api.ldap.model.message.controls.ChangeType;
+import org.apache.directory.api.ldap.model.message.controls.EntryChange;
 import org.apache.directory.api.ldap.model.message.controls.ManageDsaITImpl;
 import org.apache.directory.api.ldap.model.message.controls.PagedResults;
 import org.apache.directory.api.ldap.model.message.controls.PagedResultsImpl;
+import org.apache.directory.api.ldap.model.message.controls.PersistentSearchImpl;
 import org.ldaptive.asn1.UuidType;
+import org.ldaptive.control.EntryChangeNotificationControl;
 import org.ldaptive.control.ManageDsaITControl;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.control.PersistentSearchChangeType;
+import org.ldaptive.control.PersistentSearchRequestControl;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.control.SyncStateControl;
@@ -79,6 +85,18 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ((SyncRequestValueImpl) ctl).setMode(
         SynchronizationModeEnum.getSyncMode(c.getRequestMode().value()));
       ctl.setCritical(c.getCriticality());
+    } else if (PersistentSearchRequestControl.OID.equals(
+               requestControl.getOID())) {
+      final PersistentSearchRequestControl c =
+        (PersistentSearchRequestControl) requestControl;
+      ctl = new PersistentSearchImpl();
+      for (PersistentSearchChangeType type : c.getChangeTypes()) {
+        ((PersistentSearchImpl) ctl).enableNotification(
+          ChangeType.getChangeType(type.value()));
+      }
+      ((PersistentSearchImpl) ctl).setChangesOnly(c.getChangesOnly());
+      ((PersistentSearchImpl) ctl).setReturnECs(c.getReturnEcs());
+      ctl.setCritical(c.getCriticality());
     }
     return ctl;
   }
@@ -122,6 +140,14 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ctl = new SyncDoneControl(
         c.getCookie(),
         c.isRefreshDeletes(),
+        c.isCritical());
+    } else if (EntryChangeNotificationControl.OID.equals(
+               responseControl.getOid())) {
+      final EntryChange c = (EntryChange) responseControl;
+      ctl = new EntryChangeNotificationControl(
+        PersistentSearchChangeType.valueOf(c.getChangeType().getValue()),
+        c.getPreviousDn().toString(),
+        c.getChangeNumber(),
         c.isCritical());
     }
     return ctl;

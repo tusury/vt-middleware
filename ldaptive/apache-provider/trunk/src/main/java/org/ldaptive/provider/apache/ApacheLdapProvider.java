@@ -17,7 +17,9 @@ import java.security.GeneralSecurityException;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
 import org.apache.directory.api.ldap.codec.controls.manageDsaIT.ManageDsaITFactory;
+import org.apache.directory.api.ldap.codec.controls.search.entryChange.EntryChangeFactory;
 import org.apache.directory.api.ldap.codec.controls.search.pagedSearch.PagedResultsFactory;
+import org.apache.directory.api.ldap.codec.controls.search.persistentSearch.PersistentSearchFactory;
 import org.apache.directory.api.ldap.codec.standalone.StandaloneLdapApiService;
 import org.apache.directory.api.ldap.extras.controls.ppolicy_impl.PasswordPolicyFactory;
 import org.apache.directory.api.ldap.extras.controls.syncrepl_impl.SyncDoneValueFactory;
@@ -46,9 +48,11 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
 
   /** Controls to add to the default control list. */
   protected static final String[] DEFAULT_CONTROLS = new String[] {
+    EntryChangeFactory.class.getName(),
     ManageDsaITFactory.class.getName(),
     PagedResultsFactory.class.getName(),
     PasswordPolicyFactory.class.getName(),
+    PersistentSearchFactory.class.getName(),
     SyncDoneValueFactory.class.getName(),
     SyncInfoValueFactory.class.getName(),
     SyncRequestValueFactory.class.getName(),
@@ -68,7 +72,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     }
     if (!"".equals(sb.toString())) {
       System.setProperty(
-        StandaloneLdapApiService.DEFAULT_CONTROLS_LIST,
+        StandaloneLdapApiService.CONTROLS_LIST,
         sb.toString());
     }
   }
