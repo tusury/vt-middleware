@@ -66,6 +66,9 @@ public final class ControlFactory
     } else if (DirSyncControl.OID.equals(oid)) {
       ctl = new DirSyncControl(critical);
       ctl.decode(encoded);
+    } else if (EntryChangeNotificationControl.OID.equals(oid)) {
+      ctl = new EntryChangeNotificationControl(critical);
+      ctl.decode(encoded);
     } else if (GetStatsControl.OID.equals(oid)) {
       ctl = new GetStatsControl(critical);
       ctl.decode(encoded);
