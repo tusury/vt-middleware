@@ -112,7 +112,10 @@ public class PasswordModifyOperationTest extends AbstractTest
             dn, new Credential(INVALID_PASSWD), new Credential(newPass)));
         AssertJUnit.assertEquals(
           ResultCode.UNWILLING_TO_PERFORM, res.getResultCode());
-      } catch (LdapException e) {}
+      } catch (LdapException e) {
+        AssertJUnit.assertEquals(
+          ResultCode.UNWILLING_TO_PERFORM, e.getResultCode());
+      }
 
       // change password
       Response<Credential> modifyResponse = modify.execute(
