@@ -126,7 +126,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
       }
       storeCredentials(nameCb, passCb, loginDn);
     } catch (LdapException e) {
-      logger.debug("Error occured attempting DN lookup", e);
+      logger.debug("Error occurred attempting DN lookup", e);
       loginSuccess = false;
       throw new LoginException(
         e != null ? e.getMessage() : "DN resolution error");
