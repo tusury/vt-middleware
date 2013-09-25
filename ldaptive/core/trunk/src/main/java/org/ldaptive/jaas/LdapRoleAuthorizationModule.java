@@ -164,7 +164,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
       }
       storeCredentials(nameCb, passCb, null);
     } catch (LdapException e) {
-      logger.debug("Error occured attempting role lookup", e);
+      logger.debug("Error occurred attempting role lookup", e);
       loginSuccess = false;
       throw new LoginException(e.getMessage());
     }
