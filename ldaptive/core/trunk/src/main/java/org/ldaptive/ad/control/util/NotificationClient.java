@@ -89,6 +89,7 @@ public class NotificationClient
    *
    * @throws  LdapException  if the search fails
    */
+  @SuppressWarnings("unchecked")
   public BlockingQueue<NotificationItem> execute(final SearchRequest request)
     throws LdapException
   {
