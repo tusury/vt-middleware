@@ -47,10 +47,15 @@ public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
   {
     final InputStream is = LdapUtils.getResource(path);
     if (is != null) {
+      logger.trace("Found resource at {}", path);
       try {
-        return read(is, params);
+        final T credential = read(is, params);
+        logger.debug(
+          "Successfully loaded credential {} from path {}",
+          credential,
+          path);
+        return credential;
       } finally {
-        logger.debug("Successfully loaded {}", path);
         is.close();
       }
     } else {
