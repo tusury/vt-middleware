@@ -15,7 +15,9 @@ package org.ldaptive.handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -42,8 +44,7 @@ import org.ldaptive.SearchResult;
  * <p>With the following code:</p>
  *
  * <pre>
-   RecursiveEntryHandler reh = new RecursiveEntryHandler(
-     conn, "member", new String[]{"uugid"});
+   RecursiveEntryHandler reh = new RecursiveEntryHandler("member", "uugid");
  * </pre>
  *
  * <p>Will produce this result for the query (uugid=group1):</p>
@@ -195,7 +196,8 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
     if (entry != null) {
       final LdapAttribute attr = entry.getAttribute(searchAttribute);
       if (attr != null && !attr.isBinary()) {
-        for (String s : attr.getStringValues()) {
+        final Set<String> values = new HashSet<String>(attr.getStringValues());
+        for (String s : values) {
           recursiveSearch(conn, s, entry, searchedDns);
         }
       }
