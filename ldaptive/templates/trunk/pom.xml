@@ -69,7 +69,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>${basedir}/src/main/checkstyle</checkstyle.dir>
     <assembly.dir>${basedir}/src/main/assembly</assembly.dir>
-    <spring.version>3.2.3.RELEASE</spring.version>
+    <spring.version>3.2.4.RELEASE</spring.version>
   </properties>
 
   <dependencies>
@@ -107,7 +107,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8.5</version>
+      <version>6.8.7</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
