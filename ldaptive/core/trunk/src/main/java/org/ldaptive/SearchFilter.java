@@ -157,6 +157,46 @@ public class SearchFilter
 
 
   /**
+   * Hex encodes the supplied byte array for use in a search filter.
+   *
+   * @param  value  to encode
+   *
+   * @return  encoded value or null if supplied value is null
+   */
+  public static String encodeValue(final byte[] value)
+  {
+    if (value == null) {
+      return null;
+    }
+
+    final char[] c = LdapUtils.hexEncode(value);
+    final StringBuilder sb = new StringBuilder(c.length + c.length / 2);
+    for (int i = 0; i < c.length; i += 2) {
+      sb.append('\\').append(c[i]).append(c[i + 1]);
+    }
+    return sb.toString();
+  }
+
+
+  /**
+   * Encodes the supplied attribute value for use in a search filter. See
+   * {@link #escape(String)}.
+   *
+   * @param  value  to encode
+   *
+   * @return  encoded value or null if supplied value is null
+   */
+  public static String encodeValue(final String value)
+  {
+    if (value == null) {
+      return null;
+    }
+
+    return escape(value);
+  }
+
+
+  /**
    * Hex encodes the supplied object if it is of type byte[], otherwise the
    * string format of the object is escaped. See {@link #escape(String)}.
    *
@@ -171,22 +211,12 @@ public class SearchFilter
     }
 
     String str;
-    if (obj instanceof byte[]) {
-      final char[] c = LdapUtils.hexEncode((byte[]) obj);
-      final StringBuilder sb = new StringBuilder(c.length + c.length / 2);
-      for (int i = 0; i < c.length; i += 2) {
-        sb.append('\\');
-        sb.append(c[i]).append(c[i + 1]);
-      }
-      str = sb.toString();
+    if (obj instanceof String) {
+      str = encodeValue((String) obj);
+    } else if (obj instanceof byte[]) {
+      str = encodeValue((byte[]) obj);
     } else {
-      String s;
-      if (obj instanceof String) {
-        s = (String) obj;
-      } else {
-        s = obj.toString();
-      }
-      str = escape(s);
+      str = encodeValue(obj.toString());
     }
     return str;
   }
