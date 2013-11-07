@@ -15,6 +15,7 @@ contactPerson: cn=John Adams,${ldapBaseDn}
 creationDate: 2010-06-06T12:00:00
 objectClass: virginiaTechGroup
 objectClass: top
+member: cn=Group 2,${ldapBaseDn}
 member: cn=Group 3,${ldapBaseDn}
 uid: 2004
 uugid: group4
