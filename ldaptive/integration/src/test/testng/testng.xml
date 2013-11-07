@@ -67,6 +67,8 @@
              value="/org/ldaptive/createLdapEntry-29.ldif"/>
   <parameter name="createEntry30"
              value="/org/ldaptive/createLdapEntry-30.ldif"/>
+  <parameter name="createEntry31"
+             value="/org/ldaptive/createLdapEntry-31.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -150,6 +152,12 @@
   <parameter name="recursiveSearchReturnAttrs" value="cn|contactPerson|creationDate|member|objectClass|uid|uugid"/>
   <parameter name="recursiveHandlerResults"
              value="/org/ldaptive/recursiveHandlerResults.ldif"/>
+
+  <parameter name="recursiveSearch2Dn" value="${ldapBaseDn}"/>
+  <parameter name="recursiveSearch2Filter" value="(uugid=*)"/>
+  <parameter name="recursiveSearch2ReturnAttrs" value="member"/>
+  <parameter name="recursiveHandlerResults2"
+             value="/org/ldaptive/recursiveHandlerResults-2.ldif"/>
 
   <parameter name="mergeSearchDn" value="${ldapBaseDn}"/>
   <parameter name="mergeSearchFilter" value="(|(uugid=group3)(uugid=group4)(uugid=group5))"/>
@@ -241,6 +249,11 @@
   <parameter name="sortSearchDn" value="${ldapBaseDn}"/>
   <parameter name="sortSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
 
+  <parameter name="proxyAuthzFrom" value="${ldapBindDn}"/>
+  <parameter name="proxyAuthzTo" value="CN=John Adams,${ldapBaseDn}"/>
+  <parameter name="proxyAuthzSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="proxyAuthzSearchFilter" value="(CN=John Adams)"/>
+
   <parameter name="searchAsyncDn" value="${ldapBaseDn}"/>
   <parameter name="searchAsyncFilter" value="(uid=17)"/>
   <parameter name="searchAsyncReturnAttrs" value="departmentNumber|givenName|sn"/>
@@ -249,6 +262,10 @@
   <parameter name="syncReplSearchDn" value="cn=Ulysses Grant,${ldapBaseDn}"/>
   <parameter name="syncReplSearchReturnAttrs" value="cn|employeeType|mail|objectClass|sn|uid"/>
   <parameter name="syncReplSearchResults" value="/org/ldaptive/syncReplResults.ldif"/>
+
+  <parameter name="persistentSearchDn" value="cn=Herbert Hoover,${ldapBaseDn}"/>
+  <parameter name="persistentSearchReturnAttrs" value="cn|mail|objectClass|sn|uid"/>
+  <parameter name="persistentSearchResults" value="/org/ldaptive/persistentSearchResults.ldif"/>
 
   <parameter name="vlvSearchDn" value="${ldapBaseDn}"/>
   <parameter name="vlvSearchFilter" value="(|(uid=19)(uid=20)(uid=21))"/>
