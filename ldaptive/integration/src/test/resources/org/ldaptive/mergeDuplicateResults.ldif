@@ -8,6 +8,7 @@ contactPerson: cn=John Adams,${ldapBaseDn}
 creationDate: 2010-06-06T12:00:00
 creationDate: 2010-06-06T12:00:00
 creationDate: 2010-06-06T12:00:00
+member: cn=Group 2,${ldapBaseDn}
 member: cn=Group 3,${ldapBaseDn}
 member: cn=Group 4,${ldapBaseDn}
 member: cn=Group 5,${ldapBaseDn}

@@ -32,6 +32,7 @@ import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.control.PagedResultsControl;
+import org.ldaptive.control.ProxyAuthorizationControl;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.control.SortRequestControl;
 import org.ldaptive.control.VirtualListViewRequestControl;
@@ -205,7 +206,9 @@ public class SearchOperationTest extends AbstractTest
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
-                "member", new String[]{ "cn=Group 3," + baseDn}))));
+                "member",
+                new String[]{
+                  "cn=Group 2," + baseDn, "cn=Group 3," + baseDn}))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -406,8 +409,9 @@ public class SearchOperationTest extends AbstractTest
       // some directories return those in mixed case
       AssertJUnit.assertEquals(
         0,
-        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
-          TestUtils.convertLdifToResult(expected), result));
+        (new SearchResultIgnoreCaseComparator(
+          "member", "contactPerson")).compare(
+            TestUtils.convertLdifToResult(expected), result));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
@@ -465,8 +469,9 @@ public class SearchOperationTest extends AbstractTest
       // some directories return those in mixed case
       AssertJUnit.assertEquals(
         0,
-        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
-          TestUtils.convertLdifToResult(expected), result));
+        (new SearchResultIgnoreCaseComparator(
+          "member", "contactPerson")).compare(
+            TestUtils.convertLdifToResult(expected), result));
       contextID = ((VirtualListViewResponseControl) response.getControl(
         VirtualListViewResponseControl.OID)).getContextID();
 
@@ -479,8 +484,9 @@ public class SearchOperationTest extends AbstractTest
       // some directories return those in mixed case
       AssertJUnit.assertEquals(
         0,
-        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
-          TestUtils.convertLdifToResult(expected), result));
+        (new SearchResultIgnoreCaseComparator(
+          "member", "contactPerson")).compare(
+            TestUtils.convertLdifToResult(expected), result));
     } catch (LdapException e) {
       // ignore this test if not supported by the server
       AssertJUnit.assertEquals(
@@ -560,6 +566,94 @@ public class SearchOperationTest extends AbstractTest
 
 
   /**
+   * @param  authzFrom  to proxy from
+   * @param  authzTo  to proxy to
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "proxyAuthzFrom",
+    "proxyAuthzTo",
+    "proxyAuthzSearchDn",
+    "proxyAuthzSearchFilter"
+  })
+  @Test(groups = {"search"})
+  public void proxyAuthzSearch(
+    final String authzFrom,
+    final String authzTo,
+    final String dn,
+    final String filter)
+    throws Exception
+  {
+    final Connection conn = TestUtils.createSetupConnection();
+    try {
+      conn.open();
+      final SearchOperation search = new SearchOperation(conn);
+
+      final SearchRequest request = new SearchRequest(
+        dn, new SearchFilter(filter));
+
+      // no authz
+      Response<SearchResult> response = search.execute(request);
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+      AssertJUnit.assertEquals(1, response.getResult().size());
+
+      // anonymous authz
+      request.setControls(new ProxyAuthorizationControl("dn:"));
+      response = search.execute(request);
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+      AssertJUnit.assertEquals(0, response.getResult().size());
+
+      // authz denied
+      request.setControls(new ProxyAuthorizationControl("dn:" + authzTo));
+      try {
+        response = search.execute(request);
+        AssertJUnit.assertEquals(
+          ResultCode.AUTHORIZATION_DENIED, response.getResultCode());
+      } catch (LdapException e) {
+        AssertJUnit.assertEquals(
+          ResultCode.AUTHORIZATION_DENIED, e.getResultCode());
+      }
+
+      // add authzTo
+      final ModifyOperation modify = new ModifyOperation(conn);
+      modify.execute(
+        new ModifyRequest(
+          authzFrom,
+          new AttributeModification(
+            AttributeModificationType.ADD,
+            new LdapAttribute("authzTo", "dn:" + authzTo))));
+
+      response = search.execute(request);
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+      AssertJUnit.assertEquals(1, response.getResult().size());
+
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported by the provider
+      AssertJUnit.assertNotNull(e);
+    } finally {
+      try {
+        // remove authzTo
+        final ModifyOperation modify = new ModifyOperation(conn);
+        modify.execute(
+          new ModifyRequest(
+            authzFrom,
+            new AttributeModification(
+              AttributeModificationType.REMOVE,
+              new LdapAttribute("authzTo"))));
+      } catch (LdapException e) {}
+      conn.close();
+    }
+  }
+
+
+  /**
    * @param  dn  to search on.
    * @param  filter  to search with.
    * @param  filterParameters  to replace parameters in filter with.
@@ -593,8 +687,7 @@ public class SearchOperationTest extends AbstractTest
 
     // test recursive searching
     final RecursiveEntryHandler rsrh = new RecursiveEntryHandler(
-      "member",
-      new String[] {"uugid", "uid"});
+      "member", "uugid", "uid");
 
     final SearchRequest sr = new SearchRequest(
       dn,
@@ -607,6 +700,55 @@ public class SearchOperationTest extends AbstractTest
     AssertJUnit.assertEquals(
       0,
       (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
+        TestUtils.convertLdifToResult(expected).getEntry(),
+        result.getEntry()));
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "recursiveSearch2Dn",
+      "recursiveSearch2Filter",
+      "recursiveSearch2ReturnAttrs",
+      "recursiveHandlerResults2"
+    }
+  )
+  @Test(groups = {"search"})
+  public void recursiveHandlerSearch2(
+    final String dn,
+    final String filter,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final SearchOperation search = new SearchOperation(
+      createLdapConnection(false));
+
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+
+    // test recursive searching
+    final RecursiveEntryHandler rsrh = new RecursiveEntryHandler(
+      "member", "member");
+
+    final SearchRequest sr = new SearchRequest(
+      dn,
+      new SearchFilter(filter),
+      returnAttrs.split("\\|"));
+    sr.setSearchEntryHandlers(rsrh);
+    final SearchResult result = search.execute(sr).getResult();
+    // ignore the case of member and contactPerson; some directories return
+    // those in mixed case
+    AssertJUnit.assertEquals(
+      0,
+      (new LdapEntryIgnoreCaseComparator("member")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
         result.getEntry()));
   }
