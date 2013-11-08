@@ -154,7 +154,7 @@
              value="/org/ldaptive/recursiveHandlerResults.ldif"/>
 
   <parameter name="recursiveSearch2Dn" value="${ldapBaseDn}"/>
-  <parameter name="recursiveSearch2Filter" value="(uugid=*)"/>
+  <parameter name="recursiveSearch2Filter" value="(|(uugid=group1)(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
   <parameter name="recursiveSearch2ReturnAttrs" value="member"/>
   <parameter name="recursiveHandlerResults2"
              value="/org/ldaptive/recursiveHandlerResults-2.ldif"/>
