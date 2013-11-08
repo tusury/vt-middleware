@@ -679,8 +679,8 @@ public class ApacheLdapConnection implements ProviderConnection
     ProviderUtils.throwOperationException(
       config.getOperationExceptionResultCodes(),
       e,
-      e.getResultCode().getResultCode(),
-      e.getResolvedDn().getName(),
+      e.getResultCode() != null ? e.getResultCode().getResultCode() : null,
+      e.getResolvedDn() != null ? e.getResolvedDn().getName() : null,
       null,
       null,
       true);
