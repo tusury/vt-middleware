@@ -21,6 +21,7 @@ import org.apache.commons.cli.Option;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchResult;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -187,7 +188,7 @@ public class AuthenticatorCli extends AbstractCli
     if (
       request.getReturnAttributes() != null &&
         request.getReturnAttributes().length == 0) {
-      request.setReturnAttributes((String) null);
+      request.setReturnAttributes(ReturnAttributes.ALL_USER.value());
     }
 
     final AuthenticationResponse response = auth.authenticate(request);

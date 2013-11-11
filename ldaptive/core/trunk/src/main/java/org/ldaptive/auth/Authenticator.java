@@ -17,6 +17,7 @@ import java.util.Arrays;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ReturnAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -366,8 +367,9 @@ public class Authenticator
     if (resolveEntryOnFailure || response.getResult()) {
       if (entryResolver != null) {
         er = entryResolver;
-      } else if (request.getReturnAttributes() == null ||
-                 request.getReturnAttributes().length > 0) {
+      } else if (
+        !ReturnAttributes.NONE.equalsAttributes(
+            request.getReturnAttributes())) {
         er = new SearchEntryResolver();
       } else {
         er = NOOP_RESOLVER;

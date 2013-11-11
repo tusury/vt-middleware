@@ -19,6 +19,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -333,7 +334,7 @@ public abstract class AbstractSearchDnResolver
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(baseDn);
     request.setSearchFilter(filter);
-    request.setReturnAttributes(new String[0]);
+    request.setReturnAttributes(ReturnAttributes.NONE.value());
     if (subtreeSearch) {
       request.setSearchScope(SearchScope.SUBTREE);
     } else {
