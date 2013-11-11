@@ -15,6 +15,7 @@ package org.ldaptive.auth;
 
 import java.util.Arrays;
 import org.ldaptive.Credential;
+import org.ldaptive.ReturnAttributes;
 
 /**
  * Contains the data required to perform an ldap authentication.
@@ -32,7 +33,7 @@ public class AuthenticationRequest
   private Credential credential;
 
   /** User attributes to return. */
-  private String[] retAttrs = new String[0];
+  private String[] retAttrs = ReturnAttributes.NONE.value();
 
 
   /** Default constructor. */
@@ -132,7 +133,7 @@ public class AuthenticationRequest
    */
   public void setReturnAttributes(final String... attrs)
   {
-    retAttrs = attrs;
+    retAttrs = ReturnAttributes.parse(attrs);
   }
 
 

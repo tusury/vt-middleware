@@ -36,7 +36,7 @@ public class SearchRequest extends AbstractRequest
   private SearchFilter searchFilter;
 
   /** Attributes to return. */
-  private String[] retAttrs;
+  private String[] retAttrs = ReturnAttributes.ALL_USER.value();
 
   /** Search scope. */
   private SearchScope searchScope = SearchScope.SUBTREE;
@@ -194,7 +194,7 @@ public class SearchRequest extends AbstractRequest
    */
   public void setReturnAttributes(final String... attrs)
   {
-    retAttrs = attrs;
+    retAttrs = ReturnAttributes.parse(attrs);
   }
 
 

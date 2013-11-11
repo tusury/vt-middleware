@@ -14,6 +14,7 @@
 package org.ldaptive.pool;
 
 import org.ldaptive.Connection;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -46,7 +47,7 @@ public class SearchValidator implements Validator<Connection>
     searchRequest = new SearchRequest();
     searchRequest.setBaseDn("");
     searchRequest.setSearchFilter(new SearchFilter("(objectClass=*)"));
-    searchRequest.setReturnAttributes(new String[0]);
+    searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
     searchRequest.setSearchScope(SearchScope.OBJECT);
     searchRequest.setSizeLimit(1);
   }
