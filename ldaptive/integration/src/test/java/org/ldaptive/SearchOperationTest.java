@@ -393,8 +393,7 @@ public class SearchOperationTest extends AbstractTest
       new SearchRequest(
         dn,
         new SearchFilter(filter, filterParameters.split("\\|")),
-        new String[]{})).getResult();
-        //ReturnAttributes.NONE.value())).getResult();
+        ReturnAttributes.NONE.value())).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching, user attributes
