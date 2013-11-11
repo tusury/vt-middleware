@@ -360,6 +360,95 @@ public class SearchOperationTest extends AbstractTest
   /**
    * @param  dn  to search on.
    * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "searchDn",
+      "searchFilter",
+      "searchFilterParameters",
+      "searchResults"
+    }
+  )
+  @Test(groups = {"search"})
+  public void returnAttributesSearch(
+    final String dn,
+    final String filter,
+    final String filterParameters,
+    final String ldifFile)
+    throws Exception
+  {
+    final SearchOperation search = new SearchOperation(
+      createLdapConnection(false));
+
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+
+    final SearchResult entryDnResult = TestUtils.convertLdifToResult(expected);
+
+    // test searching, no attributes
+    SearchResult result = search.execute(
+      new SearchRequest(
+        dn,
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        new String[]{})).getResult();
+        //ReturnAttributes.NONE.value())).getResult();
+    AssertJUnit.assertTrue(result.getEntry().getAttributes().isEmpty());
+
+    // test searching, user attributes
+    result = search.execute(
+      new SearchRequest(
+        dn,
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        ReturnAttributes.ALL_USER.value())).getResult();
+    AssertJUnit.assertNotNull(result.getEntry().getAttribute("cn"));
+    AssertJUnit.assertNull(result.getEntry().getAttribute("modifyTimestamp"));
+
+    // test searching, operations attributes
+    if (TestControl.isActiveDirectory()) {
+      // active directory ignores '+'
+      result = search.execute(
+        new SearchRequest(
+          dn,
+          new SearchFilter(filter, filterParameters.split("\\|")),
+          ReturnAttributes.ALL_OPERATIONAL.add("modifyTimestamp"))).getResult();
+    } else {
+      result = search.execute(
+        new SearchRequest(
+          dn,
+          new SearchFilter(filter, filterParameters.split("\\|")),
+          ReturnAttributes.ALL_OPERATIONAL.value())).getResult();
+    }
+    AssertJUnit.assertNull(result.getEntry().getAttribute("cn"));
+    AssertJUnit.assertNotNull(
+      result.getEntry().getAttribute("modifyTimestamp"));
+
+    // test searching, all attributes
+    if (TestControl.isActiveDirectory()) {
+      // active directory ignores '+'
+      result = search.execute(
+        new SearchRequest(
+          dn,
+          new SearchFilter(filter, filterParameters.split("\\|")),
+          ReturnAttributes.ALL.add("modifyTimestamp"))).getResult();
+    } else {
+      result = search.execute(
+        new SearchRequest(
+          dn,
+          new SearchFilter(filter, filterParameters.split("\\|")),
+          ReturnAttributes.ALL.value())).getResult();
+    }
+    AssertJUnit.assertNotNull(result.getEntry().getAttribute("cn"));
+    AssertJUnit.assertNotNull(
+      result.getEntry().getAttribute("modifyTimestamp"));
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with
    *
@@ -1392,7 +1481,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
-    request.setReturnAttributes(new String[0]);
+    request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setSearchFilter(new SearchFilter(filter));
 
     request.setFollowReferrals(false);
@@ -1472,7 +1561,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
-    request.setReturnAttributes(new String[0]);
+    request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setSearchFilter(new SearchFilter(filter));
     request.setSearchReferenceHandlers(new SearchReferenceHandler() {
       @Override
@@ -1583,7 +1672,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
-    request.setReturnAttributes(new String[0]);
+    request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setSearchFilter(new SearchFilter(filter));
     request.setSearchEntryHandlers(
       new ObjectSidHandler(), new ObjectGuidHandler());

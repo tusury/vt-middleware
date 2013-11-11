@@ -26,6 +26,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchResult;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
@@ -939,9 +940,10 @@ public class AuthenticatorTest extends AbstractTest
     auth.setResolveEntryOnFailure(true);
 
     // success, store the entry for modify operations
-    // setting null return attributes uses the search entry resolver
+    // setting return attributes uses the search entry resolver
     AuthenticationResponse response = auth.authenticate(
-      new AuthenticationRequest(user, new Credential(credential), null));
+      new AuthenticationRequest(
+        user, new Credential(credential), ReturnAttributes.ALL_USER.value()));
     AssertJUnit.assertTrue(response.getResult());
     AssertJUnit.assertNull(response.getAccountState());
     LdapEntry entry = response.getLdapEntry();
@@ -949,9 +951,12 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertNotNull(entry.getAttribute("userAccountControl"));
 
     // bad password
-    // setting null return attributes uses the search entry resolver
+    // setting return attributes uses the search entry resolver
     response = auth.authenticate(
-      new AuthenticationRequest(user, new Credential(INVALID_PASSWD), null));
+      new AuthenticationRequest(
+        user,
+        new Credential(INVALID_PASSWD),
+        ReturnAttributes.ALL_USER.value()));
     AssertJUnit.assertFalse(response.getResult());
     AssertJUnit.assertEquals(
       ActiveDirectoryAccountState.Error.LOGON_FAILURE,
@@ -978,7 +983,10 @@ public class AuthenticatorTest extends AbstractTest
     auth.setEntryResolver(
       new SearchEntryResolver(ah.getConnectionFactory()));
     response = auth.authenticate(
-      new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
+      new AuthenticationRequest(
+        user,
+        new Credential(INVALID_PASSWD),
+        ReturnAttributes.ALL_USER.value()));
     AssertJUnit.assertFalse(response.getResult());
     AssertJUnit.assertEquals(
       ActiveDirectoryAccountState.Error.LOGON_FAILURE,
