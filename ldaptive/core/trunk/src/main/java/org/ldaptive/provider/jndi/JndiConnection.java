@@ -40,6 +40,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
@@ -986,7 +987,11 @@ public class JndiConnection implements ProviderConnection
     protected SearchControls getSearchControls(final SearchRequest sr)
     {
       final SearchControls ctls = new SearchControls();
-      ctls.setReturningAttributes(sr.getReturnAttributes());
+      if (ReturnAttributes.DEFAULT.equalsAttributes(sr.getReturnAttributes())) {
+        ctls.setReturningAttributes(null);
+      } else {
+        ctls.setReturningAttributes(sr.getReturnAttributes());
+      }
 
       final int searchScope = getSearchScope(sr.getSearchScope());
       if (searchScope != -1) {

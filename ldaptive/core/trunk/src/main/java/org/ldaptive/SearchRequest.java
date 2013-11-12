@@ -36,7 +36,7 @@ public class SearchRequest extends AbstractRequest
   private SearchFilter searchFilter;
 
   /** Attributes to return. */
-  private String[] retAttrs = ReturnAttributes.ALL_USER.value();
+  private String[] retAttrs = ReturnAttributes.DEFAULT.value();
 
   /** Search scope. */
   private SearchScope searchScope = SearchScope.SUBTREE;

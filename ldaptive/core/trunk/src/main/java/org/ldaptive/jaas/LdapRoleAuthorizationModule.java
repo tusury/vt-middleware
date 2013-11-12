@@ -25,6 +25,7 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import com.sun.security.auth.callback.TextCallbackHandler;
 import org.ldaptive.LdapException;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 
@@ -43,7 +44,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
   private String roleFilter;
 
   /** Role attribute to add to role data. */
-  private String[] roleAttribute = new String[0];
+  private String[] roleAttribute = ReturnAttributes.NONE.value();
 
   /** Whether failing to find any roles should raise an exception. */
   private boolean noResultsIsError;
@@ -73,8 +74,10 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
       if ("roleFilter".equalsIgnoreCase(key)) {
         roleFilter = value;
       } else if ("roleAttribute".equalsIgnoreCase(key)) {
-        if ("*".equals(value)) {
-          roleAttribute = null;
+        if ("".equals(value)) {
+          roleAttribute = ReturnAttributes.NONE.value();
+        } else if ("*".equals(value)) {
+          roleAttribute = ReturnAttributes.ALL_USER.value();
         } else {
           roleAttribute = value.split(",");
         }

@@ -33,7 +33,10 @@ public enum ReturnAttributes {
   ALL_OPERATIONAL(new String[] {"+"}),
 
   /** no attributes. */
-  NONE(new String[] {"1.1"});
+  NONE(new String[] {"1.1"}),
+
+  /** default, which is all user attributes. */
+  DEFAULT(new String[] {});
 
   /** underlying value. */
   private final String[] value;
@@ -91,8 +94,7 @@ public enum ReturnAttributes {
   /**
    * Parses the supplied return attributes and applies the following convention:
    * <ul>
-   *   <li>null == {@link ReturnAttributes#ALL_USER}</li>
-   *   <li>empty array == {@link ReturnAttributes#NONE}</li>
+   *   <li>null == {@link ReturnAttributes#DEFAULT}</li>
    * </ul>
    *
    * @param  attrs  to parse
@@ -101,14 +103,9 @@ public enum ReturnAttributes {
    */
   public static String[] parse(final String... attrs)
   {
-    String[] retAttrs;
     if (attrs == null) {
-      retAttrs = ReturnAttributes.ALL_USER.value();
-    } else if (attrs.length == 0) {
-      retAttrs = ReturnAttributes.NONE.value();
-    } else {
-      retAttrs = attrs;
+      return ReturnAttributes.DEFAULT.value();
     }
-    return retAttrs;
+    return attrs;
   }
 }
