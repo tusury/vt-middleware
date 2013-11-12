@@ -1045,11 +1045,7 @@ public class ApacheLdapConnection implements ProviderConnection
     {
       final SearchRequest apacheSr = new SearchRequestImpl();
       if (sr.getReturnAttributes() != null) {
-        if (sr.getReturnAttributes().length == 0) {
-          apacheSr.addAttributes("1.1");
-        } else {
-          apacheSr.addAttributes(sr.getReturnAttributes());
-        }
+        apacheSr.addAttributes(sr.getReturnAttributes());
       }
       apacheSr.setBase(new Dn(sr.getBaseDn()));
 

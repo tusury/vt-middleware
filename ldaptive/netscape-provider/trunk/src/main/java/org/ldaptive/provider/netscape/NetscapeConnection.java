@@ -832,16 +832,12 @@ public class NetscapeConnection implements ProviderConnection
       final SearchRequest sr)
       throws LDAPException
     {
-      String[] retAttrs = sr.getReturnAttributes();
-      if (retAttrs != null && retAttrs.length == 0) {
-        retAttrs = new String[] {"1.1"};
-      }
       return
         conn.search(
           sr.getBaseDn(),
           getSearchScope(sr.getSearchScope()),
           sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
-          retAttrs,
+          sr.getReturnAttributes(),
           sr.getTypesOnly(),
           (LDAPSearchListener) null,
           getLDAPSearchConstraints(request));
