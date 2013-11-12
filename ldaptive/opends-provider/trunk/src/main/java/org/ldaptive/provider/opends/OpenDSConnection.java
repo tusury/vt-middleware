@@ -1120,18 +1120,11 @@ public class OpenDSConnection
     protected SearchRequest getSearchRequest(
       final org.ldaptive.SearchRequest sr)
     {
-      String[] retAttrs = sr.getReturnAttributes();
-      if (retAttrs != null && retAttrs.length == 0) {
-        retAttrs = new String[] {"1.1"};
-      } else if (retAttrs == null) {
-        retAttrs = new String[0];
-      }
-
       final SearchRequest opendsSr = Requests.newSearchRequest(
         sr.getBaseDn(),
         getSearchScope(sr.getSearchScope()),
         sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
-        retAttrs);
+        sr.getReturnAttributes());
       opendsSr.setDereferenceAliasesPolicy(
         getDereferencePolicy(sr.getDerefAliases()));
       opendsSr.setSizeLimit((int) sr.getSizeLimit());

@@ -884,7 +884,7 @@ public class JLdapConnection implements ProviderConnection
           sr.getBaseDn(),
           getSearchScope(sr.getSearchScope()),
           sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
-          getReturnAttributes(sr),
+          sr.getReturnAttributes(),
           sr.getTypesOnly(),
           (LDAPSearchQueue) null,
           constraints);
@@ -909,28 +909,6 @@ public class JLdapConnection implements ProviderConnection
         scope = LDAPConnection.SCOPE_SUB;
       }
       return scope;
-    }
-
-
-    /**
-     * Returns an array of attribute names expected from the search request.
-     * Uses the '1.1' special attribute name if no attributes are requested.
-     *
-     * @param  sr  containing return attributes
-     *
-     * @return  attribute names for JLDAP
-     */
-    protected String[] getReturnAttributes(final SearchRequest sr)
-    {
-      String[] returnAttrs = null;
-      if (sr.getReturnAttributes() != null) {
-        if (sr.getReturnAttributes().length == 0) {
-          returnAttrs = new String[] {"1.1"};
-        } else {
-          returnAttrs = sr.getReturnAttributes();
-        }
-      }
-      return returnAttrs;
     }
 
 

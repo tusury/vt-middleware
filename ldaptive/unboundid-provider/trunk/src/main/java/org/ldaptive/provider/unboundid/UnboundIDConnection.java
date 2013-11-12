@@ -978,11 +978,6 @@ public class UnboundIDConnection implements ProviderConnection
       final IntermediateResponseListener irListener)
       throws LDAPSearchException
     {
-      String[] retAttrs = sr.getReturnAttributes();
-      if (retAttrs != null && retAttrs.length == 0) {
-        retAttrs = new String[] {"1.1"};
-      }
-
       try {
         final SearchRequest req = new SearchRequest(
           srListener,
@@ -993,7 +988,7 @@ public class UnboundIDConnection implements ProviderConnection
           (int) sr.getTimeLimit(),
           sr.getTypesOnly(),
           sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
-          retAttrs);
+          sr.getReturnAttributes());
         req.setFollowReferrals(sr.getFollowReferrals());
         if (irListener != null) {
           req.setIntermediateResponseListener(irListener);
