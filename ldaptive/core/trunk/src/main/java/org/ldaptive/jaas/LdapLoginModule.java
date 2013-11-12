@@ -27,6 +27,7 @@ import com.sun.security.auth.callback.TextCallbackHandler;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
@@ -41,7 +42,7 @@ public class LdapLoginModule extends AbstractLoginModule
 {
 
   /** User attribute to add to role data. */
-  private String[] userRoleAttribute = new String[0];
+  private String[] userRoleAttribute = ReturnAttributes.NONE.value();
 
   /** Factory for creating authenticators with JAAS options. */
   private AuthenticatorFactory authenticatorFactory;
@@ -69,8 +70,10 @@ public class LdapLoginModule extends AbstractLoginModule
     for (String key : options.keySet()) {
       final String value = (String) options.get(key);
       if ("userRoleAttribute".equalsIgnoreCase(key)) {
-        if ("*".equals(value)) {
-          userRoleAttribute = null;
+        if ("".equals(value)) {
+          userRoleAttribute = ReturnAttributes.NONE.value();
+        } else if ("*".equals(value)) {
+          userRoleAttribute = ReturnAttributes.ALL_USER.value();
         } else {
           userRoleAttribute = value.split(",");
         }
