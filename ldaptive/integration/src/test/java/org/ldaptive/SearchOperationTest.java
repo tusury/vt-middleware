@@ -322,7 +322,7 @@ public class SearchOperationTest extends AbstractTest
       new SearchRequest(
         dn,
         new SearchFilter(filter, filterParameters.split("\\|")),
-        new String[]{})).getResult();
+        ReturnAttributes.NONE.value())).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching without handler
@@ -691,6 +691,12 @@ public class SearchOperationTest extends AbstractTest
       // anonymous authz
       request.setControls(new ProxyAuthorizationControl("dn:"));
       response = search.execute(request);
+      if (ResultCode.UNAVAILABLE_CRITICAL_EXTENSION.equals(
+          response.getResultCode())) {
+        // ignore this test if not supported by the server
+        throw new UnsupportedOperationException(
+          "LDAP server does not support this control");
+      }
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(0, response.getResult().size());
 
