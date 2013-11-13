@@ -96,8 +96,8 @@ public class SyncReplClient
 
 
   /**
-   * Invokes {@link #execute(SearchRequest, CookieManager)} with a {@link
-   * DefaultCookieManager}.
+   * Invokes {@link #execute(SearchRequest, CookieManager, int)} with a {@link
+   * DefaultCookieManager} and a capacity of {@link Integer#MAX_VALUE}.
    *
    * @param  request  search request to execute
    *
@@ -110,7 +110,27 @@ public class SyncReplClient
   {
     final CookieManager manager = cookieManager != null
       ? cookieManager : new DefaultCookieManager();
-    return execute(request, manager);
+    return execute(request, manager, Integer.MAX_VALUE);
+  }
+
+
+  /**
+   * Invokes {@link #execute(SearchRequest, CookieManager, int)} with a capacity
+   * of {@link Integer#MAX_VALUE}.
+   *
+   * @param  request  search request to execute
+   * @param  manager  for reading and writing cookies
+   *
+   * @return  blocking queue to wait for sync repl items
+   *
+   * @throws  LdapException  if the search fails
+   */
+  public BlockingQueue<SyncReplItem> execute(
+    final SearchRequest request,
+    final CookieManager manager)
+    throws LdapException
+  {
+    return execute(request, manager, Integer.MAX_VALUE);
   }
 
 
@@ -141,6 +161,7 @@ public class SyncReplClient
    *
    * @param  request  search request to execute
    * @param  manager  for reading and writing cookies
+   * @param  capacity  of the returned blocking queue
    *
    * @return  blocking queue to wait for sync repl items
    *
@@ -149,11 +170,12 @@ public class SyncReplClient
   @SuppressWarnings("unchecked")
   public BlockingQueue<SyncReplItem> execute(
     final SearchRequest request,
-    final CookieManager manager)
+    final CookieManager manager,
+    final int capacity)
     throws LdapException
   {
     final BlockingQueue<SyncReplItem> queue =
-      new LinkedBlockingQueue<SyncReplItem>();
+      new LinkedBlockingQueue<SyncReplItem>(capacity);
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(
