@@ -83,6 +83,24 @@ public class PersistentSearchClient
 
 
   /**
+   * Invokes {@link #execute(SearchRequest, int)} with a capacity of {@link
+   * Integer#MAX_VALUE}.
+   *
+   * @param  request  search request to execute
+   *
+   * @return  blocking queue to wait for persistent search items
+   *
+   * @throws  LdapException  if the search fails
+   */
+  public BlockingQueue<PersistentSearchItem> execute(
+    final SearchRequest request)
+    throws LdapException
+  {
+    return execute(request, Integer.MAX_VALUE);
+  }
+
+
+  /**
    * Performs an async search operation with the {@link
    * PersistentSearchRequestControl}. The supplied request is modified in the
    * following way:
@@ -103,6 +121,7 @@ public class PersistentSearchClient
    * operations.</p>
    *
    * @param  request  search request to execute
+   * @param  capacity  of the returned blocking queue
    *
    * @return  blocking queue to wait for persistent search items
    *
@@ -110,11 +129,12 @@ public class PersistentSearchClient
    */
   @SuppressWarnings("unchecked")
   public BlockingQueue<PersistentSearchItem> execute(
-    final SearchRequest request)
+    final SearchRequest request,
+    final int capacity)
     throws LdapException
   {
     final BlockingQueue<PersistentSearchItem> queue =
-      new LinkedBlockingQueue<PersistentSearchItem>();
+      new LinkedBlockingQueue<PersistentSearchItem>(capacity);
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(

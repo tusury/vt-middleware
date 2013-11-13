@@ -64,6 +64,23 @@ public class NotificationClient
 
 
   /**
+   * Invokes {@link #execute(SearchRequest, int)} with a capacity of {@link
+   * Integer#MAX_VALUE}.
+   *
+   * @param  request  search request to execute
+   *
+   * @return  blocking queue to wait for search entries
+   *
+   * @throws  LdapException  if the search fails
+   */
+  public BlockingQueue<NotificationItem> execute(final SearchRequest request)
+    throws LdapException
+  {
+    return execute(request, Integer.MAX_VALUE);
+  }
+
+
+  /**
    * Performs a search operation with the {@link NotificationControl}. The
    * supplied request is modified in the following way:
    *
@@ -84,17 +101,20 @@ public class NotificationClient
    * operations.</p>
    *
    * @param  request  search request to execute
+   * @param  capacity  of the returned blocking queue
    *
    * @return  blocking queue to wait for search entries
    *
    * @throws  LdapException  if the search fails
    */
   @SuppressWarnings("unchecked")
-  public BlockingQueue<NotificationItem> execute(final SearchRequest request)
+  public BlockingQueue<NotificationItem> execute(
+    final SearchRequest request,
+    final int capacity)
     throws LdapException
   {
     final BlockingQueue<NotificationItem> queue =
-      new LinkedBlockingQueue<NotificationItem>();
+      new LinkedBlockingQueue<NotificationItem>(capacity);
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(
