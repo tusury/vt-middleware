@@ -114,4 +114,18 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
     return
       LdapUtils.computeHashCode(HASH_CODE_SEED, addIfExists, dnAttributeName);
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::dnAttributeName=%s, addIfExists=%s]",
+        getClass().getName(),
+        hashCode(),
+        dnAttributeName,
+        addIfExists);
+  }
 }

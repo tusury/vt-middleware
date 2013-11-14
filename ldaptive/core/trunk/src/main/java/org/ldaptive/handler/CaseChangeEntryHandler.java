@@ -197,4 +197,20 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
         attributeNameCaseChange,
         attributeValueCaseChange);
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::dnCaseChange=%s, attributeNameCaseChange=%s, " +
+        "attributeValueCaseChange=%s]",
+        getClass().getName(),
+        hashCode(),
+        dnCaseChange,
+        attributeNameCaseChange,
+        attributeValueCaseChange);
+  }
 }
