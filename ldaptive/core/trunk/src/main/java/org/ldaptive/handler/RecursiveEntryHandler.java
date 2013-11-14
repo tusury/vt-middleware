@@ -281,4 +281,19 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
         retAttrs,
         searchAttribute);
   }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::searchAttribute=%s, mergeAttributes=%s, retAttrs=%s]",
+        getClass().getName(),
+        hashCode(),
+        searchAttribute,
+        Arrays.toString(mergeAttributes),
+        Arrays.toString(retAttrs));
+  }
 }

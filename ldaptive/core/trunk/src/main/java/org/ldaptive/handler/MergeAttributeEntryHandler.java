@@ -13,6 +13,7 @@
 */
 package org.ldaptive.handler;
 
+import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
@@ -125,5 +126,19 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
         HASH_CODE_SEED,
         attributeNames,
         mergeAttributeName);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::mergeAttributeName=%s, attributeNames=%s]",
+        getClass().getName(),
+        hashCode(),
+        mergeAttributeName,
+        Arrays.toString(attributeNames));
   }
 }
