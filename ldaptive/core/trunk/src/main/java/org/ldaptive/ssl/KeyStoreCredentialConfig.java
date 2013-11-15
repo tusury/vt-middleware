@@ -15,6 +15,8 @@ package org.ldaptive.ssl;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides the properties necessary for creating an SSL context initializer
@@ -25,6 +27,9 @@ import java.security.GeneralSecurityException;
  */
 public class KeyStoreCredentialConfig implements CredentialConfig
 {
+
+  /** hash code seed. */
+  private static final int HASH_CODE_SEED = 1013;
 
   /** Handles loading keystores. */
   private final KeyStoreCredentialReader keyStoreReader =
@@ -39,6 +44,9 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   /** Truststore type. */
   private String trustStoreType;
 
+  /** Truststore aliases to use. */
+  private String[] trustStoreAliases;
+
   /** Name of the keystore to use for the SSL connection. */
   private String keyStore;
 
@@ -47,6 +55,9 @@ public class KeyStoreCredentialConfig implements CredentialConfig
 
   /** Keystore type. */
   private String keyStoreType;
+
+  /** Keystore aliases to use. */
+  private String[] keyStoreAliases;
 
 
   /**
@@ -116,6 +127,28 @@ public class KeyStoreCredentialConfig implements CredentialConfig
 
 
   /**
+   * Returns the aliases of the truststore to use.
+   *
+   * @return  truststore aliases
+   */
+  public String[] getTrustStoreAliases()
+  {
+    return trustStoreAliases;
+  }
+
+
+  /**
+   * Sets the aliases of the truststore to use.
+   *
+   * @param  aliases  truststore aliases
+   */
+  public void setTrustStoreAliases(final String... aliases)
+  {
+    trustStoreAliases = aliases;
+  }
+
+
+  /**
    * Returns the name of the keystore to use.
    *
    * @return  keystore name
@@ -181,6 +214,28 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   }
 
 
+  /**
+   * Returns the aliases of the keystore to use.
+   *
+   * @return  keystore aliases
+   */
+  public String[] getKeyStoreAliases()
+  {
+    return keyStoreAliases;
+  }
+
+
+  /**
+   * Sets the aliases of the keystore to use.
+   *
+   * @param  aliases  keystore aliases
+   */
+  public void setKeyStoreAliases(final String... aliases)
+  {
+    keyStoreAliases = aliases;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public SSLContextInitializer createSSLContextInitializer()
@@ -192,16 +247,62 @@ public class KeyStoreCredentialConfig implements CredentialConfig
       if (trustStore != null) {
         sslInit.setTrustKeystore(
           keyStoreReader.read(trustStore, trustStorePassword, trustStoreType));
+        sslInit.setTrustAliases(trustStoreAliases);
       }
       if (keyStore != null) {
         sslInit.setAuthenticationKeystore(
           keyStoreReader.read(keyStore, keyStorePassword, keyStoreType));
         sslInit.setAuthenticationPassword(
           keyStorePassword != null ? keyStorePassword.toCharArray() : null);
+        sslInit.setAuthenticationAliases(keyStoreAliases);
       }
     } catch (IOException e) {
       throw new GeneralSecurityException(e);
     }
     return sslInit;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public boolean equals(final Object o)
+  {
+    return LdapUtils.areEqual(this, o);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public int hashCode()
+  {
+    return LdapUtils.computeHashCode(
+      HASH_CODE_SEED,
+      trustStore,
+      trustStoreType,
+      trustStorePassword,
+      trustStoreAliases,
+      keyStore,
+      keyStoreType,
+      keyStorePassword,
+      keyStoreAliases);
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::trustStore=%s, trustStoreType=%s, trustStoreAliases=%s, " +
+        "keyStore=%s, keyStoreType=%s, keyStoreAliases=%s]",
+        getClass().getName(),
+        hashCode(),
+        trustStore,
+        trustStoreType,
+        Arrays.toString(trustStoreAliases),
+        keyStore,
+        keyStoreType,
+        Arrays.toString(keyStoreAliases));
   }
 }
