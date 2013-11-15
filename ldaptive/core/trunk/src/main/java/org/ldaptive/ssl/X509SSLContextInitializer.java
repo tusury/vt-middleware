@@ -13,7 +13,6 @@
 */
 package org.ldaptive.ssl;
 
-import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -117,15 +116,8 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
   {
     TrustManager[] tm = null;
     if (trustCerts != null && trustCerts.length > 0) {
-      final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-      try {
-        ks.load(null, null);
-      } catch (IOException e) {
-        throw new GeneralSecurityException(e);
-      }
-      for (int i = 0; i < trustCerts.length; i++) {
-        ks.setCertificateEntry("ldap_trust_" + i, trustCerts[i]);
-      }
+      final KeyStore ks = KeyStoreUtils.newInstance();
+      KeyStoreUtils.setCertificateEntry("ldap_trust_", ks, trustCerts);
 
       final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
         TrustManagerFactory.getDefaultAlgorithm());
@@ -152,17 +144,13 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
   {
     KeyManager[] km = null;
     if (authenticationCert != null && authenticationKey != null) {
-      final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-      try {
-        ks.load(null, null);
-      } catch (IOException e) {
-        throw new GeneralSecurityException(e);
-      }
-      ks.setKeyEntry(
+      final KeyStore ks = KeyStoreUtils.newInstance();
+      KeyStoreUtils.setKeyEntry(
         "ldap_client_auth",
-        authenticationKey,
+        ks,
         "changeit".toCharArray(),
-        new X509Certificate[] {authenticationCert});
+        authenticationKey,
+        authenticationCert);
 
       final KeyManagerFactory kmf = KeyManagerFactory.getInstance(
         KeyManagerFactory.getDefaultAlgorithm());

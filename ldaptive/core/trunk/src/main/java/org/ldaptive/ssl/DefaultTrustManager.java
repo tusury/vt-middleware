@@ -70,7 +70,7 @@ public class DefaultTrustManager implements X509TrustManager
     throws CertificateException
   {
     for (X509TrustManager tm : trustManagers) {
-      logger.debug("invoking checkClientTrusted invoked for {}", tm);
+      logger.trace("invoking checkClientTrusted for {}", tm);
       tm.checkClientTrusted(chain, authType);
     }
   }
@@ -84,7 +84,7 @@ public class DefaultTrustManager implements X509TrustManager
     throws CertificateException
   {
     for (X509TrustManager tm : trustManagers) {
-      logger.debug("invoking checkServerTrusted invoked for {}", tm);
+      logger.trace("invoking checkServerTrusted for {}", tm);
       tm.checkServerTrusted(chain, authType);
     }
   }
@@ -97,7 +97,7 @@ public class DefaultTrustManager implements X509TrustManager
     final List<X509Certificate> issuers = new ArrayList<X509Certificate>();
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
-        logger.debug("invoking getAcceptedIssuers invoked for {}", tm);
+        logger.trace("invoking getAcceptedIssuers for {}", tm);
         Collections.addAll(issuers, tm.getAcceptedIssuers());
       }
     }

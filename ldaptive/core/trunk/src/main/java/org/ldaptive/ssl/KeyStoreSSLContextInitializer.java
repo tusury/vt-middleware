@@ -34,8 +34,14 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   /** KeyStore used to create trust managers. */
   private KeyStore trustKeystore;
 
+  /** Aliases of trust entries to use. */
+  private String[] trustAliases;
+
   /** KeyStore used to create key managers. */
   private KeyStore authenticationKeystore;
+
+  /** Aliases of key entries to use. */
+  private String[] authenticationAliases;
 
   /** Password used to access the authentication keystore. */
   private char[] authenticationPassword;
@@ -53,6 +59,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
 
 
   /**
+   * Sets the aliases of the entries to use in the trust keystore.
+   *
+   * @param  aliases  to use
+   */
+  public void setTrustAliases(final String... aliases)
+  {
+    trustAliases = aliases;
+  }
+
+
+  /**
    * Sets the keystore to use for creating the key managers.
    *
    * @param  keystore  to set
@@ -60,6 +77,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   public void setAuthenticationKeystore(final KeyStore keystore)
   {
     authenticationKeystore = keystore;
+  }
+
+
+  /**
+   * Sets the aliases of the entries to use in the authentication keystore.
+   *
+   * @param  aliases  to use
+   */
+  public void setAuthenticationAliases(final String... aliases)
+  {
+    authenticationAliases = aliases;
   }
 
 
@@ -83,7 +111,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
     if (trustKeystore != null) {
       final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
         TrustManagerFactory.getDefaultAlgorithm());
-      tmf.init(trustKeystore);
+      if (trustAliases != null) {
+        final KeyStore ks = KeyStoreUtils.newInstance();
+        for (String alias : trustAliases) {
+          final KeyStore.Entry entry = KeyStoreUtils.getEntry(
+            alias, trustKeystore, null);
+          KeyStoreUtils.setEntry(alias, entry, ks, null);
+        }
+        tmf.init(ks);
+      } else {
+        tmf.init(trustKeystore);
+      }
       tm = tmf.getTrustManagers();
     }
 
@@ -108,7 +146,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
     if (authenticationKeystore != null && authenticationPassword != null) {
       final KeyManagerFactory kmf = KeyManagerFactory.getInstance(
         KeyManagerFactory.getDefaultAlgorithm());
-      kmf.init(authenticationKeystore, authenticationPassword);
+      if (authenticationAliases != null) {
+        final KeyStore ks = KeyStoreUtils.newInstance(authenticationPassword);
+        for (String alias : authenticationAliases) {
+          final KeyStore.Entry entry = KeyStoreUtils.getEntry(
+            alias, authenticationKeystore, authenticationPassword);
+          KeyStoreUtils.setEntry(alias, entry, ks, authenticationPassword);
+        }
+        kmf.init(ks, authenticationPassword);
+      } else {
+        kmf.init(authenticationKeystore, authenticationPassword);
+      }
       km = kmf.getKeyManagers();
     }
     return km;
