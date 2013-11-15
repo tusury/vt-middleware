@@ -38,15 +38,15 @@ public class PropertyValueParser
 {
 
   /** Property string containing configuration. */
-  private static final Pattern CONFIG_PATTERN = Pattern.compile(
+  protected static final Pattern CONFIG_PATTERN = Pattern.compile(
     "([^\\{]+)\\s*\\{(.*)\\}\\s*");
 
   /** Property string for configuring a config where the class is known. */
-  private static final Pattern PARAMS_ONLY_CONFIG_PATTERN = Pattern.compile(
+  protected static final Pattern PARAMS_ONLY_CONFIG_PATTERN = Pattern.compile(
     "\\s*\\{\\s*(.*)\\s*\\}\\s*");
 
   /** Pattern for finding properties. */
-  private static final Pattern PROPERTY_PATTERN = Pattern.compile(
+  protected static final Pattern PROPERTY_PATTERN = Pattern.compile(
     "([^\\}\\{])+");
 
   /** Logger for this class. */
@@ -60,6 +60,12 @@ public class PropertyValueParser
 
 
   /**
+   * Default constructor.
+   */
+  protected PropertyValueParser() {}
+
+
+  /**
    * Creates a new config parser.
    *
    * @param  config  containing configuration data
@@ -68,17 +74,7 @@ public class PropertyValueParser
   {
     final Matcher matcher = CONFIG_PATTERN.matcher(config);
     if (matcher.matches()) {
-      className = matcher.group(1).trim();
-
-      final String props = matcher.group(2).trim();
-      final Matcher m = PROPERTY_PATTERN.matcher(props);
-      while (m.find()) {
-        final String input = m.group().trim();
-        if (input != null && !"".equals(input)) {
-          final String[] s = input.split("=", 2);
-          properties.put(s[0].trim(), s[1].trim());
-        }
-      }
+      initialize(matcher.group(1).trim(), matcher.group(2).trim());
     }
   }
 
@@ -92,29 +88,69 @@ public class PropertyValueParser
   public PropertyValueParser(final String config, final String clazz)
   {
     final Matcher matcher = PARAMS_ONLY_CONFIG_PATTERN.matcher(config);
-    className = clazz;
     if (matcher.matches()) {
-      final String props = matcher.group(1).trim();
-      final Matcher m = PROPERTY_PATTERN.matcher(props);
-      while (m.find()) {
-        final String input = m.group().trim();
-        if (input != null && !"".equals(input)) {
-          final String[] s = input.split("=", 2);
-          properties.put(s[0].trim(), s[1].trim());
+      initialize(clazz, matcher.group(1).trim());
+    }
+  }
+
+
+  /**
+   * Invokes {@link #setClassName(String)} and {@link
+   * #initializeProperties(Matcher)}.
+   *
+   * @param  clazz  type to create and initialize
+   * @param  props  to set on the class
+   */
+  protected void initialize(final String clazz, final String props)
+  {
+    setClassName(clazz);
+    if (!"".equals(props)) {
+      initializeProperties(PROPERTY_PATTERN.matcher(props));
+    }
+  }
+
+
+  /**
+   * Finds all the matches in the supplied matcher puts them into the properties
+   * map. Properties are split on '='.
+   *
+   * @param  matcher  to find matches
+   */
+  protected void initializeProperties(final Matcher matcher)
+  {
+    while (matcher.find()) {
+      final String input = matcher.group().trim();
+      if (input != null && !"".equals(input)) {
+        final String[] s = input.split("=", 2);
+        if (s.length < 2) {
+          throw new IllegalArgumentException(
+            "Invalid property syntax: " + input);
         }
+        properties.put(s[0].trim(), s[1].trim());
       }
     }
   }
 
 
   /**
-   * Returns the class name from the configuration.
+   * Returns the class name of the object to initialize.
    *
    * @return  class name
    */
   public String getClassName()
   {
     return className;
+  }
+
+
+  /**
+   * Sets the class name of the object to initialize.
+   *
+   * @param  name  of the object class type
+   */
+  protected void setClassName(final String name)
+  {
+    className = name;
   }
 
 
