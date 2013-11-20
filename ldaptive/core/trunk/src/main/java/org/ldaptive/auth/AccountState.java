@@ -13,6 +13,7 @@
 */
 package org.ldaptive.auth;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import javax.security.auth.login.LoginException;
 
@@ -102,6 +103,20 @@ public class AccountState
     return
       accountErrors != null && accountErrors.length > 0 ? accountErrors[0]
                                                         : null;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::accountWarnings=%s, accountErrors=%s]",
+        getClass().getName(),
+        hashCode(),
+        Arrays.toString(accountWarnings),
+        Arrays.toString(accountErrors));
   }
 
 
@@ -195,6 +210,20 @@ public class AccountState
     public int getLoginsRemaining()
     {
       return loginsRemaining;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+      return
+        String.format(
+          "[%s@%d::expiration=%s, loginsRemaining=%s]",
+          getClass().getName(),
+          hashCode(),
+          expiration,
+          loginsRemaining);
     }
   }
 }
