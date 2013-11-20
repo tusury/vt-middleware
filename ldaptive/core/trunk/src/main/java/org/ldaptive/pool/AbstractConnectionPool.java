@@ -84,8 +84,14 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   /** Executor for scheduling pool tasks. */
   private ScheduledExecutorService poolExecutor;
 
-  /** Whether initialize has been invoked. */
+  /** Whether {@link #initialize()} has been invoked. */
   private boolean initialized;
+
+  /**
+   * Whether {@link #initialize()} should throw if pooling configuration
+   * requirements are not met. Default value is {@value}.
+   */
+  private boolean failFastInitialize = true;
 
 
   /**
@@ -161,6 +167,31 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
+   * Returns whether {@link #initialize()} should throw if pooling configuration
+   * requirements are not met.
+   *
+   * @return  whether {@link #initialize()} should throw
+   */
+  public boolean getFailFastInitialize()
+  {
+    return failFastInitialize;
+  }
+
+
+  /**
+   * Sets whether {@link #initialize()} should throw if pooling configuration
+   * requirements are not met.
+   *
+   * @param  b  whether {@link #initialize()} should throw
+   */
+  public void setFailFastInitialize(final boolean b)
+  {
+    logger.trace("setting failFastInitialize: {}", b);
+    failFastInitialize = b;
+  }
+
+
+  /**
    * Used to determine whether {@link #initialize()} has been invoked for this
    * pool.
    *
@@ -217,7 +248,11 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     active = new Queue<PooledConnectionProxy>(queueType);
     grow(getPoolConfig().getMinPoolSize());
     if (available.isEmpty() && getPoolConfig().getMinPoolSize() > 0) {
-      throw new IllegalStateException("Could not initialize pool");
+      if (failFastInitialize) {
+        throw new IllegalStateException("Could not initialize pool size");
+      } else {
+        logger.warn("Could not initialize pool size, pool is empty");
+      }
     }
     logger.debug("initialized available queue: {}", available);
 
