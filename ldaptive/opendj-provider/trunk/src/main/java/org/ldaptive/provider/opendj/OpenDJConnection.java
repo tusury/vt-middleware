@@ -282,12 +282,10 @@ public class OpenDJConnection
       throw new UnsupportedOperationException("CRAM-MD5 not supported");
       // LDAP reports: error: SASL bind in progress (tag=99)
       /*
-      builder.append(
-        request.getCredential() != null ?
-          request.getCredential().getBytes(): new byte[0]);
       sbr = Requests.newCRAMMD5SASLBindRequest(
         request.getDn() != null ? request.getDn() : "",
-        request.getCredential().getBytes());
+        request.getCredential() != null ?
+          request.getCredential().getBytes() : null);
       break;
       */
 
@@ -297,7 +295,7 @@ public class OpenDJConnection
       sbr = Requests.newGSSAPISASLBindRequest(
         request.getDn() != null ? request.getDn() : "",
         request.getCredential() != null ?
-          request.getCredential().getBytes() : null);
+          request.getCredential().getBytes() : new byte[0]);
       ((GSSAPISASLBindRequest) sbr).setAuthorizationID(
         sc.getAuthorizationId());
       final String gssApiRealm = sc instanceof GssApiConfig
