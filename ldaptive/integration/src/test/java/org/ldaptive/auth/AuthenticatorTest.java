@@ -476,12 +476,12 @@ public class AuthenticatorTest extends AbstractTest
 
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(
-        user, new Credential(INVALID_PASSWD), new String[0]));
+        user, new Credential(INVALID_PASSWD), ReturnAttributes.NONE.value()));
     AssertJUnit.assertFalse(response.getResult());
 
     response = auth.authenticate(
       new AuthenticationRequest(
-        user, new Credential(credential), new String[0]));
+        user, new Credential(credential), ReturnAttributes.NONE.value()));
     AssertJUnit.assertTrue(response.getResult());
   }
 
@@ -506,12 +506,12 @@ public class AuthenticatorTest extends AbstractTest
       final Authenticator auth = TestUtils.createCramMD5Authenticator();
       AuthenticationResponse response = auth.authenticate(
         new AuthenticationRequest(
-          user, new Credential(INVALID_PASSWD), new String[0]));
+          user, new Credential(INVALID_PASSWD), ReturnAttributes.NONE.value()));
       AssertJUnit.assertFalse(response.getResult());
 
       response = auth.authenticate(
         new AuthenticationRequest(
-          user, new Credential(credential), new String[0]));
+          user, new Credential(credential), ReturnAttributes.NONE.value()));
       AssertJUnit.assertTrue(response.getResult());
     } catch (LdapException e) {
       // ignore this test if not supported by the server
