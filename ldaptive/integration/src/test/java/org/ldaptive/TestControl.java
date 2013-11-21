@@ -112,7 +112,9 @@ public class TestControl
   {
     final SearchOperation search = new SearchOperation(conn);
     final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
-      bindDn, new String[0], new SearchFilter("(sAMAccountName=*)"));
+      bindDn,
+      ReturnAttributes.NONE.value(),
+      new SearchFilter("(sAMAccountName=*)"));
     try {
       return search.execute(request).getResult().size() == 1;
     } catch (LdapException e) {
