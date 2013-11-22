@@ -31,7 +31,8 @@ public abstract class AbstractSearchEntryResolver
 {
 
   /** @deprecated  User attributes to return. */
-  @Deprecated private String[] retAttrs;
+  @Deprecated
+  private String[] retAttrs;
 
   /** Ldap entry handlers. */
   private SearchEntryHandler[] entryHandlers;
@@ -153,6 +154,7 @@ public abstract class AbstractSearchEntryResolver
     throws LdapException
   {
     logger.debug("resolve criteria={}", ac);
+
     final SearchResult result = performLdapSearch(conn, ac);
     logger.debug("resolved result={} for criteria={}", result, ac);
     return resolveEntry(result);

@@ -246,6 +246,7 @@ public class EntryChangeNotificationControl extends AbstractControl
   public void decode(final byte[] berValue)
   {
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
+
     final DERParser parser = new DERParser();
     parser.registerHandler(ChangeTypeHandler.PATH, new ChangeTypeHandler(this));
     parser.registerHandler(PreviousDnHandler.PATH, new PreviousDnHandler(this));
@@ -281,8 +282,8 @@ public class EntryChangeNotificationControl extends AbstractControl
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
       final int typeValue = IntegerType.decode(encoded).intValue();
-      final PersistentSearchChangeType ct =
-        PersistentSearchChangeType.valueOf(typeValue);
+      final PersistentSearchChangeType ct = PersistentSearchChangeType.valueOf(
+        typeValue);
       if (ct == null) {
         throw new IllegalArgumentException(
           "Unknown change type code " + typeValue);

@@ -211,6 +211,7 @@ public class PersistentSearchClient
         {
           try {
             logger.debug("received {}", entry);
+
             final PersistentSearchItem item = new PersistentSearchItem(
               new PersistentSearchItem.Entry(entry));
             queue.put(item);

@@ -22,8 +22,7 @@ package org.ldaptive.control;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public enum PersistentSearchChangeType
-{
+public enum PersistentSearchChangeType {
 
   /** add. */
   ADD(1),

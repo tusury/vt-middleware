@@ -235,6 +235,7 @@ public class PersistentSearchRequestControl extends AbstractControl
     for (PersistentSearchChangeType type : getChangeTypes()) {
       types |= type.value();
     }
+
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
       new IntegerType(types),

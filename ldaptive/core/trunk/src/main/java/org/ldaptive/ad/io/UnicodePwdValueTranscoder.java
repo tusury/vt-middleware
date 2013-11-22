@@ -67,6 +67,7 @@ public class UnicodePwdValueTranscoder implements ValueTranscoder<String>
     if (value == null) {
       throw new IllegalArgumentException("Cannot encode null value");
     }
+
     final String pwd = String.format("\"%s\"", value);
     return pwd.getBytes(UTF_16LE);
   }

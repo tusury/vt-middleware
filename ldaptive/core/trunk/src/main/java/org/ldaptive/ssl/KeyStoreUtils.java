@@ -126,9 +126,10 @@ public final class KeyStoreUtils
       throw new IllegalArgumentException(
         "KeyStore does not contain alias " + alias);
     }
-    return keystore.getEntry(
-      alias,
-      password != null ? new KeyStore.PasswordProtection(password) : null);
+    return
+      keystore.getEntry(
+        alias,
+        password != null ? new KeyStore.PasswordProtection(password) : null);
   }
 
 
@@ -201,7 +202,8 @@ public final class KeyStoreUtils
       } else {
         for (int i = 0; i < certs.length; i++) {
           keystore.setCertificateEntry(
-            String.format("%s%s", alias, i), certs[i]);
+            String.format("%s%s", alias, i),
+            certs[i]);
         }
       }
     }

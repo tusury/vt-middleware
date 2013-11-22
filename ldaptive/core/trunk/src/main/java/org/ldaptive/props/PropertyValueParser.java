@@ -59,9 +59,7 @@ public class PropertyValueParser
   private final Map<String, String> properties = new HashMap<String, String>();
 
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   protected PropertyValueParser() {}
 
 
