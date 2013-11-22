@@ -179,8 +179,8 @@ public class SearchFilter
 
 
   /**
-   * Encodes the supplied attribute value for use in a search filter. See
-   * {@link #escape(String)}.
+   * Encodes the supplied attribute value for use in a search filter. See {@link
+   * #escape(String)}.
    *
    * @param  value  to encode
    *

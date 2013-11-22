@@ -115,7 +115,9 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
         final KeyStore ks = KeyStoreUtils.newInstance();
         for (String alias : trustAliases) {
           final KeyStore.Entry entry = KeyStoreUtils.getEntry(
-            alias, trustKeystore, null);
+            alias,
+            trustKeystore,
+            null);
           KeyStoreUtils.setEntry(alias, entry, ks, null);
         }
         tmf.init(ks);
@@ -150,7 +152,9 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
         final KeyStore ks = KeyStoreUtils.newInstance(authenticationPassword);
         for (String alias : authenticationAliases) {
           final KeyStore.Entry entry = KeyStoreUtils.getEntry(
-            alias, authenticationKeystore, authenticationPassword);
+            alias,
+            authenticationKeystore,
+            authenticationPassword);
           KeyStoreUtils.setEntry(alias, entry, ks, authenticationPassword);
         }
         kmf.init(ks, authenticationPassword);

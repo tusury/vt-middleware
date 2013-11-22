@@ -57,7 +57,8 @@ public class CredentialConfigParser extends PropertyValueParser
         credentialOnlyMatcher.group(2).trim());
     } else if (paramsOnlyMatcher.matches()) {
       initialize(
-        DEFAULT_CREDENTIAL_CONFIG_CLASS, paramsOnlyMatcher.group(1).trim());
+        DEFAULT_CREDENTIAL_CONFIG_CLASS,
+        paramsOnlyMatcher.group(1).trim());
     }
   }
 

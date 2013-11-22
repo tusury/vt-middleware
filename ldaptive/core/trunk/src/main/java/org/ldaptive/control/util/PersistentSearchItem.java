@@ -108,8 +108,8 @@ public class PersistentSearchItem
 
 
   /**
-   * Returns the async request contained in this item or null if this item
-   * does not contain an async request.
+   * Returns the async request contained in this item or null if this item does
+   * not contain an async request.
    *
    * @return  async request
    */
@@ -248,9 +248,8 @@ public class PersistentSearchItem
     public Entry(final SearchEntry entry)
     {
       searchEntry = entry;
-      entryChangeNotificationControl =
-        (EntryChangeNotificationControl) entry.getControl(
-          EntryChangeNotificationControl.OID);
+      entryChangeNotificationControl = (EntryChangeNotificationControl)
+        entry.getControl(EntryChangeNotificationControl.OID);
     }
 
 

@@ -275,16 +275,17 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(
-      HASH_CODE_SEED,
-      trustStore,
-      trustStoreType,
-      trustStorePassword,
-      trustStoreAliases,
-      keyStore,
-      keyStoreType,
-      keyStorePassword,
-      keyStoreAliases);
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        trustStore,
+        trustStoreType,
+        trustStorePassword,
+        trustStoreAliases,
+        keyStore,
+        keyStoreType,
+        keyStorePassword,
+        keyStoreAliases);
   }
 
 

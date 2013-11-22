@@ -154,11 +154,12 @@ public class X509CredentialConfig implements CredentialConfig
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(
-      HASH_CODE_SEED,
-      trustCertificates,
-      authenticationCertificate,
-      authenticationKey);
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        trustCertificates,
+        authenticationCertificate,
+        authenticationKey);
   }
 
 

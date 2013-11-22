@@ -115,7 +115,8 @@ public class ProxyAuthorizationControl extends AbstractControl
   @Override
   public byte[] encode()
   {
-    return getAuthorizationId() != null ?
-      OctetStringType.toBytes(getAuthorizationId()) : EMPTY_AUTHZ;
+    return
+      getAuthorizationId() != null
+      ? OctetStringType.toBytes(getAuthorizationId()) : EMPTY_AUTHZ;
   }
 }

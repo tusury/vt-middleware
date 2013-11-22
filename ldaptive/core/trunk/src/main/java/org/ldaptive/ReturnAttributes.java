@@ -93,6 +93,7 @@ public enum ReturnAttributes {
 
   /**
    * Parses the supplied return attributes and applies the following convention:
+   *
    * <ul>
    *   <li>null == {@link ReturnAttributes#DEFAULT}</li>
    * </ul>

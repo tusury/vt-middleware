@@ -152,8 +152,8 @@ public class FormatDnResolver implements DnResolver
   {
     String dn = null;
     if (user != null && !"".equals(user)) {
-      final String escapedUser = escapeUser ?
-        LdapAttribute.escapeValue(user) : user;
+      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user)
+                                            : user;
       logger.debug("Formatting DN for {} with {}", escapedUser, formatString);
       if (formatArgs != null && formatArgs.length > 0) {
         final Object[] args = new Object[formatArgs.length + 1];

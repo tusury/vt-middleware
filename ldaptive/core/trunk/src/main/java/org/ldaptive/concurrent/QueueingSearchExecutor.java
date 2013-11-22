@@ -103,11 +103,12 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   public BlockingQueue<SearchItem> search(final ConnectionFactory factory)
     throws LdapException
   {
-    return search(
-      factory,
-      null,
-      (String[]) null,
-      (org.ldaptive.handler.SearchEntryHandler[]) null);
+    return
+      search(
+        factory,
+        null,
+        (String[]) null,
+        (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
 
@@ -206,11 +207,12 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     final String... attrs)
     throws LdapException
   {
-    return search(
-      factory,
-      filter,
-      attrs,
-      (org.ldaptive.handler.SearchEntryHandler[]) null);
+    return
+      search(
+        factory,
+        filter,
+        attrs,
+        (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
 
@@ -234,8 +236,8 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     final org.ldaptive.handler.SearchEntryHandler... handlers)
     throws LdapException
   {
-    final BlockingQueue<SearchItem> queue =
-      new LinkedBlockingQueue<SearchItem>(queueCapacity);
+    final BlockingQueue<SearchItem> queue = new LinkedBlockingQueue<SearchItem>(
+      queueCapacity);
 
     final SearchRequest sr = newSearchRequest(this);
     if (filter != null) {
@@ -279,32 +281,32 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   {
     return
       new Callable<Response<SearchResult>>() {
-        @Override
-        public Response<SearchResult> call()
-          throws LdapException
-        {
+      @Override
+      public Response<SearchResult> call()
+        throws LdapException
+      {
+        try {
+          conn.open();
+
+          SearchItem item;
           try {
-            conn.open();
-            SearchItem item;
-            try {
-              final Response<SearchResult> response = operation.execute(
-                request);
-              item = new SearchItem(response);
-            } catch (Exception e) {
-              item = new SearchItem(e);
-            }
-            try {
-              logger.debug("received {}", item);
-              queue.put(item);
-            } catch (InterruptedException e1) {
-              logger.warn("Unable to insert item {}", item);
-            }
-            return null;
-          } finally {
-            conn.close();
+            final Response<SearchResult> response = operation.execute(request);
+            item = new SearchItem(response);
+          } catch (Exception e) {
+            item = new SearchItem(e);
           }
+          try {
+            logger.debug("received {}", item);
+            queue.put(item);
+          } catch (InterruptedException e1) {
+            logger.warn("Unable to insert item {}", item);
+          }
+          return null;
+        } finally {
+          conn.close();
         }
-      };
+      }
+    };
   }
 
 
@@ -325,7 +327,8 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
         LdapUtils.concatArrays(
           request.getSearchEntryHandlers(),
           new org.ldaptive.handler.SearchEntryHandler[] {
-            new SearchEntryHandler(queue), }));
+            new SearchEntryHandler(queue),
+          }));
     } else {
       request.setSearchEntryHandlers(new SearchEntryHandler(queue));
     }
@@ -333,8 +336,9 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       request.setSearchReferenceHandlers(
         LdapUtils.concatArrays(
           request.getSearchReferenceHandlers(),
-          new org.ldaptive.handler.SearchReferenceHandler[]{
-            new SearchReferenceHandler(queue), }));
+          new org.ldaptive.handler.SearchReferenceHandler[] {
+            new SearchReferenceHandler(queue),
+          }));
     } else {
       request.setSearchReferenceHandlers(new SearchReferenceHandler(queue));
     }
@@ -342,8 +346,9 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       request.setIntermediateResponseHandlers(
         LdapUtils.concatArrays(
           request.getIntermediateResponseHandlers(),
-          new org.ldaptive.handler.IntermediateResponseHandler[]{
-            new IntermediateResponseHandler(queue), }));
+          new org.ldaptive.handler.IntermediateResponseHandler[] {
+            new IntermediateResponseHandler(queue),
+          }));
     } else {
       request.setIntermediateResponseHandlers(
         new IntermediateResponseHandler(queue));
@@ -351,9 +356,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   }
 
 
-  /**
-   * Places search entries on a blocking queue.
-   */
+  /** Places search entries on a blocking queue. */
   protected class SearchEntryHandler extends AbstractHandler
     implements org.ldaptive.handler.SearchEntryHandler
   {
@@ -389,9 +392,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   }
 
 
-  /**
-   * Places search references on a blocking queue.
-   */
+  /** Places search references on a blocking queue. */
   protected class SearchReferenceHandler extends AbstractHandler
     implements org.ldaptive.handler.SearchReferenceHandler
   {
@@ -427,9 +428,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   }
 
 
-  /**
-   * Places intermediate responses on a blocking queue.
-   */
+  /** Places intermediate responses on a blocking queue. */
   protected class IntermediateResponseHandler extends AbstractHandler
     implements org.ldaptive.handler.IntermediateResponseHandler
   {
@@ -460,9 +459,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   }
 
 
-  /**
-   * Common implementation for the handler classes.
-   */
+  /** Common implementation for the handler classes. */
   protected abstract class AbstractHandler
   {
 
@@ -498,9 +495,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   }
 
 
-  /**
-   * Contains data returned when using the {@link QueueingSearchExecutor}.
-   */
+  /** Contains data returned when using the {@link QueueingSearchExecutor}. */
   public static class SearchItem
   {
 
