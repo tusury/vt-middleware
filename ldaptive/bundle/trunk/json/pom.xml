@@ -6,11 +6,11 @@
   <groupId>org.ldaptive.bundle</groupId>
   <artifactId>ldaptive-json</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <parent>
     <groupId>org.ldaptive.bundle</groupId>
     <artifactId>root</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
   </parent>
 
   <prerequisites>
