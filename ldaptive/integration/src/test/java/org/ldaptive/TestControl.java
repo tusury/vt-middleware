@@ -53,6 +53,17 @@ public class TestControl
 
 
   /**
+   * Used by tests to determine if Oracle Directory server is being tested.
+   *
+   * @return  whether oracle directory server is being tested
+   */
+  public static boolean isOracleDirectory()
+  {
+    return "ORACLE".equals(DIRECTORY_TYPE);
+  }
+
+
+  /**
    * Obtains the lock before running all tests.
    *
    * @param  ignoreLock  whether to check for the global test lock
@@ -86,6 +97,8 @@ public class TestControl
       }
       if (isAD(conn, bindDn)) {
         DIRECTORY_TYPE = "ACTIVE_DIRECTORY";
+      } else if (isOracle(conn)) {
+        DIRECTORY_TYPE = "ORACLE";
       } else {
         DIRECTORY_TYPE = "LDAP";
       }
@@ -100,7 +113,6 @@ public class TestControl
    * Active Directory.
    *
    * @param  conn  to perform compare with
-   *
    * @param  bindDn  to perform search on
    *
    * @return  whether the supplied entry is in active directory
@@ -120,6 +132,41 @@ public class TestControl
     } catch (LdapException e) {
       if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() ||
           ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
+        return false;
+      }
+      throw e;
+    }
+  }
+
+
+  /**
+   * Performs an object level search on the root DSE for the vendorName
+   * attribute used by Oracle DS.
+   *
+   * @param  conn  to perform compare with
+   *
+   * @return  whether the supplied entry contains a vendorName attribute
+   * identified by Oracle
+   *
+   * @throws  Exception  On failure.
+   */
+  protected boolean isOracle(final Connection conn)
+    throws Exception
+  {
+    final SearchOperation search = new SearchOperation(conn);
+    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
+      "",
+      new String[] {"vendorName"});
+    try {
+      final LdapEntry rootDSE = search.execute(request).getResult().getEntry();
+      if (rootDSE.getAttribute("vendorName") != null) {
+        return rootDSE.getAttribute(
+          "vendorName").getStringValue().contains("Oracle");
+      }
+      return false;
+    } catch (LdapException e) {
+      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() ||
+        ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
         return false;
       }
       throw e;
