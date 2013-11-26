@@ -176,6 +176,8 @@ public class ConnectionTest
       TestUtils.readConnectionConfig(
         "classpath:/org/ldaptive/ldap.conn.properties");
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
+    connFactory.getProvider().getProviderConfig().setConnectionStrategy(
+      ConnectionStrategy.ROUND_ROBIN);
     Connection conn = connFactory.getConnection();
 
     try {
