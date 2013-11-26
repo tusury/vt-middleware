@@ -394,6 +394,7 @@ public class SearchOperationTest extends AbstractTest
         dn,
         new SearchFilter(filter, filterParameters.split("\\|")),
         ReturnAttributes.NONE.value())).getResult();
+    AssertJUnit.assertNotNull(result.getEntry());
     AssertJUnit.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching, user attributes
@@ -402,17 +403,18 @@ public class SearchOperationTest extends AbstractTest
         dn,
         new SearchFilter(filter, filterParameters.split("\\|")),
         ReturnAttributes.ALL_USER.value())).getResult();
+    AssertJUnit.assertNotNull(result.getEntry());
     AssertJUnit.assertNotNull(result.getEntry().getAttribute("cn"));
-    AssertJUnit.assertNull(result.getEntry().getAttribute("modifyTimestamp"));
+    AssertJUnit.assertNull(result.getEntry().getAttribute("createTimestamp"));
 
     // test searching, operations attributes
-    if (TestControl.isActiveDirectory()) {
-      // active directory ignores '+'
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
+      // directory ignores '+'
       result = search.execute(
         new SearchRequest(
           dn,
           new SearchFilter(filter, filterParameters.split("\\|")),
-          ReturnAttributes.ALL_OPERATIONAL.add("modifyTimestamp"))).getResult();
+          ReturnAttributes.ALL_OPERATIONAL.add("createTimestamp"))).getResult();
     } else {
       result = search.execute(
         new SearchRequest(
@@ -420,18 +422,19 @@ public class SearchOperationTest extends AbstractTest
           new SearchFilter(filter, filterParameters.split("\\|")),
           ReturnAttributes.ALL_OPERATIONAL.value())).getResult();
     }
+    AssertJUnit.assertNotNull(result.getEntry());
     AssertJUnit.assertNull(result.getEntry().getAttribute("cn"));
     AssertJUnit.assertNotNull(
-      result.getEntry().getAttribute("modifyTimestamp"));
+      result.getEntry().getAttribute("createTimestamp"));
 
     // test searching, all attributes
-    if (TestControl.isActiveDirectory()) {
-      // active directory ignores '+'
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
+      // directory ignores '+'
       result = search.execute(
         new SearchRequest(
           dn,
           new SearchFilter(filter, filterParameters.split("\\|")),
-          ReturnAttributes.ALL.add("modifyTimestamp"))).getResult();
+          ReturnAttributes.ALL.add("createTimestamp"))).getResult();
     } else {
       result = search.execute(
         new SearchRequest(
@@ -439,9 +442,10 @@ public class SearchOperationTest extends AbstractTest
           new SearchFilter(filter, filterParameters.split("\\|")),
           ReturnAttributes.ALL.value())).getResult();
     }
+    AssertJUnit.assertNotNull(result.getEntry());
     AssertJUnit.assertNotNull(result.getEntry().getAttribute("cn"));
     AssertJUnit.assertNotNull(
-      result.getEntry().getAttribute("modifyTimestamp"));
+      result.getEntry().getAttribute("createTimestamp"));
   }
 
 
@@ -728,9 +732,6 @@ public class SearchOperationTest extends AbstractTest
       // ignore this test if not supported by the server
       AssertJUnit.assertEquals(
         ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
-    } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported by the provider
-      AssertJUnit.assertNotNull(e);
     } finally {
       try {
         // remove authzTo
@@ -1632,7 +1633,7 @@ public class SearchOperationTest extends AbstractTest
         }
         AssertJUnit.assertTrue(response.getResult().size() > 0);
       } catch (LdapException e) {
-        if (e.getCause() instanceof  UnsupportedOperationException) {
+        if (e.getCause() instanceof UnsupportedOperationException) {
           // ignore this test if not supported
           AssertJUnit.assertNotNull(e);
         } else {
@@ -2201,8 +2202,8 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    // ignore active directory until it's configured
-    if (TestControl.isActiveDirectory()) {
+    // ignore directory until it's configured
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
       return;
     }
 
