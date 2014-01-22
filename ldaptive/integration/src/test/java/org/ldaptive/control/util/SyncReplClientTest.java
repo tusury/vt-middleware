@@ -101,10 +101,10 @@ public class SyncReplClientTest extends AbstractTest
     Connection conn = TestUtils.createConnection();
     try {
       conn.open();
-      final SyncReplClient client = new SyncReplClient(conn, false, null);
+      final SyncReplClient client = new SyncReplClient(conn, false);
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
         dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request);
+      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
 
       SyncReplItem item = results.take();
       if (item.isException()) {
@@ -164,10 +164,10 @@ public class SyncReplClientTest extends AbstractTest
     Connection conn = TestUtils.createConnection();
     try {
       conn.open();
-      final SyncReplClient client = new SyncReplClient(conn, true, null);
+      final SyncReplClient client = new SyncReplClient(conn, true);
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
         dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request);
+      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
 
       // test the async request
       SyncReplItem item = results.take();
