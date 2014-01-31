@@ -13,6 +13,7 @@
 */
 package org.ldaptive.auth.ext;
 
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.security.auth.login.AccountException;
@@ -27,8 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents the state of an Active Directory account. This implementation only
- * supports errors, the warning will always be null.
+ * Represents the state of an Active Directory account. Note that the
+ * warning returned by this implementation always returns -1 for logins
+ * remaining.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -197,6 +199,18 @@ public class ActiveDirectoryAccountState extends AccountState
 
   /** active directory specific enum. */
   private final Error adError;
+
+
+  /**
+   * Creates a new active directory account state.
+   *
+   * @param  exp  account expiration
+   */
+  public ActiveDirectoryAccountState(final Calendar exp)
+  {
+    super(new AccountState.DefaultWarning(exp, -1));
+    adError = null;
+  }
 
 
   /**
