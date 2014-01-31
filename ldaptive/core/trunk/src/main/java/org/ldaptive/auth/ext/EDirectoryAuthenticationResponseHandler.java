@@ -13,13 +13,12 @@
 */
 package org.ldaptive.auth.ext;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
+import org.ldaptive.io.GeneralizedTimeValueTranscoder;
 
 /**
  * Attempts to parse the authentication response and set the account state using
@@ -39,34 +38,30 @@ public class EDirectoryAuthenticationResponseHandler
   @Override
   public void handle(final AuthenticationResponse response)
   {
-    final LdapEntry entry = response.getLdapEntry();
-    final LdapAttribute expTime = entry.getAttribute("passwordExpirationTime");
-    final LdapAttribute loginRemaining = entry.getAttribute(
-      "loginGraceRemaining");
-    Calendar exp = null;
-    if (expTime != null) {
-      exp = Calendar.getInstance();
-
-      final SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-      try {
-        exp.setTime(formatter.parse(expTime.getStringValue()));
-      } catch (ParseException e) {
-        throw new IllegalArgumentException("Expiration time format error", e);
+    if (response.getResult()) {
+      final LdapEntry entry = response.getLdapEntry();
+      final LdapAttribute expTime = entry.getAttribute(
+        "passwordExpirationTime");
+      final LdapAttribute loginRemaining = entry.getAttribute(
+        "loginGraceRemaining");
+      Calendar exp = null;
+      if (expTime != null) {
+        exp = expTime.getValue(new GeneralizedTimeValueTranscoder());
       }
-    }
-    if (exp != null || loginRemaining != null) {
-      response.setAccountState(
-        new EDirectoryAccountState(
-          exp,
-          loginRemaining != null
-            ? Integer.parseInt(loginRemaining.getStringValue()) : 0));
-    }
-
-    if (response.getAccountState() == null && response.getMessage() != null) {
-      final EDirectoryAccountState.Error edError =
-        EDirectoryAccountState.Error.parse(response.getMessage());
-      if (edError != null) {
-        response.setAccountState(new EDirectoryAccountState(edError));
+      if (exp != null || loginRemaining != null) {
+        response.setAccountState(
+          new EDirectoryAccountState(
+            exp,
+            loginRemaining != null
+              ? Integer.parseInt(loginRemaining.getStringValue()) : 0));
+      }
+    } else {
+      if (response.getMessage() != null) {
+        final EDirectoryAccountState.Error edError =
+          EDirectoryAccountState.Error.parse(response.getMessage());
+        if (edError != null) {
+          response.setAccountState(new EDirectoryAccountState(edError));
+        }
       }
     }
   }
