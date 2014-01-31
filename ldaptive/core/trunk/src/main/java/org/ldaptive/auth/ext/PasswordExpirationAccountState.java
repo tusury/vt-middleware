@@ -20,7 +20,7 @@ import org.ldaptive.auth.AccountState;
 
 /**
  * Represents the state of an account in a directory that implements:
- * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00 Note that the
+ * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00. Note that the
  * warning returned by this implementation always returns -1 for logins
  * remaining as this specification doesn't include that feature.
  *

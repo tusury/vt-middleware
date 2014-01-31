@@ -22,7 +22,7 @@ import org.ldaptive.io.ValueTranscoder;
  * attribute value.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date\$
+ * @version  $Revision$ $Date$
  */
 public class UnicodePwdValueTranscoder implements ValueTranscoder<String>
 {
