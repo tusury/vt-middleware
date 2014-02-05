@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-opends</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.2</version>
+  <version>1.0.3-SNAPSHOT</version>
   <name>LDAPTIVE OPENDS PROVIDER</name>
   <description>ldaptive opends provider</description>
   <url>http://www.ldaptive.org</url>
@@ -75,7 +75,7 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive</artifactId>
-      <version>1.0.2</version>
+      <version>1.0.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.opends</groupId>
