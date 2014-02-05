@@ -24,6 +24,7 @@ import com.unboundid.ldap.sdk.CRAMMD5BindRequest;
 import com.unboundid.ldap.sdk.CompareResult;
 import com.unboundid.ldap.sdk.Control;
 import com.unboundid.ldap.sdk.DIGESTMD5BindRequest;
+import com.unboundid.ldap.sdk.DIGESTMD5BindRequestProperties;
 import com.unboundid.ldap.sdk.DN;
 import com.unboundid.ldap.sdk.DereferencePolicy;
 import com.unboundid.ldap.sdk.DisconnectHandler;
@@ -74,8 +75,6 @@ import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.provider.SearchListener;
-import org.ldaptive.sasl.DigestMd5Config;
-import org.ldaptive.sasl.GssApiConfig;
 import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -273,17 +272,12 @@ public class UnboundIDConnection implements ProviderConnection
 
       case DIGEST_MD5:
 
-        String realm = sc instanceof DigestMd5Config
-          ? ((DigestMd5Config) sc).getRealm() : null;
-        if (realm == null && request.getDn().contains("@")) {
-          realm = request.getDn().substring(request.getDn().indexOf("@") + 1);
-        }
+        final DIGESTMD5BindRequestProperties digestMd5Props =
+          UnboundIDSaslUtils.createDigestMd5Properties(request.getDn(),
+                                                       request.getCredential(),
+                                                       request.getSaslConfig());
         sbr = new DIGESTMD5BindRequest(
-          request.getDn(),
-          "".equals(sc.getAuthorizationId()) ? null : sc.getAuthorizationId(),
-          request.getCredential() != null ? request.getCredential().getBytes()
-                                          : null,
-          realm,
+          digestMd5Props,
           config.getControlProcessor().processRequestControls(
             request.getControls()));
         break;
@@ -300,13 +294,9 @@ public class UnboundIDConnection implements ProviderConnection
       case GSSAPI:
 
         final GSSAPIBindRequestProperties props =
-          new GSSAPIBindRequestProperties(
-            request.getDn(),
-            request.getCredential() != null ? request.getCredential()
-              .getBytes() : null);
-        props.setAuthorizationID(sc.getAuthorizationId());
-        props.setRealm(
-          sc instanceof GssApiConfig ? ((GssApiConfig) sc).getRealm() : null);
+          UnboundIDSaslUtils.createGssApiProperties(request.getDn(),
+                                                    request.getCredential(),
+                                                    request.getSaslConfig());
         sbr = new GSSAPIBindRequest(
           props,
           config.getControlProcessor().processRequestControls(
