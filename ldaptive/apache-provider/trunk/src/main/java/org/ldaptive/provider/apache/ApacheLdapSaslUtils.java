@@ -193,7 +193,7 @@ public final class ApacheLdapSaslUtils
    *
    * @param  qop  quality of protection enum
    *
-   * @return  SASL quality of protection string
+   * @return  SASL quality of protection
    */
   protected static SaslQoP getQualityOfProtection(final QualityOfProtection qop)
   {
@@ -225,7 +225,7 @@ public final class ApacheLdapSaslUtils
    *
    * @param  ss  security strength enum
    *
-   * @return  SASL security strength string
+   * @return  SASL security strength
    */
   protected static SaslSecurityStrength getSecurityStrength(
     final SecurityStrength ss)
