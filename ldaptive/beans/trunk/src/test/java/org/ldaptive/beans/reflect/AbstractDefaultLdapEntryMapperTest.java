@@ -29,7 +29,7 @@ public abstract class AbstractDefaultLdapEntryMapperTest
 {
 
   /** Mapper to use for testing. */
-  protected DefaultLdapEntryMapper mapper = new DefaultLdapEntryMapper();
+  protected final DefaultLdapEntryMapper mapper = new DefaultLdapEntryMapper();
 
 
   /**
