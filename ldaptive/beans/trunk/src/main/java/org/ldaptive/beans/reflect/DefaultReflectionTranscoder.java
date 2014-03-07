@@ -16,21 +16,27 @@ package org.ldaptive.beans.reflect;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.ldaptive.io.BooleanValueTranscoder;
 import org.ldaptive.io.ByteArrayValueTranscoder;
+import org.ldaptive.io.CertificateValueTranscoder;
 import org.ldaptive.io.CharArrayValueTranscoder;
 import org.ldaptive.io.DoubleValueTranscoder;
 import org.ldaptive.io.FloatValueTranscoder;
+import org.ldaptive.io.GeneralizedTimeValueTranscoder;
 import org.ldaptive.io.IntegerValueTranscoder;
 import org.ldaptive.io.LongValueTranscoder;
 import org.ldaptive.io.ObjectValueTranscoder;
 import org.ldaptive.io.ShortValueTranscoder;
 import org.ldaptive.io.StringValueTranscoder;
+import org.ldaptive.io.UUIDValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,6 +156,12 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
       new ByteArrayValueTranscoder()));
     transcoders.add(new SingleValueReflectionTranscoder<char[]>(
       new CharArrayValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<Certificate>(
+      new CertificateValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<Calendar>(
+      new GeneralizedTimeValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<UUID>(
+      new UUIDValueTranscoder()));
     return transcoders;
   }
 
