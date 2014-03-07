@@ -1,0 +1,561 @@
+/*
+  $Id$
+
+  Copyright (C) 2003-2014 Virginia Tech.
+  All rights reserved.
+
+  SEE LICENSE FOR MORE INFORMATION
+
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
+  Version: $Revision$
+  Updated: $Date$
+*/
+package org.ldaptive.beans.generate;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.cert.Certificate;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.UUID;
+import com.sun.codemodel.JAnnotationArrayMember;
+import com.sun.codemodel.JAnnotationUse;
+import com.sun.codemodel.JClass;
+import com.sun.codemodel.JClassAlreadyExistsException;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JDocComment;
+import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JFieldVar;
+import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JMod;
+import org.ldaptive.beans.generate.props.BeanGeneratorPropertySource;
+import org.ldaptive.schema.AttributeType;
+import org.ldaptive.schema.AttributeUsage;
+import org.ldaptive.schema.ObjectClass;
+import org.ldaptive.schema.Schema;
+import org.ldaptive.schema.Syntax;
+
+/**
+ * Utility class for creating Java POJOs from an LDAP schema.
+ *
+ * @author  Middleware Services
+ * @version  $Revision$ $Date$
+ */
+public class BeanGenerator
+{
+
+  /** Code model for java class creation. */
+  private final JCodeModel codeModel = new JCodeModel();
+
+  /** Schema to generate beans from. */
+  private Schema schema;
+
+  /** Package to create beans in. */
+  private String packageName;
+
+  /** Object classes to build beans for. */
+  private String[] objectClasses;
+
+  /** Whether to include optional attributes. Default value is {@value}. */
+  private boolean useOptionalAttributes = true;
+
+  /** Whether to include operational attributes. Default value is {@value}. */
+  private boolean useOperationalAttributes;
+
+  /** Mapping to determine attribute value type. */
+  private Map<String, Class<?>> typeMappings = getDefaultTypeMappings();
+
+  /** Name mappings. */
+  private Map<String, String> nameMappings = new HashMap<String, String>();
+
+  /** Excluded names. */
+  private String[] excludedNames = new String[0];
+
+
+  /**
+   * Default constructor.
+   */
+  public BeanGenerator() {}
+
+
+  /**
+   * Creates a new bean generator.
+   *
+   * @param  s  schema
+   * @param  name  package name
+   * @param  oc  object classes
+   */
+  public BeanGenerator(
+    final Schema s,
+    final String name,
+    final String[] oc)
+  {
+    schema = s;
+    packageName = name;
+    objectClasses = oc;
+  }
+
+
+  /**
+   * Returns the schema.
+   *
+   * @return  schema
+   */
+  public Schema getSchema()
+  {
+    return schema;
+  }
+
+
+  /**
+   * Sets the schema.
+   *
+   * @param  s  schema
+   */
+  public void setSchema(final Schema s)
+  {
+    schema = s;
+  }
+
+
+  /**
+   * Returns the package name.
+   *
+   * @return  package name
+   */
+  public String getPackageName()
+  {
+    return packageName;
+  }
+
+
+  /**
+   * Sets the package name.
+   *
+   * @param  name  package name
+   */
+  public void setPackageName(final String name)
+  {
+    packageName = name;
+  }
+
+
+  /**
+   * Returns the object classes. A class is generated for each object class.
+   *
+   * @return  object classes
+   */
+  public String[] getObjectClasses()
+  {
+    return objectClasses;
+  }
+
+
+  /**
+   * Sets the object classes. A class is generated for each object class.
+   *
+   * @param  oc  object classes
+   */
+  public void setObjectClasses(final String[] oc)
+  {
+    objectClasses = oc;
+  }
+
+
+  /**
+   * Returns whether to include optional attributes in bean generation.
+   *
+   * @return  whether to include optional attributes
+   */
+  public boolean isUseOptionalAttributes()
+  {
+    return useOptionalAttributes;
+  }
+
+
+  /**
+   * Sets whether to include optional attributes in bean generation.
+   *
+   * @param  b  whether to include optional attributes
+   */
+  public void setUseOptionalAttributes(final boolean b)
+  {
+    useOptionalAttributes = b;
+  }
+
+
+  /**
+   * Returns whether to include operational attributes in bean generation.
+   *
+   * @return  whether to include operational attributes
+   */
+  public boolean isUseOperationalAttributes()
+  {
+    return useOperationalAttributes;
+  }
+
+
+  /**
+   * Sets whether to include operational attributes in bean generation.
+   *
+   * @param  b  whether to include operational attributes
+   */
+  public void setUseOperationalAttributes(final boolean b)
+  {
+    useOperationalAttributes = b;
+  }
+
+
+  /**
+   * Returns the type mappings. Type mappings is syntax OID to class type and is
+   * used to determine field type in the generated POJOs.
+   *
+   * @return  type mappings
+   */
+  public Map<String, Class<?>> getTypeMappings()
+  {
+    return typeMappings;
+  }
+
+
+  /**
+   * Sets the type mappings. Type mappings is syntax OID to class type and is
+   * used to determine field type in the generated POJOs.
+   *
+   * @param  m  type mappings
+   */
+  public void setTypeMappings(final Map<String, Class<?>> m)
+  {
+    typeMappings = m;
+  }
+
+
+  /**
+   * Returns the mapping of directory attribute name to bean property. This
+   * property is used to override the default schema name. For instance, you
+   * may prefer using 'countryName' to 'c', which would be set as
+   * 'c'=>'countryName'.
+   *
+   * @return  attribute name to bean property mapping
+   */
+  public Map<String, String> getNameMappings()
+  {
+    return nameMappings;
+  }
+
+
+  /**
+   * Sets the mapping of directory attribute name to bean property.
+   *
+   * @param  m  name mappings
+   *
+   * @throws  NullPointerException  if m is null
+   */
+  public void setNameMappings(final Map<String, String> m)
+  {
+    if (m == null) {
+      throw new NullPointerException("Name mappings cannot be null");
+    }
+    nameMappings = m;
+  }
+
+
+  /**
+   * Returns the attribute names to exclude from bean generation. Excludes an
+   * attribute from the generated POJO. For instance, you may not want
+   * 'userPassword' included in your bean.
+   *
+   * @return  attribute names to exclude
+   */
+  public String[] getExcludedNames()
+  {
+    return excludedNames;
+  }
+
+
+  /**
+   * Sets the attribute names to exclude from bean generation.
+   *
+   * @param  names  to exclude
+   *
+   * @throws  NullPointerException  if names is null
+   */
+  public void setExcludedNames(final String[] names)
+  {
+    if (names == null) {
+      throw new NullPointerException("Excluded names cannot be null");
+    }
+    excludedNames = names;
+  }
+
+
+  /**
+   * Returns the default syntax types used to determine attribute property type.
+   *
+   * @return  map of syntax OID to class type
+   */
+  protected static Map<String, Class<?>> getDefaultTypeMappings()
+  {
+    final Map<String, Class<?>> m = new HashMap<String, Class<?>>();
+    m.put("1.3.6.1.4.1.1466.115.121.1.7", boolean.class);
+    m.put("1.3.6.1.4.1.1466.115.121.1.5", byte[].class);
+    m.put("1.3.6.1.4.1.1466.115.121.1.8", Certificate.class);
+    m.put("1.3.6.1.4.1.1466.115.121.1.24", Calendar.class);
+    m.put("1.3.6.1.4.1.1466.115.121.1.36", int.class);
+    m.put("1.3.6.1.1.16.1", UUID.class);
+    return m;
+  }
+
+
+  /**
+   * Returns the class for the supplied attribute type and syntax. If the
+   * attribute type syntax OID is found in the default type mapping it is used.
+   * Otherwise if the syntax is "X-NOT-HUMAN-READABLE", a byte array is used.
+   *
+   * @param  type  attribute type
+   * @param  syntax  associated with the attribute type
+   *
+   * @return  syntax type
+   */
+  protected Class<?> getSyntaxType(
+    final AttributeType type,
+    final Syntax syntax)
+  {
+    Class<?> t = null;
+    for (Map.Entry<String, Class<?>> entry : typeMappings.entrySet()) {
+      if (entry.getKey().equals(type.getSyntaxOID(false))) {
+        t = entry.getValue();
+      }
+    }
+    if (t == null) {
+      if (Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
+        t = byte[].class;
+      } else {
+        t = String.class;
+      }
+    }
+    return t;
+  }
+
+
+  /**
+   * Generates a class for each configured object class. See {@link
+   * #objectClasses}. {@link #write(String)} must be invoked to write the
+   * classes to disk.
+   */
+  public void generate()
+  {
+    for (String objectClass : objectClasses) {
+      final JDefinedClass definedClass = createClass(packageName, objectClass);
+      final JDocComment jDocComment = definedClass.javadoc();
+      jDocComment.add(
+        String.format(
+          "Ldaptive generated bean for objectClass '%s'",
+          objectClass));
+
+      final Set<String> attributeNames = new HashSet<String>();
+      final ObjectClass oc = schema.getObjectClass(objectClass);
+      attributeNames.addAll(Arrays.asList(oc.getRequiredAttributes()));
+      if (useOptionalAttributes) {
+        attributeNames.addAll(Arrays.asList(oc.getOptionalAttributes()));
+      }
+      if (useOperationalAttributes) {
+        for (AttributeType type : schema.getAttributeTypes()) {
+          if (AttributeUsage.DIRECTORY_OPERATION.equals(type.getUsage())) {
+            attributeNames.add(type.getName());
+          }
+        }
+      }
+
+      final Map<String, AttributeType> mutators =
+        new TreeMap<String, AttributeType>();
+      for (String name : attributeNames) {
+        final AttributeType type = schema.getAttributeType(name);
+        for (String excluded : excludedNames) {
+          if (!type.getOID().equals(excluded) && !type.hasName(excluded)) {
+            if (nameMappings.containsKey(type.getName())) {
+              mutators.put(nameMappings.get(type.getName()), type);
+            } else {
+              mutators.put(type.getName(), type);
+            }
+          }
+        }
+      }
+
+      // add entry annotation
+      final JAnnotationUse entryAnnotation = definedClass.annotate(
+        codeModel.ref(org.ldaptive.beans.Entry.class));
+      entryAnnotation.param("dn", "entryDn");
+      final JAnnotationArrayMember attrArray = entryAnnotation.paramArray(
+        "attributes");
+
+      // add mutator for the DN
+      createMutators(definedClass, "entryDn", String.class, false);
+
+      // add mutators for each attribute
+      for (Map.Entry<String, AttributeType> mutator : mutators.entrySet()) {
+        final Class<?> syntaxType = getSyntaxType(
+          mutator.getValue(),
+          schema.getSyntax(mutator.getValue().getSyntaxOID(false)));
+        if (mutator.getValue().isSingleValued()) {
+          createMutators(definedClass, mutator.getKey(), syntaxType, false);
+        } else {
+          createMutators(definedClass, mutator.getKey(), syntaxType, true);
+        }
+        // add attribute annotation
+        final JAnnotationUse attrAnnotation = attrArray.annotate(
+          org.ldaptive.beans.Attribute.class);
+        attrAnnotation.param("name", mutator.getValue().getName());
+        if (!mutator.getKey().equals(mutator.getValue().getName())) {
+          attrAnnotation.param("property", mutator.getKey());
+        }
+        if (byte[].class.equals(syntaxType)) {
+          attrAnnotation.param("binary", true);
+        }
+      }
+    }
+  }
+
+
+  /**
+   * Creates a class in the supplied package.
+   *
+   * @param  classPackage  to place the class in
+   * @param  className  to create
+   *
+   * @return  class
+   *
+   * @throws  IllegalArgumentException  if the class already exists
+   */
+  protected JDefinedClass createClass(
+    final String classPackage,
+    final String className)
+  {
+    String fqClassName;
+    if (!Character.isUpperCase(className.charAt(0))) {
+      fqClassName = String.format(
+        "%s.%s",
+        classPackage,
+        className.substring(0, 1).toUpperCase() +
+          className.substring(1, className.length()));
+    } else {
+      fqClassName = String.format("%s.%s", classPackage, className);
+    }
+
+    try {
+      return codeModel._class(fqClassName);
+    } catch (JClassAlreadyExistsException e) {
+      throw new IllegalArgumentException(
+        "Class already exists: " + fqClassName, e);
+    }
+  }
+
+
+  /**
+   * Creates the getter and setter methods on the supplied class for the
+   * supplied name.
+   *
+   * @param  clazz  to put getter and setter methods on
+   * @param  name  of the property
+   * @param  syntaxType  of the property
+   * @param  multivalue  whether this property is a collection
+   */
+  protected void createMutators(
+    final JDefinedClass clazz,
+    final String name,
+    final Class<?> syntaxType,
+    final boolean multivalue)
+  {
+    final String upperName =
+      name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
+    if (multivalue) {
+      final JClass detailClass = codeModel.ref(syntaxType);
+      final JClass collectionClass = codeModel.ref(Collection.class);
+      final JClass genericClass = collectionClass.narrow(detailClass);
+      final JFieldVar field = clazz.field(JMod.PRIVATE, genericClass, name);
+      final JMethod getterMethod = clazz.method(
+        JMod.PUBLIC, genericClass, "get" + upperName);
+      getterMethod.body()._return(field);
+      final JMethod setterMethod = clazz.method(
+        JMod.PUBLIC, Void.TYPE, "set" + upperName);
+      setterMethod.param(genericClass, "c");
+      setterMethod.body().assign(JExpr._this().ref(name), JExpr.ref("c"));
+
+    } else {
+      final JFieldVar field = clazz.field(JMod.PRIVATE, syntaxType, name);
+      final JMethod getterMethod = clazz.method(
+        JMod.PUBLIC, syntaxType, "get" + upperName);
+      getterMethod.body()._return(field);
+      final JMethod setterMethod = clazz.method(
+        JMod.PUBLIC, Void.TYPE, "set" + upperName);
+      setterMethod.param(syntaxType, "s");
+      setterMethod.body().assign(JExpr._this().ref(name), JExpr.ref("s"));
+    }
+  }
+
+
+  /**
+   * Writes the generated classes to disk. Invokes {@link #write(String)} with
+   * ".".
+   *
+   * @throws  IOException  if the write fails
+   */
+  public void write()
+    throws IOException
+  {
+    write(".");
+  }
+
+
+  /**
+   * Writes the generated classes to disk at the supplied path.
+   *
+   * @param  path  to write the classes to
+   *
+   * @throws  IOException  if the write fails
+   */
+  public void write(final String path)
+    throws IOException
+  {
+    final File f = new File(path);
+    if (!f.exists()) {
+      f.mkdirs();
+    }
+    codeModel.build(f);
+  }
+
+
+  /**
+   * Provides command line access to a {@link BeanGenerator}. Expects two
+   * arguments:
+   * <ol>
+   *   <li>path to a configuration property file</li>
+   *   <li>target path to write files to</li>
+   * </ol>
+   *
+   * @param  args  command line arguments
+   *
+   * @throws  Exception  if any error occurs
+   */
+  public static void main(final String[] args)
+    throws Exception
+  {
+    final String propsPath = args[0];
+    final String targetPath = args[1];
+
+    final BeanGenerator generator = new BeanGenerator();
+    final BeanGeneratorPropertySource source =
+      new BeanGeneratorPropertySource(generator, propsPath);
+    source.initialize();
+    generator.generate();
+    generator.write(targetPath);
+  }
+}
