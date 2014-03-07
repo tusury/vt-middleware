@@ -44,7 +44,17 @@ import org.ldaptive.schema.Schema;
 import org.ldaptive.schema.Syntax;
 
 /**
- * Utility class for creating Java POJOs from an LDAP schema.
+ * Utility class for creating Java POJOs from an LDAP schema. Sample usage:
+ * <pre>
+ *   Schema schema = new Schema(new DefaultConnectionFactory(
+ *     "ldap://directory.ldaptive.org"));
+ *   BeanGenerator generator = new BeanGenerator(
+ *     schema,
+ *     "com.my.package",
+ *     new String[] {"inetOrgPerson"});
+ *   generator.generate();
+ *   generator.write();
+ * </pre>
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -87,11 +97,12 @@ public class BeanGenerator
 
 
   /**
-   * Creates a new bean generator.
+   * Creates a new bean generator. A bean will be generated for each supplied
+   * object class.
    *
-   * @param  s  schema
-   * @param  name  package name
-   * @param  oc  object classes
+   * @param  s  schema  containing directory data for generation
+   * @param  name  package name to place the generated classes in
+   * @param  oc  object classes to generate beans for
    */
   public BeanGenerator(
     final Schema s,
@@ -127,7 +138,7 @@ public class BeanGenerator
 
 
   /**
-   * Returns the package name.
+   * Returns the package name where beans will be generated.
    *
    * @return  package name
    */
@@ -138,7 +149,7 @@ public class BeanGenerator
 
 
   /**
-   * Sets the package name.
+   * Sets the package name where beans will be generated.
    *
    * @param  name  package name
    */
@@ -164,7 +175,7 @@ public class BeanGenerator
    *
    * @param  oc  object classes
    */
-  public void setObjectClasses(final String[] oc)
+  public void setObjectClasses(final String... oc)
   {
     objectClasses = oc;
   }
@@ -288,7 +299,7 @@ public class BeanGenerator
    *
    * @throws  NullPointerException  if names is null
    */
-  public void setExcludedNames(final String[] names)
+  public void setExcludedNames(final String... names)
   {
     if (names == null) {
       throw new NullPointerException("Excluded names cannot be null");
