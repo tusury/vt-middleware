@@ -60,9 +60,9 @@ public class DefaultClassDescriptor extends AbstractClassDescriptor
         }
       }
 
-      // add any hard coded attributes that did not have a property declaration
+      // add any hard coded attributes that have a values declaration
       for (final Attribute attr : entryAnnotation.attributes()) {
-        if ("".equals(attr.property())) {
+        if ("".equals(attr.property()) && attr.values().length > 0) {
           addAttributeValueMutator(
             new SimpleAttributeValueMutator(
               attr.name(),

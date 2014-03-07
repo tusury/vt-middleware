@@ -42,9 +42,13 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
       setDnValueMutator(createDnValueMutator(fields.get(entryAnnotation.dn())));
     }
     for (Attribute attr : entryAnnotation.attributes()) {
-      if (fields.containsKey(attr.property())) {
-        addAttributeValueMutator(
-          createAttributeValueMutator(fields.get(attr.property()), attr));
+      if (attr.values().length == 0) {
+        final String property = attr.property().length() > 0 ?
+          attr.property() : attr.name();
+        if (fields.containsKey(property)) {
+          addAttributeValueMutator(
+            createAttributeValueMutator(fields.get(property), attr));
+        }
       }
     }
   }

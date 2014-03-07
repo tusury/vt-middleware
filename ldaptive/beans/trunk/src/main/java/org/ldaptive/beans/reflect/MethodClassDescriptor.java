@@ -48,9 +48,13 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
         createDnValueMutator(descriptors.get(entryAnnotation.dn())));
     }
     for (Attribute attr : entryAnnotation.attributes()) {
-      if (descriptors.containsKey(attr.property())) {
-        addAttributeValueMutator(
-          createAttributeValueMutator(descriptors.get(attr.property()), attr));
+      if (attr.values().length == 0) {
+        final String property = attr.property().length() > 0 ?
+          attr.property() : attr.name();
+        if (descriptors.containsKey(property)) {
+          addAttributeValueMutator(
+            createAttributeValueMutator(descriptors.get(property), attr));
+        }
       }
     }
   }
