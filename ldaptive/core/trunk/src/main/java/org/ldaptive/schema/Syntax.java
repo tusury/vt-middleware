@@ -66,15 +66,17 @@ public class Syntax extends AbstractSchemaElement
    * @param  description  description
    * @param  extensions  extensions
    */
-  // CheckStyle:ParameterNumber|HiddenField OFF
+  // CheckStyle:HiddenField OFF
   public Syntax(
-    final String oid, final String description, final Extensions extensions)
+    final String oid,
+    final String description,
+    final Extensions extensions)
   {
     this(oid);
     setDescription(description);
     setExtensions(extensions);
   }
-  // CheckStyle:ParameterNumber|HiddenField ON
+  // CheckStyle:HiddenField ON
 
 
   /**
