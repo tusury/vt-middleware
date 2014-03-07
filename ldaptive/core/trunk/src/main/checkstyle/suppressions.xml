@@ -7,8 +7,4 @@
   <!-- nothing magic about test data -->
   <suppress checks="MagicNumber"
             files=".*Test\.java" />
-
-  <!-- tests need lots of parameters -->
-  <suppress checks="ParameterNumber"
-            files=".*Test\.java" />
 </suppressions>
