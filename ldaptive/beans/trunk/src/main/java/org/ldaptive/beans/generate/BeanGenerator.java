@@ -34,6 +34,7 @@ import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JDocComment;
 import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
+import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import org.ldaptive.beans.generate.props.BeanGeneratorPropertySource;
@@ -432,6 +433,11 @@ public class BeanGenerator
           attrAnnotation.param("binary", true);
         }
       }
+
+      // create additional methods
+      createHashCode(definedClass);
+      createEquals(definedClass);
+      createToString(definedClass);
     }
   }
 
@@ -510,6 +516,76 @@ public class BeanGenerator
       setterMethod.param(syntaxType, "s");
       setterMethod.body().assign(JExpr._this().ref(name), JExpr.ref("s"));
     }
+  }
+
+
+  /**
+   * Creates the hashCode method on the supplied class. Leverages {@link
+   * LdapUtils#computeHashCode(int, Object...)}.
+   *
+   * @param  clazz  to put hashCode method on
+   */
+  private void createHashCode(final JDefinedClass clazz)
+  {
+    final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
+    final JInvocation computeHashCode = ldapUtilsClass.staticInvoke(
+      "computeHashCode");
+    final JMethod hashCode = clazz.method(JMod.PUBLIC, int.class, "hashCode");
+    hashCode.annotate(java.lang.Override.class);
+    // CheckStyle:MagicNumber OFF
+    computeHashCode.arg(JExpr.lit(7919));
+    // CheckStyle:MagicNumber ON
+    for (Map.Entry<String, JFieldVar> entry : clazz.fields().entrySet()) {
+      computeHashCode.arg(JExpr._this().ref(entry.getValue()));
+    }
+    hashCode.body()._return(computeHashCode);
+  }
+
+
+  /**
+   * Creates the equals method on the supplied class. Leverages {@link
+   * LdapUtils#areEqual(Object, Object)}.
+   *
+   * @param  clazz  to put equals method on
+   */
+  private void createEquals(final JDefinedClass clazz)
+  {
+    final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
+    final JInvocation areEqual = ldapUtilsClass.staticInvoke("areEqual");
+    final JMethod equals = clazz.method(JMod.PUBLIC, boolean.class, "equals");
+    equals.annotate(java.lang.Override.class);
+    areEqual.arg(JExpr._this());
+    areEqual.arg(equals.param(Object.class, "o"));
+    equals.body()._return(areEqual);
+  }
+
+
+  /**
+   * Creates the toString method on the supplied class. Creates a string that
+   * contains every property on the generated bean.
+   *
+   * @param  clazz  to put toString method on
+   */
+  private void createToString(final JDefinedClass clazz)
+  {
+    final JClass stringClass = codeModel.ref(java.lang.String.class);
+    final JInvocation format = stringClass.staticInvoke("format");
+    final JMethod toString = clazz.method(
+      JMod.PUBLIC, String.class, "toString");
+    toString.annotate(java.lang.Override.class);
+    final StringBuilder sb = new StringBuilder("[%s@%d::");
+    for (Map.Entry<String, JFieldVar> entry : clazz.fields().entrySet()) {
+      sb.append(entry.getKey()).append("=%s, ");
+    }
+    sb.setLength(sb.length() - 2);
+    sb.append("]");
+    format.arg(sb.toString());
+    format.arg(JExpr._this().invoke("getClass").invoke("getName"));
+    format.arg(JExpr._this().invoke("hashCode"));
+    for (Map.Entry<String, JFieldVar> entry : clazz.fields().entrySet()) {
+      format.arg(JExpr._this().ref(entry.getValue()));
+    }
+    toString.body()._return(format);
   }
 
 
