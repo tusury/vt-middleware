@@ -549,8 +549,17 @@ public class BeanGenerator
    * arguments:
    * <ol>
    *   <li>path to a configuration property file</li>
-   *   <li>target path to write files to</li>
+   *   <li>target directory to write files to</li>
    * </ol>
+   *
+   * A sample configuration property file looks like:
+   * <pre>
+   * org.ldaptive.packageName=my.package.ldap.beans
+   * org.ldaptive.objectClasses=eduPerson
+   * org.ldaptive.nameMappings=c=countryName,l=localityName
+   * org.ldaptive.excludedNames=userPassword
+   * org.ldaptive.ldapUrl=ldap://directory.ldaptive.org
+   * </pre>
    *
    * @param  args  command line arguments
    *
