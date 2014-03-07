@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  * Annotation to describe an LDAP entry on a bean.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

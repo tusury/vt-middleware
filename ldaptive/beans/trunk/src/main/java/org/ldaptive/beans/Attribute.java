@@ -23,7 +23,7 @@ import org.ldaptive.SortBehavior;
  * Annotation to describe LDAP attribute data on a bean.
  *
  * @author  Middleware Services
- * @version  $Revision$
+ * @version  $Revision$ $Date$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
