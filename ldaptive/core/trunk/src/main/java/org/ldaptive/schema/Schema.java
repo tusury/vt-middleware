@@ -169,7 +169,7 @@ public class Schema
 
 
   /**
-   * Searches for the supplied dn and returns it's ldap entry.
+   * Searches for the supplied dn and returns its ldap entry.
    *
    * @param  factory  to obtain an LDAP connection from
    * @param  dn  to search for
