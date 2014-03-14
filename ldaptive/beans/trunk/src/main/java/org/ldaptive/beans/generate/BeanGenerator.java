@@ -81,6 +81,9 @@ public class BeanGenerator
   /** Whether to include operational attributes. Default value is {@value}. */
   private boolean useOperationalAttributes;
 
+  /** Whether to include superior classes for each object class. */
+  private boolean includeSuperiorClasses;
+
   /** Mapping to determine attribute value type. */
   private Map<String, Class<?>> typeMappings = getDefaultTypeMappings();
 
@@ -227,6 +230,28 @@ public class BeanGenerator
 
 
   /**
+   * Returns whether to include superior classes in bean generation.
+   *
+   * @return  whether to include superior classes attributes
+   */
+  public boolean isIncludeSuperiorClasses()
+  {
+    return includeSuperiorClasses;
+  }
+
+
+  /**
+   * Sets whether to include superior classes in bean generation.
+   *
+   * @param  b  whether to include superior classes
+   */
+  public void setIncludeSuperiorClasses(final boolean b)
+  {
+    includeSuperiorClasses = b;
+  }
+
+
+  /**
    * Returns the type mappings. Type mappings is syntax OID to class type and is
    * used to determine field type in the generated POJOs.
    *
@@ -321,7 +346,7 @@ public class BeanGenerator
     m.put("1.3.6.1.4.1.1466.115.121.1.5", byte[].class);
     m.put("1.3.6.1.4.1.1466.115.121.1.8", Certificate.class);
     m.put("1.3.6.1.4.1.1466.115.121.1.24", Calendar.class);
-    m.put("1.3.6.1.4.1.1466.115.121.1.36", int.class);
+    m.put("1.3.6.1.4.1.1466.115.121.1.36", Integer.class);
     m.put("1.3.6.1.1.16.1", UUID.class);
     return m;
   }
@@ -373,12 +398,8 @@ public class BeanGenerator
           "Ldaptive generated bean for objectClass '%s'",
           objectClass));
 
-      final Set<String> attributeNames = new HashSet<String>();
       final ObjectClass oc = schema.getObjectClass(objectClass);
-      attributeNames.addAll(Arrays.asList(oc.getRequiredAttributes()));
-      if (useOptionalAttributes) {
-        attributeNames.addAll(Arrays.asList(oc.getOptionalAttributes()));
-      }
+      final Set<String> attributeNames = getAttributeNames(oc);
       if (useOperationalAttributes) {
         for (AttributeType type : schema.getAttributeTypes()) {
           if (AttributeUsage.DIRECTORY_OPERATION.equals(type.getUsage())) {
@@ -391,13 +412,11 @@ public class BeanGenerator
         new TreeMap<String, AttributeType>();
       for (String name : attributeNames) {
         final AttributeType type = schema.getAttributeType(name);
-        for (String excluded : excludedNames) {
-          if (!type.getOID().equals(excluded) && !type.hasName(excluded)) {
-            if (nameMappings.containsKey(type.getName())) {
-              mutators.put(nameMappings.get(type.getName()), type);
-            } else {
-              mutators.put(type.getName(), type);
-            }
+        if (!isNameExcluded(type)) {
+          if (nameMappings.containsKey(type.getName())) {
+            mutators.put(nameMappings.get(type.getName()), type);
+          } else {
+            mutators.put(type.getName(), type);
           }
         }
       }
@@ -439,6 +458,55 @@ public class BeanGenerator
       createEquals(definedClass);
       createToString(definedClass);
     }
+  }
+
+
+  /**
+   * Returns the attribute names to use for the supplied object class. This
+   * method is invoked recursively if superior classes are included.
+   *
+   * @param  objectClass  to retrieve names from
+   *
+   * @return  set of all attribute names used for bean generation
+   */
+  private Set<String> getAttributeNames(final ObjectClass objectClass)
+  {
+    final Set<String> attributeNames = new HashSet<String>();
+    if (objectClass != null) {
+      if (objectClass.getRequiredAttributes() != null) {
+        attributeNames.addAll(Arrays.asList(objectClass.getRequiredAttributes()));
+      }
+      if (useOptionalAttributes && objectClass.getOptionalAttributes() != null) {
+        attributeNames.addAll(Arrays.asList(objectClass.getOptionalAttributes()));
+      }
+      if (includeSuperiorClasses && objectClass.getSuperiorClasses() != null) {
+        for (String oc : objectClass.getSuperiorClasses()) {
+          attributeNames.addAll(getAttributeNames(schema.getObjectClass(oc)));
+        }
+      }
+    }
+    return attributeNames;
+  }
+
+
+  /**
+   * Returns whether the supplied attribute type has a matching OID or name in
+   * the excluded names list.
+   *
+   * @param  type  to compare
+   *
+   * @return  whether attribute type should be excluded from bean generation
+   */
+  private boolean isNameExcluded(final AttributeType type)
+  {
+    if (excludedNames != null && excludedNames.length > 0) {
+      for (String excluded : excludedNames) {
+        if (type.getOID().equals(excluded) || type.hasName(excluded)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 
