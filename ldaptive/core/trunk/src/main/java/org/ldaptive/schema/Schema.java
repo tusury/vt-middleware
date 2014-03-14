@@ -135,10 +135,16 @@ public class Schema
     final LdapEntry rootDSE = getLdapEntry(
       factory,
       "",
-      new String[] {SUBSCHEMA_SUBENTRY_ATTR_NAME});
+      "(objectClass=*)",
+      new String[]{SUBSCHEMA_SUBENTRY_ATTR_NAME});
     final String entryDn = rootDSE.getAttribute(
       SUBSCHEMA_SUBENTRY_ATTR_NAME).getStringValue();
-    initialize(getLdapEntry(factory, entryDn, ReturnAttributes.ALL.value()));
+    initialize(
+      getLdapEntry(
+        factory,
+        entryDn,
+        "(objectClass=subSchema)",
+        ReturnAttributes.ALL.value()));
   }
 
 
@@ -153,7 +159,12 @@ public class Schema
   public Schema(final ConnectionFactory factory, final String entryDn)
     throws LdapException
   {
-    initialize(getLdapEntry(factory, entryDn, ReturnAttributes.ALL.value()));
+    initialize(
+      getLdapEntry(
+        factory,
+        entryDn,
+        "(objectClass=subSchema)",
+        ReturnAttributes.ALL.value()));
   }
 
 
@@ -173,6 +184,7 @@ public class Schema
    *
    * @param  factory  to obtain an LDAP connection from
    * @param  dn  to search for
+   * @param  filter  search filter
    * @param  retAttrs  attributes to return
    *
    * @return  ldap entry
@@ -182,6 +194,7 @@ public class Schema
   protected LdapEntry getLdapEntry(
     final ConnectionFactory factory,
     final String dn,
+    final String filter,
     final String[] retAttrs)
     throws LdapException
   {
@@ -189,8 +202,7 @@ public class Schema
     executor.setBaseDn(dn);
     executor.setSearchScope(SearchScope.OBJECT);
     executor.setReturnAttributes(retAttrs);
-    final SearchResult result = executor.search(
-      factory, "(objectClass=*)").getResult();
+    final SearchResult result = executor.search(factory, filter).getResult();
     return result.getEntry();
   }
 
@@ -203,6 +215,9 @@ public class Schema
    */
   protected void initialize(final LdapEntry schemaEntry)
   {
+    if (schemaEntry == null) {
+      throw new IllegalArgumentException("Schema entry cannot be null");
+    }
     final LdapAttribute atAttr = schemaEntry.getAttribute(
       ATTRIBUTE_TYPES_ATTR_NAME);
     if (atAttr != null) {
