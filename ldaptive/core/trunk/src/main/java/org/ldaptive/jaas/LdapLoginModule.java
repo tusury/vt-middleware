@@ -113,14 +113,12 @@ public class LdapLoginModule extends AbstractLoginModule
 
   /** {@inheritDoc} */
   @Override
-  public boolean login()
+  protected boolean login(
+    final NameCallback nameCb,
+    final PasswordCallback passCb)
     throws LoginException
   {
     try {
-      final NameCallback nameCb = new NameCallback("Enter user: ");
-      final PasswordCallback passCb = new PasswordCallback(
-        "Enter user password: ",
-        false);
       getCredentials(nameCb, passCb, false);
       authRequest.setUser(nameCb.getName());
       authRequest.setCredential(new Credential(passCb.getPassword()));

@@ -178,6 +178,35 @@ public abstract class AbstractLoginModule implements LoginModule
 
   /** {@inheritDoc} */
   @Override
+  public boolean login()
+    throws LoginException
+  {
+    final NameCallback nameCb = new NameCallback("Enter user: ");
+    final PasswordCallback passCb = new PasswordCallback(
+      "Enter user password: ",
+      false);
+    return login(nameCb, passCb);
+  }
+
+
+  /**
+   * Authenticates a {@link Subject} with the supplied callbacks.
+   *
+   * @param  nameCb  callback handler for subject's name
+   * @param  passCb  callback handler for subject's password
+   *
+   * @return  true if authentication succeeded, false to ignore this module
+   *
+   * @throws  LoginException  if the authentication fails
+   */
+  protected abstract boolean login(
+    final NameCallback nameCb,
+    final PasswordCallback passCb)
+    throws LoginException;
+
+
+  /** {@inheritDoc} */
+  @Override
   public boolean commit()
     throws LoginException
   {
