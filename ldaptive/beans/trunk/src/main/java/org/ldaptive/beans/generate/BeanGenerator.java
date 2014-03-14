@@ -342,7 +342,7 @@ public class BeanGenerator
   protected static Map<String, Class<?>> getDefaultTypeMappings()
   {
     final Map<String, Class<?>> m = new HashMap<String, Class<?>>();
-    m.put("1.3.6.1.4.1.1466.115.121.1.7", boolean.class);
+    m.put("1.3.6.1.4.1.1466.115.121.1.7", Boolean.class);
     m.put("1.3.6.1.4.1.1466.115.121.1.5", byte[].class);
     m.put("1.3.6.1.4.1.1466.115.121.1.8", Certificate.class);
     m.put("1.3.6.1.4.1.1466.115.121.1.24", Calendar.class);
