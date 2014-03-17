@@ -296,7 +296,8 @@ public class ObjectClass extends AbstractNamedSchemaElement
       sb.append(SchemaUtils.formatDescriptors(getNames()));
     }
     if (getDescription() != null) {
-      sb.append("DESC '").append(getDescription()).append("' ");
+      sb.append("DESC ");
+      sb.append(SchemaUtils.formatDescriptors(getDescription()));
     }
     if (isObsolete()) {
       sb.append("OBSOLETE ");

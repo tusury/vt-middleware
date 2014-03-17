@@ -108,15 +108,15 @@ public final class SchemaUtils
    *
    * @return  formatted string
    */
-  public static String formatDescriptors(final String[] descrs)
+  public static String formatDescriptors(final String... descrs)
   {
     final StringBuilder sb = new StringBuilder();
     if (descrs.length == 1) {
-      sb.append("'").append(descrs[0]).append("' ");
+      sb.append("'").append(descrs[0].replace("'", "\\27")).append("' ");
     } else {
       sb.append("( ");
       for (String descr : descrs) {
-        sb.append("'").append(descr).append("' ");
+        sb.append("'").append(descr.replace("'", "\\27")).append("' ");
       }
       sb.append(") ");
     }
@@ -131,7 +131,7 @@ public final class SchemaUtils
    *
    * @return  formatted string
    */
-  public static String formatOids(final String[] oids)
+  public static String formatOids(final String... oids)
   {
     final StringBuilder sb = new StringBuilder();
     if (oids.length == 1) {
@@ -159,7 +159,7 @@ public final class SchemaUtils
    *
    * @return  formatted string
    */
-  public static String formatNumbers(final int[] numbers)
+  public static String formatNumbers(final int... numbers)
   {
     final StringBuilder sb = new StringBuilder();
     if (numbers.length == 1) {
