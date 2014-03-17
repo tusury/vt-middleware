@@ -416,7 +416,7 @@ public class BeanGenerator
           if (nameMappings.containsKey(type.getName())) {
             mutators.put(nameMappings.get(type.getName()), type);
           } else {
-            mutators.put(type.getName(), type);
+            mutators.put(formatAttributeName(type.getName()), type);
           }
         }
       }
@@ -462,8 +462,8 @@ public class BeanGenerator
 
 
   /**
-   * Returns the attribute names to use for the supplied object class. This
-   * method is invoked recursively if superior classes are included.
+   * Returns the attribute names to use for the supplied object class. See
+   * {@link #getAttributeNames(ObjectClass, Set)}.
    *
    * @param  objectClass  to retrieve names from
    *
@@ -471,21 +471,64 @@ public class BeanGenerator
    */
   private Set<String> getAttributeNames(final ObjectClass objectClass)
   {
+    return getAttributeNames(objectClass, new HashSet<ObjectClass>());
+  }
+
+
+  /**
+   * Returns the attribute names to use for the supplied object class. This
+   * method is invoked recursively if superior classes are included.
+   *
+   * @param  objectClass  to retrieve names from
+   * @param  processed  object classes that have already been processed
+   *
+   * @return  set of all attribute names used for bean generation
+   */
+  private Set<String> getAttributeNames(
+    final ObjectClass objectClass,
+    final Set<ObjectClass> processed)
+  {
     final Set<String> attributeNames = new HashSet<String>();
     if (objectClass != null) {
       if (objectClass.getRequiredAttributes() != null) {
-        attributeNames.addAll(Arrays.asList(objectClass.getRequiredAttributes()));
+        attributeNames.addAll(
+          Arrays.asList(objectClass.getRequiredAttributes()));
       }
-      if (useOptionalAttributes && objectClass.getOptionalAttributes() != null) {
-        attributeNames.addAll(Arrays.asList(objectClass.getOptionalAttributes()));
+      if (useOptionalAttributes &&
+          objectClass.getOptionalAttributes() != null) {
+        attributeNames.addAll(
+          Arrays.asList(objectClass.getOptionalAttributes()));
       }
+      processed.add(objectClass);
       if (includeSuperiorClasses && objectClass.getSuperiorClasses() != null) {
         for (String oc : objectClass.getSuperiorClasses()) {
-          attributeNames.addAll(getAttributeNames(schema.getObjectClass(oc)));
+          final ObjectClass superiorOc = schema.getObjectClass(oc);
+          if (!processed.contains(superiorOc)) {
+            attributeNames.addAll(getAttributeNames(superiorOc, processed));
+          }
         }
       }
     }
     return attributeNames;
+  }
+
+
+  /**
+   * Formats the supplied name for use as a Java property.
+   *
+   * @param  name  to format
+   *
+   * @return  formatted name
+   */
+  private String formatAttributeName(final String name)
+  {
+    String formatted;
+    if (name.contains("-")) {
+      formatted = name.replace("-", "");
+    } else {
+      formatted = name;
+    }
+    return formatted;
   }
 
 
