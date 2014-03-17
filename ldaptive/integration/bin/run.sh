@@ -29,7 +29,7 @@ do
 done
 SSL_HOST=`echo ${HOST} |sed 's/389/636/'`
 
-MVN_CMD="clean test"
+MVN_CMD="clean verify"
 if [ ! -z "${PROVIDER}" ]; then
   MVN_CMD="-D${PROVIDER}.version=${PROVIDER_VERSION} ${MVN_CMD}"
 fi
