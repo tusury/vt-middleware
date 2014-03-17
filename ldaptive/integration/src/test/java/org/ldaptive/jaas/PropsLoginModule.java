@@ -16,6 +16,8 @@ package org.ldaptive.jaas;
 import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.auth.AuthenticationRequest;
@@ -69,7 +71,9 @@ public class PropsLoginModule extends AbstractLoginModule
 
   /** {@inheritDoc} */
   @Override
-  public boolean login()
+  protected boolean login(
+    final NameCallback nameCb,
+    final PasswordCallback passCb)
     throws LoginException
   {
     return true;
