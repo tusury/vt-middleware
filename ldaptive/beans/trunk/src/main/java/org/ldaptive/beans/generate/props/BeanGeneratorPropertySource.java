@@ -22,6 +22,7 @@ import org.ldaptive.beans.generate.BeanGenerator;
 import org.ldaptive.props.AbstractPropertySource;
 import org.ldaptive.props.DefaultConnectionFactoryPropertySource;
 import org.ldaptive.schema.Schema;
+import org.ldaptive.schema.SchemaFactory;
 
 /**
  * Reads properties specific to {@link BeanGenerator} and returns an
@@ -125,7 +126,7 @@ public final class BeanGeneratorPropertySource
           properties);
       cfPropSource.initialize();
       try {
-        schema = new Schema(cf);
+        schema = SchemaFactory.createSchema(cf);
       } catch (LdapException e) {
         throw new IllegalArgumentException("Error reading schema from LDAP", e);
       }
