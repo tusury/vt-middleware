@@ -424,12 +424,12 @@ public class BeanGenerator
       // add entry annotation
       final JAnnotationUse entryAnnotation = definedClass.annotate(
         codeModel.ref(org.ldaptive.beans.Entry.class));
-      entryAnnotation.param("dn", "entryDn");
+      entryAnnotation.param("dn", "dn");
       final JAnnotationArrayMember attrArray = entryAnnotation.paramArray(
         "attributes");
 
       // add mutator for the DN
-      createMutators(definedClass, "entryDn", String.class, false);
+      createMutators(definedClass, "dn", String.class, false);
 
       // add mutators for each attribute
       for (Map.Entry<String, AttributeType> mutator : mutators.entrySet()) {
