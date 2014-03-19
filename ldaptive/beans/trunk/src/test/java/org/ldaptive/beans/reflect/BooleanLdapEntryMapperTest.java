@@ -23,7 +23,7 @@ import org.testng.annotations.DataProvider;
  * @version  $Revision$ $Date$
  */
 public class BooleanLdapEntryMapperTest
-  extends AbstractDefaultLdapEntryMapperTest
+  extends AbstractLdapEntryMapperTest
 {
 
 
@@ -53,7 +53,10 @@ public class BooleanLdapEntryMapperTest
     o1.writeTypeList2(Arrays.asList(true, false));
 
     return new Object[][] {
-      new Object[] {o1, createBooleanLdapEntry(), },
+      new Object[] {
+        o1,
+        createBooleanLdapEntry(),
+        new DefaultLdapEntryMapper(), },
     };
   }
 }

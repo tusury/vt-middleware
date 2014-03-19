@@ -23,7 +23,7 @@ import org.testng.annotations.DataProvider;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class CharLdapEntryMapperTest extends AbstractDefaultLdapEntryMapperTest
+public class CharLdapEntryMapperTest extends AbstractLdapEntryMapperTest
 {
 
 
@@ -62,7 +62,7 @@ public class CharLdapEntryMapperTest extends AbstractDefaultLdapEntryMapperTest
     entry.removeAttribute("typeArray2");
 
     return new Object[][] {
-      new Object[] {o1, entry, },
+      new Object[] {o1, entry, new DefaultLdapEntryMapper(), },
     };
   }
 }

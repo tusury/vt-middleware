@@ -23,7 +23,7 @@ import org.testng.annotations.DataProvider;
  * @version  $Revision$ $Date$
  */
 public class BinaryLdapEntryMapperTest
-  extends AbstractDefaultLdapEntryMapperTest
+  extends AbstractLdapEntryMapperTest
 {
 
 
@@ -51,7 +51,10 @@ public class BinaryLdapEntryMapperTest
     o1.writeTypeList2(Arrays.asList(new byte[]{0x24}, new byte[]{0x25}));
 
     return new Object[][] {
-      new Object[] {o1, createBinaryLdapEntry(), },
+      new Object[] {
+        o1,
+        createBinaryLdapEntry(),
+        new DefaultLdapEntryMapper(), },
     };
   }
 }

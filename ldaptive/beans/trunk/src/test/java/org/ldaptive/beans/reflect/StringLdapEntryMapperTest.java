@@ -23,7 +23,7 @@ import org.testng.annotations.DataProvider;
  * @version  $Revision$ $Date$
  */
 public class StringLdapEntryMapperTest
-  extends AbstractDefaultLdapEntryMapperTest
+  extends AbstractLdapEntryMapperTest
 {
 
 
@@ -55,7 +55,10 @@ public class StringLdapEntryMapperTest
     o1.writeTypeList2(Arrays.asList("tlv1", "tlv2"));
 
     return new Object[][] {
-      new Object[] {o1, createStringLdapEntry(), },
+      new Object[] {
+        o1,
+        createStringLdapEntry(),
+        new DefaultLdapEntryMapper(), },
     };
   }
 }

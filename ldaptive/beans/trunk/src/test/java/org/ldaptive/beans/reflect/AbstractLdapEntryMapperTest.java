@@ -16,6 +16,7 @@ package org.ldaptive.beans.reflect;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SortBehavior;
+import org.ldaptive.beans.LdapEntryMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -25,11 +26,8 @@ import org.testng.annotations.Test;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractDefaultLdapEntryMapperTest
+public abstract class AbstractLdapEntryMapperTest
 {
-
-  /** Mapper to use for testing. */
-  protected final DefaultLdapEntryMapper mapper = new DefaultLdapEntryMapper();
 
 
   /**
@@ -349,25 +347,35 @@ public abstract class AbstractDefaultLdapEntryMapperTest
   /**
    * @param  object  initialized with data
    * @param  entry  to compare with mapped entry
+   * @param  mapper  to invoke
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"beans"}, dataProvider = "objects")
-  public void mapToLdapEntry(final CustomObject object, final LdapEntry entry)
+  public void mapToLdapEntry(
+    final CustomObject object,
+    final LdapEntry entry,
+    final LdapEntryMapper mapper)
     throws Exception
   {
-    Assert.assertEquals(entry, mapper.map(object));
+    final LdapEntry mapped = new LdapEntry();
+    mapper.map(object, mapped);
+    Assert.assertEquals(entry, mapped);
   }
 
 
   /**
    * @param  object  to compare with mapped object
    * @param  entry  initialized with data
+   * @param  mapper  to invoke
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"beans"}, dataProvider = "objects")
-  public void mapToObject(final CustomObject object, final LdapEntry entry)
+  public void mapToObject(
+    final CustomObject object,
+    final LdapEntry entry,
+    final LdapEntryMapper mapper)
     throws Exception
   {
     final CustomObject mapped = object.getClass().newInstance();
