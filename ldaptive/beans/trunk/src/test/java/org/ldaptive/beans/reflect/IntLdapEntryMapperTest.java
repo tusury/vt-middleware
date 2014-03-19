@@ -22,7 +22,7 @@ import org.testng.annotations.DataProvider;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class IntLdapEntryMapperTest extends AbstractDefaultLdapEntryMapperTest
+public class IntLdapEntryMapperTest extends AbstractLdapEntryMapperTest
 {
 
 
@@ -52,7 +52,10 @@ public class IntLdapEntryMapperTest extends AbstractDefaultLdapEntryMapperTest
     o1.writeTypeList2(Arrays.asList(701, 702));
 
     return new Object[][] {
-      new Object[] {o1, createIntegerLdapEntry(), },
+      new Object[] {
+        o1,
+        createIntegerLdapEntry(),
+        new DefaultLdapEntryMapper(), },
     };
   }
 }

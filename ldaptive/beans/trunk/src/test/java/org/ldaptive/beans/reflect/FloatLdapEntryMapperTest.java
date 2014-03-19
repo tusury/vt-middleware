@@ -23,7 +23,7 @@ import org.testng.annotations.DataProvider;
  * @version  $Revision$ $Date$
  */
 public class FloatLdapEntryMapperTest
-  extends AbstractDefaultLdapEntryMapperTest
+  extends AbstractLdapEntryMapperTest
 {
 
 
@@ -54,7 +54,7 @@ public class FloatLdapEntryMapperTest
     o1.writeTypeList2(Arrays.asList(701.7f, 702.7f));
 
     return new Object[][] {
-      new Object[] {o1, createFloatLdapEntry(), },
+      new Object[] {o1, createFloatLdapEntry(), new DefaultLdapEntryMapper(), },
     };
   }
 }
