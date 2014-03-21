@@ -110,11 +110,13 @@ public abstract class AbstractCollectionReflectionTranscoder
   public Collection<String> encodeStringValues(final Object values)
   {
     final Collection<String> encoded = createCollection(String.class);
-    for (Object o : (Collection<?>) values) {
-      if (arrayTranscoder != null) {
-        encoded.addAll(arrayTranscoder.encodeStringValues(o));
-      } else {
-        encoded.addAll(singleValueTranscoder.encodeStringValues(o));
+    if (values != null) {
+      for (Object o : (Collection<?>) values) {
+        if (arrayTranscoder != null) {
+          encoded.addAll(arrayTranscoder.encodeStringValues(o));
+        } else {
+          encoded.addAll(singleValueTranscoder.encodeStringValues(o));
+        }
       }
     }
     return encoded;
@@ -126,11 +128,13 @@ public abstract class AbstractCollectionReflectionTranscoder
   public Collection<byte[]> encodeBinaryValues(final Object values)
   {
     final Collection<byte[]> encoded = createCollection(byte[].class);
-    for (Object o : (Collection<?>) values) {
-      if (arrayTranscoder != null) {
-        encoded.addAll(arrayTranscoder.encodeBinaryValues(o));
-      } else {
-        encoded.addAll(singleValueTranscoder.encodeBinaryValues(o));
+    if (values != null) {
+      for (Object o : (Collection<?>) values) {
+        if (arrayTranscoder != null) {
+          encoded.addAll(arrayTranscoder.encodeBinaryValues(o));
+        } else {
+          encoded.addAll(singleValueTranscoder.encodeBinaryValues(o));
+        }
       }
     }
     return encoded;
