@@ -63,14 +63,10 @@ public class ListReflectionTranscoder
   {
     final Class<?> type = getType();
     List<T> l;
-    if (type == Collection.class ||
-      type == List.class ||
-      type == ArrayList.class) {
-      l = new ArrayList<T>();
-    } else if (type == LinkedList.class) {
+    if (LinkedList.class.isAssignableFrom(type)) {
       l = new LinkedList<T>();
     } else {
-      throw new IllegalArgumentException("Unsupported type: " + type);
+      l = new ArrayList<T>();
     }
     return l;
   }
