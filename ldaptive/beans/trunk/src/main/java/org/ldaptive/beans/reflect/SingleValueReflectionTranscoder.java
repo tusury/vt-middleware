@@ -78,10 +78,12 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   public Collection<String> encodeStringValues(final Object value)
   {
     final List<String> l = new ArrayList<String>(1);
-    @SuppressWarnings("unchecked")
-    final String s = valueTranscoder.encodeStringValue((T) value);
-    if (s != null) {
-      l.add(s);
+    if (value != null) {
+      @SuppressWarnings("unchecked")
+      final String s = valueTranscoder.encodeStringValue((T) value);
+      if (s != null) {
+        l.add(s);
+      }
     }
     return l;
   }
@@ -92,10 +94,12 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   public Collection<byte[]> encodeBinaryValues(final Object value)
   {
     final List<byte[]> l = new ArrayList<byte[]>(1);
-    @SuppressWarnings("unchecked")
-    final byte[] b = valueTranscoder.encodeBinaryValue((T) value);
-    if (b != null) {
-      l.add(b);
+    if (value != null) {
+      @SuppressWarnings("unchecked")
+      final byte[] b = valueTranscoder.encodeBinaryValue((T) value);
+      if (b != null) {
+        l.add(b);
+      }
     }
     return l;
   }
