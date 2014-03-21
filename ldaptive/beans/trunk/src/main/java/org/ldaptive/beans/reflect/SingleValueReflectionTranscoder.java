@@ -80,7 +80,9 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
     final List<String> l = new ArrayList<String>(1);
     @SuppressWarnings("unchecked")
     final String s = valueTranscoder.encodeStringValue((T) value);
-    l.add(s);
+    if (s != null) {
+      l.add(s);
+    }
     return l;
   }
 
@@ -92,7 +94,9 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
     final List<byte[]> l = new ArrayList<byte[]>(1);
     @SuppressWarnings("unchecked")
     final byte[] b = valueTranscoder.encodeBinaryValue((T) value);
-    l.add(b);
+    if (b != null) {
+      l.add(b);
+    }
     return l;
   }
 

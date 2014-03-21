@@ -152,30 +152,39 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
                   values = createCollection(List.class, length);
                   for (int i = 0; i < length; i++) {
                     final Object o = Array.get(converted, i);
-                    values.add(
+                    final T value =
                       (T) evaluationContext.getTypeConverter().convertValue(
                         o,
                         TypeDescriptor.valueOf(o.getClass()),
-                        TypeDescriptor.valueOf(type)));
+                        TypeDescriptor.valueOf(type));
+                    if (value != null) {
+                      values.add(value);
+                    }
                   }
                 } else if (Collection.class.isAssignableFrom(
                            converted.getClass())) {
                   final Collection<?> col = (Collection<?>) converted;
                   values = createCollection(converted.getClass(), col.size());
                   for (Object o : col) {
-                    values.add(
+                    final T value =
                       (T) evaluationContext.getTypeConverter().convertValue(
                         o,
                         TypeDescriptor.valueOf(o.getClass()),
-                        TypeDescriptor.valueOf(type)));
+                        TypeDescriptor.valueOf(type));
+                    if (value != null) {
+                      values.add(value);
+                    }
                   }
                 } else {
                   values = createCollection(List.class, 1);
-                  values.add(
+                  final T value =
                     (T) evaluationContext.getTypeConverter().convertValue(
                       converted,
                       TypeDescriptor.valueOf(converted.getClass()),
-                      TypeDescriptor.valueOf(type)));
+                      TypeDescriptor.valueOf(type));
+                  if (value != null) {
+                    values.add(value);
+                  }
                 }
               }
               return values;
@@ -215,27 +224,24 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
     final Class<?> type,
     final int size)
   {
-    if (type == Collection.class || List.class.isAssignableFrom(type)) {
-      List<T> l;
+    Collection<T> c;
+    if (List.class.isAssignableFrom(type)) {
       if (LinkedList.class.isAssignableFrom(type)) {
-        l = new LinkedList<T>();
+        c = new LinkedList<T>();
       } else {
-        l = new ArrayList<T>(size);
+        c = new ArrayList<T>(size);
       }
-      return l;
     } else if (Set.class.isAssignableFrom(type)) {
-      Set<T> s;
       if (LinkedHashSet.class.isAssignableFrom(type)) {
-        s = new LinkedHashSet<T>(size);
+        c = new LinkedHashSet<T>(size);
       } else if (TreeSet.class.isAssignableFrom(type)) {
-        s = new TreeSet<T>();
+        c = new TreeSet<T>();
       } else {
-        s = new HashSet<T>(size);
+        c = new HashSet<T>(size);
       }
-      return s;
     } else {
-      throw new IllegalArgumentException(
-        "Unsupported collection type: " + type);
+      c = new ArrayList<T>(size);
     }
+    return c;
   }
 }
