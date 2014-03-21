@@ -64,16 +64,12 @@ public class SetReflectionTranscoder
   {
     final Class<?> type = getType();
     Set<T> s;
-    if (type == Collection.class ||
-      type == Set.class ||
-      type == HashSet.class) {
-      s = new HashSet<T>();
-    } else if (type == LinkedHashSet.class) {
+    if (LinkedHashSet.class.isAssignableFrom(type)) {
       s = new LinkedHashSet<T>();
-    } else if (type == TreeSet.class) {
+    } else if (TreeSet.class.isAssignableFrom(type)) {
       s = new TreeSet<T>();
     } else {
-      throw new IllegalArgumentException("Unsupported type: " + type);
+      s = new HashSet<T>();
     }
     return s;
   }
