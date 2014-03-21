@@ -13,6 +13,7 @@
 */
 package org.ldaptive.beans;
 
+import java.util.Collection;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,9 +89,15 @@ public abstract class AbstractLdapEntryMapper<T>
           mutator.getSortBehavior(), mutator.isBinary());
         attr.setName(mutator.getName());
         if (attr.isBinary()) {
-          attr.addBinaryValues(mutator.getBinaryValues(source));
+          final Collection<byte[]> c = mutator.getBinaryValues(source);
+          if (c != null) {
+            attr.addBinaryValues(c);
+          }
         } else {
-          attr.addStringValues(mutator.getStringValues(source));
+          final Collection<String> c = mutator.getStringValues(source);
+          if (c != null) {
+            attr.addStringValues(c);
+          }
         }
         dest.addAttribute(attr);
       }
