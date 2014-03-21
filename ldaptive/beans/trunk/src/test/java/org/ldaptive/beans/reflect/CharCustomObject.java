@@ -15,6 +15,7 @@ package org.ldaptive.beans.reflect;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.ldaptive.LdapUtils;
@@ -28,28 +29,6 @@ import org.ldaptive.beans.Entry;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-@Entry(
-  dn = "customDn",
-  attributes = {
-    @Attribute(name = "customname1", values = "customvalue1"),
-    @Attribute(name = "customname2", values = {"customvalue1", "customvalue2"}),
-    @Attribute(name = "type1", property = "type1"),
-    @Attribute(name = "type2", property = "type2"),
-    @Attribute(name = "stringthree", property = "type3"),
-    @Attribute(name = "typeCol1", property = "typeCol1"),
-    @Attribute(name = "typeCol2", property = "typeCol2"),
-    @Attribute(name = "typeSet1", property = "typeSet1"),
-    @Attribute(name = "typeSet2", property = "typeSet2"),
-    @Attribute(
-      name = "typeList1",
-      property = "typeList1",
-      sortBehavior = SortBehavior.ORDERED),
-    @Attribute(
-      name = "typeList2",
-      property = "typeList2",
-      sortBehavior = SortBehavior.ORDERED)
-    }
-)
 public class CharCustomObject implements CustomObject
 {
 
@@ -57,16 +36,18 @@ public class CharCustomObject implements CustomObject
   private static final int HASH_CODE_SEED = 31;
 
   // CheckStyle:JavadocVariable OFF
+  // CheckStyle:DeclarationOrder OFF
   private String customDn;
   private char[] type1;
-  private char[] type2;
+  protected char[] type2;
   private char[] type3;
   private Collection<char[]> typeCol1;
-  private Collection<char[]> typeCol2;
+  protected Collection<char[]> typeCol2;
   private Set<char[]> typeSet1;
-  private Set<char[]> typeSet2;
+  protected Set<char[]> typeSet2;
   private List<char[]> typeList1;
-  private List<char[]> typeList2;
+  protected List<char[]> typeList2;
+  // CheckStyle:DeclarationOrder ON
   // CheckStyle:JavadocVariable ON
 
 
@@ -167,5 +148,117 @@ public class CharCustomObject implements CustomObject
       }
     }
     return s;
+  }
+
+
+  /** Test class for the default ldap entry mapper. */
+  @Entry(
+    dn = "customDn",
+    attributes = {
+      @Attribute(name = "customname1", values = "customvalue1"),
+      @Attribute(
+        name = "customname2",
+        values = {"customvalue1", "customvalue2"}),
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "stringthree", property = "type3"),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2",
+        sortBehavior = SortBehavior.ORDERED)
+      }
+  )
+  public static class Default extends CharCustomObject {}
+
+
+  /** Test class for the spring ldap entry mapper. */
+  @Entry(
+    dn = "customDn",
+    attributes = {
+      @Attribute(name = "customname1", values = "customvalue1"),
+      @Attribute(
+        name = "customname2",
+        values = {"customvalue1", "customvalue2"}),
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "stringthree", property = "type3"),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2",
+        sortBehavior = SortBehavior.ORDERED)
+      }
+  )
+  public static class Spring extends CharCustomObject
+  {
+    // CheckStyle:JavadocMethod OFF
+    // CheckStyle:LeftCurly OFF
+    public char[] getType2() { return type2; }
+    public void setType2(final char[] t) { type2 = t; }
+    public Collection<char[]> getTypeCol2() { return typeCol2; }
+    public void setTypeCol2(final Collection<char[]> c) { typeCol2 = c; }
+    public Set<char[]> getTypeSet2() { return typeSet2; }
+    public void setTypeSet2(final Set<char[]> s) { typeSet2 = s; }
+    public List<char[]> getTypeList2() { return typeList2; }
+    public void setTypeList2(final List<char[]> l) { typeList2 = l; }
+    // CheckStyle:LeftCurly ON
+    // CheckStyle:JavadocMethod ON
+  }
+
+
+  /**
+   * Creates a char custom object for testing.
+   *
+   * @param  <T>  type of char custom object
+   * @param  type  of char custom object
+   *
+   * @return  instance of char custom object
+   */
+  public static <T extends CharCustomObject> T createCustomObject(
+    final Class<T> type)
+  {
+    final Set<char[]> s1 = new HashSet<char[]>();
+    s1.add(new char[]{'t', 's', 'v', '1'});
+    s1.add(new char[]{'t', 's', 'v', '2'});
+
+    final T o1;
+    try {
+      o1 = type.newInstance();
+    } catch (InstantiationException e) {
+      throw new IllegalStateException(e);
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException(e);
+    }
+    o1.setCustomDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");
+    o1.setType1(new char[]{'t', 'v', '1'});
+    o1.writeType2(new char[]{'t', 'v', '2'});
+    o1.setType3(new char[]{'t', 'v', '3'});
+    o1.setTypeCol1(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
+                                 new char[]{'t', 'c', 'v', '2'}));
+    o1.writeTypeCol2(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
+                                   new char[]{'t', 'c', 'v', '2'}));
+    o1.setTypeSet1(s1);
+    o1.writeTypeSet2(s1);
+    o1.setTypeList1(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
+                                  new char[]{'t', 'l', 'v', '2'}));
+    o1.writeTypeList2(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
+                                    new char[]{'t', 'l', 'v', '2'}));
+
+    return o1;
   }
 }
