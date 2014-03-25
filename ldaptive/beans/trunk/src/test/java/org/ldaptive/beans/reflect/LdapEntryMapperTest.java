@@ -40,17 +40,6 @@ public class LdapEntryMapperTest
   {
     final DefaultLdapEntryMapper defaultMapper = new DefaultLdapEntryMapper();
     final SpringLdapEntryMapper springMapper = new SpringLdapEntryMapper();
-    /*
-    springMapper.setConverters(new Converter<?, ?>[] {
-      new Converter<Integer, String>() {
-        @Override
-        public String convert(final Integer source)
-        {
-          return source != null ? source.toString() : null;
-        }
-      },
-    });
-    */
 
     final LdapEntry stringEntry = StringCustomObject.createLdapEntry();
     final LdapEntry charEntry = StringCustomObject.createLdapEntry();
@@ -139,6 +128,7 @@ public class LdapEntryMapperTest
     throws Exception
   {
     final LdapEntry mapped = new LdapEntry();
+    object.initialize();
     mapper.map(object, mapped);
     Assert.assertEquals(entry, mapped);
   }
@@ -160,6 +150,7 @@ public class LdapEntryMapperTest
   {
     final CustomObject mapped = object.getClass().newInstance();
     mapper.map(entry, mapped);
+    mapped.initialize();
     Assert.assertEquals(object, mapped);
   }
 }

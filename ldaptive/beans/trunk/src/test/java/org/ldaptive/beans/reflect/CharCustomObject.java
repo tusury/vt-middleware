@@ -79,6 +79,11 @@ public class CharCustomObject implements CustomObject
 
   /** {@inheritDoc} */
   @Override
+  public void initialize() {}
+
+
+  /** {@inheritDoc} */
+  @Override
   public boolean equals(final Object o)
   {
     return LdapUtils.areEqual(this, o);

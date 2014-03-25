@@ -80,6 +80,11 @@ public class BooleanCustomObject implements CustomObject
 
   /** {@inheritDoc} */
   @Override
+  public void initialize() {}
+
+
+  /** {@inheritDoc} */
+  @Override
   public boolean equals(final Object o)
   {
     return LdapUtils.areEqual(this, o);
@@ -98,8 +103,8 @@ public class BooleanCustomObject implements CustomObject
         type3,
         typeArray1,
         typeArray2,
-        Collections.unmodifiableCollection(typeCol1),
-        Collections.unmodifiableCollection(typeCol2),
+        typeCol1 != null ? Collections.unmodifiableCollection(typeCol1) : null,
+        typeCol2 != null ? Collections.unmodifiableCollection(typeCol2) : null,
         typeSet1,
         typeSet2,
         typeList1,
