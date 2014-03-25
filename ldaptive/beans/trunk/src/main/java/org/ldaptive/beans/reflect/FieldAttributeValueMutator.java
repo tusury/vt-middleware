@@ -14,6 +14,7 @@
 package org.ldaptive.beans.reflect;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import org.ldaptive.SortBehavior;
 
@@ -29,6 +30,9 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
   /** Field to operate on. */
   private final Field f;
 
+  /** Whether the field has a final modifier. */
+  private final boolean isFinal;
+
 
   /**
    * Creates a new field attribute value mutator.
@@ -37,11 +41,13 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
    * @param  field  to mutate
    */
   public FieldAttributeValueMutator(
-    final ReflectionTranscoder transcoder, final Field field)
+    final ReflectionTranscoder transcoder,
+    final Field field)
   {
     super(null, false, null, transcoder);
     f = field;
     f.setAccessible(true);
+    isFinal = Modifier.isFinal(f.getModifiers());
   }
 
 
@@ -55,12 +61,16 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
    * @param  field  to mutate
    */
   public FieldAttributeValueMutator(
-    final String name, final boolean binary, final SortBehavior sortBehavior,
-    final ReflectionTranscoder transcoder, final Field field)
+    final String name,
+    final boolean binary,
+    final SortBehavior sortBehavior,
+    final ReflectionTranscoder transcoder,
+    final Field field)
   {
     super(name, binary, sortBehavior, transcoder);
     f = field;
     f.setAccessible(true);
+    isFinal = Modifier.isFinal(f.getModifiers());
   }
 
 
@@ -88,10 +98,12 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
     final Object object,
     final Collection<String> values)
   {
-    ReflectionUtils.setField(
-      f,
-      object,
-      getReflectionTranscoder().decodeStringValues(values));
+    if (!isFinal) {
+      ReflectionUtils.setField(
+        f,
+        object,
+        getReflectionTranscoder().decodeStringValues(values));
+    }
   }
 
 
@@ -101,10 +113,12 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
     final Object object,
     final Collection<byte[]> values)
   {
-    ReflectionUtils.setField(
-      f,
-      object,
-      getReflectionTranscoder().decodeBinaryValues(values));
+    if (!isFinal) {
+      ReflectionUtils.setField(
+        f,
+        object,
+        getReflectionTranscoder().decodeBinaryValues(values));
+    }
   }
 
 
