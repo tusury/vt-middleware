@@ -67,7 +67,9 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
     Class<?> c = type;
     while (c != null) {
       for (Field field : c.getDeclaredFields()) {
-        fields.put(field.getName(), field);
+        if (!fields.containsKey(field.getName())) {
+          fields.put(field.getName(), field);
+        }
       }
       c = c.getSuperclass();
     }
