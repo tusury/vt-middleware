@@ -119,21 +119,21 @@ public final class UnboundIDSaslUtils
     SASLQualityOfProtection e;
     switch (qop) {
 
-      case AUTH:
-        e = SASLQualityOfProtection.AUTH;
-        break;
+    case AUTH:
+      e = SASLQualityOfProtection.AUTH;
+      break;
 
-      case AUTH_INT:
-        e = SASLQualityOfProtection.AUTH_INT;
-        break;
+    case AUTH_INT:
+      e = SASLQualityOfProtection.AUTH_INT;
+      break;
 
-      case AUTH_CONF:
-        e = SASLQualityOfProtection.AUTH_CONF;
-        break;
+    case AUTH_CONF:
+      e = SASLQualityOfProtection.AUTH_CONF;
+      break;
 
-      default:
-        throw new IllegalArgumentException(
-          "Unknown SASL quality of protection: " + qop);
+    default:
+      throw new IllegalArgumentException(
+        "Unknown SASL quality of protection: " + qop);
     }
     return e;
   }
