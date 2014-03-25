@@ -19,4 +19,12 @@ package org.ldaptive.beans.reflect;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public interface CustomObject {}
+public interface CustomObject
+{
+
+
+  /**
+   * Prepare this object for use;
+   */
+  void initialize();
+}
