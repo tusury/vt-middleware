@@ -46,9 +46,13 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   {
     super(null, false, null, transcoder);
     getterMethod = getter;
-    getterMethod.setAccessible(true);
+    if (getterMethod != null) {
+      getterMethod.setAccessible(true);
+    }
     setterMethod = setter;
-    setterMethod.setAccessible(true);
+    if (setterMethod != null) {
+      setterMethod.setAccessible(true);
+    }
   }
 
 
@@ -69,9 +73,13 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   {
     super(name, binary, sortBehavior, transcoder);
     getterMethod = getter;
-    getterMethod.setAccessible(true);
+    if (getterMethod != null) {
+      getterMethod.setAccessible(true);
+    }
     setterMethod = setter;
-    setterMethod.setAccessible(true);
+    if (setterMethod != null) {
+      setterMethod.setAccessible(true);
+    }
   }
 
 
@@ -79,6 +87,9 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public Collection<String> getStringValues(final Object object)
   {
+    if (getterMethod == null) {
+      return null;
+    }
     return getReflectionTranscoder().encodeStringValues(
       ReflectionUtils.invokeGetterMethod(getterMethod, object));
   }
@@ -88,6 +99,9 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public Collection<byte[]> getBinaryValues(final Object object)
   {
+    if (getterMethod == null) {
+      return null;
+    }
     return getReflectionTranscoder().encodeBinaryValues(
       ReflectionUtils.invokeGetterMethod(getterMethod, object));
   }
@@ -99,10 +113,12 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
     final Object object,
     final Collection<String> values)
   {
-    ReflectionUtils.invokeSetterMethod(
-      setterMethod,
-      object,
-      getReflectionTranscoder().decodeStringValues(values));
+    if (setterMethod != null) {
+      ReflectionUtils.invokeSetterMethod(
+        setterMethod,
+        object,
+        getReflectionTranscoder().decodeStringValues(values));
+    }
   }
 
 
@@ -112,10 +128,12 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
     final Object object,
     final Collection<byte[]> values)
   {
-    ReflectionUtils.invokeSetterMethod(
-      setterMethod,
-      object,
-      getReflectionTranscoder().decodeBinaryValues(values));
+    if (setterMethod != null) {
+      ReflectionUtils.invokeSetterMethod(
+        setterMethod,
+        object,
+        getReflectionTranscoder().decodeBinaryValues(values));
+    }
   }
 
 
