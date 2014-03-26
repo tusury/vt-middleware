@@ -36,6 +36,12 @@
     <appender-ref ref="CONSOLE"/>
   </category>
 
+  <category name="org.ldaptive.beans"
+            additivity="false">
+    <priority value="INFO"/>
+    <appender-ref ref="CONSOLE"/>
+  </category>
+
   <category name="org.ldaptive.jaas"
             additivity="false">
     <priority value="INFO"/>

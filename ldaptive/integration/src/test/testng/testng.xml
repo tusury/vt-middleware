@@ -482,6 +482,8 @@
         <include name="ssl" />
         <include name="cli" />
         <include name="templates" />
+        <include name="beans-generate" />
+        <include name="beans-mapper" />
         <include name="conn" />
       </define>
       <define name="core-sysprops">
