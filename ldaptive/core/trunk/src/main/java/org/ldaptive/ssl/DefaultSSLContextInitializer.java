@@ -18,7 +18,6 @@ import java.security.KeyStore;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import org.ldaptive.LdapUtils;
 
 /**
  * Provides a default implementation of SSL context initializer which allows the
@@ -33,26 +32,44 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   /** Key managers. */
   private KeyManager[] keyManagers;
 
+  /** Whether default trust managers should be created. */
+  private final boolean createDefaultTrustManagers;
+
+
+  /**
+   * Creates a new default ssl context initializer. Default trust managers will
+   * be produced.
+   */
+  public DefaultSSLContextInitializer()
+  {
+    this(true);
+  }
+
+
+  /**
+   * Creates a new default ssl context initializer.
+   *
+   * @param  defaultTrustManagers  whether default trust managers should be
+   * created
+   */
+  public DefaultSSLContextInitializer(final boolean defaultTrustManagers)
+  {
+    createDefaultTrustManagers = defaultTrustManagers;
+  }
+
 
   /** {@inheritDoc} */
   @Override
-  public TrustManager[] getTrustManagers()
+  protected TrustManager[] createTrustManagers()
     throws GeneralSecurityException
   {
-    final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-      TrustManagerFactory.getDefaultAlgorithm());
-    tmf.init((KeyStore) null);
-
-    final TrustManager[] tm = tmf.getTrustManagers();
-    TrustManager[] aggregate;
-    if (tm == null) {
-      aggregate = super.getTrustManagers() != null
-        ? aggregateTrustManagers(super.getTrustManagers()) : null;
-    } else {
-      aggregate = aggregateTrustManagers(
-        LdapUtils.concatArrays(tm, super.getTrustManagers()));
+    if (createDefaultTrustManagers) {
+      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
+        TrustManagerFactory.getDefaultAlgorithm());
+      tmf.init((KeyStore) null);
+      return tmf.getTrustManagers();
     }
-    return aggregate;
+    return null;
   }
 
 
