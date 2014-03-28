@@ -150,8 +150,10 @@ public class AuthenticatorTest extends AbstractTest
     super.deleteLdapEntry(testLdapEntry.getDn());
     super.deleteLdapEntry(specialCharsLdapEntry.getDn());
     final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
-    (((PooledConnectionFactoryManager)
-      ah).getConnectionFactory().getConnectionPool()).close();
+    try {
+      (((PooledConnectionFactoryManager)
+        ah).getConnectionFactory().getConnectionPool()).close();
+    } catch (IllegalStateException e) {}
   }
 
 

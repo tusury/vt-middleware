@@ -1809,7 +1809,8 @@ public class SearchOperationTest extends AbstractTest
     // test no exception
     search.setAllowRetry(true);
     cf = new DefaultConnectionFactory(cc);
-    cf.getProvider().getProviderConfig().setOperationExceptionResultCodes(null);
+    cf.getProvider().getProviderConfig().setOperationExceptionResultCodes(
+      (ResultCode[]) null);
     conn = cf.getConnection();
     search = new RetrySearchOperation(
       conn,
