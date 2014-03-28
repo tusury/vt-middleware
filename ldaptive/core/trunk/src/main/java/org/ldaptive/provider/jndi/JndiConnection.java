@@ -1215,8 +1215,11 @@ public class JndiConnection implements ProviderConnection
       if (resultName != null) {
         StringBuilder fqName;
         if (sr.isRelative()) {
-          logger.trace("formatting relative dn {}", resultName);
-          if (baseDn != null) {
+          logger.trace(
+            "formatting relative dn '{}' with baseDn '{}'",
+            resultName,
+            baseDn);
+          if (baseDn != null && !"".equals(baseDn)) {
             if (!"".equals(resultName)) {
               fqName = new StringBuilder(readCompositeName(resultName)).append(
                 ",").append(baseDn);
@@ -1227,7 +1230,7 @@ public class JndiConnection implements ProviderConnection
             fqName = new StringBuilder(readCompositeName(resultName));
           }
         } else {
-          logger.trace("formatting non-relative dn {}", resultName);
+          logger.trace("formatting non-relative dn '{}'", resultName);
           if (config.getRemoveDnUrls()) {
             fqName = new StringBuilder(
               readCompositeName(URI.create(resultName).getPath().substring(1)));
@@ -1237,7 +1240,7 @@ public class JndiConnection implements ProviderConnection
         }
         newDn = fqName.toString();
       }
-      logger.trace("formatted dn {} as {}", resultName, newDn);
+      logger.trace("formatted dn '{}' as '{}'", resultName, newDn);
       return newDn;
     }
 
