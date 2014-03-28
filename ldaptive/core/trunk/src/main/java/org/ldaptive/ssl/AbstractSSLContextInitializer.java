@@ -17,6 +17,7 @@ import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides common implementation for SSL context initializer.
@@ -37,7 +38,16 @@ public abstract class AbstractSSLContextInitializer
   public TrustManager[] getTrustManagers()
     throws GeneralSecurityException
   {
-    return trustManagers;
+    final TrustManager[] tm = createTrustManagers();
+    TrustManager[] aggregate;
+    if (tm == null) {
+      aggregate = trustManagers != null
+        ? aggregateTrustManagers(trustManagers) : null;
+    } else {
+      aggregate = aggregateTrustManagers(
+        LdapUtils.concatArrays(tm, trustManagers));
+    }
+    return aggregate;
   }
 
 
@@ -51,6 +61,18 @@ public abstract class AbstractSSLContextInitializer
   {
     trustManagers = managers;
   }
+
+
+  /**
+   * Creates any trust managers specific to this context initializer.
+   *
+   * @return  trust managers
+   *
+   * @throws  GeneralSecurityException  if an errors occurs while loading the
+   * TrustManagers
+   */
+  protected abstract TrustManager[] createTrustManagers()
+    throws GeneralSecurityException;
 
 
   /** {@inheritDoc} */

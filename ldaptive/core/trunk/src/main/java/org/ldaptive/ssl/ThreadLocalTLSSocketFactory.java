@@ -73,9 +73,10 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
 
   /**
    * Returns an instance of this socket factory configured with a hostname
-   * verifying trust manager. If the supplied ssl config does not contain a
+   * verifying trust manager. If the supplied ssl config does not contain
    * trust managers, {@link HostnameVerifyingTrustManager} with {@link
-   * DefaultHostnameVerifier} is set.
+   * DefaultHostnameVerifier} is set. See {@link
+   * #addHostnameVerifyingTrustManager(SslConfig, String[])}.
    *
    * @param  config  to set on the socket factory
    * @param  names  to use for hostname verification
@@ -89,19 +90,10 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
     final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
     if (config != null && !config.isEmpty()) {
       sf.setSslConfig(SslConfig.newSslConfig(config));
-      if (sf.getSslConfig().getTrustManagers() == null) {
-        sf.getSslConfig().setTrustManagers(
-          new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(),
-            names));
-      }
     } else {
-      sf.setSslConfig(
-        new SslConfig(
-          new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(),
-            names)));
+      sf.setSslConfig(new SslConfig());
     }
+    addHostnameVerifyingTrustManager(sf.getSslConfig(), names);
     try {
       sf.initialize();
     } catch (GeneralSecurityException e) {
