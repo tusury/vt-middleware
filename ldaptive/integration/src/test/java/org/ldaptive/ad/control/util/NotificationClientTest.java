@@ -84,7 +84,7 @@ public class NotificationClientTest extends AbstractTest
       final AsyncRequest asyncRequest = item.getAsyncRequest();
 
       item = results.take();
-      AssertJUnit.assertTrue(item.isSearchEntry());
+      AssertJUnit.assertTrue(item.isEntry());
       AssertJUnit.assertNotNull(item.getEntry());
 
       asyncRequest.abandon();

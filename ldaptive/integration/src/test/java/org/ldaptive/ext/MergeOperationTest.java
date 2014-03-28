@@ -134,7 +134,7 @@ public class MergeOperationTest extends AbstractTest
       if (TestControl.isActiveDirectory()) {
         request.setIncludeAttributes("givenName", "initials");
       } else {
-        request.setExcludeAttributes(null);
+        request.setExcludeAttributes((String[]) null);
       }
       merge.execute(request);
 
