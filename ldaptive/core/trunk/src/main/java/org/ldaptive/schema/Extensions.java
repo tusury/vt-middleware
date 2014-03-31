@@ -45,9 +45,7 @@ public class Extensions
     new LinkedHashMap<String, List<String>>();
 
 
-  /**
-   * Creates a new extensions.
-   */
+  /** Creates a new extensions. */
   public Extensions() {}
 
 
@@ -158,8 +156,8 @@ public class Extensions
       if (m.group(2) != null) {
         values.add(m.group(2).trim());
       } else if (m.group(3) != null) {
-        values.addAll(Arrays.asList(
-          SchemaUtils.parseDescriptors(m.group(3).trim())));
+        values.addAll(
+          Arrays.asList(SchemaUtils.parseDescriptors(m.group(3).trim())));
       }
       // CheckStyle:MagicNumber ON
       exts.addExtension(name, values);

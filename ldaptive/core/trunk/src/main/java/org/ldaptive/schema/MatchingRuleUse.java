@@ -21,6 +21,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Bean for an matching rule use schema element.
+ *
  * <pre>
    MatchingRuleUseDescription = LPAREN WSP
      numericoid                 ; object identifier
@@ -81,8 +82,11 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
    */
   // CheckStyle:ParameterNumber|HiddenField OFF
   public MatchingRuleUse(
-    final String oid, final String[] names, final String description,
-    final boolean obsolete, final String[] appliesAttributeTypes,
+    final String oid,
+    final String[] names,
+    final String description,
+    final boolean obsolete,
+    final String[] appliesAttributeTypes,
     final Extensions extensions)
   {
     this(oid);
@@ -148,8 +152,7 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
         definition.length());
     }
 
-    final MatchingRuleUse mrud = new MatchingRuleUse(
-      m.group(1).trim());
+    final MatchingRuleUse mrud = new MatchingRuleUse(m.group(1).trim());
 
     // CheckStyle:MagicNumber OFF
     // parse names
@@ -230,7 +233,7 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
     return
       String.format(
         "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-          "appliesAttributeTypes=%s, extensions=%s]",
+        "appliesAttributeTypes=%s, extensions=%s]",
         getClass().getName(),
         hashCode(),
         oid,

@@ -19,8 +19,7 @@ package org.ldaptive.schema;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractNamedSchemaElement
-  extends AbstractSchemaElement
+public abstract class AbstractNamedSchemaElement extends AbstractSchemaElement
 {
 
   /** Names. */

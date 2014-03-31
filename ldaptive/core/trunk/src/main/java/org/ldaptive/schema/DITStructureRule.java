@@ -21,6 +21,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Bean for a DIT content rule schema element.
+ *
  * <pre>
    DITStructureRuleDescription = LPAREN WSP
      ruleid                     ; rule identifier
@@ -87,8 +88,12 @@ public class DITStructureRule extends AbstractNamedSchemaElement
    */
   // CheckStyle:ParameterNumber|HiddenField OFF
   public DITStructureRule(
-    final int id, final String[] names, final String description,
-    final boolean obsolete, final String nameForm, final int[] superiorRules,
+    final int id,
+    final String[] names,
+    final String description,
+    final boolean obsolete,
+    final String nameForm,
+    final int[] superiorRules,
     final Extensions extensions)
   {
     this(id);
@@ -264,7 +269,7 @@ public class DITStructureRule extends AbstractNamedSchemaElement
     return
       String.format(
         "[%s@%d::id=%s, names=%s, description=%s, obsolete=%s, " +
-          "nameForm=%s, superiorRules=%s, extensions=%s]",
+        "nameForm=%s, superiorRules=%s, extensions=%s]",
         getClass().getName(),
         hashCode(),
         id,

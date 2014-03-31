@@ -20,6 +20,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Bean for an attribute syntax schema element.
+ *
  * <pre>
    SyntaxDescription = LPAREN WSP
      numericoid                 ; object identifier
@@ -110,8 +111,7 @@ public class Syntax extends AbstractSchemaElement
         definition.length());
     }
 
-    final Syntax asd = new Syntax(
-      m.group(1).trim());
+    final Syntax asd = new Syntax(m.group(1).trim());
 
     // CheckStyle:MagicNumber OFF
     asd.setDescription(m.group(2) != null ? m.group(2).trim() : null);

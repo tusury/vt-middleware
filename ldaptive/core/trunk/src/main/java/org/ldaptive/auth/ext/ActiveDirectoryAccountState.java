@@ -28,9 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents the state of an Active Directory account. Note that the
- * warning returned by this implementation always returns -1 for logins
- * remaining.
+ * Represents the state of an Active Directory account. Note that the warning
+ * returned by this implementation always returns -1 for logins remaining.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

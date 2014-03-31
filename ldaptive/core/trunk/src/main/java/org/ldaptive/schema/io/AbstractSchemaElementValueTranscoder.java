@@ -21,6 +21,7 @@ import org.ldaptive.schema.SchemaElement;
  * Base class for schema element value transcoders.
  *
  * @param  <T>  type of schema element
+ *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */

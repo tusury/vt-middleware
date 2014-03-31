@@ -85,7 +85,7 @@ public final class SchemaFactory
    *
    * @param  is  containing the schema ldif
    *
-   * @return  schema  created from the ldif
+   * @return  schema created from the ldif
    *
    * @throws  IOException  if an error occurs reading the input stream
    */
@@ -103,7 +103,7 @@ public final class SchemaFactory
    *
    * @param  factory  to obtain an LDAP connection from
    *
-   * @return  schema  created from the connection factory
+   * @return  schema created from the connection factory
    *
    * @throws  LdapException  if the search fails
    */
@@ -114,15 +114,16 @@ public final class SchemaFactory
       factory,
       "",
       "(objectClass=*)",
-      new String[]{SUBSCHEMA_SUBENTRY_ATTR_NAME});
+      new String[] {SUBSCHEMA_SUBENTRY_ATTR_NAME});
     final String entryDn = rootDSE.getAttribute(
       SUBSCHEMA_SUBENTRY_ATTR_NAME).getStringValue();
-    return createSchema(
-      getLdapEntry(
-        factory,
-        entryDn,
-        "(objectClass=subSchema)",
-        ReturnAttributes.ALL.value()));
+    return
+      createSchema(
+        getLdapEntry(
+          factory,
+          entryDn,
+          "(objectClass=subSchema)",
+          ReturnAttributes.ALL.value()));
   }
 
 
@@ -132,7 +133,7 @@ public final class SchemaFactory
    * @param  factory  to obtain an LDAP connection from
    * @param  entryDn  the subschema entry
    *
-   * @return  schema  created from the connection factory
+   * @return  schema created from the connection factory
    *
    * @throws  LdapException  if the search fails
    */
@@ -141,12 +142,13 @@ public final class SchemaFactory
     final String entryDn)
     throws LdapException
   {
-    return createSchema(
-      getLdapEntry(
-        factory,
-        entryDn,
-        "(objectClass=subSchema)",
-        ReturnAttributes.ALL.value()));
+    return
+      createSchema(
+        getLdapEntry(
+          factory,
+          entryDn,
+          "(objectClass=subSchema)",
+          ReturnAttributes.ALL.value()));
   }
 
 
@@ -155,13 +157,14 @@ public final class SchemaFactory
    *
    * @param  schemaEntry  containing the schema
    *
-   * @return  schema  created from the entry
+   * @return  schema created from the entry
    */
   public static Schema createSchema(final LdapEntry schemaEntry)
   {
     if (schemaEntry == null) {
       throw new IllegalArgumentException("Schema entry cannot be null");
     }
+
     final Schema schema = new Schema();
 
     final LdapAttribute atAttr = schemaEntry.getAttribute(
@@ -205,8 +208,7 @@ public final class SchemaFactory
         mruAttr.getValues(new MatchingRuleUseValueTranscoder()));
     }
 
-    final LdapAttribute nfAttr = schemaEntry.getAttribute(
-      NAME_FORMS_ATTR_NAME);
+    final LdapAttribute nfAttr = schemaEntry.getAttribute(NAME_FORMS_ATTR_NAME);
     if (nfAttr != null) {
       schema.setNameForms(nfAttr.getValues(new NameFormValueTranscoder()));
     }
@@ -245,6 +247,7 @@ public final class SchemaFactory
     executor.setBaseDn(dn);
     executor.setSearchScope(SearchScope.OBJECT);
     executor.setReturnAttributes(retAttrs);
+
     final SearchResult result = executor.search(factory, filter).getResult();
     return result.getEntry();
   }

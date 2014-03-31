@@ -71,8 +71,10 @@ public class FileTimeValueTranscoder implements ValueTranscoder<Calendar>
   @Override
   public String encodeStringValue(final Calendar value)
   {
-    return String.valueOf(
-      (value.getTimeInMillis() + ERA_OFFSET) * ONE_HUNDRED_NANOSECOND_INTERVAL);
+    return
+      String.valueOf(
+        (value.getTimeInMillis() + ERA_OFFSET) *
+        ONE_HUNDRED_NANOSECOND_INTERVAL);
   }
 
 

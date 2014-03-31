@@ -91,8 +91,8 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
 
   /**
    * Returns an instance of this socket factory configured with a hostname
-   * verifying trust manager. If the supplied ssl config does not contain
-   * trust managers, {@link HostnameVerifyingTrustManager} with {@link
+   * verifying trust manager. If the supplied ssl config does not contain trust
+   * managers, {@link HostnameVerifyingTrustManager} with {@link
    * DefaultHostnameVerifier} is set. See {@link
    * #addHostnameVerifyingTrustManager(SslConfig, String[])}.
    *
@@ -139,11 +139,13 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
         config.setTrustManagers(
           new DefaultTrustManager(),
           new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), names));
+            new DefaultHostnameVerifier(),
+            names));
       } else {
         config.setTrustManagers(
           new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(), names));
+            new DefaultHostnameVerifier(),
+            names));
       }
     }
   }

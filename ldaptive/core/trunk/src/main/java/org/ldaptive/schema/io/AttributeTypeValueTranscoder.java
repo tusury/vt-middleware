@@ -35,7 +35,8 @@ public class AttributeTypeValueTranscoder
       return AttributeType.parse(value);
     } catch (ParseException e) {
       throw new IllegalArgumentException(
-        "Could not transcode attribute type", e);
+        "Could not transcode attribute type",
+        e);
     }
   }
 

@@ -51,7 +51,7 @@ public class Schema
   /** Name forms. */
   private Collection<NameForm> nameForms = Collections.emptySet();
 
-  /** Object classes.*/
+  /** Object classes. */
   private Collection<ObjectClass> objectClasses = Collections.emptySet();
 
 
@@ -233,7 +233,7 @@ public class Schema
 
 
   /**
-   * Returns the syntaxes
+   * Returns the syntaxes.
    *
    * @return  syntaxes
    */
@@ -465,8 +465,8 @@ public class Schema
     return
       String.format(
         "[%s@%d::attributeTypes=%s, ditContentRules=%s, " +
-          "ditStructureRules=%s, syntaxes=%s, matchingRules=%s, " +
-          "matchingRuleUses=%s, nameForms=%s, objectClasses=%s]",
+        "ditStructureRules=%s, syntaxes=%s, matchingRules=%s, " +
+        "matchingRuleUses=%s, nameForms=%s, objectClasses=%s]",
         getClass().getName(),
         hashCode(),
         attributeTypes,

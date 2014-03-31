@@ -21,6 +21,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Bean for an object class schema element.
+ *
  * <pre>
    ObjectClassDescription = LPAREN WSP
      numericoid                 ; object identifier
@@ -99,9 +100,13 @@ public class ObjectClass extends AbstractNamedSchemaElement
    */
   // CheckStyle:ParameterNumber|HiddenField OFF
   public ObjectClass(
-    final String oid, final String[] names, final String description,
-    final boolean obsolete, final String[] superiorClasses,
-    final ObjectClassType objectClassType, final String[] requiredAttributes,
+    final String oid,
+    final String[] names,
+    final String description,
+    final boolean obsolete,
+    final String[] superiorClasses,
+    final ObjectClassType objectClassType,
+    final String[] requiredAttributes,
     final String[] optionalAttributes,
     final Extensions extensions)
   {
@@ -237,8 +242,7 @@ public class ObjectClass extends AbstractNamedSchemaElement
         definition.length());
     }
 
-    final ObjectClass ocd = new ObjectClass(
-      m.group(1).trim());
+    final ObjectClass ocd = new ObjectClass(m.group(1).trim());
 
     // CheckStyle:MagicNumber OFF
     // parse names
@@ -351,8 +355,8 @@ public class ObjectClass extends AbstractNamedSchemaElement
     return
       String.format(
         "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-          "superiorClasses=%s, objectClassType=%s, requiredAttributes=%s, " +
-          "optionalAttributes=%s, extensions=%s]",
+        "superiorClasses=%s, objectClassType=%s, requiredAttributes=%s, " +
+        "optionalAttributes=%s, extensions=%s]",
         getClass().getName(),
         hashCode(),
         oid,

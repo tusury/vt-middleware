@@ -35,7 +35,8 @@ public class SyntaxValueTranscoder
       return Syntax.parse(value);
     } catch (ParseException e) {
       throw new IllegalArgumentException(
-        "Could not transcode attribute syntax", e);
+        "Could not transcode attribute syntax",
+        e);
     }
   }
 
