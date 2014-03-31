@@ -73,6 +73,9 @@ public class AggregateTrustManager implements X509TrustManager
     final Strategy strategy,
     final X509TrustManager... managers)
   {
+    if (strategy == null) {
+      throw new NullPointerException("Strategy cannot be null");
+    }
     trustStrategy = strategy;
     trustManagers = managers;
   }
