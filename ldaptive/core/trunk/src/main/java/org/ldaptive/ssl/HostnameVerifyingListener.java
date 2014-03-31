@@ -40,7 +40,7 @@ public class HostnameVerifyingListener implements HandshakeCompletedListener
   /** Whether this listener has been invoked. */
   private boolean invoked;
 
-  /** Whether hostname verification suceeded. */
+  /** Whether hostname verification succeeded. */
   private boolean verified;
 
   /** Hostname used in verification. */
