@@ -35,7 +35,7 @@ public class UnboundIDConnectionFactory
   /** Socket factory to use for LDAP and LDAPS connections. */
   private final SocketFactory socketFactory;
 
-  /** Unboundid connection options. */
+  /** UnboundID connection options. */
   private final LDAPConnectionOptions ldapOptions;
 
 

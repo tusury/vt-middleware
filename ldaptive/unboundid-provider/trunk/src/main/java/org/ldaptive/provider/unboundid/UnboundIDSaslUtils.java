@@ -8,8 +8,8 @@
 
   Author:  Middleware Services
   Email:   middleware@vt.edu
-  Version$
-  Updated$
+  Version: $Revision$
+  Updated: $Date$
 */
 package org.ldaptive.provider.unboundid;
 

@@ -1250,6 +1250,7 @@ public class UnboundIDConnection implements ProviderConnection
       final ExtendedResult extendedResult)
     {
       logger.debug("Unsolicited notification received: {}", extendedResult);
+
       final Response<Void> response = createResponse(
         null,
         null,

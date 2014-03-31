@@ -43,7 +43,7 @@ public class UnboundIDStartTLSConnectionFactory
   /** SSL context to use for startTLS. */
   private final SSLContext sslContext;
 
-  /** Unboundid connection options. */
+  /** UnboundID connection options. */
   private final LDAPConnectionOptions ldapOptions;
 
 

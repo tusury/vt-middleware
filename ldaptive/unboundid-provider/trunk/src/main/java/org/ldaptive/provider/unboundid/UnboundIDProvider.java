@@ -49,7 +49,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
   {
     SocketFactory factory = config.getSocketFactory();
     SSLContext sslContext = null;
-    // Unboundid does not do hostname verification by default
+    // UnboundID does not do hostname verification by default
     // set a default hostname verifier if no trust settings have been configured
     if (cc.getUseStartTLS()) {
       sslContext = getHostnameVerifierSSLContext(cc);
