@@ -912,7 +912,7 @@ public class OpenDJConnection
   }
 
 
-  /** Search listener for opends id async search results. */
+  /** Search listener for opendj id async search results. */
   protected class OpenDJAsyncSearchListener extends AbstractOpenDJSearch
     implements SearchResultHandler, IntermediateResponseHandler
   {
