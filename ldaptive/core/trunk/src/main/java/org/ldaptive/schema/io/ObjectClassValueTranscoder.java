@@ -34,8 +34,7 @@ public class ObjectClassValueTranscoder
     try {
       return ObjectClass.parse(value);
     } catch (ParseException e) {
-      throw new IllegalArgumentException(
-        "Could not transcode object class", e);
+      throw new IllegalArgumentException("Could not transcode object class", e);
     }
   }
 

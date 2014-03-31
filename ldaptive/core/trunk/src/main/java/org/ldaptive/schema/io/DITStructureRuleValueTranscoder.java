@@ -35,7 +35,8 @@ public class DITStructureRuleValueTranscoder
       return DITStructureRule.parse(value);
     } catch (ParseException e) {
       throw new IllegalArgumentException(
-        "Could not transcode DIT structure rule", e);
+        "Could not transcode DIT structure rule",
+        e);
     }
   }
 

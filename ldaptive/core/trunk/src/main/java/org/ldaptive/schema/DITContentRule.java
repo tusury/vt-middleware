@@ -21,6 +21,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Bean for a DIT content rule schema element.
+ *
  * <pre>
    DITContentRuleDescription = LPAREN WSP
      numericoid                 ; object identifier
@@ -63,7 +64,7 @@ public class DITContentRule extends AbstractNamedSchemaElement
   /** Auxiliary classes. */
   private String[] auxiliaryClasses;
 
-  /** Required attributes */
+  /** Required attributes. */
   private String[] requiredAttributes;
 
   /** Optional attributes. */
@@ -99,9 +100,13 @@ public class DITContentRule extends AbstractNamedSchemaElement
    */
   // CheckStyle:ParameterNumber|HiddenField OFF
   public DITContentRule(
-    final String oid, final String[] names, final String description,
-    final boolean obsolete, final String[] auxiliaryClasses,
-    final String[] requiredAttributes, final String[] optionalAttributes,
+    final String oid,
+    final String[] names,
+    final String description,
+    final boolean obsolete,
+    final String[] auxiliaryClasses,
+    final String[] requiredAttributes,
+    final String[] optionalAttributes,
     final String[] restrictedAttributes,
     final Extensions extensions)
   {
@@ -237,8 +242,7 @@ public class DITContentRule extends AbstractNamedSchemaElement
         definition.length());
     }
 
-    final DITContentRule dcrd = new DITContentRule(
-      m.group(1).trim());
+    final DITContentRule dcrd = new DITContentRule(m.group(1).trim());
 
     // CheckStyle:MagicNumber OFF
     // parse names
@@ -355,8 +359,8 @@ public class DITContentRule extends AbstractNamedSchemaElement
     return
       String.format(
         "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-          "auxiliaryClasses=%s, requiredAttributes=%s, " +
-          "optionalAttributes=%s, restrictedAttributes=%s, extensions=%s]",
+        "auxiliaryClasses=%s, requiredAttributes=%s, " +
+        "optionalAttributes=%s, restrictedAttributes=%s, extensions=%s]",
         getClass().getName(),
         hashCode(),
         oid,

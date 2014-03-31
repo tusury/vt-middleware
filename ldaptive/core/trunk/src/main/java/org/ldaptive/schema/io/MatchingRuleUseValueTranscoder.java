@@ -35,7 +35,8 @@ public class MatchingRuleUseValueTranscoder
       return MatchingRuleUse.parse(value);
     } catch (ParseException e) {
       throw new IllegalArgumentException(
-        "Could not transcode matching rule use", e);
+        "Could not transcode matching rule use",
+        e);
     }
   }
 

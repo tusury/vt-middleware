@@ -41,8 +41,8 @@ public abstract class AbstractSSLContextInitializer
     final TrustManager[] tm = createTrustManagers();
     TrustManager[] aggregate;
     if (tm == null) {
-      aggregate = trustManagers != null
-        ? aggregateTrustManagers(trustManagers) : null;
+      aggregate = trustManagers != null ? aggregateTrustManagers(trustManagers)
+                                        : null;
     } else {
       aggregate = aggregateTrustManagers(
         LdapUtils.concatArrays(tm, trustManagers));

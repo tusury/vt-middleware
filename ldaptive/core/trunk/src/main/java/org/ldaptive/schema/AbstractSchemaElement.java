@@ -49,7 +49,7 @@ public abstract class AbstractSchemaElement implements SchemaElement
 
 
   /**
-   * Sets the description
+   * Sets the description.
    *
    * @param  s  description
    */
@@ -92,14 +92,11 @@ public abstract class AbstractSchemaElement implements SchemaElement
    * @return  whether syntax has this boolean extension
    */
   public static <T extends AbstractSchemaElement> boolean
-  containsBooleanExtension(
-    final T schemaElement,
-    final String extensionName)
+  containsBooleanExtension(final T schemaElement, final String extensionName)
   {
     if (schemaElement != null) {
       final Extensions exts = schemaElement.getExtensions();
-      if (exts != null &&
-        Boolean.parseBoolean(exts.getValue(extensionName))) {
+      if (exts != null && Boolean.parseBoolean(exts.getValue(extensionName))) {
         return true;
       }
     }

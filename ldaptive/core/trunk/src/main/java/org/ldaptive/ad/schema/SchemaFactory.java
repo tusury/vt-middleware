@@ -86,12 +86,13 @@ public final class SchemaFactory
     final String entryDn)
     throws LdapException
   {
-    return createSchema(
-      getSearchResult(
-        factory,
-        entryDn,
-        "(objectClass=*)",
-        ReturnAttributes.ALL.value()));
+    return
+      createSchema(
+        getSearchResult(
+          factory,
+          entryDn,
+          "(objectClass=*)",
+          ReturnAttributes.ALL.value()));
   }
 
 
@@ -99,9 +100,9 @@ public final class SchemaFactory
    * Creates a new schema. The schema result should contain entries with the
    * 'attributeSchema' and 'classSchema' objectClasses.
    *
-   * @return  schema
-   *
    * @param  schemaResult  containing the schema entries
+   *
+   * @return  schema
    */
   public static Schema createSchema(final SearchResult schemaResult)
   {
@@ -116,6 +117,7 @@ public final class SchemaFactory
         objectClasses.add(createObjectClass(entry));
       }
     }
+
     final Schema schema = new Schema();
     schema.setAttributeTypes(attributeTypes);
     schema.setObjectClasses(objectClasses);
@@ -147,6 +149,7 @@ public final class SchemaFactory
     final Connection conn = factory.getConnection();
     try {
       conn.open();
+
       final PagedResultsClient client = new PagedResultsClient(conn, 100);
       final SearchRequest request = new SearchRequest(dn, filter, retAttrs);
       final Response<SearchResult> response = client.executeToCompletion(
@@ -174,25 +177,26 @@ public final class SchemaFactory
     if (la == null || !la.getStringValues().contains("attributeSchema")) {
       throw new IllegalArgumentException("Entry is not an attribute schema");
     }
-    return new AttributeType(
-      getAttributeValue(entry, "attributeID"),
-      getAttributeValues(
-        entry,
-        "lDAPDisplayName",
-        "adminDisplayName",
-        "name"),
-      getAttributeValue(entry, "adminDescription"),
-      false,
-      null,
-      null,
-      null,
-      null,
-      getAttributeValue(entry, "attributeSyntax"),
-      Boolean.valueOf(getAttributeValue(entry, "isSingleValued")),
-      false,
-      false,
-      null,
-      null);
+    return
+      new AttributeType(
+        getAttributeValue(entry, "attributeID"),
+        getAttributeValues(
+          entry,
+          "lDAPDisplayName",
+          "adminDisplayName",
+          "name"),
+        getAttributeValue(entry, "adminDescription"),
+        false,
+        null,
+        null,
+        null,
+        null,
+        getAttributeValue(entry, "attributeSyntax"),
+        Boolean.valueOf(getAttributeValue(entry, "isSingleValued")),
+        false,
+        false,
+        null,
+        null);
   }
 
 
@@ -212,6 +216,7 @@ public final class SchemaFactory
     if (la == null || !la.getStringValues().contains("classSchema")) {
       throw new IllegalArgumentException("Entry is not an object class");
     }
+
     ObjectClassType ocType = null;
     final String ocCategory = getAttributeValue(entry, "objectClassCategory");
     if (ocCategory != null) {
@@ -222,20 +227,21 @@ public final class SchemaFactory
         }
       }
     }
-    return new ObjectClass(
-      getAttributeValue(entry , "governsID"),
-      getAttributeValues(
-        entry,
-        "lDAPDisplayName",
-        "adminDisplayName",
-        "name"),
-      getAttributeValue(entry, "adminDescription"),
-      false,
-      getAttributeValues(entry, "possSuperiors", "systemPossSuperiors"),
-      ocType,
-      getAttributeValues(entry, "mustContain", "systemMustContain"),
-      getAttributeValues(entry, "mayContain", "systemMayContain"),
-      null);
+    return
+      new ObjectClass(
+        getAttributeValue(entry, "governsID"),
+        getAttributeValues(
+          entry,
+          "lDAPDisplayName",
+          "adminDisplayName",
+          "name"),
+        getAttributeValue(entry, "adminDescription"),
+        false,
+        getAttributeValues(entry, "possSuperiors", "systemPossSuperiors"),
+        ocType,
+        getAttributeValues(entry, "mustContain", "systemMustContain"),
+        getAttributeValues(entry, "mayContain", "systemMayContain"),
+        null);
   }
 
 

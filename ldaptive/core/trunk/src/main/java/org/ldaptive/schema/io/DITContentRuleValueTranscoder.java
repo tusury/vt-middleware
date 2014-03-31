@@ -35,7 +35,8 @@ public class DITContentRuleValueTranscoder
       return DITContentRule.parse(value);
     } catch (ParseException e) {
       throw new IllegalArgumentException(
-        "Could not transcode DIT content rule", e);
+        "Could not transcode DIT content rule",
+        e);
     }
   }
 

@@ -19,8 +19,7 @@ package org.ldaptive.io;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class LongValueTranscoder
-  extends AbstractPrimitiveValueTranscoder<Long>
+public class LongValueTranscoder extends AbstractPrimitiveValueTranscoder<Long>
 {
 
 

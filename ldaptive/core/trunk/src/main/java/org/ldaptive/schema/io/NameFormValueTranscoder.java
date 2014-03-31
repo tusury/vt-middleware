@@ -34,8 +34,7 @@ public class NameFormValueTranscoder
     try {
       return NameForm.parse(value);
     } catch (ParseException e) {
-      throw new IllegalArgumentException(
-        "Could not transcode name form", e);
+      throw new IllegalArgumentException("Could not transcode name form", e);
     }
   }
 

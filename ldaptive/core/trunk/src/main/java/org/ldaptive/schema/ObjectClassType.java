@@ -15,6 +15,7 @@ package org.ldaptive.schema;
 
 /**
  * Enum for an attribute usage schema element.
+ *
  * <pre>
    ObjectClassType = "ABSTRACT" / "STRUCTURAL" / "AUXILIARY"
  * </pre>

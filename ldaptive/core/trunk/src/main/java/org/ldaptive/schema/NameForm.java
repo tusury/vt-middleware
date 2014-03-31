@@ -21,6 +21,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Bean for a name form schema element.
+ *
  * <pre>
    NameFormDescription = LPAREN WSP
      numericoid                 ; object identifier
@@ -93,9 +94,13 @@ public class NameForm extends AbstractNamedSchemaElement
    */
   // CheckStyle:ParameterNumber|HiddenField OFF
   public NameForm(
-    final String oid, final String[] names, final String description,
-    final boolean obsolete, final String structuralClass,
-    final String[] requiredAttributes, final String[] optionalAttributes,
+    final String oid,
+    final String[] names,
+    final String description,
+    final boolean obsolete,
+    final String structuralClass,
+    final String[] requiredAttributes,
+    final String[] optionalAttributes,
     final Extensions extensions)
   {
     this(oid);
@@ -206,8 +211,7 @@ public class NameForm extends AbstractNamedSchemaElement
         definition.length());
     }
 
-    final NameForm nfd = new NameForm(
-      m.group(1).trim());
+    final NameForm nfd = new NameForm(m.group(1).trim());
 
     // CheckStyle:MagicNumber OFF
     // parse names
@@ -305,8 +309,8 @@ public class NameForm extends AbstractNamedSchemaElement
     return
       String.format(
         "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-          "structuralClass=%s, requiredAttributes=%s, " +
-          "optionalAttributes=%s, extensions=%s]",
+        "structuralClass=%s, requiredAttributes=%s, " +
+        "optionalAttributes=%s, extensions=%s]",
         getClass().getName(),
         hashCode(),
         oid,

@@ -21,6 +21,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Bean for an attribute type schema element.
+ *
  * <pre>
    AttributeTypeDescription = LPAREN WSP
      numericoid                    ; object identifier
@@ -129,12 +130,19 @@ public class AttributeType extends AbstractNamedSchemaElement
    */
   // CheckStyle:ParameterNumber|HiddenField OFF
   public AttributeType(
-    final String oid, final String[] names, final String description,
-    final boolean obsolete, final String superiorType,
-    final String equalityMatchingRule, final String orderingMatchingRule,
-    final String substringMatchingRule, final String syntaxOID,
-    final boolean singleValued, final boolean collective,
-    final boolean noUserModification, final AttributeUsage usage,
+    final String oid,
+    final String[] names,
+    final String description,
+    final boolean obsolete,
+    final String superiorType,
+    final String equalityMatchingRule,
+    final String orderingMatchingRule,
+    final String substringMatchingRule,
+    final String syntaxOID,
+    final boolean singleValued,
+    final boolean collective,
+    final boolean noUserModification,
+    final AttributeUsage usage,
     final Extensions extensions)
   {
     this(oid);
@@ -421,8 +429,7 @@ public class AttributeType extends AbstractNamedSchemaElement
         definition.length());
     }
 
-    final AttributeType atd = new AttributeType(
-      m.group(1).trim());
+    final AttributeType atd = new AttributeType(m.group(1).trim());
 
     // CheckStyle:MagicNumber OFF
     // parse names
@@ -538,10 +545,10 @@ public class AttributeType extends AbstractNamedSchemaElement
     return
       String.format(
         "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-          "superiorType=%s, equalityMatchingRule=%s, " +
-          "orderingMatchingRule=%s, substringMatchingRule=%s, syntaxOID=%s, " +
-          "singleValued=%s, collective=%s, noUserModification=%s, usage=%s, " +
-          "extensions=%s]",
+        "superiorType=%s, equalityMatchingRule=%s, " +
+        "orderingMatchingRule=%s, substringMatchingRule=%s, syntaxOID=%s, " +
+        "singleValued=%s, collective=%s, noUserModification=%s, usage=%s, " +
+        "extensions=%s]",
         getClass().getName(),
         hashCode(),
         oid,
