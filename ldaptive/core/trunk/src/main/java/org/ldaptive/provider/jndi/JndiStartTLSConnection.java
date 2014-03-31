@@ -55,7 +55,7 @@ public class JndiStartTLSConnection extends JndiConnection
   /**
    * Creates a new jndi startTLS connection.
    *
-   * @param  lc  ldap contxt
+   * @param  lc  ldap context
    * @param  pc  provider configuration
    * @param  tlsResponse  of successful TLS handshake
    */
