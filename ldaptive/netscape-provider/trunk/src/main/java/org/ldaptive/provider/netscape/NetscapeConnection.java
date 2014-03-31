@@ -487,7 +487,7 @@ public class NetscapeConnection implements ProviderConnection
    * Configures the supplied ldap constraints using the supplied request and
    * provider configuration.
    *
-   * @param  request  to read properties froim
+   * @param  request  to read properties from
    * @param  cons  to configure
    */
   protected void initializeLDAPConstraints(
