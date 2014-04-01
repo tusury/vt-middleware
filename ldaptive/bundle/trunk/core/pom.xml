@@ -20,18 +20,18 @@
   <dependencies>
     <dependency>
       <groupId>org.ldaptive</groupId>
-      <artifactId>${artifactId}</artifactId>
+      <artifactId>${project.artifactId}</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.ldaptive</groupId>
-      <artifactId>${artifactId}</artifactId>
+      <artifactId>${project.artifactId}</artifactId>
       <version>${project.version}</version>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>org.ldaptive</groupId>
-      <artifactId>${artifactId}</artifactId>
+      <artifactId>${project.artifactId}</artifactId>
       <version>${project.version}</version>
       <classifier>javadoc</classifier>
     </dependency>
@@ -52,8 +52,8 @@
             </goals>
             <configuration>
               <includeScope>runtime</includeScope>
-              <includeArtifactIds>${artifactId}</includeArtifactIds>
-              <outputDirectory>${basedir}/target/${artifactId}</outputDirectory>
+              <includeArtifactIds>${project.artifactId}</includeArtifactIds>
+              <outputDirectory>${basedir}/target/${project.artifactId}</outputDirectory>
             </configuration>
           </execution>
           <execution>
@@ -64,8 +64,8 @@
             </goals>
             <configuration>
               <includeScope>runtime</includeScope>
-              <excludeArtifactIds>${artifactId}</excludeArtifactIds>
-              <outputDirectory>${basedir}/target/${artifactId}/lib</outputDirectory>
+              <excludeArtifactIds>${project.artifactId}</excludeArtifactIds>
+              <outputDirectory>${basedir}/target/${project.artifactId}/lib</outputDirectory>
             </configuration>
           </execution>
         </executions>
