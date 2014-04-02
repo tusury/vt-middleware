@@ -104,7 +104,8 @@ public class SyncReplClientTest extends AbstractTest
       final SyncReplClient client = new SyncReplClient(conn, false);
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
         dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
+      final BlockingQueue<SyncReplItem> results = client.execute(
+        request, new DefaultCookieManager());
 
       SyncReplItem item = results.take();
       if (item.isException()) {
@@ -167,7 +168,8 @@ public class SyncReplClientTest extends AbstractTest
       final SyncReplClient client = new SyncReplClient(conn, true);
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
         dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
+      final BlockingQueue<SyncReplItem> results = client.execute(
+        request, new DefaultCookieManager());
 
       // test the async request
       SyncReplItem item = results.take();
@@ -195,9 +197,13 @@ public class SyncReplClientTest extends AbstractTest
 
       // test the info message
       item = results.take();
+      if (item.isException()) {
+        throw item.getException();
+      }
       AssertJUnit.assertTrue(item.isMessage());
       AssertJUnit.assertEquals(
-        SyncInfoMessage.Type.REFRESH_DELETE, item.getMessage().getMessageType());
+        SyncInfoMessage.Type.REFRESH_DELETE,
+        item.getMessage().getMessageType());
       AssertJUnit.assertNotNull(item.getMessage().getCookie());
       AssertJUnit.assertFalse(item.getMessage().getRefreshDeletes());
       AssertJUnit.assertTrue(item.getMessage().getRefreshDone());
@@ -241,6 +247,9 @@ public class SyncReplClientTest extends AbstractTest
       client.cancel(item.getEntry().getSearchEntry().getMessageId());
 
       item = results.take();
+      if (item.isException()) {
+        throw item.getException();
+      }
       AssertJUnit.assertTrue(item.isResponse());
       AssertJUnit.assertTrue(results.isEmpty());
       AssertJUnit.assertEquals(

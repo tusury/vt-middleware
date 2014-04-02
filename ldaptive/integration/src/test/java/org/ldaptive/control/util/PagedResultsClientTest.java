@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchFilter;
@@ -130,6 +131,10 @@ public class PagedResultsClientTest extends AbstractTest
       } catch (IllegalArgumentException e) {
         AssertJUnit.assertNotNull(e);
       }
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     } finally {
       conn.close();
     }
@@ -172,6 +177,10 @@ public class PagedResultsClientTest extends AbstractTest
       AssertJUnit.assertEquals(
         testLdapEntries[2].getDn().toLowerCase(),
         i.next().getDn().toLowerCase());
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     } finally {
       conn.close();
     }
