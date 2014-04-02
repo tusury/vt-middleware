@@ -102,7 +102,7 @@ public class VirtualListViewClientTest extends AbstractTest
     throws Exception
   {
     // AD server says vlv is a supported control, but returns UNAVAIL_EXTENSION
-    if (TestControl.isActiveDirectory()) {
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
       return;
     }
 

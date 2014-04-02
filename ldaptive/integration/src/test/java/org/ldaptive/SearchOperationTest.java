@@ -504,6 +504,10 @@ public class SearchOperationTest extends AbstractTest
         (new SearchResultIgnoreCaseComparator(
           "member", "contactPerson")).compare(
             TestUtils.convertLdifToResult(expected), result));
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(
+        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
@@ -536,7 +540,8 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     // AD server says vlv is a supported control, but returns UNAVAIL_EXTENSION
-    if (TestControl.isActiveDirectory()) {
+    // OracleDS returns protocol error
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
       return;
     }
 
@@ -608,6 +613,11 @@ public class SearchOperationTest extends AbstractTest
     final String filter)
     throws Exception
   {
+    // OracleDS returns protocol error
+    if (TestControl.isOracleDirectory()) {
+      return;
+    }
+
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
@@ -732,6 +742,9 @@ public class SearchOperationTest extends AbstractTest
       // ignore this test if not supported by the server
       AssertJUnit.assertEquals(
         ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported by the provider
+      AssertJUnit.assertNotNull(e);
     } finally {
       try {
         // remove authzTo
@@ -1201,6 +1214,9 @@ public class SearchOperationTest extends AbstractTest
         (new LdapEntryIgnoreCaseComparator("member")).compare(
           TestUtils.convertLdifToResult(expected).getEntry(),
           result.getEntry()));
+    } catch (LdapException e) {
+      // some providers don't support this DN syntax
+      AssertJUnit.assertEquals(ResultCode.DECODING_ERROR, e.getResultCode());
     } finally {
       conn.close();
     }
@@ -1250,6 +1266,9 @@ public class SearchOperationTest extends AbstractTest
         response.getResult().getEntry().getAttribute("whenChanged");
       AssertJUnit.assertNotNull(
         whenChanged.getValue(new GeneralizedTimeValueTranscoder()));
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported by the provider
+      AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
     }
@@ -1301,6 +1320,9 @@ public class SearchOperationTest extends AbstractTest
         new ShowDeletedControl(),
         new ShowRecycledControl());
       search.execute(sr);
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported by the provider
+      AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
     }
@@ -1408,6 +1430,9 @@ public class SearchOperationTest extends AbstractTest
         dn, new SearchFilter(filter));
       final SearchResult result = search.execute(request).getResult();
       TestUtils.assertEquals(specialCharsResult, result);
+    } catch (LdapException e) {
+      // ignore this test if not supported by the server
+      AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, e.getResultCode());
     } finally {
       conn.close();
     }
@@ -1476,7 +1501,7 @@ public class SearchOperationTest extends AbstractTest
   public void searchReferral(final String dn, final String filter)
     throws Exception
   {
-    if (TestControl.isActiveDirectory()) {
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
       return;
     }
 
@@ -1555,7 +1580,7 @@ public class SearchOperationTest extends AbstractTest
   public void searchReference(final String dn, final String filter)
     throws Exception
   {
-    if (TestControl.isActiveDirectory()) {
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
       return;
     }
 
