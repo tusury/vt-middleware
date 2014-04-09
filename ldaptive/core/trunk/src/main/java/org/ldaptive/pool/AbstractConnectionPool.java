@@ -246,10 +246,17 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
     available = new Queue<PooledConnectionProxy>(queueType);
     active = new Queue<PooledConnectionProxy>(queueType);
-    grow(getPoolConfig().getMinPoolSize());
+    IllegalStateException growException = null;
+    try {
+      grow(getPoolConfig().getMinPoolSize(), true);
+    } catch (IllegalStateException e) {
+      growException = e;
+    }
     if (available.isEmpty() && getPoolConfig().getMinPoolSize() > 0) {
       if (failFastInitialize) {
-        throw new IllegalStateException("Could not initialize pool size");
+        throw new IllegalStateException(
+          "Could not initialize pool size",
+          growException != null ? growException.getCause() : null);
       } else {
         logger.warn("Could not initialize pool size, pool is empty");
       }
@@ -324,6 +331,22 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   protected void grow(final int size)
   {
+    grow(size, false);
+  }
+
+
+  /**
+   * Attempts to grow the pool to the supplied size. If the pool size is greater
+   * than or equal to the supplied size, this method is a no-op.
+   *
+   * @param  size  to grow the pool to
+   * @param  throwOnFailure  whether to throw illegal state exception
+   *
+   * @throws  IllegalStateException  if the pool cannot grow to the supplied
+   * size and {@link #createAvailableConnection(boolean)} throws
+   */
+  protected void grow(final int size, final boolean throwOnFailure)
+  {
     logger.trace(
       "waiting for pool lock to initialize pool {}",
       poolLock.getQueueLength());
@@ -331,20 +354,29 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     int count = 0;
     poolLock.lock();
     try {
+      IllegalStateException lastThrown = null;
       int currentPoolSize = active.size() + available.size();
       logger.debug("checking connection pool size >= {} for {}", size, this);
       while (currentPoolSize < size && count < size * 2) {
-        final PooledConnectionProxy pc = createAvailableConnection();
-        if (getPoolConfig().isValidateOnCheckIn()) {
-          if (validate(pc.getConnection())) {
-            logger.trace("connection passed initialize validation: {}", pc);
-          } else {
-            logger.warn("connection failed initialize validation: {}", pc);
-            removeAvailableConnection(pc);
+        try {
+          final PooledConnectionProxy pc = createAvailableConnection(
+            throwOnFailure);
+          if (pc != null && getPoolConfig().isValidateOnCheckIn()) {
+            if (validate(pc.getConnection())) {
+              logger.trace("connection passed initialize validation: {}", pc);
+            } else {
+              logger.warn("connection failed initialize validation: {}", pc);
+              removeAvailableConnection(pc);
+            }
           }
+        } catch (IllegalStateException e) {
+          lastThrown = e;
         }
         currentPoolSize = active.size() + available.size();
         count++;
+      }
+      if (lastThrown != null && currentPoolSize < size) {
+        throw lastThrown;
       }
     } finally {
       poolLock.unlock();
@@ -425,6 +457,23 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   protected PooledConnectionProxy createConnection()
   {
+    return createConnection(false);
+  }
+
+
+  /**
+   * Create a new connection. If {@link #connectOnCreate} is true, the
+   * connection will be opened.
+   *
+   * @param  throwOnFailure  whether to throw illegal state exception
+   *
+   * @return  pooled connection
+   *
+   * @throws  IllegalStateException  if {@link #connectOnCreate} is true and the
+   * connection cannot be opened
+   */
+  protected PooledConnectionProxy createConnection(final boolean throwOnFailure)
+  {
     Connection c = connectionFactory.getConnection();
     Response<Void> r = null;
     if (connectOnCreate) {
@@ -433,6 +482,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       } catch (LdapException e) {
         logger.error("unable to connect to the ldap", e);
         c = null;
+        if (throwOnFailure) {
+          throw new IllegalStateException("unable to connect to the ldap", e);
+        }
       }
     }
     if (c != null) {
@@ -450,7 +502,24 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   protected PooledConnectionProxy createAvailableConnection()
   {
-    final PooledConnectionProxy pc = createConnection();
+    return createAvailableConnection(false);
+  }
+
+
+  /**
+   * Create a new connection and place it in the available pool.
+   *
+   * @param  throwOnFailure  whether to throw illegal state exception
+   *
+   * @return  connection that was placed in the available pool
+   *
+   * @throws  IllegalStateException  if {@link #createConnection(boolean)}
+   * throws
+   */
+  protected PooledConnectionProxy createAvailableConnection(
+    final boolean throwOnFailure)
+  {
+    final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
       poolLock.lock();
       try {
@@ -474,7 +543,24 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   protected PooledConnectionProxy createActiveConnection()
   {
-    final PooledConnectionProxy pc = createConnection();
+    return createActiveConnection(false);
+  }
+
+
+  /**
+   * Create a new connection and place it in the active pool.
+   *
+   * @param  throwOnFailure  whether to throw illegal state exception
+   *
+   * @return  connection that was placed in the active pool
+   *
+   * @throws  IllegalStateException  if {@link #createConnection(boolean)}
+   * throws
+   */
+  protected PooledConnectionProxy createActiveConnection(
+    final boolean throwOnFailure)
+  {
+    final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
       poolLock.lock();
       try {

@@ -93,7 +93,6 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
     if (pc == null) {
       // no connection was available, create a new one
       pc = createActiveConnection();
-      logger.trace("created new active connection: {}", pc);
       if (pc == null) {
         if (available.isEmpty() && active.isEmpty()) {
           logger.error("Could not service check out request");

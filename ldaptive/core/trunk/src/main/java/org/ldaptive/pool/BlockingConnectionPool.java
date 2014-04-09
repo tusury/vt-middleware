@@ -161,7 +161,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         }
         if (b) {
           pc = createActiveConnection();
-          logger.trace("created new active connection: {}", pc);
         }
       } finally {
         checkOutLock.unlock();
@@ -174,6 +173,8 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         }
         logger.debug("create failed, block until connection is available");
         pc = blockAvailableConnection();
+      } else {
+        logger.trace("created new active connection: {}", pc);
       }
     }
 
