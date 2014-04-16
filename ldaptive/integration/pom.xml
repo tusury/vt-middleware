@@ -98,6 +98,24 @@
       <testResource>
         <directory>src/test/resources</directory>
         <filtering>true</filtering>
+        <includes>
+          <include>**/*.config</include>
+          <include>**/*.ldif</include>
+          <include>**/*.dsmlv1</include>
+          <include>**/*.xml</include>
+          <include>**/*.properties</include>
+        </includes>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>**/*.keytab</include>
+          <include>**/*.keystore</include>
+          <include>**/*.truststore</include>
+          <include>**/*.crt</include>
+          <include>**/*.jpg</include>
+        </includes>
       </testResource>
     </testResources>
     <plugins>
