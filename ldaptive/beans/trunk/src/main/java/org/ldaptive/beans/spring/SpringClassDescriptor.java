@@ -24,7 +24,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 /**
  * Spring implementation of a class descriptor. Uses an {@link
- * StandardEvaluationContext} with SPEL expressions to find property values.
+ * EvaluationContext} with SPEL expressions to find property values.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
