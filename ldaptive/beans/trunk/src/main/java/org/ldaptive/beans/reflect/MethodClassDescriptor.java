@@ -26,8 +26,8 @@ import org.ldaptive.beans.DnValueMutator;
 import org.ldaptive.beans.Entry;
 
 /**
- * Creates DN and attribute mutators for the {@link Method}s on a type.
- * Leverages the {@link Introspector} class for reading descriptors.
+ * Creates DN and attribute mutators for the {@link java.lang.reflect.Method}s
+ * on a type. Leverages the {@link Introspector} class for reading descriptors.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
