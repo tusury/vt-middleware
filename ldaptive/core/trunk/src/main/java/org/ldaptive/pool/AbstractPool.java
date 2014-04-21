@@ -30,6 +30,9 @@ public abstract class AbstractPool<T>
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Pool name. */
+  private String name;
+
   /** Pool config. */
   private PoolConfig poolConfig;
 
@@ -44,6 +47,29 @@ public abstract class AbstractPool<T>
 
   /** For removing pooled objects. */
   private PruneStrategy pruneStrategy;
+
+
+  /**
+   * Returns the name for this pool.
+   *
+   * @return  pool name
+   */
+  public String getName()
+  {
+    return name;
+  }
+
+
+  /**
+   * Sets the name for this pool.
+   *
+   * @param  s  pool name
+   */
+  public void setName(final String s)
+  {
+    logger.trace("setting name: {}", s);
+    name = s;
+  }
 
 
   /**
