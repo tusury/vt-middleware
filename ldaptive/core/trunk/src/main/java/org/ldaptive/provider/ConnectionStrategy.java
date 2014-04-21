@@ -14,22 +14,41 @@
 package org.ldaptive.provider;
 
 /**
- * Enum to define the type of connection strategy.
+ * Interface to describe various connection strategies. Each strategy returns an
+ * ordered list of URLs to attempt when opening a connection.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public enum ConnectionStrategy {
+public interface ConnectionStrategy
+{
 
   /** default strategy. */
-  DEFAULT,
+  ConnectionStrategy DEFAULT =
+    new ConnectionStrategies.DefaultConnectionStrategy();
 
   /** active-passive strategy. */
-  ACTIVE_PASSIVE,
+  ConnectionStrategy ACTIVE_PASSIVE =
+    new ConnectionStrategies.ActivePassiveConnectionStrategy();
 
   /** round robin strategy. */
-  ROUND_ROBIN,
+  ConnectionStrategy ROUND_ROBIN =
+    new ConnectionStrategies.RoundRobinConnectionStrategy();
 
   /** random strategy. */
-  RANDOM,
+  ConnectionStrategy RANDOM =
+    new ConnectionStrategies.RandomConnectionStrategy();
+
+
+  /**
+   * Parses the supplied ldap url and splits it into separate URLs if it is
+   * space delimited.
+   *
+   * @param  url  to parse
+   * @param  connectionCount  number of times the provider connection factory
+   * has created a connection
+   *
+   * @return  array of ldap URLs
+   */
+  String[] parseLdapUrl(String url, int connectionCount);
 }

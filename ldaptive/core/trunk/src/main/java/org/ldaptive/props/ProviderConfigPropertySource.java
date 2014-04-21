@@ -30,8 +30,8 @@ public final class ProviderConfigPropertySource
 {
 
   /** Invoker for provider config. */
-  private static final SimplePropertyInvoker INVOKER =
-    new SimplePropertyInvoker(ProviderConfig.class);
+  private static final ProviderConfigPropertyInvoker INVOKER =
+    new ProviderConfigPropertyInvoker(ProviderConfig.class);
 
 
   /**

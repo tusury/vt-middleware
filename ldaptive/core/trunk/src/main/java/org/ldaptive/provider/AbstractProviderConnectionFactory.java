@@ -13,10 +13,6 @@
 */
 package org.ldaptive.provider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringTokenizer;
 import org.ldaptive.LdapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,9 +98,8 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     throws LdapException
   {
     LdapException lastThrown = null;
-    final String[] urls = parseLdapUrl(
-      ldapUrl,
-      providerConfig.getConnectionStrategy());
+    final String[] urls = providerConfig.getConnectionStrategy().parseLdapUrl(
+      ldapUrl, connectionCount.getCount());
     ProviderConnection conn = null;
     for (String url : urls) {
       try {
@@ -142,62 +137,6 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
    */
   protected abstract ProviderConnection createInternal(final String url)
     throws LdapException;
-
-
-  /**
-   * Parses the supplied ldap url and splits it into separate URLs if it is
-   * space delimited.
-   *
-   * @param  url  to parse
-   * @param  strategy  of ordered array to return
-   *
-   * @return  array of ldap URLs
-   */
-  protected String[] parseLdapUrl(
-    final String url,
-    final ConnectionStrategy strategy)
-  {
-    String[] urls = null;
-    if (strategy == ConnectionStrategy.DEFAULT) {
-      urls = new String[] {url};
-    } else if (strategy == ConnectionStrategy.ACTIVE_PASSIVE) {
-      final List<String> l = splitLdapUrl(url);
-      urls = l.toArray(new String[l.size()]);
-    } else if (strategy == ConnectionStrategy.ROUND_ROBIN) {
-      final List<String> l = splitLdapUrl(url);
-      for (int i = 0; i < connectionCount.getCount() % l.size(); i++) {
-        l.add(l.remove(0));
-      }
-      urls = l.toArray(new String[l.size()]);
-    } else if (strategy == ConnectionStrategy.RANDOM) {
-      final List<String> l = splitLdapUrl(url);
-      Collections.shuffle(l);
-      urls = l.toArray(new String[l.size()]);
-    }
-    return urls;
-  }
-
-
-  /**
-   * Takes a space delimited string of URLs and returns a list of URLs.
-   *
-   * @param  url  to split
-   *
-   * @return  list of URLs
-   */
-  private List<String> splitLdapUrl(final String url)
-  {
-    final List<String> urls = new ArrayList<String>();
-    if (url != null) {
-      final StringTokenizer st = new StringTokenizer(url);
-      while (st.hasMoreTokens()) {
-        urls.add(st.nextToken());
-      }
-    } else {
-      urls.add(null);
-    }
-    return urls;
-  }
 
 
   /** {@inheritDoc} */
