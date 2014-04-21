@@ -41,14 +41,11 @@ public interface ConnectionStrategy
 
 
   /**
-   * Parses the supplied ldap url and splits it into separate URLs if it is
-   * space delimited.
+   * Returns an ordered list of URLs to attempt to open.
    *
-   * @param  url  to parse
-   * @param  connectionCount  number of times the provider connection factory
-   * has created a connection
+   * @param  metadata  which can be used to produce the URL list
    *
    * @return  array of ldap URLs
    */
-  String[] parseLdapUrl(String url, int connectionCount);
+  String[] getLdapUrls(ConnectionFactoryMetadata metadata);
 }

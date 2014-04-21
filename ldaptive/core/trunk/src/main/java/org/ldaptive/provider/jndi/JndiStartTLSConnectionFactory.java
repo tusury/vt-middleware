@@ -153,11 +153,11 @@ public class JndiStartTLSConnectionFactory
   {
     return
       String.format(
-        "[%s@%d::connectionCount=%s, environment=%s, providerConfig=%s, " +
+        "[%s@%d::metadata=%s, environment=%s, providerConfig=%s, " +
         "sslSocketFactory=%s, hostnameVerifier=%s]",
         getClass().getName(),
         hashCode(),
-        getConnectionCount(),
+        getMetadata(),
         environment,
         getProviderConfig(),
         sslSocketFactory,

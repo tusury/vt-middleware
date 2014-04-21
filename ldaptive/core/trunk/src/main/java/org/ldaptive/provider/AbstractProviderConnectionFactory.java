@@ -33,14 +33,11 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** LDAP URL for connections. */
-  private final String ldapUrl;
-
   /** Provider configuration. */
   private final T providerConfig;
 
-  /** Number of connections made. */
-  private ConnectionCount connectionCount = new ConnectionCount();
+  /** Factory metadata. */
+  private final DefaultConnectionFactoryMetadata metadata;
 
 
   /**
@@ -56,7 +53,7 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     if (url == null) {
       throw new IllegalArgumentException("LDAP URL cannot be null");
     }
-    ldapUrl = url;
+    metadata = new DefaultConnectionFactoryMetadata(url);
     providerConfig = config;
     providerConfig.makeImmutable();
   }
@@ -71,24 +68,13 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
 
 
   /**
-   * Returns the connection count.
+   * Returns the connection factory metadata.
    *
-   * @return  connection count
+   * @return  metadata
    */
-  protected ConnectionCount getConnectionCount()
+  protected ConnectionFactoryMetadata getMetadata()
   {
-    return connectionCount;
-  }
-
-
-  /**
-   * Sets the connection count.
-   *
-   * @param  cc  connection count
-   */
-  protected void setConnectionCount(final ConnectionCount cc)
-  {
-    connectionCount = cc;
+    return metadata;
   }
 
 
@@ -98,20 +84,19 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     throws LdapException
   {
     LdapException lastThrown = null;
-    final String[] urls = providerConfig.getConnectionStrategy().parseLdapUrl(
-      ldapUrl, connectionCount.getCount());
+    final String[] urls = providerConfig.getConnectionStrategy().getLdapUrls(
+      metadata);
     ProviderConnection conn = null;
     for (String url : urls) {
       try {
         logger.trace(
           "[{}] Attempting connection to {} for strategy {}",
-          new Object[] {
-            connectionCount,
+          new Object[] {metadata,
             url,
             providerConfig.getConnectionStrategy(),
           });
         conn = createInternal(url);
-        connectionCount.incrementCount();
+        metadata.incrementCount();
         lastThrown = null;
         break;
       } catch (ConnectionException e) {
@@ -145,36 +130,55 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
   {
     return
       String.format(
-        "[%s@%d::ldapUrl=%s, providerConfig=%s, connectionCount=%s]",
+        "[%s@%d::metadata=%s, providerConfig=%s]",
         getClass().getName(),
         hashCode(),
-        ldapUrl,
-        providerConfig,
-        connectionCount);
+        metadata,
+        providerConfig);
   }
 
 
   /** Provides an object to track the connection count. */
-  private class ConnectionCount
+  private class DefaultConnectionFactoryMetadata
+    implements ConnectionFactoryMetadata
   {
+
+    /** ldap url. */
+    private final String ldapUrl;
 
     /** connection count. */
     private int count;
 
 
     /**
-     * Returns the connection count.
+     * Creates a new default connection factory metadata.
      *
-     * @return  count
+     * @param  s  ldap url
      */
-    public int getCount()
+    public DefaultConnectionFactoryMetadata(final String s)
+    {
+      ldapUrl = s;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public String getLdapUrl()
+    {
+      return ldapUrl;
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public int getConnectionCount()
     {
       return count;
     }
 
 
     /** Increments the connection count. */
-    public void incrementCount()
+    private void incrementCount()
     {
       count++;
       // reset the count if it exceeds the size of an integer
@@ -188,7 +192,7 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     @Override
     public String toString()
     {
-      return Integer.toString(count);
+      return String.format("[ldapUrl=%s, count=%s]", ldapUrl, count);
     }
   }
 }

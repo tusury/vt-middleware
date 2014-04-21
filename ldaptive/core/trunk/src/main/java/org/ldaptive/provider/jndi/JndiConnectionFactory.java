@@ -97,10 +97,10 @@ public class JndiConnectionFactory
   {
     return
       String.format(
-        "[%s@%d::connectionCount=%s, environment=%s, providerConfig=%s]",
+        "[%s@%d::metadata=%s, environment=%s, providerConfig=%s]",
         getClass().getName(),
         hashCode(),
-        getConnectionCount(),
+        getMetadata(),
         environment,
         getProviderConfig());
   }
