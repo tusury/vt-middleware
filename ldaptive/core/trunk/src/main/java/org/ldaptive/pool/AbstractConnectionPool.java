@@ -930,11 +930,13 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   {
     return
       String.format(
-        "[%s@%d::poolConfig=%s, activator=%s, passivator=%s, validator=%s " +
-        "pruneStrategy=%s, connectOnCreate=%s, connectionFactory=%s, " +
-        "initialized=%s, availableCount=%s, activeCount=%s]",
+        "[%s@%d::name=%s, poolConfig=%s, activator=%s, passivator=%s, " +
+        "validator=%s pruneStrategy=%s, connectOnCreate=%s, " +
+        "connectionFactory=%s, initialized=%s, availableCount=%s, " +
+        "activeCount=%s]",
         getClass().getName(),
         hashCode(),
+        getName(),
         getPoolConfig(),
         getActivator(),
         getPassivator(),
