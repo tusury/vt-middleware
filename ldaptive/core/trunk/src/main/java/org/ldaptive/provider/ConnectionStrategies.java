@@ -41,16 +41,14 @@ public final class ConnectionStrategies
     /**
      * Returns an array containing a single entry URL that is the supplied url.
      *
-     * @param  url  to parse
-     * @param  connectionCount  number of times the provider connection factory
-     * has created a connection
+     * @param  metadata  which can be used to produce the URL list
      *
      * @return  list of URLs to attempt connections to
      */
     @Override
-    public String[] parseLdapUrl(final String url, final int connectionCount)
+    public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
     {
-      return new String[] {url};
+      return new String[] {metadata.getLdapUrl()};
     }
   }
 
@@ -65,16 +63,14 @@ public final class ConnectionStrategies
      * Return the URLs in the order they are provided, so that the first URL is
      * always tried first, then the second, and so forth.
      *
-     * @param  url  to parse
-     * @param  connectionCount  number of times the provider connection factory
-     * has created a connection
+     * @param  metadata  which can be used to produce the URL list
      *
      * @return  list of URLs to attempt connections to
      */
     @Override
-    public String[] parseLdapUrl(final String url, final int connectionCount)
+    public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
     {
-      final List<String> l = splitLdapUrl(url);
+      final List<String> l = splitLdapUrl(metadata.getLdapUrl());
       return l.toArray(new String[l.size()]);
     }
   }
@@ -87,7 +83,7 @@ public final class ConnectionStrategies
     /** Internal method invocation counter. */
     private int invocationCount;
 
-    /** Whether {@link #parseLdapUrl(String, int)} should used the
+    /** Whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should used the
      * connectionCount parameter or the {@link #invocationCount}. */
     private final boolean useConnectionCount;
 
@@ -104,8 +100,8 @@ public final class ConnectionStrategies
     /**
      * Creates a new round robin connection strategy.
      *
-     * @param  b  whether {@link #parseLdapUrl(String, int)} should used the
-     * connectionCount parameter
+     * @param  b  whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should
+     * used the connectionCount parameter
      */
     public RoundRobinConnectionStrategy(final boolean b)
     {
@@ -117,17 +113,15 @@ public final class ConnectionStrategies
      * Return a list of URLs that cycles the list order. The first entry is
      * moved to the end of the list for each invocation.
      *
-     * @param  url  to parse
-     * @param  connectionCount  number of times the provider connection factory
-     * has created a connection
+     * @param  metadata  which can be used to produce the URL list
      *
      * @return  list of URLs to attempt connections to
      */
     @Override
-    public String[] parseLdapUrl(final String url, final int connectionCount)
+    public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
     {
-      final List<String> l = splitLdapUrl(url);
-      final int count = getCount(connectionCount);
+      final List<String> l = splitLdapUrl(metadata.getLdapUrl());
+      final int count = getCount(metadata.getConnectionCount());
       for (int i = 0; i < count % l.size(); i++) {
         l.add(l.remove(0));
       }
@@ -178,16 +172,14 @@ public final class ConnectionStrategies
     /**
      * Return a list of URLs in random order.
      *
-     * @param  url  to parse
-     * @param  connectionCount  number of times the provider connection factory
-     * has created a connection
+     * @param  metadata  which can be used to produce the URL list
      *
      * @return  list of URLs to attempt connections to
      */
     @Override
-    public String[] parseLdapUrl(final String url, final int connectionCount)
+    public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
     {
-      final List<String> l = splitLdapUrl(url);
+      final List<String> l = splitLdapUrl(metadata.getLdapUrl());
       Collections.shuffle(l);
       return l.toArray(new String[l.size()]);
     }
