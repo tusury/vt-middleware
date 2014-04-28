@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -62,15 +64,53 @@ public class Dsmlv1Writer implements SearchResultWriter
   /** Writer to write to. */
   private final Writer dsmlWriter;
 
+  /**
+   * Transformer output properties. See {@link
+   * Transformer#setOutputProperty(String, String)}.
+   */
+  private Map<String, String> outputProperties = new HashMap<String, String>();
+
 
   /**
-   * Creates a new dsml writer.
+   * Creates a new dsml writer. The following transformer output properties are
+   * set by default:
+   *
+   * <ul>
+   *   <li>"doctype-public", "yes"</li>
+   *   <li>"indent", "yes"</li>
+   *   <li>"{http://xml.apache.org/xslt}indent-amount", "2"</li>
+   * </ul>
    *
    * @param  writer  to write DSML to
    */
   public Dsmlv1Writer(final Writer writer)
   {
     dsmlWriter = writer;
+    outputProperties.put(OutputKeys.DOCTYPE_PUBLIC, "yes");
+    outputProperties.put(OutputKeys.INDENT, "yes");
+    outputProperties.put("{http://xml.apache.org/xslt}indent-amount", "2");
+  }
+
+
+  /**
+   * Returns the transformer output properties used by this writer.
+   *
+   * @return  transformer output properties
+   */
+  public Map<String, String> getOutputProperties()
+  {
+    return outputProperties;
+  }
+
+
+  /**
+   * Sets the transformer output properties used by this writer.
+   *
+   * @param  properties  transformer output properties
+   */
+  public void setOutputProperties(final Map<String, String> properties)
+  {
+    outputProperties = properties;
   }
 
 
@@ -87,10 +127,9 @@ public class Dsmlv1Writer implements SearchResultWriter
   {
     try {
       final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
-      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-      transformer.setOutputProperty(
-        "{http://xml.apache.org/xslt}indent-amount",
-        "2");
+      for (Map.Entry<String, String> prop : outputProperties.entrySet()) {
+        transformer.setOutputProperty(prop.getKey(), prop.getValue());
+      }
 
       final StreamResult sr = new StreamResult(dsmlWriter);
       final DOMSource source = new DOMSource(createDsml(result));
