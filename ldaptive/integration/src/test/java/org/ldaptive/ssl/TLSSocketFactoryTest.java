@@ -67,14 +67,12 @@ public class TLSSocketFactoryTest
 
   /** List of protocols. */
   public static final String[] ALL_PROTOCOLS = new String[] {
-    "SSLv2Hello",
     "SSLv3",
     "TLSv1",
   };
 
   /** List of protocols. */
   public static final String[] PROTOCOLS = new String[] {
-    "SSLv3",
     "TLSv1",
   };
 
@@ -256,9 +254,6 @@ public class TLSSocketFactoryTest
     sf.setSslConfig(cc.getSslConfig());
     sf.initialize();
 
-    AssertJUnit.assertEquals(
-      Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
-      Arrays.asList(ALL_PROTOCOLS));
     AssertJUnit.assertNotSame(
       Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledProtocols()),
       Arrays.asList(PROTOCOLS));
