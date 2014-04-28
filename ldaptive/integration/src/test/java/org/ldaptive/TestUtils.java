@@ -397,7 +397,7 @@ public final class TestUtils
     String line;
     final List<String> openConns = new ArrayList<String>();
     while ((line = br.readLine()) != null) {
-      if (line.matches(".*ESTABLISHED$")) {
+      if (line.matches("(.*)ESTABLISHED(.*)")) {
         final String s = line.split("\\s+")[NETSTAT_HOST_INDEX];
         openConns.add(s);
       }
