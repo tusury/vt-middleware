@@ -150,9 +150,12 @@ public class TLSSocketFactoryTest
     cc.setSslConfig(null);
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
-      // Note that apache ldap does not throw here:
-      // https://issues.apache.org/jira/browse/DIRAPI-122
+      // some providers won't report errors until an operation is
+      // executed
       conn.open();
+      final CompareOperation op = new CompareOperation(conn);
+      op.execute(
+        new CompareRequest("", new LdapAttribute("objectClass", "top")));
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
