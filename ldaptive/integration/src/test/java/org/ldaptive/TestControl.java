@@ -35,7 +35,7 @@ public class TestControl
     new LdapAttribute("mail", "test-running@ldaptive.org");
 
   /** Time to wait before checking if lock is available. */
-  public static final int WAIT_TIME = 5000;
+  public static final int WAIT_TIME = 60000;
 
   /** Type of directory being tested. */
   private static String DIRECTORY_TYPE;
@@ -77,33 +77,42 @@ public class TestControl
     throws Exception
   {
     final Connection conn = TestUtils.createSetupConnection();
-    try {
-      conn.open();
-      if (!Boolean.valueOf(ignoreLock)) {
-        final CompareOperation compare = new CompareOperation(conn);
-        // wait for other tests to finish
-        int i = 1;
-        while (!compare.execute(
-          new CompareRequest(bindDn, ATTR_IDLE)).getResult()) {
-          System.err.println("Waiting for test lock...");
-          Thread.sleep(WAIT_TIME * i++);
+    if (!Boolean.valueOf(ignoreLock)) {
+      boolean isTestRunning = true;
+      // wait for other tests to finish
+      int i = 1;
+      while (isTestRunning) {
+        try {
+          conn.open();
+          final CompareOperation compare = new CompareOperation(conn);
+          isTestRunning = !compare.execute(
+            new CompareRequest(bindDn, ATTR_IDLE)).getResult();
+        } finally {
+          conn.close();
+          if (isTestRunning) {
+            System.err.println("Waiting for test lock...");
+            Thread.sleep(WAIT_TIME * i++);
+          }
         }
+      }
+      try {
+        conn.open();
         final ModifyOperation modify = new ModifyOperation(conn);
         modify.execute(
           new ModifyRequest(
             bindDn,
             new AttributeModification(
               AttributeModificationType.REPLACE, ATTR_RUNNING)));
+        if (isAD(conn, bindDn)) {
+          DIRECTORY_TYPE = "ACTIVE_DIRECTORY";
+        } else if (isOracle(conn)) {
+          DIRECTORY_TYPE = "ORACLE";
+        } else {
+          DIRECTORY_TYPE = "LDAP";
+        }
+      } finally {
+        conn.close();
       }
-      if (isAD(conn, bindDn)) {
-        DIRECTORY_TYPE = "ACTIVE_DIRECTORY";
-      } else if (isOracle(conn)) {
-        DIRECTORY_TYPE = "ORACLE";
-      } else {
-        DIRECTORY_TYPE = "LDAP";
-      }
-    } finally {
-      conn.close();
     }
   }
 
