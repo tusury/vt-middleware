@@ -95,24 +95,24 @@ public class TestControl
           }
         }
       }
-      try {
-        conn.open();
-        final ModifyOperation modify = new ModifyOperation(conn);
-        modify.execute(
-          new ModifyRequest(
-            bindDn,
-            new AttributeModification(
-              AttributeModificationType.REPLACE, ATTR_RUNNING)));
-        if (isAD(conn, bindDn)) {
-          DIRECTORY_TYPE = "ACTIVE_DIRECTORY";
-        } else if (isOracle(conn)) {
-          DIRECTORY_TYPE = "ORACLE";
-        } else {
-          DIRECTORY_TYPE = "LDAP";
-        }
-      } finally {
-        conn.close();
+    }
+    try {
+      conn.open();
+      final ModifyOperation modify = new ModifyOperation(conn);
+      modify.execute(
+        new ModifyRequest(
+          bindDn,
+          new AttributeModification(
+            AttributeModificationType.REPLACE, ATTR_RUNNING)));
+      if (isAD(conn, bindDn)) {
+        DIRECTORY_TYPE = "ACTIVE_DIRECTORY";
+      } else if (isOracle(conn)) {
+        DIRECTORY_TYPE = "ORACLE";
+      } else {
+        DIRECTORY_TYPE = "LDAP";
       }
+    } finally {
+      conn.close();
     }
   }
 
