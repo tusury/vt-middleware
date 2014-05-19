@@ -13,7 +13,9 @@
 */
 package org.ldaptive.ad.control.util;
 
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
@@ -67,15 +69,9 @@ public class NotificationClientTest extends AbstractTest
       final BlockingQueue<NotificationClient.NotificationItem> results =
         client.execute(request);
 
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(
-        new ModifyRequest(
-          dn,
-          new AttributeModification(
-            AttributeModificationType.REPLACE,
-            new LdapAttribute("sn", "Jones"))));
-
-      NotificationClient.NotificationItem item = results.take();
+      NotificationClient.NotificationItem item = results.poll(
+        5, TimeUnit.SECONDS);
+      AssertJUnit.assertNotNull(item);
       if (item.isException()) {
         throw item.getException();
       }
@@ -83,7 +79,18 @@ public class NotificationClientTest extends AbstractTest
       AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
       final AsyncRequest asyncRequest = item.getAsyncRequest();
 
-      item = results.take();
+      final ModifyOperation modify = new ModifyOperation(conn);
+      modify.execute(
+        new ModifyRequest(
+          dn,
+          new AttributeModification(
+            AttributeModificationType.REPLACE,
+            new LdapAttribute(
+              "sn",
+              Integer.toString(new Random().nextInt(1000000))))));
+
+      item = results.poll(5, TimeUnit.SECONDS);
+      AssertJUnit.assertNotNull(item);
       AssertJUnit.assertTrue(item.isEntry());
       AssertJUnit.assertNotNull(item.getEntry());
 
