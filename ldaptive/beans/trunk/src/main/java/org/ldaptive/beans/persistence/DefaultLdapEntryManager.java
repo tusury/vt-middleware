@@ -19,6 +19,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchOperation;
@@ -131,7 +132,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   public Response<Void> add(final T object)
     throws LdapException
   {
-    final org.ldaptive.LdapEntry entry = new org.ldaptive.LdapEntry();
+    final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
     final AddRequest request = new AddRequest(
       entry.getDn(), entry.getAttributes());
@@ -153,7 +154,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   public Response<Void> merge(final T object)
     throws LdapException
   {
-    final org.ldaptive.LdapEntry entry = new org.ldaptive.LdapEntry();
+    final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
     final MergeRequest request = new MergeRequest(entry);
     final Connection conn = getConnectionFactory().getConnection();

@@ -14,6 +14,7 @@
 package org.ldaptive.beans;
 
 import java.util.Collection;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,7 @@ public abstract class AbstractLdapEntryMapper<T>
          descriptor.getAttributeValueMutators()) {
       logger.debug("using mutator {}", mutator);
       if (mutator != null) {
-        final org.ldaptive.LdapAttribute attr = new org.ldaptive.LdapAttribute(
+        final LdapAttribute attr = new LdapAttribute(
           mutator.getSortBehavior(), mutator.isBinary());
         attr.setName(mutator.getName());
         if (attr.isBinary()) {
@@ -115,7 +116,7 @@ public abstract class AbstractLdapEntryMapper<T>
     if (dnMutator != null) {
       dnMutator.setValue(dest, source.getDn());
     }
-    for (org.ldaptive.LdapAttribute attr : source.getAttributes()) {
+    for (LdapAttribute attr : source.getAttributes()) {
       final AttributeValueMutator mutator = descriptor.getAttributeValueMutator(
         attr.getName());
       logger.debug("using mutator {} for attribute {}", mutator, attr);
