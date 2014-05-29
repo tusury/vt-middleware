@@ -40,13 +40,27 @@ public class DefaultLdapEntryMapper extends AbstractLdapEntryMapper<Object>
     final Class<?> type = object.getClass();
     synchronized (CLASS_DESCRIPTORS) {
       if (!CLASS_DESCRIPTORS.containsKey(type)) {
-        descriptor = new DefaultClassDescriptor();
-        descriptor.initialize(type);
+        descriptor = createClassDescriptor(type);
         CLASS_DESCRIPTORS.put(type, descriptor);
       } else {
         descriptor = CLASS_DESCRIPTORS.get(type);
       }
     }
+    return descriptor;
+  }
+
+
+  /**
+   * Creates a class descriptor for the supplied type.
+   *
+   * @param  type  to create class descriptor for
+   *
+   * @return  class descriptor
+   */
+  protected ClassDescriptor createClassDescriptor(final Class<?> type)
+  {
+    final DefaultClassDescriptor descriptor = new DefaultClassDescriptor();
+    descriptor.initialize(type);
     return descriptor;
   }
 }
