@@ -37,6 +37,7 @@ import org.ldaptive.io.ObjectValueTranscoder;
 import org.ldaptive.io.ShortValueTranscoder;
 import org.ldaptive.io.StringValueTranscoder;
 import org.ldaptive.io.UUIDValueTranscoder;
+import org.ldaptive.io.ValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,9 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Custom transcoder to override the default transcoder. */
+  private final SingleValueReflectionTranscoder<?> customTranscoder;
+
   /** Transcoder for this type. */
   private final ReflectionTranscoder valueTranscoder;
 
@@ -68,6 +72,26 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
    */
   public DefaultReflectionTranscoder(final Type type)
   {
+    this(type, null);
+  }
+
+
+  /**
+   * Creates a new default reflection transcoder.
+   *
+   * @param  type  of object to transcode
+   * @param  transcoder  custom transcoder for this type
+   */
+  public DefaultReflectionTranscoder(
+    final Type type,
+    final ValueTranscoder<?> transcoder)
+  {
+    if (transcoder != null) {
+      customTranscoder = SingleValueReflectionTranscoder.newInstance(
+        transcoder);
+    } else {
+      customTranscoder = null;
+    }
     singleValueTranscoders = getDefaultSingleValueTranscoders();
     if (type instanceof Class) {
       final Class<?> c = (Class<?>) type;
@@ -176,6 +200,9 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   protected SingleValueReflectionTranscoder getSingleValueReflectionTranscoder(
     final Class<?> type)
   {
+    if (customTranscoder != null) {
+      return customTranscoder;
+    }
     for (SingleValueReflectionTranscoder transcoder : singleValueTranscoders) {
       @SuppressWarnings("unchecked")
       final boolean supports = transcoder.supports(type);
@@ -300,9 +327,10 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   public String toString()
   {
     return String.format(
-      "[%s@%d::valueTranscoder=%s]",
+      "[%s@%d::customTranscoder=%s, valueTranscoder=%s]",
       getClass().getName(),
       hashCode(),
+      customTranscoder,
       valueTranscoder);
   }
 }

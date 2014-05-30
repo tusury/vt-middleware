@@ -24,6 +24,8 @@ import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.DnValueMutator;
 import org.ldaptive.beans.Entry;
+import org.ldaptive.beans.TranscoderFactory;
+import org.ldaptive.io.ValueTranscoder;
 
 /**
  * Creates DN and attribute mutators for the {@link java.lang.reflect.Method}s
@@ -120,12 +122,14 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
   {
     final String name = "".equals(attribute.name()) ?
       desc.getName() : attribute.name();
+    final ValueTranscoder<?> transcoder = TranscoderFactory.getInstance(
+      attribute.transcoder());
     return new MethodAttributeValueMutator(
       name,
       attribute.binary(),
       attribute.sortBehavior(),
       new DefaultReflectionTranscoder(
-        desc.getReadMethod().getGenericReturnType()),
+        desc.getReadMethod().getGenericReturnType(), transcoder),
       desc.getReadMethod(),
       desc.getWriteMethod());
   }

@@ -25,6 +25,8 @@ import java.util.TreeSet;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
+import org.ldaptive.beans.TranscoderFactory;
+import org.ldaptive.io.ValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.TypeDescriptor;
@@ -54,6 +56,9 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   /** Evaluation context. */
   private final EvaluationContext evaluationContext;
 
+  /** Custom transcoder for this attribute. */
+  private final ValueTranscoder transcoder;
+
 
   /**
    * Creates a new spel attribute value mutator.
@@ -71,6 +76,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
       attribute.property().length() > 0 ?
         attribute.property() : attribute.name());
     evaluationContext = context;
+    transcoder = TranscoderFactory.getInstance(attribute.transcoder());
   }
 
 
@@ -125,7 +131,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
    *
    * @return  values in the supplied object
    */
-  @SuppressWarnings("unchecked")
   protected <T> Collection<T> getValues(
     final Object object,
     final Class<T> type)
@@ -138,11 +143,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
         values = createCollection(List.class, length);
         for (int i = 0; i < length; i++) {
           final Object o = Array.get(converted, i);
-          final T value =
-            (T) evaluationContext.getTypeConverter().convertValue(
-              o,
-              TypeDescriptor.valueOf(o.getClass()),
-              TypeDescriptor.valueOf(type));
+          final T value = convertValue(o, o.getClass(), type);
           if (value != null) {
             values.add(value);
           }
@@ -152,22 +153,14 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
         final Collection<?> col = (Collection<?>) converted;
         values = createCollection(converted.getClass(), col.size());
         for (Object o : col) {
-          final T value =
-            (T) evaluationContext.getTypeConverter().convertValue(
-              o,
-              TypeDescriptor.valueOf(o.getClass()),
-              TypeDescriptor.valueOf(type));
+          final T value = convertValue(o, o.getClass(), type);
           if (value != null) {
             values.add(value);
           }
         }
       } else {
         values = createCollection(List.class, 1);
-        final T value =
-          (T) evaluationContext.getTypeConverter().convertValue(
-            converted,
-            TypeDescriptor.valueOf(converted.getClass()),
-            TypeDescriptor.valueOf(type));
+        final T value = convertValue(converted, converted.getClass(), type);
         if (value != null) {
           values.add(value);
         }
@@ -177,21 +170,97 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
+  /**
+   * Converts the supplied value to the target type. If a custom transcoder has
+   * been configured it is used. Otherwise the type converter from the
+   * evaluation context is used.
+   *
+   * @param  <T>  either String or byte[]
+   * @param  value  to convert
+   * @param  sourceType  to convert from
+   * @param  targetType  to convert to
+   *
+   * @return  converted value
+   */
+  @SuppressWarnings("unchecked")
+  protected <T> T convertValue(
+    final Object value,
+    final Class<?> sourceType,
+    final Class<T> targetType)
+  {
+    T converted = null;
+    if (transcoder != null) {
+      if (byte[].class == targetType) {
+        converted = (T) transcoder.encodeBinaryValue(value);
+      } else if (String.class == targetType) {
+        converted = (T) transcoder.encodeStringValue(value);
+      } else {
+        throw new IllegalArgumentException(
+          "targetType must be either String.class or byte[].class");
+      }
+    } else {
+      converted =
+        (T) evaluationContext.getTypeConverter().convertValue(
+          value,
+          TypeDescriptor.valueOf(sourceType),
+          TypeDescriptor.valueOf(targetType));
+    }
+    return converted;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public void setStringValues(
-    final Object object, final Collection<String> values)
+    final Object object,
+    final Collection<String> values)
   {
-    expression.setValue(evaluationContext, object, values);
+    setValues(object, values, String.class);
   }
 
 
   /** {@inheritDoc} */
   @Override
   public void setBinaryValues(
-    final Object object, final Collection<byte[]> values)
+    final Object object,
+    final Collection<byte[]> values)
   {
-    expression.setValue(evaluationContext, object, values);
+    setValues(object, values, byte[].class);
+  }
+
+
+  /**
+   * Uses the configured expression and evaluation context to set values
+   * on the supplied object. If a custom transcoder has been configured it is
+   * executed on the values before they are passed to the expression.
+   *
+   * @param  <T>  either String or byte[]
+   * @param  object  to set values on
+   * @param  values  to set
+   * @param  type  of objects in the collection
+   */
+  protected <T> void setValues(
+    final Object object,
+    final Collection<T> values,
+    final Class<T> type)
+  {
+    if (transcoder != null) {
+      final Collection<Object> newValues = createCollection(
+        values.getClass(), values.size());
+      for (T t : values) {
+        if (byte[].class == type) {
+          newValues.add(transcoder.decodeBinaryValue((byte[]) t));
+        } else if (String.class == type) {
+          newValues.add(transcoder.decodeStringValue((String) t));
+        } else {
+          throw new IllegalArgumentException(
+            "type must be either String.class or byte[].class");
+        }
+      }
+      expression.setValue(evaluationContext, object, newValues);
+    } else {
+      expression.setValue(evaluationContext, object, values);
+    }
   }
 
 
@@ -200,12 +269,14 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   public String toString()
   {
     return String.format(
-      "[%s@%d::attribute=%s, expression=%s, evaluationContext=%s]",
+      "[%s@%d::attribute=%s, expression=%s, evaluationContext=%s, " +
+      "transcoder=%s]",
       getClass().getName(),
       hashCode(),
       attribute,
       expression,
-      evaluationContext);
+      evaluationContext,
+      transcoder);
   }
 
 

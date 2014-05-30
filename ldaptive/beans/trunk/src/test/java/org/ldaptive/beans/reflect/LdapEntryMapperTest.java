@@ -47,6 +47,7 @@ public class LdapEntryMapperTest
     charEntry.removeAttribute("col2");
     charEntry.removeAttribute("typeArray1");
     charEntry.removeAttribute("typeArray2");
+    charEntry.removeAttribute("transcoded");
     final LdapEntry integerEntry = IntegerCustomObject.createLdapEntry();
     final LdapEntry floatEntry = FloatCustomObject.createLdapEntry();
     final LdapEntry booleanEntry = BooleanCustomObject.createLdapEntry();
