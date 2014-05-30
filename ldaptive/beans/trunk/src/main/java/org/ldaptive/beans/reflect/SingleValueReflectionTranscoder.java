@@ -45,6 +45,22 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   }
 
 
+  /**
+   * Creates a new single value reflection transcoder. Useful when the type of
+   * the value transcoder is unknown.
+   *
+   * @param  <T>  type to transcode
+   * @param  transcoder  for a single value
+   *
+   * @return  single value reflection transcoder
+   */
+  public static <T> SingleValueReflectionTranscoder<T> newInstance(
+    final ValueTranscoder<T> transcoder)
+  {
+    return new SingleValueReflectionTranscoder<T>(transcoder);
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public Object decodeStringValues(final Collection<String> values)

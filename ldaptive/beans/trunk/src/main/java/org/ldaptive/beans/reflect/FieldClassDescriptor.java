@@ -21,6 +21,8 @@ import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.DnValueMutator;
 import org.ldaptive.beans.Entry;
+import org.ldaptive.beans.TranscoderFactory;
+import org.ldaptive.io.ValueTranscoder;
 
 /**
  * Creates DN and attribute mutators for the {@link Field}s on a type.
@@ -106,11 +108,13 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
   {
     final String name = "".equals(attribute.name()) ?
       field.getName() : attribute.name();
+    final ValueTranscoder<?> transcoder = TranscoderFactory.getInstance(
+      attribute.transcoder());
     return new FieldAttributeValueMutator(
       name,
       attribute.binary(),
       attribute.sortBehavior(),
-      new DefaultReflectionTranscoder(field.getGenericType()),
+      new DefaultReflectionTranscoder(field.getGenericType(), transcoder),
       field);
   }
 }

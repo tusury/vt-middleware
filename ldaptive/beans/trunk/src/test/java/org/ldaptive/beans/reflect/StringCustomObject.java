@@ -53,6 +53,7 @@ public class StringCustomObject implements CustomObject
   protected Set<String> typeSet2;
   private List<String> typeList1;
   protected List<String> typeList2;
+  private String transcoded;
   // CheckStyle:DeclarationOrder ON
   // CheckStyle:JavadocVariable ON
 
@@ -79,6 +80,8 @@ public class StringCustomObject implements CustomObject
   public List<String> getTypeList1() { return typeList1; }
   public void setTypeList1(final List<String> l) { typeList1 = l; }
   public void writeTypeList2(final List<String> l) { typeList2 = l; }
+  public String getTranscoded() { return transcoded; }
+  public void setTranscoded(final String t) { transcoded = t; }
   // CheckStyle:LeftCurly ON
   // CheckStyle:JavadocMethod ON
 
@@ -116,7 +119,8 @@ public class StringCustomObject implements CustomObject
         typeSet1,
         typeSet2,
         typeList1,
-        typeList2);
+        typeList2,
+        transcoded);
   }
 
 
@@ -127,7 +131,7 @@ public class StringCustomObject implements CustomObject
     return String.format(
       "[%s@%d::type1=%s, type2=%s, type3=%s, typeArray1=%s, typeArray2=%s, " +
         "col1=%s, col2=%s, typeCol1=%s, typeCol2=%s, " +
-        "typeSet1=%s, typeSet2=%s, typeList1=%s, typeList2=%s]",
+        "typeSet1=%s, typeSet2=%s, typeList1=%s, typeList2=%s, transcoded=%s]",
       getClass().getSimpleName(),
       hashCode(),
       type1,
@@ -142,7 +146,8 @@ public class StringCustomObject implements CustomObject
       typeSet1,
       typeSet2,
       typeList1,
-      typeList2);
+      typeList2,
+      transcoded);
   }
 
 
@@ -184,7 +189,11 @@ public class StringCustomObject implements CustomObject
       @Attribute(
         name = "typeList2",
         property = "typeList2",
-        sortBehavior = SortBehavior.ORDERED)
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "transcoded",
+        property = "transcoded",
+        transcoder = PrefixStringValueTranscoder.class)
       }
   )
   public static class Default extends StringCustomObject {}
@@ -228,7 +237,11 @@ public class StringCustomObject implements CustomObject
       @Attribute(
         name = "typeList2",
         property = "typeList2",
-        sortBehavior = SortBehavior.ORDERED)
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "transcoded",
+        property = "transcoded",
+        transcoder = PrefixStringValueTranscoder.class)
       }
   )
   public static class Spring extends StringCustomObject
@@ -288,6 +301,7 @@ public class StringCustomObject implements CustomObject
     o1.writeTypeSet2(s1);
     o1.setTypeList1(Arrays.asList("tlv1", "tlv2"));
     o1.writeTypeList2(Arrays.asList("tlv1", "tlv2"));
+    o1.setTranscoded("transcoded");
 
     return o1;
   }
@@ -362,7 +376,8 @@ public class StringCustomObject implements CustomObject
       typeSet1,
       typeSet2,
       typeList1,
-      typeList2);
+      typeList2,
+      new LdapAttribute("transcoded", "prefix-transcoded"));
 
     return entry;
   }
