@@ -188,7 +188,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
     final Class<?> sourceType,
     final Class<T> targetType)
   {
-    T converted = null;
+    T converted;
     if (transcoder != null) {
       if (byte[].class == targetType) {
         converted = (T) transcoder.encodeBinaryValue(value);

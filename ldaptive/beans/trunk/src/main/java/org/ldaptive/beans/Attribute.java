@@ -53,7 +53,7 @@ public @interface Attribute
 
 
   /** Marker class which indicates no transcoder. */
-  class NoValueTranscoder implements ValueTranscoder<Object>
+  static final class NoValueTranscoder implements ValueTranscoder<Object>
   {
 
 
