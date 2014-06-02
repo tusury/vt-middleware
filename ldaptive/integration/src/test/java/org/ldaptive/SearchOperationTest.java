@@ -545,6 +545,11 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      return;
+    }
+
     final SortRequestControl src = new SortRequestControl(
       new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
     VirtualListViewRequestControl vlvrc =
@@ -615,6 +620,11 @@ public class SearchOperationTest extends AbstractTest
   {
     // OracleDS returns protocol error
     if (TestControl.isOracleDirectory()) {
+      return;
+    }
+
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
       return;
     }
 
@@ -689,6 +699,11 @@ public class SearchOperationTest extends AbstractTest
     final String filter)
     throws Exception
   {
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      return;
+    }
+
     final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
@@ -1243,6 +1258,11 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      return;
+    }
+
     final Connection conn = createLdapConnection(true);
     try {
       conn.open();
@@ -1295,6 +1315,11 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
       return;
     }
 

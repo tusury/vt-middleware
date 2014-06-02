@@ -13,6 +13,7 @@
 */
 package org.ldaptive;
 
+import org.ldaptive.provider.Provider;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
@@ -40,6 +41,9 @@ public class TestControl
   /** Type of directory being tested. */
   private static String DIRECTORY_TYPE;
 
+  /** Type of provider being tested. */
+  private static String PROVIDER_TYPE;
+
 
   /**
    * Used by tests to determine if Active Directory is being tested.
@@ -64,6 +68,17 @@ public class TestControl
 
 
   /**
+   * Used by tests to determine if the Apache provider is being tested.
+   *
+   * @return  whether the apache provider is being tested
+   */
+  public static boolean isApacheProvider()
+  {
+    return "APACHE".equals(PROVIDER_TYPE);
+  }
+
+
+  /**
    * Obtains the lock before running all tests.
    *
    * @param  ignoreLock  whether to check for the global test lock
@@ -76,6 +91,25 @@ public class TestControl
   public void setup(final String ignoreLock, final String bindDn)
     throws Exception
   {
+    final Provider<?> provider = DefaultConnectionFactory.getDefaultProvider();
+    if (provider.getClass().getName().contains("Jndi")) {
+      PROVIDER_TYPE = "JNDI";
+    } else if (provider.getClass().getName().contains("Apache")) {
+      PROVIDER_TYPE = "APACHE";
+    } else if (provider.getClass().getName().contains("JLdap")) {
+      PROVIDER_TYPE = "JLDAP";
+    } else if (provider.getClass().getName().contains("Netscape")) {
+      PROVIDER_TYPE = "NETSCAPE";
+    } else if (provider.getClass().getName().contains("OpenDJ")) {
+      PROVIDER_TYPE = "OPENDJ";
+    } else if (provider.getClass().getName().contains("OpenDS")) {
+      PROVIDER_TYPE = "OPENDS";
+    } else if (provider.getClass().getName().contains("UnboundID")) {
+      PROVIDER_TYPE = "UNBOUNDID";
+    } else {
+      throw new IllegalStateException("Unknown provider: " + provider);
+    }
+
     final Connection conn = TestUtils.createSetupConnection();
     if (!Boolean.valueOf(ignoreLock)) {
       boolean isTestRunning = true;

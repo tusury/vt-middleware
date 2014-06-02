@@ -57,6 +57,11 @@ public class NotificationClientTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      return;
+    }
+
     Connection conn = TestUtils.createConnection();
     try {
       conn.open();
