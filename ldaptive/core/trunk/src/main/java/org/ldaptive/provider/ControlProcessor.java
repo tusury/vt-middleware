@@ -100,8 +100,7 @@ public class ControlProcessor<T>
 
     final T providerCtl = controlHandler.handleRequest(ctl);
     if (providerCtl == null) {
-      throw new UnsupportedOperationException(
-        "Request control not supported: " + ctl);
+      logger.info("Unsupported request control {}", ctl);
     }
     return providerCtl;
   }
@@ -150,8 +149,7 @@ public class ControlProcessor<T>
 
     final ResponseControl ctl = controlHandler.handleResponse(providerCtl);
     if (ctl == null) {
-      throw new UnsupportedOperationException(
-        "Response control not supported: " + providerCtl);
+      logger.info("Unsupported response control {}", providerCtl);
     }
     return ctl;
   }
