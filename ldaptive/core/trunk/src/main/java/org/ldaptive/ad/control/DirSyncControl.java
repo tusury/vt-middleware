@@ -99,11 +99,11 @@ public class DirSyncControl extends AbstractControl
 
 
     /**
-     * Returns the mode for the supplied integer constant.
+     * Returns the flag for the supplied integer constant.
      *
-     * @param  l  to find mode for
+     * @param  l  to find flag for
      *
-     * @return  mode
+     * @return  flag
      */
     public static Flag valueOf(final long l)
     {
@@ -226,7 +226,9 @@ public class DirSyncControl extends AbstractControl
     if (f != null) {
       long l = 0;
       for (Flag flag : f) {
-        l += flag.value();
+        if (flag != null) {
+          l += flag.value();
+        }
       }
       setFlags(l);
     }
