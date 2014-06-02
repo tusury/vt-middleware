@@ -30,7 +30,7 @@ import org.ldaptive.ssl.AllowAnyHostnameVerifier;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class JndiProviderConfig extends ProviderConfig
+public class JndiProviderConfig extends ProviderConfig<Control>
 {
 
   /**
@@ -58,9 +58,6 @@ public class JndiProviderConfig extends ProviderConfig
   /** hostname verifier for startTLS connections. */
   private HostnameVerifier hostnameVerifier;
 
-  /** JNDI specific control processor. */
-  private ControlProcessor<Control> controlProcessor;
-
 
   /** Default constructor. */
   public JndiProviderConfig()
@@ -73,7 +70,8 @@ public class JndiProviderConfig extends ProviderConfig
       ResultCode.SIZE_LIMIT_EXCEEDED,
       ResultCode.PARTIAL_RESULTS,
     };
-    controlProcessor = new ControlProcessor<Control>(new JndiControlHandler());
+    setControlProcessor(
+      new ControlProcessor<Control>(new JndiControlHandler()));
   }
 
 
@@ -223,30 +221,6 @@ public class JndiProviderConfig extends ProviderConfig
   }
 
 
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<Control> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<Control> processor)
-  {
-    checkImmutable();
-    logger.trace("setting controlProcessor: {}", processor);
-    controlProcessor = processor;
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public void setProperties(final Map<String, Object> props)
@@ -269,20 +243,20 @@ public class JndiProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, environment=%s, tracePackets=%s, " +
-        "removeDnUrls=%s, searchIgnoreResultCodes=%s, sslSocketFactory=%s, " +
-        "hostnameVerifier=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, controlProcessor=%s, environment=%s, " +
+        "tracePackets=%s, removeDnUrls=%s, searchIgnoreResultCodes=%s, " +
+        "sslSocketFactory=%s, hostnameVerifier=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        getControlProcessor(),
         environment,
         tracePackets,
         removeDnUrls,
         Arrays.toString(searchIgnoreResultCodes),
         sslSocketFactory,
-        hostnameVerifier,
-        controlProcessor);
+        hostnameVerifier);
   }
 }
