@@ -27,7 +27,7 @@ import org.ldaptive.provider.ProviderConfig;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class NetscapeProviderConfig extends ProviderConfig
+public class NetscapeProviderConfig extends ProviderConfig<LDAPControl>
 {
 
   /** Connection constraints. */
@@ -39,20 +39,17 @@ public class NetscapeProviderConfig extends ProviderConfig
   /** Socket factory used for SSL. */
   private LDAPSocketFactory ldapSocketFactory;
 
-  /** Netscape specific control processor. */
-  private ControlProcessor<LDAPControl> controlProcessor;
-
 
   /** Default constructor. */
   public NetscapeProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.CONNECT_ERROR);
+    setControlProcessor(
+      new ControlProcessor<LDAPControl>(new NetscapeControlHandler()));
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
     };
-    controlProcessor = new ControlProcessor<LDAPControl>(
-      new NetscapeControlHandler());
   }
 
 
@@ -128,30 +125,6 @@ public class NetscapeProviderConfig extends ProviderConfig
   }
 
 
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<LDAPControl> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<LDAPControl> processor)
-  {
-    checkImmutable();
-    logger.trace("setting controlProcessor: {}", processor);
-    controlProcessor = processor;
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -159,17 +132,16 @@ public class NetscapeProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, ldapConstraints=%s, " +
-        "searchIgnoreResultCodes=%s, ldapSocketFactory=%s, " +
-        "controlProcessor=%s]",
+        "connectionStrategy=%s, controlProcessor=%s, ldapConstraints=%s, " +
+        "searchIgnoreResultCodes=%s, ldapSocketFactory=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        getControlProcessor(),
         ldapConstraints,
         Arrays.toString(searchIgnoreResultCodes),
-        ldapSocketFactory,
-        controlProcessor);
+        ldapSocketFactory);
   }
 }

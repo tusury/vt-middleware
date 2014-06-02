@@ -27,7 +27,7 @@ import org.ldaptive.provider.ProviderConfig;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class UnboundIDProviderConfig extends ProviderConfig
+public class UnboundIDProviderConfig extends ProviderConfig<Control>
 {
 
   /** Connection options. */
@@ -39,20 +39,17 @@ public class UnboundIDProviderConfig extends ProviderConfig
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
 
-  /** Unbound id specific control processor. */
-  private ControlProcessor<Control> controlProcessor;
-
 
   /** Default constructor. */
   public UnboundIDProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
+    setControlProcessor(
+      new ControlProcessor<Control>(new UnboundIDControlHandler()));
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
     };
-    controlProcessor = new ControlProcessor<Control>(
-      new UnboundIDControlHandler());
   }
 
 
@@ -126,30 +123,6 @@ public class UnboundIDProviderConfig extends ProviderConfig
   }
 
 
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<Control> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<Control> processor)
-  {
-    checkImmutable();
-    logger.trace("setting controlProcessor: {}", processor);
-    controlProcessor = processor;
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -157,16 +130,16 @@ public class UnboundIDProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, connectionOptions=%s, socketFactory=%s, " +
-        "searchIgnoreResultCodes=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, controlProcessor=%s, connectionOptions=%s, " +
+        "socketFactory=%s, searchIgnoreResultCodes=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        getControlProcessor(),
         connectionOptions,
         socketFactory,
-        Arrays.toString(searchIgnoreResultCodes),
-        controlProcessor);
+        Arrays.toString(searchIgnoreResultCodes));
   }
 }

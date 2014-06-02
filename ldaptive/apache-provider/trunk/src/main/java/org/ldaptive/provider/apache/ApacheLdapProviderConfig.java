@@ -26,22 +26,19 @@ import org.ldaptive.provider.ProviderConfig;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ApacheLdapProviderConfig extends ProviderConfig
+public class ApacheLdapProviderConfig extends ProviderConfig<Control>
 {
 
   /** Connection configuration. */
   private LdapConnectionConfig connectionConfig;
-
-  /** Apache ldap specific control processor. */
-  private ControlProcessor<Control> controlProcessor;
 
 
   /** Default constructor. */
   public ApacheLdapProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
-    controlProcessor = new ControlProcessor<Control>(
-      new ApacheLdapControlHandler());
+    setControlProcessor(
+      new ControlProcessor<Control>(new ApacheLdapControlHandler()));
   }
 
 
@@ -69,30 +66,6 @@ public class ApacheLdapProviderConfig extends ProviderConfig
   }
 
 
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<Control> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<Control> processor)
-  {
-    checkImmutable();
-    logger.trace("setting controlProcessor: {}", processor);
-    controlProcessor = processor;
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -100,13 +73,13 @@ public class ApacheLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, ldapConnectionConfig=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, controlProcessor=%s, ldapConnectionConfig=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
-        connectionConfig,
-        controlProcessor);
+        getControlProcessor(),
+        connectionConfig);
   }
 }

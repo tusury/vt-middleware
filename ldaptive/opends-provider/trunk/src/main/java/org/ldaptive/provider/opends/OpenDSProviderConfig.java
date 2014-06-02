@@ -26,7 +26,7 @@ import org.opends.sdk.controls.Control;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class OpenDSProviderConfig extends ProviderConfig
+public class OpenDSProviderConfig extends ProviderConfig<Control>
 {
 
   /** Connection options. */
@@ -35,20 +35,17 @@ public class OpenDSProviderConfig extends ProviderConfig
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
 
-  /** OpenDS specific control processor. */
-  private ControlProcessor<Control> controlProcessor;
-
 
   /** Default constructor. */
   public OpenDSProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
+    setControlProcessor(
+      new ControlProcessor<Control>(new OpenDSControlHandler()));
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
     };
-    controlProcessor = new ControlProcessor<Control>(
-      new OpenDSControlHandler());
   }
 
 
@@ -98,30 +95,6 @@ public class OpenDSProviderConfig extends ProviderConfig
   }
 
 
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<Control> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<Control> processor)
-  {
-    checkImmutable();
-    logger.trace("setting controlProcessor: {}", processor);
-    controlProcessor = processor;
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -129,15 +102,15 @@ public class OpenDSProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, options=%s, searchIgnoreResultCodes=%s, " +
-        "controlProcessor=%s]",
+        "connectionStrategy=%s, controlProcessor=%s, options=%s, " +
+        "searchIgnoreResultCodes=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        getControlProcessor(),
         options,
-        Arrays.toString(searchIgnoreResultCodes),
-        controlProcessor);
+        Arrays.toString(searchIgnoreResultCodes));
   }
 }

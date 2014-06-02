@@ -27,7 +27,7 @@ import org.ldaptive.provider.ProviderConfig;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class JLdapProviderConfig extends ProviderConfig
+public class JLdapProviderConfig extends ProviderConfig<LDAPControl>
 {
 
   /** Connection constraints. */
@@ -39,20 +39,17 @@ public class JLdapProviderConfig extends ProviderConfig
   /** ldap socket factory used for SSL and TLS. */
   private SSLSocketFactory sslSocketFactory;
 
-  /** JLDAP specific control processor. */
-  private ControlProcessor<LDAPControl> controlProcessor;
-
 
   /** Default constructor. */
   public JLdapProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.CONNECT_ERROR);
+    setControlProcessor(
+      new ControlProcessor<LDAPControl>(new JLdapControlHandler()));
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
     };
-    controlProcessor = new ControlProcessor<LDAPControl>(
-      new JLdapControlHandler());
   }
 
 
@@ -128,30 +125,6 @@ public class JLdapProviderConfig extends ProviderConfig
   }
 
 
-  /**
-   * Returns the control processor.
-   *
-   * @return  control processor
-   */
-  public ControlProcessor<LDAPControl> getControlProcessor()
-  {
-    return controlProcessor;
-  }
-
-
-  /**
-   * Sets the control processor.
-   *
-   * @param  processor  control processor
-   */
-  public void setControlProcessor(final ControlProcessor<LDAPControl> processor)
-  {
-    checkImmutable();
-    logger.trace("setting controlProcessor: {}", processor);
-    controlProcessor = processor;
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -159,16 +132,16 @@ public class JLdapProviderConfig extends ProviderConfig
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, ldapConstraints=%s, " +
-        "searchIgnoreResultCodes=%s, sslSocketFactory=%s, controlProcessor=%s]",
+        "connectionStrategy=%s, controlProcessor=%s, ldapConstraints=%s, " +
+        "searchIgnoreResultCodes=%s, sslSocketFactory=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
         getConnectionStrategy(),
+        getControlProcessor(),
         ldapConstraints,
         Arrays.toString(searchIgnoreResultCodes),
-        sslSocketFactory,
-        controlProcessor);
+        sslSocketFactory);
   }
 }
