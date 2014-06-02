@@ -14,14 +14,17 @@
 package org.ldaptive.provider.apache;
 
 import java.nio.ByteBuffer;
-import org.apache.directory.api.ldap.extras.controls.SyncDoneValue;
-import org.apache.directory.api.ldap.extras.controls.SyncRequestValueImpl;
-import org.apache.directory.api.ldap.extras.controls.SyncStateValue;
 import org.apache.directory.api.ldap.extras.controls.SynchronizationModeEnum;
+import org.apache.directory.api.ldap.extras.controls.ad.AdDirSync;
+import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncFlag;
+import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncImpl;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicy;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyErrorEnum;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyImpl;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyResponse;
+import org.apache.directory.api.ldap.extras.controls.syncrepl.syncDone.SyncDoneValue;
+import org.apache.directory.api.ldap.extras.controls.syncrepl.syncInfoValue.SyncRequestValueImpl;
+import org.apache.directory.api.ldap.extras.controls.syncrepl.syncState.SyncStateValue;
 import org.apache.directory.api.ldap.model.message.Control;
 import org.apache.directory.api.ldap.model.message.controls.ChangeType;
 import org.apache.directory.api.ldap.model.message.controls.EntryChange;
@@ -29,6 +32,7 @@ import org.apache.directory.api.ldap.model.message.controls.ManageDsaITImpl;
 import org.apache.directory.api.ldap.model.message.controls.PagedResults;
 import org.apache.directory.api.ldap.model.message.controls.PagedResultsImpl;
 import org.apache.directory.api.ldap.model.message.controls.PersistentSearchImpl;
+import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.asn1.UuidType;
 import org.ldaptive.control.EntryChangeNotificationControl;
 import org.ldaptive.control.ManageDsaITControl;
@@ -97,6 +101,13 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ((PersistentSearchImpl) ctl).setChangesOnly(c.getChangesOnly());
       ((PersistentSearchImpl) ctl).setReturnECs(c.getReturnEcs());
       ctl.setCritical(c.getCriticality());
+    } else if (DirSyncControl.OID.equals(requestControl.getOID())) {
+      final DirSyncControl c = (DirSyncControl) requestControl;
+      ctl = new AdDirSyncImpl();
+      ((AdDirSyncImpl) ctl).setCookie(c.getCookie());
+      ((AdDirSyncImpl) ctl).setFlag(AdDirSyncFlag.getFlag((int) c.getFlags()));
+      ((AdDirSyncImpl) ctl).setMaxReturnLength(c.getMaxAttributeCount());
+      ctl.setCritical(c.getCriticality());
     }
     return ctl;
   }
@@ -148,6 +159,14 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
         PersistentSearchChangeType.valueOf(c.getChangeType().getValue()),
         c.getPreviousDn().toString(),
         c.getChangeNumber(),
+        c.isCritical());
+    } else if (DirSyncControl.OID.equals(responseControl.getOid())) {
+      final AdDirSync c = (AdDirSync) responseControl;
+      ctl = new DirSyncControl(
+        new DirSyncControl.Flag[] {
+          DirSyncControl.Flag.valueOf(c.getFlag().getValue())},
+        c.getCookie(),
+        c.getMaxReturnLength(),
         c.isCritical());
     }
     return ctl;
