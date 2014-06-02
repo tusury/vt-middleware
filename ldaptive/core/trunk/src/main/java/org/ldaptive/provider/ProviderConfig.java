@@ -24,10 +24,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Contains configuration data common to providers.
  *
+ * @param  <C>  type of control produced by the control processor
+ *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ProviderConfig extends AbstractConfig
+public class ProviderConfig<C> extends AbstractConfig
 {
 
   /** Logger for this class. */
@@ -41,6 +43,9 @@ public class ProviderConfig extends AbstractConfig
 
   /** Connection strategy. */
   private ConnectionStrategy connectionStrategy = ConnectionStrategy.DEFAULT;
+
+  /** Control processor. */
+  private ControlProcessor<C> controlProcessor;
 
 
   /**
@@ -117,6 +122,30 @@ public class ProviderConfig extends AbstractConfig
   }
 
 
+  /**
+   * Returns the control processor.
+   *
+   * @return  control processor
+   */
+  public ControlProcessor<C> getControlProcessor()
+  {
+    return controlProcessor;
+  }
+
+
+  /**
+   * Sets the control processor.
+   *
+   * @param  processor  control processor
+   */
+  public void setControlProcessor(final ControlProcessor<C> processor)
+  {
+    checkImmutable();
+    logger.trace("setting controlProcessor: {}", processor);
+    controlProcessor = processor;
+  }
+
+
   /** {@inheritDoc} */
   @Override
   public String toString()
@@ -124,11 +153,12 @@ public class ProviderConfig extends AbstractConfig
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s]",
+        "connectionStrategy=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(operationExceptionResultCodes),
         properties,
-        connectionStrategy);
+        connectionStrategy,
+        controlProcessor);
   }
 }
