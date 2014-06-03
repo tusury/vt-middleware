@@ -13,8 +13,7 @@
 */
 package org.ldaptive.ad.io;
 
-import org.ldaptive.LdapUtils;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.io.AbstractStringValueTranscoder;
 
 /**
  * Decodes and encodes an active directory delta time value for use in an ldap
@@ -23,7 +22,8 @@ import org.ldaptive.io.ValueTranscoder;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class DeltaTimeValueTranscoder implements ValueTranscoder<Long>
+public class DeltaTimeValueTranscoder extends
+  AbstractStringValueTranscoder<Long>
 {
 
   /**
@@ -43,25 +43,9 @@ public class DeltaTimeValueTranscoder implements ValueTranscoder<Long>
 
   /** {@inheritDoc} */
   @Override
-  public Long decodeBinaryValue(final byte[] value)
-  {
-    return decodeStringValue(LdapUtils.utf8Encode(value));
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
   public String encodeStringValue(final Long value)
   {
     return String.valueOf(-value * ONE_HUNDRED_NANOSECOND_INTERVAL);
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public byte[] encodeBinaryValue(final Long value)
-  {
-    return LdapUtils.utf8Encode(encodeStringValue(value));
   }
 
 

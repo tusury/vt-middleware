@@ -16,8 +16,7 @@ package org.ldaptive.ad.io;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
-import org.ldaptive.LdapUtils;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.io.AbstractStringValueTranscoder;
 
 /**
  * Decodes and encodes an active directory file time value for use in an ldap
@@ -26,7 +25,8 @@ import org.ldaptive.io.ValueTranscoder;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class FileTimeValueTranscoder implements ValueTranscoder<Calendar>
+public class FileTimeValueTranscoder extends
+  AbstractStringValueTranscoder<Calendar>
 {
 
   /** UTC time zone. */
@@ -61,28 +61,12 @@ public class FileTimeValueTranscoder implements ValueTranscoder<Calendar>
 
   /** {@inheritDoc} */
   @Override
-  public Calendar decodeBinaryValue(final byte[] value)
-  {
-    return decodeStringValue(LdapUtils.utf8Encode(value));
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
   public String encodeStringValue(final Calendar value)
   {
     return
       String.valueOf(
         (value.getTimeInMillis() + ERA_OFFSET) *
         ONE_HUNDRED_NANOSECOND_INTERVAL);
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public byte[] encodeBinaryValue(final Calendar value)
-  {
-    return LdapUtils.utf8Encode(encodeStringValue(value));
   }
 
 
