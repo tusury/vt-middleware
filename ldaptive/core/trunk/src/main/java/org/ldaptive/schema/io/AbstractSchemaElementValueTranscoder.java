@@ -13,8 +13,7 @@
 */
 package org.ldaptive.schema.io;
 
-import org.ldaptive.LdapUtils;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.io.AbstractStringValueTranscoder;
 import org.ldaptive.schema.SchemaElement;
 
 /**
@@ -27,16 +26,8 @@ import org.ldaptive.schema.SchemaElement;
  */
 public abstract class
 AbstractSchemaElementValueTranscoder<T extends SchemaElement>
-  implements ValueTranscoder<T>
+  extends AbstractStringValueTranscoder<T>
 {
-
-
-  /** {@inheritDoc} */
-  @Override
-  public T decodeBinaryValue(final byte[] value)
-  {
-    return decodeStringValue(LdapUtils.utf8Encode(value));
-  }
 
 
   /** {@inheritDoc} */
@@ -44,13 +35,5 @@ AbstractSchemaElementValueTranscoder<T extends SchemaElement>
   public String encodeStringValue(final T value)
   {
     return value.format();
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public byte[] encodeBinaryValue(final T value)
-  {
-    return LdapUtils.utf8Encode(encodeStringValue(value));
   }
 }

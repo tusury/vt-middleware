@@ -13,24 +13,15 @@
 */
 package org.ldaptive.io;
 
-import org.ldaptive.LdapUtils;
-
 /**
  * Decodes and encodes a byte array for use in an ldap attribute value.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class ByteArrayValueTranscoder implements ValueTranscoder<byte[]>
+public class ByteArrayValueTranscoder
+  extends AbstractBinaryValueTranscoder<byte[]>
 {
-
-
-  /** {@inheritDoc} */
-  @Override
-  public byte[] decodeStringValue(final String value)
-  {
-    return LdapUtils.utf8Encode(value);
-  }
 
 
   /** {@inheritDoc} */
@@ -38,14 +29,6 @@ public class ByteArrayValueTranscoder implements ValueTranscoder<byte[]>
   public byte[] decodeBinaryValue(final byte[] value)
   {
     return value;
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public String encodeStringValue(final byte[] value)
-  {
-    return LdapUtils.utf8Encode(value);
   }
 
 

@@ -13,8 +13,6 @@
 */
 package org.ldaptive.io;
 
-import org.ldaptive.LdapUtils;
-
 /**
  * Base class for primitive value transcoders.
  *
@@ -24,7 +22,7 @@ import org.ldaptive.LdapUtils;
  * @version  $Revision$ $Date$
  */
 public abstract class AbstractPrimitiveValueTranscoder<T>
-  implements ValueTranscoder<T>
+  extends AbstractStringValueTranscoder<T>
 {
 
   /** Whether this transcoder operates on a primitive or an object. */
@@ -58,21 +56,5 @@ public abstract class AbstractPrimitiveValueTranscoder<T>
   public String encodeStringValue(final T value)
   {
     return value.toString();
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public T decodeBinaryValue(final byte[] value)
-  {
-    return decodeStringValue(LdapUtils.utf8Encode(value));
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public byte[] encodeBinaryValue(final T value)
-  {
-    return LdapUtils.utf8Encode(encodeStringValue(value));
   }
 }

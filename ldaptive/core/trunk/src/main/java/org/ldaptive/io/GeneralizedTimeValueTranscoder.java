@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.ldaptive.LdapUtils;
 
 /**
  * Decodes and encodes a generalized time for use in an ldap attribute value.
@@ -30,7 +29,8 @@ import org.ldaptive.LdapUtils;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
+public class GeneralizedTimeValueTranscoder
+  extends AbstractStringValueTranscoder<Calendar>
 {
 
   /** Pattern for capturing the year in generalized time. */
@@ -150,26 +150,10 @@ public class GeneralizedTimeValueTranscoder implements ValueTranscoder<Calendar>
 
   /** {@inheritDoc} */
   @Override
-  public Calendar decodeBinaryValue(final byte[] value)
-  {
-    return decodeStringValue(LdapUtils.utf8Encode(value));
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
   public String encodeStringValue(final Calendar value)
   {
     final DateFormat format = DATE_FORMAT.get();
     return format.format(value.getTime());
-  }
-
-
-  /** {@inheritDoc} */
-  @Override
-  public byte[] encodeBinaryValue(final Calendar value)
-  {
-    return LdapUtils.utf8Encode(encodeStringValue(value));
   }
 
 
