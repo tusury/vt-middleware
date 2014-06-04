@@ -11,7 +11,7 @@
   Version: $Revision$
   Updated: $Date$
 */
-package org.ldaptive.beans;
+package org.ldaptive.beans.reflect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +27,8 @@ public final class TranscoderFactory
 {
 
   /** Value transcoders. */
-  private static final Map<Class<?>, ValueTranscoder<?>> TRANSCODERS =
-    new HashMap<Class<?>, ValueTranscoder<?>>();
+  private static final Map<String, ValueTranscoder<?>> TRANSCODERS =
+    new HashMap<String, ValueTranscoder<?>>();
 
 
   /**
@@ -45,9 +45,11 @@ public final class TranscoderFactory
    *
    * @return  value transcoder
    */
-  public static ValueTranscoder<?> getInstance(
-    final Class<? extends ValueTranscoder<?>> type)
+  public static ValueTranscoder<?> getInstance(final String type)
   {
+    if (type == null || "".equals(type)) {
+      return null;
+    }
     ValueTranscoder<?> transcoder;
     synchronized (TRANSCODERS) {
       if (!TRANSCODERS.containsKey(type)) {
@@ -62,8 +64,7 @@ public final class TranscoderFactory
 
 
   /**
-   * Creates a value transcoder for the supplied type. Ignores {@link
-   * Attribute.NoValueTranscoder} and returns null.
+   * Creates a value transcoder for the supplied type.
    *
    * @param  type  to create value transcoder for
    *
@@ -72,21 +73,12 @@ public final class TranscoderFactory
    * @throws  IllegalArgumentException  if the supplied type cannot be
    * instantiated
    */
-  protected static ValueTranscoder<?> createValueTranscoder(
-    final Class<? extends ValueTranscoder<?>> type)
+  protected static ValueTranscoder<?> createValueTranscoder(final String type)
   {
-    ValueTranscoder<?> transcoder = null;
-    if (Attribute.NoValueTranscoder.class != type) {
-      try {
-        transcoder = type.newInstance();
-      } catch (InstantiationException e) {
-        throw new IllegalArgumentException(
-          "Could not instantiate transcoder", e);
-      } catch (IllegalAccessException e) {
-        throw new IllegalArgumentException(
-          "Could not instantiate transcoder", e);
-      }
+    try {
+      return (ValueTranscoder<?>) Class.forName(type).newInstance();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Could not instantiate transcoder", e);
     }
-    return transcoder;
   }
 }
