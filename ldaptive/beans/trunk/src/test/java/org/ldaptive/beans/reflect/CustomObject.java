@@ -36,6 +36,18 @@ public interface CustomObject
   static class PrefixStringValueTranscoder implements ValueTranscoder<String>
   {
 
+    /** Default constructor. */
+    public PrefixStringValueTranscoder() {}
+
+
+    /**
+     * Constructor with a non string param.
+     *
+     * @param  i  ignored argument
+     */
+    public PrefixStringValueTranscoder(final int i) {}
+
+
     @Override
     public String decodeStringValue(final String value)
     {

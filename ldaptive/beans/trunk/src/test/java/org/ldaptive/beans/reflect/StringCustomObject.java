@@ -193,7 +193,8 @@ public class StringCustomObject implements CustomObject
       @Attribute(
         name = "transcoded",
         property = "transcoded",
-        transcoder = PrefixStringValueTranscoder.class)
+        transcoder = "org.ldaptive.beans.reflect.CustomObject$" +
+                     "PrefixStringValueTranscoder")
       }
   )
   public static class Default extends StringCustomObject {}
@@ -241,7 +242,8 @@ public class StringCustomObject implements CustomObject
       @Attribute(
         name = "transcoded",
         property = "transcoded",
-        transcoder = PrefixStringValueTranscoder.class)
+        transcoder = "new org.ldaptive.beans.reflect.CustomObject$" +
+                     "PrefixStringValueTranscoder(1)")
       }
   )
   public static class Spring extends StringCustomObject

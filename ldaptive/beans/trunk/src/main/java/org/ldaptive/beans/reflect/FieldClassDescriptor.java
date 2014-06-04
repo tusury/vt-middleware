@@ -21,7 +21,6 @@ import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.DnValueMutator;
 import org.ldaptive.beans.Entry;
-import org.ldaptive.beans.TranscoderFactory;
 import org.ldaptive.io.ValueTranscoder;
 
 /**

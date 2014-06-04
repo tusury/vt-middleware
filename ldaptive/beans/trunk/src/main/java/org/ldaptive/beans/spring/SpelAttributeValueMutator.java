@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
-import org.ldaptive.beans.TranscoderFactory;
 import org.ldaptive.io.ValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +75,12 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
       attribute.property().length() > 0 ?
         attribute.property() : attribute.name());
     evaluationContext = context;
-    transcoder = TranscoderFactory.getInstance(attribute.transcoder());
+    if ("".equals(attribute.transcoder())) {
+      transcoder = null;
+    } else {
+      transcoder = parser.parseExpression(
+        attribute.transcoder()).getValue(ValueTranscoder.class);
+    }
   }
 
 
