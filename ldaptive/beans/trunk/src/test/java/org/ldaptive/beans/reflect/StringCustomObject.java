@@ -13,6 +13,7 @@
 */
 package org.ldaptive.beans.reflect;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +55,8 @@ public class StringCustomObject implements CustomObject
   private List<String> typeList1;
   protected List<String> typeList2;
   private String transcoded;
+  private String[] nullArray1 = new String[] {null};
+  private List<String> nullList1;
   // CheckStyle:DeclarationOrder ON
   // CheckStyle:JavadocVariable ON
 
@@ -82,13 +85,19 @@ public class StringCustomObject implements CustomObject
   public void writeTypeList2(final List<String> l) { typeList2 = l; }
   public String getTranscoded() { return transcoded; }
   public void setTranscoded(final String t) { transcoded = t; }
+  public String[] getNullArray1() { return nullArray1; }
+  public List<String> getNullList1() { return nullList1; }
   // CheckStyle:LeftCurly ON
   // CheckStyle:JavadocMethod ON
 
 
   /** {@inheritDoc} */
   @Override
-  public void initialize() {}
+  public void initialize()
+  {
+    nullList1 = new ArrayList<String>(1);
+    nullList1.add(null);
+  }
 
 
   /** {@inheritDoc} */
@@ -194,7 +203,9 @@ public class StringCustomObject implements CustomObject
         name = "transcoded",
         property = "transcoded",
         transcoder = "org.ldaptive.beans.reflect.CustomObject$" +
-                     "PrefixStringValueTranscoder")
+                     "PrefixStringValueTranscoder"),
+      @Attribute(name = "nullArray1", property = "nullArray1"),
+      @Attribute(name = "nullList1", property = "nullList1")
       }
   )
   public static class Default extends StringCustomObject {}
@@ -243,7 +254,9 @@ public class StringCustomObject implements CustomObject
         name = "transcoded",
         property = "transcoded",
         transcoder = "new org.ldaptive.beans.reflect.CustomObject$" +
-                     "PrefixStringValueTranscoder(1)")
+                     "PrefixStringValueTranscoder(1)"),
+      @Attribute(name = "nullArray1", property = "nullArray1"),
+      @Attribute(name = "nullList1", property = "nullList1")
       }
   )
   public static class Spring extends StringCustomObject

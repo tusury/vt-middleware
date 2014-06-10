@@ -147,19 +147,22 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
         values = createCollection(List.class, length);
         for (int i = 0; i < length; i++) {
           final Object o = Array.get(converted, i);
-          final T value = convertValue(o, o.getClass(), type);
-          if (value != null) {
-            values.add(value);
+          if (o != null) {
+            final T value = convertValue(o, o.getClass(), type);
+            if (value != null) {
+              values.add(value);
+            }
           }
         }
-      } else if (Collection.class.isAssignableFrom(
-        converted.getClass())) {
+      } else if (Collection.class.isAssignableFrom(converted.getClass())) {
         final Collection<?> col = (Collection<?>) converted;
         values = createCollection(converted.getClass(), col.size());
         for (Object o : col) {
-          final T value = convertValue(o, o.getClass(), type);
-          if (value != null) {
-            values.add(value);
+          if (o != null) {
+            final T value = convertValue(o, o.getClass(), type);
+            if (value != null) {
+              values.add(value);
+            }
           }
         }
       } else {
