@@ -109,6 +109,7 @@ public final class DefaultConnectionFactoryPropertySource
 
   /** {@inheritDoc} */
   @Override
+  @SuppressWarnings("unchecked")
   public void initialize()
   {
     initializeObject(INVOKER);
@@ -128,6 +129,10 @@ public final class DefaultConnectionFactoryPropertySource
     if (pc.getOperationExceptionResultCodes() != null) {
       object.getProvider().getProviderConfig().setOperationExceptionResultCodes(
         pc.getOperationExceptionResultCodes());
+    }
+    if (pc.getControlProcessor() != null) {
+      object.getProvider().getProviderConfig().setControlProcessor(
+        pc.getControlProcessor());
     }
     if (!extraProps.isEmpty()) {
       object.getProvider().getProviderConfig().setProperties(extraProps);

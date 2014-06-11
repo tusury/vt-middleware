@@ -14,6 +14,7 @@
 package org.ldaptive.props;
 
 import org.ldaptive.provider.ConnectionStrategy;
+import org.ldaptive.provider.ControlProcessor;
 
 /**
  * Handles properties for {@link org.ldaptive.provider.ProviderConfig}.
@@ -56,6 +57,8 @@ public class ProviderConfigPropertyInvoker extends AbstractPropertyInvoker
             ConnectionStrategy.class,
             value);
         }
+      } else if (ControlProcessor.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(ControlProcessor.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }
