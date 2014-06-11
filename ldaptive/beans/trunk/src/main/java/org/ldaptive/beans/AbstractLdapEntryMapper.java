@@ -100,7 +100,9 @@ public abstract class AbstractLdapEntryMapper<T>
             attr.addStringValues(c);
           }
         }
-        dest.addAttribute(attr);
+        if (attr.size() > 0) {
+          dest.addAttribute(attr);
+        }
       }
     }
   }
@@ -117,14 +119,16 @@ public abstract class AbstractLdapEntryMapper<T>
       dnMutator.setValue(dest, source.getDn());
     }
     for (LdapAttribute attr : source.getAttributes()) {
-      final AttributeValueMutator mutator = descriptor.getAttributeValueMutator(
-        attr.getName());
-      logger.debug("using mutator {} for attribute {}", mutator, attr);
-      if (mutator != null) {
-        if (attr.isBinary()) {
-          mutator.setBinaryValues(dest, attr.getBinaryValues());
-        } else {
-          mutator.setStringValues(dest, attr.getStringValues());
+      if (attr.size() > 0) {
+        final AttributeValueMutator mutator =
+          descriptor.getAttributeValueMutator(attr.getName());
+        logger.debug("using mutator {} for attribute {}", mutator, attr);
+        if (mutator != null) {
+          if (attr.isBinary()) {
+            mutator.setBinaryValues(dest, attr.getBinaryValues());
+          } else {
+            mutator.setStringValues(dest, attr.getStringValues());
+          }
         }
       }
     }
