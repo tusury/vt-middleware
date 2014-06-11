@@ -26,7 +26,7 @@ import org.ldaptive.provider.ProviderConfig;
  * @version  $Revision$ $Date$
  */
 public final class ProviderConfigPropertySource
-  extends AbstractPropertySource<ProviderConfig>
+  extends AbstractPropertySource<ProviderConfig<?>>
 {
 
   /** Invoker for provider config. */
