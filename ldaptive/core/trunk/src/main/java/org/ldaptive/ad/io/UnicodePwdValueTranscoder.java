@@ -23,7 +23,8 @@ import org.ldaptive.io.AbstractBinaryValueTranscoder;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class UnicodePwdValueTranscoder extends AbstractBinaryValueTranscoder<String>
+public class UnicodePwdValueTranscoder
+  extends AbstractBinaryValueTranscoder<String>
 {
 
   /** UTF-16LE character set. */
