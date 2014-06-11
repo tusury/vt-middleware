@@ -19,6 +19,8 @@ import org.ldaptive.LdapUtils;
  * Value transcoder which decodes and encodes to a byte array and therefore the
  * string methods simply delegate to the binary methods.
  *
+ * @param  <T>  type of object to transcode
+ *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
