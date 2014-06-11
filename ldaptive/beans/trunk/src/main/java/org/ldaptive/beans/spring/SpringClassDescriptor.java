@@ -81,7 +81,8 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
    *
    * @param  dnProperty  SPEL expression
    *
-   * @return  {@link SpelDnValueMutator} or {@link SimpleDnValueMutator}
+   * @return  {@link SpelDnValueMutator} if dnProperty can be parsed. Otherwise
+   * returns simple dn value mutator
    */
   protected DnValueMutator createDnValueMutator(final String dnProperty)
   {

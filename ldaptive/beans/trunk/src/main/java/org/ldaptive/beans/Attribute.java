@@ -40,10 +40,10 @@ public @interface Attribute
    * exclusive with {@link #values()}. */
   String property() default "";
 
-  /** Whether this attribute is binary. Default is {@value}. */
+  /** Whether this attribute is binary. */
   boolean binary() default false;
 
-  /** Sort behavior for this attribute. Default is {@value}. */
+  /** Sort behavior for this attribute. */
   SortBehavior sortBehavior() default SortBehavior.UNORDERED;
 
   /** Transcoder for this attribute. */
