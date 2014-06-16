@@ -118,6 +118,9 @@ public class PropertiesTest
     AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
     AssertJUnit.assertFalse(cc.getUseStartTLS());
     AssertJUnit.assertEquals(
+      org.ldaptive.provider.TestControlProcessor.class,
+      cf.getProvider().getProviderConfig().getControlProcessor().getClass());
+    AssertJUnit.assertEquals(
       1, cf.getProvider().getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals(
       "true",
