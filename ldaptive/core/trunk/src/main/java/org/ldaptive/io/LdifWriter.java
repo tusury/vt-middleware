@@ -18,6 +18,7 @@ import java.io.Writer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchReference;
 import org.ldaptive.SearchResult;
 
 /**
@@ -100,6 +101,9 @@ public class LdifWriter implements SearchResultWriter
       for (LdapEntry le : result.getEntries()) {
         ldif.append(createLdifEntry(le));
       }
+      for (SearchReference sr : result.getReferences()) {
+        ldif.append(createSearchReference(sr));
+      }
     }
 
     return ldif.toString();
@@ -123,10 +127,8 @@ public class LdifWriter implements SearchResultWriter
     final String dn = entry.getDn();
     if (dn != null) {
       if (encodeData(dn)) {
-        final String encodedDn = LdapUtils.base64Encode(dn);
-        if (encodedDn != null) {
-          entryLdif.append("dn:: ").append(dn).append(LINE_SEPARATOR);
-        }
+        entryLdif.append("dn:: ").append(LdapUtils.base64Encode(dn)).append(
+          LINE_SEPARATOR);
       } else {
         entryLdif.append("dn: ").append(dn).append(LINE_SEPARATOR);
       }
@@ -152,6 +154,36 @@ public class LdifWriter implements SearchResultWriter
       entryLdif.append(LINE_SEPARATOR);
     }
     return entryLdif.toString();
+  }
+
+
+  /**
+   * Creates an LDIF using the supplied search reference.
+   *
+   * @param  ref  search reference
+   *
+   * @return  LDIF
+   */
+  protected String createSearchReference(final SearchReference ref)
+  {
+    if (ref == null) {
+      return "";
+    }
+
+    final StringBuilder refLdif = new StringBuilder();
+    for (String url : ref.getReferralUrls()) {
+      if (encodeData(url)) {
+        refLdif.append("ref:: ").append(LdapUtils.base64Encode(url)).append(
+          LINE_SEPARATOR);
+      } else {
+        refLdif.append("ref: ").append(url).append(LINE_SEPARATOR);
+      }
+    }
+
+    if (refLdif.length() > 0) {
+      refLdif.append(LINE_SEPARATOR);
+    }
+    return refLdif.toString();
   }
 
 
