@@ -397,8 +397,8 @@ public final class LdapUtils
       is = new FileInputStream(new File(path.substring(FILE_PREFIX.length())));
     } else {
       throw new IllegalArgumentException(
-        "path must start with either " + CLASSPATH_PREFIX + " or " +
-        FILE_PREFIX);
+        "path '" + path + "' must start with either " +
+        CLASSPATH_PREFIX + " or " + FILE_PREFIX);
     }
     return is;
   }
