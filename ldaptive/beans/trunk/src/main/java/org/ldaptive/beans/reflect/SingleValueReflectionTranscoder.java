@@ -141,10 +141,11 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::valueTranscoder=%s]",
-      getClass().getName(),
-      hashCode(),
-      valueTranscoder);
+    return
+      String.format(
+        "[%s@%d::valueTranscoder=%s]",
+        getClass().getName(),
+        hashCode(),
+        valueTranscoder);
   }
 }

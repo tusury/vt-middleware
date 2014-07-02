@@ -101,6 +101,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     final Connection conn = getConnectionFactory().getConnection();
     try {
       conn.open();
+
       final SearchOperation search = new SearchOperation(conn);
       final Response<SearchResult> response = search.execute(request);
       if (response.getResult().size() == 0) {
@@ -134,11 +135,14 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   {
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
+
     final AddRequest request = new AddRequest(
-      entry.getDn(), entry.getAttributes());
+      entry.getDn(),
+      entry.getAttributes());
     final Connection conn = getConnectionFactory().getConnection();
     try {
       conn.open();
+
       final AddOperation add = new AddOperation(conn);
       return add.execute(request);
     } finally {
@@ -156,10 +160,12 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   {
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
+
     final MergeRequest request = new MergeRequest(entry);
     final Connection conn = getConnectionFactory().getConnection();
     try {
       conn.open();
+
       final MergeOperation merge = new MergeOperation(conn);
       return merge.execute(request);
     } finally {
@@ -180,6 +186,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     final Connection conn = getConnectionFactory().getConnection();
     try {
       conn.open();
+
       final DeleteOperation delete = new DeleteOperation(conn);
       return delete.execute(request);
     } finally {

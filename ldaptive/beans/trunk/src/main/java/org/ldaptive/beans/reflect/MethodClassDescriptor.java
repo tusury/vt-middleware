@@ -99,12 +99,13 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
    */
   protected DnValueMutator createDnValueMutator(final PropertyDescriptor desc)
   {
-    return new DefaultDnValueMutator(
-      new MethodAttributeValueMutator(
-        new DefaultReflectionTranscoder(
-          desc.getReadMethod().getGenericReturnType()),
-        desc.getReadMethod(),
-        desc.getWriteMethod()));
+    return
+      new DefaultDnValueMutator(
+        new MethodAttributeValueMutator(
+          new DefaultReflectionTranscoder(
+            desc.getReadMethod().getGenericReturnType()),
+          desc.getReadMethod(),
+          desc.getWriteMethod()));
   }
 
 
@@ -117,19 +118,22 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
    * @return  attribute value mutator
    */
   protected AttributeValueMutator createAttributeValueMutator(
-    final PropertyDescriptor desc, final Attribute attribute)
+    final PropertyDescriptor desc,
+    final Attribute attribute)
   {
     final String name = "".equals(attribute.name()) ?
       desc.getName() : attribute.name();
     final ValueTranscoder<?> transcoder = TranscoderFactory.getInstance(
       attribute.transcoder());
-    return new MethodAttributeValueMutator(
-      name,
-      attribute.binary(),
-      attribute.sortBehavior(),
-      new DefaultReflectionTranscoder(
-        desc.getReadMethod().getGenericReturnType(), transcoder),
-      desc.getReadMethod(),
-      desc.getWriteMethod());
+    return
+      new MethodAttributeValueMutator(
+        name,
+        attribute.binary(),
+        attribute.sortBehavior(),
+        new DefaultReflectionTranscoder(
+          desc.getReadMethod().getGenericReturnType(),
+          transcoder),
+        desc.getReadMethod(),
+        desc.getWriteMethod());
   }
 }

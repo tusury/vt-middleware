@@ -78,8 +78,9 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
       }
     }
     addDefaultConverters(conversionService);
-    final StandardEvaluationContext context =
-      new StandardEvaluationContext(object);
+
+    final StandardEvaluationContext context = new StandardEvaluationContext(
+      object);
     context.setTypeConverter(new StandardTypeConverter(conversionService));
     return context;
   }
@@ -93,28 +94,28 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
   protected void addDefaultConverters(final GenericConversionService service)
   {
     if (!service.canConvert(String.class, Calendar.class)) {
-      service.addConverter(new Converter<String, Calendar>()
-      {
-        @Override
-        public Calendar convert(final String s)
-        {
-          final GeneralizedTimeValueTranscoder transcoder =
-            new GeneralizedTimeValueTranscoder();
-          return transcoder.decodeStringValue(s);
-        }
-      });
+      service.addConverter(
+        new Converter<String, Calendar>() {
+          @Override
+          public Calendar convert(final String s)
+          {
+            final GeneralizedTimeValueTranscoder transcoder =
+              new GeneralizedTimeValueTranscoder();
+            return transcoder.decodeStringValue(s);
+          }
+        });
     }
     if (!service.canConvert(Calendar.class, String.class)) {
-      service.addConverter(new Converter<Calendar, String>()
-      {
-        @Override
-        public String convert(final Calendar c)
-        {
-          final GeneralizedTimeValueTranscoder transcoder = new
-            GeneralizedTimeValueTranscoder();
-          return transcoder.encodeStringValue(c);
-        }
-      });
+      service.addConverter(
+        new Converter<Calendar, String>() {
+          @Override
+          public String convert(final Calendar c)
+          {
+            final GeneralizedTimeValueTranscoder transcoder =
+              new GeneralizedTimeValueTranscoder();
+            return transcoder.encodeStringValue(c);
+          }
+        });
     }
   }
 }

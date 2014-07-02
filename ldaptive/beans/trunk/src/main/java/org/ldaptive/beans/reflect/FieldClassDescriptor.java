@@ -87,10 +87,11 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
    */
   protected DnValueMutator createDnValueMutator(final Field field)
   {
-    return new DefaultDnValueMutator(
-      new FieldAttributeValueMutator(
-        new DefaultReflectionTranscoder(field.getGenericType()),
-        field));
+    return
+      new DefaultDnValueMutator(
+        new FieldAttributeValueMutator(
+          new DefaultReflectionTranscoder(field.getGenericType()),
+          field));
   }
 
 
@@ -103,17 +104,19 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
    * @return  attribute value mutator
    */
   protected AttributeValueMutator createAttributeValueMutator(
-    final Field field, final Attribute attribute)
+    final Field field,
+    final Attribute attribute)
   {
     final String name = "".equals(attribute.name()) ?
       field.getName() : attribute.name();
     final ValueTranscoder<?> transcoder = TranscoderFactory.getInstance(
       attribute.transcoder());
-    return new FieldAttributeValueMutator(
-      name,
-      attribute.binary(),
-      attribute.sortBehavior(),
-      new DefaultReflectionTranscoder(field.getGenericType(), transcoder),
-      field);
+    return
+      new FieldAttributeValueMutator(
+        name,
+        attribute.binary(),
+        attribute.sortBehavior(),
+        new DefaultReflectionTranscoder(field.getGenericType(), transcoder),
+        field);
   }
 }

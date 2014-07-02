@@ -31,9 +31,7 @@ public final class TranscoderFactory
     new HashMap<String, ValueTranscoder<?>>();
 
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   private TranscoderFactory() {}
 
 
@@ -50,6 +48,7 @@ public final class TranscoderFactory
     if (type == null || "".equals(type)) {
       return null;
     }
+
     ValueTranscoder<?> transcoder;
     synchronized (TRANSCODERS) {
       if (!TRANSCODERS.containsKey(type)) {

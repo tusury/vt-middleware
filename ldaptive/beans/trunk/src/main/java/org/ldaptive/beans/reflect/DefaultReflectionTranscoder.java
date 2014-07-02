@@ -115,6 +115,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
         throw new IllegalArgumentException(
           "Unsupported type arguments: " + Arrays.toString(typeArgs));
       }
+
       final Class<?> rawClass = ReflectionUtils.classFromType(rawType);
       if (typeArgs[0] instanceof GenericArrayType) {
         final GenericArrayType gat = (GenericArrayType) typeArgs[0];
@@ -148,44 +149,55 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   {
     final Set<SingleValueReflectionTranscoder<?>> transcoders =
       new HashSet<SingleValueReflectionTranscoder<?>>();
-    transcoders.add(new SingleValueReflectionTranscoder<Object>(
-      new ObjectValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Boolean>(
-      new BooleanValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Boolean>(
-      new BooleanValueTranscoder(true)));
-    transcoders.add(new SingleValueReflectionTranscoder<Double>(
-      new DoubleValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Double>(
-      new DoubleValueTranscoder(true)));
-    transcoders.add(new SingleValueReflectionTranscoder<Float>(
-      new FloatValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Float>(
-      new FloatValueTranscoder(true)));
-    transcoders.add(new SingleValueReflectionTranscoder<Integer>(
-      new IntegerValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Integer>(
-      new IntegerValueTranscoder(true)));
-    transcoders.add(new SingleValueReflectionTranscoder<Long>(
-      new LongValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Long>(
-      new LongValueTranscoder(true)));
-    transcoders.add(new SingleValueReflectionTranscoder<Short>(
-      new ShortValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Short>(
-      new ShortValueTranscoder(true)));
-    transcoders.add(new SingleValueReflectionTranscoder<String>(
-      new StringValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<byte[]>(
-      new ByteArrayValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<char[]>(
-      new CharArrayValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Certificate>(
-      new CertificateValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<Calendar>(
-      new GeneralizedTimeValueTranscoder()));
-    transcoders.add(new SingleValueReflectionTranscoder<UUID>(
-      new UUIDValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Object>(new ObjectValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Boolean>(
+        new BooleanValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Boolean>(
+        new BooleanValueTranscoder(true)));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Double>(new DoubleValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Double>(
+        new DoubleValueTranscoder(true)));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Float>(new FloatValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Float>(
+        new FloatValueTranscoder(true)));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Integer>(
+        new IntegerValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Integer>(
+        new IntegerValueTranscoder(true)));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Long>(new LongValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Long>(new LongValueTranscoder(true)));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Short>(new ShortValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Short>(
+        new ShortValueTranscoder(true)));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<String>(new StringValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<byte[]>(
+        new ByteArrayValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<char[]>(
+        new CharArrayValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Certificate>(
+        new CertificateValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<Calendar>(
+        new GeneralizedTimeValueTranscoder()));
+    transcoders.add(
+      new SingleValueReflectionTranscoder<UUID>(new UUIDValueTranscoder()));
     return transcoders;
   }
 
@@ -326,11 +338,12 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::customTranscoder=%s, valueTranscoder=%s]",
-      getClass().getName(),
-      hashCode(),
-      customTranscoder,
-      valueTranscoder);
+    return
+      String.format(
+        "[%s@%d::customTranscoder=%s, valueTranscoder=%s]",
+        getClass().getName(),
+        hashCode(),
+        customTranscoder,
+        valueTranscoder);
   }
 }

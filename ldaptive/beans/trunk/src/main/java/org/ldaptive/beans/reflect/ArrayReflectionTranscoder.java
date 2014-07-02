@@ -54,7 +54,8 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   public Object decodeStringValues(final Collection<String> values)
   {
     final Object decoded = Array.newInstance(
-      valueTranscoder.getType(), values.size());
+      valueTranscoder.getType(),
+      values.size());
     final Iterator<String> iter = values.iterator();
     for (int i = 0; i < values.size(); i++) {
       final List<String> l = new ArrayList<String>(1);
@@ -70,7 +71,8 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   public Object decodeBinaryValues(final Collection<byte[]> values)
   {
     final Object decoded = Array.newInstance(
-      valueTranscoder.getType(), values.size());
+      valueTranscoder.getType(),
+      values.size());
     final Iterator<byte[]> iter = values.iterator();
     for (int i = 0; i < values.size(); i++) {
       final List<byte[]> l = new ArrayList<byte[]>(1);
@@ -185,10 +187,11 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::valueTranscoder=%s]",
-      getClass().getName(),
-      hashCode(),
-      valueTranscoder);
+    return
+      String.format(
+        "[%s@%d::valueTranscoder=%s]",
+        getClass().getName(),
+        hashCode(),
+        valueTranscoder);
   }
 }

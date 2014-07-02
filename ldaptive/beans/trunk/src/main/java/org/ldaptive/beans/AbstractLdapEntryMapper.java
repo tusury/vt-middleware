@@ -20,16 +20,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base implementation of an ldap entry mapper. Uses a
- * {@link ClassDescriptor} for decoding and encoding of objects.
+ * Base implementation of an ldap entry mapper. Uses a {@link ClassDescriptor}
+ * for decoding and encoding of objects.
  *
  * @param  <T>  type of object to map
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public abstract class AbstractLdapEntryMapper<T>
-  implements LdapEntryMapper<T>
+public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
 {
 
   /** Logger for this class. */
@@ -77,6 +76,7 @@ public abstract class AbstractLdapEntryMapper<T>
   public void map(final T source, final LdapEntry dest)
   {
     logger.debug("map {} to {}", source, dest);
+
     final ClassDescriptor descriptor = getClassDescriptor(source);
     final DnValueMutator dnMutator = descriptor.getDnValueMutator();
     if (dnMutator != null) {
@@ -87,7 +87,8 @@ public abstract class AbstractLdapEntryMapper<T>
       logger.debug("using mutator {}", mutator);
       if (mutator != null) {
         final LdapAttribute attr = new LdapAttribute(
-          mutator.getSortBehavior(), mutator.isBinary());
+          mutator.getSortBehavior(),
+          mutator.isBinary());
         attr.setName(mutator.getName());
         if (attr.isBinary()) {
           final Collection<byte[]> c = mutator.getBinaryValues(source);
@@ -113,6 +114,7 @@ public abstract class AbstractLdapEntryMapper<T>
   public void map(final LdapEntry source, final T dest)
   {
     logger.debug("map {} to {}", source, dest);
+
     final ClassDescriptor descriptor = getClassDescriptor(dest);
     final DnValueMutator dnMutator = descriptor.getDnValueMutator();
     if (dnMutator != null) {

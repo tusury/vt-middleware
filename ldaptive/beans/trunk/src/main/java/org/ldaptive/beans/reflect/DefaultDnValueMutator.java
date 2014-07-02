@@ -72,10 +72,11 @@ public class DefaultDnValueMutator implements DnValueMutator
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::dnMutator=%s]",
-      getClass().getName(),
-      hashCode(),
-      dnMutator);
+    return
+      String.format(
+        "[%s@%d::dnMutator=%s]",
+        getClass().getName(),
+        hashCode(),
+        dnMutator);
   }
 }
