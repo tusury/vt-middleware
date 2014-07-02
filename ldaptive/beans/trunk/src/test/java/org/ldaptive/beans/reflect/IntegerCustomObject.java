@@ -149,74 +149,6 @@ public class IntegerCustomObject implements CustomObject
   }
 
 
-  /** Test class for the default ldap entry mapper. */
-  @Entry(
-    dn = "integerDn",
-    attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
-      }
-  )
-  public static class Default extends IntegerCustomObject {}
-
-
-  /** Test class for the spring ldap entry mapper. */
-  @Entry(
-    dn = "integerDn",
-    attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
-      }
-  )
-  public static class Spring extends IntegerCustomObject
-  {
-    // CheckStyle:JavadocMethod OFF
-    // CheckStyle:LeftCurly OFF
-    public Integer getType2() { return type2; }
-    public void setType2(final Integer t) { type2 = t; }
-    public Integer[] getTypeArray2() { return typeArray2; }
-    public void setTypeArray2(final Integer[] t) { typeArray2 = t; }
-    public Collection<Integer> getTypeCol2() { return typeCol2; }
-    public void setTypeCol2(final Collection<Integer> c) { typeCol2 = c; }
-    public Set<Integer> getTypeSet2() { return typeSet2; }
-    public void setTypeSet2(final Set<Integer> s) { typeSet2 = s; }
-    public List<Integer> getTypeList2() { return typeList2; }
-    public void setTypeList2(final List<Integer> l) { typeList2 = l; }
-    // CheckStyle:LeftCurly ON
-    // CheckStyle:JavadocMethod ON
-  }
-
-
   /**
    * Creates an integer custom object for testing.
    *
@@ -320,4 +252,70 @@ public class IntegerCustomObject implements CustomObject
   }
 
 
+  /** Test class for the default ldap entry mapper. */
+  @Entry(
+    dn = "integerDn",
+    attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "typeArray1",
+        property = "typeArray1",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeArray2",
+        property = "typeArray2",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")
+      }
+  )
+  public static class Default extends IntegerCustomObject {}
+
+
+  /** Test class for the spring ldap entry mapper. */
+  @Entry(
+    dn = "integerDn",
+    attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "typeArray1",
+        property = "typeArray1",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeArray2",
+        property = "typeArray2",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")
+      }
+  )
+  public static class Spring extends IntegerCustomObject
+  {
+    // CheckStyle:JavadocMethod OFF
+    // CheckStyle:LeftCurly OFF
+    public Integer getType2() { return type2; }
+    public void setType2(final Integer t) { type2 = t; }
+    public Integer[] getTypeArray2() { return typeArray2; }
+    public void setTypeArray2(final Integer[] t) { typeArray2 = t; }
+    public Collection<Integer> getTypeCol2() { return typeCol2; }
+    public void setTypeCol2(final Collection<Integer> c) { typeCol2 = c; }
+    public Set<Integer> getTypeSet2() { return typeSet2; }
+    public void setTypeSet2(final Set<Integer> s) { typeSet2 = s; }
+    public List<Integer> getTypeList2() { return typeList2; }
+    public void setTypeList2(final List<Integer> l) { typeList2 = l; }
+    // CheckStyle:LeftCurly ON
+    // CheckStyle:JavadocMethod ON
+  }
 }

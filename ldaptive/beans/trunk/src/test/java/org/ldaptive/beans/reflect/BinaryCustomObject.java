@@ -149,100 +149,6 @@ public class BinaryCustomObject implements CustomObject
   }
 
 
-  /** Test class for the default ldap entry mapper. */
-  @Entry(
-    dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org",
-    attributes = {
-      @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
-      @Attribute(
-        name = "customname2",
-        values = {"REVGRw==", "SElQUQ=="},
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "type1", property = "type1", binary = true),
-      @Attribute(name = "type2", property = "type2", binary = true),
-      @Attribute(name = "binarythree", property = "type3", binary = true),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
-      @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED)
-      }
-  )
-  public static class Default extends BinaryCustomObject {}
-
-
-  /** Test class for the spring ldap entry mapper. */
-  @Entry(
-    dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org",
-    attributes = {
-      @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
-      @Attribute(
-        name = "customname2",
-        values = {"REVGRw==", "SElQUQ=="},
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "type1", property = "type1", binary = true),
-      @Attribute(name = "type2", property = "type2", binary = true),
-      @Attribute(name = "binarythree", property = "type3", binary = true),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
-      @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2",
-        binary = true,
-        sortBehavior = SortBehavior.ORDERED)
-      }
-  )
-  public static class Spring extends BinaryCustomObject
-  {
-    // CheckStyle:JavadocMethod OFF
-    // CheckStyle:LeftCurly OFF
-    public byte[] getType2() { return type2; }
-    public void setType2(final byte[] t) { type2 = t; }
-    public Collection<byte[]> getTypeCol2() { return typeCol2; }
-    public void setTypeCol2(final Collection<byte[]> c) { typeCol2 = c; }
-    public Set<byte[]> getTypeSet2() { return typeSet2; }
-    public void setTypeSet2(final Set<byte[]> s) { typeSet2 = s; }
-    public List<byte[]> getTypeList2() { return typeList2; }
-    public void setTypeList2(final List<byte[]> l) { typeList2 = l; }
-    // CheckStyle:LeftCurly ON
-    // CheckStyle:JavadocMethod ON
-  }
-
-
   /**
    * Creates a binary custom object for testing.
    *
@@ -338,5 +244,99 @@ public class BinaryCustomObject implements CustomObject
       typeList2);
     return entry;
     // CheckStyle:MagicNumber ON
+  }
+
+
+  /** Test class for the default ldap entry mapper. */
+  @Entry(
+    dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org",
+    attributes = {
+      @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
+      @Attribute(
+        name = "customname2",
+        values = {"REVGRw==", "SElQUQ=="},
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "type1", property = "type1", binary = true),
+      @Attribute(name = "type2", property = "type2", binary = true),
+      @Attribute(name = "binarythree", property = "type3", binary = true),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
+      @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED)
+      }
+  )
+  public static class Default extends BinaryCustomObject {}
+
+
+  /** Test class for the spring ldap entry mapper. */
+  @Entry(
+    dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org",
+    attributes = {
+      @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
+      @Attribute(
+        name = "customname2",
+        values = {"REVGRw==", "SElQUQ=="},
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "type1", property = "type1", binary = true),
+      @Attribute(name = "type2", property = "type2", binary = true),
+      @Attribute(name = "binarythree", property = "type3", binary = true),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
+      @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2",
+        binary = true,
+        sortBehavior = SortBehavior.ORDERED)
+      }
+  )
+  public static class Spring extends BinaryCustomObject
+  {
+    // CheckStyle:JavadocMethod OFF
+    // CheckStyle:LeftCurly OFF
+    public byte[] getType2() { return type2; }
+    public void setType2(final byte[] t) { type2 = t; }
+    public Collection<byte[]> getTypeCol2() { return typeCol2; }
+    public void setTypeCol2(final Collection<byte[]> c) { typeCol2 = c; }
+    public Set<byte[]> getTypeSet2() { return typeSet2; }
+    public void setTypeSet2(final Set<byte[]> s) { typeSet2 = s; }
+    public List<byte[]> getTypeList2() { return typeList2; }
+    public void setTypeList2(final List<byte[]> l) { typeList2 = l; }
+    // CheckStyle:LeftCurly ON
+    // CheckStyle:JavadocMethod ON
   }
 }

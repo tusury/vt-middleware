@@ -149,74 +149,6 @@ public class FloatCustomObject implements CustomObject
   }
 
 
-  /** Test class for the default ldap entry mapper. */
-  @Entry(
-    dn = "floatDn",
-    attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
-      }
-  )
-  public static class Default extends FloatCustomObject {}
-
-
-  /** Test class for the spring ldap entry mapper. */
-  @Entry(
-    dn = "floatDn",
-    attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
-      }
-  )
-  public static class Spring extends FloatCustomObject
-  {
-    // CheckStyle:JavadocMethod OFF
-    // CheckStyle:LeftCurly OFF
-    public Float getType2() { return type2; }
-    public void setType2(final Float t) { type2 = t; }
-    public Float[] getTypeArray2() { return typeArray2; }
-    public void setTypeArray2(final Float[] t) { typeArray2 = t; }
-    public Collection<Float> getTypeCol2() { return typeCol2; }
-    public void setTypeCol2(final Collection<Float> c) { typeCol2 = c; }
-    public Set<Float> getTypeSet2() { return typeSet2; }
-    public void setTypeSet2(final Set<Float> s) { typeSet2 = s; }
-    public List<Float> getTypeList2() { return typeList2; }
-    public void setTypeList2(final List<Float> l) { typeList2 = l; }
-    // CheckStyle:LeftCurly ON
-    // CheckStyle:JavadocMethod ON
-  }
-
-
   /**
    * Creates a float custom object for testing.
    *
@@ -317,5 +249,73 @@ public class FloatCustomObject implements CustomObject
       typeList1,
       typeList2);
     return entry;
+  }
+
+
+  /** Test class for the default ldap entry mapper. */
+  @Entry(
+    dn = "floatDn",
+    attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "typeArray1",
+        property = "typeArray1",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeArray2",
+        property = "typeArray2",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")
+      }
+  )
+  public static class Default extends FloatCustomObject {}
+
+
+  /** Test class for the spring ldap entry mapper. */
+  @Entry(
+    dn = "floatDn",
+    attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "typeArray1",
+        property = "typeArray1",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(
+        name = "typeArray2",
+        property = "typeArray2",
+        sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")
+      }
+  )
+  public static class Spring extends FloatCustomObject
+  {
+    // CheckStyle:JavadocMethod OFF
+    // CheckStyle:LeftCurly OFF
+    public Float getType2() { return type2; }
+    public void setType2(final Float t) { type2 = t; }
+    public Float[] getTypeArray2() { return typeArray2; }
+    public void setTypeArray2(final Float[] t) { typeArray2 = t; }
+    public Collection<Float> getTypeCol2() { return typeCol2; }
+    public void setTypeCol2(final Collection<Float> c) { typeCol2 = c; }
+    public Set<Float> getTypeSet2() { return typeSet2; }
+    public void setTypeSet2(final Set<Float> s) { typeSet2 = s; }
+    public List<Float> getTypeList2() { return typeList2; }
+    public void setTypeList2(final List<Float> l) { typeList2 = l; }
+    // CheckStyle:LeftCurly ON
+    // CheckStyle:JavadocMethod ON
   }
 }

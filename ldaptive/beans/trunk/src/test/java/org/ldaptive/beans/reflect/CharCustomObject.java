@@ -156,6 +156,48 @@ public class CharCustomObject implements CustomObject
   }
 
 
+  /**
+   * Creates a char custom object for testing.
+   *
+   * @param  <T>  type of char custom object
+   * @param  type  of char custom object
+   *
+   * @return  instance of char custom object
+   */
+  public static <T extends CharCustomObject> T createCustomObject(
+    final Class<T> type)
+  {
+    final Set<char[]> s1 = new HashSet<char[]>();
+    s1.add(new char[]{'t', 's', 'v', '1'});
+    s1.add(new char[]{'t', 's', 'v', '2'});
+
+    final T o1;
+    try {
+      o1 = type.newInstance();
+    } catch (InstantiationException e) {
+      throw new IllegalStateException(e);
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException(e);
+    }
+    o1.setCustomDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");
+    o1.setType1(new char[]{'t', 'v', '1'});
+    o1.writeType2(new char[]{'t', 'v', '2'});
+    o1.setType3(new char[]{'t', 'v', '3'});
+    o1.setTypeCol1(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
+                                 new char[]{'t', 'c', 'v', '2'}));
+    o1.writeTypeCol2(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
+                                   new char[]{'t', 'c', 'v', '2'}));
+    o1.setTypeSet1(s1);
+    o1.writeTypeSet2(s1);
+    o1.setTypeList1(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
+                                  new char[]{'t', 'l', 'v', '2'}));
+    o1.writeTypeList2(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
+                                    new char[]{'t', 'l', 'v', '2'}));
+
+    return o1;
+  }
+
+
   /** Test class for the default ldap entry mapper. */
   @Entry(
     dn = "customDn",
@@ -223,47 +265,5 @@ public class CharCustomObject implements CustomObject
     public void setTypeList2(final List<char[]> l) { typeList2 = l; }
     // CheckStyle:LeftCurly ON
     // CheckStyle:JavadocMethod ON
-  }
-
-
-  /**
-   * Creates a char custom object for testing.
-   *
-   * @param  <T>  type of char custom object
-   * @param  type  of char custom object
-   *
-   * @return  instance of char custom object
-   */
-  public static <T extends CharCustomObject> T createCustomObject(
-    final Class<T> type)
-  {
-    final Set<char[]> s1 = new HashSet<char[]>();
-    s1.add(new char[]{'t', 's', 'v', '1'});
-    s1.add(new char[]{'t', 's', 'v', '2'});
-
-    final T o1;
-    try {
-      o1 = type.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
-      throw new IllegalStateException(e);
-    }
-    o1.setCustomDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");
-    o1.setType1(new char[]{'t', 'v', '1'});
-    o1.writeType2(new char[]{'t', 'v', '2'});
-    o1.setType3(new char[]{'t', 'v', '3'});
-    o1.setTypeCol1(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
-                                 new char[]{'t', 'c', 'v', '2'}));
-    o1.writeTypeCol2(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
-                                   new char[]{'t', 'c', 'v', '2'}));
-    o1.setTypeSet1(s1);
-    o1.writeTypeSet2(s1);
-    o1.setTypeList1(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
-                                  new char[]{'t', 'l', 'v', '2'}));
-    o1.writeTypeList2(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
-                                    new char[]{'t', 'l', 'v', '2'}));
-
-    return o1;
   }
 }
