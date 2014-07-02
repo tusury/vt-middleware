@@ -36,13 +36,15 @@ public class VerifyNameControlTest
   @DataProvider(name = "request")
   public Object[][] createData()
   {
-    return new Object[][] {
-      // BER: 30:14:02:01:00:04:0F:61:64:2E:6C:64:61:70:74:69:76:65:2E:6F:72:67
-      new Object[] {
-        LdapUtils.base64Decode("MBQCAQAED2FkLmxkYXB0aXZlLm9yZw=="),
-        new VerifyNameControl("ad.ldaptive.org"),
-      },
-    };
+    return
+      new Object[][] {
+        // BER:
+        // 30:14:02:01:00:04:0F:61:64:2E:6C:64:61:70:74:69:76:65:2E:6F:72:67
+        new Object[] {
+          LdapUtils.base64Decode("MBQCAQAED2FkLmxkYXB0aXZlLm9yZw=="),
+          new VerifyNameControl("ad.ldaptive.org"),
+        },
+      };
   }
 
 
@@ -52,7 +54,10 @@ public class VerifyNameControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request")
+  @Test(
+    groups = {"control"},
+    dataProvider = "request"
+  )
   public void encode(final byte[] berValue, final VerifyNameControl expected)
     throws Exception
   {

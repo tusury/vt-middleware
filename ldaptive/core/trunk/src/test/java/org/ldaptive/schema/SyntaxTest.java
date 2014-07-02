@@ -36,30 +36,25 @@ public class SyntaxTest
   @DataProvider(name = "definitions")
   public Object[][] createDefinitions()
   {
-    return new Object[][] {
-      new Object[] {
-        new Syntax(
-          "1.3.6.1.4.1.1466.115.121.1.5",
-          null,
-          null),
-        "( 1.3.6.1.4.1.1466.115.121.1.5 )",
-      },
-      new Object[] {
-        new Syntax(
-          "1.3.6.1.4.1.1466.115.121.1.5",
-          "Binary",
-          null),
-        "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' )",
-      },
-      new Object[] {
-        new Syntax(
-          "1.3.6.1.4.1.1466.115.121.1.5",
-          "Binary",
-          new Extensions("X-NOT-HUMAN-READABLE", Arrays.asList("TRUE"))),
-        "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' " +
-          "X-NOT-HUMAN-READABLE 'TRUE' )",
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          new Syntax("1.3.6.1.4.1.1466.115.121.1.5", null, null),
+          "( 1.3.6.1.4.1.1466.115.121.1.5 )",
+        },
+        new Object[] {
+          new Syntax("1.3.6.1.4.1.1466.115.121.1.5", "Binary", null),
+          "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' )",
+        },
+        new Object[] {
+          new Syntax(
+            "1.3.6.1.4.1.1466.115.121.1.5",
+            "Binary",
+            new Extensions("X-NOT-HUMAN-READABLE", Arrays.asList("TRUE"))),
+          "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' " +
+            "X-NOT-HUMAN-READABLE 'TRUE' )",
+        },
+      };
   }
 
 
@@ -69,10 +64,11 @@ public class SyntaxTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"schema"}, dataProvider = "definitions")
-  public void parse(
-    final Syntax attributeSyntax,
-    final String definition)
+  @Test(
+    groups = {"schema"},
+    dataProvider = "definitions"
+  )
+  public void parse(final Syntax attributeSyntax, final String definition)
     throws Exception
   {
     final Syntax parsed = Syntax.parse(definition);

@@ -40,30 +40,30 @@ public class HexTest
   @DataProvider(name = "encode-decode")
   public Object[][] createEncodeDecodeData()
   {
-    return new Object[][] {
-      new Object[] {
-        "".getBytes(UTF8_CHARSET),
-        "",
-      },
-      new Object[] {
-        "Hello World".getBytes(UTF8_CHARSET),
-        "48656C6C6F20576F726C64",
-      },
-      new Object[] {
-        "Hexadecimal Encode".getBytes(UTF8_CHARSET),
-        "48657861646563696D616C20456E636F6465",
-      },
-      new Object[] {
-        new Scanner(
-          HexTest.class.getResourceAsStream(
-            "/org/ldaptive/io/plaintext.txt")).useDelimiter(
-              "\\Z").next().getBytes(UTF8_CHARSET),
-        new Scanner(
-          HexTest.class.getResourceAsStream(
-            "/org/ldaptive/io/hex.txt")).useDelimiter(
-              "\\Z").next(),
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          "".getBytes(UTF8_CHARSET),
+          "",
+        },
+        new Object[] {
+          "Hello World".getBytes(UTF8_CHARSET),
+          "48656C6C6F20576F726C64",
+        },
+        new Object[] {
+          "Hexadecimal Encode".getBytes(UTF8_CHARSET),
+          "48657861646563696D616C20456E636F6465",
+        },
+        new Object[] {
+          new Scanner(
+            HexTest.class.getResourceAsStream(
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter(
+                "\\Z").next().getBytes(UTF8_CHARSET),
+          new Scanner(
+            HexTest.class.getResourceAsStream(
+              "/org/ldaptive/io/hex.txt")).useDelimiter("\\Z").next(),
+        },
+      };
   }
 
 
@@ -75,34 +75,35 @@ public class HexTest
   @DataProvider(name = "invalid-decode")
   public Object[][] createInvalidDecode()
   {
-    return new Object[][] {
-      // odd characters
-      new Object[] {
-        new char[] {'A', },
-      },
-      new Object[] {
-        new char[] {'A', 'B', 'C', },
-      },
-      new Object[] {
-        new char[] {'A', 'B', 'C', 'D', 'E', },
-      },
-      new Object[] {
-        new char[] {97},
-      },
-      // invalid characters
-      new Object[] {
-        new char[] {'A', 'l', },
-      },
-      new Object[] {
-        new char[] {'l', 'A', },
-      },
-      new Object[] {
-        new char[] {'0', '4', '*', 'b'},
-      },
-      new Object[] {
-        new char[] {'0', '4', 'b', '*'},
-      },
-    };
+    return
+      new Object[][] {
+        // odd characters
+        new Object[] {
+          new char[] {'A', },
+        },
+        new Object[] {
+          new char[] {'A', 'B', 'C', },
+        },
+        new Object[] {
+          new char[] {'A', 'B', 'C', 'D', 'E', },
+        },
+        new Object[] {
+          new char[] {97},
+        },
+        // invalid characters
+        new Object[] {
+          new char[] {'A', 'l', },
+        },
+        new Object[] {
+          new char[] {'l', 'A', },
+        },
+        new Object[] {
+          new char[] {'0', '4', '*', 'b', },
+        },
+        new Object[] {
+          new char[] {'0', '4', 'b', '*', },
+        },
+      };
   }
 
 
@@ -112,7 +113,10 @@ public class HexTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "encode-decode")
+  @Test(
+    groups = {"io"},
+    dataProvider = "encode-decode"
+  )
   public void encodeAndDecode(final byte[] raw, final String encoded)
     throws Exception
   {
@@ -127,7 +131,10 @@ public class HexTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "invalid-decode")
+  @Test(
+    groups = {"io"},
+    dataProvider = "invalid-decode"
+  )
   public void decodeException(final char[] data)
     throws Exception
   {

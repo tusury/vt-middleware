@@ -36,19 +36,21 @@ public class ProxyAuthorizationControlTest
   @DataProvider(name = "request")
   public Object[][] createData()
   {
-    return new Object[][] {
-      new Object[] {
-        new byte[0],
-        new ProxyAuthorizationControl(),
-      },
-      // BER: 64:6E:3A:75:69:64:3D:31:2C:6F:75:3D:74:65:73:74:2C:64:63:3D:6C:64:
-      //      61:70:74:69:76:65:2C:64:63:3D:6F:72:67
-      new Object[] {
-        LdapUtils.base64Decode(
-          "ZG46dWlkPTEsb3U9dGVzdCxkYz1sZGFwdGl2ZSxkYz1vcmc="),
-        new ProxyAuthorizationControl("dn:uid=1,ou=test,dc=ldaptive,dc=org"),
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          new byte[0],
+          new ProxyAuthorizationControl(),
+        },
+        // BER:
+        // 64:6E:3A:75:69:64:3D:31:2C:6F:75:3D:74:65:73:74:2C:64:63:3D:6C:64:
+        // 61:70:74:69:76:65:2C:64:63:3D:6F:72:67
+        new Object[] {
+          LdapUtils.base64Decode(
+            "ZG46dWlkPTEsb3U9dGVzdCxkYz1sZGFwdGl2ZSxkYz1vcmc="),
+          new ProxyAuthorizationControl("dn:uid=1,ou=test,dc=ldaptive,dc=org"),
+        },
+      };
   }
 
 
@@ -58,7 +60,10 @@ public class ProxyAuthorizationControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request")
+  @Test(
+    groups = {"control"},
+    dataProvider = "request"
+  )
   public void decode(
     final byte[] berValue,
     final ProxyAuthorizationControl expected)

@@ -42,11 +42,13 @@ public class DeltaTimeValueTranscoderTest
   public Object[][] createDates()
     throws Exception
   {
-    return new Object[][] {
-      new Object[] {
-        2592000000L,
-        "-25920000000000", },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          2592000000L,
+          "-25920000000000",
+        },
+      };
   }
 
 
@@ -56,7 +58,10 @@ public class DeltaTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "times")
+  @Test(
+    groups = {"io"},
+    dataProvider = "times"
+  )
   public void testTranscode(final Long millis, final String deltaTime)
     throws Exception
   {

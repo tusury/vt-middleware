@@ -230,97 +230,66 @@ public class DefaultHostnameVerifierTest
     throws Exception
   {
     final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-    final X509Certificate aFooComCert =
-      (X509Certificate) cf.generateCertificate(
+    final X509Certificate aFooComCert = (X509Certificate)
+      cf.generateCertificate(
         new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
-    final X509Certificate wcFooComCert =
-      (X509Certificate) cf.generateCertificate(
+    final X509Certificate wcFooComCert = (X509Certificate)
+      cf.generateCertificate(
         new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_COM_CERT)));
-    final X509Certificate wcFooBarComCert =
-      (X509Certificate) cf.generateCertificate(
+    final X509Certificate wcFooBarComCert = (X509Certificate)
+      cf.generateCertificate(
         new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_BAR_COM_CERT)));
-    final X509Certificate aFooComAltNameCert =
-      (X509Certificate) cf.generateCertificate(
+    final X509Certificate aFooComAltNameCert = (X509Certificate)
+      cf.generateCertificate(
         new ByteArrayInputStream(
           LdapUtils.base64Decode(A_FOO_COM_ALTNAME_CERT)));
-    final X509Certificate wcFooComAltNameCert =
-      (X509Certificate) cf.generateCertificate(
+    final X509Certificate wcFooComAltNameCert = (X509Certificate)
+      cf.generateCertificate(
         new ByteArrayInputStream(
           LdapUtils.base64Decode(WC_FOO_COM_ALTNAME_CERT)));
-    final X509Certificate localhostCert =
-      (X509Certificate) cf.generateCertificate(
+    final X509Certificate localhostCert = (X509Certificate)
+      cf.generateCertificate(
         new ByteArrayInputStream(LdapUtils.base64Decode(LOCALHOST_CERT)));
-    final X509Certificate localhostAltNameCert =
-      (X509Certificate) cf.generateCertificate(
+    final X509Certificate localhostAltNameCert = (X509Certificate)
+      cf.generateCertificate(
         new ByteArrayInputStream(
           LdapUtils.base64Decode(LOCALHOST_ALTNAME_CERT)));
 
-    return new Object[][] {
-      /* a.foo.com == CN=a.foo.com */
-      new Object[] {
-        "a.foo.com", aFooComCert, true,
-      },
-      /* b.foo.com != CN=a.foo.com */
-      new Object[] {
-        "b.foo.com", aFooComCert, false,
-      },
-      /* a.foo.com == CN=*.foo.com */
-      new Object[] {
-        "a.foo.com", wcFooComCert, true,
-      },
-      /* b.foo.com == CN=*.foo.com */
-      new Object[] {
-        "b.foo.com", wcFooComCert, true,
-      },
-      /* a.b.foo.com != CN=*.foo.com */
-      new Object[] {
-        "a.b.foo.com", wcFooComCert, false,
-      },
-      /* a.foo.com != CN=*.foo.bar.com */
-      new Object[] {
-        "a.foo.com", wcFooBarComCert, false,
-      },
-      /* a.b.foo.bar.com != CN=*.foo.bar.com */
-      new Object[] {
-        "a.b.foo.bar.com", wcFooBarComCert, false,
-      },
-      /* a.foo.bar.com == CN=*.foo.bar.com */
-      new Object[] {
-        "a.foo.bar.com", wcFooBarComCert, true,
-      },
-      /* a.foo.com == subjAltName: DNS=a.foo.com */
-      new Object[] {
-        "a.foo.com", aFooComAltNameCert, true,
-      },
-      /* b.foo.com == subjAltName: DNS=b.foo.com */
-      new Object[] {
-        "b.foo.com", aFooComAltNameCert, true,
-      },
-      /* a.foo.com == subjAltName: DNS=*.foo.com */
-      new Object[] {
-        "a.foo.com", wcFooComAltNameCert, true,
-      },
-      /* b.foo.com == subjAltName: DNS=*.foo.com */
-      new Object[] {
-        "b.foo.com", wcFooComAltNameCert, true,
-      },
-      /* a.b.foo.com != subjAltName: DNS=*.foo.com */
-      new Object[] {
-        "a.b.foo.com", wcFooComAltNameCert, false,
-      },
-      /* 10.0.0.1 != CN=127.0.0.1 */
-      new Object[] {
-        "10.0.0.1", localhostCert, false,
-      },
-      /* 127.0.0.1 != CN=127.0.0.1, IPs can only match subjAltName */
-      new Object[] {
-        "127.0.0.1", localhostCert, false,
-      },
-      /* 127.0.0.1 == subjAltName: IP=127.0.0.1 */
-      new Object[] {
-        "127.0.0.1", localhostAltNameCert, true,
-      },
-    };
+    return
+      new Object[][] {
+        /* a.foo.com == CN=a.foo.com */
+        new Object[] {"a.foo.com", aFooComCert, true, },
+        /* b.foo.com != CN=a.foo.com */
+        new Object[] {"b.foo.com", aFooComCert, false, },
+        /* a.foo.com == CN=*.foo.com */
+        new Object[] {"a.foo.com", wcFooComCert, true, },
+        /* b.foo.com == CN=*.foo.com */
+        new Object[] {"b.foo.com", wcFooComCert, true, },
+        /* a.b.foo.com != CN=*.foo.com */
+        new Object[] {"a.b.foo.com", wcFooComCert, false, },
+        /* a.foo.com != CN=*.foo.bar.com */
+        new Object[] {"a.foo.com", wcFooBarComCert, false, },
+        /* a.b.foo.bar.com != CN=*.foo.bar.com */
+        new Object[] {"a.b.foo.bar.com", wcFooBarComCert, false, },
+        /* a.foo.bar.com == CN=*.foo.bar.com */
+        new Object[] {"a.foo.bar.com", wcFooBarComCert, true, },
+        /* a.foo.com == subjAltName: DNS=a.foo.com */
+        new Object[] {"a.foo.com", aFooComAltNameCert, true, },
+        /* b.foo.com == subjAltName: DNS=b.foo.com */
+        new Object[] {"b.foo.com", aFooComAltNameCert, true, },
+        /* a.foo.com == subjAltName: DNS=*.foo.com */
+        new Object[] {"a.foo.com", wcFooComAltNameCert, true, },
+        /* b.foo.com == subjAltName: DNS=*.foo.com */
+        new Object[] {"b.foo.com", wcFooComAltNameCert, true, },
+        /* a.b.foo.com != subjAltName: DNS=*.foo.com */
+        new Object[] {"a.b.foo.com", wcFooComAltNameCert, false, },
+        /* 10.0.0.1 != CN=127.0.0.1 */
+        new Object[] {"10.0.0.1", localhostCert, false, },
+        /* 127.0.0.1 != CN=127.0.0.1, IPs can only match subjAltName */
+        new Object[] {"127.0.0.1", localhostCert, false, },
+        /* 127.0.0.1 == subjAltName: IP=127.0.0.1 */
+        new Object[] {"127.0.0.1", localhostAltNameCert, true, },
+      };
   }
 
 
@@ -331,9 +300,14 @@ public class DefaultHostnameVerifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ssl"}, dataProvider = "certificates")
+  @Test(
+    groups = {"ssl"},
+    dataProvider = "certificates"
+  )
   public void verify(
-    final String hostname, final X509Certificate cert, final boolean pass)
+    final String hostname,
+    final X509Certificate cert,
+    final boolean pass)
     throws Exception
   {
     final boolean defaultResult = DEFAULT_VERIFIER.verify(hostname, cert);

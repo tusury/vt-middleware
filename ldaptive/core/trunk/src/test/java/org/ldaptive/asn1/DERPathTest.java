@@ -26,11 +26,10 @@ import org.testng.annotations.Test;
 public class DERPathTest
 {
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"asn1"})
-  public void testPushPop() throws Exception
+  public void testPushPop()
+    throws Exception
   {
     final DERPath path = new DERPath("/SEQ");
     path.pushNode("OCTSTR");
@@ -45,39 +44,36 @@ public class DERPathTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"asn1"})
-  public void testEquals() throws Exception
+  public void testEquals()
+    throws Exception
   {
     Assert.assertTrue(
-        new DERPath("/SEQ[0]/OCTSTR[1]").equals(
-            new DERPath("/SEQ[0]/OCTSTR[1]")));
+      new DERPath("/SEQ[0]/OCTSTR[1]").equals(
+        new DERPath("/SEQ[0]/OCTSTR[1]")));
     Assert.assertFalse(
-        new DERPath("/SEQ[0]/OCTSTR[1]").equals(
-            new DERPath("/SEQ[0]/OCTSTR[2]")));
+      new DERPath("/SEQ[0]/OCTSTR[1]").equals(
+        new DERPath("/SEQ[0]/OCTSTR[2]")));
     Assert.assertFalse(
-        new DERPath("/SEQ[0]/OCTSTR[1]").equals(
-            new DERPath("/SEQ/OCTSTR[2]")));
+      new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ/OCTSTR[2]")));
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"asn1"})
-  public void testHashcode() throws Exception
+  public void testHashcode()
+    throws Exception
   {
     Assert.assertEquals(
-        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode(),
-        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode());
+      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode(),
+      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode());
     Assert.assertFalse(
-        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
-        new DERPath("/SEQ[0]/OCTSTR[2]").hashCode());
+      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
+      new DERPath("/SEQ[0]/OCTSTR[2]").hashCode());
     Assert.assertFalse(
-        new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
-        new DERPath("/SEQ/OCTSTR[2]").hashCode());
+      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
+      new DERPath("/SEQ/OCTSTR[2]").hashCode());
   }
 
   /**
@@ -88,31 +84,35 @@ public class DERPathTest
   @DataProvider(name = "paths")
   public Object[][] createTestParams()
   {
-    return new Object[][] {
-      new Object[] {
-        "/SET/SEQ/INT[1]",
-        "/SET/SEQ/INT[1]",
-      },
-      new Object[] {
-        "/SET/CTX(0)/INT",
-        "/SET/CTX(0)/INT",
-      },
-      new Object[] {
-        "/SET/APP(0)[1]/CTX(1)",
-        "/SET/APP(0)[1]/CTX(1)",
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          "/SET/SEQ/INT[1]",
+          "/SET/SEQ/INT[1]",
+        },
+        new Object[] {
+          "/SET/CTX(0)/INT",
+          "/SET/CTX(0)/INT",
+        },
+        new Object[] {
+          "/SET/APP(0)[1]/CTX(1)",
+          "/SET/APP(0)[1]/CTX(1)",
+        },
+      };
   }
 
 
   /**
    * @param  testPath  to test
    * @param  expected  to test
+   *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "paths")
-  public void testToString(
-    final String testPath, final String expected)
+  @Test(
+    groups = {"asn1"},
+    dataProvider = "paths"
+  )
+  public void testToString(final String testPath, final String expected)
     throws Exception
   {
     Assert.assertEquals(new DERPath(testPath).toString(), expected);
@@ -122,11 +122,14 @@ public class DERPathTest
   /**
    * @param  testPath  to test
    * @param  expected  to test
+   *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "paths")
-  public void testEquals(
-    final String testPath, final String expected)
+  @Test(
+    groups = {"asn1"},
+    dataProvider = "paths"
+  )
+  public void testEquals(final String testPath, final String expected)
     throws Exception
   {
     Assert.assertTrue(new DERPath(testPath).equals(new DERPath(expected)));

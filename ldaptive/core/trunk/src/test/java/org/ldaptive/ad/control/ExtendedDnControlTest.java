@@ -36,20 +36,21 @@ public class ExtendedDnControlTest
   @DataProvider(name = "request")
   public Object[][] createData()
   {
-    return new Object[][] {
-      // standard format
-      // BER: 30:03:02:01:01:
-      new Object[] {
-        LdapUtils.base64Decode("MAMCAQE="),
-        new ExtendedDnControl(),
-      },
-      // hexadecimal format
-      // BER: 30:03:02:01:00
-      new Object[] {
-        LdapUtils.base64Decode("MAMCAQA="),
-        new ExtendedDnControl(ExtendedDnControl.Flag.HEXADECIMAL),
-      },
-    };
+    return
+      new Object[][] {
+        // standard format
+        // BER: 30:03:02:01:01:
+        new Object[] {
+          LdapUtils.base64Decode("MAMCAQE="),
+          new ExtendedDnControl(),
+        },
+        // hexadecimal format
+        // BER: 30:03:02:01:00
+        new Object[] {
+          LdapUtils.base64Decode("MAMCAQA="),
+          new ExtendedDnControl(ExtendedDnControl.Flag.HEXADECIMAL),
+        },
+      };
   }
 
 
@@ -59,7 +60,10 @@ public class ExtendedDnControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request")
+  @Test(
+    groups = {"control"},
+    dataProvider = "request"
+  )
   public void encode(final byte[] berValue, final ExtendedDnControl expected)
     throws Exception
   {

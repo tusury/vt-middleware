@@ -44,11 +44,13 @@ public class FileTimeValueTranscoderTest
   public Object[][] createDates()
     throws Exception
   {
-    return new Object[][] {
-      new Object[] {
-        createCalendar("UTC", 2014, 1, 28, 21, 54, 27, 711),
-        "130354196677110000", },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          createCalendar("UTC", 2014, 1, 28, 21, 54, 27, 711),
+          "130354196677110000",
+        },
+      };
   }
 
 
@@ -58,7 +60,10 @@ public class FileTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "times")
+  @Test(
+    groups = {"io"},
+    dataProvider = "times"
+  )
   public void testTranscode(final Calendar date, final String fileTime)
     throws Exception
   {
@@ -82,27 +87,35 @@ public class FileTimeValueTranscoderTest
     calendar.setTimeZone(TimeZone.getTimeZone(timezone));
     for (int i = 0; i < values.length; i++) {
       switch (i) {
+
       case 0:
         calendar.set(Calendar.YEAR, values[i]);
         break;
+
       case 1:
         calendar.set(Calendar.MONTH, values[i] - 1);
         break;
+
       case 2:
         calendar.set(Calendar.DATE, values[i]);
         break;
+
       case 3:
         calendar.set(Calendar.HOUR_OF_DAY, values[i]);
         break;
+
       case 4:
         calendar.set(Calendar.MINUTE, values[i]);
         break;
+
       case 5:
         calendar.set(Calendar.SECOND, values[i]);
         break;
+
       case 6:
         calendar.set(Calendar.MILLISECOND, values[i]);
         break;
+
       default:
         throw new IllegalArgumentException("Too many values");
       }

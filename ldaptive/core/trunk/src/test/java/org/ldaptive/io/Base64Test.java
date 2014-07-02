@@ -40,30 +40,30 @@ public class Base64Test
   @DataProvider(name = "encode-decode")
   public Object[][] createEncodeDecodeData()
   {
-    return new Object[][] {
-      new Object[] {
-        "".getBytes(UTF8_CHARSET),
-        "",
-      },
-      new Object[] {
-        "Hello World".getBytes(UTF8_CHARSET),
-        "SGVsbG8gV29ybGQ=",
-      },
-      new Object[] {
-        "Base64 Encode".getBytes(UTF8_CHARSET),
-        "QmFzZTY0IEVuY29kZQ==",
-      },
-      new Object[] {
-        new Scanner(
-          Base64Test.class.getResourceAsStream(
-            "/org/ldaptive/io/plaintext.txt")).useDelimiter(
-              "\\Z").next().getBytes(UTF8_CHARSET),
-        new Scanner(
-          Base64Test.class.getResourceAsStream(
-            "/org/ldaptive/io/base64-0.txt")).useDelimiter(
-              "\\Z").next(),
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          "".getBytes(UTF8_CHARSET),
+          "",
+        },
+        new Object[] {
+          "Hello World".getBytes(UTF8_CHARSET),
+          "SGVsbG8gV29ybGQ=",
+        },
+        new Object[] {
+          "Base64 Encode".getBytes(UTF8_CHARSET),
+          "QmFzZTY0IEVuY29kZQ==",
+        },
+        new Object[] {
+          new Scanner(
+            Base64Test.class.getResourceAsStream(
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter(
+                "\\Z").next().getBytes(UTF8_CHARSET),
+          new Scanner(
+            Base64Test.class.getResourceAsStream(
+              "/org/ldaptive/io/base64-0.txt")).useDelimiter("\\Z").next(),
+        },
+      };
   }
 
 
@@ -75,28 +75,27 @@ public class Base64Test
   @DataProvider(name = "decode")
   public Object[][] createDecodeData()
   {
-    return new Object[][] {
-      new Object[] {
-        new Scanner(
-          Base64Test.class.getResourceAsStream(
-            "/org/ldaptive/io/plaintext.txt")).useDelimiter(
-              "\\Z").next().getBytes(UTF8_CHARSET),
-        new Scanner(
-          Base64Test.class.getResourceAsStream(
-            "/org/ldaptive/io/base64-76.txt")).useDelimiter(
-              "\\Z").next(),
-      },
-      new Object[] {
-        new Scanner(
-          Base64Test.class.getResourceAsStream(
-            "/org/ldaptive/io/plaintext.txt")).useDelimiter(
-              "\\Z").next().getBytes(UTF8_CHARSET),
-        new Scanner(
-          Base64Test.class.getResourceAsStream(
-            "/org/ldaptive/io/base64-64.txt")).useDelimiter(
-              "\\Z").next(),
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          new Scanner(
+            Base64Test.class.getResourceAsStream(
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter(
+                "\\Z").next().getBytes(UTF8_CHARSET),
+          new Scanner(
+            Base64Test.class.getResourceAsStream(
+              "/org/ldaptive/io/base64-76.txt")).useDelimiter("\\Z").next(),
+        },
+        new Object[] {
+          new Scanner(
+            Base64Test.class.getResourceAsStream(
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter(
+                "\\Z").next().getBytes(UTF8_CHARSET),
+          new Scanner(
+            Base64Test.class.getResourceAsStream(
+              "/org/ldaptive/io/base64-64.txt")).useDelimiter("\\Z").next(),
+        },
+      };
   }
 
 
@@ -108,14 +107,11 @@ public class Base64Test
   @DataProvider(name = "invalid-decode")
   public Object[][] createInvalidDecode()
   {
-    return new Object[][] {
-      new Object[] {
-        "QmFzZTY0IEVuY29kZQ=",
-      },
-      new Object[] {
-        "QmFzZTY0IEVuY29kZQ",
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {"QmFzZTY0IEVuY29kZQ=", },
+        new Object[] {"QmFzZTY0IEVuY29kZQ", },
+      };
   }
 
 
@@ -125,7 +121,10 @@ public class Base64Test
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "encode-decode")
+  @Test(
+    groups = {"io"},
+    dataProvider = "encode-decode"
+  )
   public void encodeAndDecode(final byte[] raw, final String encoded)
     throws Exception
   {
@@ -141,7 +140,10 @@ public class Base64Test
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "decode")
+  @Test(
+    groups = {"io"},
+    dataProvider = "decode"
+  )
   public void decode(final byte[] raw, final String encoded)
     throws Exception
   {
@@ -154,7 +156,10 @@ public class Base64Test
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "invalid-decode")
+  @Test(
+    groups = {"io"},
+    dataProvider = "invalid-decode"
+  )
   public void decodeException(final String data)
     throws Exception
   {

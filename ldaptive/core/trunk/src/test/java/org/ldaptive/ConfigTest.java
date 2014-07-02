@@ -38,7 +38,9 @@ public class ConfigTest
   private static final Map<Class<?>, Object> PRIMITIVE_TYPES =
     new HashMap<Class<?>, Object>();
 
-  /** Initialize primitive type values.*/
+  /**
+   * Initialize primitive type values.
+   */
   static {
     PRIMITIVE_TYPES.put(int.class, 0);
     PRIMITIVE_TYPES.put(long.class, 0);
@@ -54,31 +56,26 @@ public class ConfigTest
   @DataProvider(name = "configs")
   public Object[][] createConfigs()
   {
-    return new Object[][] {
-      new Object[] {
-        new ConnectionConfig(),
-      },
-      new Object[] {
-        new PoolConfig(),
-      },
-      new Object[] {
-        new ProviderConfig(),
-      },
-      new Object[] {
-        new SaslConfig(),
-      },
-      new Object[] {
-        new SslConfig(),
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {new ConnectionConfig(), },
+        new Object[] {new PoolConfig(), },
+        new Object[] {new ProviderConfig(), },
+        new Object[] {new SaslConfig(), },
+        new Object[] {new SslConfig(), },
+      };
   }
 
 
   /**
    * @param  config  to test
+   *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"config"}, dataProvider = "configs")
+  @Test(
+    groups = {"config"},
+    dataProvider = "configs"
+  )
   public void testImmutable(
     // CheckStyle:IllegalType OFF
     final AbstractConfig config)
@@ -99,7 +96,8 @@ public class ConfigTest
           Assert.fail("Should have thrown IllegalStateException for " + method);
         } catch (Exception e) {
           AssertJUnit.assertEquals(
-            IllegalStateException.class, e.getCause().getClass());
+            IllegalStateException.class,
+            e.getCause().getClass());
         }
       }
     }

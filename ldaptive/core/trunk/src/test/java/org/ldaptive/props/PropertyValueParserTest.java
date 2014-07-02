@@ -43,8 +43,7 @@ public class PropertyValueParserTest
   @DataProvider(name = "properties")
   public Object[][] createProperties()
   {
-    final String p1 =
-      "org.ldaptive.handler.RecursiveEntryHandler" +
+    final String p1 = "org.ldaptive.handler.RecursiveEntryHandler" +
       "{{searchAttribute=member}{mergeAttributes=mail,department}}";
     final RecursiveEntryHandler o1 = new RecursiveEntryHandler();
     o1.setSearchAttribute("member");
@@ -59,8 +58,7 @@ public class PropertyValueParserTest
     o3.setPrunePeriod(60);
     o3.setIdleTime(120);
 
-    final String p4 =
-      "org.ldaptive.sasl.CramMd5Config" +
+    final String p4 = "org.ldaptive.sasl.CramMd5Config" +
       "{{securityStrength=LOW}{qualityOfProtection=AUTH}}";
     final CramMd5Config o4 = new CramMd5Config();
     o4.setSecurityStrength(SecurityStrength.LOW);
@@ -75,14 +73,15 @@ public class PropertyValueParserTest
     final SaslConfig o6 = new SaslConfig();
     o6.setMechanism(Mechanism.EXTERNAL);
 
-    return new Object[][] {
-      new Object[] {p1, null, o1, },
-      new Object[] {p2, null, o2, },
-      new Object[] {p3, null, o3, },
-      new Object[] {p4, null, o4, },
-      new Object[] {p5, SaslConfig.class, o5, },
-      new Object[] {p6, SaslConfig.class, o6, },
-    };
+    return
+      new Object[][] {
+        new Object[] {p1, null, o1, },
+        new Object[] {p2, null, o2, },
+        new Object[] {p3, null, o3, },
+        new Object[] {p4, null, o4, },
+        new Object[] {p5, SaslConfig.class, o5, },
+        new Object[] {p6, SaslConfig.class, o6, },
+      };
   }
 
 
@@ -93,9 +92,14 @@ public class PropertyValueParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"props"}, dataProvider = "properties")
+  @Test(
+    groups = {"props"},
+    dataProvider = "properties"
+  )
   public void initializeType(
-    final String property, final Class<?> type, final Object initialized)
+    final String property,
+    final Class<?> type,
+    final Object initialized)
     throws Exception
   {
     PropertyValueParser parser = null;
@@ -106,6 +110,7 @@ public class PropertyValueParserTest
       parser = new PropertyValueParser(property);
       Assert.assertTrue(PropertyValueParser.isConfig(property));
     }
+
     final Object o = parser.initializeType();
     Assert.assertEquals(
       initialized.toString().split("::")[1],

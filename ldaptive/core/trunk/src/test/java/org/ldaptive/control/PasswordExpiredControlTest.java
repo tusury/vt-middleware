@@ -36,13 +36,14 @@ public class PasswordExpiredControlTest
   @DataProvider(name = "response")
   public Object[][] createData()
   {
-    return new Object[][] {
-      // BER: 30
-      new Object[] {
-        LdapUtils.base64Decode("MA=="),
-        new PasswordExpiredControl(),
-      },
-    };
+    return
+      new Object[][] {
+        // BER: 30
+        new Object[] {
+          LdapUtils.base64Decode("MA=="),
+          new PasswordExpiredControl(),
+        },
+      };
   }
 
 
@@ -52,7 +53,10 @@ public class PasswordExpiredControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "response")
+  @Test(
+    groups = {"control"},
+    dataProvider = "response"
+  )
   public void decode(
     final byte[] berValue,
     final PasswordExpiredControl expected)

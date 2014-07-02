@@ -32,13 +32,13 @@ public class LRUCacheTest
 {
 
   /** Cache for testing. */
-  private final LRUCache<SearchRequest> cache =
-    new LRUCache<SearchRequest>(5, 60, 3);
+  private final LRUCache<SearchRequest> cache = new LRUCache<SearchRequest>(
+    5,
+    60,
+    3);
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @BeforeClass(groups = {"cache"})
   public void initialize()
     throws Exception
@@ -47,9 +47,7 @@ public class LRUCacheTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"cache"})
   public void clear()
     throws Exception
@@ -62,9 +60,7 @@ public class LRUCacheTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(
     groups = {"cache"},
     threadPoolSize = 5,
@@ -92,9 +88,7 @@ public class LRUCacheTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"cache"})
   public void put()
     throws Exception
@@ -102,17 +96,18 @@ public class LRUCacheTest
     AssertJUnit.assertEquals(5, cache.size());
     cache.put(
       new SearchRequest(
-        "dc=ldaptive,dc=org", new SearchFilter("uid=%s", new Object[]{"101"})),
+        "dc=ldaptive,dc=org",
+        new SearchFilter("uid=%s", new Object[] {"101"})),
       new SearchResult(new LdapEntry("uid=101,ou=test,dc=ldaptive,dc=org")));
     cache.put(
-      new SearchRequest(
-        "dc=ldaptive,dc=org", new SearchFilter("uid=102")),
+      new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=102")),
       new SearchResult(new LdapEntry("uid=102,ou=test,dc=ldaptive,dc=org")));
     AssertJUnit.assertEquals(5, cache.size());
 
     SearchResult result = cache.get(
       new SearchRequest(
-        "dc=ldaptive,dc=org", new SearchFilter("uid=%s", new Object[]{"101"})));
+        "dc=ldaptive,dc=org",
+        new SearchFilter("uid=%s", new Object[] {"101"})));
     AssertJUnit.assertEquals(
       new SearchResult(new LdapEntry("uid=101,ou=test,dc=ldaptive,dc=org")),
       result);
@@ -127,9 +122,7 @@ public class LRUCacheTest
   }
 
 
-  /**
-   * Fills the cache with data.
-   */
+  /** Fills the cache with data. */
   private void fillCache()
   {
     cache.put(

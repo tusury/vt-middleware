@@ -43,27 +43,33 @@ public class UnicodePwdValueTranscoderTest
   public Object[][] createPasswords()
     throws Exception
   {
-    return new Object[][] {
-      new Object[] {
-        "password",
-        LdapUtils.base64Decode("IgBwAGEAcwBzAHcAbwByAGQAIgA="), },
-      new Object[] {
-        "The quick brown fox jumps over the lazy dog",
-        LdapUtils.base64Decode(
-          "IgBUAGgAZQAgAHEAdQBpAGMAawAgAGIAcgBvAHcAbgAgAGYAbwB4ACAAagB1AG0AcA" +
-          "BzACAAbwB2AGUAcgAgAHQAaABlACAAbABhAHoAeQAgAGQAbwBnACIA"), },
-      new Object[] {
-        "1234567890",
-        LdapUtils.base64Decode("IgAxADIAMwA0ADUANgA3ADgAOQAwACIA"), },
-      new Object[] {
-        "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?",
-        LdapUtils.base64Decode(
-          "IgBgAH4AIQBAACMAJAAlAF4AJgAqACgAKQAtAF8APQArAFsAewBdAH0AXAB8ADsAOg" +
-          "AnACIALAA8AC4APgAvAD8AIgA="), },
-      new Object[] {
-        "",
-        LdapUtils.base64Decode("IgAiAA=="), },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          "password",
+          LdapUtils.base64Decode("IgBwAGEAcwBzAHcAbwByAGQAIgA="),
+        },
+        new Object[] {
+          "The quick brown fox jumps over the lazy dog",
+          LdapUtils.base64Decode(
+            "IgBUAGgAZQAgAHEAdQBpAGMAawAgAGIAcgBvAHcAbgAgAGYAbwB4ACAAagB1AG0A" +
+            "cABzACAAbwB2AGUAcgAgAHQAaABlACAAbABhAHoAeQAgAGQAbwBnACIA"),
+        },
+        new Object[] {
+          "1234567890",
+          LdapUtils.base64Decode("IgAxADIAMwA0ADUANgA3ADgAOQAwACIA"),
+        },
+        new Object[] {
+          "`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?",
+          LdapUtils.base64Decode(
+            "IgBgAH4AIQBAACMAJAAlAF4AJgAqACgAKQAtAF8APQArAFsAewBdAH0AXAB8ADsA" +
+            "OgAnACIALAA8AC4APgAvAD8AIgA="),
+        },
+        new Object[] {
+          "",
+          LdapUtils.base64Decode("IgAiAA=="),
+        },
+      };
   }
 
 
@@ -78,11 +84,13 @@ public class UnicodePwdValueTranscoderTest
   public Object[][] createInvalidPasswords()
     throws Exception
   {
-    return new Object[][] {
-      new Object[] {
-        null,
-        new byte[0], },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          null,
+          new byte[0],
+        },
+      };
   }
 
 
@@ -92,19 +100,24 @@ public class UnicodePwdValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "passwords")
+  @Test(
+    groups = {"io"},
+    dataProvider = "passwords"
+  )
   public void testTranscode(final String pwd, final byte[] unicodePwd)
     throws Exception
   {
-    Assert.assertEquals(
-      transcoder.encodeBinaryValue(pwd), unicodePwd);
+    Assert.assertEquals(transcoder.encodeBinaryValue(pwd), unicodePwd);
     Assert.assertEquals(transcoder.decodeBinaryValue(unicodePwd), pwd);
     Assert.assertEquals(
-      transcoder.decodeStringValue(transcoder.encodeStringValue(pwd)), pwd);
+      transcoder.decodeStringValue(transcoder.encodeStringValue(pwd)),
+      pwd);
     Assert.assertEquals(
-      transcoder.encodeStringValue(pwd), LdapUtils.utf8Encode(unicodePwd));
+      transcoder.encodeStringValue(pwd),
+      LdapUtils.utf8Encode(unicodePwd));
     Assert.assertEquals(
-      transcoder.decodeStringValue(LdapUtils.utf8Encode(unicodePwd)), pwd);
+      transcoder.decodeStringValue(LdapUtils.utf8Encode(unicodePwd)),
+      pwd);
   }
 
 
@@ -114,7 +127,10 @@ public class UnicodePwdValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "invalid")
+  @Test(
+    groups = {"io"},
+    dataProvider = "invalid"
+  )
   public void testInvalid(final String pwd, final byte[] unicodePwd)
     throws Exception
   {
