@@ -41,7 +41,8 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
    * @param  setter  method to write data
    */
   public MethodAttributeValueMutator(
-    final ReflectionTranscoder transcoder, final Method getter,
+    final ReflectionTranscoder transcoder,
+    final Method getter,
     final Method setter)
   {
     super(null, false, null, transcoder);
@@ -67,8 +68,11 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
    * @param  setter  method to write data
    */
   public MethodAttributeValueMutator(
-    final String name, final boolean binary, final SortBehavior sortBehavior,
-    final ReflectionTranscoder transcoder, final Method getter,
+    final String name,
+    final boolean binary,
+    final SortBehavior sortBehavior,
+    final ReflectionTranscoder transcoder,
+    final Method getter,
     final Method setter)
   {
     super(name, binary, sortBehavior, transcoder);
@@ -90,8 +94,9 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
     if (getterMethod == null) {
       return null;
     }
-    return getReflectionTranscoder().encodeStringValues(
-      ReflectionUtils.invokeGetterMethod(getterMethod, object));
+    return
+      getReflectionTranscoder().encodeStringValues(
+        ReflectionUtils.invokeGetterMethod(getterMethod, object));
   }
 
 
@@ -102,8 +107,9 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
     if (getterMethod == null) {
       return null;
     }
-    return getReflectionTranscoder().encodeBinaryValues(
-      ReflectionUtils.invokeGetterMethod(getterMethod, object));
+    return
+      getReflectionTranscoder().encodeBinaryValues(
+        ReflectionUtils.invokeGetterMethod(getterMethod, object));
   }
 
 
@@ -141,16 +147,17 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::name=%s, binary=%s, sortBehavior=%s, reflectionTranscoder=%s, " +
-        "getterMethod=%s, setterMethod=%s]",
-      getClass().getName(),
-      hashCode(),
-      getName(),
-      isBinary(),
-      getSortBehavior(),
-      getReflectionTranscoder(),
-      getterMethod,
-      setterMethod);
+    return
+      String.format(
+        "[%s@%d::name=%s, binary=%s, sortBehavior=%s, " +
+        "reflectionTranscoder=%s, getterMethod=%s, setterMethod=%s]",
+        getClass().getName(),
+        hashCode(),
+        getName(),
+        isBinary(),
+        getSortBehavior(),
+        getReflectionTranscoder(),
+        getterMethod,
+        setterMethod);
   }
 }

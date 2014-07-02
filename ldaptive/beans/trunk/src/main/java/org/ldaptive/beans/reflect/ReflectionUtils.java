@@ -60,9 +60,7 @@ public final class ReflectionUtils
    *
    * @throws  IllegalArgumentException  if the field cannot be retrieved
    */
-  public static Object getField(
-    final Field field,
-    final Object object)
+  public static Object getField(final Field field, final Object object)
   {
     try {
       return field.get(object);

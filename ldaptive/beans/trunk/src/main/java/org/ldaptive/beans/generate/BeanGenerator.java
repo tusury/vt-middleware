@@ -46,15 +46,16 @@ import org.ldaptive.schema.Syntax;
 
 /**
  * Utility class for creating Java POJOs from an LDAP schema. Sample usage:
+ *
  * <pre>
- *   Schema schema = new Schema(new DefaultConnectionFactory(
- *     "ldap://directory.ldaptive.org"));
- *   BeanGenerator generator = new BeanGenerator(
- *     schema,
- *     "com.my.package",
- *     new String[] {"inetOrgPerson"});
- *   generator.generate();
- *   generator.write();
+     Schema schema = new Schema(new DefaultConnectionFactory(
+       "ldap://directory.ldaptive.org"));
+     BeanGenerator generator = new BeanGenerator(
+       schema,
+       "com.my.package",
+       new String[] {"inetOrgPerson"});
+     generator.generate();
+     generator.write();
  * </pre>
  *
  * @author  Middleware Services
@@ -94,9 +95,7 @@ public class BeanGenerator
   private String[] excludedNames = new String[0];
 
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public BeanGenerator() {}
 
 
@@ -104,14 +103,11 @@ public class BeanGenerator
    * Creates a new bean generator. A bean will be generated for each supplied
    * object class.
    *
-   * @param  s  schema  containing directory data for generation
+   * @param  s  schema containing directory data for generation
    * @param  name  package name to place the generated classes in
    * @param  oc  object classes to generate beans for
    */
-  public BeanGenerator(
-    final Schema s,
-    final String name,
-    final String[] oc)
+  public BeanGenerator(final Schema s, final String name, final String[] oc)
   {
     schema = s;
     packageName = name;
@@ -277,8 +273,8 @@ public class BeanGenerator
 
   /**
    * Returns the mapping of directory attribute name to bean property. This
-   * property is used to override the default schema name. For instance, you
-   * may prefer using 'countryName' to 'c', which would be set as
+   * property is used to override the default schema name. For instance, you may
+   * prefer using 'countryName' to 'c', which would be set as
    * 'c'=>'countryName'.
    *
    * @return  attribute name to bean property mapping
@@ -425,6 +421,7 @@ public class BeanGenerator
       final JAnnotationUse entryAnnotation = definedClass.annotate(
         codeModel.ref(org.ldaptive.beans.Entry.class));
       entryAnnotation.param("dn", "dn");
+
       final JAnnotationArrayMember attrArray = entryAnnotation.paramArray(
         "attributes");
 
@@ -441,6 +438,7 @@ public class BeanGenerator
         } else {
           createMutators(definedClass, mutator.getKey(), syntaxType, true);
         }
+
         // add attribute annotation
         final JAnnotationUse attrAnnotation = attrArray.annotate(
           org.ldaptive.beans.Attribute.class);
@@ -582,7 +580,8 @@ public class BeanGenerator
       return codeModel._class(fqClassName);
     } catch (JClassAlreadyExistsException e) {
       throw new IllegalArgumentException(
-        "Class already exists: " + fqClassName, e);
+        "Class already exists: " + fqClassName,
+        e);
     }
   }
 
@@ -602,28 +601,38 @@ public class BeanGenerator
     final Class<?> syntaxType,
     final boolean multivalue)
   {
-    final String upperName =
-      name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
+    final String upperName = name.substring(0, 1).toUpperCase() +
+      name.substring(1, name.length());
     if (multivalue) {
       final JClass detailClass = codeModel.ref(syntaxType);
       final JClass collectionClass = codeModel.ref(Collection.class);
       final JClass genericClass = collectionClass.narrow(detailClass);
       final JFieldVar field = clazz.field(JMod.PRIVATE, genericClass, name);
       final JMethod getterMethod = clazz.method(
-        JMod.PUBLIC, genericClass, "get" + upperName);
+        JMod.PUBLIC,
+        genericClass,
+        "get" + upperName);
       getterMethod.body()._return(field);
+
       final JMethod setterMethod = clazz.method(
-        JMod.PUBLIC, Void.TYPE, "set" + upperName);
+        JMod.PUBLIC,
+        Void.TYPE,
+        "set" + upperName);
       setterMethod.param(genericClass, "c");
       setterMethod.body().assign(JExpr._this().ref(name), JExpr.ref("c"));
 
     } else {
       final JFieldVar field = clazz.field(JMod.PRIVATE, syntaxType, name);
       final JMethod getterMethod = clazz.method(
-        JMod.PUBLIC, syntaxType, "get" + upperName);
+        JMod.PUBLIC,
+        syntaxType,
+        "get" + upperName);
       getterMethod.body()._return(field);
+
       final JMethod setterMethod = clazz.method(
-        JMod.PUBLIC, Void.TYPE, "set" + upperName);
+        JMod.PUBLIC,
+        Void.TYPE,
+        "set" + upperName);
       setterMethod.param(syntaxType, "s");
       setterMethod.body().assign(JExpr._this().ref(name), JExpr.ref("s"));
     }
@@ -682,8 +691,11 @@ public class BeanGenerator
     final JClass stringClass = codeModel.ref(java.lang.String.class);
     final JInvocation format = stringClass.staticInvoke("format");
     final JMethod toString = clazz.method(
-      JMod.PUBLIC, String.class, "toString");
+      JMod.PUBLIC,
+      String.class,
+      "toString");
     toString.annotate(java.lang.Override.class);
+
     final StringBuilder sb = new StringBuilder("[%s@%d::");
     for (Map.Entry<String, JFieldVar> entry : clazz.fields().entrySet()) {
       sb.append(entry.getKey()).append("=%s, ");
@@ -734,18 +746,20 @@ public class BeanGenerator
   /**
    * Provides command line access to a {@link BeanGenerator}. Expects two
    * arguments:
+   *
    * <ol>
    *   <li>path to a configuration property file</li>
    *   <li>target directory to write files to</li>
    * </ol>
    *
-   * A sample configuration property file looks like:
+   * <p>A sample configuration property file looks like:</p>
+   *
    * <pre>
-   * org.ldaptive.packageName=my.package.ldap.beans
-   * org.ldaptive.objectClasses=eduPerson
-   * org.ldaptive.nameMappings=c=countryName,l=localityName
-   * org.ldaptive.excludedNames=userPassword
-   * org.ldaptive.ldapUrl=ldap://directory.ldaptive.org
+     org.ldaptive.packageName=my.package.ldap.beans
+     org.ldaptive.objectClasses=eduPerson
+     org.ldaptive.nameMappings=c=countryName,l=localityName
+     org.ldaptive.excludedNames=userPassword
+     org.ldaptive.ldapUrl=ldap://directory.ldaptive.org
    * </pre>
    *
    * @param  args  command line arguments
@@ -759,8 +773,9 @@ public class BeanGenerator
     final String targetPath = args[1];
 
     final BeanGenerator generator = new BeanGenerator();
-    final BeanGeneratorPropertySource source =
-      new BeanGeneratorPropertySource(generator, propsPath);
+    final BeanGeneratorPropertySource source = new BeanGeneratorPropertySource(
+      generator,
+      propsPath);
     source.initialize();
     generator.generate();
     generator.write(targetPath);

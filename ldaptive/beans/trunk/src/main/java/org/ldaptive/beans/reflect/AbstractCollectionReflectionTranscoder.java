@@ -173,12 +173,13 @@ public abstract class AbstractCollectionReflectionTranscoder
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::type=%s, singleValueTranscoder=%s, arrayTranscoder=%s]",
-      getClass().getName(),
-      hashCode(),
-      type,
-      singleValueTranscoder,
-      arrayTranscoder);
+    return
+      String.format(
+        "[%s@%d::type=%s, singleValueTranscoder=%s, arrayTranscoder=%s]",
+        getClass().getName(),
+        hashCode(),
+        type,
+        singleValueTranscoder,
+        arrayTranscoder);
   }
 }

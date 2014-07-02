@@ -78,8 +78,9 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public Collection<String> getStringValues(final Object object)
   {
-    return getReflectionTranscoder().encodeStringValues(
-      ReflectionUtils.getField(f, object));
+    return
+      getReflectionTranscoder().encodeStringValues(
+        ReflectionUtils.getField(f, object));
   }
 
 
@@ -87,8 +88,9 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public Collection<byte[]> getBinaryValues(final Object object)
   {
-    return getReflectionTranscoder().encodeBinaryValues(
-      ReflectionUtils.getField(f, object));
+    return
+      getReflectionTranscoder().encodeBinaryValues(
+        ReflectionUtils.getField(f, object));
   }
 
 
@@ -126,15 +128,16 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::name=%s, binary=%s, sortBehavior=%s, reflectionTranscoder=%s, " +
-      "field=%s]",
-      getClass().getName(),
-      hashCode(),
-      getName(),
-      isBinary(),
-      getSortBehavior(),
-      getReflectionTranscoder(),
-      f);
+    return
+      String.format(
+        "[%s@%d::name=%s, binary=%s, sortBehavior=%s, " +
+        "reflectionTranscoder=%s, field=%s]",
+        getClass().getName(),
+        hashCode(),
+        getName(),
+        isBinary(),
+        getSortBehavior(),
+        getReflectionTranscoder(),
+        f);
   }
 }

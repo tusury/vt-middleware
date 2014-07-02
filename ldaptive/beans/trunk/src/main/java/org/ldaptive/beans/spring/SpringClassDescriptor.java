@@ -53,7 +53,8 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
   {
     // check for entry annotation
     final Entry entryAnnotation = AnnotationUtils.findAnnotation(
-      type, Entry.class);
+      type,
+      Entry.class);
     if (entryAnnotation != null) {
       if (!"".equals(entryAnnotation.dn())) {
         setDnValueMutator(createDnValueMutator(entryAnnotation.dn()));
@@ -87,9 +88,10 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
   protected DnValueMutator createDnValueMutator(final String dnProperty)
   {
     try {
-      return new SpelDnValueMutator(
-        new SpelExpressionParser().parseExpression(dnProperty),
-        evaluationContext);
+      return
+        new SpelDnValueMutator(
+          new SpelExpressionParser().parseExpression(dnProperty),
+          evaluationContext);
     } catch (SpelParseException e) {
       logger.debug(
         "Could not parse dn expression, using SimpleDnValueMutator",

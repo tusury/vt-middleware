@@ -70,6 +70,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
     final EvaluationContext context)
   {
     attribute = attr;
+
     final ExpressionParser parser = new SpelExpressionParser();
     expression = parser.parseExpression(
       attribute.property().length() > 0 ?
@@ -78,8 +79,8 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
     if ("".equals(attribute.transcoder())) {
       transcoder = null;
     } else {
-      transcoder = parser.parseExpression(
-        attribute.transcoder()).getValue(ValueTranscoder.class);
+      transcoder = parser.parseExpression(attribute.transcoder()).getValue(
+        ValueTranscoder.class);
     }
   }
 
@@ -167,6 +168,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
         }
       } else {
         values = createCollection(List.class, 1);
+
         final T value = convertValue(converted, converted.getClass(), type);
         if (value != null) {
           values.add(value);
@@ -206,11 +208,10 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
           "targetType must be either String.class or byte[].class");
       }
     } else {
-      converted =
-        (T) evaluationContext.getTypeConverter().convertValue(
-          value,
-          TypeDescriptor.valueOf(sourceType),
-          TypeDescriptor.valueOf(targetType));
+      converted = (T) evaluationContext.getTypeConverter().convertValue(
+        value,
+        TypeDescriptor.valueOf(sourceType),
+        TypeDescriptor.valueOf(targetType));
     }
     return converted;
   }
@@ -237,9 +238,9 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
 
 
   /**
-   * Uses the configured expression and evaluation context to set values
-   * on the supplied object. If a custom transcoder has been configured it is
-   * executed on the values before they are passed to the expression.
+   * Uses the configured expression and evaluation context to set values on the
+   * supplied object. If a custom transcoder has been configured it is executed
+   * on the values before they are passed to the expression.
    *
    * @param  <T>  either String or byte[]
    * @param  object  to set values on
@@ -253,7 +254,8 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   {
     if (transcoder != null) {
       final Collection<Object> newValues = createCollection(
-        values.getClass(), values.size());
+        values.getClass(),
+        values.size());
       for (T t : values) {
         if (byte[].class == type) {
           newValues.add(transcoder.decodeBinaryValue((byte[]) t));
@@ -275,15 +277,16 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::attribute=%s, expression=%s, evaluationContext=%s, " +
-      "transcoder=%s]",
-      getClass().getName(),
-      hashCode(),
-      attribute,
-      expression,
-      evaluationContext,
-      transcoder);
+    return
+      String.format(
+        "[%s@%d::attribute=%s, expression=%s, evaluationContext=%s, " +
+        "transcoder=%s]",
+        getClass().getName(),
+        hashCode(),
+        attribute,
+        expression,
+        evaluationContext,
+        transcoder);
   }
 
 

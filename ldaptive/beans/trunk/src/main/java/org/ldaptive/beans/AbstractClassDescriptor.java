@@ -114,11 +114,13 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::dnMutator=%s, attributeMutators=%s]",
-      getClass().getName(),
-      hashCode(), dnMutator,
-      attributeMutators);
+    return
+      String.format(
+        "[%s@%d::dnMutator=%s, attributeMutators=%s]",
+        getClass().getName(),
+        hashCode(),
+        dnMutator,
+        attributeMutators);
   }
 
 
@@ -164,6 +166,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
    */
   protected class SimpleAttributeValueMutator implements AttributeValueMutator
   {
+
     /** Ldap attribute to operate on. */
     private final LdapAttribute la;
 
@@ -252,11 +255,12 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     @Override
     public String toString()
     {
-      return String.format(
-        "[%s@%d::ldapAttribute=%s]",
-        getClass().getName(),
-        hashCode(),
-        la);
+      return
+        String.format(
+          "[%s@%d::ldapAttribute=%s]",
+          getClass().getName(),
+          hashCode(),
+          la);
     }
   }
 }
