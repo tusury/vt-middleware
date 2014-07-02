@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-ldapi</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.4</version>
+  <version>1.0.5-SNAPSHOT</version>
   <name>LDAPTIVE LDAPI</name>
   <description>Provides ldapi support</description>
   <url>http://www.ldaptive.org</url>
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive</artifactId>
-      <version>1.0.4</version>
+      <version>1.0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.newsclub.net</groupId>
