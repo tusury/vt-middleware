@@ -109,23 +109,24 @@ public class BinaryCustomObject implements CustomObject
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::" +
-      "type1=%s, type2=%s, type3=%s, " +
-      "typeCol1=%s, typeCol2=%s, " +
-      "typeSet1=%s, typeSet2=%s, " +
-      "typeList1=%s, typeList2=%s]",
-      getClass().getSimpleName(),
-      hashCode(),
-      Arrays.toString(type1),
-      Arrays.toString(type2),
-      Arrays.toString(type3),
-      toString(typeCol1),
-      toString(typeCol2),
-      toString(typeSet1),
-      toString(typeSet2),
-      toString(typeList1),
-      toString(typeList2));
+    return
+      String.format(
+        "[%s@%d::" +
+        "type1=%s, type2=%s, type3=%s, " +
+        "typeCol1=%s, typeCol2=%s, " +
+        "typeSet1=%s, typeSet2=%s, " +
+        "typeList1=%s, typeList2=%s]",
+        getClass().getSimpleName(),
+        hashCode(),
+        Arrays.toString(type1),
+        Arrays.toString(type2),
+        Arrays.toString(type3),
+        toString(typeCol1),
+        toString(typeCol2),
+        toString(typeSet1),
+        toString(typeSet2),
+        toString(typeList1),
+        toString(typeList2));
   }
 
 
@@ -162,8 +163,8 @@ public class BinaryCustomObject implements CustomObject
   {
     // CheckStyle:MagicNumber OFF
     final Set<byte[]> s1 = new LinkedHashSet<byte[]>();
-    s1.add(new byte[]{0x22});
-    s1.add(new byte[]{0x23});
+    s1.add(new byte[] {0x22});
+    s1.add(new byte[] {0x23});
 
     final T o1;
     try {
@@ -173,15 +174,15 @@ public class BinaryCustomObject implements CustomObject
     } catch (IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
-    o1.setType1(new byte[]{0x01});
-    o1.writeType2(new byte[]{0x02});
-    o1.setType3(new byte[]{0x03});
-    o1.setTypeCol1(Arrays.asList(new byte[]{0x20}, new byte[]{0x21}));
-    o1.writeTypeCol2(Arrays.asList(new byte[]{0x20}, new byte[]{0x21}));
+    o1.setType1(new byte[] {0x01});
+    o1.writeType2(new byte[] {0x02});
+    o1.setType3(new byte[] {0x03});
+    o1.setTypeCol1(Arrays.asList(new byte[] {0x20}, new byte[] {0x21}));
+    o1.writeTypeCol2(Arrays.asList(new byte[] {0x20}, new byte[] {0x21}));
     o1.setTypeSet1(s1);
     o1.writeTypeSet2(s1);
-    o1.setTypeList1(Arrays.asList(new byte[]{0x24}, new byte[]{0x25}));
-    o1.writeTypeList2(Arrays.asList(new byte[]{0x24}, new byte[]{0x25}));
+    o1.setTypeList1(Arrays.asList(new byte[] {0x24}, new byte[] {0x25}));
+    o1.writeTypeList2(Arrays.asList(new byte[] {0x24}, new byte[] {0x25}));
 
     return o1;
     // CheckStyle:MagicNumber ON
@@ -197,38 +198,45 @@ public class BinaryCustomObject implements CustomObject
   {
     // CheckStyle:MagicNumber OFF
     final LdapAttribute typeCol1 = new LdapAttribute(
-      SortBehavior.ORDERED, true);
+      SortBehavior.ORDERED,
+      true);
     typeCol1.setName("typeCol1");
     typeCol1.addBinaryValue(new byte[] {0x20}, new byte[] {0x21});
+
     final LdapAttribute typeCol2 = new LdapAttribute(
-      SortBehavior.ORDERED, true);
+      SortBehavior.ORDERED,
+      true);
     typeCol2.setName("typeCol2");
     typeCol2.addBinaryValue(new byte[] {0x20}, new byte[] {0x21});
 
     final LdapAttribute typeSet1 = new LdapAttribute(
-      SortBehavior.ORDERED, true);
+      SortBehavior.ORDERED,
+      true);
     typeSet1.setName("typeSet1");
     typeSet1.addBinaryValue(new byte[] {0x22}, new byte[] {0x23});
+
     final LdapAttribute typeSet2 = new LdapAttribute(
-      SortBehavior.ORDERED, true);
+      SortBehavior.ORDERED,
+      true);
     typeSet2.setName("typeSet2");
     typeSet2.addBinaryValue(new byte[] {0x22}, new byte[] {0x23});
 
     final LdapAttribute typeList1 = new LdapAttribute(
-      SortBehavior.ORDERED, true);
+      SortBehavior.ORDERED,
+      true);
     typeList1.setName("typeList1");
     typeList1.addBinaryValue(new byte[] {0x24}, new byte[] {0x25});
+
     final LdapAttribute typeList2 = new LdapAttribute(
-      SortBehavior.ORDERED, true);
+      SortBehavior.ORDERED,
+      true);
     typeList2.setName("typeList2");
     typeList2.addBinaryValue(new byte[] {0x24}, new byte[] {0x25});
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Binary Entry,ou=people,dc=ldaptive,dc=org");
     entry.addAttribute(
-      new LdapAttribute(
-        "customname1",
-        new byte[] {0x40, 0x41, 0x42, 0x43}),
+      new LdapAttribute("customname1", new byte[] {0x40, 0x41, 0x42, 0x43}),
       new LdapAttribute(
         "customname2",
         new byte[] {0x44, 0x45, 0x46, 0x47},
@@ -251,37 +259,66 @@ public class BinaryCustomObject implements CustomObject
   @Entry(
     dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org",
     attributes = {
-      @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
+      @Attribute(
+        name = "customname1",
+        values = "QEFCQw==",
+        binary = true
+      ),
       @Attribute(
         name = "customname2",
         values = {"REVGRw==", "SElQUQ=="},
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "type1", property = "type1", binary = true),
-      @Attribute(name = "type2", property = "type2", binary = true),
-      @Attribute(name = "binarythree", property = "type3", binary = true),
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "type1",
+        property = "type1",
+        binary = true
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2",
+        binary = true
+      ),
+      @Attribute(
+        name = "binarythree",
+        property = "type3",
+        binary = true
+      ),
       @Attribute(
         name = "typeCol1",
         property = "typeCol1",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeCol2",
         property = "typeCol2",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
-      @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1",
+        binary = true
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2",
+        binary = true
+      ),
       @Attribute(
         name = "typeList1",
         property = "typeList1",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeList2",
         property = "typeList2",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED)
+        sortBehavior = SortBehavior.ORDERED
+      )
       }
   )
   public static class Default extends BinaryCustomObject {}
@@ -291,37 +328,66 @@ public class BinaryCustomObject implements CustomObject
   @Entry(
     dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org",
     attributes = {
-      @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
+      @Attribute(
+        name = "customname1",
+        values = "QEFCQw==",
+        binary = true
+      ),
       @Attribute(
         name = "customname2",
         values = {"REVGRw==", "SElQUQ=="},
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "type1", property = "type1", binary = true),
-      @Attribute(name = "type2", property = "type2", binary = true),
-      @Attribute(name = "binarythree", property = "type3", binary = true),
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "type1",
+        property = "type1",
+        binary = true
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2",
+        binary = true
+      ),
+      @Attribute(
+        name = "binarythree",
+        property = "type3",
+        binary = true
+      ),
       @Attribute(
         name = "typeCol1",
         property = "typeCol1",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeCol2",
         property = "typeCol2",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
-      @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1",
+        binary = true
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2",
+        binary = true
+      ),
       @Attribute(
         name = "typeList1",
         property = "typeList1",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeList2",
         property = "typeList2",
         binary = true,
-        sortBehavior = SortBehavior.ORDERED)
+        sortBehavior = SortBehavior.ORDERED
+      )
       }
   )
   public static class Spring extends BinaryCustomObject

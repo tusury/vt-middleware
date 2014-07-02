@@ -124,28 +124,29 @@ public class FloatCustomObject implements CustomObject
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::" +
+    return
+      String.format(
+        "[%s@%d::" +
         "integerDn=%s, " +
         "type1=%s, type2=%s, type3=%s, " +
         "typeArray1=%s, typeArray2=%s, " +
         "typeCol1=%s, typeCol2=%s, " +
         "typeSet1=%s, typeSet2=%s, " +
         "typeList1=%s, typeList2=%s]",
-      getClass().getSimpleName(),
-      hashCode(),
-      floatDn,
-      type1,
-      type2,
-      type3,
-      Arrays.toString(typeArray1),
-      Arrays.toString(typeArray2),
-      typeCol1,
-      typeCol2,
-      typeSet1,
-      typeSet2,
-      typeList1,
-      typeList2);
+        getClass().getSimpleName(),
+        hashCode(),
+        floatDn,
+        type1,
+        type2,
+        type3,
+        Arrays.toString(typeArray1),
+        Arrays.toString(typeArray2),
+        typeCol1,
+        typeCol2,
+        typeSet1,
+        typeSet2,
+        typeList1,
+        typeList2);
   }
 
 
@@ -177,8 +178,8 @@ public class FloatCustomObject implements CustomObject
     o1.setType1(100.1f);
     o1.writeType2(200.2f);
     o1.setType3(300.3f);
-    o1.setTypeArray1(new Float[]{301.1f, 302.2f});
-    o1.writeTypeArray2(new Float[]{301.1f, 302.2f});
+    o1.setTypeArray1(new Float[] {301.1f, 302.2f});
+    o1.writeTypeArray2(new Float[] {301.1f, 302.2f});
     o1.setTypeCol1(Arrays.asList(501.5f, 502.5f));
     o1.writeTypeCol2(Arrays.asList(501.5f, 502.5f));
     o1.setTypeSet1(s1);
@@ -198,39 +199,35 @@ public class FloatCustomObject implements CustomObject
    */
   public static LdapEntry createLdapEntry()
   {
-    final LdapAttribute typeArray1 = new LdapAttribute(
-      SortBehavior.ORDERED);
+    final LdapAttribute typeArray1 = new LdapAttribute(SortBehavior.ORDERED);
     typeArray1.setName("typeArray1");
     typeArray1.addStringValue("301.1", "302.2");
-    final LdapAttribute typeArray2 = new LdapAttribute(
-      SortBehavior.ORDERED);
+
+    final LdapAttribute typeArray2 = new LdapAttribute(SortBehavior.ORDERED);
     typeArray2.setName("typeArray2");
     typeArray2.addStringValue("301.1", "302.2");
 
-    final LdapAttribute typeCol1 = new LdapAttribute(
-      SortBehavior.ORDERED);
+    final LdapAttribute typeCol1 = new LdapAttribute(SortBehavior.ORDERED);
     typeCol1.setName("typeCol1");
     typeCol1.addStringValue("501.5", "502.5");
-    final LdapAttribute typeCol2 = new LdapAttribute(
-      SortBehavior.ORDERED);
+
+    final LdapAttribute typeCol2 = new LdapAttribute(SortBehavior.ORDERED);
     typeCol2.setName("typeCol2");
     typeCol2.addStringValue("501.5", "502.5");
 
-    final LdapAttribute typeSet1 = new LdapAttribute(
-      SortBehavior.ORDERED);
+    final LdapAttribute typeSet1 = new LdapAttribute(SortBehavior.ORDERED);
     typeSet1.setName("typeSet1");
     typeSet1.addStringValue("601.6", "602.6");
-    final LdapAttribute typeSet2 = new LdapAttribute(
-      SortBehavior.ORDERED);
+
+    final LdapAttribute typeSet2 = new LdapAttribute(SortBehavior.ORDERED);
     typeSet2.setName("typeSet2");
     typeSet2.addStringValue("601.6", "602.6");
 
-    final LdapAttribute typeList1 = new LdapAttribute(
-      SortBehavior.ORDERED);
+    final LdapAttribute typeList1 = new LdapAttribute(SortBehavior.ORDERED);
     typeList1.setName("typeList1");
     typeList1.addStringValue("701.7", "702.7");
-    final LdapAttribute typeList2 = new LdapAttribute(
-      SortBehavior.ORDERED);
+
+    final LdapAttribute typeList2 = new LdapAttribute(SortBehavior.ORDERED);
     typeList2.setName("typeList2");
     typeList2.addStringValue("701.7", "702.7");
 
@@ -256,23 +253,52 @@ public class FloatCustomObject implements CustomObject
   @Entry(
     dn = "floatDn",
     attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "type1",
+        property = "type1"
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2"
+      ),
+      @Attribute(
+        name = "numberthree",
+        property = "type3"
+      ),
       @Attribute(
         name = "typeArray1",
         property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeArray2",
         property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1"
+      ),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2"
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1"
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2"
+      ),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1"
+      ),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2"
+      )
       }
   )
   public static class Default extends FloatCustomObject {}
@@ -282,23 +308,52 @@ public class FloatCustomObject implements CustomObject
   @Entry(
     dn = "floatDn",
     attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "type1",
+        property = "type1"
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2"
+      ),
+      @Attribute(
+        name = "numberthree",
+        property = "type3"
+      ),
       @Attribute(
         name = "typeArray1",
         property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeArray2",
         property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1"
+      ),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2"
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1"
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2"
+      ),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1"
+      ),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2"
+      )
       }
   )
   public static class Spring extends FloatCustomObject

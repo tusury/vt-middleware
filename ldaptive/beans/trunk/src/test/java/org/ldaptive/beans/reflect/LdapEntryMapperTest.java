@@ -48,69 +48,88 @@ public class LdapEntryMapperTest
     charEntry.removeAttribute("typeArray1");
     charEntry.removeAttribute("typeArray2");
     charEntry.removeAttribute("transcoded");
+
     final LdapEntry integerEntry = IntegerCustomObject.createLdapEntry();
     final LdapEntry floatEntry = FloatCustomObject.createLdapEntry();
     final LdapEntry booleanEntry = BooleanCustomObject.createLdapEntry();
     final LdapEntry binaryEntry = BinaryCustomObject.createLdapEntry();
 
-    return new Object[][] {
-      new Object[] {
-        StringCustomObject.createCustomObject(StringCustomObject.Default.class),
-        stringEntry,
-        defaultMapper, },
-      new Object[] {
-        StringCustomObject.createCustomObject(StringCustomObject.Spring.class),
-        stringEntry,
-        springMapper, },
-      new Object[] {
-        CharCustomObject.createCustomObject(CharCustomObject.Default.class),
-        charEntry,
-        defaultMapper, },
-      new Object[] {
-        IntegerCustomObject.createCustomObject(
-          IntegerCustomObject.Default.class),
-        integerEntry,
-        defaultMapper, },
-      new Object[] {
-        IntegerCustomObject.createCustomObject(
-          IntegerCustomObject.Spring.class),
-        integerEntry,
-        springMapper, },
-      new Object[] {
-        IntCustomObject.createCustomObject(IntCustomObject.Default.class),
-        integerEntry,
-        defaultMapper, },
-      new Object[] {
-        IntCustomObject.createCustomObject(IntCustomObject.Spring.class),
-        integerEntry,
-        springMapper, },
-      new Object[] {
-        FloatCustomObject.createCustomObject(FloatCustomObject.Default.class),
-        floatEntry,
-        defaultMapper, },
-      new Object[] {
-        FloatCustomObject.createCustomObject(FloatCustomObject.Spring.class),
-        floatEntry,
-        springMapper, },
-      new Object[] {
-        BooleanCustomObject.createCustomObject(
-          BooleanCustomObject.Default.class),
-        booleanEntry,
-        defaultMapper, },
-      new Object[] {
-        BooleanCustomObject.createCustomObject(
-          BooleanCustomObject.Spring.class),
-        booleanEntry,
-        springMapper, },
-      new Object[] {
-        BinaryCustomObject.createCustomObject(BinaryCustomObject.Default.class),
-        binaryEntry,
-        defaultMapper, },
-      new Object[] {
-        BinaryCustomObject.createCustomObject(BinaryCustomObject.Spring.class),
-        binaryEntry,
-        springMapper, },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          StringCustomObject.createCustomObject(
+            StringCustomObject.Default.class),
+          stringEntry,
+          defaultMapper,
+        },
+        new Object[] {
+          StringCustomObject.createCustomObject(
+            StringCustomObject.Spring.class),
+          stringEntry,
+          springMapper,
+        },
+        new Object[] {
+          CharCustomObject.createCustomObject(CharCustomObject.Default.class),
+          charEntry,
+          defaultMapper,
+        },
+        new Object[] {
+          IntegerCustomObject.createCustomObject(
+            IntegerCustomObject.Default.class),
+          integerEntry,
+          defaultMapper,
+        },
+        new Object[] {
+          IntegerCustomObject.createCustomObject(
+            IntegerCustomObject.Spring.class),
+          integerEntry,
+          springMapper,
+        },
+        new Object[] {
+          IntCustomObject.createCustomObject(IntCustomObject.Default.class),
+          integerEntry,
+          defaultMapper,
+        },
+        new Object[] {
+          IntCustomObject.createCustomObject(IntCustomObject.Spring.class),
+          integerEntry,
+          springMapper,
+        },
+        new Object[] {
+          FloatCustomObject.createCustomObject(FloatCustomObject.Default.class),
+          floatEntry,
+          defaultMapper,
+        },
+        new Object[] {
+          FloatCustomObject.createCustomObject(FloatCustomObject.Spring.class),
+          floatEntry,
+          springMapper,
+        },
+        new Object[] {
+          BooleanCustomObject.createCustomObject(
+            BooleanCustomObject.Default.class),
+          booleanEntry,
+          defaultMapper,
+        },
+        new Object[] {
+          BooleanCustomObject.createCustomObject(
+            BooleanCustomObject.Spring.class),
+          booleanEntry,
+          springMapper,
+        },
+        new Object[] {
+          BinaryCustomObject.createCustomObject(
+            BinaryCustomObject.Default.class),
+          binaryEntry,
+          defaultMapper,
+        },
+        new Object[] {
+          BinaryCustomObject.createCustomObject(
+            BinaryCustomObject.Spring.class),
+          binaryEntry,
+          springMapper,
+        },
+      };
   }
 
 
@@ -121,7 +140,10 @@ public class LdapEntryMapperTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans"}, dataProvider = "objects")
+  @Test(
+    groups = {"beans"},
+    dataProvider = "objects"
+  )
   public void mapToLdapEntry(
     final CustomObject object,
     final LdapEntry entry,
@@ -142,7 +164,10 @@ public class LdapEntryMapperTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans"}, dataProvider = "objects")
+  @Test(
+    groups = {"beans"},
+    dataProvider = "objects"
+  )
   public void mapToObject(
     final CustomObject object,
     final LdapEntry entry,

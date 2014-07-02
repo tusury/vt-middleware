@@ -114,25 +114,26 @@ public class CharCustomObject implements CustomObject
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::" +
-      "customDn=%s, " +
-      "type1=%s, type2=%s, type3=%s, " +
-      "typeCol1=%s, typeCol2=%s, " +
-      "typeSet1=%s, typeSet2=%s, " +
-      "typeList1=%s, typeList2=%s]",
-      getClass().getSimpleName(),
-      hashCode(),
-      getCustomDn(),
-      Arrays.toString(type1),
-      Arrays.toString(type2),
-      Arrays.toString(type3),
-      toString(typeCol1),
-      toString(typeCol2),
-      toString(typeSet1),
-      toString(typeSet2),
-      toString(typeList1),
-      toString(typeList2));
+    return
+      String.format(
+        "[%s@%d::" +
+        "customDn=%s, " +
+        "type1=%s, type2=%s, type3=%s, " +
+        "typeCol1=%s, typeCol2=%s, " +
+        "typeSet1=%s, typeSet2=%s, " +
+        "typeList1=%s, typeList2=%s]",
+        getClass().getSimpleName(),
+        hashCode(),
+        getCustomDn(),
+        Arrays.toString(type1),
+        Arrays.toString(type2),
+        Arrays.toString(type3),
+        toString(typeCol1),
+        toString(typeCol2),
+        toString(typeSet1),
+        toString(typeSet2),
+        toString(typeList1),
+        toString(typeList2));
   }
 
 
@@ -168,8 +169,8 @@ public class CharCustomObject implements CustomObject
     final Class<T> type)
   {
     final Set<char[]> s1 = new HashSet<char[]>();
-    s1.add(new char[]{'t', 's', 'v', '1'});
-    s1.add(new char[]{'t', 's', 'v', '2'});
+    s1.add(new char[] {'t', 's', 'v', '1'});
+    s1.add(new char[] {'t', 's', 'v', '2'});
 
     final T o1;
     try {
@@ -180,19 +181,27 @@ public class CharCustomObject implements CustomObject
       throw new IllegalStateException(e);
     }
     o1.setCustomDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");
-    o1.setType1(new char[]{'t', 'v', '1'});
-    o1.writeType2(new char[]{'t', 'v', '2'});
-    o1.setType3(new char[]{'t', 'v', '3'});
-    o1.setTypeCol1(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
-                                 new char[]{'t', 'c', 'v', '2'}));
-    o1.writeTypeCol2(Arrays.asList(new char[]{'t', 'c', 'v', '1'},
-                                   new char[]{'t', 'c', 'v', '2'}));
+    o1.setType1(new char[] {'t', 'v', '1'});
+    o1.writeType2(new char[] {'t', 'v', '2'});
+    o1.setType3(new char[] {'t', 'v', '3'});
+    o1.setTypeCol1(
+      Arrays.asList(
+        new char[] {'t', 'c', 'v', '1'},
+        new char[] {'t', 'c', 'v', '2'}));
+    o1.writeTypeCol2(
+      Arrays.asList(
+        new char[] {'t', 'c', 'v', '1'},
+        new char[] {'t', 'c', 'v', '2'}));
     o1.setTypeSet1(s1);
     o1.writeTypeSet2(s1);
-    o1.setTypeList1(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
-                                  new char[]{'t', 'l', 'v', '2'}));
-    o1.writeTypeList2(Arrays.asList(new char[]{'t', 'l', 'v', '1'},
-                                    new char[]{'t', 'l', 'v', '2'}));
+    o1.setTypeList1(
+      Arrays.asList(
+        new char[] {'t', 'l', 'v', '1'},
+        new char[] {'t', 'l', 'v', '2'}));
+    o1.writeTypeList2(
+      Arrays.asList(
+        new char[] {'t', 'l', 'v', '1'},
+        new char[] {'t', 'l', 'v', '2'}));
 
     return o1;
   }
@@ -202,25 +211,52 @@ public class CharCustomObject implements CustomObject
   @Entry(
     dn = "customDn",
     attributes = {
-      @Attribute(name = "customname1", values = "customvalue1"),
+      @Attribute(
+        name = "customname1",
+        values = "customvalue1"
+      ),
       @Attribute(
         name = "customname2",
-        values = {"customvalue1", "customvalue2"}),
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "stringthree", property = "type3"),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
+        values = {"customvalue1", "customvalue2"}
+      ),
+      @Attribute(
+        name = "type1",
+        property = "type1"
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2"
+      ),
+      @Attribute(
+        name = "stringthree",
+        property = "type3"
+      ),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1"
+      ),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2"
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1"
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2"
+      ),
       @Attribute(
         name = "typeList1",
         property = "typeList1",
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeList2",
         property = "typeList2",
-        sortBehavior = SortBehavior.ORDERED)
+        sortBehavior = SortBehavior.ORDERED
+      )
       }
   )
   public static class Default extends CharCustomObject {}
@@ -230,25 +266,52 @@ public class CharCustomObject implements CustomObject
   @Entry(
     dn = "customDn",
     attributes = {
-      @Attribute(name = "customname1", values = "customvalue1"),
+      @Attribute(
+        name = "customname1",
+        values = "customvalue1"
+      ),
       @Attribute(
         name = "customname2",
-        values = {"customvalue1", "customvalue2"}),
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "stringthree", property = "type3"),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
+        values = {"customvalue1", "customvalue2"}
+      ),
+      @Attribute(
+        name = "type1",
+        property = "type1"
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2"
+      ),
+      @Attribute(
+        name = "stringthree",
+        property = "type3"
+      ),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1"
+      ),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2"
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1"
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2"
+      ),
       @Attribute(
         name = "typeList1",
         property = "typeList1",
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeList2",
         property = "typeList2",
-        sortBehavior = SortBehavior.ORDERED)
+        sortBehavior = SortBehavior.ORDERED
+      )
       }
   )
   public static class Spring extends CharCustomObject
