@@ -23,8 +23,8 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link SearchResult}, {@link LdapEntry}, and
- * {@link LdapAttribute}.
+ * Unit test for {@link SearchResult}, {@link LdapEntry}, and {@link
+ * LdapAttribute}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -48,7 +48,8 @@ public class LdapBeanTest
     // test default sort behavior
     SearchResult sr = new SearchResult();
     AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(), sr.getSortBehavior());
+      SortBehavior.getDefaultSortBehavior(),
+      sr.getSortBehavior());
     AssertJUnit.assertEquals(0, sr.size());
     AssertJUnit.assertNull(sr.getEntry());
     sr.clear();
@@ -58,6 +59,7 @@ public class LdapBeanTest
     sr = new SearchResult(SortBehavior.ORDERED);
     AssertJUnit.assertEquals(SortBehavior.ORDERED, sr.getSortBehavior());
     sr.addEntry(entry2, entry1);
+
     LdapEntry[] entries = sr.getEntries().toArray(new LdapEntry[2]);
     AssertJUnit.assertEquals(entry2, entries[0]);
     AssertJUnit.assertEquals(entry1, entries[1]);
@@ -154,7 +156,8 @@ public class LdapBeanTest
     // test default sort behavior
     LdapEntry le = new LdapEntry("uid=1");
     AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(), le.getSortBehavior());
+      SortBehavior.getDefaultSortBehavior(),
+      le.getSortBehavior());
     AssertJUnit.assertEquals(0, le.size());
     AssertJUnit.assertNull(le.getAttribute());
     AssertJUnit.assertEquals("uid=1", le.getDn());
@@ -167,6 +170,7 @@ public class LdapBeanTest
     le = new LdapEntry(SortBehavior.ORDERED);
     AssertJUnit.assertEquals(SortBehavior.ORDERED, le.getSortBehavior());
     le.addAttribute(attr2, attr1);
+
     LdapAttribute[] attrs = le.getAttributes().toArray(new LdapAttribute[2]);
     AssertJUnit.assertEquals(attr2, attrs[0]);
     AssertJUnit.assertEquals(attr1, attrs[1]);
@@ -235,7 +239,8 @@ public class LdapBeanTest
     // test default sort behavior
     LdapAttribute la = new LdapAttribute("givenName");
     AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(), la.getSortBehavior());
+      SortBehavior.getDefaultSortBehavior(),
+      la.getSortBehavior());
     AssertJUnit.assertEquals(0, la.size());
     AssertJUnit.assertNull(la.getStringValue());
     AssertJUnit.assertNull(la.getBinaryValue());
@@ -249,6 +254,7 @@ public class LdapBeanTest
     la = new LdapAttribute(SortBehavior.ORDERED);
     AssertJUnit.assertEquals(SortBehavior.ORDERED, la.getSortBehavior());
     la.addStringValue("William", "Bill");
+
     String[] values = la.getStringValues().toArray(new String[2]);
     AssertJUnit.assertEquals("William", values[0]);
     AssertJUnit.assertEquals("Bill", values[1]);
@@ -294,7 +300,8 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertEquals(2, la.size());
     AssertJUnit.assertEquals(
-      la, new LdapAttribute("givenName", "William", "Bill"));
+      la,
+      new LdapAttribute("givenName", "William", "Bill"));
     la.removeStringValue("William");
     AssertJUnit.assertEquals(1, la.size());
     la.clear();
@@ -328,6 +335,7 @@ public class LdapBeanTest
     final List<String> commonNames = new ArrayList<String>();
     commonNames.add("Bill Wallace");
     commonNames.add("William Wallace");
+
     final List<byte[]> binaryCommonNames = new ArrayList<byte[]>();
     binaryCommonNames.add("Bill Wallace".getBytes(Charset.forName("UTF-8")));
     binaryCommonNames.add("William Wallace".getBytes(Charset.forName("UTF-8")));
@@ -391,7 +399,8 @@ public class LdapBeanTest
     AssertJUnit.assertEquals("aW1hZ2U=", la.getStringValue());
     AssertJUnit.assertEquals(1, la.getStringValues().size());
     AssertJUnit.assertEquals(
-      la, new LdapAttribute("jpegPhoto", "image".getBytes()));
+      la,
+      new LdapAttribute("jpegPhoto", "image".getBytes()));
     try {
       la.addBinaryValue((byte[][]) null);
       AssertJUnit.fail("Should have thrown NullPointerException");
@@ -411,6 +420,7 @@ public class LdapBeanTest
     final List<byte[]> jpegPhotos = new ArrayList<byte[]>();
     jpegPhotos.add("image1".getBytes());
     jpegPhotos.add("image2".getBytes());
+
     final List<String> stringJpegPhotos = new ArrayList<String>();
     stringJpegPhotos.add("aW1hZ2Ux");
     stringJpegPhotos.add("aW1hZ2Uy");

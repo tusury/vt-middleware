@@ -24,8 +24,8 @@ import sun.security.util.HostnameChecker;
 
 /**
  * A {@link HostnameVerifier} that delegates to the internal Sun implementation
- * at sun.security.util.HostnameChecker. This is the implementation used by
- * JNDI with StartTLS.
+ * at sun.security.util.HostnameChecker. This is the implementation used by JNDI
+ * with StartTLS.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$

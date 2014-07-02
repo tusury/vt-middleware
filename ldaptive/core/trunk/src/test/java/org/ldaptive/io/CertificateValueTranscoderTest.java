@@ -73,14 +73,15 @@ public class CertificateValueTranscoderTest
     final Certificate cert = cf.generateCertificate(
       new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
 
-    return new Object[][] {
-      new Object[] {
-        cert,
-        "-----BEGIN CERTIFICATE-----\n" +
-          A_FOO_COM_CERT +
-          "\n-----END CERTIFICATE-----",
-        LdapUtils.base64Decode(A_FOO_COM_CERT), },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          cert,
+          "-----BEGIN CERTIFICATE-----\n" + A_FOO_COM_CERT +
+            "\n-----END CERTIFICATE-----",
+          LdapUtils.base64Decode(A_FOO_COM_CERT),
+        },
+      };
   }
 
 
@@ -91,9 +92,14 @@ public class CertificateValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "certs")
+  @Test(
+    groups = {"io"},
+    dataProvider = "certs"
+  )
   public void testTranscode(
-    final Certificate cert, final String s, final byte[] b)
+    final Certificate cert,
+    final String s,
+    final byte[] b)
     throws Exception
   {
     Assert.assertEquals(cert, transcoder.decodeStringValue(s));

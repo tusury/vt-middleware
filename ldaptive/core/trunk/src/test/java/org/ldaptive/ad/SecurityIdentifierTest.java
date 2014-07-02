@@ -39,20 +39,21 @@ public class SecurityIdentifierTest
   public Object[][] createSids()
     throws Exception
   {
-    return new Object[][] {
-      new Object[] {
-        "S-1-5-21-1051162837-3568060411-1686669321-1105",
-        LdapUtils.base64Decode("AQUAAAAAAAUVAAAA1XinPvtHrNQJiIhkUQQAAA=="),
-      },
-      new Object[] {
-        "S-1-5-21-1051162837-3568060411-1686669321-3173",
-        LdapUtils.base64Decode("AQUAAAAAAAUVAAAA1XinPvtHrNQJiIhkZQwAAA=="),
-      },
-      new Object[] {
-        "S-1-5-21-1051162837-3568060411-1686669321-1000",
-        LdapUtils.base64Decode("AQUAAAAAAAUVAAAA1XinPvtHrNQJiIhk6AMAAA=="),
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          "S-1-5-21-1051162837-3568060411-1686669321-1105",
+          LdapUtils.base64Decode("AQUAAAAAAAUVAAAA1XinPvtHrNQJiIhkUQQAAA=="),
+        },
+        new Object[] {
+          "S-1-5-21-1051162837-3568060411-1686669321-3173",
+          LdapUtils.base64Decode("AQUAAAAAAAUVAAAA1XinPvtHrNQJiIhkZQwAAA=="),
+        },
+        new Object[] {
+          "S-1-5-21-1051162837-3568060411-1686669321-1000",
+          LdapUtils.base64Decode("AQUAAAAAAAUVAAAA1XinPvtHrNQJiIhk6AMAAA=="),
+        },
+      };
   }
 
 
@@ -62,7 +63,10 @@ public class SecurityIdentifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ad"}, dataProvider = "sids")
+  @Test(
+    groups = {"ad"},
+    dataProvider = "sids"
+  )
   public void testToString(final String sidString, final byte[] sid)
     throws Exception
   {
@@ -76,7 +80,10 @@ public class SecurityIdentifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ad"}, dataProvider = "sids")
+  @Test(
+    groups = {"ad"},
+    dataProvider = "sids"
+  )
   public void testToBytes(final String sidString, final byte[] sid)
     throws Exception
   {

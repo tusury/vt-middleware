@@ -41,9 +41,7 @@ public class EhcacheTest
   private Ehcache<SearchRequest> cache;
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @BeforeClass(groups = {"cache"})
   public void initialize()
     throws Exception
@@ -61,9 +59,7 @@ public class EhcacheTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"cache"})
   public void clear()
     throws Exception
@@ -76,9 +72,7 @@ public class EhcacheTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(
     groups = {"cache"},
     threadPoolSize = 5,
@@ -106,9 +100,7 @@ public class EhcacheTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"cache"})
   public void put()
     throws Exception
@@ -116,7 +108,8 @@ public class EhcacheTest
     AssertJUnit.assertEquals(5, cache.size());
     cache.put(
       new SearchRequest(
-        "dc=ldaptive,dc=org", new SearchFilter("uid=%s", new Object[]{"101"})),
+        "dc=ldaptive,dc=org",
+        new SearchFilter("uid=%s", new Object[] {"101"})),
       new SearchResult(new LdapEntry("uid=101,ou=test,dc=ldaptive,dc=org")));
     cache.put(
       new SearchRequest("dc=ldaptive,dc=org", new SearchFilter("uid=102")),
@@ -125,7 +118,8 @@ public class EhcacheTest
 
     SearchResult result = cache.get(
       new SearchRequest(
-        "dc=ldaptive,dc=org", new SearchFilter("uid=%s", new Object[]{"101"})));
+        "dc=ldaptive,dc=org",
+        new SearchFilter("uid=%s", new Object[] {"101"})));
     AssertJUnit.assertEquals(
       new SearchResult(new LdapEntry("uid=101,ou=test,dc=ldaptive,dc=org")),
       result);
@@ -140,9 +134,7 @@ public class EhcacheTest
   }
 
 
-  /**
-   * Fills the cache with data.
-   */
+  /** Fills the cache with data. */
   private void fillCache()
   {
     cache.put(

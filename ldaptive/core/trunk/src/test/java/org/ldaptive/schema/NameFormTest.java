@@ -36,71 +36,72 @@ public class NameFormTest
   @DataProvider(name = "definitions")
   public Object[][] createDefinitions()
   {
-    return new Object[][] {
-      new Object[] {
-        new NameForm(
-          "1.3.6.1.1.10.15.1",
-          null,
-          null,
-          false,
-          null,
-          null,
-          null,
-          null),
-        "( 1.3.6.1.1.10.15.1 )",
-      },
-      new Object[] {
-        new NameForm(
-          "1.3.6.1.1.10.15.1",
-          new String[] {"uddiBusinessEntityNameForm"},
-          null,
-          false,
-          null,
-          null,
-          null,
-          null),
-        "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' )",
-      },
-      new Object[] {
-        new NameForm(
-          "1.3.6.1.1.10.15.1",
-          new String[] {"uddiBusinessEntityNameForm"},
-          null,
-          false,
-          "uddiBusinessEntity",
-          null,
-          null,
-          null),
-        "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
-          "OC uddiBusinessEntity )",
-      },
-      new Object[] {
-        new NameForm(
-          "1.3.6.1.1.10.15.1",
-          new String[] {"uddiBusinessEntityNameForm"},
-          null,
-          false,
-          "uddiBusinessEntity",
-          new String[] {"uddiBusinessKey"},
-          null,
-          null),
-        "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
-          "OC uddiBusinessEntity MUST uddiBusinessKey )",
-      },
-      new Object[] {
-        new NameForm(
-          "1.3.6.1.1.10.15.1",
-          new String[] {"uddiBusinessEntityNameForm"},
-          null,
-          false,
-          "uddiBusinessEntity",
-          new String[] {"uddiBusinessKey"},
-          null,
-          new Extensions("X-ORIGIN", Arrays.asList("RFC 4403"))),
-        "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
-          "OC uddiBusinessEntity MUST uddiBusinessKey X-ORIGIN 'RFC 4403' )",
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          new NameForm(
+            "1.3.6.1.1.10.15.1",
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            null),
+          "( 1.3.6.1.1.10.15.1 )",
+        },
+        new Object[] {
+          new NameForm(
+            "1.3.6.1.1.10.15.1",
+            new String[] {"uddiBusinessEntityNameForm"},
+            null,
+            false,
+            null,
+            null,
+            null,
+            null),
+          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' )",
+        },
+        new Object[] {
+          new NameForm(
+            "1.3.6.1.1.10.15.1",
+            new String[] {"uddiBusinessEntityNameForm"},
+            null,
+            false,
+            "uddiBusinessEntity",
+            null,
+            null,
+            null),
+          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
+            "OC uddiBusinessEntity )",
+        },
+        new Object[] {
+          new NameForm(
+            "1.3.6.1.1.10.15.1",
+            new String[] {"uddiBusinessEntityNameForm"},
+            null,
+            false,
+            "uddiBusinessEntity",
+            new String[] {"uddiBusinessKey"},
+            null,
+            null),
+          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
+            "OC uddiBusinessEntity MUST uddiBusinessKey )",
+        },
+        new Object[] {
+          new NameForm(
+            "1.3.6.1.1.10.15.1",
+            new String[] {"uddiBusinessEntityNameForm"},
+            null,
+            false,
+            "uddiBusinessEntity",
+            new String[] {"uddiBusinessKey"},
+            null,
+            new Extensions("X-ORIGIN", Arrays.asList("RFC 4403"))),
+          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
+            "OC uddiBusinessEntity MUST uddiBusinessKey X-ORIGIN 'RFC 4403' )",
+        },
+      };
   }
 
 
@@ -110,10 +111,11 @@ public class NameFormTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"schema"}, dataProvider = "definitions")
-  public void parse(
-    final NameForm nameForm,
-    final String definition)
+  @Test(
+    groups = {"schema"},
+    dataProvider = "definitions"
+  )
+  public void parse(final NameForm nameForm, final String definition)
     throws Exception
   {
     final NameForm parsed = NameForm.parse(definition);

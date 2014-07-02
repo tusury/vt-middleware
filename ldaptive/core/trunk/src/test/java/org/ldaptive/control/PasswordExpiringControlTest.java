@@ -36,18 +36,19 @@ public class PasswordExpiringControlTest
   @DataProvider(name = "response")
   public Object[][] createData()
   {
-    return new Object[][] {
-      // BER: 34:36:31
-      new Object[] {
-        LdapUtils.base64Decode("NDYx"),
-        new PasswordExpiringControl(461),
-      },
-      // BER: 33:38:34
-      new Object[] {
-        LdapUtils.base64Decode("Mzg0"),
-        new PasswordExpiringControl(384),
-      },
-    };
+    return
+      new Object[][] {
+        // BER: 34:36:31
+        new Object[] {
+          LdapUtils.base64Decode("NDYx"),
+          new PasswordExpiringControl(461),
+        },
+        // BER: 33:38:34
+        new Object[] {
+          LdapUtils.base64Decode("Mzg0"),
+          new PasswordExpiringControl(384),
+        },
+      };
   }
 
 
@@ -57,7 +58,10 @@ public class PasswordExpiringControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "response")
+  @Test(
+    groups = {"control"},
+    dataProvider = "response"
+  )
   public void decode(
     final byte[] berValue,
     final PasswordExpiringControl expected)

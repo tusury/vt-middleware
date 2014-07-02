@@ -43,9 +43,7 @@ public class Ehcache<Q extends SearchRequest> implements Cache<Q>
   }
 
 
-  /**
-   * Removes all data from this cache.
-   */
+  /** Removes all data from this cache. */
   public void clear()
   {
     cache.removeAll();

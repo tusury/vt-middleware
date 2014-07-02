@@ -36,20 +36,21 @@ public class SearchOptionsControlTest
   @DataProvider(name = "request")
   public Object[][] createData()
   {
-    return new Object[][] {
-      // domain scope
-      // BER: 30:03:02:01:00
-      new Object[] {
-        LdapUtils.base64Decode("MAMCAQA="),
-        new SearchOptionsControl(),
-      },
-      // phantom root
-      // BER: 30:03:02:01:01:
-      new Object[] {
-        LdapUtils.base64Decode("MAMCAQE="),
-        new SearchOptionsControl(SearchOptionsControl.Flag.PHANTOM_ROOT),
-      },
-    };
+    return
+      new Object[][] {
+        // domain scope
+        // BER: 30:03:02:01:00
+        new Object[] {
+          LdapUtils.base64Decode("MAMCAQA="),
+          new SearchOptionsControl(),
+        },
+        // phantom root
+        // BER: 30:03:02:01:01:
+        new Object[] {
+          LdapUtils.base64Decode("MAMCAQE="),
+          new SearchOptionsControl(SearchOptionsControl.Flag.PHANTOM_ROOT),
+        },
+      };
   }
 
 
@@ -59,7 +60,10 @@ public class SearchOptionsControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request")
+  @Test(
+    groups = {"control"},
+    dataProvider = "request"
+  )
   public void encode(final byte[] berValue, final SearchOptionsControl expected)
     throws Exception
   {

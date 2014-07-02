@@ -35,80 +35,83 @@ public class MatchingRuleUseTest
   @DataProvider(name = "definitions")
   public Object[][] createDefinitions()
   {
-    return new Object[][] {
-      new Object[] {
-        new MatchingRuleUse(
-          "1.2.840.113556.1.4.804",
-          null,
-          null,
-          false,
-          null,
-          null),
-        "( 1.2.840.113556.1.4.804 )",
-      },
-      new Object[] {
-        new MatchingRuleUse(
-          "1.2.840.113556.1.4.804",
-          new String[] {"integerBitOrMatch"},
-          null,
-          false,
-          null,
-          null),
-        "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' )",
-      },
-      new Object[] {
-        new MatchingRuleUse(
-          "1.2.840.113556.1.4.804",
-          new String[] {"integerBitOrMatch"},
-          null,
-          false,
-          new String[] {
-            "supportedLDAPVersion",
-            "entryTtl",
-            "uidNumber",
-            "gidNumber",
-            "olcConcurrency",
-            "olcConnMaxPending",
-            "olcConnMaxPendingAuth",
-            "olcIdleTimeout",
-            "olcIndexSubstrIfMinLen",
-            "olcIndexSubstrIfMaxLen",
-            "olcIndexSubstrAnyLen",
-            "olcIndexSubstrAnyStep",
-            "olcIndexIntLen",
-            "olcListenerThreads",
-            "olcLocalSSF",
-            "olcMaxDerefDepth",
-            "olcReplicationInterval",
-            "olcSockbufMaxIncoming",
-            "olcSockbufMaxIncomingAuth",
-            "olcThreads",
-            "olcToolThreads",
-            "olcWriteTimeout",
-            "olcDbCacheFree",
-            "olcDbCacheSize",
-            "olcDbDNcacheSize",
-            "olcDbIDLcacheSize",
-            "olcDbSearchStack",
-            "olcDbShmKey",
-            "olcDbMaxReaders",
-            "olcDbMaxSize",
-            "mailPreferenceOption", },
-          null),
-        "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' " +
-          "APPLIES ( supportedLDAPVersion $ entryTtl $ uidNumber $ " +
-          "gidNumber $ olcConcurrency $ olcConnMaxPending $ " +
-          "olcConnMaxPendingAuth $ olcIdleTimeout $ olcIndexSubstrIfMinLen $ " +
-          "olcIndexSubstrIfMaxLen $ olcIndexSubstrAnyLen $ " +
-          "olcIndexSubstrAnyStep $ olcIndexIntLen $ olcListenerThreads $ " +
-          "olcLocalSSF $ olcMaxDerefDepth $ olcReplicationInterval $ " +
-          "olcSockbufMaxIncoming $ olcSockbufMaxIncomingAuth $ olcThreads $ " +
-          "olcToolThreads $ olcWriteTimeout $ olcDbCacheFree $ " +
-          "olcDbCacheSize $ olcDbDNcacheSize $ olcDbIDLcacheSize $ " +
-          "olcDbSearchStack $ olcDbShmKey $ olcDbMaxReaders $ olcDbMaxSize $ " +
-          "mailPreferenceOption ) )",
-      },
-    };
+    return
+      new Object[][] {
+        new Object[] {
+          new MatchingRuleUse(
+            "1.2.840.113556.1.4.804",
+            null,
+            null,
+            false,
+            null,
+            null),
+          "( 1.2.840.113556.1.4.804 )",
+        },
+        new Object[] {
+          new MatchingRuleUse(
+            "1.2.840.113556.1.4.804",
+            new String[] {"integerBitOrMatch"},
+            null,
+            false,
+            null,
+            null),
+          "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' )",
+        },
+        new Object[] {
+          new MatchingRuleUse(
+            "1.2.840.113556.1.4.804",
+            new String[] {"integerBitOrMatch"},
+            null,
+            false,
+            new String[] {
+              "supportedLDAPVersion",
+              "entryTtl",
+              "uidNumber",
+              "gidNumber",
+              "olcConcurrency",
+              "olcConnMaxPending",
+              "olcConnMaxPendingAuth",
+              "olcIdleTimeout",
+              "olcIndexSubstrIfMinLen",
+              "olcIndexSubstrIfMaxLen",
+              "olcIndexSubstrAnyLen",
+              "olcIndexSubstrAnyStep",
+              "olcIndexIntLen",
+              "olcListenerThreads",
+              "olcLocalSSF",
+              "olcMaxDerefDepth",
+              "olcReplicationInterval",
+              "olcSockbufMaxIncoming",
+              "olcSockbufMaxIncomingAuth",
+              "olcThreads",
+              "olcToolThreads",
+              "olcWriteTimeout",
+              "olcDbCacheFree",
+              "olcDbCacheSize",
+              "olcDbDNcacheSize",
+              "olcDbIDLcacheSize",
+              "olcDbSearchStack",
+              "olcDbShmKey",
+              "olcDbMaxReaders",
+              "olcDbMaxSize",
+              "mailPreferenceOption",
+            },
+            null),
+          "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' " +
+            "APPLIES ( supportedLDAPVersion $ entryTtl $ uidNumber $ " +
+            "gidNumber $ olcConcurrency $ olcConnMaxPending $ " +
+            "olcConnMaxPendingAuth $ olcIdleTimeout $ " +
+            "olcIndexSubstrIfMinLen $ olcIndexSubstrIfMaxLen $ " +
+            "olcIndexSubstrAnyLen $ olcIndexSubstrAnyStep $ olcIndexIntLen $ " +
+            "olcListenerThreads $ olcLocalSSF $ olcMaxDerefDepth $ " +
+            "olcReplicationInterval $ olcSockbufMaxIncoming $ " +
+            "olcSockbufMaxIncomingAuth $ olcThreads $ olcToolThreads $ " +
+            "olcWriteTimeout $ olcDbCacheFree $ olcDbCacheSize $ " +
+            "olcDbDNcacheSize $ olcDbIDLcacheSize $ olcDbSearchStack $ " +
+            "olcDbShmKey $ olcDbMaxReaders $ olcDbMaxSize $ " +
+            "mailPreferenceOption ) )",
+        },
+      };
   }
 
 
@@ -118,10 +121,11 @@ public class MatchingRuleUseTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"schema"}, dataProvider = "definitions")
-  public void parse(
-    final MatchingRuleUse matchingRule,
-    final String definition)
+  @Test(
+    groups = {"schema"},
+    dataProvider = "definitions"
+  )
+  public void parse(final MatchingRuleUse matchingRule, final String definition)
     throws Exception
   {
     final MatchingRuleUse parsed = MatchingRuleUse.parse(definition);

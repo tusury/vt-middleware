@@ -15,7 +15,6 @@ package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -38,14 +37,15 @@ public class SortResponseControlTest
   @DataProvider(name = "response")
   public Object[][] createData()
   {
-    return new Object[][] {
-      // result code success
-      // BER: 30:03:0A:01:00
-      new Object[] {
-        LdapUtils.base64Decode("MAMKAQA="),
-        new SortResponseControl(ResultCode.SUCCESS, true),
-      },
-    };
+    return
+      new Object[][] {
+        // result code success
+        // BER: 30:03:0A:01:00
+        new Object[] {
+          LdapUtils.base64Decode("MAMKAQA="),
+          new SortResponseControl(ResultCode.SUCCESS, true),
+        },
+      };
   }
 
 
@@ -55,7 +55,10 @@ public class SortResponseControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "response")
+  @Test(
+    groups = {"control"},
+    dataProvider = "response"
+  )
   public void decode(final byte[] berValue, final SortResponseControl expected)
     throws Exception
   {
