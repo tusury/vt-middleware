@@ -137,6 +137,47 @@ public class IntCustomObject implements CustomObject
   }
 
 
+  /**
+   * Creates an int custom object for testing.
+   *
+   * @param  <T>  type of int custom object
+   * @param  type  of int custom object
+   *
+   * @return  instance of int custom object
+   */
+  public static <T extends IntCustomObject> T createCustomObject(
+    final Class<T> type)
+  {
+    // CheckStyle:MagicNumber OFF
+    final Set<Integer> s1 = new HashSet<Integer>();
+    s1.add(601);
+    s1.add(602);
+
+    final T o1;
+    try {
+      o1 = type.newInstance();
+    } catch (InstantiationException e) {
+      throw new IllegalStateException(e);
+    } catch (IllegalAccessException e) {
+      throw new IllegalStateException(e);
+    }
+    o1.setType1(100);
+    o1.writeType2(200);
+    o1.setType3(300);
+    o1.setTypeArray1(new int[]{301, 302});
+    o1.writeTypeArray2(new int[]{301, 302});
+    o1.setTypeCol1(Arrays.asList(501, 502));
+    o1.writeTypeCol2(Arrays.asList(501, 502));
+    o1.setTypeSet1(s1);
+    o1.writeTypeSet2(s1);
+    o1.setTypeList1(Arrays.asList(701, 702));
+    o1.writeTypeList2(Arrays.asList(701, 702));
+
+    return o1;
+    // CheckStyle:MagicNumber ON
+  }
+
+
   /** Test class for the default ldap entry mapper. */
   @Entry(
     dn = "cn=Integer Entry,ou=people,dc=ldaptive,dc=org",
@@ -202,46 +243,5 @@ public class IntCustomObject implements CustomObject
     public void setTypeList2(final List<Integer> l) { typeList2 = l; }
     // CheckStyle:LeftCurly ON
     // CheckStyle:JavadocMethod ON
-  }
-
-
-  /**
-   * Creates an int custom object for testing.
-   *
-   * @param  <T>  type of int custom object
-   * @param  type  of int custom object
-   *
-   * @return  instance of int custom object
-   */
-  public static <T extends IntCustomObject> T createCustomObject(
-    final Class<T> type)
-  {
-    // CheckStyle:MagicNumber OFF
-    final Set<Integer> s1 = new HashSet<Integer>();
-    s1.add(601);
-    s1.add(602);
-
-    final T o1;
-    try {
-      o1 = type.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
-      throw new IllegalStateException(e);
-    }
-    o1.setType1(100);
-    o1.writeType2(200);
-    o1.setType3(300);
-    o1.setTypeArray1(new int[]{301, 302});
-    o1.writeTypeArray2(new int[]{301, 302});
-    o1.setTypeCol1(Arrays.asList(501, 502));
-    o1.writeTypeCol2(Arrays.asList(501, 502));
-    o1.setTypeSet1(s1);
-    o1.writeTypeSet2(s1);
-    o1.setTypeList1(Arrays.asList(701, 702));
-    o1.writeTypeList2(Arrays.asList(701, 702));
-
-    return o1;
-    // CheckStyle:MagicNumber ON
   }
 }
