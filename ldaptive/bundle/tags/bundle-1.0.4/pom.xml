@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.ldaptive.bundle</groupId>
+  <artifactId>root</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.4</version>
+  <name>LDAPTIVE BUNDLE</name>
+  <description>ldaptive bundle</description>
+  <url>http://www.ldaptive.org</url>
+  <issueManagement>
+    <system>Google Code</system>
+    <url>http://code.google.com/p/vt-middleware/issues/list</url>
+  </issueManagement>
+  <mailingLists>
+    <mailingList>
+      <name>ldaptive</name>
+      <subscribe>ldaptive+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>ldaptive+unsubscribe@googlegroups.com</unsubscribe>
+      <post>ldaptive@googlegroups.com</post>
+      <archive>http://groups.google.com/group/ldaptive</archive>
+    </mailingList>
+  </mailingLists>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+    <license>
+      <name>GNU Lesser General Public License</name>
+      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:svn:https://vt-middleware.googlecode.com/svn/ldaptive/core</connection>
+    <url>http://vt-middleware.googlecode.com/svn/ldaptive/core</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>dfisher</id>
+      <name>Daniel Fisher</name>
+      <email>dfisher@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>marvin.addison</id>
+      <name>Marvin Addison</name>
+      <email>serac@vt.edu</email>
+      <organization>Virginia Tech</organization>
+      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>core</module>
+    <module>json</module>
+    <module>templates</module>
+    <module>webapp</module>
+    <module>apache</module>
+    <module>jldap</module>
+    <module>netscape</module>
+    <module>opendj</module>
+    <module>opends</module>
+    <module>unboundid</module>
+    <module>bundle</module>
+    <module>javadoc</module>
+  </modules>
+
+</project>
