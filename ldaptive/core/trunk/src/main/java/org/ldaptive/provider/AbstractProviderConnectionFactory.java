@@ -91,7 +91,8 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
       try {
         logger.trace(
           "[{}] Attempting connection to {} for strategy {}",
-          new Object[] {metadata,
+          new Object[] {
+            metadata,
             url,
             providerConfig.getConnectionStrategy(),
           });

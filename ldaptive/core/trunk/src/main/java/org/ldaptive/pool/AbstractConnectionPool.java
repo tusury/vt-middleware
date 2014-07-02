@@ -246,6 +246,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
     available = new Queue<PooledConnectionProxy>(queueType);
     active = new Queue<PooledConnectionProxy>(queueType);
+
     IllegalStateException growException = null;
     try {
       grow(getPoolConfig().getMinPoolSize(), true);
@@ -953,9 +954,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   /**
    * Contains a connection that is participating in this pool. Used to track how
    * long a connection has been in use and override certain method invocations.
-   *
-   * @author  Middleware Services
-   * @version  $Revision$ $Date$
    */
   protected class DefaultPooledConnectionProxy implements PooledConnectionProxy
   {
