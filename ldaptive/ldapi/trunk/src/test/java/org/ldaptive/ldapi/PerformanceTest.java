@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 /**
  * Performance test for an ldap search operation over native sockets.
  *
- * @author Middleware Services
+ * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
 public class PerformanceTest
@@ -56,13 +56,15 @@ public class PerformanceTest
    * @param  baseDn  to search on
    * @param  searchFilter  to execute
    */
-  @BeforeClass(groups = { "ldapi" })
-  @Parameters({
-    "ldapSocketFile",
-    "ldapTestHost",
-    "ldapBaseDn",
-    "ldapSearchFilter"
-  })
+  @BeforeClass(groups = {"ldapi"})
+  @Parameters(
+    {
+      "ldapSocketFile",
+      "ldapTestHost",
+      "ldapBaseDn",
+      "ldapSearchFilter"
+    }
+  )
   public void initialize(
     final String socketFile,
     final String host,
@@ -91,19 +93,22 @@ public class PerformanceTest
     props.put(
       JndiProvider.SOCKET_FACTORY,
       "org.ldaptive.ldapi.AFUnixSocketFactory");
-    final DefaultConnectionFactory nativeFactory =
-      new DefaultConnectionFactory(new ConnectionConfig("ldap://domainsocket"));
+
+    final DefaultConnectionFactory nativeFactory = new DefaultConnectionFactory(
+      new ConnectionConfig("ldap://domainsocket"));
     nativeFactory.getProvider().getProviderConfig().setProperties(props);
 
-    final DefaultConnectionFactory localFactory =
-      new DefaultConnectionFactory(new ConnectionConfig(ldapHost));
+    final DefaultConnectionFactory localFactory = new DefaultConnectionFactory(
+      new ConnectionConfig(ldapHost));
 
     final SearchRequest request = new SearchRequest(
-      ldapBaseDn, ldapSearchFilter);
-    return new Object[][] {
-      new Object[] {nativeFactory, request, },
-      new Object[] {localFactory, request, },
-    };
+      ldapBaseDn,
+      ldapSearchFilter);
+    return
+      new Object[][] {
+        new Object[] {nativeFactory, request,},
+        new Object[] {localFactory, request,},
+      };
   }
 
 
@@ -113,9 +118,12 @@ public class PerformanceTest
    * @param  connFactory  to get connections from
    * @param  request  to execute
    *
-   * @throws Exception On test errors.
+   * @throws  Exception  On test errors.
    */
-  @Test(groups = { "ldapi" }, dataProvider = "factories")
+  @Test(
+    groups = {"ldapi"},
+    dataProvider = "factories"
+  )
   public void search(
     final ConnectionFactory connFactory,
     final SearchRequest request)
