@@ -62,7 +62,9 @@
 
   <modules>
     <module>core</module>
+    <module>beans</module>
     <module>json</module>
+    <module>ldapi</module>
     <module>templates</module>
     <module>webapp</module>
     <module>apache</module>
