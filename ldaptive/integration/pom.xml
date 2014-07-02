@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-integration-test</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.5-SNAPSHOT</version>
   <name>LDAPTIVE INTEGRATION TESTS</name>
 
   <prerequisites>
@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-beans</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
