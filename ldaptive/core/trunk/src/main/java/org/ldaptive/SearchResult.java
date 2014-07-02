@@ -76,10 +76,11 @@ public class SearchResult extends AbstractLdapBean
         new Comparator<SearchReference>() {
           @Override
           public int compare(
-            final SearchReference ref1, final SearchReference ref2)
+            final SearchReference ref1,
+            final SearchReference ref2)
           {
-            return Arrays.toString(
-              ref1.getReferralUrls()).compareTo(
+            return
+              Arrays.toString(ref1.getReferralUrls()).compareTo(
                 Arrays.toString(ref2.getReferralUrls()));
           }
         });
@@ -379,12 +380,13 @@ public class SearchResult extends AbstractLdapBean
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::entries=%s, references=%s]",
-      getClass().getName(),
-      hashCode(),
-      resultEntries.values(),
-      searchReferences);
+    return
+      String.format(
+        "[%s@%d::entries=%s, references=%s]",
+        getClass().getName(),
+        hashCode(),
+        resultEntries.values(),
+        searchReferences);
   }
 
 

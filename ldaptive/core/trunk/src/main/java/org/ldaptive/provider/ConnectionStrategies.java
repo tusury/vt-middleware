@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Utility class that contains common implementations of
- * {@link ConnectionStrategy}.
+ * Utility class that contains common implementations of {@link
+ * ConnectionStrategy}.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -31,6 +31,28 @@ public final class ConnectionStrategies
 
   /** Default constructor. */
   private ConnectionStrategies() {}
+
+
+  /**
+   * Takes a space delimited string of URLs and returns a list of URLs.
+   *
+   * @param  url  to split
+   *
+   * @return  list of URLs
+   */
+  protected static List<String> splitLdapUrl(final String url)
+  {
+    final List<String> urls = new ArrayList<String>();
+    if (url != null) {
+      final StringTokenizer st = new StringTokenizer(url);
+      while (st.hasMoreTokens()) {
+        urls.add(st.nextToken());
+      }
+    } else {
+      urls.add(null);
+    }
+    return urls;
+  }
 
 
   /** Default strategy. */
@@ -83,14 +105,14 @@ public final class ConnectionStrategies
     /** Internal method invocation counter. */
     private int invocationCount;
 
-    /** Whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should used the
-     * connectionCount parameter or the {@link #invocationCount}. */
+    /**
+     * Whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should used the
+     * connectionCount parameter or the {@link #invocationCount}.
+     */
     private final boolean useConnectionCount;
 
 
-    /**
-     * Creates a new round robin connection strategy.
-     */
+    /** Creates a new round robin connection strategy. */
     public RoundRobinConnectionStrategy()
     {
       this(true);
@@ -183,27 +205,5 @@ public final class ConnectionStrategies
       Collections.shuffle(l);
       return l.toArray(new String[l.size()]);
     }
-  }
-
-
-  /**
-   * Takes a space delimited string of URLs and returns a list of URLs.
-   *
-   * @param  url  to split
-   *
-   * @return  list of URLs
-   */
-  protected static List<String> splitLdapUrl(final String url)
-  {
-    final List<String> urls = new ArrayList<String>();
-    if (url != null) {
-      final StringTokenizer st = new StringTokenizer(url);
-      while (st.hasMoreTokens()) {
-        urls.add(st.nextToken());
-      }
-    } else {
-      urls.add(null);
-    }
-    return urls;
   }
 }

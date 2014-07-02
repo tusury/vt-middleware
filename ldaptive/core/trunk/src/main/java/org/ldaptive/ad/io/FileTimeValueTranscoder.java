@@ -25,8 +25,8 @@ import org.ldaptive.io.AbstractStringValueTranscoder;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class FileTimeValueTranscoder extends
-  AbstractStringValueTranscoder<Calendar>
+public class FileTimeValueTranscoder
+  extends AbstractStringValueTranscoder<Calendar>
 {
 
   /** UTC time zone. */

@@ -53,8 +53,8 @@ public enum SortBehavior {
     final String sb = System.getProperty(SORT_BEHAVIOR);
     if (sb != null) {
       try {
-        final SortBehavior sortBehavior = (SortBehavior) Class.forName(sb)
-          .newInstance();
+        final SortBehavior sortBehavior = (SortBehavior)
+          Class.forName(sb).newInstance();
         LOGGER.info("Set default sort behavior to {}", sortBehavior);
         defaultSortBehavior = sortBehavior;
       } catch (ClassNotFoundException e) {

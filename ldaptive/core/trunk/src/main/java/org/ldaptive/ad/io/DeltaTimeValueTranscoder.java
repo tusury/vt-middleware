@@ -22,8 +22,8 @@ import org.ldaptive.io.AbstractStringValueTranscoder;
  * @author  Middleware Services
  * @version  $Revision$ $Date$
  */
-public class DeltaTimeValueTranscoder extends
-  AbstractStringValueTranscoder<Long>
+public class DeltaTimeValueTranscoder
+  extends AbstractStringValueTranscoder<Long>
 {
 
   /**
