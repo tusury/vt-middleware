@@ -114,26 +114,27 @@ public class IntCustomObject implements CustomObject
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::" +
-      "type1=%s, type2=%s, type3=%s, " +
-      "typeArray1=%s, typeArray2=%s, " +
-      "typeCol1=%s, typeCol2=%s, " +
-      "typeSet1=%s, typeSet2=%s, " +
-      "typeList1=%s, typeList2=%s]",
-      getClass().getSimpleName(),
-      hashCode(),
-      type1,
-      type2,
-      type3,
-      Arrays.toString(typeArray1),
-      Arrays.toString(typeArray2),
-      typeCol1,
-      typeCol2,
-      typeSet1,
-      typeSet2,
-      typeList1,
-      typeList2);
+    return
+      String.format(
+        "[%s@%d::" +
+        "type1=%s, type2=%s, type3=%s, " +
+        "typeArray1=%s, typeArray2=%s, " +
+        "typeCol1=%s, typeCol2=%s, " +
+        "typeSet1=%s, typeSet2=%s, " +
+        "typeList1=%s, typeList2=%s]",
+        getClass().getSimpleName(),
+        hashCode(),
+        type1,
+        type2,
+        type3,
+        Arrays.toString(typeArray1),
+        Arrays.toString(typeArray2),
+        typeCol1,
+        typeCol2,
+        typeSet1,
+        typeSet2,
+        typeList1,
+        typeList2);
   }
 
 
@@ -164,8 +165,8 @@ public class IntCustomObject implements CustomObject
     o1.setType1(100);
     o1.writeType2(200);
     o1.setType3(300);
-    o1.setTypeArray1(new int[]{301, 302});
-    o1.writeTypeArray2(new int[]{301, 302});
+    o1.setTypeArray1(new int[] {301, 302});
+    o1.writeTypeArray2(new int[] {301, 302});
     o1.setTypeCol1(Arrays.asList(501, 502));
     o1.writeTypeCol2(Arrays.asList(501, 502));
     o1.setTypeSet1(s1);
@@ -182,23 +183,52 @@ public class IntCustomObject implements CustomObject
   @Entry(
     dn = "cn=Integer Entry,ou=people,dc=ldaptive,dc=org",
     attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "type1",
+        property = "type1"
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2"
+      ),
+      @Attribute(
+        name = "numberthree",
+        property = "type3"
+      ),
       @Attribute(
         name = "typeArray1",
         property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeArray2",
         property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1"
+      ),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2"
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1"
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2"
+      ),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1"
+      ),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2"
+      )
       }
   )
   public static class Default extends IntCustomObject {}
@@ -208,23 +238,52 @@ public class IntCustomObject implements CustomObject
   @Entry(
     dn = "cn=Integer Entry,ou=people,dc=ldaptive,dc=org",
     attributes = {
-      @Attribute(name = "type1", property = "type1"),
-      @Attribute(name = "type2", property = "type2"),
-      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(
+        name = "type1",
+        property = "type1"
+      ),
+      @Attribute(
+        name = "type2",
+        property = "type2"
+      ),
+      @Attribute(
+        name = "numberthree",
+        property = "type3"
+      ),
       @Attribute(
         name = "typeArray1",
         property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED),
+        sortBehavior = SortBehavior.ORDERED
+      ),
       @Attribute(
         name = "typeArray2",
         property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol1", property = "typeCol1"),
-      @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1"),
-      @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1"),
-      @Attribute(name = "typeList2", property = "typeList2")
+        sortBehavior = SortBehavior.ORDERED
+      ),
+      @Attribute(
+        name = "typeCol1",
+        property = "typeCol1"
+      ),
+      @Attribute(
+        name = "typeCol2",
+        property = "typeCol2"
+      ),
+      @Attribute(
+        name = "typeSet1",
+        property = "typeSet1"
+      ),
+      @Attribute(
+        name = "typeSet2",
+        property = "typeSet2"
+      ),
+      @Attribute(
+        name = "typeList1",
+        property = "typeList1"
+      ),
+      @Attribute(
+        name = "typeList2",
+        property = "typeList2"
+      )
       }
   )
   public static class Spring extends IntCustomObject
