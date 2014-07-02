@@ -164,7 +164,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       final AdDirSync c = (AdDirSync) responseControl;
       ctl = new DirSyncControl(
         new DirSyncControl.Flag[] {
-          DirSyncControl.Flag.valueOf(c.getFlag().getValue())
+          DirSyncControl.Flag.valueOf(c.getFlag().getValue()),
         },
         c.getCookie(),
         c.getMaxReturnLength(),
