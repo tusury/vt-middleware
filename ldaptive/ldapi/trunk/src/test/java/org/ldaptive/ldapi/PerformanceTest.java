@@ -106,8 +106,8 @@ public class PerformanceTest
       ldapSearchFilter);
     return
       new Object[][] {
-        new Object[] {nativeFactory, request,},
-        new Object[] {localFactory, request,},
+        new Object[] {nativeFactory, request, },
+        new Object[] {localFactory, request, },
       };
   }
 
