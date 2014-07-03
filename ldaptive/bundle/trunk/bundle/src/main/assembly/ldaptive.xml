@@ -47,6 +47,22 @@
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
     <fileSet>
+      <directory>../beans/target/ldaptive-beans</directory>
+      <outputDirectory>/ldaptive-beans</outputDirectory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+    <fileSet>
+      <directory>../ldapi/target/ldaptive-ldapi</directory>
+      <outputDirectory>/ldaptive-ldapi</outputDirectory>
+      <includes>
+        <include>**</include>
+      </includes>
+      <useDefaultExcludes>true</useDefaultExcludes>
+    </fileSet>
+    <fileSet>
       <directory>../apache/target/ldaptive-apache</directory>
       <outputDirectory>/ldaptive-apache</outputDirectory>
       <includes>
