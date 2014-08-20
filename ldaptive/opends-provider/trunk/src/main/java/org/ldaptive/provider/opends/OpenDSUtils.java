@@ -224,14 +224,11 @@ public class OpenDSUtils
       isBinary = "1.3.6.1.4.1.1466.115.121.1.5".equals(oid);
     }
 
-    LdapAttribute la;
+    final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);
+    la.setName(a.getAttributeDescriptionAsString());
     if (isBinary) {
-      la = new LdapAttribute(sortBehavior, true);
-      la.setName(a.getAttributeDescriptionAsString());
       la.addBinaryValue(toBinaryValues(a.toArray()));
     } else {
-      la = new LdapAttribute(sortBehavior, false);
-      la.setName(a.getAttributeDescriptionAsString());
       la.addStringValue(toStringValues(a.toArray()));
     }
     return la;
