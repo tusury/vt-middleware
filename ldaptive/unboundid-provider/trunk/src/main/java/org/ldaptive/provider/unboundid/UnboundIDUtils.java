@@ -119,11 +119,18 @@ public class UnboundIDUtils
    */
   public LdapAttribute toLdapAttribute(final Attribute a)
   {
-    final LdapAttribute la = new LdapAttribute(
-      sortBehavior,
-      a.needsBase64Encoding());
+    boolean isBinary = false;
+    if (a.getOptions().contains("binary")) {
+      isBinary = true;
+    } else if (binaryAttrs != null && binaryAttrs.contains(a.getName())) {
+      isBinary = true;
+    } else if (a.needsBase64Encoding()) {
+      isBinary = true;
+    }
+
+    final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);
     la.setName(a.getName());
-    if (a.needsBase64Encoding()) {
+    if (isBinary) {
       la.addBinaryValue(a.getValueByteArrays());
     } else {
       la.addStringValue(a.getValues());

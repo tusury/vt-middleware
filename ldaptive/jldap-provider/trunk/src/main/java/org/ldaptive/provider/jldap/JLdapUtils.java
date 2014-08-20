@@ -135,16 +135,13 @@ public class JLdapUtils
       isBinary = !Base64.isLDIFSafe(a.getStringValue());
     }
 
-    LdapAttribute la;
+    final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);
+    la.setName(a.getName());
     if (isBinary) {
-      la = new LdapAttribute(sortBehavior, true);
-      la.setName(a.getName());
       for (byte[] b : a.getByteValueArray()) {
         la.addBinaryValue(b);
       }
     } else {
-      la = new LdapAttribute(sortBehavior, false);
-      la.setName(a.getName());
       for (String s : a.getStringValueArray()) {
         la.addStringValue(s);
       }
