@@ -140,7 +140,7 @@ public class AggregateDnResolver implements DnResolver
   {
     final CompletionService<String> cs = new ExecutorCompletionService<String>(
       service);
-    final List<String> results = new ArrayList<String>();
+    final List<String> results = new ArrayList<String>(dnResolvers.size());
     for (final Map.Entry<String, DnResolver> entry : dnResolvers.entrySet()) {
       cs.submit(
         new Callable<String>() {
@@ -155,12 +155,15 @@ public class AggregateDnResolver implements DnResolver
             return null;
           }
         });
+      logger.debug("submitted DN resolver {}", entry.getValue());
     }
     for (DnResolver resolver : dnResolvers.values()) {
       try {
+        logger.debug("waiting on DN resolver {}", resolver);
         final String dn = cs.take().get();
+        logger.debug("DN resolver {} resolved dn {}", resolver, dn);
         if (dn != null) {
-          results.add(cs.take().get());
+          results.add(dn);
         }
       } catch (ExecutionException e) {
         logger.debug("ExecutionException thrown, ignoring", e);
@@ -171,7 +174,7 @@ public class AggregateDnResolver implements DnResolver
     if (results.size() > 1 && !allowMultipleDns) {
       throw new LdapException("Found more than (1) DN for: " + user);
     }
-    return results.get(0);
+    return results.isEmpty() ? null : results.get(0);
   }
 
 
