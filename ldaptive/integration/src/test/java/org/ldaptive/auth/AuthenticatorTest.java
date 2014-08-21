@@ -13,6 +13,8 @@
 */
 package org.ldaptive.auth;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
@@ -304,6 +306,52 @@ public class AuthenticatorTest extends AbstractTest
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
     AssertJUnit.assertEquals(
       testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
+  }
+
+
+  /**
+   * @param  user  to get dn for.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "getDnUser" })
+  @Test(groups = {"auth"})
+  public void resolveDnAggregate(final String user)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SearchDnResolver sr1 = (SearchDnResolver) auth.getDnResolver();
+    final SearchDnResolver sr2 = new SearchDnResolver();
+    sr2.setAllowMultipleDns(sr1.getAllowMultipleDns());
+    sr2.setConnectionFactory(sr1.getConnectionFactory());
+    sr2.setBaseDn(sr1.getBaseDn());
+    sr2.setSubtreeSearch(sr1.getSubtreeSearch());
+    sr2.setUserFilter(sr1.getUserFilter());
+    sr2.setUserFilterParameters(sr1.getUserFilterParameters());
+
+    final Map<String, DnResolver> resolvers = new HashMap<String, DnResolver>();
+    resolvers.put("resover1", sr1);
+    resolvers.put("resover2", sr2);
+    final AggregateDnResolver resolver = new AggregateDnResolver(resolvers);
+    auth.setDnResolver(resolver);
+
+    // test input
+    AssertJUnit.assertNull(auth.resolveDn(null));
+    AssertJUnit.assertNull(auth.resolveDn(""));
+
+    // test duplicate DNs
+    resolver.setAllowMultipleDns(false);
+    try {
+      auth.resolveDn(user);
+      AssertJUnit.fail("Should have thrown LdapException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(LdapException.class, e.getClass());
+    }
+
+    resolver.setAllowMultipleDns(true);
+    AssertJUnit.assertEquals(
+      testLdapEntry.getDn().toLowerCase(),
+      auth.resolveDn(user).toLowerCase().split(":")[1]);
   }
 
 
