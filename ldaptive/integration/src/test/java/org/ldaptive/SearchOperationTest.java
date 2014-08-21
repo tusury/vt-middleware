@@ -1057,17 +1057,39 @@ public class SearchOperationTest extends AbstractTest
       new String[] {returnAttr});
     request.setBinaryAttributes(new String[]{returnAttr});
     SearchResult result = search.execute(request).getResult();
-    AssertJUnit.assertNotSame(
+    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
+    AssertJUnit.assertEquals(
       base64Value,
       result.getEntry().getAttribute().getStringValue());
 
     request = new SearchRequest(
-      dn, new SearchFilter(filter), new String[] {returnAttr});
-    request.setBinaryAttributes(new String[]{returnAttr});
+      dn,
+      new SearchFilter(filter),
+      new String[] {returnAttr});
     result = search.execute(request).getResult();
+    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
     AssertJUnit.assertEquals(
       base64Value,
       result.getEntry().getAttribute().getStringValue());
+
+    request = new SearchRequest(
+      dn,
+      new SearchFilter(filter),
+      new String[] {"sn"});
+    request.setBinaryAttributes(new String[]{"sn"});
+    result = search.execute(request).getResult();
+    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
+    AssertJUnit.assertNotNull(
+      result.getEntry().getAttribute().getBinaryValue());
+
+    request = new SearchRequest(
+      dn,
+      new SearchFilter(filter),
+      new String[] {"userCertificate;binary"});
+    result = search.execute(request).getResult();
+    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
+    AssertJUnit.assertNotNull(
+      result.getEntry().getAttribute().getBinaryValue());
   }
 
 
