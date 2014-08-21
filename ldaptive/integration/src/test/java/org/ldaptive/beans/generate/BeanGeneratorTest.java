@@ -18,6 +18,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.schema.Schema;
+import org.ldaptive.schema.SchemaFactory;
 import org.testng.annotations.Test;
 
 /**
@@ -43,8 +44,7 @@ public class BeanGeneratorTest extends AbstractTest
     final DefaultConnectionFactory factory = new DefaultConnectionFactory(
       TestUtils.readConnectionConfig(
         "classpath:/org/ldaptive/ldap.setup.properties"));
-    final Schema schema = org.ldaptive.schema.SchemaFactory.createSchema(
-      factory);
+    final Schema schema = SchemaFactory.createSchema(factory);
     final BeanGenerator generator = new BeanGenerator();
     generator.setSchema(schema);
     generator.setExcludedNames("objectClass");
