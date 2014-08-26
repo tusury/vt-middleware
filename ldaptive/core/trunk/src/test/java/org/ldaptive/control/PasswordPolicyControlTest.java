@@ -77,6 +77,13 @@ public class PasswordPolicyControlTest
           LdapUtils.base64Decode("MAOBAQE="),
           p4,
         },
+        // Test case #5
+        // empty control
+        // BER: 30:00
+        new Object[] {
+          LdapUtils.base64Decode("MAA="),
+          new PasswordPolicyControl(),
+        },
       };
   }
 
