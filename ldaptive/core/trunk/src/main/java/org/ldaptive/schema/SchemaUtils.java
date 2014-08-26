@@ -43,13 +43,7 @@ public final class SchemaUtils
       final String[] quotedDescr = descrs.split(" ");
       final String[] s = new String[quotedDescr.length];
       for (int i = 0; i < s.length; i++) {
-        try {
-          s[i] = quotedDescr[i].substring(
-            1, quotedDescr[i].length() - 1).trim();
-        } catch (RuntimeException e) {
-          System.err.println("PARSE ERROR:: " + descrs);
-          throw e;
-        }
+        s[i] = quotedDescr[i].substring(1, quotedDescr[i].length() - 1).trim();
       }
       return s;
     } else {
