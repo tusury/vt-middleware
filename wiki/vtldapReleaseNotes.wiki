@@ -2,6 +2,12 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 3.3.8 =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=226 vtldap-226] - default certificate hostname verifier incorrectly parses CN
+
+= Version 3.3.7 =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=175 vtldap-175] - timer tasks may die if LDAP unavailable
+
 = Version 3.3.6 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=133 vtldap-133] - Non default connection strategies broken for LDAPS
 
