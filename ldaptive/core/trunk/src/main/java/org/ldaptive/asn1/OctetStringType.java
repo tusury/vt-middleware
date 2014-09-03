@@ -25,6 +25,9 @@ import java.nio.charset.Charset;
 public class OctetStringType extends AbstractDERType implements DEREncoder
 {
 
+  /** Character set for this string type. */
+  private static final Charset CHARSET = Charset.forName("UTF-8");
+
   /** String to encode. */
   private final byte[] derItem;
 
@@ -36,7 +39,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public OctetStringType(final String item)
   {
-    this(item.getBytes(Charset.forName("UTF-8")));
+    this(item.getBytes(CHARSET));
   }
 
 
@@ -62,7 +65,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public OctetStringType(final DERTag tag, final String item)
   {
-    this(tag, item.getBytes(Charset.forName("UTF-8")));
+    this(tag, item.getBytes(CHARSET));
   }
 
 
@@ -105,7 +108,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public static String decode(final ByteBuffer encoded)
   {
-    return new String(readBuffer(encoded), Charset.forName("UTF-8"));
+    return new String(readBuffer(encoded), CHARSET);
   }
 
 
@@ -118,6 +121,6 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public static byte[] toBytes(final String s)
   {
-    return s.getBytes(Charset.forName("UTF-8"));
+    return s.getBytes(CHARSET);
   }
 }
