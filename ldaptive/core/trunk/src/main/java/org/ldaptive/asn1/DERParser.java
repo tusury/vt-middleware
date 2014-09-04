@@ -153,7 +153,7 @@ public class DERParser
       final int len = b & 0x7F;
       if (len > 0) {
         encoded.limit(encoded.position() + len);
-        length = IntegerType.decode(encoded).intValue();
+        length = IntegerType.decodeUnsigned(encoded).intValue();
         encoded.limit(encoded.capacity());
       }
     } else {
@@ -261,5 +261,4 @@ public class DERParser
       p.popNode();
     }
   }
-
 }

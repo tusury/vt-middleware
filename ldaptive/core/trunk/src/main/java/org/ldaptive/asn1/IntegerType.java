@@ -115,6 +115,23 @@ public class IntegerType extends AbstractDERType implements DEREncoder
 
 
   /**
+   * Converts bytes in the buffer to an unsigned integer by reading from the
+   * current position to the limit, which assumes the bytes of the integer are
+   * in big-endian order.
+   *
+   * @param  encoded  buffer containing DER-encoded data where the buffer is
+   * positioned at the start of integer bytes and the limit is set beyond the
+   * last byte of integer data.
+   *
+   * @return  decoded bytes as an unsigned integer of arbitrary size.
+   */
+  public static BigInteger decodeUnsigned(final ByteBuffer encoded)
+  {
+    return new BigInteger(1, readBuffer(encoded));
+  }
+
+
+  /**
    * Converts the supplied big integer to a byte array.
    *
    * @param  i  to convert
