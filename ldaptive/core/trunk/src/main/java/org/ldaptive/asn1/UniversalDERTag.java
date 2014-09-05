@@ -36,18 +36,77 @@ public enum UniversalDERTag implements DERTag {
   /** OCTETSTRING type. */
   OCTSTR(4, false),
 
+  /** NULL type. */
+  NULL(5, false),
+
   /** OBJECT IDENTIFIER type. */
   OID(6, false),
 
+  /** ObjectDescriptor type. */
+  ODESC(7, false),
+
+  /** EXTERNAL type. */
+  EXT(8, false),
+
+  /** REAL type. */
+  REAL(9, false),
+
   /** ENUMERATED type. */
   ENUM(10, false),
+
+  /** EMBEDDED PDV type. */
+  EMBPDV(11, false),
+
+  /** UTF8String type. */
+  UTF8STR(12, false),
+
+  /** RELATIVE-OID type. */
+  ROID(13, false),
 
   /** SEQUENCE type. */
   SEQ(16, true),
 
   /** SET type. */
-  SET(17, true);
+  SET(17, true),
 
+  /** NumericString type. */
+  NUMSTR(18, false),
+
+  /** PrintableString type. */
+  PRINTSTR(19, false),
+
+  /** T61String type. */
+  T61STR(20, false),
+
+  /** VideotexString type. */
+  VTEXSTR(21, false),
+
+  /** IA5String type. */
+  IA5STR(22, false),
+
+  /** UTCTime type. */
+  UTCTIME(23, false),
+
+  /** GeneralizedTime type. */
+  GENTIME(24, false),
+
+  /** GraphicString type. */
+  GRAPHICSTR(25, false),
+
+  /** ISO646String type. */
+  ISO646STR(26, false),
+
+  /** GeneralString type. */
+  GENSTR(27, false),
+
+  /** UniversalString type. */
+  UNISTR(28, false),
+
+  /** CharacterString type. */
+  CHARSTR(29, false),
+
+  /** BMPString type. */
+  BMPSTR(30, false);
 
   /** Universal tag class is 00b in first two high-order bytes. */
   public static final int TAG_CLASS = 0;

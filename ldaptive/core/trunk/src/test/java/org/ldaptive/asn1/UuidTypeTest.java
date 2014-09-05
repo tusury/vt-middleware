@@ -32,7 +32,7 @@ public class UuidTypeTest
   /**
    * UUID test data.
    *
-   * @return  response test data
+   * @return  test data
    */
   @DataProvider(name = "uuids")
   public Object[][] createData()
