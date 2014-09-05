@@ -13,6 +13,7 @@
 */
 package org.ldaptive.ssl;
 
+import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
@@ -20,12 +21,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.StringTokenizer;
 import javax.net.SocketFactory;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DN;
+import org.ldaptive.asn1.RDN;
+import org.ldaptive.io.StringValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,8 +209,10 @@ public class DefaultHostnameVerifier
       final String[] cns = getCNs(cert);
       logger.debug("verifyDNS using CN={}", Arrays.toString(cns));
       if (cns.length > 0) {
-        if (isMatch(hostname, cns[0])) {
-          logger.debug("verifyDNS found hostname match: {}", cns[0]);
+        // the most specific CN refers to the last CN
+        if (isMatch(hostname, cns[cns.length - 1])) {
+          logger.debug(
+            "verifyDNS found hostname match: {}", cns[cns.length - 1]);
           verified = true;
         }
       }
@@ -258,15 +263,17 @@ public class DefaultHostnameVerifier
   private String[] getCNs(final X509Certificate cert)
   {
     final List<String> names = new ArrayList<String>();
-    // not a perfect implementation but appears to work for >99% of certificates
-    // and has the virtue of not requiring any dependencies
-    final String subjectPrincipal = cert.getSubjectX500Principal().toString();
-    final StringTokenizer st = new StringTokenizer(subjectPrincipal, ",");
-    while (st.hasMoreTokens()) {
-      final String tok = st.nextToken();
-      final int x = tok.indexOf("CN=");
-      if (x >= 0) {
-        names.add(tok.substring(x + "CN=".length()));
+    final byte[] encodedDn = cert.getSubjectX500Principal().getEncoded();
+    if (encodedDn != null && encodedDn.length > 0) {
+      final DN dn = DN.decode(ByteBuffer.wrap(encodedDn));
+      for (RDN rdn : dn.getRDNs()) {
+        // for multi value RDNs the first value is used
+        final String value = rdn.getAttributeValue(
+          "2.5.4.3",
+          new StringValueTranscoder());
+        if (value != null) {
+          names.add(value);
+        }
       }
     }
     return names.toArray(new String[names.size()]);
