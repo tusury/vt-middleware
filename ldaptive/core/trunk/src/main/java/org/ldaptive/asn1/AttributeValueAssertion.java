@@ -19,7 +19,7 @@ import java.util.List;
 import org.ldaptive.LdapUtils;
 
 /**
- * An OID representing the type of attribute and it's value.
+ * An OID representing the type of attribute and its value.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
