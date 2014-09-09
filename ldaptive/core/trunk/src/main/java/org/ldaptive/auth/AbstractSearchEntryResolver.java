@@ -26,7 +26,10 @@ import org.ldaptive.SearchScope;
 import org.ldaptive.handler.SearchEntryHandler;
 
 /**
- * Base implementation for search entry resolvers.
+ * Base implementation for search entry resolvers. Uses an object level search
+ * on the {@link AuthenticationCriteria#getDn()} if no {@link #userFilter} is
+ * configured. If a {@link #userFilter} is configured, then a search is executed
+ * using that filter.
  *
  * @author  Middleware Services
  * @version  $Revision$ $Date$
@@ -301,8 +304,7 @@ public abstract class AbstractSearchEntryResolver
   /**
    * Returns a search filter using {@link #userFilter} and {@link
    * #userFilterParameters}. The user parameter is injected as a named parameter
-   * of 'user'. If no userFilter is defined the authentication criteria DN is
-   * used is conjunction with an object level search.
+   * of 'user'.
    *
    * @param  ac  authentication criteria
    *
@@ -320,8 +322,7 @@ public abstract class AbstractSearchEntryResolver
       // assign dn as a named parameter
       filter.setParameter("user", ac.getDn());
     } else {
-      logger.debug("No userFilter defined, using authenticated DN");
-      filter.setFilter(ac.getDn());
+      logger.error("Invalid userFilter, cannot be null or empty.");
     }
     return filter;
   }
