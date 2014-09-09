@@ -168,7 +168,7 @@ public abstract class AbstractSearchDnResolver
   /**
    * Sets whether subtree searching will be used. If true, the DN used for
    * authenticating will be searched for over the entire {@link #getBaseDn()}.
-   * Otherwise the DN will be search for in the {@link #getBaseDn()} context.
+   * Otherwise the DN will be searched for in the {@link #getBaseDn()} context.
    *
    * @param  b  whether the DN will be searched for over the entire base
    */
@@ -227,7 +227,7 @@ public abstract class AbstractSearchDnResolver
 
   /**
    * Attempts to find the DN for the supplied user. {@link #getUserFilter()} is
-   * used to look up the DN. The user is provided as the {0} variable filter
+   * used to look up the DN. The user is provided as the 'user' variable filter
    * parameter. If more than one entry matches the search, the result is
    * controlled by {@link #setAllowMultipleDns(boolean)}.
    *

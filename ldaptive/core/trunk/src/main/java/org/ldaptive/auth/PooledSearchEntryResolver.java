@@ -113,10 +113,20 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   {
     return
       String.format(
-        "[%s@%d::factory=%s, searchEntryHandlers=%s]",
+        "[%s@%d::factory=%s, baseDn=%s, userFilter=%s, " +
+        "userFilterParameters=%s, allowMultipleEntries=%s, " +
+        "subtreeSearch=%s, derefAliases=%s, followReferrals=%s, " +
+        "searchEntryHandlers=%s]",
         getClass().getName(),
         hashCode(),
         factory,
+        getBaseDn(),
+        getUserFilter(),
+        Arrays.toString(getUserFilterParameters()),
+        getAllowMultipleEntries(),
+        getSubtreeSearch(),
+        getDerefAliases(),
+        getFollowReferrals(),
         Arrays.toString(getSearchEntryHandlers()));
   }
 }
