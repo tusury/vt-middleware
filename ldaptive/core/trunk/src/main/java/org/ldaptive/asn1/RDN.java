@@ -193,12 +193,10 @@ public class RDN implements DEREncoder
       @Override
       public void handle(final DERParser parser, final ByteBuffer encoded)
       {
-        final byte[] assertionBytes =
-          new byte[encoded.limit() - encoded.position()];
-        encoded.get(assertionBytes);
         rdns.add(
           new RDN(
-            AttributeValueAssertion.decode(ByteBuffer.wrap(assertionBytes))));
+            AttributeValueAssertion.decode(encoded.slice())));
+        encoded.position(encoded.limit());
       }
     });
     parser.parse(encoded);
