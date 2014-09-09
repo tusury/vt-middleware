@@ -319,8 +319,9 @@ public abstract class AbstractSearchEntryResolver
       if (userFilterParameters != null) {
         filter.setParameters(userFilterParameters);
       }
-      // assign dn as a named parameter
-      filter.setParameter("user", ac.getDn());
+      // assign named parameters
+      filter.setParameter("user", ac.getAuthenticationRequest().getUser());
+      filter.setParameter("dn", ac.getDn());
     } else {
       logger.error("Invalid userFilter, cannot be null or empty.");
     }
