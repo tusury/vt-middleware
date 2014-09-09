@@ -141,7 +141,7 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Sets whether DN resolution should fail if multiple DNs are found If false
+   * Sets whether DN resolution should fail if multiple DNs are found. If false
    * an exception will be thrown if {@link #resolve(String)} finds more than one
    * DN matching it's filter. Otherwise the first DN found is returned.
    *
@@ -295,9 +295,9 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Returns a search filter using the user filter and user filter parameters of
-   * the authentication config. The user parameter is injected as a named
-   * parameter of 'user'.
+   * Returns a search filter using {@link #userFilter} and {@link
+   * #userFilterParameters}. The user parameter is injected as a named parameter
+   * of 'user'.
    *
    * @param  user  identifier
    *
