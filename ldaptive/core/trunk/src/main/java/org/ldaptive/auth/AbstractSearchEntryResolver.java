@@ -303,8 +303,9 @@ public abstract class AbstractSearchEntryResolver
 
   /**
    * Returns a search filter using {@link #userFilter} and {@link
-   * #userFilterParameters}. The user parameter is injected as a named parameter
-   * of 'user'.
+   * #userFilterParameters}. {@link AuthenticationRequest#getUser()} is injected
+   * with a named parameter of 'user', {@link AuthenticationCriteria#getDn()} is
+   * injected with a named parameter of 'dn'.
    *
    * @param  ac  authentication criteria
    *
