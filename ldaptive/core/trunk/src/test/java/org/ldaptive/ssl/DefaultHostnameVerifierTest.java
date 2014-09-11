@@ -356,7 +356,8 @@ public class DefaultHostnameVerifierTest
         new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_MV_CERT)));
     final X509Certificate aFooComMvRdnCert = (X509Certificate)
       cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_MV_RDN_CERT)));
+        new ByteArrayInputStream(
+          LdapUtils.base64Decode(A_FOO_COM_MV_RDN_CERT)));
     final X509Certificate endBEmbedComCert = (X509Certificate)
       cf.generateCertificate(
         new ByteArrayInputStream(
