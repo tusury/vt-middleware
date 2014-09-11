@@ -123,7 +123,7 @@ public class ModifyDnRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::oldModifyDn=%s, newModifyDn=%s, deleteOldRDn=%s controls=%s]",
+        "[%s@%d::oldModifyDn=%s, newModifyDn=%s, deleteOldRDn=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
         oldModifyDn,

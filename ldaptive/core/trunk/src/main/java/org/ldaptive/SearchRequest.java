@@ -523,7 +523,8 @@ public class SearchRequest extends AbstractRequest
         timeLimit,
         typesOnly,
         getControls(),
-        getFollowReferrals());
+        getFollowReferrals(),
+        getIntermediateResponseHandlers());
   }
 
 
