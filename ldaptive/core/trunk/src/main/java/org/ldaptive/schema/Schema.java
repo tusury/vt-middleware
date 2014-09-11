@@ -13,8 +13,10 @@
 */
 package org.ldaptive.schema;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -131,6 +133,38 @@ public class Schema
   public void setAttributeTypes(final Collection<AttributeType> c)
   {
     attributeTypes = c;
+  }
+
+
+  /**
+   * Returns the attribute names in this schema that represent binary data. This
+   * includes attributes with a syntax OID of '1.3.6.1.4.1.1466.115.121.1.5' and
+   * any syntax with the 'X-NOT-HUMAN-READABLE' extension.
+   *
+   * @return  binary attribute names
+   */
+  public String[] getBinaryAttributeNames()
+  {
+    final List<String> binaryAttrs = new ArrayList<String>();
+    for (AttributeType type : attributeTypes) {
+      boolean isBinary = false;
+      final String syntaxOid = type.getSyntaxOID(false);
+      if ("1.3.6.1.4.1.1466.115.121.1.5".equals(syntaxOid)) {
+        isBinary = true;
+      } else {
+        final Syntax syntax = getSyntax(syntaxOid);
+        if (syntax != null &&
+            Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
+          isBinary = true;
+        }
+      }
+      if (isBinary) {
+        for (String name : type.getNames()) {
+          binaryAttrs.add(name);
+        }
+      }
+    }
+    return binaryAttrs.toArray(new String[binaryAttrs.size()]);
   }
 
 
