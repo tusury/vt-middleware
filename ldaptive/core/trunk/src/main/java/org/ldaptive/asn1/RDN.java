@@ -112,7 +112,9 @@ public class RDN implements DEREncoder
   /**
    * Returns the attribute values decoded by the supplied transcoder.
    *
+   * @param  <T>  type of value
    * @param  oid  to match
+   * @param  transcoder  to decode the binary value
    *
    * @return  decoded attribute values
    */
@@ -135,7 +137,9 @@ public class RDN implements DEREncoder
    * Returns a single attribute value for the supplied oid. See {@link
    * #getAttributeValues(String, ValueTranscoder)}.
    *
+   * @param  <T>  type of value
    * @param  oid  to match
+   * @param  transcoder  to decode the binary value
    *
    * @return  decoded attribute value
    */

@@ -185,8 +185,6 @@ public class OidTypeTest
 
   /**
    * @param  oid  to encode.
-   *
-   * @throws  Exception  On test failure.
    */
   @Test(
     groups = {"asn1"},

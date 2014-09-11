@@ -33,7 +33,10 @@ public class DNTest
    * DN test data.
    *
    * @return  test data
+   *
+   * @throws  Exception  On test failure.
    */
+  // CheckStyle:MethodLength OFF
   @DataProvider(name = "dns")
   public Object[][] createData()
     throws Exception
@@ -189,7 +192,7 @@ public class DNTest
             (byte) 0x4E, (byte) 0x3D, (byte) 0x77, (byte) 0x77, (byte) 0x77,
             (byte) 0x2E, (byte) 0x61, (byte) 0x70, (byte) 0x61, (byte) 0x63,
             (byte) 0x68, (byte) 0x65, (byte) 0x2E, (byte) 0x6F, (byte) 0x72,
-            (byte) 0x67, (byte) 0x2C
+            (byte) 0x67, (byte) 0x2C,
           },
           new DN(
             new RDN(
@@ -395,6 +398,7 @@ public class DNTest
         },
       };
   }
+  // CheckStyle:MethodLength ON
 
 
   /**
