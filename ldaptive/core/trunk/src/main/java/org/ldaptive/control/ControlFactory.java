@@ -84,6 +84,9 @@ public final class ControlFactory
     } else if (PasswordExpiringControl.OID.equals(oid)) {
       ctl = new PasswordExpiringControl(critical);
       ctl.decode(encoded);
+    } else if (AuthorizationIdentityResponseControl.OID.equals(oid)) {
+      ctl = new AuthorizationIdentityResponseControl(critical);
+      ctl.decode(encoded);
     } else {
       LOGGER.debug("Unsupported response control OID {}", oid);
     }
