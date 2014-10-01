@@ -74,7 +74,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
    *
    * @return  ldap entry mapper
    */
-  protected LdapEntryMapper<T> getLdapEntryMapper()
+  public LdapEntryMapper<T> getLdapEntryMapper()
   {
     return ldapEntryMapper;
   }
@@ -85,7 +85,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
    *
    * @return  connection factory
    */
-  protected ConnectionFactory getConnectionFactory()
+  public ConnectionFactory getConnectionFactory()
   {
     return connectionFactory;
   }
