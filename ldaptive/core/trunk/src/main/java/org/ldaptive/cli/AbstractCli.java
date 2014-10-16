@@ -93,7 +93,9 @@ public abstract class AbstractCli
     } catch (LdapException ex) {
       System.err.println("LDAP Operation failed:");
       ex.printStackTrace(System.err);
-      status = ex.getResultCode().value();
+      if (ex.getResultCode() != null) {
+        status = ex.getResultCode().value();
+      }
     } catch (Exception ex) {
       System.err.println("Operation failed:");
       ex.printStackTrace(System.err);
