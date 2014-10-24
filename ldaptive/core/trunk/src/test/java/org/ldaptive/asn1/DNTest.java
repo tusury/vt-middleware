@@ -416,9 +416,7 @@ public class DNTest
     final DN expected)
     throws Exception
   {
-    Assert.assertEquals(
-      DN.decode(ByteBuffer.wrap(bytes)),
-      expected);
+    Assert.assertEquals(DN.decode(ByteBuffer.wrap(bytes)), expected);
   }
 
 
@@ -432,9 +430,7 @@ public class DNTest
     groups = {"asn1"},
     dataProvider = "dns"
   )
-  public void encode(
-    final byte[] expected,
-    final DN sequence)
+  public void encode(final byte[] expected, final DN sequence)
     throws Exception
   {
     Assert.assertEquals(sequence.encode(), expected);

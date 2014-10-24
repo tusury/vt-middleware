@@ -115,31 +115,34 @@ public class AttributeValueAssertion extends AbstractDERType
     final List<AttributeValueAssertion> assertions =
       new ArrayList<AttributeValueAssertion>();
     final DERParser parser = new DERParser();
-    parser.registerHandler("/SEQ", new ParseHandler()
-    {
-      @Override
-      public void handle(final DERParser parser, final ByteBuffer encoded)
-      {
-        if (UniversalDERTag.OID.getTagNo() !=
-            parser.readTag(encoded).getTagNo()) {
-          throw new IllegalArgumentException("Expected OID tag");
+    parser.registerHandler(
+      "/SEQ",
+      new ParseHandler() {
+        @Override
+        public void handle(final DERParser parser, final ByteBuffer encoded)
+        {
+          if (UniversalDERTag.OID.getTagNo() !=
+              parser.readTag(encoded).getTagNo()) {
+            throw new IllegalArgumentException("Expected OID tag");
+          }
+
+          final int seqLimit = encoded.limit();
+          final int oidLength = parser.readLength(encoded);
+          encoded.limit(encoded.position() + oidLength);
+
+          final String oid = OidType.decode(encoded);
+          encoded.limit(seqLimit);
+
+          final DERTag tag = parser.readTag(encoded);
+          parser.readLength(encoded);
+          assertions.add(
+            new AttributeValueAssertion(
+              oid,
+              new Value(tag, readBuffer(encoded))));
         }
-        final int seqLimit = encoded.limit();
-        final int oidLength = parser.readLength(encoded);
-        encoded.limit(encoded.position() + oidLength);
-        final String oid = OidType.decode(encoded);
-        encoded.limit(seqLimit);
-        final DERTag tag = parser.readTag(encoded);
-        parser.readLength(encoded);
-        assertions.add(
-          new AttributeValueAssertion(
-            oid,
-            new Value(tag, readBuffer(encoded))));
-      }
-    });
+      });
     parser.parse(encoded);
-    return assertions.toArray(
-      new AttributeValueAssertion[assertions.size()]);
+    return assertions.toArray(new AttributeValueAssertion[assertions.size()]);
   }
 
 
@@ -156,10 +159,7 @@ public class AttributeValueAssertion extends AbstractDERType
   public int hashCode()
   {
     return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        attributeOid,
-        attributeValue);
+      LdapUtils.computeHashCode(HASH_CODE_SEED, attributeOid, attributeValue);
   }
 
 

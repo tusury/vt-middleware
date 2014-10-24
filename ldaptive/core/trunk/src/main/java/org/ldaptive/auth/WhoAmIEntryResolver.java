@@ -44,11 +44,13 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
     final WhoAmIOperation whoami = new WhoAmIOperation(conn);
     final Response<String> res = whoami.execute(new WhoAmIRequest());
     logger.debug("whoami operation returned {}", res);
+
     final String authzId = res.getResult();
     if (authzId == null) {
       throw new IllegalStateException(
         "WhoAmI operation did not return an authorization ID");
     }
+
     final String dn = authzId.split(":", 2)[1].trim();
     final SearchOperation search = createSearchOperation(conn);
     return search.execute(createSearchRequest(ac, dn)).getResult();

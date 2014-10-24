@@ -212,7 +212,8 @@ public class DefaultHostnameVerifier
         // the most specific CN refers to the last CN
         if (isMatch(hostname, cns[cns.length - 1])) {
           logger.debug(
-            "verifyDNS found hostname match: {}", cns[cns.length - 1]);
+            "verifyDNS found hostname match: {}",
+            cns[cns.length - 1]);
           verified = true;
         }
       }

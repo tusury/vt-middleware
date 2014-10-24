@@ -145,6 +145,7 @@ public class OidType extends AbstractDERType implements DEREncoder
   public static byte[] toBytes(final int[] oid)
   {
     isValid(oid);
+
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     try {
       try {
@@ -172,6 +173,7 @@ public class OidType extends AbstractDERType implements DEREncoder
   /**
    * Checks whether the supplied oid is valid. Oids must meet the following
    * criteria:
+   *
    * <ul>
    *   <li>must not be null and must have at least 2 elements</li>
    *   <li>components must not be negative</li>
@@ -228,6 +230,7 @@ public class OidType extends AbstractDERType implements DEREncoder
       }
       val >>>= 7;
     }
+
     final byte[] bytes = new byte[size];
     for (int i = 0; i < bytes.length; i++) {
       bytes[i] = buffer[--size];
@@ -261,8 +264,7 @@ public class OidType extends AbstractDERType implements DEREncoder
       }
     }
     // CheckStyle:MagicNumber ON
-    throw new IllegalArgumentException(
-      "Integer greater than 4 bytes in size");
+    throw new IllegalArgumentException("Integer greater than 4 bytes in size");
   }
 
 
@@ -281,6 +283,7 @@ public class OidType extends AbstractDERType implements DEREncoder
     if (oid == null) {
       throw new IllegalArgumentException("OID cannot be null");
     }
+
     final StringTokenizer st = new StringTokenizer(oid, ".");
     final int[] oids = new int[st.countTokens()];
     int i = 0;
