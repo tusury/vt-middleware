@@ -6,11 +6,11 @@
   <groupId>org.ldaptive.bundle</groupId>
   <artifactId>ldaptive-bundle</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <parent>
     <groupId>org.ldaptive.bundle</groupId>
     <artifactId>root</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
   </parent>
 
   <prerequisites>
@@ -26,7 +26,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>2.7</version>
         <executions>
           <execution>
             <id>copy-info</id>
@@ -59,7 +59,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.4.1</version>
         <configuration>
           <appendAssemblyId>true</appendAssemblyId>
           <descriptors>
