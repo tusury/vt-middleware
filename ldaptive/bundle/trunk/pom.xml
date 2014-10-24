@@ -6,7 +6,7 @@
   <groupId>org.ldaptive.bundle</groupId>
   <artifactId>root</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <name>LDAPTIVE BUNDLE</name>
   <description>ldaptive bundle</description>
   <url>http://www.ldaptive.org</url>
@@ -59,6 +59,10 @@
       </roles>
     </developer>
   </developers>
+
+  <prerequisites>
+    <maven>2.2.1</maven>
+  </prerequisites>
 
   <modules>
     <module>core</module>
