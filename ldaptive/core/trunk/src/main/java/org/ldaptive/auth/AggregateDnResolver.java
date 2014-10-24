@@ -160,6 +160,7 @@ public class AggregateDnResolver implements DnResolver
     for (DnResolver resolver : dnResolvers.values()) {
       try {
         logger.debug("waiting on DN resolver {}", resolver);
+
         final String dn = cs.take().get();
         logger.debug("DN resolver {} resolved dn {}", resolver, dn);
         if (dn != null) {

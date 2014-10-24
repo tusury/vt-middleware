@@ -161,19 +161,19 @@ public class RDN implements DEREncoder
   {
     final List<DEREncoder> typeEncoders = new ArrayList<DEREncoder>();
     for (final AttributeValueAssertion types : attributeValueAssertions) {
-      typeEncoders.add(new DEREncoder()
-      {
-        @Override
-        public byte[] encode()
-        {
-          return types.encode();
-        }
-      });
+      typeEncoders.add(
+        new DEREncoder() {
+          @Override
+          public byte[] encode()
+          {
+            return types.encode();
+          }
+        });
     }
+
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SET,
-      typeEncoders.toArray(
-        new DEREncoder[typeEncoders.size()]));
+      typeEncoders.toArray(new DEREncoder[typeEncoders.size()]));
     return se.encode();
   }
 
@@ -192,17 +192,16 @@ public class RDN implements DEREncoder
   {
     final List<RDN> rdns = new ArrayList<RDN>();
     final DERParser parser = new DERParser();
-    parser.registerHandler("/SEQ/SET", new ParseHandler()
-    {
-      @Override
-      public void handle(final DERParser parser, final ByteBuffer encoded)
-      {
-        rdns.add(
-          new RDN(
-            AttributeValueAssertion.decode(encoded.slice())));
-        encoded.position(encoded.limit());
-      }
-    });
+    parser.registerHandler(
+      "/SEQ/SET",
+      new ParseHandler() {
+        @Override
+        public void handle(final DERParser parser, final ByteBuffer encoded)
+        {
+          rdns.add(new RDN(AttributeValueAssertion.decode(encoded.slice())));
+          encoded.position(encoded.limit());
+        }
+      });
     parser.parse(encoded);
     return rdns.toArray(new RDN[rdns.size()]);
   }
@@ -220,9 +219,10 @@ public class RDN implements DEREncoder
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(
-      HASH_CODE_SEED,
-      (Object) attributeValueAssertions);
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        (Object) attributeValueAssertions);
   }
 
 
