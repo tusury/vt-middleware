@@ -69,6 +69,8 @@
              value="/org/ldaptive/createLdapEntry-30.ldif"/>
   <parameter name="createEntry31"
              value="/org/ldaptive/createLdapEntry-31.ldif"/>
+  <parameter name="createEntry32"
+             value="/org/ldaptive/createLdapEntry-32.ldif"/>
 
   <parameter name="createGroup2"
              value="/org/ldaptive/createGroupEntry-2.ldif"/>
@@ -282,6 +284,9 @@
 
   <parameter name="ncSearchDn" value="${ldapBindDn}"/>
 
+  <parameter name="bindDn" value="cn=Franklin Roosevelt,${ldapBaseDn}"/>
+  <parameter name="bindPasswd" value="password32"/>
+
   <parameter name="compareDn" value="cn=Thomas Jefferson,${ldapBaseDn}"/>
   <parameter name="compareAttrName" value="departmentNumber"/>
   <parameter name="compareAttrValue" value="0823"/>
@@ -463,6 +468,7 @@
     <groups>
       <define name="core">
         <include name="bean" />
+        <include name="bind" />
         <include name="props" />
         <include name="search" />
         <include name="search-with-retry" />
