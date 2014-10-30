@@ -879,6 +879,104 @@ public class AuthenticatorTest extends AbstractTest
   /**
    * @param  user  to authenticate.
    * @param  credential  to authenticate with.
+   * @param  returnAttrs  to search for.
+   * @param  ldifFile  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential",
+      "authenticateReturnAttrs",
+      "authenticateResults"
+    }
+  )
+  @Test(
+    groups = {"auth"},
+    threadPoolSize = TEST_THREAD_POOL_SIZE,
+    invocationCount = TEST_INVOCATION_COUNT,
+    timeOut = TEST_TIME_OUT
+  )
+  public void authenticateSearchEntry(
+    final String user,
+    final String credential,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(false);
+    final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
+    final SearchEntryResolver entryResolver = new SearchEntryResolver();
+    entryResolver.setUserFilter(dnResolver.getUserFilter());
+    entryResolver.setBaseDn(dnResolver.getBaseDn());
+    entryResolver.setSubtreeSearch(dnResolver.getSubtreeSearch());
+    auth.setEntryResolver(entryResolver);
+
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest(
+        user,
+        new Credential(credential),
+        returnAttrs.split("\\|")));
+    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    TestUtils.assertEquals(
+      TestUtils.convertLdifToResult(expected),
+      new SearchResult(response.getLdapEntry()));
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential",
+      "authenticateReturnAttrs",
+      "authenticateResults"
+    }
+  )
+  @Test(groups = {"auth"})
+  public void authenticateWhoAmI(
+    final String user,
+    final String credential,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+    final Authenticator auth = createTLSAuthenticator(true);
+    auth.setEntryResolver(new WhoAmIEntryResolver());
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest(
+        user,
+        new Credential(credential),
+        returnAttrs.split("\\|")));
+    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    TestUtils.assertEquals(
+      TestUtils.convertLdifToResult(expected),
+      new SearchResult(response.getLdapEntry()));
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
    *
    * @throws  Exception  On test failure.
    */
