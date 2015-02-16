@@ -481,7 +481,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       try {
         r = c.open();
       } catch (LdapException e) {
-        logger.error("unable to connect to the ldap", e);
+        logger.error("{} unable to connect to the ldap", this, e);
         c = null;
         if (throwOnFailure) {
           throw new IllegalStateException("unable to connect to the ldap", e);
