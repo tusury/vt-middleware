@@ -13,6 +13,9 @@
 */
 package org.ldaptive;
 
+import org.ldaptive.concurrent.SearchOperationWorker;
+import org.ldaptive.handler.HandlerResult;
+import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.provider.ConnectionStrategy;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -252,6 +255,56 @@ public class ConnectionTest
     }
     try {
       conn.open();
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = {"conn"})
+  public void ldapsConnect()
+    throws Exception
+  {
+    final Connection conn = DefaultConnectionFactory.getConnection(
+      TestUtils.readConnectionConfig(
+        "classpath:/org/ldaptive/ldap.ssl.properties"));
+    try {
+      conn.open();
+      final SearchOperationWorker search = new SearchOperationWorker(
+        new SearchOperation(conn));
+      final SearchRequest request = new SearchRequest(
+        DnParser.substring(testLdapEntry.getDn(), 1),
+        new SearchFilter("(uid=15)"));
+
+      SearchResult lr = search.execute(request).get().getResult();
+      AssertJUnit.assertEquals(
+        testLdapEntry.getDn().toLowerCase(),
+        lr.getEntry().getDn().toLowerCase());
+
+      // worker thread should reopen the connection
+      request.setSearchEntryHandlers(
+        new SearchEntryHandler() {
+          @Override
+          public HandlerResult<SearchEntry> handle(
+            final Connection conn,
+            final SearchRequest request,
+            final SearchEntry entry) throws LdapException
+          {
+            conn.reopen();
+            return new HandlerResult<SearchEntry>(entry);
+          }   
+
+          @Override
+          public void initializeRequest(final SearchRequest request) {}
+        }   
+      );
+      lr = search.execute(request).get().getResult();
+      AssertJUnit.assertEquals(
+        testLdapEntry.getDn().toLowerCase(),
+        lr.getEntry().getDn().toLowerCase());
+
+      search.shutdown();
     } finally {
       conn.close();
     }

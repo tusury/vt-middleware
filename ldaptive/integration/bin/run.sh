@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PROVIDER_VERSION="1.0.3-SNAPSHOT"
+PROVIDER_VERSION="1.0.6-SNAPSHOT"
 
 TEST_GROUP=core
 while [ $# -gt 0 ]

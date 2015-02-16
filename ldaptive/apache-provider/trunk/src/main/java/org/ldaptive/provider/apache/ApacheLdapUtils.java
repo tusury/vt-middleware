@@ -46,18 +46,11 @@ import org.ldaptive.control.ResponseControl;
 public class ApacheLdapUtils
 {
 
-  /** Default binary attributes. */
-  protected static final String[] DEFAULT_BINARY_ATTRS = new String[] {
-    "userPassword",
-    "jpegPhoto",
-    "userCertificate",
-  };
-
   /** Ldap result sort behavior. */
   private final SortBehavior sortBehavior;
 
   /** Attributes that should be treated as binary. */
-  private List<String> binaryAttrs = Arrays.asList(DEFAULT_BINARY_ATTRS);
+  private List<String> binaryAttrs;
 
 
   /** Default constructor. */
@@ -159,8 +152,6 @@ public class ApacheLdapUtils
     if (a.getId().contains(";binary")) {
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getUpId())) {
-      isBinary = true;
-    } else if (!a.isHumanReadable() && a.get() != null) {
       isBinary = true;
     }
 

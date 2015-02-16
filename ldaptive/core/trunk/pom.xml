@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.5</version>
+  <version>1.0.6-SNAPSHOT</version>
   <name>LDAPTIVE</name>
   <description>Java LDAP API</description>
   <url>http://www.ldaptive.org</url>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.7</version>
+      <version>1.7.10</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.8.8</version>
+      <version>6.8.21</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -242,7 +242,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>2.5.3</version>
         <configuration>
           <appendAssemblyId>true</appendAssemblyId>
           <attach>false</attach>
@@ -279,7 +279,7 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <executions>
               <execution>
                 <id>sign-artifacts</id>

@@ -21,6 +21,8 @@ import javax.naming.ldap.InitialLdapContext;
 import org.ldaptive.LdapException;
 import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
+import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.ThreadLocalTLSSocketFactory;
 
 /**
  * Creates connections using the JNDI {@link InitialLdapContext} class.
@@ -34,6 +36,9 @@ public class JndiConnectionFactory
 
   /** Environment properties. */
   private final Map<String, Object> environment;
+
+  /** Thread local SslConfig, if one exists. */
+  private SslConfig threadLocalSslConfig;
 
 
   /**
@@ -50,6 +55,10 @@ public class JndiConnectionFactory
   {
     super(url, config);
     environment = Collections.unmodifiableMap(env);
+    if (ThreadLocalTLSSocketFactory.class.getName().equals(
+        environment.get(JndiProvider.SOCKET_FACTORY))) {
+      threadLocalSslConfig = new ThreadLocalTLSSocketFactory().getSslConfig();
+    }
   }
 
 
@@ -70,6 +79,15 @@ public class JndiConnectionFactory
   protected JndiConnection createInternal(final String url)
     throws LdapException
   {
+    if (threadLocalSslConfig != null &&
+        ThreadLocalTLSSocketFactory.class.getName().equals(
+          environment.get(JndiProvider.SOCKET_FACTORY))) {
+      final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
+      if (sf.getSslConfig() == null) {
+        sf.setSslConfig(threadLocalSslConfig);
+      }
+    }
+
     // CheckStyle:IllegalType OFF
     // the JNDI API requires the Hashtable type
     final Hashtable<String, Object> env = new Hashtable<String, Object>(
