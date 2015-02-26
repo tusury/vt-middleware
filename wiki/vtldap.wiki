@@ -28,7 +28,7 @@ This project is available from Maven Central. If you would like to use this proj
   <dependency>
       <groupId>edu.vt.middleware</groupId>
       <artifactId>vt-ldap</artifactId>
-      <version>3.3.8</version>
+      <version>3.3.9</version>
   </dependency>
 <dependencies>
 }}}
