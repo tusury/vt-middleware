@@ -2,6 +2,9 @@
 
 <wiki:toc max_depth="2" />
 
+= Version 3.3.9 =
+  * [http://code.google.com/p/vt-middleware/issues/detail?id=235 vtldap-235] - JNDI does not startTLS when following referrals
+
 = Version 3.3.8 =
   * [http://code.google.com/p/vt-middleware/issues/detail?id=226 vtldap-226] - default certificate hostname verifier incorrectly parses CN
 
