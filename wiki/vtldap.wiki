@@ -20,8 +20,6 @@ This library meets the following design goals:
 
 ----
 = Installation =
-The latest version can be downloaded from the [http://code.google.com/p/vt-middleware/downloads/list downloads] page.
-
 This project is available from Maven Central. If you would like to use this project in your maven build, include the following in your pom.xml:
 {{{
 <dependencies>
